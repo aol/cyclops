@@ -16,17 +16,17 @@ import cyclops.collections.ListX;
 import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 
-public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<Witness.stream>{
+public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<Witness.reactiveSeq>{
    
 	@Override
-	public <T> AnyMSeq<Witness.stream,T> of(T... values) {
+	public <T> AnyMSeq<Witness.reactiveSeq,T> of(T... values) {
 		return AnyM.fromStream(FutureStream.of(values).async());
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.function.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
-	public <T> AnyMSeq<Witness.stream,T> empty() {
+	public <T> AnyMSeq<Witness.reactiveSeq,T> empty() {
 		return AnyM.fromStream(FutureStream.empty());
 	}
 	@Test

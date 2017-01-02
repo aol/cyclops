@@ -326,6 +326,7 @@ public abstract class AbstractTraversableTest {
         assertThat(right,hasItem(400));
         
         List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+
         assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
     }

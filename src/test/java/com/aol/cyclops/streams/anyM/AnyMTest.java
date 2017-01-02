@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import cyclops.monads.Witness;
 import cyclops.function.AnyMFn1;
 import cyclops.function.AnyMFn2;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
@@ -111,6 +112,13 @@ public class AnyMTest {
 		assertThat(fromStream(Stream.of(1,2,2)).stream()
 											.cycleUntil(next -> count++>6)
 											.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
+	}
+	@Test
+	public void testCycleUntilReactiveSeq(){
+		count =0;
+		assertThat(fromStream(ReactiveSeq.of(1,2,2)).stream()
+				.cycleUntil(next -> count++>6)
+				.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
 	}
 	@Test
 	public void testCycle(){
@@ -344,7 +352,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testSortedCompartor(){
-		assertThat(AnyM.fromStream(Stream.of(4,3,6,7)).stream().sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
+		assertThat(AnyM.fromStream(Stream.of(4,3,6,7)).stream().sorted((a, b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
 	}
 	@Test
 	public void testSkip(){

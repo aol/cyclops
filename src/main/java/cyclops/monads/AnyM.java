@@ -65,6 +65,7 @@ import cyclops.monads.Witness.optional;
 import cyclops.monads.Witness.set;
 import cyclops.monads.Witness.stream;
 import cyclops.monads.Witness.streamable;
+import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.Witness.tryType;
 import cyclops.monads.Witness.xor;
 import cyclops.monads.Witness.*;
@@ -139,6 +140,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     }
     @Override
     default Iterator<T> iterator() {
+
         return adapter().toIterable(this).iterator();
 
     }
@@ -479,7 +481,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @param end Exclusive end of the range
      * @return AnyM range
      */
-    public static AnyMSeq<stream,Integer> fromRange(final int start, final int end) {
+    public static AnyMSeq<reactiveSeq,Integer> fromRange(final int start, final int end) {
 
         return AnyM.fromStream(ReactiveSeq.range(start, end));
     }
@@ -493,7 +495,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @param end Exclusive end of the range
      * @return AnyM range
      */
-    public static AnyMSeq<stream,Long> fromRangeLong(final long start, final long end) {
+    public static AnyMSeq<reactiveSeq,Long> fromRangeLong(final long start, final long end) {
 
         return AnyM.fromStream(ReactiveSeq.rangeLong(start, end));
     }
@@ -599,7 +601,22 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     public static <T> AnyMSeq<stream,T> fromPublisher(final Publisher<T> publisher) {
         return AnyMFactory.instance.seq(ReactiveSeq.fromPublisher(publisher),Witness.stream.INSTANCE);
     }
+    /**
+     * Create an AnyM instance that wraps a Stream
+     *
+     * @param stream Stream to wrap
+     * @return AnyM that wraps the provided Stream
+     */
+    public static <T> AnyMSeq<reactiveSeq,T> fromStream(final ReactiveSeq<T> stream) {
+        Objects.requireNonNull(stream);
+        return AnyMFactory.instance.seq(stream,Witness.reactiveSeq.INSTANCE);
 
+    }
+    public static <W extends Witness.StreamWitness<W>,T> AnyMSeq<W,T> fromStream(final Stream<T> stream, W witness) {
+        Objects.requireNonNull(stream);
+        return AnyMFactory.instance.seq(stream,witness);
+
+    }
     /**
      * Create an AnyM instance that wraps a Stream
      * 

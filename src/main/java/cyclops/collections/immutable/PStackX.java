@@ -292,6 +292,11 @@ public interface PStackX<T> extends To<PStackX<T>>,
                        .efficientOpsOff();
     }
 
+    @Override
+    default PStackX<T> materialize() {
+        return (PStackX<T>)PersistentCollectionX.super.materialize();
+    }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
      */

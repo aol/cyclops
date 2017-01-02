@@ -327,6 +327,11 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     @Override
+    default PSetX<T> materialize() {
+        return (PSetX<T>)PersistentCollectionX.super.materialize();
+    }
+
+    @Override
     default ReactiveSeq<T> stream() {
 
         return ReactiveSeq.fromIterable(this);

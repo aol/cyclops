@@ -1,5 +1,6 @@
 package com.aol.cyclops.internal.monads;
 
+import cyclops.Streams;
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import cyclops.monads.WitnessType;
@@ -15,7 +16,7 @@ public class AnyMSeqImpl<W extends WitnessType<W>,T> extends BaseAnyMImpl<W,T>im
     }
     @Override
     public ReactiveSeq<T> stream(){
-        return ReactiveSeq.fromIterable(this);
+        return Streams.oneShotStreamI(this);
     }
     @Override
     public String toString() {

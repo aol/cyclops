@@ -19,15 +19,16 @@ import com.aol.cyclops.types.extensability.AbstractFunctionalAdapter;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class StreamAdapter extends AbstractFunctionalAdapter<Witness.stream> {
+public class StreamAdapter<W extends Witness.StreamWitness<W>> extends  AbstractFunctionalAdapter<W> {
     
     private final Supplier<Stream<?>> empty;
     private final Function<?,Stream<?>> unit;
     private final Function<Iterator<?>,Stream<?>> unitIterator;
-    
-    public final static StreamAdapter stream = new StreamAdapter(()->Stream.of(),t->Stream.of(t),it-> Streams.stream(()->it));
-    public final static StreamAdapter reactiveSeq = new StreamAdapter(()->ReactiveSeq.of(),t->ReactiveSeq.of(t),it->ReactiveSeq.fromIterator(it));
-    
+    private final W witness;
+    public final static StreamAdapter stream = new StreamAdapter( ()->Stream.of(), t->Stream.of(t), it-> (Stream)Streams.stream(()->(Iterator)it),Witness.stream.INSTANCE);
+
+    public final static StreamAdapter reactiveSeq = new StreamAdapter(()->ReactiveSeq.of(),t->ReactiveSeq.of(t),it->(Stream)ReactiveSeq.fromIterator((Iterator)it),Witness.reactiveSeq.INSTANCE);
+
     private <U> Supplier<Stream<U>> getEmpty(){
         return (Supplier)empty;
     }
@@ -38,42 +39,45 @@ public class StreamAdapter extends AbstractFunctionalAdapter<Witness.stream> {
         return (Function)unitIterator;
     }
     @Override
-    public <T> Iterable<T> toIterable(AnyM<stream, T> t) {
+    public <T> Iterable<T> toIterable(AnyM<W, T> t) {
         return ()->stream(t).iterator();
     }
     
 
     @Override
-    public <T> AnyM<stream, T> filter(AnyM<stream, T> t, Predicate<? super T> fn) {
-        return fromStream(stream(t).filter(fn));
+    public <T> AnyM<W, T> filter(AnyM<W, T> t, Predicate<? super T> fn) {
+        return fromStream(stream(t).filter(fn),witness);
+    }
+
+    <T> Stream<T> stream(AnyM<W,T> anyM){
+        return anyM.unwrap();
+    }
+
+    @Override
+    public <T> AnyM<W, T> empty() {
+        return fromStream(this.<T>getEmpty().get(),witness);
     }
 
 
     @Override
-    public <T> AnyM<stream, T> empty() {
-        return fromStream(this.<T>getEmpty().get());
-    }
-
-
-    @Override
-    public <T, R> AnyM<stream, R> ap(AnyM<stream,? extends Function<? super T,? extends R>> fn, AnyM<stream, T> apply) {
-         return fromStream(zipSequence(stream(apply), stream(fn),(a,b)->b.apply(a)));
+    public <T, R> AnyM<W, R> ap(AnyM<W,? extends Function<? super T,? extends R>> fn, AnyM<W, T> apply) {
+         return fromStream(zipSequence(stream(apply), stream(fn),(a,b)->b.apply(a)),witness);
     }
 
     @Override
-    public <T, R> AnyM<stream, R> flatMap(AnyM<stream, T> t,
-            Function<? super T, ? extends AnyM<stream, ? extends R>> fn) {
-        return fromStream(Witness.stream(t).flatMap(fn.andThen(Witness::stream)));
+    public <T, R> AnyM<W, R> flatMap(AnyM<W, T> t,
+            Function<? super T, ? extends AnyM<W, ? extends R>> fn) {
+        return fromStream(((Stream)t.unwrap()).flatMap(fn.andThen(a-> (Stream)a.unwrap())),witness);
     }
 
     @Override
-    public <T> AnyM<stream, T> unitIterable(Iterable<T> it)  {
-       return fromStream(this.<T>getUnitIterator().apply(it.iterator()));
+    public <T> AnyM<W, T> unitIterable(Iterable<T> it)  {
+       return fromStream(this.<T>getUnitIterator().apply(it.iterator()),witness);
     }
    
     @Override
-    public <T> AnyM<Witness.stream, T> unit(T o) {
-        return fromStream(this.<T>getUnit().apply(o));
+    public <T> AnyM<W, T> unit(T o) {
+        return fromStream(this.<T>getUnit().apply(o),witness);
     }
 
    

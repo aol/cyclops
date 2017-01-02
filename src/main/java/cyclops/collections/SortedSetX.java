@@ -132,6 +132,12 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     @Override
+    default SortedSetX<T> materialize() {
+        return (SortedSetX<T>)MutableCollectionX.super.materialize();
+    }
+
+
+    @Override
     default SortedSetX<T> take(final long num) {
 
         return (SortedSetX<T>) MutableCollectionX.super.limit(num);

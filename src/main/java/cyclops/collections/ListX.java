@@ -438,6 +438,10 @@ public interface ListX<T> extends To<ListX<T>>,
                           .toListX();
 
     }
+    @Override
+    default ListX<T> materialize() {
+        return (ListX<T>)MutableCollectionX.super.materialize();
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)

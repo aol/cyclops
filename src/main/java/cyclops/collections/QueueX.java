@@ -348,6 +348,10 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
     default <R> QueueX<R> unitIterator(final Iterator<R> it) {
         return fromIterable(() -> it);
     }
+    @Override
+    default QueueX<T> materialize() {
+        return (QueueX<T>)MutableCollectionX.super.materialize();
+    }
 
     @Override
     default ReactiveSeq<T> stream() {

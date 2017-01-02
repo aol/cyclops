@@ -10,17 +10,17 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops.types.anyM.AnyMSeq;
-public class ReactiveSeqTest extends AbstractAnyMSeqOrderedDependentTest<Witness.stream>{
+public class ReactiveSeqTest extends AbstractAnyMSeqOrderedDependentTest<Witness.reactiveSeq>{
     
 	@Override
-	public <T> AnyMSeq<Witness.stream,T> of(T... values) {
+	public <T> AnyMSeq<Witness.reactiveSeq,T> of(T... values) {
 		return AnyM.fromStream(ReactiveSeq.of(values));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops.function.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
-	public <T> AnyMSeq<Witness.stream,T> empty() {
+	public <T> AnyMSeq<Witness.reactiveSeq,T> empty() {
 		return AnyM.fromStream(ReactiveSeq.empty());
 	}
 	@Test

@@ -355,6 +355,11 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
     }
 
     @Override
+    default PQueueX<T> materialize() {
+        return (PQueueX<T>)PersistentCollectionX.super.materialize();
+    }
+
+    @Override
     default ReactiveSeq<T> stream() {
 
         return ReactiveSeq.fromIterable(this);

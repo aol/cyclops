@@ -1907,7 +1907,11 @@ public class Streams {
         return true;
 
     }
+    public static <T> ReactiveSeq<T> oneShotStreamI(final Iterable<T> iterable) {
+        Objects.requireNonNull(iterable);
+        return new ExtendedStreamImpl<T>(new IteratableSpliterator<T>(iterable), Optional.empty(), Optional.empty());
 
+    }
     public static <T> ReactiveSeq<T> oneShotStream(Stream<T> stream){
         return new ExtendedStreamImpl<T>(stream,Optional.empty(), Optional.empty());
     }

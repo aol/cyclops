@@ -145,9 +145,9 @@ public abstract class BaseSequentialSeqTest {
 	
 	@Test
 	public void batchBySizeSet(){
-		
+		System.out.println(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).block());
 		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).block().get(0).size(),is(1));
-		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).block().get(1).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).block().size(),is(1));
 	}
 	@Test
 	public void batchBySizeInternalSize(){
@@ -621,7 +621,15 @@ public abstract class BaseSequentialSeqTest {
 		        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(7).v1.toList());
 		      	}
 	    }
-
+	@Test
+	public void splitAtHeadInvestigate(){
+		System.out.println("0" + of(1, 2, 3).splitAt(0).v2.toListX());
+		System.out.println("head " + of(1, 2, 3).splitAtHead().v1);
+		System.out.println("tail "+of(1, 2, 3).splitAtHead().v2.toListX());
+		System.out.println(of(1, 2, 3).splitAtHead().v2.splitAtHead().v1);
+		System.out.println(of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toListX());
+		assertThat(of(1,2,3).splitAtHead().v2.toListX(),equalTo(ListX.of(2,3)));
+	}
 	    @Test
 	    public void testSplitAtHead() {
 	        assertEquals(Optional.empty(), of().splitAtHead().v1);

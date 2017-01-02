@@ -269,7 +269,7 @@ public class BatchingTest {
 	public void batchBySizeSet(){
 		
 		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().get(0).size(),is(1));
-		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().get(1).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().size(),is(1));
 	}
 	@Test
 	public void batchBySizeSetEmpty(){

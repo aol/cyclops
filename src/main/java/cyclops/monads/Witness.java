@@ -41,6 +41,9 @@ public interface Witness {
    static interface MonadicValueWitness<W extends MonadicValueWitness<W>>  extends WitnessType<W>{
         
     }
+    static interface StreamWitness<W extends StreamWitness<W>>  extends WitnessType<W>{
+
+    }
    static interface CollectionXWitness<W extends CollectionXWitness<W>>  extends WitnessType<W>{
        
    }
@@ -118,7 +121,7 @@ public interface Witness {
     public static <X extends Throwable,T> Try<T,X> Try(AnyM<tryType,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static enum stream implements WitnessType<stream>{
+    public static enum stream implements StreamWitness<stream>{
         INSTANCE;
 
         @Override
@@ -127,11 +130,11 @@ public interface Witness {
         }
         
     }
-    public static enum reactiveSeq implements WitnessType<stream>{
+    public static enum reactiveSeq implements StreamWitness<reactiveSeq>{
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<stream> adapter() {
+        public  FunctionalAdapter<reactiveSeq> adapter() {
             return StreamAdapter.reactiveSeq;
         }
         

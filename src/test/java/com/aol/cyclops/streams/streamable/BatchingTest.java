@@ -337,7 +337,7 @@ public class BatchingTest {
 			System.out.println(i);
 			List<ListX<Integer>> list = of(1,2,3,4,5,6)
 					.map(n-> n==6? sleep(1) : n)
-					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
+					.groupedBySizeAndTime(10,1,TimeUnit.MILLISECONDS)
 					
 					.toList();
 			

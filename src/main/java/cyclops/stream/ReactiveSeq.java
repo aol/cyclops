@@ -412,21 +412,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default <U, R> ReactiveSeq<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return ReactiveSeq.fromStream(Seq.zip(this, other, zipper));
+        return (ReactiveSeq<R>)zipS(ReactiveSeq.fromIterable(other),zipper);
     }
 
     @Override
     default <U, R> ReactiveSeq<R> zipP(final Publisher<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return zip((Iterable<? extends U>) ReactiveSeq.fromPublisher(other), zipper);
+        return zipS(ReactiveSeq.fromPublisher(other), zipper);
     }
  
 
     @Override
-    default <U, R> ReactiveSeq<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);
-    }
+    <U, R> ReactiveSeq<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops.types.Unwrapable#unwrap()
@@ -676,7 +673,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return zipS(StreamSupport.stream(other.spliterator(),false));
+        return zipS(ReactiveSeq.fromIterable(other));
     }
 
 
@@ -1904,7 +1901,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * @return this ReactiveSeq converted to AnyM format
      */
-    public AnyMSeq<Witness.stream,T> anyM();
+    public AnyMSeq<Witness.reactiveSeq,T> anyM();
 
     /*
      * (non-Javadoc)
@@ -2842,6 +2839,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static <T> ReactiveSeq<T> fromIterable(final Iterable<T> iterable) {
         Objects.requireNonNull(iterable);
+        if(iterable instanceof ReactiveSeq)
+            return (ReactiveSeq)iterable;
         return Streams.reactiveSeq(new IteratableSpliterator<T>(iterable), Optional.empty(), Optional.empty());
     }
 

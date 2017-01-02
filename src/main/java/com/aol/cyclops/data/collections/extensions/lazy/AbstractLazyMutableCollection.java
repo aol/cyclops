@@ -1,5 +1,6 @@
 package com.aol.cyclops.data.collections.extensions.lazy;
 
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops.util.ExceptionSoftener;
@@ -75,12 +76,18 @@ public abstract class AbstractLazyMutableCollection<T, C extends Collection<T>> 
 
     @Override
     public ReactiveSeq<T> stream() {
-        System.out.println("Stream!!");
+
         ReactiveSeq<T> toUse = seq.get();
         if (toUse != null) {
             return toUse;
         }
         return ReactiveSeq.fromIterable(list);
+    }
+
+    @Override
+    public CollectionX<T> materialize() {
+        get();
+        return this;
     }
 
     @Override

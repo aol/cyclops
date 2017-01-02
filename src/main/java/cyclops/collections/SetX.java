@@ -171,7 +171,11 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
                                           .collect(collector),
                                collector);
     }
-    
+
+    @Override
+    default SetX<T> materialize() {
+        return (SetX<T>)MutableCollectionX.super.materialize();
+    }
 
     @Override
     default SetX<T> take(final long num) {

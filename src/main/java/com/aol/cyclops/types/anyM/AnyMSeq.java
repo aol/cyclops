@@ -19,7 +19,11 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
-import cyclops.collections.immutable.PVectorX;
+import com.aol.cyclops.types.stream.ConvertableSequence;
+import cyclops.collections.DequeX;
+import cyclops.collections.QueueX;
+import cyclops.collections.SetX;
+import cyclops.collections.immutable.*;
 import cyclops.monads.WitnessType;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -455,6 +459,11 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
     @Override
     default <T> AnyMSeq<W,T> fromIterable(Iterable<T> t){
+        if(t instanceof AnyMSeq) {
+            AnyMSeq check =(AnyMSeq) t;
+            if(check.adapter() == this.adapter())
+                return check;
+        }
         return  (AnyMSeq<W,T>)adapter().unitIterable(t);
     }
     
@@ -1101,4 +1110,53 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     ReactiveSeq<T> stream();
 
+
+    @Override
+    default DequeX<T> toDequeX() {
+        return FoldableTraversable.super.toDequeX().materialize();
+    }
+
+    @Override
+    default QueueX<T> toQueueX() {
+        return FoldableTraversable.super.toQueueX().materialize();
+    }
+
+    @Override
+    default SetX<T> toSetX() {
+        return FoldableTraversable.super.toSetX().materialize();
+    }
+
+    @Override
+    default ListX<T> toListX() {
+        return FoldableTraversable.super.toListX().materialize();
+    }
+
+    @Override
+    default PStackX<T> toPStackX() {
+        return FoldableTraversable.super.toPStackX().materialize();
+    }
+
+    @Override
+    default PVectorX<T> toPVectorX() {
+        return FoldableTraversable.super.toPVectorX().materialize();
+    }
+
+    @Override
+    default PQueueX<T> toPQueueX() {
+        return FoldableTraversable.super.toPQueueX().materialize();
+    }
+    @Override
+    default PBagX<T> toPBagX() {
+        return FoldableTraversable.super.toPBagX().materialize();
+    }
+
+    @Override
+    default PSetX<T> toPSetX() {
+        return FoldableTraversable.super.toPSetX().materialize();
+    }
+
+    @Override
+    default POrderedSetX<T> toPOrderedSetX() {
+        return FoldableTraversable.super.toPOrderedSetX().materialize();
+    }
 }

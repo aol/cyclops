@@ -80,8 +80,9 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
     @Override
     public Iterator<T> iterator(){
+
         if(!this.split.isPresent())
-            return StreamSupport.stream(copyOrGet(),false).iterator();
+            return Spliterators.iterator(copyOrGet());
         //Iterator for push streams
         Spliterator<T> split = copyOrGet();
         class QueueingIterator implements Iterator<T>,Consumer<T>{
@@ -223,6 +224,10 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     public final <S> ReactiveSeq<Tuple2<T, S>> zipS(final Stream<? extends S> second) {
         return createSeq( new ZippingSpliterator<>(copyOrGet(),second.spliterator(),(a, b) -> new Tuple2<>(
                                                         a, b)));
+    }
+    @Override
+    public final <U, R> ReactiveSeq<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper){
+        return createSeq( new ZippingSpliterator<>(copyOrGet(),other.spliterator(),zipper));
     }
 
     @Override
@@ -448,7 +453,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final HeadAndTail<T> headAndTail() {
-        return Streams.headAndTail(unwrapStream());
+        return Streams.headAndTail(this);
     }
 
     @Override
@@ -484,7 +489,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     @Override
     public final T reduce(final Monoid<T> reducer) {
 
-        return reducer.reduce(unwrapStream());
+        return reducer.reduce(this);
     }
 
     @Override
@@ -586,8 +591,8 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
     @Override
-    public AnyMSeq<Witness.stream,T> anyM() {
-        return AnyM.fromStream(unwrapStream());
+    public AnyMSeq<Witness.reactiveSeq,T> anyM() {
+        return AnyM.fromStream(this);
 
     }
 
@@ -699,22 +704,22 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     
     @Override
     public Spliterator<T> spliterator() {
-        return unwrapStream().spliterator();
+        return stream;
     }
 
     @Override
     public boolean isParallel() {
-        return unwrapStream().isParallel();
+        return false;
     }
 
     @Override
     public ReactiveSeq<T> sequential() {
-        return createSeq(unwrapStream().sequential(), reversible,split);
+        return this;
     }
 
     @Override
     public ReactiveSeq<T> unordered() {
-        return createSeq(unwrapStream().unordered(), reversible,split);
+        return this;
     }
 
     @Override
@@ -779,21 +784,21 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public CollectionX<T> toLazyCollection() {
-        return Streams.toLazyCollection(unwrapStream());
+        return Streams.toLazyCollection(this);
     }
 
     @Override
     public CollectionX<T> toConcurrentLazyCollection() {
-        return Streams.toConcurrentLazyCollection(unwrapStream());
+        return Streams.toConcurrentLazyCollection(this);
     }
 
     public Streamable<T> toLazyStreamable() {
-        return Streams.toLazyStreamable(unwrapStream());
+        return Streams.toLazyStreamable(this);
     }
 
     @Override
     public Streamable<T> toConcurrentLazyStreamable() {
-        return Streams.toConcurrentLazyStreamable(unwrapStream());
+        return Streams.toConcurrentLazyStreamable(this);
 
     }
 
@@ -803,7 +808,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             reversible.ifPresent(r -> r.invert());
             return this;
         }
-        return createSeq(Streams.reverse(unwrapStream()), reversible,split);
+        return createSeq(Streams.reverse(this), reversible,split);
     }
 
     @Override
@@ -874,7 +879,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public ReactiveSeq<T> onEmpty(final T value) {
-        return createSeq(new OnEmptySpliterator<>(unwrapStream().spliterator(),value));
+        return createSeq(new OnEmptySpliterator<>(stream,value));
 
     }
     @Override
@@ -890,13 +895,13 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public ReactiveSeq<T> onEmptyGet(final Supplier<? extends T> supplier) {
-        return createSeq(new OnEmptyGetSpliterator<>(unwrapStream().spliterator(),supplier));
+        return createSeq(new OnEmptyGetSpliterator<>(stream,supplier));
     }
 
     @Override
     public <X extends Throwable> ReactiveSeq<T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return createSeq(new OnEmptyThrowSpliterator<>(unwrapStream().spliterator(),supplier));
+        return createSeq(new OnEmptyThrowSpliterator<>(stream,supplier));
     }
 
 
@@ -908,6 +913,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return ReactiveSeq.concat(copyOrGet(),other.spliterator());
     }
 
+    //TODO use spliterators and createSeq
     @Override
     public ReactiveSeq<T> append(final T other) {
         return ReactiveSeq.concat(unwrapStream(),Stream.of(other));

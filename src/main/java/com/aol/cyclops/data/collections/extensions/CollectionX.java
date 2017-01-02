@@ -212,8 +212,11 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
         return ReactiveSeq.fromIterable(this);
     }
 
+    default CollectionX<T> materialize(){
 
+        return this;
 
+    }
     /**
      * Get the element at the specified index (if it exists)
      * 

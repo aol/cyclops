@@ -59,10 +59,16 @@ public class WindowingTest {
 				.toList().size(),equalTo(0));
 	}
 	@Test
-	public void windowStatefullyWhile(){
+	public void windowStatefullyUntil(){
+		System.out.println(FutureStream.of(1,2,3,4,5,6)
+				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false).toList());
+		System.out.println(ReactiveSeq.of(1,2,3,4,5,6)
+				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false).toList());
+		System.out.println(Streamable.of(1,2,3,4,5,6)
+				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false).toList());
 	    assertThat(FutureStream.of(1,2,3,4,5,6)
 	                .groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
-	                .toList().size(),equalTo(5));
+	                .toList().size(),equalTo(2));
 		
 		
 	}

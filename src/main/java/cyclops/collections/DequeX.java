@@ -1,5 +1,6 @@
 package cyclops.collections;
 
+import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
 import cyclops.collections.immutable.PVectorX;
@@ -237,8 +238,11 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
                                             .collect(collector),
                                  collector);
     }
-    
-   
+
+    @Override
+    default DequeX<T> materialize() {
+        return (DequeX<T>)MutableCollectionX.super.materialize();
+    }
 
     DequeX<T> withCollector(Collector<T, ?, Deque<T>> collector);
 

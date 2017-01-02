@@ -1,25 +1,17 @@
 package cyclops.collections.immutable;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
-
-
 import com.aol.cyclops.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
+import com.aol.cyclops.types.OnEmptySwitch;
+import com.aol.cyclops.types.To;
+import cyclops.Reducers;
+import cyclops.collections.ListX;
+import cyclops.control.Trampoline;
+import cyclops.function.Fn3;
+import cyclops.function.Fn4;
+import cyclops.function.Monoid;
+import cyclops.function.Reducer;
+import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -28,16 +20,11 @@ import org.pcollections.MapPBag;
 import org.pcollections.PBag;
 import org.reactivestreams.Publisher;
 
-import cyclops.function.Monoid;
-import cyclops.function.Reducer;
-import cyclops.Reducers;
-import cyclops.stream.ReactiveSeq;
-import cyclops.control.Trampoline;
-import cyclops.collections.ListX;
-import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.types.To;
-import cyclops.function.Fn4;
-import cyclops.function.Fn3;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 
 public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PBag<T>> {
@@ -133,6 +120,11 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
                           .limit(limit)
                           .toPBagX();
     }
+    @Override
+    default PBagX<T> materialize() {
+        return (PBagX<T>)PersistentCollectionX.super.materialize();
+    }
+
     /**
      * Create a PBagX by iterative application of a function to an initial element up to the supplied limit number of times
      * 
