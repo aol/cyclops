@@ -1,10 +1,6 @@
 package com.aol.cyclops.data.collections.extensions.persistent;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -448,6 +444,33 @@ public class PVectorXImpl<T> implements PVectorX<T> {
     @Override
     public ListIterator<T> listIterator(final int index) {
         return stack.listIterator(index);
+    }
+    @Override
+    public int compareTo(final T o) {
+        if (o instanceof List) {
+            final List l = (List) o;
+            if (this.size() == l.size()) {
+                final Iterator i1 = iterator();
+                final Iterator i2 = l.iterator();
+                if (i1.hasNext()) {
+                    if (i2.hasNext()) {
+                        final int comp = Comparator.<Comparable> naturalOrder()
+                                .compare((Comparable) i1.next(), (Comparable) i2.next());
+                        if (comp != 0)
+                            return comp;
+                    }
+                    return 1;
+                } else {
+                    if (i2.hasNext())
+                        return -1;
+                    else
+                        return 0;
+                }
+            }
+            return this.size() - ((List) o).size();
+        } else
+            return 1;
+
     }
 
 }

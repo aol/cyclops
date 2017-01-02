@@ -123,19 +123,25 @@ public  class BaseSequenceTest {
     }
     @Test
     public void testReverseList() {
-    	
+
         assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1))
         				.reverse().toList(), equalTo(asList(-1, 2, 400,10)));
     }
     @Test
     public void testReverseListLimit() {
-    	
+
         assertThat( ReactiveSeq.fromList(Arrays.asList(10,400,2,-1)).limit(2)
-        				.reverse().toList(), equalTo(asList(-1, 2)));
+        				.reverse().toList(), equalTo(asList(400, 10)));
     }
+	@Test
+	public void testReverseListLimitOneShot() {
+
+		assertThat( ReactiveSeq.oneShotList(Arrays.asList(10,400,2,-1)).limit(2)
+				.reverse().toList(), equalTo(asList(-1, 2)));
+	}
     @Test
     public void testReverseRange() {
-    	
+
         assertThat( ReactiveSeq.range(0,10)
         				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
     }

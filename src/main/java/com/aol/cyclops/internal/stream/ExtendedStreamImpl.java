@@ -31,6 +31,14 @@ public class ExtendedStreamImpl<T> extends BaseExtendedStream<T> {
     public ExtendedStreamImpl(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
         super(stream, rev, split);
     }
+    @Override
+    public ReactiveSeq<T> reverse() {
+        if (reversible.isPresent()) {
+            reversible.ifPresent(r -> r.invert());
+            return this;
+        }
+        return createSeq(Streams.reverse(this), reversible,split);
+    }
 
     @Override
     public final ReactiveSeq<T> cycle() {

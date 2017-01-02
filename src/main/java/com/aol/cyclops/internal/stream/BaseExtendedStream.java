@@ -802,14 +802,6 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     }
 
-    @Override
-    public ReactiveSeq<T> reverse() {
-        if (reversible.isPresent()) {
-            reversible.ifPresent(r -> r.invert());
-            return this;
-        }
-        return createSeq(Streams.reverse(this), reversible,split);
-    }
 
     @Override
     public ReactiveSeq<T> onClose(final Runnable closeHandler) {

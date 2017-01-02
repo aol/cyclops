@@ -34,7 +34,8 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
                                      FluentSequenceX<T>,
                                      PersistentCollectionX<T>,
                                      OnEmptySwitch<T, 
-                                     PVector<T>> {
+                                     PVector<T>>,
+                                     Comparable<T>{
 
 
     default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {

@@ -2,6 +2,7 @@ package com.aol.cyclops.internal.stream;
 
 import com.aol.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
+import cyclops.Streams;
 import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -27,6 +28,12 @@ public class ReactiveSeqImpl<T> extends BaseExtendedStream<T> {
     public ReactiveSeqImpl(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
         super(stream, rev, split);
     }
+    @Override
+    public ReactiveSeq<T> reverse() {
+
+        return createSeq(Streams.reverse(this), reversible,split);
+    }
+
 
     @Override
     <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible, Optional<PushingSpliterator<?>> split) {

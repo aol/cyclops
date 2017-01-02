@@ -1915,19 +1915,22 @@ public class Streams {
     public static <T> ReactiveSeq<T> oneShotStream(Stream<T> stream){
         return new ExtendedStreamImpl<T>(stream,Optional.empty(), Optional.empty());
     }
+    public static <T> ReactiveSeq<T> oneShotStream(Spliterator<T> stream,final Optional<ReversableSpliterator> rev){
+        return new ExtendedStreamImpl<T>(stream,rev, Optional.empty());
+    }
 
     public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<PushingSpliterator<?>> push) {
         if (stream instanceof ReactiveSeq)
             return (ReactiveSeq) stream;
         
             return new ReactiveSeqImpl<T>((Stream<T>)
-                                          stream, Optional.empty(),(Optional)push);
+                                          stream, rev,(Optional)push);
 
     }
     public final static <T> ReactiveSeq<T> reactiveSeq(final Spliterator<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<PushingSpliterator<?>> push) {
 
         return new ReactiveSeqImpl<T>((Spliterator<T>)
-                stream, Optional.empty(),(Optional)push);
+                stream, rev,(Optional)push);
 
     }
 

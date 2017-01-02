@@ -9,6 +9,7 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import cyclops.stream.ReactiveSeq;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -163,7 +164,8 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
                 if (next == UNSET)
                     throw new NoSuchElementException();
                 requested = false;
-                return (T) next;
+                T result = (T) next;
+                return result;
             }
 
         };
@@ -210,5 +212,11 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
         };
 
     }
+
+    @Override
+    public ReactiveSeq<T> stream() {
+        return ReactiveSeq.fromSpliterator(spliterator());
+    }
+
 
 }

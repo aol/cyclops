@@ -2820,6 +2820,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                                                list, false);
         return Streams.reactiveSeq(array, Optional.ofNullable(array),Optional.empty());
     }
+    public static <T> ReactiveSeq<T> oneShotList(final List<T> list) {
+        Objects.requireNonNull(list);
+        final ReversingListSpliterator array = new ReversingListSpliterator<T>(
+                list, false);
+        return Streams.oneShotStream(array, Optional.ofNullable(array));
+    }
 
     /**
      * Construct a ReactiveSeq from an Publisher

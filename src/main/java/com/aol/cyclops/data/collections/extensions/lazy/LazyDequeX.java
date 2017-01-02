@@ -3,6 +3,8 @@ package com.aol.cyclops.data.collections.extensions.lazy;
 
 import cyclops.collections.DequeX;
 import cyclops.stream.ReactiveSeq;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.util.*;
 import java.util.stream.Collector;
@@ -34,6 +36,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
+@EqualsAndHashCode(of = { "deque" })
 public class LazyDequeX<T> extends AbstractLazyMutableCollection<T,Deque<T>> implements DequeX<T> {
 
 

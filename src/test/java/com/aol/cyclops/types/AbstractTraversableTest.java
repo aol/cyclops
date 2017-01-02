@@ -316,7 +316,7 @@ public abstract class AbstractTraversableTest {
         
         List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
                                             .zip(of(100,200,300,400).stream())
-                                            .stream().toListX();
+                                            .stream().toListX().materialize();
                 
     
         List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());

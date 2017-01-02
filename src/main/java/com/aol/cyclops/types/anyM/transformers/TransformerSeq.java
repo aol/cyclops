@@ -13,7 +13,10 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.types.*;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.DequeX;
+import cyclops.collections.QueueX;
+import cyclops.collections.SetX;
+import cyclops.collections.immutable.*;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -35,6 +38,50 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
                                                                     ToStream<T>,
                                                                     Publisher<T> {
 
+
+    @Override
+    default DequeX<T> toDequeX() {
+        return ConvertableSequence.super.toDequeX().materialize();
+    }
+
+    @Override
+    default QueueX<T> toQueueX() {
+        return ConvertableSequence.super.toQueueX().materialize();
+    }
+
+    @Override
+    default SetX<T> toSetX() {
+        return ConvertableSequence.super.toSetX().materialize();
+    }
+
+    @Override
+    default ListX<T> toListX() {
+        return ConvertableSequence.super.toListX().materialize();
+    }
+
+    @Override
+    default PStackX<T> toPStackX() {
+        return ConvertableSequence.super.toPStackX().materialize();
+    }
+
+    @Override
+    default PVectorX<T> toPVectorX() {
+        return ConvertableSequence.super.toPVectorX().materialize();
+    }
+
+    @Override
+    default PQueueX<T> toPQueueX() {
+        return ConvertableSequence.super.toPQueueX().materialize();
+    }
+    @Override
+    default PBagX<T> toPBagX() {
+        return ConvertableSequence.super.toPBagX().materialize();
+    }
+
+    @Override
+    default PSetX<T> toPSetX() {
+        return ConvertableSequence.super.toPSetX().materialize();
+    }
     public boolean isSeqPresent();
 
     <T> TransformerSeq<W,T> unitAnyM(AnyM<W,Traversable<T>> traversable);
