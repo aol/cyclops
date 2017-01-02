@@ -245,7 +245,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
     public static <T> Future<T> fromPublisher(final Publisher<T> pub) {
         final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
-        return sub.toFutureW();
+        return sub.toFuture();
     }
 
     /**
@@ -846,7 +846,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
     @Override
     public <R> Future<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
         return Future.<R> of(future.<R> thenCompose(t -> (CompletionStage<R>) mapper.apply(t)
-                                                                                     .toFutureW()
+                                                                                     .toFuture()
                                                                                      .getFuture()));
     }
 
@@ -893,10 +893,10 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.closures.Convertable#toFutureW()
+     * @see com.aol.cyclops.closures.Convertable#toFuture()
      */
     @Override
-    public Future<T> toFutureW() {
+    public Future<T> toFuture() {
         return this;
     }
 

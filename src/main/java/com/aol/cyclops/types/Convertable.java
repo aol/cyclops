@@ -180,7 +180,7 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
     /**
      * @return This convertable converted to a Future
      */
-    default Future<T> toFutureW() {
+    default Future<T> toFuture() {
         return Future.of(toCompletableFuture());
     }
 

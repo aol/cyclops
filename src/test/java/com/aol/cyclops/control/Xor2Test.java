@@ -494,7 +494,7 @@ public class Xor2Test {
 	
 	@Test
 	public void testToFutureW() {
-		Future<Integer> cf = just.toFutureW();
+		Future<Integer> cf = just.toFuture();
 		assertThat(cf.get(),equalTo(10));
 	}
 

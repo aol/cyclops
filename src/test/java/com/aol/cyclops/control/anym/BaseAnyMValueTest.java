@@ -455,7 +455,7 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testToFutureW() {
-		Future<Integer> cf = just.toFutureW();
+		Future<Integer> cf = just.toFuture();
 		assertThat(cf.get(),equalTo(10));
 	}
 
