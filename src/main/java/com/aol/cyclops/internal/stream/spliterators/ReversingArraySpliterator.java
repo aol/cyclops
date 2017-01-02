@@ -36,7 +36,7 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
 
     @Override
     public ReversingArraySpliterator<T> invert() {
-        System.out.println("inverting!");
+
         setReverse(!isReverse());
         index = calcIndex();
         return this;

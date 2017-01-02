@@ -70,7 +70,7 @@ public interface AdaptersModule {
 
     static class SingleContinuation implements ContinuationStrategy {
         private final Queue<?> queue;
-        private Continuation continuation = null;
+        private volatile Continuation continuation = null;
 
         public SingleContinuation(final Queue<?> queue) {
             this.queue = queue;

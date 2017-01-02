@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -342,12 +343,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                     if(it[0]==null)
                         it[0] = stream.apply(0l);
                     Iterator<R> local = it[0];
-                    if(!local.hasNext()) {
+                    try {
+                        if (!local.hasNext()) {
+                            queue.close();
+                            return Continuation.empty();
+                        } else {
+                            queue.offer(local.next());
+                        }
+                    }catch(Throwable t){
                         queue.close();
-                        return Continuation.empty();
-                    }
-                    else{
-                        queue.offer(local.next());
+                        throw ExceptionSoftener.throwSoftenedException(t);
                     }
                     return store[0];
 
@@ -366,32 +371,25 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue().build().withTimeout(1);
 
 
-        Iterator<T> local = iterator();
-        Continuation[] store = {null};
+        AtomicReference<Continuation> ref = new AtomicReference<>(null);
         Continuation cont =
                 new Continuation(()->{
 
-                    if(!local.hasNext()) {
-
-                        queue.close();
-                        return Continuation.empty();
-                    }
-                    else{
+                    if(ref.get()==null && ref.compareAndSet(null,Continuation.empty())){
                         try {
-                            queue.offer(local.next());
-                            return store[0];
-                        }catch(NoSuchElementException e){
+                            //use the first consuming thread to write this Stream onto the Queue
+                            this.spliterator().forEachRemaining(queue::offer);
+                        }finally {
                             queue.close();
-                            return Continuation.empty();
                         }
 
                     }
+                    System.out.println("Continuation..");
 
-
-
-                });
+                        return Continuation.empty();
+                    });
         ;
-        store[0]=cont;
+
         queue.addContinuation(cont);
         return fn.apply(queue.jdkStream().parallel());
 
