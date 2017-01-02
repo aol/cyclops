@@ -1,12 +1,14 @@
 package com.aol.cyclops.functions.collections.extensions.persistent;
 
 import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
+import cyclops.collections.ListX;
 import cyclops.collections.immutable.PSetX;
 import com.aol.cyclops.functions.collections.extensions.AbstractCollectionXTest;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -22,6 +24,16 @@ public class PSetXTest extends AbstractCollectionXTest {
         return PSetX.of(values);
     }
 
+    @Test
+    public void cycle(){
+        ListX.of(1).stream().cycle(2).forEach(System.out::println);
+        Iterator<Integer> it = ListX.of(1).stream().cycle(2).iterator();
+        while(it.hasNext()){
+            System.out.println("Next " + it.next());
+        }
+      //  System.out.println(of(1).cycle(2));
+    //    assertThat(of(1,2,3).cycle(2).toListX(),equalTo(ListX.of(3,2,1,3,2,1)));
+    }
     @Test
     public void onEmptySwitch() {
         assertThat(PSetX.empty()

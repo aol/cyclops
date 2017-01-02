@@ -3,8 +3,7 @@ package com.aol.cyclops.functions.collections.extensions.standard;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -20,6 +19,34 @@ import com.aol.cyclops.functions.collections.extensions.CollectionXTestsWithNull
 import com.aol.cyclops.types.Zippable;
 
 public class ListXTest extends CollectionXTestsWithNulls {
+
+
+    @Test
+    public void cycle(){
+        List<Integer> list = new ArrayList<>();
+        ListX.of(1).cycle(2).forEach(e->list.add(e));
+        assertThat(list,equalTo(ListX.of(1,1)));
+        Iterator<Integer> it = ListX.of(1,1).cycle(2).iterator();
+        List<Integer> list2 = new ArrayList<>();
+        while(it.hasNext())
+            list2.add(it.next());
+        assertThat(list2,equalTo(ListX.of(1,1)));
+
+
+    }
+    @Test
+    public void cycleStream(){
+        List<Integer> list = new ArrayList<>();
+        ListX.of(1).stream().cycle(2).forEach(e->list.add(e));
+        assertThat(list,equalTo(ListX.of(1,1)));
+        Iterator<Integer> it = ListX.of(1,1).stream().cycle(2).iterator();
+        List<Integer> list2 = new ArrayList<>();
+        while(it.hasNext())
+            list2.add(it.next());
+        assertThat(list2,equalTo(ListX.of(1,1)));
+
+
+    }
 
     @Test
     public void onEmptySwitch(){

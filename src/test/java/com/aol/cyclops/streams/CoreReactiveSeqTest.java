@@ -136,7 +136,30 @@ public  class CoreReactiveSeqTest {
 
         
     }
-
+	@Test
+	public void cycleIterateIterable(){
+		Iterator<Integer> it = ReactiveSeq.fromIterable(Arrays.asList(1)).stream().cycle(2).iterator();
+		List<Integer> list2 = new ArrayList<>();
+		while(it.hasNext())
+			list2.add(it.next());
+		assertThat(list2,equalTo(ListX.of(1,1)));
+	}
+    @Test
+	public void cycleIterate(){
+		Iterator<Integer> it = ReactiveSeq.of(1).stream().cycle(2).iterator();
+		List<Integer> list2 = new ArrayList<>();
+		while(it.hasNext())
+			list2.add(it.next());
+		assertThat(list2,equalTo(ListX.of(1,1)));
+	}
+	@Test
+	public void cycleIterate2(){
+		Iterator<Integer> it = ReactiveSeq.of(1,2).stream().cycle(2).iterator();
+		List<Integer> list2 = new ArrayList<>();
+		while(it.hasNext())
+			list2.add(it.next());
+		assertThat(list2,equalTo(ListX.of(1,2,1,2)));
+	}
     
 
     @Test

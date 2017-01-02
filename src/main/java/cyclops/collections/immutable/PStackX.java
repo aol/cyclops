@@ -200,7 +200,9 @@ public interface PStackX<T> extends To<PStackX<T>>,
             return new LazyPStackX<T>(
                                      (PStack) iterable, true);
         PStack<T> res = ConsPStack.<T> empty();
+
         final Iterator<T> it = iterable.iterator();
+
         while (it.hasNext())
             res = res.plus(it.next());
 

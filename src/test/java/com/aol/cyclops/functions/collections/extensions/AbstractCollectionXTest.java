@@ -91,7 +91,22 @@ public abstract class AbstractCollectionXTest {
     public void foldTry(){
         assertThat(of(1,2,3).foldTry(l->l.reduce(Monoids.intSum), Throwable.class).get(),equalTo(6));
     }
-
+    @Test
+    public void iterate(){
+        Iterator<Integer> it = of(1,2,3).iterator();
+        List<Integer> list2 = new ArrayList<>();
+        while(it.hasNext())
+            list2.add(it.next());
+        assertThat(list2.size(),equalTo(3));
+    }
+    @Test
+    public void iterateStream(){
+        Iterator<Integer> it = of(1,2,3).stream().iterator();
+        List<Integer> list2 = new ArrayList<>();
+        while(it.hasNext())
+            list2.add(it.next());
+        assertThat(list2.size(),equalTo(3));
+    }
 	@Test
 	public void testRange(){
 	    assertThat(range(0,2).size(),equalTo(2));
@@ -1722,6 +1737,8 @@ public abstract class AbstractCollectionXTest {
 	    }
 	    @Test
 	    public void testCycleUntil() {
+	        count =0;
+	        System.out.println("List " + of(1, 2, 3).cycleUntil(next->count++==6).toListX());
 	        count =0;
 	        assertEquals(6,of(1, 2, 3).cycleUntil(next->count++==6).toListX().size());
 	       
