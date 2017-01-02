@@ -1154,7 +1154,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
         new ForEachWithError<T>(this.copyOrGet(),consumerError).forEachRemaining(consumerElement);
 
-    //    Streams.forEach(this, consumerElement, consumerError);**/
+
     }
 
     @Override

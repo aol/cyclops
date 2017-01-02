@@ -377,9 +377,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                         return Continuation.empty();
                     }
                     else{
+                        try {
+                            queue.offer(local.next());
+                            return store[0];
+                        }catch(NoSuchElementException e){
+                            queue.close();
+                            return Continuation.empty();
+                        }
 
-                        queue.offer(local.next());
-                        return store[0];
                     }
 
 
