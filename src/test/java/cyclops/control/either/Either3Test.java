@@ -261,7 +261,7 @@ public class Either3Test {
 
     @Test
     public void testGenerate() {
-        assertThat(just.generate().limit(10).sumInt(i->i),equalTo(Optional.of(100)));
+        assertThat(just.generate().limit(10).sumInt(i->i),equalTo(100));
     }
 
     @Test
