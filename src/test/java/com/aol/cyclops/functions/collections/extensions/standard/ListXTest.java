@@ -30,7 +30,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
         List<Integer> list2 = new ArrayList<>();
         while(it.hasNext())
             list2.add(it.next());
-        assertThat(list2,equalTo(ListX.of(1,1)));
+        assertThat(list2,equalTo(ListX.of(1,1,1,1)));
 
 
     }
@@ -43,7 +43,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
         List<Integer> list2 = new ArrayList<>();
         while(it.hasNext())
             list2.add(it.next());
-        assertThat(list2,equalTo(ListX.of(1,1)));
+        assertThat(list2,equalTo(ListX.of(1,1,1,1)));
 
 
     }
