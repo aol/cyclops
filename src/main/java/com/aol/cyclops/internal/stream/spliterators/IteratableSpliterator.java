@@ -23,11 +23,14 @@ public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T
         super(-1,Spliterator.ORDERED);
 
         this.source = source;
-        active = source.iterator();
+
 
     }
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
+
+        if(active==null)
+            active=source.iterator();
 
         active.forEachRemaining(action);
 
@@ -36,11 +39,13 @@ public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
 
-
+        if(active==null)
+            active=source.iterator();
         if (active.hasNext()) {
             action.accept(active.next());
             return true;
         }
+
         return false;
     }
 

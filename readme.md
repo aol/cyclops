@@ -47,7 +47,7 @@ Used in Aol to build robust, performant & scalable asynchronous systems : featur
 * Powerful functional-style control structures, implemented in Java friendly manner (Maybe, Eval, FutureW, Xor, Ior, Try, AnyM, structural & guard based pattern matching, for-comprehensions)
 * Execute functions between wrapped values (Optional / CompletableFutre etc) without tedious unwrapping (Java friendly Applicative support).
 * Java friendly abstractions for wrapping any Monad type (Stream, CompletableFuture, Optional, cyclops-react types and types from other Java projects too). AnyM and it's two subtypes AnyMSeq for aggregates (Steam, List etc) and AnyMValue for Values
-* Monad Transformers - for manipulating nesting monadic types (e.g. Optionals within suspended Stream as if it were just an Optional)
+* Monad Transformers - for manipulating nesting monadic types (e.g. Optionals within a Stream as if it were just an Optional)
 * Applicatives - apply functions across wrapped types (e.g. Optional / Maybe / Xor) without unwrapping & aggregate without terminate on failure
 * Structural pattern matching & pattern matching via Guards (see Matchable and Matchables)
 * Full strength for comprehensions / generators (reference elements from other generators)
@@ -70,7 +70,7 @@ Used in Aol to build robust, performant & scalable asynchronous systems : featur
 * [Straightfoward structural Pattern Matching in Java 8](https://medium.com/about-java/straightforward-structural-pattern-matching-d77155bac8da#.ogdrhsyfe)
 * [Functional Feature Toggling](https://medium.com/@johnmcclean/feature-toggling-with-cyclops-a29d1eead62c)
 * [Dependency injection using the Reader Monad in Java8](https://medium.com/@johnmcclean/dependency-injection-using-the-reader-monad-in-java8-9056d9501c75)
-* [Scheduling suspended Stream](https://medium.com/@johnmcclean/how-to-schedule-emission-from-suspended-stream-in-java-aa2dafda7c07#.pi12so6zn)
+* [Scheduling a Stream](https://medium.com/@johnmcclean/how-to-schedule-emission-from-a-stream-in-java-aa2dafda7c07#.pi12so6zn)
 * [Neophytes guide to Java 8 : Welcome to the Future](https://medium.com/@johnmcclean/neophytes-guide-to-java-8-welcome-to-the-future-83f432ce82a9#.jb5s9qop8)
 * [JDBC Processing Options with cyclops-react](https://medium.com/@johnmcclean/jdbc-processing-options-with-cyclops-react-49d62b02f775#.1dh1ziaxv)
 * [Deterministic and Non-Deterministic Finite State Machines with Cyclops](http://sebastian-millies.blogspot.de/2015/11/deterministic-and-non-deterministic.html)
