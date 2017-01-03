@@ -3766,9 +3766,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return the count of elements in this stream
      */
     @Override
-    default long count() {
-        return seq().count();
-    }
+    long count();
 
     @Override
     default Optional<T> min(final Comparator<? super T> comparator) {

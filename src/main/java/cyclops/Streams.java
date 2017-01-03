@@ -26,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -1867,19 +1868,30 @@ public class Streams {
 
     }
 
-    public final static <T> boolean endsWith(final Stream<T> stream, final Iterable<T> iterable) {
+    private static <T> Tuple2<Integer,Iterator<T>> findSize(Iterable<T> iterable){
+        if(iterable instanceof Collection) {
+            Collection<T> col = (Collection<T>) iterable;
+            return Tuple.tuple(col.size(),col.iterator());
+        }
+        int size=0;
         final Iterator<T> it = iterable.iterator();
         final List<T> compare1 = new ArrayList<>();
         while (it.hasNext()) {
             compare1.add(it.next());
+            size++;
         }
+        return Tuple.tuple(size,compare1.iterator());
+    }
+    public final static <T> boolean endsWith(final Stream<T> stream, final Iterable<T> iterable) {
+        Tuple2<Integer,Iterator<T>> sizeAndIterator = findSize(iterable);
+
         final LinkedList<T> list = new LinkedList<>();
         stream.forEach(v -> {
             list.add(v);
-            if (list.size() > compare1.size())
+            if (list.size() > sizeAndIterator.v1)
                 list.remove();
         });
-        return startsWith(list.stream(), compare1.iterator());
+        return startsWith(list.stream(), sizeAndIterator.v2);
 
     }
 

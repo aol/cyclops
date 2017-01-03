@@ -1,6 +1,6 @@
 package com.aol.cyclops.internal.stream.spliterators;
 
-import com.aol.cyclops.internal.stream.PredicateToFunction;
+
 import com.aol.cyclops.types.Unit;
 
 import java.util.Spliterator;
@@ -51,13 +51,8 @@ public abstract class BaseComposableSpliterator<T,R,X extends Spliterator<?>> ex
             return (Consumer<T>)consumer;
         }
 
-        return in-> {
-            try {
-                consumer.accept(fn.apply(in));
-            }catch(PredicateToFunction.FilteredException e){
-                //filtered out
-            }
-        };
+        return in-> consumer.accept(fn.apply(in));
+
     }
 
 

@@ -11,10 +11,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,6 +32,34 @@ public class ReactiveSeqTest {
 
     int count =0;
     @Test
+    public void compareConcat(){
+        List<Integer> oneThousand= Stream.iterate(1,i->i+1).limit(1000).collect(Collectors.toList());
+        int total = 0;
+        for(int x=0;x<10;x++) {
+
+
+            total += Stream.concat(oneThousand.stream(),oneThousand.stream()).count();
+
+        }
+        long time = System.currentTimeMillis();
+        for(int k=0;k<5000;k++)
+            count += Stream.concat(oneThousand.stream(),oneThousand.stream()).count();
+        long stream = System.currentTimeMillis()-time;
+        for(int x=0;x<10;x++) {
+
+
+            total += ReactiveSeq.concat(oneThousand.stream(),oneThousand.stream()).count();
+
+        }
+        long time2 = System.currentTimeMillis();
+        for(int k=0;k<5000;k++)
+            count += ReactiveSeq.concat(oneThousand.stream(),oneThousand.stream()).count();
+        long rs = System.currentTimeMillis()-time2;
+        System.out.println("Stream " + stream + " rs with construction " + rs + " count " + count);
+
+
+    }
+    @Test
     public void compareFlatMap(){
         for(int k=0;k<10;k++)
             count += Stream.generate(()->1).limit(100).flatMap(i->Stream.iterate(1,x->x+i).limit(500)).count();
@@ -42,6 +67,8 @@ public class ReactiveSeqTest {
         for(int k=0;k<1000;k++)
             count += Stream.generate(()->1).limit(100).flatMap(i->Stream.iterate(1,x->x+i).limit(500)).count();
         long stream = System.currentTimeMillis()-time;
+        for(int k=0;k<10;k++)
+            count += ReactiveSeq.generate(()->1).limit(100).flatMap(i->Stream.iterate(1,x->x+i).limit(500)).count();
         long time2 = System.currentTimeMillis();
         for(int k=0;k<1000;k++)
             count += ReactiveSeq.generate(()->1).limit(100).flatMap(i->Stream.iterate(1,x->x+i).limit(500)).count();
@@ -191,12 +218,29 @@ public class ReactiveSeqTest {
                 .filter(i -> i > 9)
                 .filter(i -> i > 10)
                 .filter(i -> i > 10);
-        for(int x=0;x<1000;x++) {
+        for(int x=0;x<5000;x++) {
 
             total += stream.collect(Collectors.toList()).size();
 
         }
         System.out.println("Reactive Seq without construction " + (System.currentTimeMillis() - time));
+        time = System.currentTimeMillis();
+        ;
+        ReactiveSeq<Integer> stream2 = ReactiveSeq.generate(() -> 1000).limit(1_0000)
+                .map(i->i+1)
+                .filter(i -> i > 5)
+                .filter(i -> i > 6)
+                .filter(i -> i > 7)
+                .filter(i -> i > 8)
+                .filter(i -> i > 9)
+                .filter(i -> i > 10)
+                .filter(i -> i > 10);
+        for(int x=0;x<5000;x++) {
+
+            total += stream2.collect(()->new ArrayList(),List::add,(l1, l2)->l1.addAll(l2)).size();
+
+        }
+        System.out.println("Reactive Seq without construction stream collect" + (System.currentTimeMillis() - time));
 
 
         System.out.println("Total " + total);

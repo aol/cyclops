@@ -5,6 +5,7 @@ import com.aol.cyclops.internal.stream.spliterators.push.CollectingSinkSpliterat
 import com.aol.cyclops.internal.stream.spliterators.push.FoldingSinkSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
 import com.aol.cyclops.internal.stream.spliterators.push.ValueEmittingSpliterator;
+import com.aol.cyclops.util.ExceptionSoftener;
 import cyclops.*;
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
@@ -26,6 +27,7 @@ import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
+import lombok.AllArgsConstructor;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -460,12 +462,32 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final Optional<T> findFirst() {
-        return unwrapStream().findFirst();
+
+       try {
+           //use forEachRemaining as it is the fast path for many operators
+           stream.forEachRemaining(e -> {
+
+               throw new FoundValueException(e);
+           });
+       }catch(FoundValueException t){
+           return Optional.of((T)t.value);
+       }
+
+       return Optional.empty();
+    }
+    @AllArgsConstructor
+    private static class FoundValueException extends RuntimeException{
+       Object value;
+
+        @Override
+        public Throwable fillInStackTrace() {
+            return this;
+        }
     }
 
     @Override
     public final Optional<T> findAny() {
-        return unwrapStream().findAny();
+        return findFirst();
     }
 
     @Override
@@ -480,7 +502,9 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final <R, A> R collect(final Collector<? super T, A, R> collector) {
-        return unwrapStream().collect(collector);
+       return unwrapStream().collect(collector);
+
+
     }
 
     @Override
@@ -496,12 +520,24 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final Optional<T> reduce(final BinaryOperator<T> accumulator) {
-        return unwrapStream().reduce(accumulator);
+        Object[] result = {null};
+        stream.forEachRemaining(e->{
+            if(result[0]==null)
+                result[0]=e;
+            else{
+                result[0] = accumulator.apply((T)result[0],e);
+            }
+        });
+       return result[0]==null? Optional.empty() : Optional.of((T)result[0]);
     }
 
     @Override
     public final T reduce(final T identity, final BinaryOperator<T> accumulator) {
-        return unwrapStream().reduce(identity, accumulator);
+       Object[] result = {identity};
+       stream.forEachRemaining(e->{
+           result[0] = accumulator.apply((T)result[0],e);
+       });
+        return (T)result[0];
     }
 
     @Override
@@ -776,7 +812,12 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public long count() {
-        return unwrapStream().count();
+
+        long[] result = {0};
+        stream.forEachRemaining(t -> result[0]++);
+        return result[0];
+
+
     }
 
     @Override
@@ -942,9 +983,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public <U> ReactiveSeq<T> distinct(final Function<? super T, ? extends U> keyExtractor) {
-        final Set<U> values = new HashSet<>();
-       return filter(t -> values.add(keyExtractor.apply(t)));
-
+        return createSeq(new DistinctKeySpliterator<>(keyExtractor,stream),reversible,split);
     }
 
 

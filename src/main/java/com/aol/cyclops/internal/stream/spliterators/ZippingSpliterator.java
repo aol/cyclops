@@ -18,9 +18,7 @@ public class ZippingSpliterator<T1,T2,R> implements CopyableSpliterator<R>,
     private final Spliterator<T1> left;
     private final Spliterator<T2> right;
     private final BiFunction<? super T1, ? super T2, ? extends R> fn;
-    //with push based Streams values could arrive at any stage
-    private final QueueConsumer<T1> leftQueue = new QueueConsumer<T1>();
-    private final QueueConsumer<T2> rightQueue = new QueueConsumer<T2>();
+
 
     public ZippingSpliterator(Spliterator<T1> left, Spliterator<T2> right, BiFunction<? super T1, ? super T2, ? extends R> fn) {
         this.left = CopyableSpliterator.copy(left);
@@ -31,66 +29,35 @@ public class ZippingSpliterator<T1,T2,R> implements CopyableSpliterator<R>,
         return new ZippingSpliterator<>(CopyableSpliterator.copy(left),CopyableSpliterator.copy(right),
                 this.fn.andThen(fn));
     }
-    static class QueueConsumer<T> implements Consumer<T>{
-
-        T value;
-        ArrayDeque<T> q;
-
-        @Override
-        public void accept(T t) {
-            System.out.println("Zipper " + t);
-            if(value==null){
-                value = t;
-            }else{
-                if(q==null){
-                    q= new ArrayDeque<>();
-                }
-                q.offer(t);
-            }
-        }
-        public boolean isEmpty(){
-            return value==null;
-        }
-        public T next(){
-            T res = value;
-            if(q!=null && q.size()>0)
-                value = q.pop();
-            else
-                value =null;
-            return res;
-        }
-    }
-
 
 
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
-        left.tryAdvance(leftQueue);
-        right.tryAdvance(rightQueue);
+         boolean found[] = {false};
+         return left.tryAdvance(l ->
+                right.tryAdvance(r -> {
+                    action.accept(fn.apply(l, r));
+                    found[0]=true;
+                })) && found[0];
 
-        if(!leftQueue.isEmpty() && !rightQueue.isEmpty()){
-            while(!leftQueue.isEmpty() && !rightQueue.isEmpty()){
-                action.accept(fn.apply(leftQueue.next(),rightQueue.next()));
-            }
-            return true;
-        }
-        return false;
     }
 
     @Override
     public void forEachRemaining(Consumer<? super R> action) {
         if(hasCharacteristics(SIZED)) {
             if(left.getExactSizeIfKnown() < right.getExactSizeIfKnown()){
-                left.forEachRemaining(next -> {
-                    if(right.tryAdvance(rightQueue)) {
-                        action.accept(fn.apply(next, rightQueue.next()));
-                    }
+                left.forEachRemaining(l -> {
+                    right.tryAdvance(r -> {
+                        action.accept(fn.apply(l, r));
+
+                    });
                 });
-            }else{
-                right.forEachRemaining(next -> {
-                    if(left.tryAdvance(leftQueue)) {
-                        action.accept(fn.apply(leftQueue.next(), next));
-                    }
+            }else {
+                right.forEachRemaining(r -> {
+                    left.tryAdvance(l -> {
+                        action.accept(fn.apply(l, r));
+
+                    });
                 });
             }
 
