@@ -20,22 +20,7 @@ import cyclops.stream.ReactiveSeq;
 public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
 
 
-    default FluentCollectionX<T> plusLoop(int max, IntFunction<T> value){
-        FluentCollectionX<T> toUse = this;
-        for(int i=0;i<max;i++){
-            toUse = toUse.plus(value.apply(i));
-        }
-        return toUse;
-    }
-    default FluentCollectionX<T> plusLoop(Supplier<Optional<T>> supplier){
-        FluentCollectionX<T> toUse = this;
-        Optional<T> next =  supplier.get();
-        while(next.isPresent()){
-            toUse = toUse.plus(next.get());
-            next = supplier.get();
-        }
-        return toUse;
-    }
+
 
     /**
      * @return This collection with any queued Lazy Operations materialized

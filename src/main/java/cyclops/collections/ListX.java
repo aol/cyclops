@@ -1,5 +1,6 @@
 package cyclops.collections;
 
+import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
@@ -1546,6 +1547,16 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default <EX extends Throwable> ListX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (ListX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
+    }
+
+    @Override
+    default ListX<T> plusLoop(int max, IntFunction<T> value) {
+        return (ListX<T>)MutableCollectionX.super.plusLoop(max,value);
+    }
+
+    @Override
+    default ListX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (ListX<T>)MutableCollectionX.super.plusLoop(supplier);
     }
 
     /**

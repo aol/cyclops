@@ -1,6 +1,9 @@
 package com.aol.cyclops2.data.collections.extensions;
 
 import java.util.Collection;
+import java.util.Optional;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
 /**
  * A Fluent API for adding and removing collection elements
@@ -11,6 +14,22 @@ import java.util.Collection;
  */
 public interface FluentCollectionX<T> extends CollectionX<T> {
 
+    default FluentCollectionX<T> plusLoop(int max, IntFunction<T> value){
+        FluentCollectionX<T> toUse = this;
+        for(int i=0;i<max;i++){
+            toUse = toUse.plus(value.apply(i));
+        }
+        return toUse;
+    }
+    default FluentCollectionX<T> plusLoop(Supplier<Optional<T>> supplier){
+        FluentCollectionX<T> toUse = this;
+        Optional<T> next =  supplier.get();
+        while(next.isPresent()){
+            toUse = toUse.plus(next.get());
+            next = supplier.get();
+        }
+        return toUse;
+    }
     /**
      * Add an element to the collection
      * 
