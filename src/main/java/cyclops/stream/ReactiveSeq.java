@@ -384,7 +384,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                         }
 
                     }
-                    System.out.println("Continuation..");
+
 
                         return Continuation.empty();
                     });
@@ -394,6 +394,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return fn.apply(queue.jdkStream().parallel());
 
     }
+
+
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#foldRight(java.lang.Object, java.util.function.BiFunction)
      */
@@ -3935,10 +3937,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         for(Stream<? extends T> next : streams){
             array[index++] = next.spliterator();
         }
-        return Streams.reactiveSeq(new ArrayConcatonatingSpliterator<T>(array),Optional.empty(),Optional.empty());
+        return Streams.reactiveSeq(new ArrayConcatonatingSpliterator<T,T>(array),Optional.empty(),Optional.empty());
     }
     static <T> ReactiveSeq<T> concat(Spliterator<? extends T>...array){
 
-        return Streams.reactiveSeq(new ArrayConcatonatingSpliterator<T>((Spliterator[])array),Optional.empty(),Optional.empty());
+        return Streams.reactiveSeq(new ArrayConcatonatingSpliterator<T,T>((Spliterator[])array),Optional.empty(),Optional.empty());
     }
 }

@@ -56,6 +56,7 @@ public abstract class AbstractTraversableTest {
                 1,2,3));
         
     }
+
     @Test
     public void stream(){
        

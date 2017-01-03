@@ -91,6 +91,8 @@ public abstract class AbstractCollectionXTest {
     public void foldTry(){
         assertThat(of(1,2,3).foldTry(l->l.reduce(Monoids.intSum), Throwable.class).get(),equalTo(6));
     }
+
+
     @Test
     public void iterate(){
         Iterator<Integer> it = of(1,2,3).iterator();

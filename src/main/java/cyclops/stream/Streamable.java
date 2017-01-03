@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.*;
 
+import com.aol.cyclops.internal.stream.spliterators.LazySingleSpliterator;
 import cyclops.Streams;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.AnyM;
@@ -567,7 +568,28 @@ public interface Streamable<T> extends  To<Streamable<T>>,
         return Streamable.fromStream(reactiveSeq().flatMap(i -> fn.apply(i)
                                                                   .reactiveSeq()));
     }
+    /**
+     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     *
+     * <pre>
+     * {@code
+     *
+     *      ReactiveSeq.of(1,2,3)
+     *                 .map(i->i*2)
+     *                 .coflatMap(s -> s.reduce(0,(a,b)->a+b))
+     *
+     *      //ReactiveSeq[12]
+     * }
+     * </pre>
+     *
+     *
+     * @param fn
+     * @return
+     */
+    default <R> Streamable<R> coflatMap(Function<? super Streamable<T>, ? extends R> fn){
+        return Streamable.fromStream(reactiveSeq().coflatMap(i -> fn.apply(Streamable.fromStream(i))));
 
+    }
     /**
      * @return number of elements in this Streamable
      */

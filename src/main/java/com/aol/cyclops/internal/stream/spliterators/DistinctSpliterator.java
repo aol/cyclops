@@ -5,27 +5,35 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public class DistinctSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T> {
-    Spliterator<T> source;
-    Set<T> values;
-    public DistinctSpliterator(final Spliterator<T> source) {
-        super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED);
+public class DistinctSpliterator<IN,T> extends BaseComposableSpliterator<IN,T,DistinctSpliterator<IN,?>> implements CopyableSpliterator<T> {
+    Spliterator<IN> source;
+    Set<IN> values;
+    public DistinctSpliterator(final Spliterator<IN> source) {
+        super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED,null);
 
         this.source = source;
-        this.values = new HashSet<T>();
+        this.values = new HashSet<>();
+
+    }
+    DistinctSpliterator(Function<? super IN, ? extends T> fn,final Spliterator<IN> source) {
+        super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED,fn);
+
+        this.source = source;
+        this.values = new HashSet<>();
 
     }
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
-
+        final Consumer<? super IN> toUse = apply(action);
         source.forEachRemaining(e->{
             if(!values.contains(e)){
                 values.add(e);
-                action.accept(e);
+                toUse.accept(e);
             }
         });
 
@@ -34,6 +42,7 @@ public class DistinctSpliterator<T> extends Spliterators.AbstractSpliterator<T> 
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
+        final Consumer<? super IN> toUse = apply(action);
         boolean[] accepted = {false};
         boolean advance = true;
         do {
@@ -41,7 +50,7 @@ public class DistinctSpliterator<T> extends Spliterators.AbstractSpliterator<T> 
             advance = source.tryAdvance(t -> {
                 if (!values.contains(t)) {
                     values.add(t);
-                    action.accept(t);
+                    toUse.accept(t);
                     accepted[0] = true;
                 }
             });
@@ -52,6 +61,11 @@ public class DistinctSpliterator<T> extends Spliterators.AbstractSpliterator<T> 
 
     @Override
     public Spliterator<T> copy() {
-        return new DistinctSpliterator<T>(CopyableSpliterator.copy(source));
+        return new DistinctSpliterator<IN,T>(fn,CopyableSpliterator.copy(source));
+    }
+
+    @Override
+    <R2> DistinctSpliterator<IN, ?> create(Function<? super IN, ? extends R2> after) {
+        return new DistinctSpliterator(after,CopyableSpliterator.copy(source));
     }
 }

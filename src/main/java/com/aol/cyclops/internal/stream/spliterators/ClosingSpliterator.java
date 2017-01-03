@@ -3,20 +3,31 @@ package com.aol.cyclops.internal.stream.spliterators;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
-public class ClosingSpliterator<T> implements Spliterator<T> {
+public class ClosingSpliterator<IN,T> extends BaseComposableSpliterator<IN,T,ClosingSpliterator<IN,?>> implements Spliterator<T> {
     private final long estimate;
 
-    private final Queue<T> queue;
+    private final Queue<IN> queue;
     private final AtomicBoolean open;
 
     public ClosingSpliterator(final long estimate, final Queue queue, final AtomicBoolean open) {
+        super(estimate, ORDERED,null);
         this.estimate = estimate;
         this.open = open;
         this.queue = queue;
+
+    }
+    ClosingSpliterator(Function<? super IN, ? extends T> fn,final long estimate, final Queue queue, final AtomicBoolean open) {
+        super(estimate, ORDERED,fn);
+        this.estimate = estimate;
+        this.open = open;
+        this.queue = queue;
+
 
     }
 
@@ -33,6 +44,7 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
     @Override
     public boolean tryAdvance(final Consumer<? super T> action) {
         Objects.requireNonNull(action);
+        final Consumer<? super IN> toUse = apply(action);
 
         if (!open.get() && queue.size() == 0) {
 
@@ -42,9 +54,9 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
         while (open.get() || queue.size() > 0) {
             long nanos = 1l;
 
-            T value;
+            IN value;
             if ((value = queue.poll()) != null) {
-                action.accept(nullSafe(value));
+                toUse.accept(nullSafe(value));
 
                 return true;
             }
@@ -56,7 +68,7 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
 
     }
 
-    private T nullSafe(final T value) {
+    private IN nullSafe(final IN value) {
         return value;
     }
 
@@ -66,4 +78,8 @@ public class ClosingSpliterator<T> implements Spliterator<T> {
         return this;
     }
 
+    @Override
+    <R2> ClosingSpliterator<IN, ?> create(Function<? super IN, ? extends R2> after) {
+        return new ClosingSpliterator(fn,estimate,queue,open);
+    }
 }

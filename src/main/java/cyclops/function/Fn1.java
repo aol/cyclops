@@ -21,6 +21,8 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import cyclops.typeclasses.functor.Functor;
 import org.jooq.lambda.function.Function1;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 @FunctionalInterface
 public interface Fn1<T1,  R> extends Function1<T1,R> {
@@ -63,6 +65,9 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
         return Memoize.memoizeFunction(this,c);
     }
 
+    default <R1> Fn1<T1,Tuple2<R,R1>> product(Fn1<? super T1, ? extends R1> fn){
+        return in -> Tuple.tuple(apply(in),fn.apply(in));
+    }
 
 
     default Fn0<R> bind(final T1 s) {

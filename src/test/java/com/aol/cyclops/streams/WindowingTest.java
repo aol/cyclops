@@ -31,17 +31,7 @@ public class WindowingTest {
 		nonEmpty = of(1);
 	}
 
-	@Test
-	public void compareMap(){
-		long time = System.currentTimeMillis();
-		Stream.generate(()->1).limit(1_000).map(i->i*2).map(i->i*10).map(i->i*100).forEach(System.out::println);
-		long stream = System.currentTimeMillis()-time;
-		long time2 = System.currentTimeMillis();
-		ReactiveSeq.generate(()->1).limit(1_000).map(i->i*2).map(i->i*10).map(i->i*100).forEach(System.out::println);
-		long rs = System.currentTimeMillis()-time2;
 
-		System.out.println("Stream " + stream + " rs " + rs);
-	}
 	
 	@Test
 	public void windowWhile(){

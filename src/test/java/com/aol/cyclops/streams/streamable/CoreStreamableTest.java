@@ -43,7 +43,24 @@ public  class CoreStreamableTest {
 		empty = Streamable.of();
 		nonEmpty = of(1);
 	}
+	@Test
+	public void coflatMapTest(){
+		Streamable<Streamable<Integer>> list = Streamable.of(1, 2, 3)
+				                                        .coflatMap(s -> s);
 
+		Streamable<Integer> stream2 = list.flatMap(s -> s).map(i -> i * 10);
+		Streamable<Integer> stream3 = list.flatMap(s -> s).map(i -> i * 100);
+
+		assertThat(stream2.toListX(),equalTo(ListX.of(10,20,30)));
+		assertThat(stream3.toListX(),equalTo(ListX.of(100,200,300)));
+
+	}
+
+	@Test
+    public void testFlatMap(){
+	    assertThat(Streamable.of(1,2,3).flatMap(i->Streamable.of(i))
+                .toList(),equalTo(ListX.of(1,2,3)));
+    }
 	@Test
     public void testContains() {
         assertThat(Streamable.of(1, 2, 3, 4, 5).contains(3), equalTo(true));

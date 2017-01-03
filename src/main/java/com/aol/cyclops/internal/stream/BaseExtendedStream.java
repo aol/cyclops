@@ -291,15 +291,10 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
                                                         Function<? super C, ? extends R> finalizer) {
         return this.<R>createSeq(new GroupedStatefullySpliterator<T,C,R>(copyOrGet(),factory,finalizer, predicate.negate()), this.reversible,split);
     }
-/**
-    @Override
-    public final <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
-        return MapX.fromMap(collect(Collectors.groupingBy(classifier)));
-    }
-**/
+
     @Override
     public final ReactiveSeq<T> distinct() {
-        return createSeq(new DistinctSpliterator<T>(copyOrGet()), reversible,split);
+        return createSeq(new DistinctSpliterator<T,T>(copyOrGet()), reversible,split);
     }
 
     @Override
@@ -338,6 +333,13 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         final Supplier<TreeSet<T>> supplier =  () -> new TreeSet<T>(c);
         return coflatMap(r-> r.collect(Collectors.toCollection(supplier))  )
                 .flatMap(col->col.stream());
+
+    }
+
+    @Override
+   public <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
+        //coflatMap lazily reconstructs the stream
+        return ReactiveSeq.fromSpliterator(new LazySingleSpliterator<T,Supplier<ReactiveSeq<T>>,R>(()->createSeq(copyOrGet(),reversible,split),in->fn.apply(in.get())));
 
     }
 
@@ -598,6 +600,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final <R> ReactiveSeq<R> map(final Function<? super T, ? extends R> fn) {
+
         if(this.stream instanceof ComposableFunction){
             ComposableFunction f = (ComposableFunction)stream;
             return createSeq(f.compose(fn),reversible,split);
@@ -692,7 +695,10 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     @Override
     public final ReactiveSeq<T> filter(final Predicate<? super T> fn) {
         return createSeq(new FilteringSpliterator<T>(copyOrGet(),fn).compose(), reversible,split);
+
     }
+
+
 
     @Override
     public void forEach(final Consumer<? super T> action) {
@@ -879,7 +885,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         final Object value = new Object();
         ReactiveSeq res = createSeq(onEmptyGet((Supplier) () ->value).flatMap(s -> {
             if (s==value)
-                return (Stream) switchTo.get().peek(System.out::println);
+                return (Stream) switchTo.get();
             return Stream.of(s);
         })).peek(System.out::println);
         return res;

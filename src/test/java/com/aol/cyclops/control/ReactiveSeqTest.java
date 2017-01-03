@@ -5,6 +5,7 @@ import cyclops.collections.ListX;
 import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.control.Eval;
+import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import static cyclops.function.Predicates.*;
@@ -31,6 +33,199 @@ import static org.junit.Assert.assertThat;
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
+    int count =0;
+    @Test
+    public void compareFlatMap(){
+        for(int k=0;k<10;k++)
+            count += Stream.generate(()->1).limit(100).flatMap(i->Stream.iterate(1,x->x+i).limit(500)).count();
+        long time = System.currentTimeMillis();
+        for(int k=0;k<1000;k++)
+            count += Stream.generate(()->1).limit(100).flatMap(i->Stream.iterate(1,x->x+i).limit(500)).count();
+        long stream = System.currentTimeMillis()-time;
+        long time2 = System.currentTimeMillis();
+        for(int k=0;k<1000;k++)
+            count += ReactiveSeq.generate(()->1).limit(100).flatMap(i->Stream.iterate(1,x->x+i).limit(500)).count();
+        long rs = System.currentTimeMillis()-time2;
+        System.out.println("Stream " + stream + " rs with construction " + rs + " count " + count);
+    }
+    @Test
+    public void compareMap(){
+
+        for(int k=0;k<10;k++)
+            count +=Stream.generate(()->1).limit(1_000).map(i->i*2).map(i->i*10).map(i->i*100).count();
+        long time = System.currentTimeMillis();
+        for(int k=0;k<1000;k++)
+            count +=Stream.generate(()->1).limit(1_0000).map(i->i*2).map(i->i*10).map(i->i*100).count();
+        long stream = System.currentTimeMillis()-time;
+        for(int k=0;k<10;k++)
+            count +=ReactiveSeq.generate(()->1).limit(1_000).map(i->i*2).map(i->i*10).map(i->i*100).count();
+        long time2 = System.currentTimeMillis();
+       // ReactiveSeq<Integer> s = ReactiveSeq.generate(()->1).limit(1_0000).map(i->i*2).map(i->i*10).map(i->i*100);
+        for(int k=0;k<1000;k++)
+            count += ReactiveSeq.generate(()->1).limit(1_0000).map(i->i*2).map(i->i*10).map(i->i*100).count();
+        long rs = System.currentTimeMillis()-time2;
+        long time3 = System.currentTimeMillis();
+        ReactiveSeq<Integer> s = ReactiveSeq.generate(()->1).limit(1_0000).map(i->i*2).map(i->i*10).map(i->i*100);
+        for(int k=0;k<1000;k++)
+            count += s.count();
+        long rsWithout = System.currentTimeMillis()-time3;
+
+        System.out.println("Stream " + stream + " rs with construction " + rs +  " rs without " + rsWithout + " count " + count);
+    }
+    @Test
+    public void mapFuseTest(){
+        int total = 0;
+        for(int x=0;x<10;x++) {
+
+
+            total += Stream.concat(IntStream.range(0, 1000).boxed(), IntStream.range(1000, 10000).boxed())
+                    .filter(i -> i < 5000)
+                    .map(i -> i * 2)
+                    .filter(i -> i > 500)
+                    .filter(i -> i < 5000)
+                    .map(i -> i * 2)
+                    .filter(i -> i > 500).collect(Collectors.toList()).size();
+
+        }
+        long time = System.currentTimeMillis();
+        for(int x=0;x<1000;x++) {
+
+
+            Stream.iterate(1,i->i+1).limit(10000)
+                    .map(i->i*100)
+                    .map(i -> i * 2)
+                    .map(i->"hello" + i)
+                    .map(s->s.length())
+                    .map(i -> i * 2)
+                    .forEach(i->count++);//collect(Collectors.toList()).size();
+
+        }
+        System.out.println("Streams " + (System.currentTimeMillis() - time));
+        time = System.currentTimeMillis();
+        ReactiveSeq<Integer> stream = ReactiveSeq.iterate(1, i -> i + 1).limit(10000)
+                .map(i -> i * 100)
+                .map(i -> i * 2)
+                .map(i -> "hello" + i)
+                .map(s -> s.length())
+                .map(i -> i * 2);
+        for(int x=0;x<1000;x++) {
+
+            //total +=
+                    stream.forEach(i->count++);//collect(Collectors.toList()).size();
+
+        }
+        System.out.println("Reactive Seq without construction " + (System.currentTimeMillis() - time));
+        time = System.currentTimeMillis();
+
+        for(int x=0;x<1000;x++) {
+
+            //total +=
+            ReactiveSeq.iterate(1, i -> i + 1).limit(10000)
+                    .map(i -> i * 100)
+                    .map(i -> i * 2)
+                    .map(i -> "hello" + i)
+                    .map(s -> s.length())
+                    .map(i -> i * 2).forEach(i->count++);//collect(Collectors.toList()).size();
+
+        }
+        System.out.println("Reactive Seq with construction " + (System.currentTimeMillis() - time));
+
+        System.out.println("Total " + total);
+    }
+    @Test
+    public void filterFuseTest(){
+        int total = 0;
+        for(int x=0;x<10;x++) {
+
+
+            total += Stream.concat(IntStream.range(0, 1000).boxed(), IntStream.range(1000, 10000).boxed())
+                    .filter(i -> i < 5000)
+                    .map(i -> i * 2)
+                    .filter(i -> i > 500)
+                    .filter(i -> i < 5000)
+                    .map(i -> i * 2)
+                    .filter(i -> i > 500).collect(Collectors.toList()).size();
+
+        }
+        long time = System.currentTimeMillis();
+        for(int x=0;x<1000;x++) {
+
+
+           total += Stream.generate(()->1000).limit(1_0000)
+                   .map(i->i+1)
+                    .filter(i -> i > 5)
+                   .filter(i -> i > 6)
+                   .filter(i -> i > 7)
+                   .filter(i -> i > 8)
+                   .filter(i -> i > 9)
+                   .filter(i -> i > 10)
+                   .filter(i -> i > 10)
+                   .collect(Collectors.toList()).size();
+
+        }
+        System.out.println("Streams " + (System.currentTimeMillis() - time));
+        time = System.currentTimeMillis();
+        ;
+        for(int x=0;x<1000;x++) {
+
+            total += ReactiveSeq.generate(()->1000).limit(1_0000)
+                    .map(i->i+1)
+                    .filter(i -> i > 5)
+                    .filter(i -> i > 6)
+                    .filter(i -> i > 7)
+                    .filter(i -> i > 8)
+                    .filter(i -> i > 9)
+                    .filter(i -> i > 10)
+                    .filter(i -> i > 10).collect(Collectors.toList()).size();
+
+        }
+        System.out.println("Reactive Seq " + (System.currentTimeMillis() - time));
+        time = System.currentTimeMillis();
+        ;
+        ReactiveSeq<Integer> stream = ReactiveSeq.generate(() -> 1000).limit(1_0000)
+                .map(i->i+1)
+                .filter(i -> i > 5)
+                .filter(i -> i > 6)
+                .filter(i -> i > 7)
+                .filter(i -> i > 8)
+                .filter(i -> i > 9)
+                .filter(i -> i > 10)
+                .filter(i -> i > 10);
+        for(int x=0;x<1000;x++) {
+
+            total += stream.collect(Collectors.toList()).size();
+
+        }
+        System.out.println("Reactive Seq without construction " + (System.currentTimeMillis() - time));
+
+
+        System.out.println("Total " + total);
+
+
+    }
+    @Test
+    public void coflatMapTest(){
+        ReactiveSeq<ReactiveSeq<Integer>> stream = ReactiveSeq.fromIterable(Arrays.asList(1,2,3))
+                                                                .coflatMap(s -> s);
+
+        ReactiveSeq<Integer> stream2 = stream.flatMap(s -> s).map(i -> i * 10);
+        ReactiveSeq<Integer> stream3 = stream.flatMap(s -> s).map(i -> i * 100);
+
+        assertThat(stream2.toListX(),equalTo(ListX.of(10,20,30)));
+        assertThat(stream3.toListX(),equalTo(ListX.of(10,20,30)));
+
+    }
+    @Test
+    public void arrayConcat(){
+        assertThat(ReactiveSeq.concat(ReactiveSeq.of(1,2,3),ReactiveSeq.of(100,200,300))
+                   .map(i->i*1000).toListX(),equalTo(ListX.of(1000,
+                2000,
+                3000,
+                100000,
+                200000,
+                300000)));
+
+    }
     @Test
     public void lastOneBug(){
         assertThat(ReactiveSeq.of(1, 2, 3, 4)
