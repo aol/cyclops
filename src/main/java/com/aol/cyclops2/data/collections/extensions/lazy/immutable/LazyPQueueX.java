@@ -2,12 +2,16 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import cyclops.Reducers;
+import cyclops.collections.immutable.PBagX;
 import cyclops.collections.immutable.PQueueX;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PQueue;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -145,5 +149,14 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
         return from(col);
     }
 
+    @Override
+    public PQueueX<T> plusLoop(int max, IntFunction<T> value) {
+        return (PQueueX<T>)super.plusLoop(max,value);
+    }
+
+    @Override
+    public PQueueX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (PQueueX<T>)super.plusLoop(supplier);
+    }
     
 }

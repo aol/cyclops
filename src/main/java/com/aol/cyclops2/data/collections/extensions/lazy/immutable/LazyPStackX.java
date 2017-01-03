@@ -2,6 +2,7 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import cyclops.Reducers;
+import cyclops.collections.immutable.PBagX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.stream.ReactiveSeq;
 import lombok.Getter;
@@ -10,6 +11,9 @@ import org.pcollections.PStack;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Optional;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -203,5 +207,13 @@ public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>
         return from(col);
     }
 
+    @Override
+    public PStackX<T> plusLoop(int max, IntFunction<T> value) {
+        return (PStackX<T>)super.plusLoop(max,value);
+    }
 
+    @Override
+    public PStackX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (PStackX<T>)super.plusLoop(supplier);
+    }
 }

@@ -1035,7 +1035,15 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
         return (POrderedSetX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
 
+    @Override
+    default POrderedSetX<T> plusLoop(int max, IntFunction<T> value) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.plusLoop(max,value);
+    }
 
+    @Override
+    default POrderedSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.plusLoop(supplier);
+    }
 
 
 }

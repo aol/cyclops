@@ -1004,6 +1004,16 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
         return (SetX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
     }
 
+    @Override
+    default SetX<T> plusLoop(int max, IntFunction<T> value) {
+        return (SetX<T>)MutableCollectionX.super.plusLoop(max,value);
+    }
+
+    @Override
+    default SetX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (SetX<T>)MutableCollectionX.super.plusLoop(supplier);
+    }
+
     /**
      * Narrow a covariant Set
      * 

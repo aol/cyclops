@@ -1179,5 +1179,13 @@ public interface PStackX<T> extends To<PStackX<T>>,
         return (PStackX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
 
+    @Override
+    default PStackX<T> plusLoop(int max, IntFunction<T> value) {
+        return (PStackX<T>)PersistentCollectionX.super.plusLoop(max,value);
+    }
 
+    @Override
+    default PStackX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (PStackX<T>)PersistentCollectionX.super.plusLoop(supplier);
+    }
 }

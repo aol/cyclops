@@ -2,11 +2,14 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import cyclops.Reducers;
+import cyclops.collections.immutable.PBagX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PVector;
 
 import java.util.*;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -211,6 +214,15 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
         } else
             return 1;
 
+    }
+    @Override
+    public PVectorX<T> plusLoop(int max, IntFunction<T> value) {
+        return (PVectorX<T>)super.plusLoop(max,value);
+    }
+
+    @Override
+    public PVectorX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (PVectorX<T>)super.plusLoop(supplier);
     }
 
 }

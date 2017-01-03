@@ -1190,5 +1190,13 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
     default <EX extends Throwable> PQueueX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (PQueueX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
+    @Override
+    default PQueueX<T> plusLoop(int max, IntFunction<T> value) {
+        return (PQueueX<T>)PersistentCollectionX.super.plusLoop(max,value);
+    }
 
+    @Override
+    default PQueueX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (PQueueX<T>)PersistentCollectionX.super.plusLoop(supplier);
+    }
 }

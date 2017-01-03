@@ -1015,6 +1015,15 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     default <EX extends Throwable> SortedSetX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (SortedSetX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
     }
+    @Override
+    default SortedSetX<T> plusLoop(int max, IntFunction<T> value) {
+        return (SortedSetX<T>)MutableCollectionX.super.plusLoop(max,value);
+    }
+
+    @Override
+    default SortedSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (SortedSetX<T>)MutableCollectionX.super.plusLoop(supplier);
+    }
 
     /**
      * Narrow a covariant SortedSet

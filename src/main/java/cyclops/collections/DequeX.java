@@ -1172,6 +1172,15 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     default <EX extends Throwable> DequeX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (DequeX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
     }
+    @Override
+    default DequeX<T> plusLoop(int max, IntFunction<T> value) {
+        return (DequeX<T>)MutableCollectionX.super.plusLoop(max,value);
+    }
+
+    @Override
+    default DequeX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (DequeX<T>)MutableCollectionX.super.plusLoop(supplier);
+    }
 
     /**
      * Narrow a covariant Deque

@@ -2,12 +2,16 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import cyclops.Reducers;
+import cyclops.collections.immutable.PBagX;
 import cyclops.collections.immutable.POrderedSetX;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.POrderedSet;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -126,6 +130,14 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
     public <R> LazyPOrderedSetX<R> unit(Collection<R> col) {
         return from(col);
     }
+    @Override
+    public POrderedSetX<T> plusLoop(int max, IntFunction<T> value) {
+        return (POrderedSetX<T>)super.plusLoop(max,value);
+    }
 
+    @Override
+    public POrderedSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (POrderedSetX<T>)super.plusLoop(supplier);
+    }
     
 }

@@ -1,26 +1,32 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
+import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
 import com.aol.cyclops2.util.ExceptionSoftener;
+import cyclops.collections.immutable.PBagX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.Getter;
+import org.pcollections.PCollection;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public abstract class AbstractLazyPersistentCollection<T, C extends Collection<T>> implements LazyFluentCollection<T, C>, PersistentCollectionX<T> {
+public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<T>> implements LazyFluentCollection<T, C>, PersistentCollectionX<T> {
     @Getter(AccessLevel.PROTECTED)
     protected volatile C list;
     @Getter(AccessLevel.PROTECTED)
@@ -75,14 +81,34 @@ public abstract class AbstractLazyPersistentCollection<T, C extends Collection<T
 
     @Override
     public ReactiveSeq<T> stream() {
-        System.out.println("Stream!!");
+
         ReactiveSeq<T> toUse = seq.get();
         if (toUse != null) {
             return toUse;
         }
         return ReactiveSeq.fromIterable(list);
     }
+    @Override
+    public FluentCollectionX<T> plusLoop(int max, IntFunction<T> value) {
+        PCollection<T> toUse = get();
+        for(int i=0;i<max;i++){
+            toUse = toUse.plus(value.apply(i));
+        }
+        return this.unit(toUse);
 
+
+    }
+
+    @Override
+    public FluentCollectionX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        PCollection<T> toUse = get();
+        Optional<T> next =  supplier.get();
+        while(next.isPresent()){
+            toUse = toUse.plus(next.get());
+            next = supplier.get();
+        }
+        return unit(toUse);
+    }
     @Override
     public int size(){
         return get().size();

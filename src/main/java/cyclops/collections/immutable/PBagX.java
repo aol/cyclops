@@ -2,6 +2,7 @@ package cyclops.collections.immutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
+import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
 import cyclops.Reducers;
@@ -1048,6 +1049,15 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
         return (PBagX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
 
+    @Override
+    default PBagX<T> plusLoop(int max, IntFunction<T> value) {
+        return (PBagX<T>)PersistentCollectionX.super.plusLoop(max,value);
+    }
+
+    @Override
+    default PBagX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (PBagX<T>)PersistentCollectionX.super.plusLoop(supplier);
+    }
 
 
 }

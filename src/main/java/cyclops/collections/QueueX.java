@@ -1023,6 +1023,15 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
     default <EX extends Throwable> QueueX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (QueueX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
     }
+    @Override
+    default QueueX<T> plusLoop(int max, IntFunction<T> value) {
+        return (QueueX<T>)MutableCollectionX.super.plusLoop(max,value);
+    }
+
+    @Override
+    default QueueX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (QueueX<T>)MutableCollectionX.super.plusLoop(supplier);
+    }
     /**
      * Narrow a covariant Queue
      * 

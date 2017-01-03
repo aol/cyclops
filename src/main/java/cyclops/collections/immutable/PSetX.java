@@ -1016,5 +1016,13 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
 
+    @Override
+    default PSetX<T> plusLoop(int max, IntFunction<T> value) {
+        return (PSetX<T>)PersistentCollectionX.super.plusLoop(max,value);
+    }
 
+    @Override
+    default PSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (PSetX<T>)PersistentCollectionX.super.plusLoop(supplier);
+    }
 }

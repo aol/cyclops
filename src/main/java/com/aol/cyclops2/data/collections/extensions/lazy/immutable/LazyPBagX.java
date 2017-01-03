@@ -1,6 +1,7 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
 import cyclops.Reducers;
 import cyclops.collections.immutable.PBagX;
 import cyclops.stream.ReactiveSeq;
@@ -8,6 +9,9 @@ import org.pcollections.PBag;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -54,7 +58,15 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
        
 
     }
+    @Override
+    public PBagX<T> plusLoop(int max, IntFunction<T> value) {
+        return (PBagX<T>)super.plusLoop(max,value);
+    }
 
+    @Override
+    public PBagX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (PBagX<T>)super.plusLoop(supplier);
+    }
     
     
     //@Override

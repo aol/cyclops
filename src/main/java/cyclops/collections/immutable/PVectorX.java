@@ -1121,6 +1121,15 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
         return (PVectorX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
 
+    @Override
+    default PVectorX<T> plusLoop(int max, IntFunction<T> value) {
+        return (PVectorX<T>)PersistentCollectionX.super.plusLoop(max,value);
+    }
+
+    @Override
+    default PVectorX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (PVectorX<T>)PersistentCollectionX.super.plusLoop(supplier);
+    }
 
 
 }
