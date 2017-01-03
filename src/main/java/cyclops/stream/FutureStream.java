@@ -83,6 +83,12 @@ import lombok.val;
 public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>, ReactiveSeq<U>, LazyToQueue<U>,
         ConfigurableStream<U, FastFuture<U>>, FutureStreamSynchronousPublisher<U> {
 
+    default LazyReact builder(int maxActiveTasks, Executor exec){
+        return new LazyReact(maxActiveTasks,exec);
+    }
+    default LazyReact builder(){
+        return new LazyReact();
+    }
     default <R> Future<R> foldFuture(Function<? super FoldableTraversable<U>,? extends R> fn){
         return Future.ofSupplier(()->fn.apply(this),getSimpleReact().getExecutor());
     }
