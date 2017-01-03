@@ -3944,4 +3944,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         return Streams.reactiveSeq(new ArrayConcatonatingSpliterator<T,T>((Spliterator[])array),Optional.empty(),Optional.empty());
     }
+    static <T> ReactiveSeq<T> concat(Stream<? extends T> left, Stream<? extends T> right){
+
+        return Streams.reactiveSeq(new ConcatonatingSpliterator<T,T>((Spliterator<T>)left.spliterator(),
+                (Spliterator<T>)right.spliterator()),Optional.empty(),Optional.empty());
+    }
+    static <T> ReactiveSeq<T> concat(Spliterator<? extends T> left, Spliterator<? extends T> right){
+
+        return Streams.reactiveSeq(new ConcatonatingSpliterator<T,T>((Spliterator<T>)left,
+                (Spliterator<T>)right),Optional.empty(),Optional.empty());
+    }
 }
