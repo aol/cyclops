@@ -1916,7 +1916,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     <R> ReactiveSeq<R> map(Function<? super T, ? extends R> fn);
 
-    <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn);
+
     /*
      * (non-Javadoc)
      * 
@@ -2009,7 +2009,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> filter(Predicate<? super T> fn);
 
 
-    ReactiveSeq<T> filterLazyPredicate(Supplier<Predicate<? super T>> fn);
+
     /**
      * Returns a spliterator for the elements of this stream.
      * <p>

@@ -17,6 +17,7 @@ import com.aol.cyclops.types.anyM.AnyMSeq;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Eval;
 import cyclops.function.Fn3;
+import cyclops.function.Fn4;
 import cyclops.monads.Witness;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -244,20 +245,17 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return createSeq( new Zipping3Spliterator<>(copyOrGet(),second.spliterator(),third.spliterator(),(a,b,c)->Tuple.tuple(a,b,c)));
     }
 
-    
+
+    @Override
+    public <T2, T3, T4, R> ReactiveSeq<R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return createSeq( new Zipping4Spliterator<>(copyOrGet(),second.spliterator(),third.spliterator(),fourth.spliterator(),fn));
+
+    }
 
     @Override
     public final <T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
             final Iterable<? extends T4> fourth) {
-        return zip3(second, third).zip(fourth)
-                                  .map(t -> new Tuple4(
-                                                       t.v1()
-                                                        .v1(),
-                                                       t.v1()
-                                                        .v2(),
-                                                       t.v1()
-                                                        .v3(),
-                                                       t.v2()));
+        return zip4(second,third,fourth,Tuple::tuple);
 
     }
 
@@ -735,7 +733,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return createSeq(new FilteringSpliterator<T>(copyOrGet(),fn).compose(), reversible,split);
 
     }
-    @Override
+
     public final ReactiveSeq<T> filterLazyPredicate(final Supplier<Predicate<? super T>> fn) {
         return createSeq(new LazyFilteringSpliterator<T>(copyOrGet(),fn), reversible,split);
 
@@ -1038,7 +1036,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     }
 
-    @Override
+
     public  <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn){
         //not composable to the 'left' (as statefulness is lost)
         return createSeq(new LazyMappingSpliterator<T,R>(this.copyOrGet(),fn), reversible,split);

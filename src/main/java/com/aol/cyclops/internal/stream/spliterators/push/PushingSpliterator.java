@@ -14,8 +14,8 @@ import lombok.Setter;
 public class PushingSpliterator<T> implements Spliterator<T> {
 
     //TODO push based analoguges for the following Spliterators / operators
-    //recover, iterate, foreach (error, oncomplete), zip, group
-    //limit, skip
+    //recover, iterator, foreach (error, oncomplete), zipXXX, groupXXX
+    //limitXXX, skipXXX, cycleXXXX, flatMap
 
    
     public static void main(String[] args) throws InterruptedException{
