@@ -1015,12 +1015,12 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
     }
 
     @Override
-    default QueueX<T> recover(final Function<Throwable, ? extends T> fn) {
+    default QueueX<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return (QueueX<T>)MutableCollectionX.super.recover(fn);
     }
 
     @Override
-    default <EX extends Throwable> QueueX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+    default <EX extends Throwable> QueueX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (QueueX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
     }
     /**

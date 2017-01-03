@@ -1007,12 +1007,12 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     @Override
-    default SortedSetX<T> recover(final Function<Throwable, ? extends T> fn) {
+    default SortedSetX<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return (SortedSetX<T>)MutableCollectionX.super.recover(fn);
     }
 
     @Override
-    default <EX extends Throwable> SortedSetX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+    default <EX extends Throwable> SortedSetX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (SortedSetX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
     }
 

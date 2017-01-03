@@ -1006,12 +1006,12 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     @Override
-    default PSetX<T> recover(final Function<Throwable, ? extends T> fn) {
+    default PSetX<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return (PSetX<T>)PersistentCollectionX.super.recover(fn);
     }
 
     @Override
-    default <EX extends Throwable> PSetX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+    default <EX extends Throwable> PSetX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (PSetX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
 

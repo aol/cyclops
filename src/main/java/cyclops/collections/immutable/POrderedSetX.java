@@ -1026,12 +1026,12 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     }
 
     @Override
-    default POrderedSetX<T> recover(final Function<Throwable, ? extends T> fn) {
+    default POrderedSetX<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return (POrderedSetX<T>)PersistentCollectionX.super.recover(fn);
     }
 
     @Override
-    default <EX extends Throwable> POrderedSetX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+    default <EX extends Throwable> POrderedSetX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (POrderedSetX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
 

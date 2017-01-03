@@ -1039,12 +1039,12 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     @Override
-    default PBagX<T> recover(final Function<Throwable, ? extends T> fn) {
+    default PBagX<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return (PBagX<T>)PersistentCollectionX.super.recover(fn);
     }
 
     @Override
-    default <EX extends Throwable> PBagX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+    default <EX extends Throwable> PBagX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (PBagX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
 

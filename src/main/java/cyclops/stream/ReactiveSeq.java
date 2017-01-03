@@ -1916,6 +1916,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     <R> ReactiveSeq<R> map(Function<? super T, ? extends R> fn);
 
+    <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn);
     /*
      * (non-Javadoc)
      * 
@@ -2007,6 +2008,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     ReactiveSeq<T> filter(Predicate<? super T> fn);
 
+
+    ReactiveSeq<T> filterLazyPredicate(Supplier<Predicate<? super T>> fn);
     /**
      * Returns a spliterator for the elements of this stream.
      * <p>
@@ -3167,7 +3170,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            value
      * @return ReactiveSeq that can recover from an Exception
      */
-    ReactiveSeq<T> recover(final Function<Throwable, ? extends T> fn);
+    ReactiveSeq<T> recover(final Function<? super Throwable, ? extends T> fn);
 
     /**
      * Recover from a particular exception type
@@ -3189,7 +3192,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            That accepts an error and returns an alternative value
      * @return ReactiveSeq that can recover from a particular exception
      */
-    <EX extends Throwable> ReactiveSeq<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn);
+    <EX extends Throwable> ReactiveSeq<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn);
 
     /**
      * Retry a transformation if it fails. Default settings are to retry up to 7

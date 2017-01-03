@@ -54,11 +54,18 @@ public class FilteringSpliterator<T> extends Spliterators.AbstractSpliterator<T>
         if(source instanceof FilteringSpliterator){
             return compose((FilteringSpliterator)source,this);
         }
+        if(source instanceof LazyFilteringSpliterator){
+            return compose((LazyFilteringSpliterator)source,this);
+        }
 
         return this;
     }
     public static <T> FilteringSpliterator<T> compose(FilteringSpliterator<T> before, FilteringSpliterator<T> after){
 
         return new FilteringSpliterator<>(before.source,((Predicate<T>)before.mapper).and(after.mapper));
+    }
+    public static <T> FilteringSpliterator<T> compose(LazyFilteringSpliterator<T> before, FilteringSpliterator<T> after){
+
+        return new FilteringSpliterator<>(before.source,((Predicate<T>)before.mapperSupplier.get()).and(after.mapper));
     }
 }

@@ -1112,12 +1112,12 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     }
 
     @Override
-    default PVectorX<T> recover(final Function<Throwable, ? extends T> fn) {
+    default PVectorX<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return (PVectorX<T>)PersistentCollectionX.super.recover(fn);
     }
 
     @Override
-    default <EX extends Throwable> PVectorX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+    default <EX extends Throwable> PVectorX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (PVectorX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
 

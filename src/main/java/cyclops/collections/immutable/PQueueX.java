@@ -1181,5 +1181,14 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
         return (PQueueX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
     }
 
+    @Override
+    default PQueueX<T> recover(final Function<? super Throwable, ? extends T> fn) {
+        return (PQueueX<T>)PersistentCollectionX.super.recover(fn);
+    }
+
+    @Override
+    default <EX extends Throwable> PQueueX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
+        return (PQueueX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
+    }
 
 }

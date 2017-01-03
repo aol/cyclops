@@ -1070,7 +1070,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            value
      * @return ReactiveSeq that can recover from an Exception
      */
-    default Traversable<T> recover(final Function<Throwable, ? extends T> fn){
+    default Traversable<T> recover(final Function<? super Throwable, ? extends T> fn){
         return traversable().recover(fn);
     }
 
@@ -1094,7 +1094,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            That accepts an error and returns an alternative value
      * @return Traversable that can recover from a particular exception
      */
-    default <EX extends Throwable> Traversable<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn){
+    default <EX extends Throwable> Traversable<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn){
         return traversable().recover(exceptionClass,fn);
     }
 

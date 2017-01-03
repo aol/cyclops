@@ -1067,8 +1067,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> debounce(final long time, final TimeUnit unit) {
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .debounce(time, unit));
+        return fromStream(Streams.debounce(stream(),time, unit));
 
     }
 
@@ -1203,8 +1202,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> jitter(final long jitterInNanos) {
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .jitter(jitterInNanos));
+        return fromStream(Streams.jitter(stream(),jitterInNanos));
     }
 
     /**
@@ -1242,8 +1240,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> fixedDelay(final long time, final TimeUnit unit) {
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .fixedDelay(time, unit));
+        return fromStream(Streams.fixedDelay(stream(),time, unit));
     }
 
     /**
@@ -1267,8 +1264,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> onePer(final long time, final TimeUnit unit) {
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .onePer(time, unit));
+        return fromStream(Streams.onePer(stream(),time, unit));
 
     }
 
@@ -1296,8 +1292,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      */
     @Override
     default FutureStream<U> xPer(final int x, final long time, final TimeUnit unit) {
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .xPer(x, time, unit));
+        return fromStream(Streams.xPer(stream(),x, time, unit));
     }
 
     /**
@@ -3072,7 +3067,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * @see cyclops.stream.ReactiveSeq#recover(java.util.function.Function)
      */
     @Override
-    default FutureStream<U> recover(final Function<Throwable, ? extends U> fn) {
+    default FutureStream<U> recover(final Function<? super Throwable, ? extends U> fn) {
         return this.onFail(e -> fn.apply(e.getCause()));
 
     }
@@ -3081,7 +3076,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * @see cyclops.stream.ReactiveSeq#recover(java.lang.Class, java.util.function.Function)
      */
     @Override
-    default <EX extends Throwable> FutureStream<U> recover(final Class<EX> exceptionClass, final Function<EX, ? extends U> fn) {
+    default <EX extends Throwable> FutureStream<U> recover(final Class<EX> exceptionClass, final Function<? super EX, ? extends U> fn) {
         return this.onFail(exceptionClass, e -> fn.apply((EX) e.getCause()));
     }
 

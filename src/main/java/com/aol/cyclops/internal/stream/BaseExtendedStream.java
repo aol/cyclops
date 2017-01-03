@@ -45,6 +45,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -727,6 +728,11 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return createSeq(new FilteringSpliterator<T>(copyOrGet(),fn).compose(), reversible,split);
 
     }
+    @Override
+    public final ReactiveSeq<T> filterLazyPredicate(final Supplier<Predicate<? super T>> fn) {
+        return createSeq(new LazyFilteringSpliterator<T>(copyOrGet(),fn), reversible,split);
+
+    }
 
 
 
@@ -1004,17 +1010,78 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public ReactiveSeq<T> xPer(final int x, final long time, final TimeUnit t) {
-        return createSeq(Streams.xPer(this, x, time, t), reversible,split);
+        final long next = t.toNanos(time);
+        Supplier<Function<? super T, ? extends T>> lazy = ()-> {
+
+            long[] last = {-1};
+            int[] count = {0};
+            return a-> {
+                if (++count[0] < x)
+                    return a;
+                count[0] = 0;
+                final long sleepFor = next - (System.nanoTime() - last[0]);
+
+                LockSupport.parkNanos(sleepFor);
+
+                last[0] = System.nanoTime();
+                return a;
+            };
+        };
+        return mapLazyFn(lazy);
+
+    }
+
+    @Override
+    public  <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn){
+        //not composable to the 'left' (as statefulness is lost)
+        return createSeq(new LazyMappingSpliterator<T,R>(this.copyOrGet(),fn), reversible,split);
+
     }
 
     @Override
     public ReactiveSeq<T> onePer(final long time, final TimeUnit t) {
-        return createSeq(Streams.onePer(this, time, t), reversible,split);
+        final long next = t.toNanos(time);
+        Supplier<Function<? super T, ? extends T>> lazy = ()-> {
+
+            long[] last = {-1};
+            return a-> {
+                final long sleepFor = next - (System.nanoTime() - last[0]);
+
+                LockSupport.parkNanos(sleepFor);
+
+                last[0] = System.nanoTime();
+                return a;
+            };
+        };
+        return mapLazyFn(lazy);
+
     }
 
     @Override
     public ReactiveSeq<T> debounce(final long time, final TimeUnit t) {
-        return createSeq(Streams.debounce(this, time, t), reversible,split);
+        final long timeNanos = t.toNanos(time);
+        final long next = t.toNanos(time);
+        Supplier<Predicate<? super T>> lazy = ()-> {
+            final long[] last = {0};
+            long[] elapsedNanos = {1};
+            return a-> {
+
+                T nextValue = null;
+                if (elapsedNanos[0] > 0) {
+
+
+                    if (last[0] == 0) {
+                        last[0] = System.nanoTime();
+                        return true;
+                    }
+                    elapsedNanos[0] = timeNanos - (System.nanoTime() - last[0]);
+                }
+
+                return false;
+            };
+        };
+        return filterLazyPredicate(lazy);
+
     }
 
     @Override
@@ -1055,12 +1122,40 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public ReactiveSeq<T> fixedDelay(final long l, final TimeUnit unit) {
-        return createSeq(Streams.fixedDelay(this, l, unit), this.reversible,split);
+        final long elapsedNanos = unit.toNanos(l);
+        final long millis = elapsedNanos / 1000000;
+        final int nanos = (int) (elapsedNanos - millis * 1000000);
+        return map(a->{
+            try {
+
+                Thread.sleep(Math.max(0, millis), Math.max(0, nanos));
+                return a;
+            } catch (final InterruptedException e) {
+                throw ExceptionSoftener.throwSoftenedException(e);
+
+            }
+        });
+        //return createSeq(Streams.fixedDelay(this, l, unit), this.reversible,split);
     }
 
     @Override
     public ReactiveSeq<T> jitter(final long l) {
-        return createSeq(Streams.jitter(this, l), this.reversible,split);
+
+        final Random r = new Random();
+        return map(a->{
+            try {
+                final long elapsedNanos = (long) (l * r.nextDouble());
+                final long millis = elapsedNanos / 1000000;
+                final int nanos = (int) (elapsedNanos - millis * 1000000);
+                Thread.sleep(Math.max(0, millis), Math.max(0, nanos));
+                return a;
+            } catch (final InterruptedException e) {
+                throw ExceptionSoftener.throwSoftenedException(e);
+
+            }
+        });
+
+       // return createSeq(Streams.jitter(this, l), this.reversible,split);
     }
 
     @Override
@@ -1138,13 +1233,13 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
     @Override
-    public ReactiveSeq<T> recover(final Function<Throwable, ? extends T> fn) {
-        return createSeq(Streams.recover(this, fn), this.reversible,split);
+    public ReactiveSeq<T> recover(final Function<? super Throwable, ? extends T> fn) {
+        return createSeq(new RecoverSpliterator<T,Throwable>(copyOrGet(),fn,Throwable.class), this.reversible,split);
     }
 
     @Override
-    public <EX extends Throwable> ReactiveSeq<T> recover(final Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
-        return createSeq(Streams.recover(this, exceptionClass, fn), this.reversible,split);
+    public <EX extends Throwable> ReactiveSeq<T> recover(final Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
+        return createSeq(new RecoverSpliterator<T,EX>(copyOrGet(),fn,exceptionClass), this.reversible,split);
     }
     
 

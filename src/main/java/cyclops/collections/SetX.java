@@ -995,12 +995,12 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     }
 
     @Override
-    default SetX<T> recover(final Function<Throwable, ? extends T> fn) {
+    default SetX<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return (SetX<T>)MutableCollectionX.super.recover(fn);
     }
 
     @Override
-    default <EX extends Throwable> SetX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+    default <EX extends Throwable> SetX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (SetX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
     }
 

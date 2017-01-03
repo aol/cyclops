@@ -1170,12 +1170,12 @@ public interface PStackX<T> extends To<PStackX<T>>,
     }
 
     @Override
-    default PStackX<T> recover(final Function<Throwable, ? extends T> fn) {
+    default PStackX<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return (PStackX<T>)PersistentCollectionX.super.recover(fn);
     }
 
     @Override
-    default <EX extends Throwable> PStackX<T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+    default <EX extends Throwable> PStackX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (PStackX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
     }
 
