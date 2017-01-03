@@ -4,9 +4,9 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;
 import cyclops.box.MutableInt;
-import com.aol.cyclops.internal.invokedynamic.CheckedTriFunction;
+import com.aol.cyclops2.internal.invokedynamic.CheckedTriFunction;
 import cyclops.monads.WitnessType;
-import com.aol.cyclops.util.ExceptionSoftener;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
@@ -545,7 +545,7 @@ public class FluentFunctions {
         }
 
         /* (non-Javadoc)
-         * @see cyclops.function.Reader#map(java.util.function.Function)
+         * @see cyclops2.function.Reader#map(java.util.function.Function)
          */
         @Override
         public <R1> FluentFunction<T, R1> map(final Function<? super R, ? extends R1> f2) {
@@ -553,7 +553,7 @@ public class FluentFunctions {
         }
 
         /* (non-Javadoc)
-         * @see cyclops.function.Reader#flatMap(java.util.function.Function)
+         * @see cyclops2.function.Reader#flatMap(java.util.function.Function)
          */
         @Override
         public <R1> FluentFunction<T, R1> flatMap(final Function<? super R, ? extends Reader<T, R1>> f) {
@@ -1261,7 +1261,7 @@ public class FluentFunctions {
         }
 
         /* (non-Javadoc)
-         * @see com.aol.cyclops.util.function.TriFunction#apply(java.lang.Object, java.lang.Object, java.lang.Object)
+         * @see com.aol.cyclops2.util.function.TriFunction#apply(java.lang.Object, java.lang.Object, java.lang.Object)
          */
         @Override
         public R apply(final T1 t1, final T2 t2, final T3 t3) {

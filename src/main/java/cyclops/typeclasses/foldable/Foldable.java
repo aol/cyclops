@@ -1,7 +1,7 @@
 package cyclops.typeclasses.foldable;
 
 import cyclops.function.Monoid;
-import com.aol.cyclops.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher;
 
 import java.util.function.BinaryOperator;
 

@@ -24,7 +24,7 @@ public class ExponentialBackofWaitStrategy<T> implements WaitStrategy<T> {
     }
 
     /* (non-Javadoc)
-     * @see cyclops.async.wait.WaitStrategy#take(cyclops.async.wait.WaitStrategy.Takeable)
+     * @see cyclops2.async.wait.WaitStrategy#take(cyclops2.async.wait.WaitStrategy.Takeable)
      */
     @Override
     public T take(final WaitStrategy.Takeable<T> t) throws InterruptedException {
@@ -41,7 +41,7 @@ public class ExponentialBackofWaitStrategy<T> implements WaitStrategy<T> {
     }
 
     /* (non-Javadoc)
-     * @see cyclops.async.wait.WaitStrategy#offer(cyclops.async.wait.WaitStrategy.Offerable)
+     * @see cyclops2.async.wait.WaitStrategy#offer(cyclops2.async.wait.WaitStrategy.Offerable)
      */
     @Override
     public boolean offer(final WaitStrategy.Offerable o) throws InterruptedException {

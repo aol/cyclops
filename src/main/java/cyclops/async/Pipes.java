@@ -21,15 +21,15 @@ import org.reactivestreams.Subscriber;
 import cyclops.box.LazyImmutable;
 import cyclops.collections.immutable.PMapX;
 import cyclops.collections.ListX;
-import com.aol.cyclops.react.threads.SequentialElasticPools;
-import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
-import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.react.threads.SequentialElasticPools;
+import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
+import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * Pipes : Stores and manages cyclops-react Adapters for cross-thread communication
+ * Pipes : Stores and manages cyclops2-react Adapters for cross-thread communication
  * 
  * Connected Streams will not be able to complete collect or reduce style methods unless the underlying Adapter for data transfer is closed.
  * I.e. connected Streams remain connected until either the Adapter is closed, or they disconnect (due to a limit for example).

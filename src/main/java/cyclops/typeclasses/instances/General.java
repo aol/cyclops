@@ -1,6 +1,6 @@
 package cyclops.typeclasses.instances;
 
-import com.aol.cyclops.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.function.Fn3;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.Pure;

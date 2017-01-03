@@ -21,8 +21,8 @@ import java.util.stream.Stream;
 import org.jooq.lambda.Seq;
 
 import cyclops.async.Queue.ClosedQueueException;
-import com.aol.cyclops.react.async.subscription.Continueable;
-import com.aol.cyclops.types.futurestream.Continuation;
+import com.aol.cyclops2.react.async.subscription.Continueable;
+import com.aol.cyclops2.types.futurestream.Continuation;
 
 import lombok.AllArgsConstructor;
 

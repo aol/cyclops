@@ -1,15 +1,14 @@
 package cyclops.collections;
 
-import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.data.collections.extensions.lazy.LazyDequeX;
-import com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX;
+import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
+import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.Streams;
 import cyclops.control.Trampoline;
-import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.types.To;
+import com.aol.cyclops2.types.OnEmptySwitch;
+import com.aol.cyclops2.types.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import org.jooq.lambda.tuple.Tuple2;
@@ -247,7 +246,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     DequeX<T> withCollector(Collector<T, ?, Deque<T>> collector);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
     @Override
     default <R1, R2, R3, R> DequeX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -259,7 +258,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
     @Override
     default <R1, R2, R3, R> DequeX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -272,7 +271,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
      */
     @Override
     default <R1, R2, R> DequeX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -283,7 +282,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
      */
     @Override
     default <R1, R2, R> DequeX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -295,7 +294,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> DequeX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -305,7 +304,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> DequeX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -315,7 +314,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         return (DequeX)MutableCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
+     * @see com.aol.cyclops2.sequence.traits.ConvertableSequence#toListX()
      */
     @Override
     default DequeX<T> toDequeX() {
@@ -328,7 +327,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     public <T> Collector<T, ?, Deque<T>> getCollector();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#from(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#from(java.util.Collection)
      */
     @Override
     default <T1> DequeX<T1> from(final Collection<T1> c) {
@@ -336,7 +335,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#fromStream(java.util.stream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#fromStream(java.util.stream.Stream)
      */
     @Override
     default <X> DequeX<X> fromStream(final Stream<X> stream) {
@@ -390,7 +389,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)
      */
     @Override
     default <R> DequeX<R> unit(final Collection<R> col) {
@@ -398,7 +397,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Pure#unit(java.lang.Object)
+     * @see com.aol.cyclops2.types.Pure#unit(java.lang.Object)
      */
     @Override
     default <R> DequeX<R> unit(final R value) {
@@ -406,7 +405,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFunctor#unitIterable(java.util.Iterator)
+     * @see com.aol.cyclops2.types.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
     default <R> DequeX<R> unitIterator(final Iterator<R> it) {
@@ -423,7 +422,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#reverse()
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#reverse()
      */
     @Override
     default DequeX<T> reverse() {
@@ -432,7 +431,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#filter(java.util.function.Predicate)
      */
     @Override
     default DequeX<T> filter(final Predicate<? super T> pred) {
@@ -441,7 +440,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#map(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#map(java.util.function.Function)
      */
     @Override
     default <R> DequeX<R> map(final Function<? super T, ? extends R> mapper) {
@@ -450,7 +449,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#flatMap(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#flatMap(java.util.function.Function)
      */
     @Override
     default <R> DequeX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -459,7 +458,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#limit(long)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#limit(long)
      */
     @Override
     default DequeX<T> limit(final long num) {
@@ -478,7 +477,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         return (DequeX<T>) MutableCollectionX.super.skip(num);
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#skip(long)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#skip(long)
      */
     @Override
     default DequeX<T> skip(final long num) {
@@ -487,7 +486,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#takeWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#takeWhile(java.util.function.Predicate)
      */
     @Override
     default DequeX<T> takeWhile(final Predicate<? super T> p) {
@@ -496,7 +495,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#takeRight(int)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#takeRight(int)
      */
     @Override
     default DequeX<T> takeRight(final int num) {
@@ -504,7 +503,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#dropRight(int)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#dropRight(int)
      */
     @Override
     default DequeX<T> dropRight(final int num) {
@@ -512,7 +511,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#dropWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#dropWhile(java.util.function.Predicate)
      */
     @Override
     default DequeX<T> dropWhile(final Predicate<? super T> p) {
@@ -521,7 +520,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#takeUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#takeUntil(java.util.function.Predicate)
      */
     @Override
     default DequeX<T> takeUntil(final Predicate<? super T> p) {
@@ -530,7 +529,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#dropUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#dropUntil(java.util.function.Predicate)
      */
     @Override
     default DequeX<T> dropUntil(final Predicate<? super T> p) {
@@ -538,7 +537,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#trampoline(java.util.function.Function)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -547,7 +546,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#slice(long, long)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#slice(long, long)
      */
     @Override
     default DequeX<T> slice(final long from, final long to) {
@@ -555,7 +554,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(int)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(int)
      */
     @Override
     default DequeX<ListX<T>> grouped(final int groupSize) {
@@ -563,7 +562,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function, java.util.stream.Collector)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
     default <K, A, D> DequeX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
@@ -571,7 +570,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function)
      */
     @Override
     default <K> DequeX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
@@ -579,7 +578,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable)
      */
     @Override
     default <U> DequeX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -587,7 +586,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> DequeX<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -598,7 +597,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> DequeX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -607,7 +606,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#sliding(int)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#sliding(int)
      */
     @Override
     default DequeX<PVectorX<T>> sliding(final int windowSize) {
@@ -615,7 +614,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#sliding(int, int)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#sliding(int, int)
      */
     @Override
     default DequeX<PVectorX<T>> sliding(final int windowSize, final int increment) {
@@ -623,7 +622,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanLeft(cyclops.function.Monoid)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#scanLeft(cyclops2.function.Monoid)
      */
     @Override
     default DequeX<T> scanLeft(final Monoid<T> monoid) {
@@ -631,7 +630,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     default <U> DequeX<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
@@ -639,7 +638,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanRight(cyclops.function.Monoid)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#scanRight(cyclops2.function.Monoid)
      */
     @Override
     default DequeX<T> scanRight(final Monoid<T> monoid) {
@@ -647,7 +646,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     default <U> DequeX<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
@@ -655,7 +654,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#sorted(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#sorted(java.util.function.Function)
      */
     @Override
     default <U extends Comparable<? super U>> DequeX<T> sorted(final Function<? super T, ? extends U> function) {
@@ -664,7 +663,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#plus(java.lang.Object)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#plus(java.lang.Object)
      */
     @Override
     default DequeX<T> plus(final T e) {
@@ -673,7 +672,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#plusAll(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#plusAll(java.util.Collection)
      */
     @Override
     default DequeX<T> plusAll(final Collection<? extends T> list) {
@@ -682,7 +681,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#minus(java.lang.Object)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#minus(java.lang.Object)
      */
     @Override
     default DequeX<T> minus(final Object e) {
@@ -691,7 +690,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#minusAll(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#minusAll(java.util.Collection)
      */
     @Override
     default DequeX<T> minusAll(final Collection<?> list) {
@@ -700,7 +699,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.CollectionX#peek(java.util.function.Consumer)
+     * @see com.aol.cyclops2.collections.extensions.CollectionX#peek(java.util.function.Consumer)
      */
     @Override
     default DequeX<T> peek(final Consumer<? super T> c) {
@@ -709,7 +708,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#cycle(int)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#cycle(int)
      */
     @Override
     default DequeX<T> cycle(final long times) {
@@ -718,7 +717,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#cycle(com.aol.cyclops.sequence.Monoid, int)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#cycle(com.aol.cyclops2.sequence.Monoid, int)
      */
     @Override
     default DequeX<T> cycle(final Monoid<T> m, final long times) {
@@ -727,7 +726,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#cycleWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#cycleWhile(java.util.function.Predicate)
      */
     @Override
     default DequeX<T> cycleWhile(final Predicate<? super T> predicate) {
@@ -736,7 +735,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#cycleUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#cycleUntil(java.util.function.Predicate)
      */
     @Override
     default DequeX<T> cycleUntil(final Predicate<? super T> predicate) {
@@ -745,7 +744,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> DequeX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -756,7 +755,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> DequeX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -765,7 +764,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> DequeX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -775,7 +774,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#zipWithIndex()
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zipWithIndex()
      */
     @Override
     default DequeX<Tuple2<T, Long>> zipWithIndex() {
@@ -784,7 +783,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#distinct()
+     * @see com.aol.cyclops2.lambda.monads.Traversable#distinct()
      */
     @Override
     default DequeX<T> distinct() {
@@ -793,7 +792,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#sorted()
+     * @see com.aol.cyclops2.lambda.monads.Traversable#sorted()
      */
     @Override
     default DequeX<T> sorted() {
@@ -802,7 +801,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#sorted(java.util.Comparator)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#sorted(java.util.Comparator)
      */
     @Override
     default DequeX<T> sorted(final Comparator<? super T> c) {
@@ -811,7 +810,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#skipWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#skipWhile(java.util.function.Predicate)
      */
     @Override
     default DequeX<T> skipWhile(final Predicate<? super T> p) {
@@ -820,7 +819,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#skipUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#skipUntil(java.util.function.Predicate)
      */
     @Override
     default DequeX<T> skipUntil(final Predicate<? super T> p) {
@@ -829,7 +828,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#limitWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#limitWhile(java.util.function.Predicate)
      */
     @Override
     default DequeX<T> limitWhile(final Predicate<? super T> p) {
@@ -838,7 +837,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#limitUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#limitUntil(java.util.function.Predicate)
      */
     @Override
     default DequeX<T> limitUntil(final Predicate<? super T> p) {
@@ -847,7 +846,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#intersperse(java.lang.Object)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#intersperse(java.lang.Object)
      */
     @Override
     default DequeX<T> intersperse(final T value) {
@@ -856,7 +855,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#shuffle()
+     * @see com.aol.cyclops2.lambda.monads.Traversable#shuffle()
      */
     @Override
     default DequeX<T> shuffle() {
@@ -865,7 +864,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#skipLast(int)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#skipLast(int)
      */
     @Override
     default DequeX<T> skipLast(final int num) {
@@ -874,7 +873,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#limitLast(int)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#limitLast(int)
      */
     @Override
     default DequeX<T> limitLast(final int num) {
@@ -883,7 +882,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#onEmpty(java.lang.Object)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#onEmpty(java.lang.Object)
      */
     @Override
     default DequeX<T> onEmpty(final T value) {
@@ -892,7 +891,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#onEmptyGet(java.util.function.Supplier)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default DequeX<T> onEmptyGet(final Supplier<? extends T> supplier) {
@@ -901,7 +900,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
     default <X extends Throwable> DequeX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
@@ -910,7 +909,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#shuffle(java.util.Random)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#shuffle(java.util.Random)
      */
     @Override
     default DequeX<T> shuffle(final Random random) {
@@ -919,7 +918,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#permutations()
+     * @see com.aol.cyclops2.lambda.monads.Traversable#permutations()
      */
     @Override
     default DequeX<ReactiveSeq<T>> permutations() {
@@ -928,7 +927,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#combinations(int)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#combinations(int)
      */
     @Override
     default DequeX<ReactiveSeq<T>> combinations(final int size) {
@@ -937,7 +936,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#combinations()
+     * @see com.aol.cyclops2.lambda.monads.Traversable#combinations()
      */
     @Override
     default DequeX<ReactiveSeq<T>> combinations() {
@@ -946,7 +945,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#cast(java.lang.Class)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> DequeX<U> cast(final Class<? extends U> type) {
@@ -955,7 +954,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#ofType(java.lang.Class)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#ofType(java.lang.Class)
      */
     @Override
     default <U> DequeX<U> ofType(final Class<? extends U> type) {
@@ -964,7 +963,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#filterNot(java.util.function.Predicate)
      */
     @Override
     default DequeX<T> filterNot(final Predicate<? super T> fn) {
@@ -973,7 +972,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#notNull()
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#notNull()
      */
     @Override
     default DequeX<T> notNull() {
@@ -982,7 +981,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.util.stream.Stream)
      */
     @Override
     default DequeX<T> removeAllS(final Stream<? extends T> stream) {
@@ -991,7 +990,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.lang.Iterable)
      */
     @Override
     default DequeX<T> removeAllS(final Iterable<? extends T> it) {
@@ -1000,7 +999,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.lang.Object[])
      */
     @Override
     default DequeX<T> removeAllS(final T... values) {
@@ -1009,7 +1008,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.lang.Iterable)
      */
     @Override
     default DequeX<T> retainAllS(final Iterable<? extends T> it) {
@@ -1018,7 +1017,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.util.stream.Stream)
      */
     @Override
     default DequeX<T> retainAllS(final Stream<? extends T> seq) {
@@ -1027,7 +1026,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.lang.Object[])
      */
     @Override
     default DequeX<T> retainAllS(final T... values) {
@@ -1036,7 +1035,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#grouped(int, java.util.function.Supplier)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(int, java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<? super T>> DequeX<C> grouped(final int size, final Supplier<C> supplier) {
@@ -1045,7 +1044,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate)
      */
     @Override
     default DequeX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
@@ -1054,7 +1053,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate)
      */
     @Override
     default DequeX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
@@ -1063,7 +1062,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<? super T>> DequeX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
@@ -1072,7 +1071,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<? super T>> DequeX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
@@ -1081,7 +1080,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.standard.MutableCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
     default DequeX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
@@ -1094,7 +1093,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
     default DequeX<T> onEmptySwitch(final Supplier<? extends Deque<T>> supplier) {

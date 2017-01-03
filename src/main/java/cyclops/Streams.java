@@ -1,6 +1,6 @@
 package cyclops;
 
-import com.aol.cyclops.internal.stream.spliterators.*;
+import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.AnyM;
 import cyclops.function.Monoid;
@@ -8,18 +8,18 @@ import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import cyclops.box.Mutable;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
-import com.aol.cyclops.internal.stream.*;
-import com.aol.cyclops.internal.stream.operators.*;
-import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
+import com.aol.cyclops2.internal.stream.*;
+import com.aol.cyclops2.internal.stream.operators.*;
+import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.stream;
-import com.aol.cyclops.types.stream.HeadAndTail;
-import com.aol.cyclops.types.stream.HotStream;
-import com.aol.cyclops.types.stream.NonPausableHotStream;
-import com.aol.cyclops.types.stream.PausableHotStream;
-import com.aol.cyclops.util.ExceptionSoftener;
+import com.aol.cyclops2.types.stream.HeadAndTail;
+import com.aol.cyclops2.types.stream.HotStream;
+import com.aol.cyclops2.types.stream.NonPausableHotStream;
+import com.aol.cyclops2.types.stream.PausableHotStream;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import lombok.AllArgsConstructor;
@@ -34,7 +34,6 @@ import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 import org.reactivestreams.Subscription;
 
-import javax.swing.text.html.Option;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -115,7 +114,7 @@ public class Streams {
      * <pre>
      * {@code
      *
-     *  import static com.aol.cyclops.reactor.Streames.forEach4;
+     *  import static com.aol.cyclops2.reactor.Streames.forEach4;
      *
      *  forEach4(Stream.range(1,10),
     a-> Stream.iterate(a,i->i+1).limit(10),

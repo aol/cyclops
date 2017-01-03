@@ -3,7 +3,7 @@ package cyclops.typeclasses.functor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.aol.cyclops.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher;
 
 /**
  * Functor type class, performs a transformation operation over the supplied data structure

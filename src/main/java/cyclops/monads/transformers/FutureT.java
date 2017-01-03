@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import cyclops.async.Future;
 import cyclops.control.Trampoline;
-import com.aol.cyclops.types.*;
+import com.aol.cyclops2.types.*;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -22,7 +22,7 @@ import org.reactivestreams.Publisher;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.monads.WitnessType;
-import com.aol.cyclops.types.anyM.transformers.ValueTransformer;
+import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
 import cyclops.function.Fn4;
 import cyclops.function.Fn3;
 
@@ -303,7 +303,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(com.aol.cyclops2.types.Value, java.util.function.BiFunction)
      */
     @Override
     public <T2, R> FutureT<W,R> combine(Value<? extends T2> app,
@@ -312,7 +312,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Combiner)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(java.util.function.BinaryOperator, com.aol.cyclops2.types.Combiner)
      */
     @Override
     public FutureT<W, T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
@@ -323,7 +323,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
 
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
      */
     @Override
     public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn) {
@@ -332,7 +332,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#generate()
+     * @see cyclops2.monads.transformers.values.ValueTransformer#generate()
      */
     @Override
     public AnyM<W, ? extends ReactiveSeq<T>> generate() {
@@ -341,7 +341,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     public <T2, R> FutureT<W, R> zip(Iterable<? extends T2> iterable,
@@ -351,7 +351,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
     public <T2, R> FutureT<W, R> zipP(Publisher<? extends T2> publisher,BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -360,7 +360,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
      */
     @Override
     public <U> FutureT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {
@@ -370,7 +370,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
 
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#zip(java.lang.Iterable)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.lang.Iterable)
      */
     @Override
     public <U> FutureT<W, Tuple2<T, U>> zip(Iterable<? extends U> other) {
@@ -380,7 +380,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
 
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
     @Override
     public <T2, R1, R2, R3, R> FutureT<W, R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -392,7 +392,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
     @Override
     public <T2, R1, R2, R3, R> FutureT<W, R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -405,7 +405,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
      */
     @Override
     public <T2, R1, R2, R> FutureT<W, R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -416,7 +416,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
      */
     @Override
     public <T2, R1, R2, R> FutureT<W, R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -428,7 +428,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     public <R1, R> FutureT<W, R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -438,7 +438,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     public <R1, R> FutureT<W, R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -451,7 +451,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
 
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#flatMapI(java.util.function.Function)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#flatMapI(java.util.function.Function)
      */
     @Override
     public <R> FutureT<W, R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -460,7 +460,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ValueTransformer#flatMapP(java.util.function.Function)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#flatMapP(java.util.function.Function)
      */
     @Override
     public <R> FutureT<W, R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {

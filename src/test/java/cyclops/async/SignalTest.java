@@ -1,6 +1,6 @@
 package cyclops.async;
 
-import static com.aol.cyclops.types.futurestream.BaseSimpleReactStream.parallel;
+import static com.aol.cyclops2.types.futurestream.BaseSimpleReactStream.parallel;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 

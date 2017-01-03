@@ -3,7 +3,7 @@ package cyclops.function;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.aol.cyclops.types.Transformable;
+import com.aol.cyclops2.types.Transformable;
 
 /**
  * An interface that represents the Reader monad
@@ -17,7 +17,7 @@ import com.aol.cyclops.types.Transformable;
  * {@code 
  * For comprehension with the Reader Monad, using curried syntax :-
  *  
- * import com.aol.cyclops.control.For;
+ * import com.aol.cyclops2.control.For;
  * 
  * Reader<UserRepository,Integer> res =  For.reader(depth1("bob"))
                                             .reader(a->depth2("bob"))
@@ -47,7 +47,7 @@ import com.aol.cyclops.types.Transformable;
 public interface Reader<T, R> extends Fn1<T, R>, Transformable<R> {
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Transformable#map(java.util.function.Function)
+     * @see com.aol.cyclops2.types.Transformable#map(java.util.function.Function)
      */
     @Override
     default <R1> Reader<T, R1> map(final Function<? super R, ? extends R1> f2) {
@@ -72,7 +72,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R> {
              *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops.reactor.Readers.forEach4;
+     *   import static com.aol.cyclops2.reactor.Readers.forEach4;
      *
         forEach4(Reader.just(1),
                 a-> Reader.just(a+1),
@@ -130,7 +130,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R> {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops.reactor.Readers.forEach3;
+     *   import static com.aol.cyclops2.reactor.Readers.forEach3;
      *
     forEach3(Reader.just(1),
     a-> Reader.just(a+1),
@@ -176,7 +176,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R> {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops.reactor.Readers.forEach;
+     *   import static com.aol.cyclops2.reactor.Readers.forEach;
      *
     forEach(Reader.just(1),
     a-> Reader.just(a+1),

@@ -1,7 +1,7 @@
 package cyclops;
 
-import com.aol.cyclops.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops.types.Zippable;
+import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops2.types.Zippable;
 import cyclops.async.Future;
 import cyclops.collections.*;
 import cyclops.collections.immutable.*;
@@ -44,7 +44,7 @@ public interface Monoids {
      * 
      * }
      * </pre>
-     * @return A Monoid that can combine any cyclops-react extended Collection type
+     * @return A Monoid that can combine any cyclops2-react extended Collection type
      */
     static <T, C extends FluentCollectionX<T>> Monoid<C> collectionXConcat(C identity) {
         return Monoid.of(identity, Semigroups.<T,C>collectionXConcat());
@@ -183,7 +183,7 @@ public interface Monoids {
     }
 
     /**
-     * This Semigroup will attempt to combine JDK Collections. If the Supplied are instances of cyclops-react extended Collections
+     * This Semigroup will attempt to combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
      * or a pCollection persisent collection a new Collection type is created that contains the entries from both supplied collections.
      * If the supplied Collections are standard JDK mutable collections Colleciton b is appended to Collection a and a is returned.
      * 

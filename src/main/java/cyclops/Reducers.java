@@ -26,7 +26,7 @@ import cyclops.collections.immutable.PQueueX;
 import cyclops.collections.immutable.PSetX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.collections.immutable.PVectorX;
-import com.aol.cyclops.types.mixins.TupleWrapper;
+import com.aol.cyclops2.types.mixins.TupleWrapper;
 
 import lombok.experimental.UtilityClass;
 

@@ -1,12 +1,12 @@
 package cyclops.collections;
 
-import com.aol.cyclops.data.collections.extensions.standard.MapXImpl;
+import com.aol.cyclops2.data.collections.extensions.standard.MapXImpl;
 import cyclops.stream.ReactiveSeq;
 import cyclops.Streams;
 import cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.FluentMapX;
-import com.aol.cyclops.types.*;
-import com.aol.cyclops.types.stream.CyclopsCollectable;
+import com.aol.cyclops2.data.collections.extensions.FluentMapX;
+import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.stream.CyclopsCollectable;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
@@ -60,7 +60,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     public <K, V> Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> getCollector();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Folds#stream()
+     * @see com.aol.cyclops2.types.Folds#stream()
      */
     @Override
     default ReactiveSeq<Tuple2<K, V>> stream() {
@@ -128,7 +128,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#map(java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#map(java.util.function.Function)
      */
     default <KR, VR> MapX<KR, VR> flatMap(final BiFunction<? super K, ? super V, ? extends MapX<KR, VR>> fn) {
 
@@ -139,7 +139,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#map(java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#map(java.util.function.Function)
      */
     @Override
     default <R> MapX<K, R> map(final Function<? super V, ? extends R> fn) {
@@ -150,7 +150,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.MapX#bimap(java.util.function.Function, java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.MapX#bimap(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> MapX<R1, R2> bimap(final Function<? super K, ? extends R1> fn1, final Function<? super V, ? extends R2> fn2) {
@@ -167,7 +167,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     boolean isEmpty();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#allMatch(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#allMatch(java.util.function.Predicate)
      */
     @Override
     default boolean allMatch(final Predicate<? super Tuple2<K, V>> c) {
@@ -175,7 +175,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#anyMatch(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#anyMatch(java.util.function.Predicate)
      */
     @Override
     default boolean anyMatch(final Predicate<? super Tuple2<K, V>> c) {
@@ -183,7 +183,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#noneMatch(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#noneMatch(java.util.function.Predicate)
      */
     @Override
     default boolean noneMatch(final Predicate<? super Tuple2<K, V>> c) {
@@ -191,7 +191,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#max(java.util.Comparator)
+     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#max(java.util.Comparator)
      */
     @Override
     default Optional<Tuple2<K, V>> max(final Comparator<? super Tuple2<K, V>> comparator) {
@@ -199,7 +199,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#min(java.util.Comparator)
+     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#min(java.util.Comparator)
      */
     @Override
     default Optional<Tuple2<K, V>> min(final Comparator<? super Tuple2<K, V>> comparator) {
@@ -207,7 +207,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.FluentMapX#plus(java.lang.Object, java.lang.Object)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#plus(java.lang.Object, java.lang.Object)
      */
     @Override
     default MapX<K, V> plus(final K key, final V value) {
@@ -215,7 +215,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.FluentMapX#plusAll(java.util.Map)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#plusAll(java.util.Map)
      */
     @Override
     default MapX<K, V> plusAll(final Map<? extends K, ? extends V> map) {
@@ -223,7 +223,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.FluentMapX#minus(java.lang.Object)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#minus(java.lang.Object)
      */
     @Override
     default MapX<K, V> minus(final Object key) {
@@ -231,7 +231,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.FluentMapX#minusAll(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#minusAll(java.util.Collection)
      */
     @Override
     default MapX<K, V> minusAll(final Collection<?> keys) {
@@ -239,7 +239,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#cast(java.lang.Class)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> MapX<K, U> cast(final Class<? extends U> type) {
@@ -248,7 +248,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#peek(java.util.function.Consumer)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     default MapX<K, V> peek(final Consumer<? super V> c) {
@@ -257,7 +257,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> MapX<K, R> trampoline(final Function<? super V, ? extends Trampoline<? extends R>> mapper) {
@@ -266,7 +266,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops2.lambda.monads.Filters#filter(java.util.function.Predicate)
      */
     @Override
     default MapX<K, V> filter(final Predicate<? super Tuple2<K, V>> fn) {
@@ -275,7 +275,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops2.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default MapX<K, V> filterNot(final Predicate<? super Tuple2<K, V>> fn) {
@@ -284,7 +284,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#notNull()
+     * @see com.aol.cyclops2.lambda.monads.Filters#notNull()
      */
     @Override
     default MapX<K, V> notNull() {
@@ -293,7 +293,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.util.stream.Stream)
      */
     @Override
     default MapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -302,7 +302,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.lang.Iterable)
      */
     @Override
     default MapX<K, V> removeAllS(final Iterable<? extends Tuple2<K, V>> it) {
@@ -311,7 +311,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.lang.Object[])
      */
     @Override
     default MapX<K, V> removeAllS(final Tuple2<K, V>... values) {
@@ -320,7 +320,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.lang.Iterable)
      */
     @Override
     default MapX<K, V> retainAllS(final Iterable<? extends Tuple2<K, V>> it) {
@@ -329,7 +329,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.util.stream.Stream)
      */
     @Override
     default MapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -338,7 +338,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.lang.Object[])
      */
     @Override
     default MapX<K, V> retainAllS(final Tuple2<K, V>... values) {
@@ -348,7 +348,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.BiFunctor#bipeek(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.aol.cyclops2.types.BiFunctor#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default MapX<K, V> bipeek(final Consumer<? super K> c1, final Consumer<? super V> c2) {
@@ -357,7 +357,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.BiFunctor#bicast(java.lang.Class, java.lang.Class)
+     * @see com.aol.cyclops2.types.BiFunctor#bicast(java.lang.Class, java.lang.Class)
      */
     @Override
     default <U1, U2> MapX<U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
@@ -366,7 +366,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.BiFunctor#bitrampoline(java.util.function.Function, java.util.function.Function)
+     * @see com.aol.cyclops2.types.BiFunctor#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> MapX<R1, R2> bitrampoline(final Function<? super K, ? extends Trampoline<? extends R1>> mapper1,
@@ -376,7 +376,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#subscribe(org.reactivestreams.Subscriber)
+     * @see com.aol.cyclops2.types.Traversable#subscribe(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super Tuple2<K, V>> s) {
@@ -385,7 +385,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.OnEmpty#onEmpty(java.lang.Object)
+     * @see com.aol.cyclops2.types.OnEmpty#onEmpty(java.lang.Object)
      */
     @Override
     default MapX<K, V> onEmpty(final Tuple2<K, V> value) {
@@ -394,7 +394,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.OnEmpty#onEmptyGet(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.OnEmpty#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default MapX<K, V> onEmptyGet(final Supplier<? extends Tuple2<K, V>> supplier) {
@@ -403,7 +403,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.OnEmpty#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.OnEmpty#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
     default <X extends Throwable> MapX<K, V> onEmptyThrow(final Supplier<? extends X> supplier) {
@@ -412,7 +412,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
     default MapX<K, V> onEmptySwitch(final Supplier<? extends Map<K, V>> supplier) {

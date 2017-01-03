@@ -1,16 +1,16 @@
 package cyclops.collections.immutable;
 
 
-import com.aol.cyclops.data.collections.extensions.lazy.immutable.LazyPSetX;
-import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
+import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPSetX;
+import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.Reducers;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.collections.ListX;
-import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.types.To;
+import com.aol.cyclops2.types.OnEmptySwitch;
+import com.aol.cyclops2.types.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import org.jooq.lambda.tuple.Tuple2;
@@ -180,7 +180,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
    
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
     @Override
     default <R1, R2, R3, R> PSetX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -192,7 +192,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
     @Override
     default <R1, R2, R3, R> PSetX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -205,7 +205,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
      */
     @Override
     default <R1, R2, R> PSetX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -216,7 +216,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
      */
     @Override
     default <R1, R2, R> PSetX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -228,7 +228,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> PSetX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -238,7 +238,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> PSetX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -376,7 +376,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     public PSetX<T> minusAll(Collection<?> list);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#reverse()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#reverse()
      */
     @Override
     default PSetX<T> reverse() {
@@ -384,7 +384,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#filter(java.util.function.Predicate)
      */
     @Override
     default PSetX<T> filter(final Predicate<? super T> pred) {
@@ -392,7 +392,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#map(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#map(java.util.function.Function)
      */
     @Override
     default <R> PSetX<R> map(final Function<? super T, ? extends R> mapper) {
@@ -400,7 +400,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
      */
     @Override
     default <R> PSetX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -408,7 +408,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#limit(long)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limit(long)
      */
     @Override
     default PSetX<T> limit(final long num) {
@@ -416,7 +416,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#skip(long)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skip(long)
      */
     @Override
     default PSetX<T> skip(final long num) {
@@ -434,7 +434,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#takeWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#takeWhile(java.util.function.Predicate)
      */
     @Override
     default PSetX<T> takeWhile(final Predicate<? super T> p) {
@@ -442,7 +442,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#dropWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#dropWhile(java.util.function.Predicate)
      */
     @Override
     default PSetX<T> dropWhile(final Predicate<? super T> p) {
@@ -450,7 +450,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#takeUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#takeUntil(java.util.function.Predicate)
      */
     @Override
     default PSetX<T> takeUntil(final Predicate<? super T> p) {
@@ -458,7 +458,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#dropUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#dropUntil(java.util.function.Predicate)
      */
     @Override
     default PSetX<T> dropUntil(final Predicate<? super T> p) {
@@ -466,7 +466,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#trampoline(java.util.function.Function)
      */
     @Override
     default <R> PSetX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
@@ -474,7 +474,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#slice(long, long)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#slice(long, long)
      */
     @Override
     default PSetX<T> slice(final long from, final long to) {
@@ -482,7 +482,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.function.Function)
      */
     @Override
     default <U extends Comparable<? super U>> PSetX<T> sorted(final Function<? super T, ? extends U> function) {
@@ -510,7 +510,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> PSetX<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -526,7 +526,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#permutations()
      */
     @Override
     default PSetX<ReactiveSeq<T>> permutations() {
@@ -535,7 +535,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#combinations(int)
      */
     @Override
     default PSetX<ReactiveSeq<T>> combinations(final int size) {
@@ -544,7 +544,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#combinations()
      */
     @Override
     default PSetX<ReactiveSeq<T>> combinations() {
@@ -583,7 +583,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#plusInOrder(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#plusInOrder(java.lang.Object)
      */
     @Override
     default PSetX<T> plusInOrder(final T e) {
@@ -592,7 +592,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(int)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cycle(int)
      */
     @Override
     default PStackX<T> cycle(final long times) {
@@ -603,7 +603,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops2.sequence.Monoid, int)
      */
     @Override
     default PStackX<T> cycle(final Monoid<T> m, final long times) {
@@ -614,7 +614,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycleWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cycleWhile(java.util.function.Predicate)
      */
     @Override
     default PStackX<T> cycleWhile(final Predicate<? super T> predicate) {
@@ -625,7 +625,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.standard.MutableCollectionX#cycleUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cycleUntil(java.util.function.Predicate)
      */
     @Override
     default PStackX<T> cycleUntil(final Predicate<? super T> predicate) {
@@ -636,7 +636,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip(java.util.stream.Stream)
      */
     @Override
     default <U> PSetX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -645,7 +645,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> PSetX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -654,7 +654,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> PSetX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -664,7 +664,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipWithIndex()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zipWithIndex()
      */
     @Override
     default PSetX<Tuple2<T, Long>> zipWithIndex() {
@@ -673,7 +673,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#distinct()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#distinct()
      */
     @Override
     default PSetX<T> distinct() {
@@ -682,7 +682,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#sorted()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#sorted()
      */
     @Override
     default PSetX<T> sorted() {
@@ -691,7 +691,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.Comparator)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.Comparator)
      */
     @Override
     default PSetX<T> sorted(final Comparator<? super T> c) {
@@ -700,7 +700,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#skipWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skipWhile(java.util.function.Predicate)
      */
     @Override
     default PSetX<T> skipWhile(final Predicate<? super T> p) {
@@ -709,7 +709,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#skipUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skipUntil(java.util.function.Predicate)
      */
     @Override
     default PSetX<T> skipUntil(final Predicate<? super T> p) {
@@ -718,7 +718,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#limitWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limitWhile(java.util.function.Predicate)
      */
     @Override
     default PSetX<T> limitWhile(final Predicate<? super T> p) {
@@ -727,7 +727,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#limitUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limitUntil(java.util.function.Predicate)
      */
     @Override
     default PSetX<T> limitUntil(final Predicate<? super T> p) {
@@ -736,7 +736,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#intersperse(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#intersperse(java.lang.Object)
      */
     @Override
     default PSetX<T> intersperse(final T value) {
@@ -745,7 +745,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#shuffle()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#shuffle()
      */
     @Override
     default PSetX<T> shuffle() {
@@ -754,7 +754,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#skipLast(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skipLast(int)
      */
     @Override
     default PSetX<T> skipLast(final int num) {
@@ -763,7 +763,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#limitLast(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limitLast(int)
      */
     @Override
     default PSetX<T> limitLast(final int num) {
@@ -772,7 +772,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
     default PSetX<T> onEmptySwitch(final Supplier<? extends PSet<T>> supplier) {
@@ -782,7 +782,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmpty(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#onEmpty(java.lang.Object)
      */
     @Override
     default PSetX<T> onEmpty(final T value) {
@@ -791,7 +791,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyGet(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default PSetX<T> onEmptyGet(final Supplier<? extends T> supplier) {
@@ -800,7 +800,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
     default <X extends Throwable> PSetX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
@@ -809,7 +809,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#shuffle(java.util.Random)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#shuffle(java.util.Random)
      */
     @Override
     default PSetX<T> shuffle(final Random random) {
@@ -818,7 +818,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#ofType(java.lang.Class)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#ofType(java.lang.Class)
      */
     @Override
     default <U> PSetX<U> ofType(final Class<? extends U> type) {
@@ -827,7 +827,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#filterNot(java.util.function.Predicate)
      */
     @Override
     default PSetX<T> filterNot(final Predicate<? super T> fn) {
@@ -836,7 +836,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#notNull()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#notNull()
      */
     @Override
     default PSetX<T> notNull() {
@@ -845,7 +845,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.util.stream.Stream)
      */
     @Override
     default PSetX<T> removeAllS(final Stream<? extends T> stream) {
@@ -854,7 +854,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Iterable)
      */
     @Override
     default PSetX<T> removeAllS(final Iterable<? extends T> it) {
@@ -863,7 +863,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Object[])
      */
     @Override
     default PSetX<T> removeAllS(final T... values) {
@@ -872,7 +872,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Iterable)
      */
     @Override
     default PSetX<T> retainAllS(final Iterable<? extends T> it) {
@@ -881,7 +881,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.util.stream.Stream)
      */
     @Override
     default PSetX<T> retainAllS(final Stream<? extends T> seq) {
@@ -890,7 +890,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Object[])
      */
     @Override
     default PSetX<T> retainAllS(final T... values) {
@@ -899,7 +899,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
      */
     @Override
     default <U> PSetX<U> cast(final Class<? extends U> type) {

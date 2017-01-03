@@ -25,7 +25,7 @@ import java.util.stream.*;
 import cyclops.Streams;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.AnyM;
-import com.aol.cyclops.types.*;
+import com.aol.cyclops2.types.*;
 import lombok.val;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
@@ -37,17 +37,17 @@ import org.reactivestreams.Publisher;
 
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
 import cyclops.collections.MapX;
-import com.aol.cyclops.internal.stream.SeqUtils;
-import com.aol.cyclops.internal.stream.StreamableImpl;
+import com.aol.cyclops2.internal.stream.SeqUtils;
+import com.aol.cyclops2.internal.stream.StreamableImpl;
 import cyclops.monads.Witness;
-import com.aol.cyclops.types.stream.ConvertableSequence;
-import com.aol.cyclops.types.stream.CyclopsCollectable;
-import com.aol.cyclops.types.stream.HotStream;
-import com.aol.cyclops.types.stream.ToStream;
-import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.stream.CyclopsCollectable;
+import com.aol.cyclops2.types.stream.HotStream;
+import com.aol.cyclops2.types.stream.ToStream;
+import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
 
 import lombok.AllArgsConstructor;
 
@@ -168,7 +168,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
+     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#collectable()
      */
     @Override
     default Collectable<T> collectable() {
@@ -177,7 +177,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     * @see com.aol.cyclops2.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
     default Streamable<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
@@ -186,7 +186,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Streamable<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -203,7 +203,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Traversable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Streamable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -212,7 +212,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -221,7 +221,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -231,7 +231,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
+     * @see com.aol.cyclops2.types.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
     default Streamable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
@@ -240,7 +240,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
+     * @see com.aol.cyclops2.types.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
     default <K, A, D> Streamable<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
@@ -249,7 +249,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#grouped(java.util.function.Function)
+     * @see com.aol.cyclops2.types.Traversable#grouped(java.util.function.Function)
      */
     @Override
     default <K> Streamable<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
@@ -258,7 +258,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#takeWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
     default Streamable<T> takeWhile(final Predicate<? super T> p) {
@@ -267,7 +267,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#dropWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
     default Streamable<T> dropWhile(final Predicate<? super T> p) {
@@ -276,7 +276,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#takeUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
     default Streamable<T> takeUntil(final Predicate<? super T> p) {
@@ -285,7 +285,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#dropUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
     default Streamable<T> dropUntil(final Predicate<? super T> p) {
@@ -294,7 +294,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#dropRight(int)
+     * @see com.aol.cyclops2.types.Traversable#dropRight(int)
      */
     @Override
     default Streamable<T> dropRight(final int num) {
@@ -303,7 +303,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#takeRight(int)
+     * @see com.aol.cyclops2.types.Traversable#takeRight(int)
      */
     @Override
     default Streamable<T> takeRight(final int num) {
@@ -336,7 +336,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.IterableFunctor#unitIterable(java.util.Iterator)
+     * @see com.aol.cyclops2.lambda.monads.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
     default <T> Streamable<T> unitIterator(final Iterator<T> it) {
@@ -643,7 +643,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collect(java.util.stream.Collector)
+     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#collect(java.util.stream.Collector)
      */
     @Override
     default <R, A> R collect(final Collector<? super T, A, R> collector) {

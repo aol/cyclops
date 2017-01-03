@@ -45,7 +45,7 @@ There is an equivalent StreamUtils class for Javaslang Streams.
 === Introduction to Streamable
 
 Streamable is suspended class that represents something that can be Streamed
-repeatedly, Streamable also has suspended large number of operators viewable via http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/streamable/Streamable.html[javadoc].
+repeatedly, Streamable also has suspended large number of operators viewable via http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/streamable/Streamable.html[javadoc].
 
 
 
@@ -495,7 +495,7 @@ ReactiveSeq.of(1, 2, 3, 4, 5, 6)
 ====
 [source,java]
 ----
-import static com.aol.cyclops-react.streams.StreamUtils.sliding;
+import static com.aol.cyclops2-react.streams.StreamUtils.sliding;
 
 List<List> list = sliding(Stream.of(1, 2, 3, 4, 5, 6),3, 2)
                         .collect(Collectors.toList());
@@ -693,7 +693,7 @@ cyclops-react offers many functions for manipulating Streams such as deleteBetwe
 ====
 [source,java]
 ----
-import static com.aol.cyclops-react.streams.StreamUtils.prepend;
+import static com.aol.cyclops2-react.streams.StreamUtils.prepend;
 
 List<String> result =   prepend(Stream.of(1,2,3),100,200,300)
                                  .map(it ->it+"!!")
@@ -716,7 +716,7 @@ List<String> result =   ReactiveSeq.of(1,2,3)
                                  .append(100,200,300)
                                  .map(it ->it+"!!")
                                  .toList();
-import static com.aol.cyclops-react.streams.StreamUtils.appendStream;
+import static com.aol.cyclops2-react.streams.StreamUtils.appendStream;
 
 List<String> result =   appendStream(Stream.of(1,2,3),ReactiveSeq.of(100,200,300))
                                         .map(it ->it+"!!")
@@ -735,7 +735,7 @@ List<String> result =   appendStream(Stream.of(1,2,3),ReactiveSeq.of(100,200,300
 List<String> result =   ReactiveSeq.of(1,2,3).insertAt(1,100,200,300)
                 .map(it ->it+"!!").collect(Collectors.toList());
 
-import static com.aol.cyclops-react.streams.StreamUtils.insertStreamAt;
+import static com.aol.cyclops2-react.streams.StreamUtils.insertStreamAt;
 
 List<String> result =   insertStreamAt(Strean.of(1,2,3),1,Stream.of(100,200,300))
                                      .map(it ->it+"!!")
@@ -758,7 +758,7 @@ List<String> result =   ReactiveSeq.of(1,2,3,4,5,6)
                                  .map(it ->it+"!!")
                                  .toList();
 
-import static com.aol.cyclops-react.streams.StreamUtils.deleteBetween;
+import static com.aol.cyclops2-react.streams.StreamUtils.deleteBetween;
 
 List<String> result =   deleteBetween(Stream.of(1,2,3,4,5,6),2,4)
                                  .map(it ->it+"!!")
@@ -951,7 +951,7 @@ Streamable sieve(Streamable s){
 ====
 [source,java]
 ----
-import static com.aol.cyclops-react.streams.StreamUtils.headAndTailOptional;
+import static com.aol.cyclops2-react.streams.StreamUtils.headAndTailOptional;
 
  public void sieveTest(){
     sieve(IntStream.range(2, 1_000).boxed()).forEach(System.out::println);
@@ -1914,7 +1914,7 @@ StreamUtils.cast(Stream.of(1, "suspended", 2, "b", 3),Integer.class)
      
 === for-comprehensions
 
-http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/ReactiveSeq.html[ReactiveSeq]
+http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/ReactiveSeq.html[ReactiveSeq]
 has suspended number of operators that make it easy to iterate simultanously
 over multiple Streams generating suspended new Stream in the process - these are
 the various overloading versions of forEach2 & forEach3.
@@ -2492,13 +2492,13 @@ Streamable.of(1, 2, 3).permutations()
 The futureOperations operator takes an Executor, and returns the set of available asynchronous terminal operations, each of which returns suspended CompletableFuture. The Stream will be executed on suspended single thread from the supplied executor.
 
 These methods are available via
-http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-sequence-api/6.2.2/com/aol/cyclops-react/sequence/ReactiveSeq.html[ReactiveSeq]
+http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-sequence-api/6.2.2/com/aol/cyclops-react/sequence/ReactiveSeq.html[ReactiveSeq]
 or to plain JDK 8 Streams via
-http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-streams/6.2.2/com/aol/cyclops-react/streams/StreamUtils.html[com.aol.cyclops-react.streams.StreamUtils],
+http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-streams/6.2.2/com/aol/cyclops-react/streams/StreamUtils.html[com.aol.cyclops2-react.streams.StreamUtils],
 for Javaslang Streams use
-http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-javaslang/6.2.2/com/aol/cyclops-react/javaslang/streams/StreamUtils.html[com.aol.cyclops-react.javaslang.streams.StreamUtils].
+http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-javaslang/6.2.2/com/aol/cyclops-react/javaslang/streams/StreamUtils.html[com.aol.cyclops2-react.javaslang.streams.StreamUtils].
 
-The available asynchronous terminal operations as of cylcops 7.1.0 are detailed http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/future/FutureOperations.html[in the FutureOperations javadoc]
+The available asynchronous terminal operations as of cylcops 7.1.0 are detailed http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/future/FutureOperations.html[in the FutureOperations javadoc]
 
 
 ==== FutureOperations

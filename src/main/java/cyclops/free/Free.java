@@ -1,15 +1,13 @@
 package cyclops.free;
 
-import com.aol.cyclops.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher;
 
-import com.aol.cyclops.types.mixins.Printable;
+import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.control.Xor;
-import cyclops.control.either.Either;
 import cyclops.control.either.Either3;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Fn5;
-import cyclops.function.Reader;
 import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -18,7 +16,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * Free monad for cyclops
+ * Free monad for cyclops2
  *
  * Inspiration and influences by https://github.com/xuwei-k/free-monad-java/blob/master/src/main/java/free/Free.java
  * and http://www.slideshare.net/kenbot/running-free-with-the-monads

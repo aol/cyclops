@@ -1,9 +1,9 @@
 package cyclops.collections.immutable;
 
-import com.aol.cyclops.data.collections.extensions.lazy.immutable.LazyPBagX;
-import com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX;
-import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.types.To;
+import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPBagX;
+import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
+import com.aol.cyclops2.types.OnEmptySwitch;
+import com.aol.cyclops2.types.To;
 import cyclops.Reducers;
 import cyclops.collections.ListX;
 import cyclops.control.Trampoline;
@@ -141,7 +141,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
     @Override
     default <R1, R2, R3, R> PBagX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -153,7 +153,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
     @Override
     default <R1, R2, R3, R> PBagX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -166,7 +166,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
      */
     @Override
     default <R1, R2, R> PBagX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -177,7 +177,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
      */
     @Override
     default <R1, R2, R> PBagX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -189,7 +189,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> PBagX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -199,7 +199,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> PBagX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
@@ -328,7 +328,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.sequence.traits.ConvertableSequence#toListX()
+     * @see com.aol.cyclops2.sequence.traits.ConvertableSequence#toListX()
      */
     @Override
     default PBagX<T> toPBagX() {
@@ -336,7 +336,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Pure#unit(java.lang.Object)
+     * @see com.aol.cyclops2.types.Pure#unit(java.lang.Object)
      */
     @Override
     default <R> PBagX<R> unit(final R value) {
@@ -344,7 +344,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.IterableFunctor#unitIterable(java.util.Iterator)
+     * @see com.aol.cyclops2.types.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
     default <R> PBagX<R> unitIterator(final Iterator<R> it) {
@@ -352,7 +352,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX#unit(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX#unit(java.util.Collection)
      */
     @Override
     default <R> PBagX<R> unit(final Collection<R> col) {
@@ -360,7 +360,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX#emptyUnit()
+     * @see com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX#emptyUnit()
      */
     @Override
     default <R> PBagX<R> emptyUnit() {
@@ -375,7 +375,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX#from(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX#from(java.util.Collection)
      */
     @Override
     default <X> PBagX<X> from(final Collection<X> col) {
@@ -383,7 +383,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.data.collections.extensions.persistent.PersistentCollectionX#monoid()
+     * @see com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX#monoid()
      */
     @Override
     default <T> Reducer<PBag<T>> monoid() {
@@ -415,7 +415,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     public PBagX<T> minusAll(Collection<?> list);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#reverse()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#reverse()
      */
     @Override
     default PBagX<T> reverse() {
@@ -423,7 +423,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#filter(java.util.function.Predicate)
      */
     @Override
     default PBagX<T> filter(final Predicate<? super T> pred) {
@@ -431,7 +431,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#map(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#map(java.util.function.Function)
      */
     @Override
     default <R> PBagX<R> map(final Function<? super T, ? extends R> mapper) {
@@ -439,7 +439,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
      */
     @Override
     default <R> PBagX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -447,7 +447,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#limit(long)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limit(long)
      */
     @Override
     default PBagX<T> limit(final long num) {
@@ -455,7 +455,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#skip(long)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skip(long)
      */
     @Override
     default PBagX<T> skip(final long num) {
@@ -473,7 +473,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#takeWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#takeWhile(java.util.function.Predicate)
      */
     @Override
     default PBagX<T> takeWhile(final Predicate<? super T> p) {
@@ -481,7 +481,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#dropWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#dropWhile(java.util.function.Predicate)
      */
     @Override
     default PBagX<T> dropWhile(final Predicate<? super T> p) {
@@ -489,7 +489,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#takeUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#takeUntil(java.util.function.Predicate)
      */
     @Override
     default PBagX<T> takeUntil(final Predicate<? super T> p) {
@@ -497,7 +497,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#dropUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#dropUntil(java.util.function.Predicate)
      */
     @Override
     default PBagX<T> dropUntil(final Predicate<? super T> p) {
@@ -505,7 +505,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#trampoline(java.util.function.Function)
      */
     @Override
     default <R> PBagX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
@@ -513,7 +513,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#slice(long, long)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#slice(long, long)
      */
     @Override
     default PBagX<T> slice(final long from, final long to) {
@@ -521,7 +521,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.function.Function)
      */
     @Override
     default <U extends Comparable<? super U>> PBagX<T> sorted(final Function<? super T, ? extends U> function) {
@@ -549,7 +549,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> PBagX<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -566,7 +566,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#permutations()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#permutations()
      */
     @Override
     default PBagX<ReactiveSeq<T>> permutations() {
@@ -575,7 +575,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#combinations(int)
      */
     @Override
     default PBagX<ReactiveSeq<T>> combinations(final int size) {
@@ -584,7 +584,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#combinations()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#combinations()
      */
     @Override
     default PBagX<ReactiveSeq<T>> combinations() {
@@ -623,7 +623,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#plusInOrder(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#plusInOrder(java.lang.Object)
      */
     @Override
     default PBagX<T> plusInOrder(final T e) {
@@ -632,7 +632,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycle(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#cycle(int)
      */
     @Override
     default PBagX<T> cycle(final long times) {
@@ -641,7 +641,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycle(com.aol.cyclops.sequence.Monoid, int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#cycle(com.aol.cyclops2.sequence.Monoid, int)
      */
     @Override
     default PBagX<T> cycle(final Monoid<T> m, final long times) {
@@ -650,7 +650,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycleWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#cycleWhile(java.util.function.Predicate)
      */
     @Override
     default PBagX<T> cycleWhile(final Predicate<? super T> predicate) {
@@ -659,7 +659,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cycleUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#cycleUntil(java.util.function.Predicate)
      */
     @Override
     default PBagX<T> cycleUntil(final Predicate<? super T> predicate) {
@@ -668,7 +668,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip(java.util.stream.Stream)
      */
     @Override
     default <U> PBagX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -678,7 +678,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> PBagX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -687,7 +687,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> PBagX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -697,7 +697,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#zipWithIndex()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zipWithIndex()
      */
     @Override
     default PBagX<Tuple2<T, Long>> zipWithIndex() {
@@ -706,7 +706,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#distinct()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#distinct()
      */
     @Override
     default PBagX<T> distinct() {
@@ -715,7 +715,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#sorted()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#sorted()
      */
     @Override
     default PBagX<T> sorted() {
@@ -724,7 +724,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.Comparator)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.Comparator)
      */
     @Override
     default PBagX<T> sorted(final Comparator<? super T> c) {
@@ -733,7 +733,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#skipWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skipWhile(java.util.function.Predicate)
      */
     @Override
     default PBagX<T> skipWhile(final Predicate<? super T> p) {
@@ -742,7 +742,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#skipUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skipUntil(java.util.function.Predicate)
      */
     @Override
     default PBagX<T> skipUntil(final Predicate<? super T> p) {
@@ -751,7 +751,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#limitWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limitWhile(java.util.function.Predicate)
      */
     @Override
     default PBagX<T> limitWhile(final Predicate<? super T> p) {
@@ -760,7 +760,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#limitUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limitUntil(java.util.function.Predicate)
      */
     @Override
     default PBagX<T> limitUntil(final Predicate<? super T> p) {
@@ -769,7 +769,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#intersperse(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#intersperse(java.lang.Object)
      */
     @Override
     default PBagX<T> intersperse(final T value) {
@@ -778,7 +778,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#shuffle()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#shuffle()
      */
     @Override
     default PBagX<T> shuffle() {
@@ -787,7 +787,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#skipLast(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skipLast(int)
      */
     @Override
     default PBagX<T> skipLast(final int num) {
@@ -796,7 +796,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#limitLast(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limitLast(int)
      */
     @Override
     default PBagX<T> limitLast(final int num) {
@@ -805,7 +805,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
     default PBagX<T> onEmptySwitch(final Supplier<? extends PBag<T>> supplier) {
@@ -815,7 +815,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmpty(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#onEmpty(java.lang.Object)
      */
     @Override
     default PBagX<T> onEmpty(final T value) {
@@ -824,7 +824,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyGet(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default PBagX<T> onEmptyGet(final Supplier<? extends T> supplier) {
@@ -833,7 +833,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
     default <X extends Throwable> PBagX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
@@ -842,7 +842,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#shuffle(java.util.Random)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#shuffle(java.util.Random)
      */
     @Override
     default PBagX<T> shuffle(final Random random) {
@@ -851,7 +851,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#ofType(java.lang.Class)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#ofType(java.lang.Class)
      */
     @Override
     default <U> PBagX<U> ofType(final Class<? extends U> type) {
@@ -860,7 +860,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#filterNot(java.util.function.Predicate)
      */
     @Override
     default PBagX<T> filterNot(final Predicate<? super T> fn) {
@@ -869,7 +869,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#notNull()
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#notNull()
      */
     @Override
     default PBagX<T> notNull() {
@@ -878,7 +878,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.util.stream.Stream)
      */
     @Override
     default PBagX<T> removeAllS(final Stream<? extends T> stream) {
@@ -887,7 +887,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Iterable)
      */
     @Override
     default PBagX<T> removeAllS(final Iterable<? extends T> it) {
@@ -896,7 +896,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Object[])
      */
     @Override
     default PBagX<T> removeAllS(final T... values) {
@@ -905,7 +905,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Iterable)
      */
     @Override
     default PBagX<T> retainAllS(final Iterable<? extends T> it) {
@@ -914,7 +914,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.util.stream.Stream)
      */
     @Override
     default PBagX<T> retainAllS(final Stream<? extends T> seq) {
@@ -923,7 +923,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Object[])
      */
     @Override
     default PBagX<T> retainAllS(final T... values) {
@@ -932,7 +932,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
      */
     @Override
     default <U> PBagX<U> cast(final Class<? extends U> type) {

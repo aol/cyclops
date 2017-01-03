@@ -20,12 +20,12 @@ import cyclops.async.AdaptersModule.SingleContinuation;
 import cyclops.async.AdaptersModule.StreamOfContinuations;
 import cyclops.async.wait.DirectWaitStrategy;
 import cyclops.async.wait.WaitStrategy;
-import com.aol.cyclops.internal.react.exceptions.SimpleReactProcessingException;
-import com.aol.cyclops.react.async.subscription.AlwaysContinue;
-import com.aol.cyclops.react.async.subscription.Continueable;
-import com.aol.cyclops.types.futurestream.Continuation;
-import com.aol.cyclops.util.ExceptionSoftener;
-import com.aol.cyclops.util.SimpleTimer;
+import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
+import com.aol.cyclops2.react.async.subscription.AlwaysContinue;
+import com.aol.cyclops2.react.async.subscription.Continueable;
+import com.aol.cyclops2.types.futurestream.Continuation;
+import com.aol.cyclops2.util.ExceptionSoftener;
+import com.aol.cyclops2.util.SimpleTimer;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

@@ -13,7 +13,7 @@ import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
 import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops.react.async.subscription.Continueable;
+import com.aol.cyclops2.react.async.subscription.Continueable;
 
 import lombok.AccessLevel;
 import lombok.Getter;

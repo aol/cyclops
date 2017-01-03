@@ -1,10 +1,10 @@
 package cyclops.box;
 
-import com.aol.cyclops.types.Transformable;
+import com.aol.cyclops2.types.Transformable;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Zippable;
+import com.aol.cyclops2.types.To;
+import com.aol.cyclops2.types.Zippable;
 import lombok.ToString;
 
 import java.util.Iterator;
@@ -172,7 +172,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Value#stream()
+     * @see com.aol.cyclops2.types.Value#stream()
      */
     @Override
     public ReactiveSeq<T> stream() {
@@ -181,7 +181,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.control.Matchable.ValueAndOptionalMatcher#iterator()
+     * @see com.aol.cyclops2.control.Matchable.ValueAndOptionalMatcher#iterator()
      */
     @Override
     public Iterator<T> iterator() {
@@ -192,7 +192,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#cast(java.lang.Class)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
     public <U> LazyImmutable<U> cast(final Class<? extends U> type) {
@@ -201,7 +201,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#peek(java.util.function.Consumer)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     public LazyImmutable<T> peek(final Consumer<? super T> c) {
@@ -210,7 +210,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     public <R> LazyImmutable<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {

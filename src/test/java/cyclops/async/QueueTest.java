@@ -1,10 +1,9 @@
 package cyclops.async;
 
-import static com.aol.cyclops.types.futurestream.BaseSimpleReactStream.parallel;
+import static com.aol.cyclops2.types.futurestream.BaseSimpleReactStream.parallel;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -24,7 +23,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.types.futurestream.BaseSimpleReactStream;
+import com.aol.cyclops2.types.futurestream.BaseSimpleReactStream;
 
 public class QueueTest {
 

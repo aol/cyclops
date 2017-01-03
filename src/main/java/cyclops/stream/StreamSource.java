@@ -8,10 +8,10 @@ import cyclops.async.Adapter;
 import cyclops.async.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.async.QueueFactory;
-import com.aol.cyclops.util.stream.pushable.MultipleStreamSource;
-import com.aol.cyclops.util.stream.pushable.PushableLazyFutureStream;
-import com.aol.cyclops.util.stream.pushable.PushableReactiveSeq;
-import com.aol.cyclops.util.stream.pushable.PushableStream;
+import com.aol.cyclops2.util.stream.pushable.MultipleStreamSource;
+import com.aol.cyclops2.util.stream.pushable.PushableLazyFutureStream;
+import com.aol.cyclops2.util.stream.pushable.PushableReactiveSeq;
+import com.aol.cyclops2.util.stream.pushable.PushableStream;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -188,7 +188,7 @@ public class StreamSource {
 
     /**
      * Connect multiple Streams to a Pushable datasource, each Stream will recieve the same
-     * data. In this backpresure is applied by using a LinkedBlockingQueue. @see cyclops.stream.StreamSource#ofMultiple(QueueFactory)
+     * data. In this backpresure is applied by using a LinkedBlockingQueue. @see cyclops2.stream.StreamSource#ofMultiple(QueueFactory)
      * For more granular management of Adapter based backpressure. Adapters can be backed by non-blocking data structures and different backpressure strategies applied
      * <pre>
      * {@code 
@@ -361,7 +361,7 @@ public class StreamSource {
     /**
      * A builder for pushable Streams that apply backpressure if producing Streams exceed the capacity of consuming Streams.
      * 
-     * In this backpresure is applied by using a LinkedBlockingQueue. @see cyclops.stream.StreamSource#ofMultiple(QueueFactory)
+     * In this backpresure is applied by using a LinkedBlockingQueue. @see cyclops2.stream.StreamSource#ofMultiple(QueueFactory)
      * For more granular management of Adapter based backpressure. Adapters can be backed by non-blocking data structures and different backpressure strategies applied
     
        <pre>
@@ -515,7 +515,7 @@ public class StreamSource {
      * </pre>
      * 
      * 
-     * @return PushableStream that can accept data to push into a {@see cyclops.stream.ReactiveSeq}
+     * @return PushableStream that can accept data to push into a {@see cyclops2.stream.ReactiveSeq}
      * to push it to the Stream
      */
     public <T> PushableReactiveSeq<T> reactiveSeq() {

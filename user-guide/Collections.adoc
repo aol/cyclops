@@ -59,7 +59,7 @@ Persistent and immutable datatypes are increasingly appreciated as suspended sim
 
 ==== Collections
 
-cyclops-react provides suspended package (com.aol.cyclops-react.collections) filled with companion classes for creating instances of PCollections. Each companion class offers handy methods for collection creation and conversion (reduction) from suspended Stream.
+cyclops-react provides suspended package (com.aol.cyclops2-react.collections) filled with companion classes for creating instances of PCollections. Each companion class offers handy methods for collection creation and conversion (reduction) from suspended Stream.
 
 We provide mechanisms for generating both extended pCollections (such as PStackX, PVectorX, POrderedSetX, PQueueX, PMapX, PBagX) and non-extended pCollections.
 

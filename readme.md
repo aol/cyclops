@@ -18,7 +18,7 @@ Future & functional based programming via JDK compatible extensions for Java 8 a
 where x.y.z represents the latest version
 
 ```groovy
-compile 'com.aol.simplereact:cyclops-react:x.y.z'
+compile cyclops2
 ```
 
 ## Maven

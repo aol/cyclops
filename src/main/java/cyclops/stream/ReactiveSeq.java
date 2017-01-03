@@ -5,24 +5,22 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
 import java.util.stream.*;
 
-import com.aol.cyclops.internal.stream.spliterators.push.PushingSpliterator;
-import cyclops.async.Future;
+import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.AnyM;
 import cyclops.async.*;
 import cyclops.control.Trampoline;
-import com.aol.cyclops.internal.stream.ReactiveSeqFutureOpterationsImpl;
-import com.aol.cyclops.internal.stream.spliterators.*;
-import com.aol.cyclops.types.*;
-import com.aol.cyclops.types.futurestream.Continuation;
-import com.aol.cyclops.types.stream.*;
-import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
+import com.aol.cyclops2.internal.stream.ReactiveSeqFutureOpterationsImpl;
+import com.aol.cyclops2.internal.stream.spliterators.*;
+import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.futurestream.Continuation;
+import com.aol.cyclops2.types.stream.*;
+import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import cyclops.*;
 import cyclops.async.Queue;
 import cyclops.function.Monoid;
@@ -33,14 +31,14 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
 import cyclops.collections.MapX;
-import com.aol.cyclops.types.anyM.AnyMSeq;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.monads.Witness;
-import com.aol.cyclops.types.stream.reactive.ReactiveSubscriber;
-import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
-import com.aol.cyclops.util.ExceptionSoftener;
+import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
+import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Fn4;
 import cyclops.function.Fn3;
 
@@ -324,7 +322,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Pure#unit(java.lang.Object)
+     * @see com.aol.cyclops2.types.Pure#unit(java.lang.Object)
      */
     @Override
     public <T> ReactiveSeq<T> unit(T unit);
@@ -412,7 +410,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> ReactiveSeq<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -431,7 +429,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     <U, R> ReactiveSeq<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Unwrapable#unwrap()
+     * @see com.aol.cyclops2.types.Unwrapable#unwrap()
      */
     @Override
     <R> R unwrap();
@@ -1138,7 +1136,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> sorted();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     * @see com.aol.cyclops2.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
     default ReactiveSeq<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
@@ -1160,7 +1158,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> sorted(Comparator<? super T> c);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#takeWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
     default ReactiveSeq<T> takeWhile(final Predicate<? super T> p) {
@@ -1185,7 +1183,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#dropWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
     default ReactiveSeq<T> dropWhile(final Predicate<? super T> p) {
@@ -1194,7 +1192,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#takeUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
     default ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {
@@ -1203,7 +1201,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#dropUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
     default ReactiveSeq<T> dropUntil(final Predicate<? super T> p) {
@@ -1212,7 +1210,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#dropRight(int)
+     * @see com.aol.cyclops2.types.Traversable#dropRight(int)
      */
     @Override
     default ReactiveSeq<T> dropRight(final int num) {
@@ -1221,7 +1219,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Traversable#takeRight(int)
+     * @see com.aol.cyclops2.types.Traversable#takeRight(int)
      */
     @Override
     default ReactiveSeq<T> takeRight(final int num) {

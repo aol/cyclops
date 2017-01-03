@@ -10,7 +10,7 @@ import org.junit.Test;
 import cyclops.async.wait.ExponentialBackofWaitStrategy;
 import cyclops.async.wait.WaitStrategy.Offerable;
 import cyclops.async.wait.WaitStrategy.Takeable;
-import com.aol.cyclops.util.SimpleTimer;
+import com.aol.cyclops2.util.SimpleTimer;
 
 public class ExponentialBackofWaitStrategyTest {
 	int called = 0;

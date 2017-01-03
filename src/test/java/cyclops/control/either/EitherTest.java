@@ -1,4 +1,4 @@
-package com.aol.cyclops.sum.types;
+package com.aol.cyclops2.sum.types;
 
 import cyclops.Monoids;
 import cyclops.Reducers;
@@ -11,7 +11,6 @@ import cyclops.collections.immutable.PSetX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.control.*;
 import cyclops.control.either.Either;
-import cyclops.control.either.Either3;
 import cyclops.function.Monoid;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;

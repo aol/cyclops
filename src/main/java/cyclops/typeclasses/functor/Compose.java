@@ -2,7 +2,7 @@ package cyclops.typeclasses.functor;
 
 import java.util.function.Function;
 
-import com.aol.cyclops.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

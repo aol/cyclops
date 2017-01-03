@@ -5,8 +5,8 @@ import cyclops.control.Xor;
 import cyclops.async.Adapter;
 import cyclops.async.Queue;
 import cyclops.async.Topic;
-import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.monads.WitnessType;
 
 import java.util.concurrent.BlockingQueue;
@@ -23,8 +23,8 @@ public class Matchables {
 
 
     /**
-     * Create a Pattern Matcher on cyclops-react adapter type (note this will only match
-     * on known types within the cyclops-react library)
+     * Create a Pattern Matcher on cyclops2-react adapter type (note this will only match
+     * on known types within the cyclops2-react library)
      * 
      * <pre>
      * {@code 

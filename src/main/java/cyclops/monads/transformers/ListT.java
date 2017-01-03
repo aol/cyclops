@@ -12,7 +12,7 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import cyclops.control.Maybe;
-import com.aol.cyclops.types.FoldableTraversable;
+import com.aol.cyclops2.types.FoldableTraversable;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import org.jooq.lambda.tuple.Tuple2;
@@ -22,17 +22,17 @@ import org.jooq.lambda.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
+import com.aol.cyclops2.data.collections.extensions.FluentSequenceX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.collections.DequeX;
 import cyclops.collections.ListX;
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Traversable;
+import com.aol.cyclops2.types.To;
+import com.aol.cyclops2.types.Traversable;
 import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
-import com.aol.cyclops.types.anyM.transformers.FoldableTransformerSeq;
-import com.aol.cyclops.types.stream.CyclopsCollectable;
+import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
+import com.aol.cyclops2.types.stream.CyclopsCollectable;
 
 /**
  * Monad Transformer for Java Lists nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
@@ -267,7 +267,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Pure#unit(java.lang.Object)
+     * @see com.aol.cyclops2.types.Pure#unit(java.lang.Object)
      */
     public <T> ListT<W,T> unit(final T unit) {
         return of(run.unit(ListX.of(unit)));
@@ -285,7 +285,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.stream.CyclopsCollectable#collectable()
+     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#collectable()
      
     @Override
     public Collectable<T> collectable() {
@@ -336,7 +336,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     * @see cyclops2.monads.transformers.values.ListT#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
     public ListT<W,T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
@@ -345,7 +345,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#cycle(int)
+     * @see cyclops2.monads.transformers.values.ListT#cycle(int)
      */
     @Override
     public ListT<W,T> cycle(final long times) {
@@ -354,7 +354,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#cycle(cyclops.function.Monoid, int)
+     * @see cyclops2.monads.transformers.values.ListT#cycle(cyclops2.function.Monoid, int)
      */
     @Override
     public ListT<W,T> cycle(final Monoid<T> m, final long times) {
@@ -363,7 +363,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#cycleWhile(java.util.function.Predicate)
+     * @see cyclops2.monads.transformers.values.ListT#cycleWhile(java.util.function.Predicate)
      */
     @Override
     public ListT<W,T> cycleWhile(final Predicate<? super T> predicate) {
@@ -372,7 +372,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#cycleUntil(java.util.function.Predicate)
+     * @see cyclops2.monads.transformers.values.ListT#cycleUntil(java.util.function.Predicate)
      */
     @Override
     public ListT<W,T> cycleUntil(final Predicate<? super T> predicate) {
@@ -381,7 +381,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see cyclops2.monads.transformers.values.ListT#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     public <U, R> ListT<W,R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -390,7 +390,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.ListT#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see cyclops2.monads.transformers.ListT#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     public <U, R> ListT<W,R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -401,7 +401,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#zipStream(java.util.stream.Stream)
+     * @see cyclops2.monads.transformers.values.ListT#zipStream(java.util.stream.Stream)
      */
     @Override
     public <U> ListT<W,Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -410,7 +410,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.ListT#zip(java.lang.Iterable)
+     * @see cyclops2.monads.transformers.ListT#zip(java.lang.Iterable)
      */
     @Override
     public <U> ListT<W,Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -421,7 +421,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see cyclops2.monads.transformers.values.ListT#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     public <S, U> ListT<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -430,7 +430,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see cyclops2.monads.transformers.values.ListT#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     public <T2, T3, T4> ListT<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -440,7 +440,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#zipWithIndex()
+     * @see cyclops2.monads.transformers.values.ListT#zipWithIndex()
      */
     @Override
     public ListT<W,Tuple2<T, Long>> zipWithIndex() {
@@ -449,7 +449,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#sliding(int)
+     * @see cyclops2.monads.transformers.values.ListT#sliding(int)
      */
     @Override
     public ListT<W,PVectorX<T>> sliding(final int windowSize) {
@@ -458,7 +458,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#sliding(int, int)
+     * @see cyclops2.monads.transformers.values.ListT#sliding(int, int)
      */
     @Override
     public ListT<W,PVectorX<T>> sliding(final int windowSize, final int increment) {
@@ -467,7 +467,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#grouped(int, java.util.function.Supplier)
+     * @see cyclops2.monads.transformers.values.ListT#grouped(int, java.util.function.Supplier)
      */
     @Override
     public <C extends Collection<? super T>> ListT<W,C> grouped(final int size, final Supplier<C> supplier) {
@@ -476,7 +476,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#groupedUntil(java.util.function.Predicate)
+     * @see cyclops2.monads.transformers.values.ListT#groupedUntil(java.util.function.Predicate)
      */
     @Override
     public ListT<W,ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
@@ -485,7 +485,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#groupedStatefullyUntil(java.util.function.BiPredicate)
+     * @see cyclops2.monads.transformers.values.ListT#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
     public ListT<W,ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
@@ -494,7 +494,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#groupedWhile(java.util.function.Predicate)
+     * @see cyclops2.monads.transformers.values.ListT#groupedWhile(java.util.function.Predicate)
      */
     @Override
     public ListT<W,ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
@@ -503,7 +503,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+     * @see cyclops2.monads.transformers.values.ListT#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
     public <C extends Collection<? super T>> ListT<W,C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
@@ -512,7 +512,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+     * @see cyclops2.monads.transformers.values.ListT#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
     public <C extends Collection<? super T>> ListT<W,C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
@@ -521,7 +521,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#grouped(int)
+     * @see cyclops2.monads.transformers.values.ListT#grouped(int)
      */
     @Override
     public ListT<W,ListX<T>> grouped(final int groupSize) {
@@ -530,7 +530,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#grouped(java.util.function.Function, java.util.stream.Collector)
+     * @see cyclops2.monads.transformers.values.ListT#grouped(java.util.function.Function, java.util.stream.Collector)
      */
     @Override
     public <K, A, D> ListT<W,Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
@@ -539,7 +539,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#grouped(java.util.function.Function)
+     * @see cyclops2.monads.transformers.values.ListT#grouped(java.util.function.Function)
      */
     @Override
     public <K> ListT<W,Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
@@ -548,7 +548,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#distinct()
+     * @see cyclops2.monads.transformers.values.ListT#distinct()
      */
     @Override
     public ListT<W,T> distinct() {
@@ -557,7 +557,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#scanLeft(cyclops.function.Monoid)
+     * @see cyclops2.monads.transformers.values.ListT#scanLeft(cyclops2.function.Monoid)
      */
     @Override
     public ListT<W,T> scanLeft(final Monoid<T> monoid) {
@@ -566,7 +566,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#scanLeft(java.lang.Object, java.util.function.BiFunction)
+     * @see cyclops2.monads.transformers.values.ListT#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     public <U> ListT<W,U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
@@ -575,7 +575,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#scanRight(cyclops.function.Monoid)
+     * @see cyclops2.monads.transformers.values.ListT#scanRight(cyclops2.function.Monoid)
      */
     @Override
     public ListT<W,T> scanRight(final Monoid<T> monoid) {
@@ -584,7 +584,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#scanRight(java.lang.Object, java.util.function.BiFunction)
+     * @see cyclops2.monads.transformers.values.ListT#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     public <U> ListT<W,U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
@@ -593,7 +593,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#sorted()
+     * @see cyclops2.monads.transformers.values.ListT#sorted()
      */
     @Override
     public ListT<W,T> sorted() {
@@ -602,7 +602,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#sorted(java.util.Comparator)
+     * @see cyclops2.monads.transformers.values.ListT#sorted(java.util.Comparator)
      */
     @Override
     public ListT<W,T> sorted(final Comparator<? super T> c) {
@@ -611,7 +611,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#takeWhile(java.util.function.Predicate)
+     * @see cyclops2.monads.transformers.values.ListT#takeWhile(java.util.function.Predicate)
      */
     @Override
     public ListT<W,T> takeWhile(final Predicate<? super T> p) {
@@ -620,7 +620,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#dropWhile(java.util.function.Predicate)
+     * @see cyclops2.monads.transformers.values.ListT#dropWhile(java.util.function.Predicate)
      */
     @Override
     public ListT<W,T> dropWhile(final Predicate<? super T> p) {
@@ -629,7 +629,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#takeUntil(java.util.function.Predicate)
+     * @see cyclops2.monads.transformers.values.ListT#takeUntil(java.util.function.Predicate)
      */
     @Override
     public ListT<W,T> takeUntil(final Predicate<? super T> p) {
@@ -638,7 +638,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#dropUntil(java.util.function.Predicate)
+     * @see cyclops2.monads.transformers.values.ListT#dropUntil(java.util.function.Predicate)
      */
     @Override
     public ListT<W,T> dropUntil(final Predicate<? super T> p) {
@@ -647,7 +647,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#dropRight(int)
+     * @see cyclops2.monads.transformers.values.ListT#dropRight(int)
      */
     @Override
     public ListT<W,T> dropRight(final int num) {
@@ -656,7 +656,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#takeRight(int)
+     * @see cyclops2.monads.transformers.values.ListT#takeRight(int)
      */
     @Override
     public ListT<W,T> takeRight(final int num) {
@@ -665,7 +665,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#skip(long)
+     * @see cyclops2.monads.transformers.values.ListT#skip(long)
      */
     @Override
     public ListT<W,T> skip(final long num) {
@@ -674,7 +674,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#skipWhile(java.util.function.Predicate)
+     * @see cyclops2.monads.transformers.values.ListT#skipWhile(java.util.function.Predicate)
      */
     @Override
     public ListT<W,T> skipWhile(final Predicate<? super T> p) {
@@ -683,7 +683,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#skipUntil(java.util.function.Predicate)
+     * @see cyclops2.monads.transformers.values.ListT#skipUntil(java.util.function.Predicate)
      */
     @Override
     public ListT<W,T> skipUntil(final Predicate<? super T> p) {
@@ -692,7 +692,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#limit(long)
+     * @see cyclops2.monads.transformers.values.ListT#limit(long)
      */
     @Override
     public ListT<W,T> limit(final long num) {
@@ -701,7 +701,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#limitWhile(java.util.function.Predicate)
+     * @see cyclops2.monads.transformers.values.ListT#limitWhile(java.util.function.Predicate)
      */
     @Override
     public ListT<W,T> limitWhile(final Predicate<? super T> p) {
@@ -710,7 +710,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#limitUntil(java.util.function.Predicate)
+     * @see cyclops2.monads.transformers.values.ListT#limitUntil(java.util.function.Predicate)
      */
     @Override
     public ListT<W,T> limitUntil(final Predicate<? super T> p) {
@@ -719,7 +719,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#intersperse(java.lang.Object)
+     * @see cyclops2.monads.transformers.values.ListT#intersperse(java.lang.Object)
      */
     @Override
     public ListT<W,T> intersperse(final T value) {
@@ -728,7 +728,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#reverse()
+     * @see cyclops2.monads.transformers.values.ListT#reverse()
      */
     @Override
     public ListT<W,T> reverse() {
@@ -737,7 +737,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#shuffle()
+     * @see cyclops2.monads.transformers.values.ListT#shuffle()
      */
     @Override
     public ListT<W,T> shuffle() {
@@ -746,7 +746,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#skipLast(int)
+     * @see cyclops2.monads.transformers.values.ListT#skipLast(int)
      */
     @Override
     public ListT<W,T> skipLast(final int num) {
@@ -755,7 +755,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#limitLast(int)
+     * @see cyclops2.monads.transformers.values.ListT#limitLast(int)
      */
     @Override
     public ListT<W,T> limitLast(final int num) {
@@ -764,7 +764,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#onEmpty(java.lang.Object)
+     * @see cyclops2.monads.transformers.values.ListT#onEmpty(java.lang.Object)
      */
     @Override
     public ListT<W,T> onEmpty(final T value) {
@@ -773,7 +773,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#onEmptyGet(java.util.function.Supplier)
+     * @see cyclops2.monads.transformers.values.ListT#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     public ListT<W,T> onEmptyGet(final Supplier<? extends T> supplier) {
@@ -782,7 +782,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#onEmptyThrow(java.util.function.Supplier)
+     * @see cyclops2.monads.transformers.values.ListT#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
     public <X extends Throwable> ListT<W,T> onEmptyThrow(final Supplier<? extends X> supplier) {
@@ -791,7 +791,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#shuffle(java.util.Random)
+     * @see cyclops2.monads.transformers.values.ListT#shuffle(java.util.Random)
      */
     @Override
     public ListT<W,T> shuffle(final Random random) {
@@ -800,7 +800,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#slice(long, long)
+     * @see cyclops2.monads.transformers.values.ListT#slice(long, long)
      */
     @Override
     public ListT<W,T> slice(final long from, final long to) {
@@ -809,7 +809,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops.monads.transformers.values.ListT#sorted(java.util.function.Function)
+     * @see cyclops2.monads.transformers.values.ListT#sorted(java.util.function.Function)
      */
     @Override
     public <U extends Comparable<? super U>> ListT<W,T> sorted(final Function<? super T, ? extends U> function) {

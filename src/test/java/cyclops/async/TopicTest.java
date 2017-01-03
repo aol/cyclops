@@ -1,6 +1,6 @@
 package cyclops.async;
 
-import static com.aol.cyclops.types.futurestream.BaseSimpleReactStream.parallel;
+import static com.aol.cyclops2.types.futurestream.BaseSimpleReactStream.parallel;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops.types.futurestream.BaseSimpleReactStream;
+import com.aol.cyclops2.types.futurestream.BaseSimpleReactStream;
 
 public class TopicTest {
 

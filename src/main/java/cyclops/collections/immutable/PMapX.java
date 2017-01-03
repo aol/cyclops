@@ -9,8 +9,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.data.collections.extensions.persistent.PMapXImpl;
-import com.aol.cyclops.types.*;
+import com.aol.cyclops2.data.collections.extensions.persistent.PMapXImpl;
+import com.aol.cyclops2.types.*;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.HashTreePMap;
@@ -20,10 +20,10 @@ import org.reactivestreams.Subscriber;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
-import com.aol.cyclops.data.collections.extensions.FluentMapX;
+import com.aol.cyclops2.data.collections.extensions.FluentMapX;
 import cyclops.collections.ListX;
-import com.aol.cyclops.types.Transformable;
-import com.aol.cyclops.types.stream.CyclopsCollectable;
+import com.aol.cyclops2.types.Transformable;
+import com.aol.cyclops2.types.stream.CyclopsCollectable;
 
 public interface PMapX<K, V>
         extends To<PMapX<K,V>>,PMap<K, V>, FluentMapX<K, V>, BiFunctor<K, V>, Transformable<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
@@ -93,7 +93,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#map(java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#map(java.util.function.Function)
      */
     @Override
     default <R> PMapX<K, R> map(final Function<? super V, ? extends R> fn) {
@@ -102,7 +102,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> PMapX<R1, R2> bimap(final Function<? super K, ? extends R1> fn1, final Function<? super V, ? extends R2> fn2) {
@@ -113,7 +113,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.BiFunctor#bipeek(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default PMapX<K, V> bipeek(final Consumer<? super K> c1, final Consumer<? super V> c2) {
@@ -122,7 +122,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.BiFunctor#bicast(java.lang.Class, java.lang.Class)
+     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bicast(java.lang.Class, java.lang.Class)
      */
     @Override
     default <U1, U2> PMapX<U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
@@ -131,7 +131,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.BiFunctor#bitrampoline(java.util.function.Function, java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> PMapX<R1, R2> bitrampoline(final Function<? super K, ? extends Trampoline<? extends R1>> mapper1,
@@ -141,7 +141,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#cast(java.lang.Class)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> PMapX<K, U> cast(final Class<? extends U> type) {
@@ -150,7 +150,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#peek(java.util.function.Consumer)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     default PMapX<K, V> peek(final Consumer<? super V> c) {
@@ -159,7 +159,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> PMapX<K, R> trampoline(final Function<? super V, ? extends Trampoline<? extends R>> mapper) {
@@ -168,7 +168,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops2.lambda.monads.Filters#filter(java.util.function.Predicate)
      */
     @Override
     default PMapX<K, V> filter(final Predicate<? super Tuple2<K, V>> fn) {
@@ -177,7 +177,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops2.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default PMapX<K, V> filterNot(final Predicate<? super Tuple2<K, V>> fn) {
@@ -186,7 +186,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#notNull()
+     * @see com.aol.cyclops2.lambda.monads.Filters#notNull()
      */
     @Override
     default PMapX<K, V> notNull() {
@@ -195,7 +195,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.util.stream.Stream)
      */
     @Override
     default PMapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -204,7 +204,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.lang.Iterable)
      */
     @Override
     default PMapX<K, V> removeAllS(final Iterable<? extends Tuple2<K, V>> it) {
@@ -213,7 +213,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.lang.Object[])
      */
     @Override
     default PMapX<K, V> removeAllS(final Tuple2<K, V>... values) {
@@ -222,7 +222,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.lang.Iterable)
      */
     @Override
     default PMapX<K, V> retainAllS(final Iterable<? extends Tuple2<K, V>> it) {
@@ -231,7 +231,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.util.stream.Stream)
      */
     @Override
     default PMapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -240,7 +240,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.lang.Object[])
      */
     @Override
     default PMapX<K, V> retainAllS(final Tuple2<K, V>... values) {
@@ -260,7 +260,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.OnEmpty#onEmpty(java.lang.Object)
+     * @see com.aol.cyclops2.types.OnEmpty#onEmpty(java.lang.Object)
      */
     @Override
     default PMapX<K, V> onEmpty(final Tuple2<K, V> value) {
@@ -268,7 +268,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.OnEmpty#onEmptyGet(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.OnEmpty#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default PMapX<K, V> onEmptyGet(final Supplier<? extends Tuple2<K, V>> supplier) {
@@ -277,7 +277,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.OnEmpty#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.OnEmpty#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
     default <X extends Throwable> PMapX<K, V> onEmptyThrow(final Supplier<? extends X> supplier) {
@@ -286,7 +286,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
     default PMapX<K, V> onEmptySwitch(final Supplier<? extends PMap<K, V>> supplier) {

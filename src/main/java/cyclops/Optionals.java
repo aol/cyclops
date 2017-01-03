@@ -17,9 +17,9 @@ import org.reactivestreams.Publisher;
 import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops2.types.Value;
 import cyclops.monads.Witness;
 
 import lombok.experimental.UtilityClass;
@@ -40,7 +40,7 @@ public class Optionals {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops.reactor.Optionals.forEach4;
+     *   import static com.aol.cyclops2.reactor.Optionals.forEach4;
      *
     forEach4(Optional.just(1),
     a-> Optional.just(a+1),
@@ -88,7 +88,7 @@ public class Optionals {
      * <pre>
      * {@code
      *
-     *  import static com.aol.cyclops.reactor.Optionals.forEach4;
+     *  import static com.aol.cyclops2.reactor.Optionals.forEach4;
      *
      *  forEach4(Optional.just(1),
     a-> Optional.just(a+1),
@@ -139,7 +139,7 @@ public class Optionals {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops.reactor.Optionals.forEach3;
+     *   import static com.aol.cyclops2.reactor.Optionals.forEach3;
      *
     forEach3(Optional.just(1),
     a-> Optional.just(a+1),
@@ -181,7 +181,7 @@ public class Optionals {
      * <pre>
      * {@code
      *
-     *  import static com.aol.cyclops.reactor.Optionals.forEach3;
+     *  import static com.aol.cyclops2.reactor.Optionals.forEach3;
      *
      *  forEach3(Optional.just(1),
     a-> Optional.just(a+1),
@@ -227,7 +227,7 @@ public class Optionals {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops.reactor.Optionals.forEach;
+     *   import static com.aol.cyclops2.reactor.Optionals.forEach;
      *
     forEach(Optional.just(1),
     a-> Optional.just(a+1),
@@ -262,7 +262,7 @@ public class Optionals {
      * <pre>
      * {@code
      *
-     *  import static com.aol.cyclops.reactor.Optionals.forEach;
+     *  import static com.aol.cyclops2.reactor.Optionals.forEach;
      *
      *  forEach(Optional.just(1),
     a-> Optional.just(a+1),
@@ -379,7 +379,7 @@ public class Optionals {
 
     }
     /**
-     * Accummulating operation using the supplied Reducer (@see cyclops.Reducers). A typical use case is to accumulate into a Persistent Collection type.
+     * Accummulating operation using the supplied Reducer (@see cyclops2.Reducers). A typical use case is to accumulate into a Persistent Collection type.
      * Accumulates the present results, ignores empty Optionals.
      * 
      * <pre>
@@ -403,7 +403,7 @@ public class Optionals {
     /**
      * Accumulate the results only from those Optionals which have a value present, using the supplied mapping function to
      * convert the data from each Optional before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * 
      * <pre>
      * {@code 
@@ -430,7 +430,7 @@ public class Optionals {
     /**
      * Accumulate the results only from those Optionals which have a value present, using the 
      * supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * 
      * <pre>
      * {@code 

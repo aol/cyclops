@@ -17,7 +17,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.types.*;
+import com.aol.cyclops2.types.*;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple;
@@ -27,9 +27,9 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import cyclops.function.Monoid;
-import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
-import com.aol.cyclops.util.ExceptionSoftener;
+import com.aol.cyclops2.types.anyM.AnyMValue;
+import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Curry;
 import cyclops.function.Fn4;
 import cyclops.function.Fn3;
@@ -271,7 +271,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
     @Override
     default <T2, R1, R2, R3, R> Try<R,X> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -282,7 +282,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
     @Override
     default <T2, R1, R2, R3, R> Try<R,X> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -295,7 +295,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
      */
     @Override
     default <T2, R1, R2, R> Try<R,X> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -306,7 +306,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
      */
     @Override
     default <T2, R1, R2, R> Try<R,X> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -318,7 +318,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> Try<R,X> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -328,7 +328,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> Try<R,X> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -338,7 +338,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Value#toTry()
+     * @see com.aol.cyclops2.types.Value#toTry()
      */
     @Override
     default Try<T, Throwable> toTry() {
@@ -355,19 +355,19 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     public X failureGet();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Value#toXor()
+     * @see com.aol.cyclops2.types.Value#toXor()
      */
     @Override
     public Xor<X, T> toXor();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Value#toIor()
+     * @see com.aol.cyclops2.types.Value#toIor()
      */
     @Override
     public Ior<X, T> toIor();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     * @see com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
     default <R> Try<R, X> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
@@ -377,7 +377,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
     //cojoin
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#nest()
+     * @see com.aol.cyclops2.types.MonadicValue#nest()
      */
     @Override
     default Try<MonadicValue<T>, X> nest() {
@@ -418,7 +418,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops.types.Applicative)
+     * @see com.aol.cyclops2.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops2.types.Applicative)
      */
     @Override
     default Try<T,X> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
@@ -426,7 +426,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Transformable#cast(java.lang.Class)
+     * @see com.aol.cyclops2.types.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> Try<U, X> cast(final Class<? extends U> type) {
@@ -434,7 +434,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Transformable#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.types.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> Try<R, X> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
@@ -442,7 +442,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filters#ofType(java.lang.Class)
+     * @see com.aol.cyclops2.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Maybe<U> ofType(final Class<? extends U> type) {
@@ -451,7 +451,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filters#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default Maybe<T> filterNot(final Predicate<? super T> fn) {
@@ -460,7 +460,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filters#notNull()
+     * @see com.aol.cyclops2.types.Filters#notNull()
      */
     @Override
     default Maybe<T> notNull() {
@@ -514,7 +514,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
+     * @see com.aol.cyclops2.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
     default <T> Try<T, X> unit(final T value) {
@@ -808,7 +808,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /* 
          *	@param input
          *	@return
-         * @see com.aol.cyclops.trycatch.Try.Init#init(com.aol.cyclops.trycatch.Try.CheckedSupplier)
+         * @see com.aol.cyclops2.trycatch.Try.Init#init(com.aol.cyclops2.trycatch.Try.CheckedSupplier)
          */
         @Override
         public <V> TryCatch<V, X> init(final CheckedSupplier<V, X> input) {
@@ -1032,7 +1032,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     /* 
      * Flatten a nested Try Structure
      * @return Lowest nested Try
-     * @see com.aol.cyclops.trycatch.Try#flatten()
+     * @see com.aol.cyclops2.trycatch.Try#flatten()
      */
   
     public static <T,X extends Throwable> Try<T, X> flatten(Try<? extends Try<T,X>,X> nested) {
@@ -1071,7 +1071,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
        
         /* 
          *	@return Current value
-         * @see com.aol.cyclops.trycatch.Try#get()
+         * @see com.aol.cyclops2.trycatch.Try#get()
          */
         @Override
         public T get() {
@@ -1093,7 +1093,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /* 
          * @param fn Map success value from T to R.
          * @return New Try with mapped value
-         * @see com.aol.cyclops.trycatch.Try#map(java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#map(java.util.function.Function)
          */
         @Override
         public <R> Try<R, X> map(final Function<? super T, ? extends R> fn) {
@@ -1123,7 +1123,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /* 
          * @param fn FlatMap success value or Do nothing if Failure (return this)
          * @return Try returned from FlatMap fn
-         * @see com.aol.cyclops.trycatch.Try#flatMap(java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#flatMap(java.util.function.Function)
          */
         @Override
         public <R> Try<R, X> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> fn) {
@@ -1135,7 +1135,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
          * @param p Convert a Success to a Failure (with a null value for Exception) if predicate does not hold.
          *         
          * @return this if  Predicate holds, new Failure if not
-         * @see com.aol.cyclops.trycatch.Try#filter(java.util.function.Predicate)
+         * @see com.aol.cyclops2.trycatch.Try#filter(java.util.function.Predicate)
          */
         @Override
         public Maybe<T> filter(final Predicate<? super T> p) {
@@ -1147,7 +1147,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          * Does nothing (no error to recover from)
-         * @see com.aol.cyclops.trycatch.Try#recover(java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#recover(java.util.function.Function)
          */
         @Override
         public Success<T, X> recover(final Function<? super X, ? extends T> fn) {
@@ -1156,7 +1156,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          * Does nothing (no error to recover from)
-         * @see com.aol.cyclops.trycatch.Try#recoverWith(java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#recoverWith(java.util.function.Function)
          */
         @Override
         public Try<T, X> recoverWith(final Function<? super X, ? extends Try<T, X>> fn) {
@@ -1165,7 +1165,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          * Does nothing (no error to recover from)
-         * @see com.aol.cyclops.trycatch.Try#recoverFor(java.lang.Class, java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#recoverFor(java.lang.Class, java.util.function.Function)
          */
         @Override
         public Success<T, X> recoverFor(final Class<? extends X> t, final Function<? super X, ? extends T> fn) {
@@ -1174,7 +1174,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          * Does nothing (no error to recover from)
-         * @see com.aol.cyclops.trycatch.Try#recoverWithFor(java.lang.Class, java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#recoverWithFor(java.lang.Class, java.util.function.Function)
          */
         @Override
         public Success<T, X> recoverWithFor(final Class<? extends X> t, final Function<? super X, ? extends Success<T, X>> fn) {
@@ -1186,7 +1186,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /* 
          *	
          *	@return Returns current value (ignores supplied value)
-         * @see com.aol.cyclops.trycatch.Try#orElse(java.lang.Object)
+         * @see com.aol.cyclops2.trycatch.Try#orElse(java.lang.Object)
          */
         @Override
         public T orElse(final T value) {
@@ -1202,7 +1202,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /* 
          *	@param value (ignored)
          *	@return Returns current value (ignores Supplier)
-         * @see com.aol.cyclops.trycatch.Try#orElseGet(java.util.function.Supplier)
+         * @see com.aol.cyclops2.trycatch.Try#orElseGet(java.util.function.Supplier)
          */
         @Override
         public T orElseGet(final Supplier<? extends T> value) {
@@ -1211,7 +1211,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return Optional of current value
-         * @see com.aol.cyclops.trycatch.Try#toOptional()
+         * @see com.aol.cyclops2.trycatch.Try#toOptional()
          */
         @Override
         public Optional<T> toOptional() {
@@ -1220,7 +1220,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return Stream of current value
-         * @see com.aol.cyclops.trycatch.Try#toStream()
+         * @see com.aol.cyclops2.trycatch.Try#toStream()
          */
         @Override
         public ReactiveSeq<T> stream() {
@@ -1229,7 +1229,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return true
-         * @see com.aol.cyclops.trycatch.Try#isSuccess()
+         * @see com.aol.cyclops2.trycatch.Try#isSuccess()
          */
         @Override
         public boolean isSuccess() {
@@ -1238,7 +1238,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return false
-         * @see com.aol.cyclops.trycatch.Try#isFailure()
+         * @see com.aol.cyclops2.trycatch.Try#isFailure()
          */
         @Override
         public boolean isFailure() {
@@ -1247,7 +1247,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@param consumer to recieve current value
-         * @see com.aol.cyclops.trycatch.Try#foreach(java.util.function.Consumer)
+         * @see com.aol.cyclops2.trycatch.Try#foreach(java.util.function.Consumer)
          */
         @Override
         public void forEach(final Consumer<? super T> consumer) {
@@ -1257,7 +1257,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *  does nothing no failure
-         * @see com.aol.cyclops.trycatch.Try#onFail(java.util.function.Consumer)
+         * @see com.aol.cyclops2.trycatch.Try#onFail(java.util.function.Consumer)
          */
         @Override
         public Try<T, X> onFail(final Consumer<? super X> consumer) {
@@ -1266,7 +1266,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *  does nothing no failure
-         * @see com.aol.cyclops.trycatch.Try#onFail(java.lang.Class, java.util.function.Consumer)
+         * @see com.aol.cyclops2.trycatch.Try#onFail(java.lang.Class, java.util.function.Consumer)
          */
         @Override
         public Try<T, X> onFail(final Class<? extends X> t, final Consumer<X> consumer) {
@@ -1275,7 +1275,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *  does nothing no failure
-         * @see com.aol.cyclops.trycatch.Try#throwException()
+         * @see com.aol.cyclops2.trycatch.Try#throwException()
          */
         @Override
         public void throwException() {
@@ -1284,7 +1284,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *  @return java.util.Optional#empty()
-         * @see com.aol.cyclops.trycatch.Try#toFailedOptional()
+         * @see com.aol.cyclops2.trycatch.Try#toFailedOptional()
          */
         @Override
         public Optional<X> toFailedOptional() {
@@ -1293,7 +1293,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return empty Stream
-         * @see com.aol.cyclops.trycatch.Try#toFailedStream()
+         * @see com.aol.cyclops2.trycatch.Try#toFailedStream()
          */
         @Override
         public Stream<X> toFailedStream() {
@@ -1302,7 +1302,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	does nothing - no failure
-         * @see com.aol.cyclops.trycatch.Try#foreachFailed(java.util.function.Consumer)
+         * @see com.aol.cyclops2.trycatch.Try#foreachFailed(java.util.function.Consumer)
          */
         @Override
         public void forEachFailed(final Consumer<? super X> consumer) {
@@ -1317,7 +1317,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         }
 
         /* (non-Javadoc)
-         * @see com.aol.cyclops.trycatch.Try#when(java.util.function.Function, java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#when(java.util.function.Function, java.util.function.Function)
          */
         @Override
         public <R> R visit(final Function<? super T, ? extends R> success, final Function<? super X, ? extends R> failure) {
@@ -1386,7 +1386,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return throws an Exception
-         * @see com.aol.cyclops.trycatch.Try#get()
+         * @see com.aol.cyclops2.trycatch.Try#get()
          */
         @Override
         public T get() {
@@ -1396,7 +1396,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return this
-         * @see com.aol.cyclops.trycatch.Try#map(java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#map(java.util.function.Function)
          */
         @Override
         public <R> Try<R, X> map(final Function<? super T, ? extends R> fn) {
@@ -1405,7 +1405,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return this
-         * @see com.aol.cyclops.trycatch.Try#flatMap(java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#flatMap(java.util.function.Function)
          */
         @Override
         public <R> Try<R, X> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> fn) {
@@ -1414,7 +1414,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return Empty optional
-         * @see com.aol.cyclops.trycatch.Try#filter(java.util.function.Predicate)
+         * @see com.aol.cyclops2.trycatch.Try#filter(java.util.function.Predicate)
          */
         @Override
         public Maybe<T> filter(final Predicate<? super T> p) {
@@ -1427,7 +1427,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
          * @param t Type of exception to match against
          * @param fn Recovery FlatMap function. Map from a failure to a Success
          * @return Success from recovery function
-         * @see com.aol.cyclops.trycatch.Try#recoverWithFor(java.lang.Class, java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#recoverWithFor(java.lang.Class, java.util.function.Function)
          */
         @Override
         public Try<T, X> recoverWithFor(final Class<? extends X> t, final Function<? super X, ? extends Success<T, X>> fn) {
@@ -1441,7 +1441,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
          * @param t Type of exception to match against
          * @param fn Recovery function
          * @return New Success
-         * @see com.aol.cyclops.trycatch.Try#recoverFor(java.lang.Class, java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#recoverFor(java.lang.Class, java.util.function.Function)
          */
         @Override
         public Try<T, X> recoverFor(final Class<? extends X> t, final Function<? super X, ? extends T> fn) {
@@ -1453,7 +1453,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /* 
          * @param fn Recovery function - map from a failure to a Success.
          * @return new Success
-         * @see com.aol.cyclops.trycatch.Try#recover(java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#recover(java.util.function.Function)
          */
         @Override
         public Success<T, X> recover(final Function<? super X, ? extends T> fn) {
@@ -1465,7 +1465,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
          * 
          * @param fn Recovery FlatMap function. Map from a failure to a Success
          * @return Success from recovery function
-         * @see com.aol.cyclops.trycatch.Try#recoverWith(java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#recoverWith(java.util.function.Function)
          */
         @Override
         public Try<T, X> recoverWith(final Function<? super X, ? extends Try<T, X>> fn) {
@@ -1477,7 +1477,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /* 
          *  @param value Return value supplied 
          * @return  supplied value
-         * @see com.aol.cyclops.trycatch.Try#orElse(java.lang.Object)
+         * @see com.aol.cyclops2.trycatch.Try#orElse(java.lang.Object)
          */
         @Override
         public T orElse(final T value) {
@@ -1487,7 +1487,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /* 
          * @param value from supplied Supplier 
          * @return value from supplier
-         * @see com.aol.cyclops.trycatch.Try#orElseGet(java.util.function.Supplier)
+         * @see com.aol.cyclops2.trycatch.Try#orElseGet(java.util.function.Supplier)
          */
         @Override
         public T orElseGet(final Supplier<? extends T> value) {
@@ -1496,7 +1496,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return Optional.empty()
-         * @see com.aol.cyclops.trycatch.Try#toOptional()
+         * @see com.aol.cyclops2.trycatch.Try#toOptional()
          */
         @Override
         public Optional<T> toOptional() {
@@ -1505,7 +1505,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return empty Stream
-         * @see com.aol.cyclops.trycatch.Try#toStream()
+         * @see com.aol.cyclops2.trycatch.Try#toStream()
          */
         @Override
         public ReactiveSeq<T> stream() {
@@ -1514,7 +1514,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return false
-         * @see com.aol.cyclops.trycatch.Try#isSuccess()
+         * @see com.aol.cyclops2.trycatch.Try#isSuccess()
          */
         @Override
         public boolean isSuccess() {
@@ -1523,7 +1523,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /*  
          *	@return true
-         * @see com.aol.cyclops.trycatch.Try#isFailure()
+         * @see com.aol.cyclops2.trycatch.Try#isFailure()
          */
         @Override
         public boolean isFailure() {
@@ -1532,7 +1532,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	does nothing
-         * @see com.aol.cyclops.trycatch.Try#foreach(java.util.function.Consumer)
+         * @see com.aol.cyclops2.trycatch.Try#foreach(java.util.function.Consumer)
          */
         @Override
         public void forEach(final Consumer<? super T> consumer) {
@@ -1542,7 +1542,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /* 
          *	@param consumer is passed error
          *	@return this
-         * @see com.aol.cyclops.trycatch.Try#onFail(java.util.function.Consumer)
+         * @see com.aol.cyclops2.trycatch.Try#onFail(java.util.function.Consumer)
          */
         @Override
         public Try<T, X> onFail(final Consumer<? super X> consumer) {
@@ -1554,7 +1554,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
          * @param t Class type of match Exception against
          * @param consumer Accept Exception if present
          * @return this
-         * @see com.aol.cyclops.trycatch.Try#onFail(java.lang.Class, java.util.function.Consumer)
+         * @see com.aol.cyclops2.trycatch.Try#onFail(java.lang.Class, java.util.function.Consumer)
          */
         @Override
         public Try<T, X> onFail(final Class<? extends X> t, final Consumer<X> consumer) {
@@ -1565,7 +1565,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	
-         * @see com.aol.cyclops.trycatch.Try#throwException()
+         * @see com.aol.cyclops2.trycatch.Try#throwException()
          */
         @Override
         public void throwException() {
@@ -1575,7 +1575,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          * @return Optional containing error
-         * @see com.aol.cyclops.trycatch.Try#toFailedOptional()
+         * @see com.aol.cyclops2.trycatch.Try#toFailedOptional()
          */
         @Override
         public Optional<X> toFailedOptional() {
@@ -1585,7 +1585,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return Stream containing error
-         * @see com.aol.cyclops.trycatch.Try#toFailedStream()
+         * @see com.aol.cyclops2.trycatch.Try#toFailedStream()
          */
         @Override
         public Stream<X> toFailedStream() {
@@ -1594,7 +1594,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          * @param consumer that will accept error
-         * @see com.aol.cyclops.trycatch.Try#foreachFailed(java.util.function.Consumer)
+         * @see com.aol.cyclops2.trycatch.Try#foreachFailed(java.util.function.Consumer)
          */
         @Override
         public void forEachFailed(final Consumer<? super X> consumer) {
@@ -1609,7 +1609,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         }
 
         /* (non-Javadoc)
-         * @see com.aol.cyclops.trycatch.Try#when(java.util.function.Function, java.util.function.Function)
+         * @see com.aol.cyclops2.trycatch.Try#when(java.util.function.Function, java.util.function.Function)
          */
         @Override
         public <R> R visit(final Function<? super T, ? extends R> success, final Function<? super X, ? extends R> failure) {
@@ -1632,7 +1632,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops2.types.Value, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> Try<R, X> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -1674,7 +1674,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Try<R, X> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -1683,7 +1683,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Try<Tuple2<T, U>, X> zipS(final Stream<? extends U> other) {
@@ -1694,7 +1694,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
     default <U> Try<Tuple2<T, U>, X> zip(final Iterable<? extends U> other) {

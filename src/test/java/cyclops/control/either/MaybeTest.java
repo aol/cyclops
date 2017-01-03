@@ -1,4 +1,4 @@
-package com.aol.cyclops.sum.types;
+package com.aol.cyclops2.sum.types;
 
 import cyclops.control.Maybe;
 import org.junit.Test;

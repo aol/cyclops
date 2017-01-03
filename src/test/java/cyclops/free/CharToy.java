@@ -1,6 +1,6 @@
 package cyclops.free;
 
-import com.aol.cyclops.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.either.Either3;
 import cyclops.function.Fn1;
 import cyclops.function.Fn2;

@@ -90,7 +90,7 @@ sourceSets {
 jacocoTestReport {
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/aol/cyclops/util/stream/scheduling/cron/**'])
+            fileTree(dir: it, exclude: ['com/aol/cyclops2/util/stream/scheduling/cron/**'])
         })
     }
 }
@@ -134,13 +134,13 @@ javadoc {
 }
 modifyPom {
 	project {
-		name 'cyclops-react'
+		name 'cyclops2-react'
 		description 'Platform for Functional Reactive Programming with Java 8'
 		url 'https://github.com/aol/simple-react'
 		inceptionYear '2015'
 
 		groupId 'com.aol.simplereact'
-		artifactId 'cyclops-react'
+		artifactId 'cyclops2-react'
 		version "$version"
 		
 		scm {

@@ -1,6 +1,6 @@
 package cyclops.box;
 
-import com.aol.cyclops.types.To;
+import com.aol.cyclops2.types.To;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

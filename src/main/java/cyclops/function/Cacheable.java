@@ -2,7 +2,7 @@ package cyclops.function;
 
 import java.util.function.Function;
 
-import com.aol.cyclops.util.ExceptionSoftener;
+import com.aol.cyclops2.util.ExceptionSoftener;
 
 /**
  * Interface that represents a pluggable cache

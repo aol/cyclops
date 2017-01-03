@@ -16,7 +16,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
 import cyclops.box.LazyImmutable;
-import com.aol.cyclops.util.ExceptionSoftener;
+import com.aol.cyclops2.util.ExceptionSoftener;
 
 import lombok.val;
 

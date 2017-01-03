@@ -4,7 +4,7 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
 
-import com.aol.cyclops.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher;
 
 public interface Combine<CRE> {
 

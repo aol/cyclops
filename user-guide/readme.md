@@ -449,7 +449,7 @@ cyclops-react Types are defined in the [types](http://static.javadoc.io/com.aol.
 
 # <suspended name="forComp">For Comprehension Mechanics
 
-Using the cyclops-react Do builder. In general prefer using com.aol.cyclops.control.For to the lower level Do. Do is useful for building your own For Comprehension interpreter (see [For intro](https://github.com/aol/cyclops-react/wiki/For).
+Using the cyclops-react Do builder. In general prefer using com.aol.cyclops2.control.For to the lower level Do. Do is useful for building your own For Comprehension interpreter (see [For intro](https://github.com/aol/cyclops-react/wiki/For).
 
 * [Extensible for comprehensions](https://github.com/aol/cyclops/wiki/Extensible-For-Comprehensions-for-Java-8) : used to build type specific For Comprehensions elsewhere
 * [For Comprehensions explained](https://github.com/aol/cyclops/wiki/For-Comprehensions-Explained)

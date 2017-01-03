@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Xor;
-import com.aol.cyclops.react.async.subscription.Continueable;
+import com.aol.cyclops2.react.async.subscription.Continueable;
 
 /**
  * 

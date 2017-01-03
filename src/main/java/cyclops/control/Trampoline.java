@@ -2,11 +2,10 @@ package cyclops.control;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops.types.To;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops2.types.To;
+import com.aol.cyclops2.types.Value;
 
 /**
  * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl 
@@ -97,7 +96,7 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
     T get();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Value#iterator()
+     * @see com.aol.cyclops2.types.Value#iterator()
      */
     @Override
     default Iterator<T> iterator() {

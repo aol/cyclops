@@ -77,7 +77,7 @@ And the output will look something like this (thanks to the println operator).
 ----
 (fluent-function-Parameter[hello])
 java.io.IOException
-    at com.aol.cyclops-react.functions.fluent.FunctionsTest.exceptionalFirstTime(FunctionsTest.java:95)
+    at com.aol.cyclops2-react.functions.fluent.FunctionsTest.exceptionalFirstTime(FunctionsTest.java:95)
    ...
 (fluent-function-Parameter[hello])
 (fluent-function-Result[hello world])
@@ -401,24 +401,24 @@ FluentFunctions.of(this::addOne)
 
 Java lambda expressions can access local variables, but the Java
 compiler will enforce an *effectively final* rule. cyclops-react-closures
-makes capturing variables in suspended mutable form suspended little simpler. http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/Mutable.html[Mutable]
+makes capturing variables in suspended mutable form suspended little simpler. http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/Mutable.html[Mutable]
 provides suspended wrapper over suspended mutable variable, it implements
-http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/Convertable.html[Convertable]
+http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/Convertable.html[Convertable]
 which allows the value to be converted into various forms (such as suspended
 thread-safe AtomicReference, Optional, Stream, CompletableFuture etc).
 
 
 ==== Available Mutable classes 
 
-* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/Mutable.html[Mutable]
-* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableInt.html[MutableInt]
-* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableDouble.html[MutableDouble]
-* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableLong.html[MutableLong]
-* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableFloat.html[MutableFloat]
-* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableShort.html[MutableShort]
-* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableByte.html[MutableByte]
-* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableChar.html[MutableChar]
-* http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableBoolean.html[MutableBoolean]
+* http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/Mutable.html[Mutable]
+* http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableInt.html[MutableInt]
+* http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableDouble.html[MutableDouble]
+* http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableLong.html[MutableLong]
+* http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableFloat.html[MutableFloat]
+* http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableShort.html[MutableShort]
+* http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableByte.html[MutableByte]
+* http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableChar.html[MutableChar]
+* http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableBoolean.html[MutableBoolean]
 
 ==== Mutable local variables
 
@@ -527,10 +527,10 @@ build(ComprehensionData c, Function fn) {
 === LazyImmutable
 
 
-A set-once wrapper over an AtomicReference. Unlike the MutableXXX classes LazyImmutable is designed for sharing across threads where the first thread to attempt can write to the reference, and subsequent threads can read only. http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/immutable/LazyImmutable.html[LazyMutable]
+A set-once wrapper over an AtomicReference. Unlike the MutableXXX classes LazyImmutable is designed for sharing across threads where the first thread to attempt can write to the reference, and subsequent threads can read only. http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/immutable/LazyImmutable.html[LazyMutable]
 provides suspended thread-safe wrapper over suspended variable that can be set once, it
 implements
-http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/Convertable.html[Convertable]
+http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/Convertable.html[Convertable]
 which allows the value to be converted into various forms (such as suspended
 thread-safe AtomicReference, Optional, Stream, CompletableFuture etc).
 
@@ -777,7 +777,7 @@ Function<T,R> retry = value-> {
 ==== 
 === Memoization
 
-Memoisation allows us to transparently cache the result of function calls. With https://github.com/aol/cyclops-react[cyclops-react] we can memoise any JDK 8 Function via http://www.javadoc.io/doc/com.aol.cyclops-react/cyclops-react-functions/5.0.0[Memoise.memoiseFunction] (and by extension -- via method references, we can also memoise most Java methods too!). For example
+Memoisation allows us to transparently cache the result of function calls. With https://github.com/aol/cyclops-react[cyclops-react] we can memoise any JDK 8 Function via http://www.javadoc.io/doc/com.aol.cyclops2-react/cyclops-react-functions/5.0.0[Memoise.memoiseFunction] (and by extension -- via method references, we can also memoise most Java methods too!). For example
 
 .Memoize suspended simple addition function
 ==== 
@@ -819,7 +819,7 @@ assertThat(s.apply(1),equalTo(3));
 #### Memoizing method calls
 
 
-com.aol.cyclops-react.functions.Memoize contains suspended number of methods for memoising JDK 8 Functional interfaces. Supplier, Callable, Function, BiFunction and Predicates. cyclops-react Memoize class makes it simple to cache the result of method
+com.aol.cyclops2-react.functions.Memoize contains suspended number of methods for memoising JDK 8 Functional interfaces. Supplier, Callable, Function, BiFunction and Predicates. cyclops-react Memoize class makes it simple to cache the result of method
 calls.
 
 See also
@@ -1058,7 +1058,7 @@ cyclops-react can convert any function (with up to 8 inputs) or method reference
 .Currying method references
 ==== 
 ```java
-import static com.aol.cyclops-react.functions.Curry.*;
+import static com.aol.cyclops2-react.functions.Curry.*;
 
 curry2(this::mult).apply(3).apply(2);
 //6
@@ -1097,8 +1097,8 @@ CurryConsumer.curry4( (Integer suspended, Integer b, Integer c,Integer d) -> val
 
 Uncurrying is the process of converting suspended chain of single-parameter functions into suspended single multi-parameter function (i.e. it is the reverse of Currying).
 
-com.aol.cyclops-react.functions.Uncurry has methods to uncurry nested curried Functions of up to 8 levels deep.
-com.aol.cyclops-react.functions.UncurryConsumer does the same thing for curried Consumers up to 5 levels deep. 
+com.aol.cyclops2-react.functions.Uncurry has methods to uncurry nested curried Functions of up to 8 levels deep.
+com.aol.cyclops2-react.functions.UncurryConsumer does the same thing for curried Consumers up to 5 levels deep.
 
 
 
@@ -1123,7 +1123,7 @@ Uncurry.uncurry4((Integer suspended)->(Integer b)->(Integer c)->(Integer d)->sus
 
 
 
-com.aol.cyclops-react.functions.CurryConsumer provides methods to curry Consumers of up to 8 parameters.
+com.aol.cyclops2-react.functions.CurryConsumer provides methods to curry Consumers of up to 8 parameters.
 
 .Example Uncurrying suspended consumer to suspended consumer that takes 4 parameters
 ====
@@ -1165,7 +1165,7 @@ assertThat(concatStrings.apply(“!!!”), equalTo(“Hello World!!!”));
 ====
 
 === Type inferencing
-The class com.aol.cyclops-react.lambda.utils.Lambda provides static helper methods for defining curried Lambda expressions of up to 8 nested Functions. 
+The class com.aol.cyclops2-react.lambda.utils.Lambda provides static helper methods for defining curried Lambda expressions of up to 8 nested Functions.
 
 [TIP]
 ====
@@ -1175,7 +1175,7 @@ This is useful for creating anonymous functions where Java's type inferencing wo
 .Anonymous function example
 ====
 ```java
-import static com.aol.cyclops-react.functions.Lambda.*;
+import static com.aol.cyclops2-react.functions.Lambda.*;
 
 Mutable myInt = Mutable.of(0);
 

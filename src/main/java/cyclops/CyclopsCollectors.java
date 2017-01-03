@@ -9,15 +9,15 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import cyclops.collections.DequeX;
-import com.aol.cyclops.data.collections.extensions.standard.DequeXImpl;
+import com.aol.cyclops2.data.collections.extensions.standard.DequeXImpl;
 import cyclops.collections.ListX;
-import com.aol.cyclops.data.collections.extensions.standard.ListXImpl;
+import com.aol.cyclops2.data.collections.extensions.standard.ListXImpl;
 import cyclops.collections.QueueX;
-import com.aol.cyclops.data.collections.extensions.standard.QueueXImpl;
+import com.aol.cyclops2.data.collections.extensions.standard.QueueXImpl;
 import cyclops.collections.SetX;
-import com.aol.cyclops.data.collections.extensions.standard.SetXImpl;
+import com.aol.cyclops2.data.collections.extensions.standard.SetXImpl;
 import cyclops.collections.SortedSetX;
-import com.aol.cyclops.data.collections.extensions.standard.SortedSetXImpl;
+import com.aol.cyclops2.data.collections.extensions.standard.SortedSetXImpl;
 
 /**
  * Collectors for Cyclops Extended Collections

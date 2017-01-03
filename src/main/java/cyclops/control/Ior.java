@@ -1,9 +1,9 @@
 package cyclops.control;
 
-import com.aol.cyclops.data.collections.extensions.CollectionX;
-import com.aol.cyclops.types.*;
-import com.aol.cyclops.types.anyM.AnyMValue;
-import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.anyM.AnyMValue;
+import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.Streams;
 import cyclops.collections.ListX;
 import cyclops.function.*;
@@ -248,7 +248,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction)
+     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
     @Override
     default <T2, R1, R2, R3, R> Ior<ST,R> forEach4(Function<? super PT, ? extends MonadicValue<R1>> value1,
@@ -259,7 +259,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.QuadFunction, com.aol.cyclops.util.function.QuadFunction)
+     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
     @Override
     default <T2, R1, R2, R3, R> Ior<ST,R> forEach4(Function<? super PT, ? extends MonadicValue<R1>> value1,
@@ -272,7 +272,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction)
+     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
      */
     @Override
     default <T2, R1, R2, R> Ior<ST,R> forEach3(Function<? super PT, ? extends MonadicValue<R1>> value1,
@@ -283,7 +283,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops.util.function.TriFunction, com.aol.cyclops.util.function.TriFunction)
+     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
      */
     @Override
     default <T2, R1, R2, R> Ior<ST,R> forEach3(Function<? super PT, ? extends MonadicValue<R1>> value1,
@@ -295,7 +295,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> Ior<ST,R> forEach2(Function<? super PT, ? extends MonadicValue<R1>> value1,
@@ -305,7 +305,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> Ior<ST,R> forEach2(Function<? super PT, ? extends MonadicValue<R1>> value1,
@@ -317,15 +317,15 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.aol.cyclops2.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
-    default <R> Ior<ST, R> flatMapIe(Function<? super PT, ? extends Iterable<? extends R>> mapper) {
-        return (Ior<ST, R>)MonadicValue.super.flatMapIe(mapper);
+    default <R> Ior<ST, R> flatMapI(Function<? super PT, ? extends Iterable<? extends R>> mapper) {
+        return (Ior<ST, R>)MonadicValue.super.flatMapI(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
+     * @see com.aol.cyclops2.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
     default <R> Ior<ST, R> flatMapP(Function<? super PT, ? extends Publisher<? extends R>> mapper) {
@@ -333,14 +333,14 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#fromEither5()
+     * @see com.aol.cyclops2.types.MonadicValue#fromEither5()
      */
     default AnyMValue<Witness.ior,PT> anyM() {
         return AnyM.fromIor(this);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#unit(java.lang.Object)
+     * @see com.aol.cyclops2.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
     default <T> Ior<ST, T> unit(final T unit) {
@@ -348,13 +348,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filters#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     Ior<ST, PT> filter(Predicate<? super PT> test);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Value#toXor()
+     * @see com.aol.cyclops2.types.Value#toXor()
      */
     @Override
     Xor<ST, PT> toXor(); //drop ST
@@ -365,7 +365,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     Xor<ST, PT> toXorDropPrimary(); //drop PT
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Value#toXor(java.lang.Object)
+     * @see com.aol.cyclops2.types.Value#toXor(java.lang.Object)
      */
     @Override
     default <ST2> Xor<ST2, PT> toXor(final ST2 secondary) {
@@ -373,7 +373,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Value#toIor()
+     * @see com.aol.cyclops2.types.Value#toIor()
      */
     @Override
     default Ior<ST, PT> toIor() {
@@ -398,7 +398,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     <R> Ior<R, PT> secondaryMap(Function<? super ST, ? extends R> fn);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#map(java.util.function.Function)
+     * @see com.aol.cyclops2.types.MonadicValue#map(java.util.function.Function)
      */
     @Override
     <R> Ior<ST, R> map(Function<? super PT, ? extends R> fn);
@@ -412,7 +412,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     Ior<ST, PT> secondaryPeek(Consumer<? super ST> action);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Transformable#peek(java.util.function.Consumer)
+     * @see com.aol.cyclops2.types.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     Ior<ST, PT> peek(Consumer<? super PT> action);
@@ -423,7 +423,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     Ior<PT, ST> swap();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+     * @see com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
     default <R> Ior<ST, R> coflatMap(final Function<? super MonadicValue<PT>, R> mapper) {
@@ -432,7 +432,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
     //cojoin
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#nest()
+     * @see com.aol.cyclops2.types.MonadicValue#nest()
      */
     @Override
     default Ior<ST, MonadicValue<PT>> nest() {
@@ -440,7 +440,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#combine(cyclops.function.Monoid, com.aol.cyclops.types.MonadicValue)
+     * @see com.aol.cyclops2.types.MonadicValue#combine(cyclops2.function.Monoid, com.aol.cyclops2.types.MonadicValue)
      */
     @Override
     default Ior<ST, PT> combineEager(final Monoid<PT> monoid, final MonadicValue<? extends PT> v2) {
@@ -463,7 +463,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)
+     * @see com.aol.cyclops2.types.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> Ior<R1, R2> bimap(final Function<? super ST, ? extends R1> fn1, final Function<? super PT, ? extends R2> fn2) {
@@ -530,7 +530,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     PT get();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Convertable#isPresent()
+     * @see com.aol.cyclops2.types.Convertable#isPresent()
      */
     @Override
     default boolean isPresent() {
@@ -558,7 +558,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     ReactiveSeq<ST> secondaryToStream();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.MonadicValue#flatMap(java.util.function.Function)
+     * @see com.aol.cyclops2.types.MonadicValue#flatMap(java.util.function.Function)
      */
     @Override
     public < RT1> Ior<ST, RT1> flatMap(final Function<? super PT, ? extends MonadicValue< ? extends RT1>> mapper);
@@ -620,7 +620,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /**
-     * Accumulate the result of the Secondary types in the Collection of Iors provided using the supplied Reducer  {@see cyclops.Reducers}.
+     * Accumulate the result of the Secondary types in the Collection of Iors provided using the supplied Reducer  {@see cyclops2.Reducers}.
      * 
      * <pre>
      * {@code 
@@ -642,7 +642,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     /**
      * Accumulate the results only from those Iors which have a Secondary type present, using the supplied mapping function to
      * convert the data from each Ior before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * 
      * <pre>
      * {@code 
@@ -670,7 +670,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
     /**
      *  Accumulate the results only from those Iors which have a Secondary type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * 
      * <pre>
      * {@code 
@@ -720,7 +720,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /**
-     * Accumulate the result of the Primary types in the Collection of Iors provided using the supplied Reducer  {@see cyclops.Reducers}.
+     * Accumulate the result of the Primary types in the Collection of Iors provided using the supplied Reducer  {@see cyclops2.Reducers}.
 
      * <pre>
      * {@code 
@@ -742,7 +742,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     /**
      * Accumulate the results only from those Iors which have a Primary type present, using the supplied mapping function to
      * convert the data from each Ior before reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see cyclops.Semigroups }.
+     * input values of the same type and returns the combined result) {@see cyclops2.Semigroups }.
      * 
      * <pre>
      * {@code 
@@ -769,7 +769,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
     /**
      *  Accumulate the results only from those Iors which have a Primary type present, using the supplied  Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see cyclops.Semigroups }.
+     * input values of the same type and returns the combined result) {@see cyclops2.Semigroups }.
      * 
      * <pre>
      * {@code 
@@ -794,7 +794,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Applicative#combine(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Applicative#combine(com.aol.cyclops2.types.Value, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> Ior<ST,R> combine(Value<? extends T2> app,
@@ -808,7 +808,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
         return (Ior<ST,PT>)MonadicValue.super.zip(combiner, app);
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#ofType(java.lang.Class)
+     * @see com.aol.cyclops2.lambda.monads.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Ior<ST, U> ofType(final Class<? extends U> type) {
@@ -817,7 +817,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops2.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default Ior<ST, PT> filterNot(final Predicate<? super PT> fn) {
@@ -826,7 +826,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filters#notNull()
+     * @see com.aol.cyclops2.lambda.monads.Filters#notNull()
      */
     @Override
     default Ior<ST, PT> notNull() {
@@ -835,7 +835,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#cast(java.lang.Class)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> Ior<ST, U> cast(final Class<? extends U> type) {
@@ -844,7 +844,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> Ior<ST, R> trampoline(final Function<? super PT, ? extends Trampoline<? extends R>> mapper) {
@@ -853,7 +853,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.BiFunctor#bipeek(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default Ior<ST, PT> bipeek(final Consumer<? super ST> c1, final Consumer<? super PT> c2) {
@@ -862,7 +862,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.BiFunctor#bicast(java.lang.Class, java.lang.Class)
+     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bicast(java.lang.Class, java.lang.Class)
      */
     @Override
     default <U1, U2> Ior<U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
@@ -871,7 +871,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.BiFunctor#bitrampoline(java.util.function.Function, java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> Ior<R1, R2> bitrampoline(final Function<? super ST, ? extends Trampoline<? extends R1>> mapper1,
@@ -881,7 +881,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> Ior<ST, R> zip(final Iterable<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
@@ -891,7 +891,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
     default <T2, R> Ior<ST, R> zipP(final Publisher<? extends T2> app,final BiFunction<? super PT, ? super T2, ? extends R> fn) {
@@ -903,7 +903,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Ior<ST, R> zipS(final Stream<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
@@ -912,7 +912,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Ior<ST, Tuple2<PT, U>> zipS(final Stream<? extends U> other) {
@@ -923,7 +923,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Zippable#zip(java.lang.Iterable)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
     default <U> Ior<ST, Tuple2<PT, U>> zip(final Iterable<? extends U> other) {
@@ -1075,7 +1075,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
         }
 
         /* (non-Javadoc)
-         * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+         * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops2.types.Value, java.util.function.BiFunction)
          */
         @Override
         public <T2, R> Ior<ST, R> combine(final Value<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
@@ -1238,7 +1238,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
 
             /* (non-Javadoc)
-             * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+             * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops2.types.Value, java.util.function.BiFunction)
              */
             @Override
             public <T2, R> Ior<ST, R> combine(final Value<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
@@ -1408,7 +1408,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
 
             /* (non-Javadoc)
-             * @see com.aol.cyclops.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops.types.Value, java.util.function.BiFunction)
+             * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops2.types.Value, java.util.function.BiFunction)
              */
             @Override
             public <T2, R> Ior<ST, R> combine(final Value<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {

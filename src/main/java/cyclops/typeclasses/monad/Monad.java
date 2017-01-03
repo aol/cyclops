@@ -1,6 +1,6 @@
 package cyclops.typeclasses.monad;
 
-import com.aol.cyclops.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.functor.Functor;
 

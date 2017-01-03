@@ -19,12 +19,12 @@ import java.util.stream.StreamSupport;
 
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.internal.react.SimpleReactStreamImpl;
-import com.aol.cyclops.internal.react.stream.ReactBuilder;
-import com.aol.cyclops.react.RetryBuilder;
-import com.aol.cyclops.react.ThreadPools;
-import com.aol.cyclops.types.futurestream.SimpleReactStream;
-import com.aol.cyclops.types.stream.reactive.SeqSubscriber;
+import com.aol.cyclops2.internal.react.SimpleReactStreamImpl;
+import com.aol.cyclops2.internal.react.stream.ReactBuilder;
+import com.aol.cyclops2.react.RetryBuilder;
+import com.aol.cyclops2.react.ThreadPools;
+import com.aol.cyclops2.types.futurestream.SimpleReactStream;
+import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
 import com.nurkiewicz.asyncretry.RetryExecutor;
 
 import lombok.Getter;

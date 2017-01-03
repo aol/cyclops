@@ -5,8 +5,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops.hkt.Higher;
-import com.aol.cyclops.types.To;
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.collections.immutable.PVectorX;

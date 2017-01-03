@@ -3,7 +3,7 @@ package cyclops.function;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.ListX;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops2.types.Value;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  * e.g. 
  * <pre>
  * {@code 
- *  import static cyclops.function.Predicates.greaterThan;
+ *  import static cyclops2.function.Predicates.greaterThan;
  *  
  *  Stream.of(1,2,3,100,200,300)
  *        .filter(greaterThan(10));
@@ -57,7 +57,7 @@ public class Predicates {
      * 
      * <pre>
      * {@code 
-     *      import static cyclops.function.Predicates.optionalPresent;
+     *      import static cyclops2.function.Predicates.optionalPresent;
      *      
      *      ListX.of(Optional.ofNullable(null),Optional.of(1),null)
      *            .filter(optionalPresent());
@@ -76,7 +76,7 @@ public class Predicates {
     /**
      * <pre>
      * {@code 
-     *      import static cyclops.function.Predicates.valuePresent;
+     *      import static cyclops2.function.Predicates.valuePresent;
      *      
      *      ListX.of(Maybe.ofNullable(null),Maybe.just(1),null)
      *            .filter(valuePresent());
@@ -84,7 +84,7 @@ public class Predicates {
      *       //ListX[Maybe[1]]      
      * }
      * </pre>     
-     *  @return A Predicate that checks if it's input is a cyclops-react Value (which also contains a present value)
+     *  @return A Predicate that checks if it's input is a cyclops2-react Value (which also contains a present value)
      */
     public static <T> Predicate<T> valuePresent() {
         return t -> t instanceof Value ? ((Value) t).toMaybe()
@@ -95,7 +95,7 @@ public class Predicates {
     /**
      * <pre>
      * {@code 
-     *      import static cyclops.function.Predicates.valuePresent;
+     *      import static cyclops2.function.Predicates.valuePresent;
      *      
      *      ListX.of(Arrays.asList(),Arrays.asList(1),null)
      *            .filter(iterablePresent());
@@ -115,7 +115,7 @@ public class Predicates {
      * 
      * <pre>
      * {@code 
-     *      import static cyclops.function.Predicates.some;
+     *      import static cyclops2.function.Predicates.some;
      *      
      *      ListX.of(Arrays.asList(),Arrays.asList(1),null, Optional.empty(),Maybe.none())
      *            .filter(some());
@@ -125,7 +125,7 @@ public class Predicates {
      * </pre>   
      * 
      * @return A predicate that checks for a values presence (i.e. for standard values that they are non-null, 
-     *  for Optionals that they are present, for cyclops-react values that they are present and for Iterables that they are
+     *  for Optionals that they are present, for cyclops2-react values that they are present and for Iterables that they are
      *  non-null).
      */
     public static <T> Predicate<T> some() {
@@ -142,7 +142,7 @@ public class Predicates {
      * <pre>
      * {@code 
      * 
-     * import static cyclops.function.Predicates.some
+     * import static cyclops2.function.Predicates.some
 
      * 
      * Eval<Integer> result = Matchables.future(FutureW.ofResult(1))
@@ -167,7 +167,7 @@ public class Predicates {
      * 
      * <pre>
      * {@code 
-     *  import static cyclops.function.Predicates.__
+     *  import static cyclops2.function.Predicates.__
      * 
      *  Eval<String> result = Matchables.listOfValues(1,new MyCase(4,5,6))
                                 .matches(c->c.is(when(__,Predicates.has(4,5,6)),then("rec")),otherwise("n/a"));
@@ -195,11 +195,11 @@ public class Predicates {
      * 
      * <pre>
      * {@code 
-     *  import static com.aol.cyclops.control.Matchable.whenGuard;
-     *  import static com.aol.cyclops.control.Matchable.otherwise;
-        import static com.aol.cyclops.control.Matchable.then;
-     *  import static cyclops.function.Predicates.eq;
-     *  import static cyclops.function.Predicates.any;
+     *  import static com.aol.cyclops2.control.Matchable.whenGuard;
+     *  import static com.aol.cyclops2.control.Matchable.otherwise;
+        import static com.aol.cyclops2.control.Matchable.then;
+     *  import static cyclops2.function.Predicates.eq;
+     *  import static cyclops2.function.Predicates.any;
      *  
      *  Matchable.of(Arrays.asList(1,2,3))
                     .matches(c->c.is(whenGuard(eq(1),any(Integer.class),eq(4)),then("2")),otherwise("45"));

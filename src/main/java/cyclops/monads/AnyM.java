@@ -33,9 +33,9 @@ import cyclops.control.either.Either4;
 import cyclops.control.either.Either5;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
-import com.aol.cyclops.data.collections.extensions.FluentSequenceX;
+import com.aol.cyclops2.data.collections.extensions.FluentSequenceX;
 import cyclops.collections.SetX;
-import com.aol.cyclops.types.*;
+import com.aol.cyclops2.types.*;
 import cyclops.async.Future;
 import cyclops.function.*;
 import cyclops.stream.FutureStream;
@@ -49,13 +49,13 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
-import com.aol.cyclops.internal.monads.AnyMSeqImpl;
-import com.aol.cyclops.internal.monads.AnyMValueImpl;
+import com.aol.cyclops2.internal.monads.AnyMSeqImpl;
+import com.aol.cyclops2.internal.monads.AnyMValueImpl;
 
-import com.aol.cyclops.types.anyM.AnyMSeq;
-import com.aol.cyclops.types.anyM.AnyMValue;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.monads.Witness.completableFuture;
 import cyclops.monads.Witness.eval;
 import cyclops.monads.Witness.ior;
@@ -70,8 +70,8 @@ import cyclops.monads.Witness.tryType;
 import cyclops.monads.Witness.xor;
 import cyclops.monads.Witness.*;
 import cyclops.monads.Witness.future;
-import com.aol.cyclops.types.extensability.FunctionalAdapter;
-import com.aol.cyclops.types.stream.ToStream;
+import com.aol.cyclops2.types.extensability.FunctionalAdapter;
+import com.aol.cyclops2.types.stream.ToStream;
 import cyclops.Optionals;
 
 /**
@@ -316,7 +316,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     }
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.EmptyUnit#emptyUnit()
+     * @see com.aol.cyclops2.types.EmptyUnit#emptyUnit()
      */
     @Override
     default <T> Unit<T> emptyUnit(){
@@ -579,21 +579,21 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
     /**
      * Construct an AnyM that wraps a reactive-streams Publisher. If there is no registered Comprehender for the supplied Publisher, this method
-     *  will attempt to convert the Publisher to a type that cyclops-react can understand.
+     *  will attempt to convert the Publisher to a type that cyclops2-react can understand.
      *  
      *  <pre>
      *  {@code 
      *       AnyMSeq<Integer> flux = AnyM.fromPublisher(Flux.just(10,20,30));
      *       
-     *       //with cyclops-reactor
+     *       //with cyclops2-reactor
      *       //AnyM[Flux[Integer]]]
      *       
-     *       //without cyclops-reactor
+     *       //without cyclops2-reactor
      *       //AnyM[ReactiveSeq[Integer]]]
      *  }
      *  </pre>
      *  It is generally safer to define a Comprehender and use a non-converting call to generate the wrapped AnyM
-     *       (e.g. Reactor.Flux in cyclops-reactor for Pivotal Reactor Publishers)
+     *       (e.g. Reactor.Flux in cyclops2-reactor for Pivotal Reactor Publishers)
      * 
      * @param publisher Publisher to wrap inside an AnyM
      * @return AnyMSeq that wraps a Publisher

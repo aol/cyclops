@@ -23,9 +23,9 @@ We can provide either Predicates / Hamcrest Matchers or values in suspended type
 
 [source,java]
 ----
-import static com.aol.cyclops.control.Matchable.otherwise;
-import static com.aol.cyclops.control.Matchable.then;
-import static com.aol.cyclops.control.Matchable.when;
+import static com.aol.cyclops2.control.Matchable.otherwise;
+import static com.aol.cyclops2.control.Matchable.then;
+import static com.aol.cyclops2.control.Matchable.when;
 
 String m = Matchable.of(Optional.of(3))
                     .matches(     
@@ -54,8 +54,8 @@ Predicates for matching can be composed, in suspended manner similar to Hamcrest
 [source,java]
 ----
 
-import static com.aol.cyclops.util.function.Predicates.in;
-import static com.aol.cyclops.util.function.Predicates.not;
+import static com.aol.cyclops2.util.function.Predicates.in;
+import static com.aol.cyclops2.util.function.Predicates.not;
 
 Matchable.of(Optional.of(1))
          .matches(c->c.is(when(not(in(2,3,4)),in(4,5,6)),then(3)),otherwise(2));
@@ -91,8 +91,8 @@ We can deconstruct any Java object via guards, the Predicates.type method allows
 ====
 [source,java]
 ----
-import static com.aol.cyclops.util.function.Predicates.__;
-import static com.aol.cyclops.util.function.Predicates.type;
+import static com.aol.cyclops2.util.function.Predicates.__;
+import static com.aol.cyclops2.util.function.Predicates.type;
 
 Matchable.of(new NestedCase(1,2,new NestedCase(3,4,null)))
 			.matches(c->c.is(whenGuard(1,__,type(NestedCase.class).hasGuard(3,4,__)),then("2")),otherwise("-1"));

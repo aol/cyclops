@@ -3,9 +3,7 @@ package cyclops.function;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
-import com.aol.cyclops.hkt.Higher;
 import cyclops.control.*;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
@@ -19,7 +17,6 @@ import cyclops.async.Future;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import cyclops.typeclasses.functor.Functor;
 import org.jooq.lambda.function.Function1;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;

@@ -20,7 +20,7 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import cyclops.control.Try;
 import cyclops.control.Xor;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.collections.DequeX;
@@ -28,14 +28,14 @@ import cyclops.collections.ListX;
 import cyclops.collections.QueueX;
 import cyclops.collections.SetX;
 import cyclops.collections.SortedSetX;
-import com.aol.cyclops.internal.comprehensions.comprehenders.CollectionXAdapter;
-import com.aol.cyclops.internal.comprehensions.comprehenders.FutureAdapter;
-import com.aol.cyclops.internal.comprehensions.comprehenders.MonadicValueAdapter;
-import com.aol.cyclops.internal.comprehensions.comprehenders.OptionalAdapter;
-import com.aol.cyclops.internal.comprehensions.comprehenders.StreamAdapter;
-import com.aol.cyclops.internal.comprehensions.comprehenders.StreamableAdapter;
-import com.aol.cyclops.types.MonadicValue;
-import com.aol.cyclops.types.extensability.FunctionalAdapter;
+import com.aol.cyclops2.internal.comprehensions.comprehenders.CollectionXAdapter;
+import com.aol.cyclops2.internal.comprehensions.comprehenders.FutureAdapter;
+import com.aol.cyclops2.internal.comprehensions.comprehenders.MonadicValueAdapter;
+import com.aol.cyclops2.internal.comprehensions.comprehenders.OptionalAdapter;
+import com.aol.cyclops2.internal.comprehensions.comprehenders.StreamAdapter;
+import com.aol.cyclops2.internal.comprehensions.comprehenders.StreamableAdapter;
+import com.aol.cyclops2.types.MonadicValue;
+import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 
 public interface Witness {
    static interface MonadicValueWitness<W extends MonadicValueWitness<W>>  extends WitnessType<W>{

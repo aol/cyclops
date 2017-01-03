@@ -16,9 +16,9 @@ import org.reactivestreams.Publisher;
 
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
-import com.aol.cyclops.types.Value;
+import com.aol.cyclops2.types.Value;
 import cyclops.monads.Witness;
 
 import lombok.experimental.UtilityClass;
@@ -40,7 +40,7 @@ public class CompletableFutures {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops.reactor.CompletableFutures.forEach4;
+     *   import static com.aol.cyclops2.reactor.CompletableFutures.forEach4;
      *
     forEach4(CompletableFuture.just(1),
     a-> CompletableFuture.just(a+1),
@@ -89,7 +89,7 @@ public class CompletableFutures {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops.reactor.CompletableFutures.forEach3;
+     *   import static com.aol.cyclops2.reactor.CompletableFutures.forEach3;
      *
     forEach3(CompletableFuture.just(1),
     a-> CompletableFuture.just(a+1),
@@ -134,7 +134,7 @@ public class CompletableFutures {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops.reactor.CompletableFutures.forEach;
+     *   import static com.aol.cyclops2.reactor.CompletableFutures.forEach;
      *
     forEach(CompletableFuture.just(1),
     a-> CompletableFuture.just(a+1),
@@ -242,7 +242,7 @@ public class CompletableFutures {
     /**
      * Asynchronously accumulate the results only from those Futures which have completed successfully, using the supplied mapping function to
      * convert the data from each Future before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * 
      * <pre>
      * {@code 
@@ -271,7 +271,7 @@ public class CompletableFutures {
     /**
      * Asynchronously accumulate the results only from those Futures which have completed successfully,
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see cyclops.Monoids }
+     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }
      * 
      * <pre>
      * {@code 
@@ -298,7 +298,7 @@ public class CompletableFutures {
         return result;    
     }
     /**
-     * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see cyclops.Reducers}
+     * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see cyclops2.Reducers}
      * <pre>
      * {@code 
      * 
@@ -321,7 +321,7 @@ public class CompletableFutures {
     /**
      * Asynchronously accumulate the results of a batch of Futures which using the supplied mapping function to
      * convert the data from each Future before reducing them using the supplied supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * A single Failure results in a Failed  Future.
      * 
      * <pre>
@@ -344,7 +344,7 @@ public class CompletableFutures {
     /**
      * Asynchronously accumulate the results only from the provided Futures,
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * 
      * A single Failure results in a Failed  Future.
      * 

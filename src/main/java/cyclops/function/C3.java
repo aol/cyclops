@@ -19,9 +19,9 @@ import org.jooq.lambda.function.Consumer3;
 public interface C3<S1, S2, S3> {
 
     /**
-     * Create a cyclops-react C3 from a jOOλ Consumer3
+     * Create a cyclops2-react C3 from a jOOλ Consumer3
      * @param c3 jOOλ Consumer3
-     * @return cyclops-react C3
+     * @return cyclops2-react C3
      */
     static <S1, S2, S3> C3<S1, S2, S3> fromConsumer3(final Consumer3<S1, S2, S3> c3) {
         return (a, b, c) -> c3.accept(a, b, c);
