@@ -16,6 +16,7 @@ import com.aol.cyclops.types.Unwrapable;
 import com.aol.cyclops.types.anyM.AnyMSeq;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Eval;
+import cyclops.function.Fn3;
 import cyclops.monads.Witness;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 import com.aol.cyclops.types.stream.HeadAndTail;
@@ -231,17 +232,10 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     public final <U, R> ReactiveSeq<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper){
         return createSeq( new ZippingSpliterator<>(copyOrGet(),other.spliterator(),zipper));
     }
-
     @Override
-    public final <S, U> ReactiveSeq<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-        return zip(second).zip(third)
-                          .map(p -> new Tuple3(
-                                               p.v1()
-                                                .v1(),
-                                               p.v1()
-                                                .v2(),
-                                               p.v2()));
-
+    public final <S, U,R> ReactiveSeq<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third,
+                                                          final Fn3<? super T, ? super S, ? super U,? extends R> fn3) {
+        return createSeq( new Zipping3Spliterator<>(copyOrGet(),second.spliterator(),third.spliterator(),fn3));
     }
 
     @Override

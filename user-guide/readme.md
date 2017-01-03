@@ -208,7 +208,7 @@ See FutureStreams below for more advanced - infinite lazy Streams of Futures wit
 ### <suspended name="sumXor">Xor
 
 * [Validator : lazy active validator, works with Xor](https://github.com/aol/cyclops-react/wiki/Validator)
-* [Xor : exclusive Or, suspended right biased Either type](https://github.com/aol/cyclops-react/wiki/Xor)
+* [Xor : exclusive Or, suspended middle biased Either type](https://github.com/aol/cyclops-react/wiki/Xor)
 
 ### <suspended name="product">Product types (Tuples)
 

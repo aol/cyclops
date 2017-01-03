@@ -1169,7 +1169,7 @@ The class com.aol.cyclops-react.lambda.utils.Lambda provides static helper metho
 
 [TIP]
 ====
-This is useful for creating anonymous functions where Java's type inferencing won'value normally be able to infer types & for use in conjunction with Lombok's val keyword which infers types from the right hand side of an expression.
+This is useful for creating anonymous functions where Java's type inferencing won'value normally be able to infer types & for use in conjunction with Lombok's val keyword which infers types from the middle hand side of an expression.
 ====
 
 .Anonymous function example

@@ -146,7 +146,7 @@ public interface Zippable<T> extends Iterable<T>, Functor<T>, ToStream<T> {
      * </pre>
      */
     default <S, U> Zippable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-        return zip(second,Tuple::tuple).zip(third,(a,b)->(Tuple3<T,S,U>)Tuple.tuple(a.v1,a.v2,b));
+        return zip3(second,third,(a,b,c)->(Tuple3<T,S,U>)Tuple.tuple(a,b,c));
     }
     default <S, U,R> Zippable<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third,
                                                   final Fn3<? super T, ? super S, ? super U,? extends R> fn3) {
