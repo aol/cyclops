@@ -38,8 +38,8 @@ import cyclops.function.Fn3;
  */
 public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
                                                        implements  To<FutureT<W,T>>,
-                                                                   Functor<T>,
-                                                                   Filterable<T>{
+        Transformable<T>,
+        Filters<T> {
 
     private final AnyM<W,Future<T>> run;
 
@@ -537,17 +537,17 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
 
     @Override
     public <U> FutureT<W,U> ofType(Class<? extends U> type) {
-        return (FutureT<W,U>)Filterable.super.ofType(type);
+        return (FutureT<W,U>)Filters.super.ofType(type);
     }
 
     @Override
     public FutureT<W,T> filterNot(Predicate<? super T> predicate) {
-        return (FutureT<W,T>)Filterable.super.filterNot(predicate);
+        return (FutureT<W,T>)Filters.super.filterNot(predicate);
     }
 
     @Override
     public FutureT<W,T> notNull() {
-        return (FutureT<W,T>)Filterable.super.notNull();
+        return (FutureT<W,T>)Filters.super.notNull();
     }
 
     @Override

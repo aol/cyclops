@@ -32,7 +32,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
    
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Foldable#reduce(java.lang.Object, java.util.function.BiFunction)
+     * @see com.aol.cyclops.types.Folds#reduce(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
@@ -526,7 +526,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> MutableCollectionX<U> ofType(final Class<? extends U> type) {
@@ -544,7 +544,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
+     * @see com.aol.cyclops.lambda.monads.Filters#notNull()
      */
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#notNull()
@@ -556,7 +556,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.util.stream.Stream)
      */
     /* (non-Javadoc)
      * @see com.aol.cyclops.data.collections.extensions.CollectionX#removeAllS(java.util.stream.Stream)

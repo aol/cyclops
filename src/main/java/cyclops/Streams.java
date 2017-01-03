@@ -2534,7 +2534,7 @@ public class Streams {
      * 
      * @param stream Stream to emit one element per time period from
      * @param time  Time period
-     * @param t Time Unit
+     * @param t Time Pure
      * @return Stream with slowed emission
      */
     public final static <T> Stream<T> onePer(final Stream<T> stream, final long time, final TimeUnit t) {

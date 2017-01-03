@@ -165,7 +165,7 @@ public abstract class AbstractFoldableTest {
     }
     public void testFoldLeft() {
         for(int i=0;i<100;i++){
-            Supplier<Foldable<String>> s = () -> of("a", "b", "c");
+            Supplier<Folds<String>> s = () -> of("a", "b", "c");
 
             assertTrue(s.get().reduce("", String::concat).contains("a"));
             assertTrue(s.get().reduce("", String::concat).contains("b"));
@@ -180,7 +180,7 @@ public abstract class AbstractFoldableTest {
     
     @Test
     public void testFoldRight(){
-            Supplier<Foldable<String>> s = () -> of("a", "b", "c");
+            Supplier<Folds<String>> s = () -> of("a", "b", "c");
 
             assertTrue(s.get().foldRight("", String::concat).contains("a"));
             assertTrue(s.get().foldRight("", String::concat).contains("b"));
@@ -190,7 +190,7 @@ public abstract class AbstractFoldableTest {
     
     @Test
     public void testFoldLeftStringBuilder() {
-        Supplier<Foldable<String>> s = () -> of("a", "b", "c");
+        Supplier<Folds<String>> s = () -> of("a", "b", "c");
 
         
         assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("a"));
@@ -206,7 +206,7 @@ public abstract class AbstractFoldableTest {
 
     @Test
     public void testFoldRighttringBuilder() {
-        Supplier<Foldable<String>> s = () -> of("a", "b", "c");
+        Supplier<Folds<String>> s = () -> of("a", "b", "c");
 
         
         assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("a"));

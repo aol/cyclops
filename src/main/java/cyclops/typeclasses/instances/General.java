@@ -3,7 +3,7 @@ package cyclops.typeclasses.instances;
 import com.aol.cyclops.hkt.Higher;
 import cyclops.function.Fn3;
 import cyclops.function.Monoid;
-import cyclops.typeclasses.Unit;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
@@ -44,7 +44,7 @@ public interface General {
          
     }
     @AllArgsConstructor
-    static class GeneralUnit<CRE,A> implements Unit<CRE> {
+    static class GeneralPure<CRE,A> implements Pure<CRE> {
         
         Function<A,Higher<CRE,A>> unitRef;
        
@@ -56,9 +56,9 @@ public interface General {
             return this.<T>unitRef().apply(value);
         }
     }
-    static  <CRE,A> GeneralUnit<CRE,A> unit(Function<A, Higher<CRE, A>> unitRef){
+    static  <CRE,A> GeneralPure<CRE,A> unit(Function<A, Higher<CRE, A>> unitRef){
    
-        return new GeneralUnit<CRE,A>(unitRef);
+        return new GeneralPure<CRE,A>(unitRef);
     }
     
 
@@ -66,7 +66,7 @@ public interface General {
     @Builder
     static class GeneralApplicative<CRE,A,B> implements Applicative<CRE> {
         Functor<CRE> functor;
-        Unit<CRE> unit;
+        Pure<CRE> pure;
         BiFunction<? extends Higher<CRE, Function<A, B>>,? extends Higher<CRE,A>,? extends Higher<CRE,B>> applyRef;
         
         
@@ -87,14 +87,14 @@ public interface General {
         }
         @Override
         public <T> Higher<CRE, T> unit(T value) {
-           return unit.unit(value);
+           return pure.unit(value);
         }
     }
     
-    static  <CRE,T,R> GeneralApplicative<CRE,T,R> applicative(Functor<CRE> functor, Unit<CRE> unit,
+    static  <CRE,T,R> GeneralApplicative<CRE,T,R> applicative(Functor<CRE> functor, Pure<CRE> pure,
                                                               BiFunction<? extends Higher<CRE, Function<T, R>>, ? extends Higher<CRE, T>, ? extends Higher<CRE, R>> applyRef) {
         
-        return new GeneralApplicative<CRE,T,R>(functor,unit,applyRef);
+        return new GeneralApplicative<CRE,T,R>(functor, pure,applyRef);
         
     }
     
@@ -317,14 +317,14 @@ public interface General {
     @AllArgsConstructor
     static class GeneralComonad<CRE,A,B> implements Comonad<CRE> {
         Functor<CRE> functor;
-        Unit<CRE> unit;
+        Pure<CRE> pure;
         Function<? super Higher<CRE, A>, ? extends A> extractFn;
         <T> Function<? super Higher<CRE, T>, ? extends T> extractFn(){
             return (Function)extractFn;
         }
         @Override
         public <T> Higher<CRE, T> unit(T value) {
-            return unit.unit(value);
+            return pure.unit(value);
         }
 
         @Override
@@ -340,10 +340,10 @@ public interface General {
         }
         
     }
-    static  <CRE,T,R> GeneralComonad<CRE,T,R> comonad(Functor<CRE> functor, Unit<CRE> unit,
+    static  <CRE,T,R> GeneralComonad<CRE,T,R> comonad(Functor<CRE> functor, Pure<CRE> pure,
                                                       Function<? super Higher<CRE, T>, ? extends T> extractFn) {
         
-        return new GeneralComonad<>(functor,unit,extractFn);
+        return new GeneralComonad<>(functor, pure,extractFn);
         
     }
     @AllArgsConstructor

@@ -5,7 +5,7 @@ package com.aol.cyclops.types;
  * 
  * @author johnmcclean
  *
- * @param <T> Data type of element(s) stored inside this Unit instance
+ * @param <T> Data type of element(s) stored inside this Pure instance
  */
 @FunctionalInterface
 public interface Unit<T> {

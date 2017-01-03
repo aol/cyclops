@@ -807,7 +807,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.lambda.monads.Unit#unit(java.lang.Object)
+     * @see com.aol.cyclops.lambda.monads.Pure#unit(java.lang.Object)
      */
     @Override
     public <T> Future<T> unit(final T unit) {
@@ -983,7 +983,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+     * @see com.aol.cyclops.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
     public <U> Future<U> cast(final Class<? extends U> type) {
@@ -995,7 +995,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
      * (non-Javadoc)
      * 
      * @see
-     * com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
+     * com.aol.cyclops.lambda.monads.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     public Future<T> peek(final Consumer<? super T> c) {
@@ -1006,7 +1006,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.
+     * @see com.aol.cyclops.lambda.monads.Transformable#trampoline(java.util.function.
      * Function)
      */
     @Override
@@ -1079,7 +1079,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
      * (non-Javadoc)
      * 
      * @see
-     * com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     * com.aol.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     public Maybe<T> filter(final Predicate<? super T> fn) {
@@ -1089,7 +1089,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     public <U> Maybe<U> ofType(final Class<? extends U> type) {
@@ -1101,7 +1101,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
      * (non-Javadoc)
      * 
      * @see
-     * com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     * com.aol.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     public Maybe<T> filterNot(final Predicate<? super T> fn) {
@@ -1112,7 +1112,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.types.Filterable#notNull()
+     * @see com.aol.cyclops.types.Filters#notNull()
      */
     @Override
     public Maybe<T> notNull() {

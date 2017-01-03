@@ -324,7 +324,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
+     * @see com.aol.cyclops.types.Pure#unit(java.lang.Object)
      */
     @Override
     public <T> ReactiveSeq<T> unit(T unit);

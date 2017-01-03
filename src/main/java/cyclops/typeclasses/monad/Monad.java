@@ -1,7 +1,7 @@
 package cyclops.typeclasses.monad;
 
 import com.aol.cyclops.hkt.Higher;
-import cyclops.typeclasses.Unit;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.functor.Functor;
 
 import java.util.function.BiFunction;
@@ -10,7 +10,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 
-public interface Monad<CRE> extends Applicative<CRE>,Functor<CRE>, Unit<CRE> {
+public interface Monad<CRE> extends Applicative<CRE>,Functor<CRE>, Pure<CRE> {
     
     public <T,R> Higher<CRE,R> flatMap(Function<? super T, ? extends Higher<CRE, R>> fn, Higher<CRE, T> ds);
     

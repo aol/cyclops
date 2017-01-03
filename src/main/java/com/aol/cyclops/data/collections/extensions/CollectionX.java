@@ -228,7 +228,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Foldable#headAndTail()
+     * @see com.aol.cyclops.types.Folds#headAndTail()
      */
     @Override
     default HeadAndTail<T> headAndTail() {
@@ -258,7 +258,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     CollectionX<T> reverse();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Foldable#single()
+     * @see com.aol.cyclops.types.Folds#single()
      */
     @Override
     default T single() {
@@ -275,7 +275,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Foldable#single(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Folds#single(java.util.function.Predicate)
      */
     @Override
     default T single(final Predicate<? super T> predicate) {
@@ -285,7 +285,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Foldable#singleOptional()
+     * @see com.aol.cyclops.types.Folds#singleOptional()
      */
     @Override
     default Optional<T> singleOptional() {
@@ -300,7 +300,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Foldable#findFirst()
+     * @see com.aol.cyclops.types.Folds#findFirst()
      */
     @Override
     default Optional<T> findFirst() {
@@ -308,7 +308,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Foldable#findAny()
+     * @see com.aol.cyclops.types.Folds#findAny()
      */
     @Override
     default Optional<T> findAny() {
@@ -316,7 +316,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Foldable#groupBy(java.util.function.Function)
+     * @see com.aol.cyclops.types.Folds#groupBy(java.util.function.Function)
      */
     @Override
     default <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
@@ -324,7 +324,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> filter(Predicate<? super T> pred);
@@ -401,7 +401,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     CollectionX<T> takeRight(int num);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#peek(java.util.function.Consumer)
+     * @see com.aol.cyclops.types.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     default CollectionX<T> peek(final Consumer<? super T> c) {
@@ -555,19 +555,19 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     CollectionX<T> retainAllS(T... values);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> filterNot(Predicate<? super T> fn);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#notNull()
+     * @see com.aol.cyclops.types.Filters#notNull()
      */
     @Override
     CollectionX<T> notNull();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops.types.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     <R> CollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper);
@@ -878,7 +878,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     CollectionX<ReactiveSeq<T>> combinations();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     * @see com.aol.cyclops.types.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> CollectionX<U> cast(final Class<? extends U> type) {

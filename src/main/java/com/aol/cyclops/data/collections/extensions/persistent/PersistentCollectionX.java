@@ -511,7 +511,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.lambda.monads.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> PersistentCollectionX<U> ofType(final Class<? extends U> type) {
@@ -521,7 +521,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default PersistentCollectionX<T> filterNot(final Predicate<? super T> fn) {
@@ -531,7 +531,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
+     * @see com.aol.cyclops.lambda.monads.Filters#notNull()
      */
     @Override
     default PersistentCollectionX<T> notNull() {
@@ -541,7 +541,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.util.stream.Stream)
      */
     @Override
     default PersistentCollectionX<T> removeAllS(final Stream<? extends T> stream) {
@@ -552,7 +552,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.lang.Iterable)
      */
     @Override
     default PersistentCollectionX<T> removeAllS(final Iterable<? extends T> it) {
@@ -562,7 +562,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.lang.Object[])
      */
     @Override
     default PersistentCollectionX<T> removeAllS(final T... values) {
@@ -572,7 +572,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops.lambda.monads.Filters#retainAllS(java.lang.Iterable)
      */
     @Override
     default PersistentCollectionX<T> retainAllS(final Iterable<? extends T> it) {
@@ -582,7 +582,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops.lambda.monads.Filters#retainAllS(java.util.stream.Stream)
      */
     @Override
     default PersistentCollectionX<T> retainAllS(final Stream<? extends T> seq) {
@@ -594,7 +594,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops.lambda.monads.Filters#retainAllS(java.lang.Object[])
      */
     @Override
     default PersistentCollectionX<T> retainAllS(final T... values) {
@@ -604,7 +604,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+     * @see com.aol.cyclops.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> PersistentCollectionX<U> cast(final Class<? extends U> type) {

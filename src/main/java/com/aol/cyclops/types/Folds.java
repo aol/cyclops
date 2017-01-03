@@ -25,9 +25,9 @@ import com.aol.cyclops.types.stream.HotStream;
  * 
  * @author johnmcclean
  *
- * @param <T> Data type of element(s) in this Foldable
+ * @param <T> Data type of element(s) in this Folds
  */
-public interface Foldable<T> extends ToStream<T> {
+public interface Folds<T> extends ToStream<T> {
 
 
 
@@ -89,7 +89,7 @@ public interface Foldable<T> extends ToStream<T> {
     }
 
     /**
-     * Reduce this Foldable to a single value, using the supplied Monoid. For example
+     * Reduce this Folds to a single value, using the supplied Monoid. For example
      * <pre>
      * {@code 
      * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
@@ -127,7 +127,7 @@ public interface Foldable<T> extends ToStream<T> {
      *  An equivalent function to {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
      * @param accumulator Combiner function
      * @return Value produced by applying the current accumulated value and the 
-     *          next value to the combiner function as this Foldable is traversed from left to right
+     *          next value to the combiner function as this Folds is traversed from left to right
      */
     default T reduce(final T identity, final BinaryOperator<T> accumulator) {
         return stream().reduce(identity, accumulator);
@@ -139,10 +139,10 @@ public interface Foldable<T> extends ToStream<T> {
      * @param identity Identity value for the combiner function (leaves the input unchanged)
      * @param accumulator Combiner function
      * @return Value produced by applying the current accumulated value and the 
-     *          next value to the combiner function as this Foldable is traversed from left to right
+     *          next value to the combiner function as this Folds is traversed from left to right
      */
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
-        final Foldable<T> foldable = stream();
+        final Folds<T> foldable = stream();
         return foldable.reduce(identity, accumulator);
     }
     default <U> U foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator) {
@@ -327,7 +327,7 @@ public interface Foldable<T> extends ToStream<T> {
     }
 
     /**
-     * Write each element within this Foldable in turn to the supplied PrintStream
+     * Write each element within this Folds in turn to the supplied PrintStream
      *
      * @param str PrintStream to write to
      */
@@ -336,7 +336,7 @@ public interface Foldable<T> extends ToStream<T> {
     }
 
     /**
-     * Write each element within this Foldable in turn to the supplied PrintWriter
+     * Write each element within this Folds in turn to the supplied PrintWriter
      *
      * @param writer PrintWriter to write to
      */
@@ -345,14 +345,14 @@ public interface Foldable<T> extends ToStream<T> {
     }
 
     /**
-     *  Print each value in this Foldable to the console in turn (left-to-right)
+     *  Print each value in this Folds to the console in turn (left-to-right)
      */
     default void printOut() {
         stream().printOut();
     }
 
     /**
-     *  Print each value in this Foldable to the error console in turn (left-to-right)
+     *  Print each value in this Folds to the error console in turn (left-to-right)
      */
     default void printErr() {
         stream().printErr();
@@ -433,7 +433,7 @@ public interface Foldable<T> extends ToStream<T> {
      * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
      * </pre>
      * 
-     * @param stream Stream to check if this Foldable has the same elements in the same order, at the start
+     * @param stream Stream to check if this Folds has the same elements in the same order, at the start
      * @return True if Monad starts with Iterators sequence of data
      */
     default boolean startsWith(final Stream<T> stream) {

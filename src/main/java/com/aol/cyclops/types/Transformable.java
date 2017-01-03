@@ -6,17 +6,16 @@ import java.util.function.Function;
 
 import com.aol.cyclops.util.ExceptionSoftener;
 import cyclops.control.Trampoline;
-import cyclops.stream.ReactiveSeq;
 
 /** 
  * An interface that represents a type that can transform a value from one type to another
  * 
  * @author johnmcclean
  *
- * @param <T> Data type of element(s) stored in this Functor
+ * @param <T> Data type of element(s) stored in this Transformable
  */
 @FunctionalInterface
-public interface Functor<T> {
+public interface Transformable<T> {
 
     /**
      * Cast all elements in a stream to a given type, possibly throwing a
@@ -26,7 +25,7 @@ public interface Functor<T> {
      * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
      * 
      */
-    default <U> Functor<U> cast(final Class<? extends U> type) {
+    default <U> Transformable<U> cast(final Class<? extends U> type) {
         return map(type::cast);
     }
 
@@ -45,12 +44,12 @@ public interface Functor<T> {
      * </pre>
      * 
      * @param fn Transformation function
-     * @return Transformed Functor
+     * @return Transformed Transformable
      */
-    <R> Functor<R> map(Function<? super T, ? extends R> fn);
+    <R> Transformable<R> map(Function<? super T, ? extends R> fn);
  
     /**
-     * Peek at the current value of this Functor, without transforming it
+     * Peek at the current value of this Transformable, without transforming it
      * 
       * <pre>
      * {@code 
@@ -64,10 +63,10 @@ public interface Functor<T> {
      *  
      * }
      * </pre>
-     * @param c Consumer that recieves each element from this Functor
-     * @return Functor that will peek at each value
+     * @param c Consumer that recieves each element from this Transformable
+     * @return Transformable that will peek at each value
      */
-    default Functor<T> peek(final Consumer<? super T> c) {
+    default Transformable<T> peek(final Consumer<? super T> c) {
         return map(input -> {
             c.accept(input);
             return input;
@@ -105,9 +104,9 @@ public interface Functor<T> {
       * </pre>
       * 
      * @param mapper TCO Transformation function
-     * @return Functor transformed by the supplied transformation function
+     * @return Transformable transformed by the supplied transformation function
      */
-    default <R> Functor<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+    default <R> Transformable<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
         return map(in -> mapper.apply(in)
                                .result());
     }
@@ -137,7 +136,7 @@ public interface Functor<T> {
      *            Function to retry if fails
      *
      */
-    default <R> Functor<R> retry(final Function<? super T, ? extends R> fn) {
+    default <R> Transformable<R> retry(final Function<? super T, ? extends R> fn) {
         return retry(fn, 7, 2, TimeUnit.SECONDS);
     }
 
@@ -171,7 +170,7 @@ public interface Functor<T> {
      * @param timeUnit
      *            TimeUnit to use for delay
      */
-    default <R> Functor<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+    default <R> Transformable<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
         final Function<T, R> retry = t -> {
             int count = retries;
             final long[] sleep = { timeUnit.toMillis(delay) };

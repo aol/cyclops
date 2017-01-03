@@ -1,5 +1,6 @@
 package com.aol.cyclops.types.anyM;
 
+import com.aol.cyclops.types.Filters;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
@@ -8,7 +9,6 @@ import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
-import com.aol.cyclops.types.Filterable;
 import com.aol.cyclops.types.MonadicValue;
 import com.aol.cyclops.types.Value;
 import com.aol.cyclops.types.Zippable;
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  */
 public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
                                                                 Value<T>,
-                                                                Filterable<T>,
+        Filters<T>,
                                                                 MonadicValue<T> {
 
 
@@ -161,7 +161,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> AnyMValue<W,U> ofType(final Class<? extends U> type) {
@@ -170,7 +170,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default AnyMValue<W,T> filterNot(final Predicate<? super T> fn) {
@@ -179,7 +179,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#notNull()
+     * @see com.aol.cyclops.types.Filters#notNull()
      */
     @Override
     default AnyMValue<W,T> notNull() {

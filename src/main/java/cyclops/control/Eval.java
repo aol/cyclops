@@ -336,7 +336,7 @@ public interface Eval<T> extends    To<Eval<T>>,
     public T get();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Maybe<U> ofType(final Class<? extends U> type) {
@@ -345,7 +345,7 @@ public interface Eval<T> extends    To<Eval<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default Maybe<T> filterNot(final Predicate<? super T> fn) {
@@ -354,7 +354,7 @@ public interface Eval<T> extends    To<Eval<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#notNull()
+     * @see com.aol.cyclops.types.Filters#notNull()
      */
     @Override
     default Maybe<T> notNull() {
@@ -363,7 +363,7 @@ public interface Eval<T> extends    To<Eval<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     default Maybe<T> filter(final Predicate<? super T> pred) {
@@ -641,7 +641,7 @@ public interface Eval<T> extends    To<Eval<T>>,
             }
 
             /* (non-Javadoc)
-             * @see com.aol.cyclops.lambda.monads.Unit#unit(java.lang.Object)
+             * @see com.aol.cyclops.lambda.monads.Pure#unit(java.lang.Object)
              */
             @Override
             public <T> Eval<T> unit(final T unit) {

@@ -589,7 +589,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>, MutableCollectionX<T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+     * @see com.aol.cyclops.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> QueueX<U> cast(final Class<? extends U> type) {

@@ -426,7 +426,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     * @see com.aol.cyclops.types.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> Try<U, X> cast(final Class<? extends U> type) {
@@ -434,7 +434,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops.types.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> Try<R, X> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
@@ -442,7 +442,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Maybe<U> ofType(final Class<? extends U> type) {
@@ -451,7 +451,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default Maybe<T> filterNot(final Predicate<? super T> fn) {
@@ -460,7 +460,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#notNull()
+     * @see com.aol.cyclops.types.Filters#notNull()
      */
     @Override
     default Maybe<T> notNull() {

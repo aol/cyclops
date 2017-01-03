@@ -336,7 +336,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
+     * @see com.aol.cyclops.types.Pure#unit(java.lang.Object)
      */
     @Override
     default <R> PBagX<R> unit(final R value) {

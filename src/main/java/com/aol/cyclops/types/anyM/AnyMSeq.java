@@ -408,7 +408,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     * @see com.aol.cyclops.types.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> AnyMSeq<W,U> cast(final Class<? extends U> type) {
@@ -417,7 +417,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops.types.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> AnyMSeq<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
@@ -887,7 +887,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> AnyMSeq<W,U> ofType(final Class<? extends U> type) {
@@ -896,7 +896,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default AnyMSeq<W,T> filterNot(final Predicate<? super T> fn) {

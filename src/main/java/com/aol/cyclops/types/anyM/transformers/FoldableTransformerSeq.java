@@ -5,9 +5,9 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.aol.cyclops.types.FilterableTransformable;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops.types.FilterableFunctor;
 import com.aol.cyclops.types.anyM.NestedCollectable;
 import com.aol.cyclops.types.anyM.NestedFoldable;
 import cyclops.monads.WitnessType;
@@ -21,8 +21,8 @@ import com.aol.cyclops.types.stream.HeadAndTail;
  */
 public interface FoldableTransformerSeq<W extends WitnessType<W>,T> extends TransformerSeq<W,T>,  
                                                                             NestedFoldable<W,T>, 
-                                                                            NestedCollectable<W,T>, 
-                                                                            FilterableFunctor<T> {
+                                                                            NestedCollectable<W,T>,
+        FilterableTransformable<T> {
 
     /* (non-Javadoc)
      * @see cyclops.monads.transformers.values.TransformerSeq#stream()

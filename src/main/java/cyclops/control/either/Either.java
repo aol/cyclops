@@ -516,7 +516,7 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
      * (non-Javadoc)
      * 
      * @see
-     * com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     * com.aol.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     Either<ST, PT> filter(Predicate<? super PT> test);
@@ -925,7 +925,7 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.lambda.monads.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Either<ST, U> ofType(final Class<? extends U> type) {
@@ -937,7 +937,7 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
      * (non-Javadoc)
      * 
      * @see
-     * com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.
+     * com.aol.cyclops.lambda.monads.Filters#filterNot(java.util.function.
      * Predicate)
      */
     @Override
@@ -949,7 +949,7 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
+     * @see com.aol.cyclops.lambda.monads.Filters#notNull()
      */
     @Override
     default Either<ST, PT> notNull() {

@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops.data.collections.extensions.persistent.PMapXImpl;
+import com.aol.cyclops.types.*;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.HashTreePMap;
@@ -21,18 +22,12 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import com.aol.cyclops.data.collections.extensions.FluentMapX;
 import cyclops.collections.ListX;
-import com.aol.cyclops.types.BiFunctor;
-import com.aol.cyclops.types.Foldable;
-import com.aol.cyclops.types.Functor;
-import com.aol.cyclops.types.IterableFilterable;
-import com.aol.cyclops.types.OnEmpty;
-import com.aol.cyclops.types.OnEmptySwitch;
-import com.aol.cyclops.types.To;
+import com.aol.cyclops.types.Transformable;
 import com.aol.cyclops.types.stream.CyclopsCollectable;
 
 public interface PMapX<K, V>
-        extends To<PMapX<K,V>>,PMap<K, V>, FluentMapX<K, V>, BiFunctor<K, V>, Functor<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
-        OnEmptySwitch<Tuple2<K, V>, PMap<K, V>>, Publisher<Tuple2<K, V>>, Foldable<Tuple2<K, V>>, CyclopsCollectable<Tuple2<K, V>> {
+        extends To<PMapX<K,V>>,PMap<K, V>, FluentMapX<K, V>, BiFunctor<K, V>, Transformable<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
+        OnEmptySwitch<Tuple2<K, V>, PMap<K, V>>, Publisher<Tuple2<K, V>>, Folds<Tuple2<K, V>>, CyclopsCollectable<Tuple2<K, V>> {
 
     public static <K, V> PMapX<K, V> empty() {
         return new PMapXImpl<K, V>(
@@ -98,7 +93,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#map(java.util.function.Function)
+     * @see com.aol.cyclops.lambda.monads.Transformable#map(java.util.function.Function)
      */
     @Override
     default <R> PMapX<K, R> map(final Function<? super V, ? extends R> fn) {
@@ -146,34 +141,34 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+     * @see com.aol.cyclops.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> PMapX<K, U> cast(final Class<? extends U> type) {
 
-        return (PMapX<K, U>) Functor.super.cast(type);
+        return (PMapX<K, U>) Transformable.super.cast(type);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
+     * @see com.aol.cyclops.lambda.monads.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     default PMapX<K, V> peek(final Consumer<? super V> c) {
 
-        return (PMapX<K, V>) Functor.super.peek(c);
+        return (PMapX<K, V>) Transformable.super.peek(c);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> PMapX<K, R> trampoline(final Function<? super V, ? extends Trampoline<? extends R>> mapper) {
 
-        return (PMapX<K, R>) Functor.super.trampoline(mapper);
+        return (PMapX<K, R>) Transformable.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops.lambda.monads.Filters#filter(java.util.function.Predicate)
      */
     @Override
     default PMapX<K, V> filter(final Predicate<? super Tuple2<K, V>> fn) {
@@ -182,7 +177,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default PMapX<K, V> filterNot(final Predicate<? super Tuple2<K, V>> fn) {
@@ -191,7 +186,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
+     * @see com.aol.cyclops.lambda.monads.Filters#notNull()
      */
     @Override
     default PMapX<K, V> notNull() {
@@ -200,7 +195,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.util.stream.Stream)
      */
     @Override
     default PMapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -209,7 +204,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.lang.Iterable)
      */
     @Override
     default PMapX<K, V> removeAllS(final Iterable<? extends Tuple2<K, V>> it) {
@@ -218,7 +213,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops.lambda.monads.Filters#removeAllS(java.lang.Object[])
      */
     @Override
     default PMapX<K, V> removeAllS(final Tuple2<K, V>... values) {
@@ -227,7 +222,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops.lambda.monads.Filters#retainAllS(java.lang.Iterable)
      */
     @Override
     default PMapX<K, V> retainAllS(final Iterable<? extends Tuple2<K, V>> it) {
@@ -236,7 +231,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops.lambda.monads.Filters#retainAllS(java.util.stream.Stream)
      */
     @Override
     default PMapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -245,7 +240,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops.lambda.monads.Filters#retainAllS(java.lang.Object[])
      */
     @Override
     default PMapX<K, V> retainAllS(final Tuple2<K, V>... values) {

@@ -431,7 +431,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     Xor<ST, PT> filter(Predicate<? super PT> test);
@@ -957,7 +957,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.lambda.monads.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Xor<ST, U> ofType(final Class<? extends U> type) {
@@ -966,7 +966,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default Xor<ST, PT> filterNot(final Predicate<? super PT> fn) {
@@ -975,7 +975,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
+     * @see com.aol.cyclops.lambda.monads.Filters#notNull()
      */
     @Override
     default Xor<ST, PT> notNull() {

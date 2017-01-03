@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.*;
 
-import com.aol.cyclops.internal.stream.spliterators.LazySingleSpliterator;
 import cyclops.Streams;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.AnyM;
@@ -64,8 +63,8 @@ public interface Streamable<T> extends  To<Streamable<T>>,
                                         FoldableTraversable<T>,
                                         CyclopsCollectable<T>,
                                         ConvertableSequence<T>,
-                                        Functor<T>,
-                                        Filterable<T>,
+        Transformable<T>,
+        Filters<T>,
                                         Traversable<T>,
                                         Unit<T>,
                                         Zippable<T> {

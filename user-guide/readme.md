@@ -462,7 +462,7 @@ Using the cyclops-react Do builder. In general prefer using com.aol.cyclops.cont
 
 # <suspended name="typeClasses">Type classes
 
-[monad,applicative, functor, unit, monadPlus based on HKT]
+[monad,applicative, functor, pure, monadPlus based on HKT]
 
 * [Type classes](https://github.com/aol/cyclops/wiki/Type-classes)
 

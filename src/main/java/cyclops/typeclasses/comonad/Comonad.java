@@ -3,7 +3,7 @@ package cyclops.typeclasses.comonad;
 
 
 import com.aol.cyclops.hkt.Higher;
-import cyclops.typeclasses.Unit;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.functor.Functor;
 
 import java.util.function.Function;
@@ -19,7 +19,7 @@ import java.util.function.Function;
  *
  * @param <CRE> Witness type of Kind to process
  */
-public interface Comonad<CRE> extends Unit<CRE>, Functor<CRE> {
+public interface Comonad<CRE> extends Pure<CRE>, Functor<CRE> {
 
     /**
      * Nest a value inside a value  (e.g. {@code List<List<Integer>> })

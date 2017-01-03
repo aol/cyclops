@@ -3,7 +3,7 @@ package cyclops.function;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.aol.cyclops.types.Functor;
+import com.aol.cyclops.types.Transformable;
 
 /**
  * An interface that represents the Reader monad
@@ -44,10 +44,10 @@ import com.aol.cyclops.types.Functor;
  * @param <T> Current input type of Function
  * @param <R> Current return type of Function
  */
-public interface Reader<T, R> extends Fn1<T, R>, Functor<R> {
+public interface Reader<T, R> extends Fn1<T, R>, Transformable<R> {
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#map(java.util.function.Function)
+     * @see com.aol.cyclops.types.Transformable#map(java.util.function.Function)
      */
     @Override
     default <R1> Reader<T, R1> map(final Function<? super R, ? extends R1> f2) {

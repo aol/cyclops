@@ -398,7 +398,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
+     * @see com.aol.cyclops.types.Pure#unit(java.lang.Object)
      */
     @Override
     default <R> DequeX<R> unit(final R value) {
@@ -946,7 +946,7 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+     * @see com.aol.cyclops.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> DequeX<U> cast(final Class<? extends U> type) {

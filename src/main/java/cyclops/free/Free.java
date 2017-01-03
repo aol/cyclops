@@ -27,8 +27,8 @@ import java.util.function.Function;
  *
  * Org attempt : https://github.com/aol/cyclops/blob/v4.0.1/cyclops-free-monad/src/main/java/com/aol/cyclops/monad/Free.java
  *
- * @param <F> Functor type
- * @param <T> Data type of Functor
+ * @param <F> Transformable type
+ * @param <T> Data type of Transformable
  */
 @NoArgsConstructor(access=AccessLevel.PRIVATE)
 public abstract class Free<F, T> implements Printable {

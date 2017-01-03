@@ -8,9 +8,9 @@ import java.util.function.Predicate;
  * 
  * @author johnmcclean
  *
- * @param <T> Type of this Filterable
+ * @param <T> Type of this Filters
  */
-public interface Filterable<T> {
+public interface Filters<T> {
 
     /**
      * Keep only elements for which the supplied predicates hold
@@ -28,9 +28,9 @@ public interface Filterable<T> {
      * 
      * 
      * @param predicate to filter elements by, retaining matches
-     * @return Filterable with elements removed where the predicate does not hold
+     * @return Filters with elements removed where the predicate does not hold
      */
-    Filterable<T> filter(Predicate<? super T> predicate);
+    Filters<T> filter(Predicate<? super T> predicate);
 
     /**
      * Keep only those elements in a stream that are of a given type.
@@ -44,8 +44,8 @@ public interface Filterable<T> {
      * </pre>
      */
     @SuppressWarnings("unchecked")
-    default <U> Filterable<U> ofType(final Class<? extends U> type) {
-        return (Filterable<U>) filter(type::isInstance);
+    default <U> Filters<U> ofType(final Class<? extends U> type) {
+        return (Filters<U>) filter(type::isInstance);
     }
 
     /**
@@ -64,9 +64,9 @@ public interface Filterable<T> {
      * 
      * 
      * @param predicate to filter elements by, retaining matches
-     * @return Filterable with elements removed where the predicate does not hold
+     * @return Filters with elements removed where the predicate does not hold
      */
-    default Filterable<T> filterNot(final Predicate<? super T> predicate) {
+    default Filters<T> filterNot(final Predicate<? super T> predicate) {
         return filter(predicate.negate());
     }
 
@@ -83,9 +83,9 @@ public interface Filterable<T> {
      * }
      * </pre>
      * 
-     * @return Filterable with nulls removed
+     * @return Filters with nulls removed
      */
-    default Filterable<T> notNull() {
+    default Filters<T> notNull() {
         return filter(t -> t != null);
     }
 

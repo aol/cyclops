@@ -8,7 +8,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-import cyclops.function.Fn0;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -32,7 +31,7 @@ import lombok.AllArgsConstructor;
  * @param <T> Data type of element in this value
  */
 @FunctionalInterface
-public interface Value<T> extends   Foldable<T>,
+public interface Value<T> extends Folds<T>,
                                     Convertable<T>, 
                                     Publisher<T>, 
                                     Predicate<T> {
@@ -151,7 +150,7 @@ public interface Value<T> extends   Foldable<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Foldable#stream()
+     * @see com.aol.cyclops.types.Folds#stream()
      */
     @Override
     default ReactiveSeq<T> stream() {

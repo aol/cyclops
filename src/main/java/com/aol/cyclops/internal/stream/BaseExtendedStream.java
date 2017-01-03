@@ -166,7 +166,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Unit#unit(java.lang.Object)
+     * @see com.aol.cyclops.lambda.monads.Pure#unit(java.lang.Object)
      */
     @Override
     public <T> ReactiveSeq<T> unit(final T unit) {

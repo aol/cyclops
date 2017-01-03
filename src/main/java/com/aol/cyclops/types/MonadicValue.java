@@ -21,23 +21,23 @@ import java.util.stream.Stream;
  *
  * @param <T> Data type of element stored inside this Monad
  */
-public interface MonadicValue<T> extends Value<T>, Unit<T>, Functor<T>, Filterable<T>, Zippable<T>{
+public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Filters<T>, Zippable<T>{
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
      MonadicValue<T> filter(Predicate<? super T> predicate) ;
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
+     * @see com.aol.cyclops.types.Pure#unit(java.lang.Object)
      */
     @Override
     public <T> MonadicValue<T> unit(T unit);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#map(java.util.function.Function)
+     * @see com.aol.cyclops.types.Transformable#map(java.util.function.Function)
      */
     @Override
     <R> MonadicValue<R> map(Function<? super T, ? extends R> fn);

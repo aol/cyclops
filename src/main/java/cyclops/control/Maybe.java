@@ -757,7 +757,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.lambda.monads.Filterable#filter(java.util.function.
+     * @see com.aol.cyclops.lambda.monads.Filters#filter(java.util.function.
      * Predicate)
      */
     @Override
@@ -766,7 +766,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.lambda.monads.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Maybe<U> ofType(final Class<? extends U> type) {
@@ -778,7 +778,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * (non-Javadoc)
      * 
      * @see
-     * com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.
+     * com.aol.cyclops.lambda.monads.Filters#filterNot(java.util.function.
      * Predicate)
      */
     @Override
@@ -790,7 +790,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
+     * @see com.aol.cyclops.lambda.monads.Filters#notNull()
      */
     @Override
     default Maybe<T> notNull() {

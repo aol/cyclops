@@ -348,7 +348,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     Ior<ST, PT> filter(Predicate<? super PT> test);
@@ -412,7 +412,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     Ior<ST, PT> secondaryPeek(Consumer<? super ST> action);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Functor#peek(java.util.function.Consumer)
+     * @see com.aol.cyclops.types.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     Ior<ST, PT> peek(Consumer<? super PT> action);
@@ -808,7 +808,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
         return (Ior<ST,PT>)MonadicValue.super.zip(combiner, app);
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.lambda.monads.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Ior<ST, U> ofType(final Class<? extends U> type) {
@@ -817,7 +817,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default Ior<ST, PT> filterNot(final Predicate<? super PT> fn) {
@@ -826,7 +826,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Filterable#notNull()
+     * @see com.aol.cyclops.lambda.monads.Filters#notNull()
      */
     @Override
     default Ior<ST, PT> notNull() {
@@ -835,7 +835,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+     * @see com.aol.cyclops.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> Ior<ST, U> cast(final Class<? extends U> type) {
@@ -844,7 +844,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> Ior<ST, R> trampoline(final Function<? super PT, ? extends Trampoline<? extends R>> mapper) {

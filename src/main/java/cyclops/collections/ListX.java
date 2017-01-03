@@ -16,7 +16,7 @@ import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.ListT;
 import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.Unit;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
@@ -101,7 +101,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *
          * @return A factory for Lists
          */
-        public static <T> Unit<µ> unit(){
+        public static <T> Pure<µ> unit(){
             return General.<ListX.µ,T>unit(Instances::of);
         }
         /**
@@ -663,7 +663,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
+     * @see com.aol.cyclops.types.Pure#unit(java.lang.Object)
      */
     @Override
     default <R> ListX<R> unit(final R value) {
@@ -1220,7 +1220,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.lambda.monads.Functor#cast(java.lang.Class)
+     * @see com.aol.cyclops.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> ListX<U> cast(final Class<? extends U> type) {

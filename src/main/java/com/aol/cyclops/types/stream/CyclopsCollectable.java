@@ -8,7 +8,7 @@ import com.aol.cyclops.types.stream.reactive.ReactiveStreamsTerminalOperations;
 import org.jooq.lambda.Collectable;
 
 import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops.types.Foldable;
+import com.aol.cyclops.types.Folds;
 import org.jooq.lambda.Seq;
 
 /**
@@ -19,7 +19,7 @@ import org.jooq.lambda.Seq;
  *
  * @param <T> Data type of elements in this Collectable
  */
-public interface CyclopsCollectable<T> extends  Iterable<T>, Foldable<T>,ReactiveStreamsTerminalOperations<T> {
+public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveStreamsTerminalOperations<T> {
 
 
     /* (non-Javadoc)

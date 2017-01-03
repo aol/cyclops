@@ -1,7 +1,7 @@
 package cyclops.typeclasses.monad;
 
 import com.aol.cyclops.hkt.Higher;
-import cyclops.typeclasses.Unit;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.functor.Functor;
 
 import java.util.function.BiFunction;
@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 
 
-public interface Applicative<CRE> extends Functor<CRE>,Unit<CRE> {
+public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
     
     /**
      * Narrow the co/contra variance on Function stored within a HKT encoded type 

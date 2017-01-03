@@ -340,7 +340,7 @@ public interface Either3<LT1, LT2, RT>
     
      
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Maybe<U> ofType(Class<? extends U> type) {
@@ -348,7 +348,7 @@ public interface Either3<LT1, LT2, RT>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default Maybe<RT> filterNot(Predicate<? super RT> predicate) {
@@ -356,7 +356,7 @@ public interface Either3<LT1, LT2, RT>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#notNull()
+     * @see com.aol.cyclops.types.Filters#notNull()
      */
     @Override
     default Maybe<RT> notNull() {
@@ -537,7 +537,7 @@ public interface Either3<LT1, LT2, RT>
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
+     * @see com.aol.cyclops.types.Pure#unit(java.lang.Object)
      */
     @Override
     <T> Either3<LT1, LT2, T> unit(T unit);

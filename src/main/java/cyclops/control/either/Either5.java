@@ -2,12 +2,8 @@ package cyclops.control.either;
 
 import com.aol.cyclops.data.collections.extensions.CollectionX;
 import com.aol.cyclops.types.*;
-import com.aol.cyclops.types.anyM.AnyMValue;
 import com.aol.cyclops.types.stream.reactive.ValueSubscriber;
-import cyclops.Semigroups;
-import cyclops.Streams;
 import cyclops.collections.ListX;
-import cyclops.collections.immutable.PStackX;
 import cyclops.control.*;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
@@ -15,7 +11,6 @@ import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -44,8 +39,8 @@ import java.util.stream.Stream;
  * @param <LT4> Fourth Type
  * @param <RT> Right type (operations are performed on this type if present)
  */
-public interface Either5<LT1, LT2,LT3, LT4,RT> extends Functor<RT>, 
-                                                   Filterable<RT>,
+public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
+        Filters<RT>,
                                                    BiFunctor<LT4, RT>, 
                                                    To<Either5<LT1, LT2,LT3, LT4,RT>>,
                                                    MonadicValue<RT>,
@@ -416,7 +411,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Functor<RT>,
     
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#ofType(java.lang.Class)
+     * @see com.aol.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Maybe<U> ofType(Class<? extends U> type) {
@@ -424,7 +419,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Functor<RT>,
         return (Maybe<U>)MonadicValue.super.ofType(type);
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default Maybe<RT> filterNot(Predicate<? super RT> predicate) {
@@ -432,7 +427,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Functor<RT>,
         return (Maybe<RT>)MonadicValue.super.filterNot(predicate);
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops.types.Filterable#notNull()
+     * @see com.aol.cyclops.types.Filters#notNull()
      */
     @Override
     default Maybe<RT> notNull() {
@@ -452,7 +447,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Functor<RT>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.types.Functor#map(java.util.function.Function)
+     * @see com.aol.cyclops.types.Transformable#map(java.util.function.Function)
      */
     @Override
     <R> Either5<LT1,LT2,LT3, LT4, R> map(Function<? super RT, ? extends R> fn);
@@ -634,7 +629,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Functor<RT>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.types.Unit#unit(java.lang.Object)
+     * @see com.aol.cyclops.types.Pure#unit(java.lang.Object)
      */
     @Override
     <T> Either5<LT1, LT2,LT3,LT4, T> unit(T unit);
@@ -707,7 +702,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Functor<RT>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.types.Functor#cast(java.lang.Class)
+     * @see com.aol.cyclops.types.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> Either5<LT1, LT2, LT3, LT4, U> cast(final Class<? extends U> type) {
@@ -718,7 +713,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Functor<RT>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops.types.Functor#peek(java.util.function.Consumer)
+     * @see com.aol.cyclops.types.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     default Either5<LT1, LT2, LT3,LT4, RT> peek(final Consumer<? super RT> c) {
@@ -730,7 +725,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Functor<RT>,
      * (non-Javadoc)
      * 
      * @see
-     * com.aol.cyclops.types.Functor#trampoline(java.util.function.Function)
+     * com.aol.cyclops.types.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> Either5<LT1, LT2, LT3,LT4, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
