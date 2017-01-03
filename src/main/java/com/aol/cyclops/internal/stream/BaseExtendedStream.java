@@ -240,6 +240,13 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
     @Override
+    public <S, U> ReactiveSeq<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
+        return createSeq( new Zipping3Spliterator<>(copyOrGet(),second.spliterator(),third.spliterator(),(a,b,c)->Tuple.tuple(a,b,c)));
+    }
+
+    
+
+    @Override
     public final <T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
             final Iterable<? extends T4> fourth) {
         return zip3(second, third).zip(fourth)

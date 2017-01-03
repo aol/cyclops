@@ -1075,12 +1075,12 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     @Override
-    default AnyMSeq<W,T> recover(final Function<Throwable, ? extends T> fn) {
+    default AnyMSeq<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
         return (AnyMSeq<W,T>)FoldableTraversable.super.recover(fn);
     }
 
     @Override
-    default <EX extends Throwable> AnyMSeq<W,T> recover(Class<EX> exceptionClass, final Function<EX, ? extends T> fn) {
+    default <EX extends Throwable> AnyMSeq<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return (AnyMSeq<W,T>)FoldableTraversable.super.recover(exceptionClass,fn);
     }
 
