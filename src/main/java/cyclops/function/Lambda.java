@@ -51,6 +51,9 @@ public class Lambda {
     public static <T> Fn0<T> λ(final Fn0<T> supplier) {
         return supplier;
     }
+    public static <T> Fn0.SupplierKind<T> λK(final Fn0.SupplierKind<T> supplier) {
+        return supplier;
+    }
     public static <T> Predicate<T> λ(final Predicate<T> pred) {
         return  pred;
     }

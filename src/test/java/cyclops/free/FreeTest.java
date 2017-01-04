@@ -1,6 +1,8 @@
 package cyclops.free;
 
 
+import static cyclops.function.Fn0.SupplierKind;
+
 import cyclops.function.Fn0;
 import org.junit.Test;
 
@@ -10,23 +12,23 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public final class FreeTest {
-    private static Free<Fn0.µ, Long> fibonacci(long i){
+    private static Free<SupplierKind.µ, Long> fibonacci(long i){
         return fibonacci(i,1,0);
     }
-    private static Free<Fn0.µ, Long> fibonacci(long n, long a, long b) {
-        return n == 0 ? Free.done(b) : λ( ()->fibonacci(n-1, a+b, a))
+    private static Free<SupplierKind.µ, Long> fibonacci(long n, long a, long b) {
+        return n == 0 ? Free.done(b) : λK( ()->fibonacci(n-1, a+b, a))
                                         .fnTo(Fn0::suspend)
-                                        .flatMap(i->λ( ()->fibonacci(n-1, a+b, a))
+                                        .flatMap(i->λK( ()->fibonacci(n-1, a+b, a))
                                                 .fnTo(Fn0::suspend));
     }
-    static Free<Fn0.µ, Long> fib(final Long n){
+    static Free<SupplierKind.µ, Long> fib(final Long n){
 
         if(n < 2){
             return Free.done(2L);
         }else{
-            return λ(()->fib(n-1))
+            return λK(()->fib(n-1))
                             .fnTo(Fn0::suspend)
-                            .flatMap(x->λ(()->fib(n-2))
+                            .flatMap(x->λK(()->fib(n-2))
                                     .fnTo(Fn0::suspend)
                                     .map(y->x+y));
         }
