@@ -2,6 +2,12 @@
 
 Future & functional based programming via JDK compatible extensions for Java 8 and above. 
 
+This is the 2.x branch for 1.x click here 
+
+* [1.x](https://github.com/aol/cyclops-react/tree/1.x)
+
+2.x is namespaced differently so as not to collide with 1.x on the same classpath.
+
 # Getting cyclops-react
 
 * [![Maven Central : cyclops-react](https://maven-badges.herokuapp.com/maven-central/com.aol.simplereact/cyclops-react/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.simple-react/cyclops-react)
@@ -30,17 +36,57 @@ compile cyclops2
     <version>x.y.z</version>
 </dependency>
 ```
+# Features
+
+* Deep consistent and integrated API across a broad range of key functional types
+* An extended JDK Stream type - replayable + many additional operators
+* Fast Lazy Collection types for efficient functional transformations
+* FutureStreams for parallel I/O
+* Core components for building asynchronous applications
+* Advanced functional features such as for comprehensions and pattern matching integrated into the API
+* Clean simulated Higher Kinded Types via Witness Types
+* Extensions for JDK types : Optional, CompletableFutures and Streams
+
+* Third party integrations via cyclops modules (including Scala, JavasLang, FunctionalJava, Reactor and RxJava)
+
+
 # 2.x Type dictionary
 
-## Streams
+## cyclops
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| Optionals     | Extension methods, for comprehensions and Higher kinded type classes            | Higher kinded                 |
+| CompletableFutures    | Extension methods, for comprehensions and Higher kinded type classes            | Higher kinded                 |
+| Streams     | Extension methods, for comprehensions and Higher kinded type classes            | Higher kinded                 |
+| Semigroups     | Combiners for a wide range of types           |                  |
+| Monoids     | Combiners with an identity value for a wide range of types            |              |
+
+
+## cyclops.stream
 
 | type | description | characteristics |
 |------|-------------|-----------------|
 | FutureStream     | Asynchronous and parallel stream             | Lazy, async, parallel                 |
 | ReactiveSeq     | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Lazy, parallel option, primitive support, replayable, Higher kinded                |
 | Streamable     | Capturing and caching replayable Stream type              | Lazy, caching                |
+| StreamSource     | Push data asynchronously into synchronous sequential or parallel Streams (e.g. JDK Stream, ReactiveSeq)              |             |
 
-## Sum Types
+## cyclops.async
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| Future     | Potentially asynchronous task that may populate a result in the Future            | Eager async, Higher kinded                 |
+| SimpleReact     | Asynchronous bulk operations on Futures            | Eager async                 |
+| LazyReact     | Builder for FutureStreams           |                 |
+| Adapter     | Interface for data transfer Adapters to connected Streams. Closing the adapter, closes the streams (impls - Queue, Topic, Signal)           |    Async             |
+| Queue     | Facilitates asyncrhonous data transfer to mulitiple connected Streams, via any java.util.Queue impl, Continuations toallow consumers to become producers.           |    Async             |
+| Topic     | Asynchronous data transfer to multiple connected Streams, all connected Streams recieve each message           |   Async              |
+| Signal    | Asynchronous data transfer - changes in data are broadcast to connected Streams           |   Async              |
+| Pipes    | Event bus for managing data transfer via Adapters to connected data structures           |   Async              |
+
+
+## cyclops.control : Sum Types
 
 | type | description | characteristics |
 |------|-------------|-----------------|
@@ -53,7 +99,7 @@ compile cyclops2
 | Either4     | Lazy Either type maybe one of four values            | Lazy, tail recursive, sum type                 |
 | Either5     | Lazy Either type maybe one of five values            | Lazy, tail recursive, sum type                 |
 
-## Collections : mutable / immutable
+## cyclops.collections (mutable / immutable)
 
 | type | description | characteristics |
 |------|-------------|-----------------|
@@ -63,7 +109,7 @@ compile cyclops2
 | SetX     | Functional extensions for working with Sets            | Lazy , mutable, immutable, 3rd party support                |
 | SortedSetX     | Functional extensions for working with SortedSets            | Lazy, mutable, immutable                 |
 
-## Collections : persistent
+## cyclops.collections.persistent
 
 | type | description | characteristics |
 |------|-------------|-----------------|
@@ -74,31 +120,16 @@ compile cyclops2
 | PQueueX     | Functional extensions for working with persistent Queues           | Lazy, persistent, 3rd party support, Higher kinded                 |
 | PBagX     | Functional extensions for working with persistent Bags (set like collections that allow duplicates)          | Lazy, persistent, 3rd party support                 |
 
-## JDK Support
 
-| type | description | characteristics |
-|------|-------------|-----------------|
-| Optionals     | Extension methods, for comprehensions and Higher kinded type classes            | Higher kinded                 |
-| CompletableFutures    | Extension methods, for comprehensions and Higher kinded type classes            | Higher kinded                 |
-| Streams     | Extension methods, for comprehensions and Higher kinded type classes            | Higher kinded                 |
-
-## Async monadic types
-
-| type | description | characteristics |
-|------|-------------|-----------------|
-| Future     | Potentially asynchronous task that may populate a result in the Future            | Eager async, Higher kinded                 |
-| SimpleReact     | Asyncrhonous bulk operations on Futures            | Eager async                 |
-
-## Misc monadic types
+## cyclops.control + cyclops.free
 
 | type | description | characteristics |
 |------|-------------|-----------------|
 | Eval     | Lazy evaluation, optional caching            | Lazy, tail recursive, Higher kinded                 |
-| Reader     | A transformable function : useful to implement dependency injection or Singletons in a functional style            | Eager                |
 | Trampoline     | Easy to use trampoline implementations (see also Free using SupplierKind)            | Lazy                |
-| Free     | Higher kinded implementation of the Free monad for Java, facilitates functional interpreters            | Lazy                |
+| Free     | Higher kinded implementation of the Free monad for Java, facilitates functional interpreters. Free + SupplierKind (higher kinded Fn0) = a more advanced Trampoline implementation.            | Lazy                |
 
-## Box types
+## cyclops.box
 
 | type | description | characteristics |
 |------|-------------|-----------------|
@@ -112,8 +143,26 @@ compile cyclops2
 | MutableByte     | A mutable primitive box type for bytes        | Eager execution                 |
 | MutableBoolean     | A mutable primitive box type for booleans        | Eager execution                 |
 
+## cyclops.functions
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| Fn0-Fn8     | Extended Function interfaces supporting map / flatMap / applicative operations, currying, partial application, lifting, composition and more           |                  |
+| AnyMFn0-AnyMFn2     | Type aliases for monadically lifted functions          |                  |
+| C3-C5     | Additional Consumers           |                  |
+| FluentFunctions     | A fluent API for working with Functions - composition, lifting, AOP and more           |                  |
+| Lambda    | An API for working with anomyous lambda expressions (type inferencing)          |                  |
+| Memoize     | An API for caching pure functions         |                 |
+| PartialApplicator     | An API for Partial Application of functions       |                  |
+| Curry / CurryConsumer / CurryVariance     | An API for currying functions        |                  |
+| Monoid     | A function for combining values of the same type, with an identity value     |                  |
+| Semigroup     | A function for combining values of the same type        |                 |
+| Reader     | A transformable function : useful to implement dependency injection or Singletons in a functional style            | Eager                |
+
 
 ## Higher level abstractions
+
+### cyclops.monads
 
 | type | description | characteristics |
 |------|-------------|-----------------|
@@ -121,7 +170,7 @@ compile cyclops2
 | AnyMValue     | Type safe monadic wrapper for any monadic sum type            | Higher kinded                 |
 | AnyMSeq     | Type safe monadic wrapper for any monadic non-scalar type            | Higher kinded                 |
 
-## Monad transformers
+#### cyclops.monads.transformers
 
 | type | description | characteristics |
 |------|-------------|-----------------|
@@ -129,7 +178,7 @@ compile cyclops2
 | FutureT     | Type safe future transformer of manipulating futures in a monadic context            | Higher kinded                 |
 
 
-## Type classes
+### cyclops.typeclasses
 
 | type | description | characteristics |
 |------|-------------|-----------------|
@@ -146,27 +195,6 @@ compile cyclops2
 
 ![cyclops-react-types](https://cloud.githubusercontent.com/assets/9964792/14741656/cf3d8494-088f-11e6-9189-b2bed00365d1.png)
 
-# Features
-
-Used in Aol to build robust, performant & scalable asynchronous systems : features include
-
-* Compatible extensions to JDK interfaces (Collections, Streams, Functions)
-* Built with [jOOλ](https://github.com/jOOQ/jOOL), [reactive-streams](http://www.reactive-streams.org/) ,[Agrona](https://github.com/real-logic/Agrona) and [pCollections](https://github.com/hrldcpr/pcollections)
-* Extensions for efficient JDK compatible persistent collections ([pCollections](http://pcollections.org/))
-* FutureStreams for managing aggregates for Future Tasks (e.g. for multi-threaded execution of large numbers of I/O tasks)
-* Single-threaded asynchronous streaming
-* Scheduling of data emission
-* Powerful extended type hierarchy for aggregrations (Collections & Streams) and single values
-* Powerful functional-style control structures, implemented in Java friendly manner (Maybe, Eval, FutureW, Xor, Ior, Try, AnyM, structural & guard based pattern matching, for-comprehensions)
-* Execute functions between wrapped values (Optional / CompletableFutre etc) without tedious unwrapping (Java friendly Applicative support).
-* Java friendly abstractions for wrapping any Monad type (Stream, CompletableFuture, Optional, cyclops-react types and types from other Java projects too). AnyM and it's two subtypes AnyMSeq for aggregates (Steam, List etc) and AnyMValue for Values
-* Monad Transformers - for manipulating nesting monadic types (e.g. Optionals within a Stream as if it were just an Optional)
-* Applicatives - apply functions across wrapped types (e.g. Optional / Maybe / Xor) without unwrapping & aggregate without terminate on failure
-* Structural pattern matching & pattern matching via Guards (see Matchable and Matchables)
-* Full strength for comprehensions / generators (reference elements from other generators)
-* Tight integration with reactive-streams : collections, streams and datatypes are publishers & can be generated via subscribers
-
-* Very Extensible & integration with other projects via cyclops-integration modules.
 
 
 # Articles
