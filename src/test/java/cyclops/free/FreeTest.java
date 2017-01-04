@@ -17,9 +17,9 @@ public final class FreeTest {
     }
     private static Free<SupplierKind.µ, Long> fibonacci(long n, long a, long b) {
         return n == 0 ? Free.done(b) : λK( ()->fibonacci(n-1, a+b, a))
-                                        .fnTo(Fn0::suspend)
+                                        .kindTo(Fn0::suspend)
                                         .flatMap(i->λK( ()->fibonacci(n-1, a+b, a))
-                                                .fnTo(Fn0::suspend));
+                                                .kindTo(Fn0::suspend));
     }
     static Free<SupplierKind.µ, Long> fib(final Long n){
 
@@ -27,9 +27,9 @@ public final class FreeTest {
             return Free.done(2L);
         }else{
             return λK(()->fib(n-1))
-                            .fnTo(Fn0::suspend)
+                            .kindTo(Fn0::suspend)
                             .flatMap(x->λK(()->fib(n-2))
-                                    .fnTo(Fn0::suspend)
+                                    .kindTo(Fn0::suspend)
                                     .map(y->x+y));
         }
     }

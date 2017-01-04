@@ -3,6 +3,7 @@ package cyclops.collections.immutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPStackX;
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.Reducers;
@@ -16,6 +17,12 @@ import com.aol.cyclops2.types.To;
 import cyclops.monads.WitnessType;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.instances.General;
+import cyclops.typeclasses.monad.*;
+import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -31,10 +38,35 @@ import java.util.stream.Stream;
 
 public interface PStackX<T> extends To<PStackX<T>>,
                                     PStack<T>,
-        PersistentCollectionX<T>,
+                                    PersistentCollectionX<T>,
                                     FluentSequenceX<T>, 
-                                    OnEmptySwitch<T, PStack<T>> {
+                                    OnEmptySwitch<T, PStack<T>>,
+                                    Higher<PStackX.µ,T> {
 
+
+    public static class µ {
+    }
+
+    /**
+     * Widen a PStackType nested inside another HKT encoded type
+     *
+     * @param list HTK encoded type containing  a PStack to widen
+     * @return HKT encoded type with a widened PStack
+     */
+    public static <C2,T> Higher<C2, Higher<PStackX.µ,T>> widen2(Higher<C2, PStackX<T>> list){
+        //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
+        //cast seems safer as Higher<PStackType.µ,T> must be a PStackType
+        return (Higher)list;
+    }
+    /**
+     * Convert the raw Higher Kinded Type for PStack types into the PStackType type definition class
+     *
+     * @param list HKT encoded list into a PStackType
+     * @return PStackType
+     */
+    public static <T> PStackX<T> narrowK(final Higher<PStackX.µ, T> list) {
+        return (PStackX<T>)list;
+    }
 
     default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {
         return ListT.of(witness.adapter().unit(this));
@@ -1187,5 +1219,257 @@ public interface PStackX<T> extends To<PStackX<T>>,
     @Override
     default PStackX<T> plusLoop(Supplier<Optional<T>> supplier) {
         return (PStackX<T>)PersistentCollectionX.super.plusLoop(supplier);
+    }
+    /**
+     * Companion class for creating Type Class instances for working with PStacks
+     * @author johnmcclean
+     *
+     */
+    @UtilityClass
+    public static class Instances {
+
+
+        /**
+         *
+         * Transform a list, mulitplying every element by 2
+         *
+         * <pre>
+         * {@code
+         *  PStackX<Integer> list = PStacks.functor().map(i->i*2, PStackX.widen(Arrays.asPStack(1,2,3));
+         *
+         *  //[2,4,6]
+         *
+         *
+         * }
+         * </pre>
+         *
+         * An example fluent api working with PStacks
+         * <pre>
+         * {@code
+         *   PStackX<Integer> list = PStacks.unit()
+        .unit("hello")
+        .then(h->PStacks.functor().map((String v) ->v.length(), h))
+        .convert(PStackX::narrowK);
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A functor for PStacks
+         */
+        public static <T,R>Functor<µ> functor(){
+            BiFunction<PStackX<T>,Function<? super T, ? extends R>,PStackX<R>> map = Instances::map;
+            return General.functor(map);
+        }
+        /**
+         * <pre>
+         * {@code
+         * PStackX<String> list = PStacks.unit()
+        .unit("hello")
+        .convert(PStackX::narrowK);
+
+        //Arrays.asPStack("hello"))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A factory for PStacks
+         */
+        public static <T> Pure<µ> unit(){
+            return General.<PStackX.µ,T>unit(Instances::of);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.PStackX.widen;
+         * import static com.aol.cyclops.util.function.Lambda.l1;
+         * import static java.util.Arrays.asPStack;
+         *
+        PStacks.zippingApplicative()
+        .ap(widen(asPStack(l1(this::multiplyByTwo))),widen(asPStack(1,2,3)));
+         *
+         * //[2,4,6]
+         * }
+         * </pre>
+         *
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         * PStackX<Function<Integer,Integer>> listFn =PStacks.unit()
+         *                                                  .unit(Lambda.l1((Integer i) ->i*2))
+         *                                                  .convert(PStackX::narrowK);
+
+        PStackX<Integer> list = PStacks.unit()
+        .unit("hello")
+        .then(h->PStacks.functor().map((String v) ->v.length(), h))
+        .then(h->PStacks.zippingApplicative().ap(listFn, h))
+        .convert(PStackX::narrowK);
+
+        //Arrays.asPStack("hello".length()*2))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A zipper for PStacks
+         */
+        public static <T,R> Applicative<PStackX.µ> zippingApplicative(){
+            BiFunction<PStackX< Function<T, R>>,PStackX<T>,PStackX<R>> ap = Instances::ap;
+            return General.applicative(functor(), unit(), ap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.PStackX.widen;
+         * PStackX<Integer> list  = PStacks.monad()
+        .flatMap(i->widen(PStackX.range(0,i)), widen(Arrays.asPStack(1,2,3)))
+        .convert(PStackX::narrowK);
+         * }
+         * </pre>
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         *    PStackX<Integer> list = PStacks.unit()
+        .unit("hello")
+        .then(h->PStacks.monad().flatMap((String v) ->PStacks.unit().unit(v.length()), h))
+        .convert(PStackX::narrowK);
+
+        //Arrays.asPStack("hello".length())
+         *
+         * }
+         * </pre>
+         *
+         * @return Type class with monad functions for PStacks
+         */
+        public static <T,R> Monad<µ> monad(){
+
+            BiFunction<Higher<PStackX.µ,T>,Function<? super T, ? extends Higher<PStackX.µ,R>>,Higher<PStackX.µ,R>> flatMap = Instances::flatMap;
+            return General.monad(zippingApplicative(), flatMap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  PStackX<String> list = PStacks.unit()
+        .unit("hello")
+        .then(h->PStacks.monadZero().filter((String t)->t.startsWith("he"), h))
+        .convert(PStackX::narrowK);
+
+        //Arrays.asPStack("hello"));
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A filterable monad (with default value)
+         */
+        public static <T,R> MonadZero<µ> monadZero(){
+
+            return General.monadZero(monad(), PStackX.empty());
+        }
+        /**
+         * <pre>
+         * {@code
+         *  PStackX<Integer> list = PStacks.<Integer>monadPlus()
+        .plus(PStackX.widen(Arrays.asPStack()), PStackX.widen(Arrays.asPStack(10)))
+        .convert(PStackX::narrowK);
+        //Arrays.asPStack(10))
+         *
+         * }
+         * </pre>
+         * @return Type class for combining PStacks by concatenation
+         */
+        public static <T> MonadPlus<PStackX.µ> monadPlus(){
+            Monoid<PStackX<T>> m = Monoid.of(PStackX.empty(), Instances::concat);
+            Monoid<Higher<PStackX.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  Monoid<PStackX<Integer>> m = Monoid.of(PStackX.widen(Arrays.asPStack()), (a,b)->a.isEmpty() ? b : a);
+        PStackX<Integer> list = PStacks.<Integer>monadPlus(m)
+        .plus(PStackX.widen(Arrays.asPStack(5)), PStackX.widen(Arrays.asPStack(10)))
+        .convert(PStackX::narrowK);
+        //Arrays.asPStack(5))
+         *
+         * }
+         * </pre>
+         *
+         * @param m Monoid to use for combining PStacks
+         * @return Type class for combining PStacks
+         */
+        public static <T> MonadPlus<µ> monadPlus(Monoid<PStackX<T>> m){
+            Monoid<Higher<PStackX.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+
+        /**
+         * @return Type class for traversables with traverse / sequence operations
+         */
+        public static <C2,T> Traverse<µ> traverse(){
+            BiFunction<Applicative<C2>,PStackX<Higher<C2, T>>,Higher<C2, PStackX<T>>> sequenceFn = (ap,list) -> {
+
+                Higher<C2,PStackX<T>> identity = ap.unit(PStackX.empty());
+
+                BiFunction<Higher<C2,PStackX<T>>,Higher<C2,T>,Higher<C2,PStackX<T>>> combineToPStack =   (acc,next) -> ap.apBiFn(ap.unit((a,b) ->a.plus(b)),acc,next);
+
+                BinaryOperator<Higher<C2,PStackX<T>>> combinePStacks = (a,b)-> ap.apBiFn(ap.unit((l1,l2)-> l1.plusAll(l2)),a,b); ;
+
+                return list.stream()
+                        .reduce(identity,
+                                combineToPStack,
+                                combinePStacks);
+
+
+            };
+            BiFunction<Applicative<C2>,Higher<PStackX.µ,Higher<C2, T>>,Higher<C2, Higher<PStackX.µ,T>>> sequenceNarrow  =
+                    (a,b) -> PStackX.widen2(sequenceFn.apply(a, PStackX.narrowK(b)));
+            return General.traverse(zippingApplicative(), sequenceNarrow);
+        }
+
+        /**
+         *
+         * <pre>
+         * {@code
+         * int sum  = PStacks.foldable()
+        .foldLeft(0, (a,b)->a+b, PStackX.widen(Arrays.asPStack(1,2,3,4)));
+
+        //10
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return Type class for folding / reduction operations
+         */
+        public static <T> Foldable<µ> foldable(){
+            BiFunction<Monoid<T>,Higher<PStackX.µ,T>,T> foldRightFn =  (m,l)-> PStackX.narrowK(l).foldRight(m);
+            BiFunction<Monoid<T>,Higher<PStackX.µ,T>,T> foldLeftFn = (m,l)-> PStackX.narrowK(l).reduce(m);
+            return General.foldable(foldRightFn, foldLeftFn);
+        }
+
+        private static  <T> PStackX<T> concat(PStack<T> l1, PStack<T> l2){
+
+            return PStackX.fromIterable(l1.plusAll(l2));
+        }
+        private <T> PStackX<T> of(T value){
+            return PStackX.of(value);
+        }
+        private static <T,R> PStackX<R> ap(PStackX<Function< T, R>> lt,  PStackX<T> list){
+            return PStackX.fromIterable(lt).zip(list,(a,b)->a.apply(b));
+        }
+        private static <T,R> Higher<PStackX.µ,R> flatMap( Higher<PStackX.µ,T> lt, Function<? super T, ? extends  Higher<PStackX.µ,R>> fn){
+            return PStackX.fromIterable(PStackX.narrowK(lt)).flatMap(fn.andThen(PStackX::narrowK));
+        }
+        private static <T,R> PStackX<R> map(PStackX<T> lt, Function<? super T, ? extends R> fn){
+            return PStackX.fromIterable(lt).map(fn);
+        }
     }
 }

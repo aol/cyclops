@@ -121,6 +121,9 @@ public interface Fn0< R> extends Function0<R>{
         static class µ {
         }
 
+        default <R1> R1 kindTo(Function<? super SupplierKind<R>,? extends R1> reduce){
+            return reduce.apply(this);
+        }
             default <V> SupplierKind<V> apply(final Supplier<? extends Function<? super R,? extends V>> applicative) {
                 return () -> applicative.get().apply(this.apply());
             }

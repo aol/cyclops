@@ -1,6 +1,7 @@
 package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.To;
 import com.aol.cyclops2.types.Value;
@@ -13,6 +14,13 @@ import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.instances.General;
+import cyclops.typeclasses.monad.*;
+import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -55,13 +63,26 @@ import java.util.stream.Stream;
  * @param <T> Type of value storable in this Eval
  */
 public interface Eval<T> extends    To<Eval<T>>,
-                                    MonadicValue<T> {
+                                    MonadicValue<T>,
+                                    Higher<Eval.µ ,T> {
 
+
+    public static class µ {
+    }
 
     default AnyM<Witness.eval,T> anyM(){
         return AnyM.fromEval(this);
     }
 
+    /**
+     * Convert the raw Higher Kinded Type for Evals types into the Eval interface
+     *
+     * @param future HKT encoded list into a OptionalType
+     * @return Eval
+     */
+    public static <T> Eval<T> narrowK(final Higher<Eval.µ, T> future) {
+        return (Eval<T>)future;
+    }
     /**
      * Create an Eval instance from a reactive-streams publisher
      * 
@@ -791,6 +812,257 @@ public interface Eval<T> extends    To<Eval<T>>,
                 return applyRec();
             }
 
+        }
+
+    }
+
+    /**
+     * Companion class for creating Type Class instances for working with Evals
+     * @author johnmcclean
+     *
+     */
+    @UtilityClass
+    public static class EvalInstances {
+
+
+        /**
+         *
+         * Transform a list, mulitplying every element by 2
+         *
+         * <pre>
+         * {@code
+         *  Eval<Integer> list = Evals.functor().map(i->i*2, Eval.widen(Arrays.asEval(1,2,3));
+         *
+         *  //[2,4,6]
+         *
+         *
+         * }
+         * </pre>
+         *
+         * An example fluent api working with Evals
+         * <pre>
+         * {@code
+         *   Eval<Integer> list = Evals.unit()
+        .unit("hello")
+        .then(h->Evals.functor().map((String v) ->v.length(), h))
+        .convert(Eval::narrowK);
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A functor for Evals
+         */
+        public static <T,R>Functor<µ> functor(){
+            BiFunction<Eval<T>,Function<? super T, ? extends R>,Eval<R>> map = EvalInstances::map;
+            return General.functor(map);
+        }
+
+        /**
+         * <pre>
+         * {@code
+         * Eval<String> list = Evals.unit()
+        .unit("hello")
+        .convert(Eval::narrowK);
+
+        //Arrays.asEval("hello"))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A factory for Evals
+         */
+        public static <T> Pure<µ> unit(){
+            return General.<Eval.µ,T>unit(EvalInstances::of);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.Eval.widen;
+         * import static com.aol.cyclops.util.function.Lambda.l1;
+         * import static java.util.Arrays.asEval;
+         *
+        Evals.zippingApplicative()
+        .ap(widen(asEval(l1(this::multiplyByTwo))),widen(asEval(1,2,3)));
+         *
+         * //[2,4,6]
+         * }
+         * </pre>
+         *
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         * Eval<Function<Integer,Integer>> listFn =Evals.unit()
+         *                                                  .unit(Lambda.l1((Integer i) ->i*2))
+         *                                                  .convert(Eval::narrowK);
+
+        Eval<Integer> list = Evals.unit()
+        .unit("hello")
+        .then(h->Evals.functor().map((String v) ->v.length(), h))
+        .then(h->Evals.applicative().ap(listFn, h))
+        .convert(Eval::narrowK);
+
+        //Arrays.asEval("hello".length()*2))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A zipper for Evals
+         */
+        public static <T,R> Applicative<Eval.µ> applicative(){
+            BiFunction<Eval< Function<T, R>>,Eval<T>,Eval<R>> ap = EvalInstances::ap;
+            return General.applicative(functor(), unit(), ap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.Eval.widen;
+         * Eval<Integer> list  = Evals.monad()
+        .flatMap(i->widen(EvalX.range(0,i)), widen(Arrays.asEval(1,2,3)))
+        .convert(Eval::narrowK);
+         * }
+         * </pre>
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         *    Eval<Integer> list = Evals.unit()
+        .unit("hello")
+        .then(h->Evals.monad().flatMap((String v) ->Evals.unit().unit(v.length()), h))
+        .convert(Eval::narrowK);
+
+        //Arrays.asEval("hello".length())
+         *
+         * }
+         * </pre>
+         *
+         * @return Type class with monad functions for Evals
+         */
+        public static <T,R> Monad<µ> monad(){
+
+            BiFunction<Higher<Eval.µ,T>,Function<? super T, ? extends Higher<Eval.µ,R>>,Higher<Eval.µ,R>> flatMap = EvalInstances::flatMap;
+            return General.monad(applicative(), flatMap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  Eval<String> list = Evals.unit()
+        .unit("hello")
+        .then(h->Evals.monadZero().filter((String t)->t.startsWith("he"), h))
+        .convert(Eval::narrowK);
+
+        //Arrays.asEval("hello"));
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A filterable monad (with default value)
+         */
+        public static <T,R> MonadZero<µ> monadZero(){
+
+            return General.monadZero(monad(), Eval.now(null));
+        }
+        /**
+         * <pre>
+         * {@code
+         *  Eval<Integer> list = Evals.<Integer>monadPlus()
+        .plus(Eval.widen(Arrays.asEval()), Eval.widen(Arrays.asEval(10)))
+        .convert(Eval::narrowK);
+        //Arrays.asEval(10))
+         *
+         * }
+         * </pre>
+         * @return Type class for combining Evals by concatenation
+         */
+        public static <T> MonadPlus<µ> monadPlus(){
+            Monoid<Eval<T>> mn = Monoid.of(Eval.now(null), (a,b)->a.get()!=null?a :b);
+            Monoid<Eval<T>> m = Monoid.of(mn.zero(), (f,g)->
+                    mn.apply(Eval.narrow(f), Eval.narrow(g)));
+
+            Monoid<Higher<Eval.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  Monoid<Eval<Integer>> m = Monoid.of(Eval.widen(Arrays.asEval()), (a,b)->a.isEmpty() ? b : a);
+        Eval<Integer> list = Evals.<Integer>monadPlus(m)
+        .plus(Eval.widen(Arrays.asEval(5)), Eval.widen(Arrays.asEval(10)))
+        .convert(Eval::narrowK);
+        //Arrays.asEval(5))
+         *
+         * }
+         * </pre>
+         *
+         * @param m Monoid to use for combining Evals
+         * @return Type class for combining Evals
+         */
+        public static <T> MonadPlus<Eval.µ> monadPlus(Monoid<Eval<T>> m){
+            Monoid<Higher<Eval.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+
+        /**
+         * @return Type class for traversables with traverse / sequence operations
+         */
+        public static <C2,T> Traverse<µ> traverse(){
+
+            return General.traverseByTraverse(applicative(), EvalInstances::traverseA);
+        }
+
+        /**
+         *
+         * <pre>
+         * {@code
+         * int sum  = Evals.foldable()
+        .foldLeft(0, (a,b)->a+b, Eval.widen(Arrays.asEval(1,2,3,4)));
+
+        //10
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return Type class for folding / reduction operations
+         */
+        public static <T> Foldable<µ> foldable(){
+            BiFunction<Monoid<T>,Higher<Eval.µ,T>,T> foldRightFn =  (m,l)-> Eval.narrowK(l).orElse(m.zero());
+            BiFunction<Monoid<T>,Higher<Eval.µ,T>,T> foldLeftFn = (m,l)-> Eval.narrowK(l).orElse(m.zero());
+            return General.foldable(foldRightFn, foldLeftFn);
+        }
+
+        public static <T> Comonad<µ> comonad(){
+            Function<? super Higher<Eval.µ, T>, ? extends T> extractFn = maybe -> maybe.convert(Eval::narrowK).get();
+            return General.comonad(functor(), unit(), extractFn);
+        }
+        private <T> Eval<T> of(T value){
+            return Eval.now(value);
+        }
+        private static <T,R> Eval<R> ap(Eval<Function< T, R>> lt,  Eval<T> maybe){
+            return lt.combine(maybe, (a,b)->a.apply(b));
+
+        }
+        private static <T,R> Higher<Eval.µ,R> flatMap( Higher<Eval.µ,T> lt, Function<? super T, ? extends  Higher<Eval.µ,R>> fn){
+            return Eval.narrowK(lt).flatMap(fn.andThen(Eval::narrowK));
+        }
+        private static <T,R> Eval<R> map(Eval<T> lt, Function<? super T, ? extends R> fn){
+            return  lt.map(fn);
+        }
+
+
+        private static <C2,T,R> Higher<C2, Higher<Eval.µ, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
+                                                                        Higher<Eval.µ, T> ds){
+
+            Eval<T> eval = Eval.narrowK(ds);
+            return applicative.map(Eval::now, fn.apply(eval.get()));
         }
 
     }
