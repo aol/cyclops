@@ -193,9 +193,6 @@ compile cyclops2
 | Comonad     | Extract values from a context and extend functions to operat at monadic level            | Higher kinded                 |
 
 
-![cyclops-react-types](https://cloud.githubusercontent.com/assets/9964792/14741656/cf3d8494-088f-11e6-9189-b2bed00365d1.png)
-
-
 
 # Articles
 
