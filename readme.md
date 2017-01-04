@@ -157,7 +157,7 @@ compile cyclops2
 | Curry / CurryConsumer / CurryVariance     | An API for currying functions        |                  |
 | Monoid     | A function for combining values of the same type, with an identity value     |                  |
 | Semigroup     | A function for combining values of the same type        |                 |
-| Reader     | A transformable function : useful to implement dependency injection or Singletons in a functional style            | Eager                |
+| Reader     | A transformable function : useful to implement dependency injection or Singletons in a functional style            |                 |
 
 
 ## Higher level abstractions
