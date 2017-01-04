@@ -30,6 +30,119 @@ compile cyclops2
     <version>x.y.z</version>
 </dependency>
 ```
+# 2.x Type dictionary
+
+## Streams
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| FutureStream     | Asynchronous and parallel stream             | Lazy, async, parallel                 |
+| ReactiveSeq     | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Lazy, parallel option, primitive support, replayable, Higher kinded                |
+| Streamable     | Capturing and caching replayable Stream type              | Lazy, caching                |
+
+## Sum Types
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| Maybe     | Lazy analogue of Optional (Just/None)             |  Lazy, tail recursive,sum type, Higher kinded               |
+| Try     | Represents a value or an exception. Only specified Exceptions are caught on creation by default.            | Eager, avoids error hiding                 |
+| Ior     | Inclusive Or, maybe one of two values or both            | Eager, sum and product type                 |
+| Xor     | Exclusive Or, maybe one of two values, eager analogue of Either            | Eager, sum type                 |
+| Either     | Lazy Either type maybe one of two values, lazy analogue of Xor            | Lazy, tail recursive, sum type                 |
+| Either3     | Lazy Either type maybe one of three values            | Lazy, tail recursive, sum type                 |
+| Either4     | Lazy Either type maybe one of four values            | Lazy, tail recursive, sum type                 |
+| Either5     | Lazy Either type maybe one of five values            | Lazy, tail recursive, sum type                 |
+
+## Collections : mutable / immutable
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| ListX     | Functional extensions for working with Lists            | Lazy, mutable, immutable, 3rd party support, Higher kinded                 |
+| DequeX     | Functional extensions for working with Deques            | Lazy, mutable, immutable, 3rd party support, Higher kinded                 |
+| QueueX     | Functional extensions for working with Queues            | Lazy, mutable, immutable, 3rd party support, Higher kinded                 |
+| SetX     | Functional extensions for working with Sets            | Lazy , mutable, immutable, 3rd party support                |
+| SortedSetX     | Functional extensions for working with SortedSets            | Lazy, mutable, immutable                 |
+
+## Collections : persistent
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| PListX     | Functional extensions for working with persistent Lists            | Lazy, persistent, 3rd party support, Higher kinded                 |
+| PVectorX     | Functional extensions for working with persistent Vectors            | Lazy, persistent, 3rd party support, Higher kinded                 |
+| PSetX     | Functional extensions for working with persistent Sets            | Lazy, persistent, 3rd party support                 |
+| POrderedSetX     | Functional extensions for working with persistent Ordered Sets            | Lazy, persistent, 3rd party support                 |
+| PQueueX     | Functional extensions for working with persistent Queues           | Lazy, persistent, 3rd party support, Higher kinded                 |
+| PBagX     | Functional extensions for working with persistent Bags (set like collections that allow duplicates)          | Lazy, persistent, 3rd party support                 |
+
+## JDK Support
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| Optionals     | Extension methods, for comprehensions and Higher kinded type classes            | Higher kinded                 |
+| CompletableFutures    | Extension methods, for comprehensions and Higher kinded type classes            | Higher kinded                 |
+| Streams     | Extension methods, for comprehensions and Higher kinded type classes            | Higher kinded                 |
+
+## Async monadic types
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| Future     | Potentially asynchronous task that may populate a result in the Future            | Eager async, Higher kinded                 |
+| SimpleReact     | Asyncrhonous bulk operations on Futures            | Eager async                 |
+
+## Misc monadic types
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| Eval     | Lazy evaluation, optional caching            | Lazy, tail recursive, Higher kinded                 |
+| Reader     | A transformable function : useful to implement dependency injection or Singletons in a functional style            | Eager                |
+| Trampoline     | Easy to use trampoline implementations (see also Free using SupplierKind)            | Lazy                |
+| Free     | Higher kinded implementation of the Free monad for Java, facilitates functional interpreters            | Lazy                |
+
+## Box types
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| LazyImmutable     | Represents a set once only box type            | Eager execution                 |
+| Mutable     | A mutable generic box type           | Eager execution                 |
+| MutableInt     | A mutable primitive box type for ints          | Eager execution                 |
+| MutableLong     | A mutable primitive box type for longs         | Eager execution                 |
+| MutableDouble     | A mutable primitive box type for doubles        | Eager execution                 |
+| MutableFloat     | A mutable primitive box type for floats        | Eager execution                 |
+| MutableChar     | A mutable primitive box type for characters     | Eager execution                 |
+| MutableByte     | A mutable primitive box type for bytes        | Eager execution                 |
+| MutableBoolean     | A mutable primitive box type for booleans        | Eager execution                 |
+
+
+## Higher level abstractions
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| AnyM     | Type safe monadic wrapper for any monad type            | Higher kinded                 |
+| AnyMValue     | Type safe monadic wrapper for any monadic sum type            | Higher kinded                 |
+| AnyMSeq     | Type safe monadic wrapper for any monadic non-scalar type            | Higher kinded                 |
+
+## Monad transformers
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| ListT     | Type safe list transformer of manipulating lists in a monadic context            | Higher kinded                 |
+| FutureT     | Type safe future transformer of manipulating futures in a monadic context            | Higher kinded                 |
+
+
+## Type classes
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| Pure     | Embed a value inside a type            | Higher kinded                 |
+| Functor     | Transform embedded values            | Higher kinded                 |
+| Applicative     | Apply a function to embedded values            | Higher kinded                 |
+| Monad     | Apply flattening transformations to embedded values            | Higher kinded                 |
+| Traverse     | Invert two nested applicative types (e.g. a List of Futures to a Future with a Lists) applying a function in the process            | Higher kinded                 |
+| Fold     | Reduce embedded values to a single extracted value            | Higher kinded                 |
+| MonadZero     | Filter a monad (e.g. like Optional.filter)            | Higher kinded                 |
+| MonadPlus     | Combine two monads            | Higher kinded                 |
+| Comonad     | Extract values from a context and extend functions to operat at monadic level            | Higher kinded                 |
+
 
 ![cyclops-react-types](https://cloud.githubusercontent.com/assets/9964792/14741656/cf3d8494-088f-11e6-9189-b2bed00365d1.png)
 
