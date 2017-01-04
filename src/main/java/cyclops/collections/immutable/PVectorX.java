@@ -3,6 +3,7 @@ package cyclops.collections.immutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.Reducers;
@@ -16,6 +17,12 @@ import com.aol.cyclops2.types.To;
 import cyclops.monads.WitnessType;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.instances.General;
+import cyclops.typeclasses.monad.*;
+import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -35,11 +42,35 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
                                      PersistentCollectionX<T>,
                                      OnEmptySwitch<T, 
                                      PVector<T>>,
-                                     Comparable<T>{
+                                     Comparable<T>,
+                                     Higher<PVectorX.µ,T>{
 
+    public static class µ {
+    }
 
     default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {
         return ListT.of(witness.adapter().unit(this));
+    }
+
+    /**
+     * Widen a PVectorType nested inside another HKT encoded type
+     *
+     * @param list HTK encoded type containing  a PVector to widen
+     * @return HKT encoded type with a widened PVector
+     */
+    public static <C2,T> Higher<C2, Higher<PVectorX.µ,T>> widen2(Higher<C2, PVectorX<T>> list){
+        //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
+        //cast seems safer as Higher<PVectorType.µ,T> must be a PVectorType
+        return (Higher)list;
+    }
+    /**
+     * Convert the raw Higher Kinded Type for PVector types into the PVectorType type definition class
+     *
+     * @param list HKT encoded list into a PVectorType
+     * @return PVectorType
+     */
+    public static <T> PVectorX<T> narrowK(final Higher<PVectorX.µ, T> list) {
+        return (PVectorX<T>)list;
     }
     /**
      * Narrow a covariant PVectorX
@@ -1131,5 +1162,257 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
         return (PVectorX<T>)PersistentCollectionX.super.plusLoop(supplier);
     }
 
+    /**
+     * Companion class for creating Type Class instances for working with PVectors
+     * @author johnmcclean
+     *
+     */
+    @UtilityClass
+    public static class Instances {
+
+
+        /**
+         *
+         * Transform a list, mulitplying every element by 2
+         *
+         * <pre>
+         * {@code
+         *  PVectorX<Integer> list = PVectors.functor().map(i->i*2, Arrays.asPVector(1,2,3));
+         *
+         *  //[2,4,6]
+         *
+         *
+         * }
+         * </pre>
+         *
+         * An example fluent api working with PVectors
+         * <pre>
+         * {@code
+         *   PVectorX<Integer> list = PVectors.unit()
+        .unit("hello")
+        .then(h->PVectors.functor().map((String v) ->v.length(), h))
+        .convert(PVectorX::narrowK);
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A functor for PVectors
+         */
+        public static <T,R>Functor<µ> functor(){
+            BiFunction<PVectorX<T>,Function<? super T, ? extends R>,PVectorX<R>> map = Instances::map;
+            return General.functor(map);
+        }
+        /**
+         * <pre>
+         * {@code
+         * PVectorX<String> list = PVectors.unit()
+        .unit("hello")
+        .convert(PVectorX::narrowK);
+
+        //Arrays.asPVector("hello"))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A factory for PVectors
+         */
+        public static  <T> Pure<µ> unit(){
+            return General.<PVectorX.µ,T>unit(Instances::of);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.PVectorX.widen;
+         * import static com.aol.cyclops.util.function.Lambda.l1;
+         * import static java.util.Arrays.asPVector;
+         *
+        PVectors.zippingApplicative()
+        .ap(widen(asPVector(l1(this::multiplyByTwo))),widen(asPVector(1,2,3)));
+         *
+         * //[2,4,6]
+         * }
+         * </pre>
+         *
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         * PVectorX<Function<Integer,Integer>> listFn =PVectors.unit()
+         *                                                  .unit(Lambda.l1((Integer i) ->i*2))
+         *                                                  .convert(PVectorX::narrowK);
+
+        PVectorX<Integer> list = PVectors.unit()
+        .unit("hello")
+        .then(h->PVectors.functor().map((String v) ->v.length(), h))
+        .then(h->PVectors.zippingApplicative().ap(listFn, h))
+        .convert(PVectorX::narrowK);
+
+        //Arrays.asPVector("hello".length()*2))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A zipper for PVectors
+         */
+        public static <T,R> Applicative<µ> zippingApplicative(){
+            BiFunction<PVectorX< Function<T, R>>,PVectorX<T>,PVectorX<R>> ap = Instances::ap;
+            return General.applicative(functor(), unit(), ap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.PVectorX.widen;
+         * PVectorX<Integer> list  = PVectors.monad()
+        .flatMap(i->widen(PVectorX.range(0,i)), widen(Arrays.asPVector(1,2,3)))
+        .convert(PVectorX::narrowK);
+         * }
+         * </pre>
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         *    PVectorX<Integer> list = PVectors.unit()
+        .unit("hello")
+        .then(h->PVectors.monad().flatMap((String v) ->PVectors.unit().unit(v.length()), h))
+        .convert(PVectorX::narrowK);
+
+        //Arrays.asPVector("hello".length())
+         *
+         * }
+         * </pre>
+         *
+         * @return Type class with monad functions for PVectors
+         */
+        public static <T,R> Monad<µ> monad(){
+
+            BiFunction<Higher<PVectorX.µ,T>,Function<? super T, ? extends Higher<PVectorX.µ,R>>,Higher<PVectorX.µ,R>> flatMap = Instances::flatMap;
+            return General.monad(zippingApplicative(), flatMap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  PVectorX<String> list = PVectors.unit()
+        .unit("hello")
+        .then(h->PVectors.monadZero().filter((String t)->t.startsWith("he"), h))
+        .convert(PVectorX::narrowK);
+
+        //Arrays.asPVector("hello"));
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A filterable monad (with default value)
+         */
+        public static <T,R> MonadZero<µ> monadZero(){
+
+            return General.monadZero(monad(), PVectorX.empty());
+        }
+        /**
+         * <pre>
+         * {@code
+         *  PVectorX<Integer> list = PVectors.<Integer>monadPlus()
+        .plus(Arrays.asPVector()), Arrays.asPVector(10)))
+        .convert(PVectorX::narrowK);
+        //Arrays.asPVector(10))
+         *
+         * }
+         * </pre>
+         * @return Type class for combining PVectors by concatenation
+         */
+        public static <T> MonadPlus<µ> monadPlus(){
+            Monoid<PVectorX<T>> m = Monoid.of(PVectorX.empty(), Instances::concat);
+            Monoid<Higher<PVectorX.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  Monoid<PVectorX<Integer>> m = Monoid.of(Arrays.asPVector()), (a,b)->a.isEmpty() ? b : a);
+        PVectorX<Integer> list = PVectors.<Integer>monadPlus(m)
+        .plus(Arrays.asPVector(5)), Arrays.asPVector(10)))
+        .convert(PVectorX::narrowK);
+        //Arrays.asPVector(5))
+         *
+         * }
+         * </pre>
+         *
+         * @param m Monoid to use for combining PVectors
+         * @return Type class for combining PVectors
+         */
+        public static <T> MonadPlus<PVectorX.µ> monadPlus(Monoid<PVectorX<T>> m){
+            Monoid<Higher<PVectorX.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+
+        /**
+         * @return Type class for traversables with traverse / sequence operations
+         */
+        public static <C2,T> Traverse<µ> traverse(){
+            BiFunction<Applicative<C2>,PVectorX<Higher<C2, T>>,Higher<C2, PVectorX<T>>> sequenceFn = (ap,list) -> {
+
+                Higher<C2,PVectorX<T>> identity = ap.unit(PVectorX.empty());
+
+                BiFunction<Higher<C2,PVectorX<T>>,Higher<C2,T>,Higher<C2,PVectorX<T>>> combineToPVector =   (acc,next) -> ap.apBiFn(ap.unit((a,b) ->a.plus(b)),acc,next);
+
+                BinaryOperator<Higher<C2,PVectorX<T>>> combinePVectors = (a,b)-> ap.apBiFn(ap.unit((l1,l2)-> l1.plusAll(l2)),a,b); ;
+
+                return list.stream()
+                        .reduce(identity,
+                                combineToPVector,
+                                combinePVectors);
+
+
+            };
+            BiFunction<Applicative<C2>,Higher<PVectorX.µ,Higher<C2, T>>,Higher<C2, Higher<PVectorX.µ,T>>> sequenceNarrow  =
+                    (a,b) -> PVectorX.widen2(sequenceFn.apply(a, PVectorX.narrowK(b)));
+            return General.traverse(zippingApplicative(), sequenceNarrow);
+        }
+
+        /**
+         *
+         * <pre>
+         * {@code
+         * int sum  = PVectors.foldable()
+        .foldLeft(0, (a,b)->a+b, Arrays.asPVector(1,2,3,4)));
+
+        //10
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return Type class for folding / reduction operations
+         */
+        public static <T> Foldable<µ> foldable(){
+            BiFunction<Monoid<T>,Higher<PVectorX.µ,T>,T> foldRightFn =  (m,l)-> PVectorX.narrowK(l).foldRight(m);
+            BiFunction<Monoid<T>,Higher<PVectorX.µ,T>,T> foldLeftFn = (m,l)-> PVectorX.narrowK(l).reduce(m);
+            return General.foldable(foldRightFn, foldLeftFn);
+        }
+
+        private static  <T> PVectorX<T> concat(PVector<T> l1, PVector<T> l2){
+
+            return PVectorX.fromIterable(l1.plusAll(l2));
+        }
+        private <T> PVectorX<T> of(T value){
+            return PVectorX.of(value);
+        }
+        private static <T,R> PVectorX<R> ap(PVectorX<Function< T, R>> lt,  PVectorX<T> list){
+            return PVectorX.fromIterable(lt).zip(list,(a,b)->a.apply(b));
+        }
+        private static <T,R> Higher<µ,R> flatMap(Higher<PVectorX.µ,T> lt, Function<? super T, ? extends  Higher<PVectorX.µ,R>> fn){
+            return PVectorX.narrowK(lt).flatMap(fn.andThen(PVectorX::narrowK));
+        }
+        private static <T,R> PVectorX<R> map(PVectorX<T> lt, Function<? super T, ? extends R> fn){
+            return lt.map(fn);
+        }
+    }
 
 }
