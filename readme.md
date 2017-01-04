@@ -108,6 +108,7 @@ compile cyclops2
 | QueueX     | Functional extensions for working with Queues            | Lazy, mutable, immutable, 3rd party support, Higher kinded                 |
 | SetX     | Functional extensions for working with Sets            | Lazy , mutable, immutable, 3rd party support                |
 | SortedSetX     | Functional extensions for working with SortedSets            | Lazy, mutable, immutable                 |
+| MapX     | Functional extensions for working with Maps            | Eager, mutable, immutable                 |
 
 ## cyclops.collections.persistent
 
@@ -119,6 +120,7 @@ compile cyclops2
 | POrderedSetX     | Functional extensions for working with persistent Ordered Sets            | Lazy, persistent, 3rd party support                 |
 | PQueueX     | Functional extensions for working with persistent Queues           | Lazy, persistent, 3rd party support, Higher kinded                 |
 | PBagX     | Functional extensions for working with persistent Bags (set like collections that allow duplicates)          | Lazy, persistent, 3rd party support                 |
+| PMapX     | Functional extensions for working with persistent Maps          | Map, persistent, 3rd party support                 |
 
 
 ## cyclops.control + cyclops.free

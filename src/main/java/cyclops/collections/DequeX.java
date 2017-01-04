@@ -2,6 +2,8 @@ package cyclops.collections;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
+import com.aol.cyclops2.hkt.Higher;
+import cyclops.CyclopsCollectors;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
@@ -11,6 +13,12 @@ import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.instances.General;
+import cyclops.typeclasses.monad.*;
+import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -31,7 +39,35 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>, OnEmptySwitch<T, Deque<T>> {
+public interface DequeX<T> extends To<DequeX<T>>,
+                                   Deque<T>,
+                                   MutableCollectionX<T>,
+                                   OnEmptySwitch<T, Deque<T>>,
+                                   Higher<DequeX.µ,T>{
+
+    public static class µ {
+    }
+    /**
+     * Widen a DequeType nested inside another HKT encoded type
+     *
+     * @param deque HTK encoded type containing  a Deque to widen
+     * @return HKT encoded type with a widened Deque
+     */
+    public static <C2,T> Higher<C2, Higher<DequeX.µ,T>> widen2(Higher<C2, DequeX<T>> list){
+        //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
+        //cast seems safer as Higher<DequeType.µ,T> must be a ListType
+        return (Higher)list;
+    }
+
+    /**
+     * Convert the raw Higher Kinded Type for Deque types into the DequeType type definition class
+     *
+     * @param deque HKT encoded list into a DequeType
+     * @return DequeType
+     */
+    public static <T> DequeX<T> narrowK(final Higher<DequeX.µ, T> list) {
+        return (DequeX<T>)list;
+    }
 
     /**
      * Create a DequeX that contains the Integers between start and end
@@ -1199,4 +1235,250 @@ public interface DequeX<T> extends To<DequeX<T>>,Deque<T>, MutableCollectionX<T>
         return (DequeX<T>) dequeX;
     }
 
+    @UtilityClass
+    public static class Instances {
+
+
+        /**
+         *
+         * Transform a list, mulitplying every element by 2
+         *
+         * <pre>
+         * {@code
+         *  DequeX<Integer> list = Deques.functor().map(i->i*2, DequeX.of(1,2,3));
+         *
+         *  //[2,4,6]
+         *
+         *
+         * }
+         * </pre>
+         *
+         * An example fluent api working with Deques
+         * <pre>
+         * {@code
+         *   DequeX<Integer> list = Deques.unit()
+        .unit("hello")
+        .then(h->Deques.functor().map((String v) ->v.length(), h))
+        .convert(DequeX::narrowK);
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A functor for Deques
+         */
+        public static <T,R>Functor<µ> functor(){
+            BiFunction<DequeX<T>,Function<? super T, ? extends R>,DequeX<R>> map = Instances::map;
+            return General.functor(map);
+        }
+        /**
+         * <pre>
+         * {@code
+         * DequeX<String> list = Deques.unit()
+        .unit("hello")
+        .convert(DequeX::narrowK);
+
+        //DequeX.of("hello"))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A factory for Deques
+         */
+        public static <T> Pure<µ> unit(){
+            return General.<DequeX.µ,T>unit(Instances::of);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.DequeX.widen;
+         * import static com.aol.cyclops.util.function.Lambda.l1;
+         * import static java.util.DequeX.of;
+         *
+        Deques.zippingApplicative()
+        .ap(widen(asDeque(l1(this::multiplyByTwo))),widen(asDeque(1,2,3)));
+         *
+         * //[2,4,6]
+         * }
+         * </pre>
+         *
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         * DequeX<Function<Integer,Integer>> listFn =Deques.unit()
+         *                                                  .unit(Lambda.l1((Integer i) ->i*2))
+         *                                                  .convert(DequeX::narrowK);
+
+        DequeX<Integer> list = Deques.unit()
+        .unit("hello")
+        .then(h->Deques.functor().map((String v) ->v.length(), h))
+        .then(h->Deques.zippingApplicative().ap(listFn, h))
+        .convert(DequeX::narrowK);
+
+        //DequeX.of("hello".length()*2))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A zipper for Deques
+         */
+        public static <T,R> Applicative<µ> zippingApplicative(){
+            BiFunction<DequeX< Function<T, R>>,DequeX<T>,DequeX<R>> ap = Instances::ap;
+            return General.applicative(functor(), unit(), ap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.DequeX.widen;
+         * DequeX<Integer> list  = Deques.monad()
+        .flatMap(i->widen(DequeX.range(0,i)), widen(DequeX.of(1,2,3)))
+        .convert(DequeX::narrowK);
+         * }
+         * </pre>
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         *    DequeX<Integer> list = Deques.unit()
+        .unit("hello")
+        .then(h->Deques.monad().flatMap((String v) ->Deques.unit().unit(v.length()), h))
+        .convert(DequeX::narrowK);
+
+        //DequeX.of("hello".length())
+         *
+         * }
+         * </pre>
+         *
+         * @return Type class with monad functions for Deques
+         */
+        public static <T,R> Monad<µ> monad(){
+
+            BiFunction<Higher<DequeX.µ,T>,Function<? super T, ? extends Higher<DequeX.µ,R>>,Higher<DequeX.µ,R>> flatMap = Instances::flatMap;
+            return General.monad(zippingApplicative(), flatMap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  DequeX<String> list = Deques.unit()
+        .unit("hello")
+        .then(h->Deques.monadZero().filter((String t)->t.startsWith("he"), h))
+        .convert(DequeX::narrowK);
+
+        //DequeX.of("hello"));
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A filterable monad (with default value)
+         */
+        public static <T,R> MonadZero<µ> monadZero(){
+
+            return General.monadZero(monad(), DequeX.empty());
+        }
+        /**
+         * <pre>
+         * {@code
+         *  DequeX<Integer> list = Deques.<Integer>monadPlus()
+        .plus(DequeX.of()), DequeX.of(10)))
+        .convert(DequeX::narrowK);
+        //DequeX.of(10))
+         *
+         * }
+         * </pre>
+         * @return Type class for combining Deques by concatenation
+         */
+        public static <T> MonadPlus<µ> monadPlus(){
+            Monoid<DequeX<T>> m = Monoid.of(DequeX.empty(), Instances::concat);
+            Monoid<Higher<DequeX.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  Monoid<DequeX<Integer>> m = Monoid.of(DequeX.of()), (a,b)->a.isEmpty() ? b : a);
+        DequeX<Integer> list = Deques.<Integer>monadPlus(m)
+        .plus(DequeX.of(5)), DequeX.of(10)))
+        .convert(DequeX::narrowK);
+        //DequeX.of(5))
+         *
+         * }
+         * </pre>
+         *
+         * @param m Monoid to use for combining Deques
+         * @return Type class for combining Deques
+         */
+        public static <T> MonadPlus<DequeX.µ> monadPlus(Monoid<DequeX<T>> m){
+            Monoid<Higher<DequeX.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+
+        /**
+         * @return Type class for traversables with traverse / sequence operations
+         */
+        public static <C2,T> Traverse<µ> traverse(){
+            BiFunction<Applicative<C2>,DequeX<Higher<C2, T>>,Higher<C2, DequeX<T>>> sequenceFn = (ap,list) -> {
+
+                Higher<C2,DequeX<T>> identity = ap.unit(DequeX.of());
+
+                BiFunction<Higher<C2,DequeX<T>>,Higher<C2,T>,Higher<C2,DequeX<T>>> combineToDeque =   (acc,next) -> ap.apBiFn(ap.unit((a,b) -> { a.add(b); return a;}),acc,next);
+
+                BinaryOperator<Higher<C2,DequeX<T>>> combineDeques = (a,b)-> ap.apBiFn(ap.unit((l1,l2)-> { l1.addAll(l2); return l1;}),a,b); ;
+
+                return list.stream()
+                        .reduce(identity,
+                                combineToDeque,
+                                combineDeques);
+
+
+            };
+            BiFunction<Applicative<C2>,Higher<DequeX.µ,Higher<C2, T>>,Higher<C2, Higher<DequeX.µ,T>>> sequenceNarrow  =
+                    (a,b) -> DequeX.widen2(sequenceFn.apply(a, DequeX.narrowK(b)));
+            return General.traverse(zippingApplicative(), sequenceNarrow);
+        }
+
+        /**
+         *
+         * <pre>
+         * {@code
+         * int sum  = Deques.foldable()
+        .foldLeft(0, (a,b)->a+b, DequeX.of(1,2,3,4)));
+
+        //10
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return Type class for folding / reduction operations
+         */
+        public static <T> Foldable<µ> foldable(){
+            BiFunction<Monoid<T>,Higher<DequeX.µ,T>,T> foldRightFn =  (m,l)-> DequeX.narrowK(l).foldRight(m);
+            BiFunction<Monoid<T>,Higher<DequeX.µ,T>,T> foldLeftFn = (m,l)-> DequeX.narrowK(l).reduce(m);
+            return General.foldable(foldRightFn, foldLeftFn);
+        }
+
+        private static  <T> DequeX<T> concat(Deque<T> l1, Deque<T> l2){
+            return Stream.concat(l1.stream(),l2.stream()).collect(CyclopsCollectors.toDequeX());
+        }
+        private <T> DequeX<T> of(T value){
+            return DequeX.of(value);
+        }
+        private static <T,R> DequeX<R> ap(DequeX<Function< T, R>> lt,  DequeX<T> list){
+            return lt.zip(list,(a,b)->a.apply(b));
+        }
+        private static <T,R> Higher<DequeX.µ,R> flatMap( Higher<DequeX.µ,T> lt, Function<? super T, ? extends  Higher<DequeX.µ,R>> fn){
+            return DequeX.narrowK(lt).flatMap(fn.andThen(DequeX::narrowK));
+        }
+        private static <T,R> DequeX<R> map(DequeX<T> lt, Function<? super T, ? extends R> fn){
+            return lt.map(fn);
+        }
+    }
 }
