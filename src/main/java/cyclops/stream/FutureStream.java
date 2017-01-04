@@ -2449,7 +2449,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
 
     /** START SEQUENCEM **/
     /*
-     *	@return This Stream with a different type (can be used to narrow or widen)
+     *	@return This Stream with a different type (can be used to narrowK or widen)
      * @see cyclops2.stream.ReactiveSeq#unwrap()
      */
     @Override

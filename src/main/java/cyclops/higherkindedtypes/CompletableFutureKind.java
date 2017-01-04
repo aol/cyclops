@@ -68,7 +68,7 @@ public interface CompletableFutureKind<T> extends Higher<CompletableFutureKind.�
      * @param future HKT encoded list into a CompletableFutureKind
      * @return CompletableFutureKind
      */
-    public static <T> CompletableFutureKind<T> narrowK(final Higher<CompletableFutureKind.µ, T> future) {
+    public static <T> CompletableFutureKind<T> narrow(final Higher<CompletableFutureKind.µ, T> future) {
         return (CompletableFutureKind<T>)future;
     }
 
@@ -78,7 +78,7 @@ public interface CompletableFutureKind<T> extends Higher<CompletableFutureKind.�
      * @param CompletableFuture Type Constructor to convert back into narrowed type
      * @return CompletableFuture from Higher Kinded Type
      */
-    public static <T> CompletableFuture<T> narrow(final Higher<CompletableFutureKind.µ, T> completableFuture) {
+    public static <T> CompletableFuture<T> narrowK(final Higher<CompletableFutureKind.µ, T> completableFuture) {
         if (completableFuture instanceof CompletionStage) {
             final CompletionStage<T> ft = (CompletionStage<T>) completableFuture;
             return CompletableFuture.completedFuture(1)

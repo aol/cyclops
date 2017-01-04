@@ -33,11 +33,11 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
      * <pre>
      * {@code 
      *  POrderedSetX<? extends Fruit> set = POrderedSetX.of(apple,bannana);
-     *  POrderedSetX<Fruit> fruitSet = POrderedSetX.narrow(set);
+     *  POrderedSetX<Fruit> fruitSet = POrderedSetX.narrowK(set);
      * }
      * </pre>
      * 
-     * @param setX to narrow generic type
+     * @param setX to narrowK generic type
      * @return POrderedSetX with narrowed type
      */
     public static <T> POrderedSetX<T> narrow(final POrderedSetX<? extends T> setX) {

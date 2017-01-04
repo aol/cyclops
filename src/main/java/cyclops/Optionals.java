@@ -8,10 +8,18 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
+import cyclops.higherkindedtypes.OptionalKind;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.instances.General;
+import cyclops.typeclasses.monad.*;
 import org.reactivestreams.Publisher;
 
 import cyclops.monads.AnyM;
@@ -562,6 +570,256 @@ public class Optionals {
      */
     public static <T> Optional<T> narrow(final Optional<? extends T> optional) {
         return (Optional<T>) optional;
+    }
+
+    /**
+     * Companion class for creating Type Class instances for working with Optionals
+     * @author johnmcclean
+     *
+     */
+    @UtilityClass
+    public static class Instances {
+
+
+        /**
+         *
+         * Transform a list, mulitplying every element by 2
+         *
+         * <pre>
+         * {@code
+         *  OptionalKind<Integer> list = Optionals.functor().map(i->i*2, OptionalKind.widen(Arrays.asOptional(1,2,3));
+         *
+         *  //[2,4,6]
+         *
+         *
+         * }
+         * </pre>
+         *
+         * An example fluent api working with Optionals
+         * <pre>
+         * {@code
+         *   OptionalKind<Integer> list = Optionals.unit()
+        .unit("hello")
+        .then(h->Optionals.functor().map((String v) ->v.length(), h))
+        .convert(OptionalKind::narrowK);
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A functor for Optionals
+         */
+        public static <T,R>Functor<OptionalKind.µ> functor(){
+            BiFunction<OptionalKind<T>,Function<? super T, ? extends R>,OptionalKind<R>> map = Instances::map;
+            return General.functor(map);
+        }
+        /**
+         * <pre>
+         * {@code
+         * OptionalKind<String> list = Optionals.unit()
+        .unit("hello")
+        .convert(OptionalKind::narrowK);
+
+        //Arrays.asOptional("hello"))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A factory for Optionals
+         */
+        public static <T> Pure<OptionalKind.µ> unit(){
+            return General.<OptionalKind.µ,T>unit(Instances::of);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.OptionalKind.widen;
+         * import static com.aol.cyclops.util.function.Lambda.l1;
+         * import static java.util.Arrays.asOptional;
+         *
+        Optionals.zippingApplicative()
+        .ap(widen(asOptional(l1(this::multiplyByTwo))),widen(asOptional(1,2,3)));
+         *
+         * //[2,4,6]
+         * }
+         * </pre>
+         *
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         * OptionalKind<Function<Integer,Integer>> listFn =Optionals.unit()
+         *                                                  .unit(Lambda.l1((Integer i) ->i*2))
+         *                                                  .convert(OptionalKind::narrowK);
+
+        OptionalKind<Integer> list = Optionals.unit()
+        .unit("hello")
+        .then(h->Optionals.functor().map((String v) ->v.length(), h))
+        .then(h->Optionals.applicative().ap(listFn, h))
+        .convert(OptionalKind::narrowK);
+
+        //Arrays.asOptional("hello".length()*2))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A zipper for Optionals
+         */
+        public static <T,R> Applicative<OptionalKind.µ> applicative(){
+            BiFunction<OptionalKind< Function<T, R>>,OptionalKind<T>,OptionalKind<R>> ap = Instances::ap;
+            return General.applicative(functor(), unit(), ap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.OptionalKind.widen;
+         * OptionalKind<Integer> list  = Optionals.monad()
+        .flatMap(i->widen(OptionalX.range(0,i)), widen(Arrays.asOptional(1,2,3)))
+        .convert(OptionalKind::narrowK);
+         * }
+         * </pre>
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         *    OptionalKind<Integer> list = Optionals.unit()
+        .unit("hello")
+        .then(h->Optionals.monad().flatMap((String v) ->Optionals.unit().unit(v.length()), h))
+        .convert(OptionalKind::narrowK);
+
+        //Arrays.asOptional("hello".length())
+         *
+         * }
+         * </pre>
+         *
+         * @return Type class with monad functions for Optionals
+         */
+        public static <T,R> Monad<OptionalKind.µ> monad(){
+
+            BiFunction<Higher<OptionalKind.µ,T>,Function<? super T, ? extends Higher<OptionalKind.µ,R>>,Higher<OptionalKind.µ,R>> flatMap = Instances::flatMap;
+            return General.monad(applicative(), flatMap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  OptionalKind<String> list = Optionals.unit()
+        .unit("hello")
+        .then(h->Optionals.monadZero().filter((String t)->t.startsWith("he"), h))
+        .convert(OptionalKind::narrowK);
+
+        //Arrays.asOptional("hello"));
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A filterable monad (with default value)
+         */
+        public static <T,R> MonadZero<OptionalKind.µ> monadZero(){
+
+            return General.monadZero(monad(), OptionalKind.empty());
+        }
+        /**
+         * <pre>
+         * {@code
+         *  OptionalKind<Integer> list = Optionals.<Integer>monadPlus()
+        .plus(OptionalKind.widen(Arrays.asOptional()), OptionalKind.widen(Arrays.asOptional(10)))
+        .convert(OptionalKind::narrowK);
+        //Arrays.asOptional(10))
+         *
+         * }
+         * </pre>
+         * @return Type class for combining Optionals by concatenation
+         */
+        public static <T> MonadPlus<OptionalKind.µ> monadPlus(){
+            Monoid<Optional<T>> mn = Monoids.firstPresentOptional();
+            Monoid<OptionalKind<T>> m = Monoid.of(OptionalKind.widen(mn.zero()), (f, g)-> OptionalKind.widen(
+                    mn.apply(OptionalKind.narrowK(f), OptionalKind.narrowK(g))));
+
+            Monoid<Higher<OptionalKind.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  Monoid<OptionalKind<Integer>> m = Monoid.of(OptionalKind.widen(Arrays.asOptional()), (a,b)->a.isEmpty() ? b : a);
+        OptionalKind<Integer> list = Optionals.<Integer>monadPlus(m)
+        .plus(OptionalKind.widen(Arrays.asOptional(5)), OptionalKind.widen(Arrays.asOptional(10)))
+        .convert(OptionalKind::narrowK);
+        //Arrays.asOptional(5))
+         *
+         * }
+         * </pre>
+         *
+         * @param m Monoid to use for combining Optionals
+         * @return Type class for combining Optionals
+         */
+        public static <T> MonadPlus<OptionalKind.µ> monadPlus(Monoid<OptionalKind<T>> m){
+            Monoid<Higher<OptionalKind.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+
+        /**
+         * @return Type class for traversables with traverse / sequence operations
+         */
+        public static <C2,T> Traverse<OptionalKind.µ> traverse(){
+
+            return General.traverseByTraverse(applicative(), Instances::traverseA);
+        }
+
+        /**
+         *
+         * <pre>
+         * {@code
+         * int sum  = Optionals.foldable()
+        .foldLeft(0, (a,b)->a+b, OptionalKind.widen(Arrays.asOptional(1,2,3,4)));
+
+        //10
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return Type class for folding / reduction operations
+         */
+        public static <T> Foldable<OptionalKind.µ> foldable(){
+            BiFunction<Monoid<T>,Higher<OptionalKind.µ,T>,T> foldRightFn =  (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
+            BiFunction<Monoid<T>,Higher<OptionalKind.µ,T>,T> foldLeftFn = (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
+            return General.foldable(foldRightFn, foldLeftFn);
+        }
+        public static <T> Comonad<OptionalKind.µ> comonad(){
+            Function<? super Higher<OptionalKind.µ, T>, ? extends T> extractFn = maybe -> maybe.convert(OptionalKind::narrow).get();
+            return General.comonad(functor(), unit(), extractFn);
+        }
+
+        private <T> OptionalKind<T> of(T value){
+            return OptionalKind.widen(Optional.of(value));
+        }
+        private static <T,R> OptionalKind<R> ap(OptionalKind<Function< T, R>> lt, OptionalKind<T> list){
+            return OptionalKind.widen(Maybe.fromOptionalKind(lt).combine(Maybe.fromOptionalKind(list), (a, b)->a.apply(b)).toOptional());
+
+        }
+        private static <T,R> Higher<OptionalKind.µ,R> flatMap(Higher<OptionalKind.µ,T> lt, Function<? super T, ? extends  Higher<OptionalKind.µ,R>> fn){
+            return OptionalKind.widen(OptionalKind.narrow(lt).flatMap(fn.andThen(OptionalKind::narrowK)));
+        }
+        private static <T,R> OptionalKind<R> map(OptionalKind<T> lt, Function<? super T, ? extends R> fn){
+            return OptionalKind.widen(OptionalKind.narrow(lt).map(fn));
+        }
+
+
+        private static <C2,T,R> Higher<C2, Higher<OptionalKind.µ, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
+                                                                                Higher<OptionalKind.µ, T> ds){
+            Optional<T> opt = OptionalKind.narrowK(ds);
+            return opt.isPresent() ?   applicative.map(OptionalKind::of, fn.apply(opt.get())) :
+                    applicative.unit(OptionalKind.empty());
+        }
+
     }
 
 }

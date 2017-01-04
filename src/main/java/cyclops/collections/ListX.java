@@ -54,6 +54,15 @@ public interface ListX<T> extends To<ListX<T>>,
     public static class µ {
     }
 
+    /**
+     * Convert the raw Higher Kinded Type for ListX types into the ListX type definition class
+     *
+     * @param deque HKT encoded list into a ListX
+     * @return ListX
+     */
+    public static <T> ListX<T> narrowK(final Higher<ListX.µ, T> list) {
+        return (ListX<T>)list;
+    }
     static class Instances {
         /**
          *

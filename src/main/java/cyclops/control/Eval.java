@@ -822,7 +822,7 @@ public interface Eval<T> extends    To<Eval<T>>,
      *
      */
     @UtilityClass
-    public static class EvalInstances {
+    public static class Instances {
 
 
         /**
@@ -854,7 +854,7 @@ public interface Eval<T> extends    To<Eval<T>>,
          * @return A functor for Evals
          */
         public static <T,R>Functor<µ> functor(){
-            BiFunction<Eval<T>,Function<? super T, ? extends R>,Eval<R>> map = EvalInstances::map;
+            BiFunction<Eval<T>,Function<? super T, ? extends R>,Eval<R>> map = Instances::map;
             return General.functor(map);
         }
 
@@ -874,7 +874,7 @@ public interface Eval<T> extends    To<Eval<T>>,
          * @return A factory for Evals
          */
         public static <T> Pure<µ> unit(){
-            return General.<Eval.µ,T>unit(EvalInstances::of);
+            return General.<Eval.µ,T>unit(Instances::of);
         }
         /**
          *
@@ -914,7 +914,7 @@ public interface Eval<T> extends    To<Eval<T>>,
          * @return A zipper for Evals
          */
         public static <T,R> Applicative<Eval.µ> applicative(){
-            BiFunction<Eval< Function<T, R>>,Eval<T>,Eval<R>> ap = EvalInstances::ap;
+            BiFunction<Eval< Function<T, R>>,Eval<T>,Eval<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
         /**
@@ -945,7 +945,7 @@ public interface Eval<T> extends    To<Eval<T>>,
          */
         public static <T,R> Monad<µ> monad(){
 
-            BiFunction<Higher<Eval.µ,T>,Function<? super T, ? extends Higher<Eval.µ,R>>,Higher<Eval.µ,R>> flatMap = EvalInstances::flatMap;
+            BiFunction<Higher<Eval.µ,T>,Function<? super T, ? extends Higher<Eval.µ,R>>,Higher<Eval.µ,R>> flatMap = Instances::flatMap;
             return General.monad(applicative(), flatMap);
         }
         /**
@@ -1015,7 +1015,7 @@ public interface Eval<T> extends    To<Eval<T>>,
          */
         public static <C2,T> Traverse<µ> traverse(){
 
-            return General.traverseByTraverse(applicative(), EvalInstances::traverseA);
+            return General.traverseByTraverse(applicative(), Instances::traverseA);
         }
 
         /**

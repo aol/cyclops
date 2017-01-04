@@ -537,7 +537,7 @@ public class CompletableFutures {
      *
      */
     @UtilityClass
-    public static class CompletableFutureInstances {
+    public static class Instances {
 
 
         /**
@@ -569,7 +569,7 @@ public class CompletableFutures {
          * @return A functor for CompletableFutures
          */
         public static <T,R>Functor<CompletableFutureKind.µ> functor(){
-            BiFunction<CompletableFutureKind<T>,Function<? super T, ? extends R>,CompletableFutureKind<R>> map = CompletableFutureInstances::map;
+            BiFunction<CompletableFutureKind<T>,Function<? super T, ? extends R>,CompletableFutureKind<R>> map = Instances::map;
             return General.functor(map);
         }
         /**
@@ -588,7 +588,7 @@ public class CompletableFutures {
          * @return A factory for CompletableFutures
          */
         public static <T> Pure<CompletableFutureKind.µ> unit(){
-            return General.<CompletableFutureKind.µ,T>unit(CompletableFutureInstances::of);
+            return General.<CompletableFutureKind.µ,T>unit(Instances::of);
         }
         /**
          *
@@ -627,7 +627,7 @@ public class CompletableFutures {
          * @return A zipper for CompletableFutures
          */
         public static <T,R> Applicative<CompletableFutureKind.µ> applicative(){
-            BiFunction<CompletableFutureKind< Function<T, R>>,CompletableFutureKind<T>,CompletableFutureKind<R>> ap = CompletableFutureInstances::ap;
+            BiFunction<CompletableFutureKind< Function<T, R>>,CompletableFutureKind<T>,CompletableFutureKind<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
         /**
@@ -658,7 +658,7 @@ public class CompletableFutures {
          */
         public static <T,R> Monad<CompletableFutureKind.µ> monad(){
 
-            BiFunction<Higher<CompletableFutureKind.µ,T>,Function<? super T, ? extends Higher<CompletableFutureKind.µ,R>>,Higher<CompletableFutureKind.µ,R>> flatMap = CompletableFutureInstances::flatMap;
+            BiFunction<Higher<CompletableFutureKind.µ,T>,Function<? super T, ? extends Higher<CompletableFutureKind.µ,R>>,Higher<CompletableFutureKind.µ,R>> flatMap = Instances::flatMap;
             return General.monad(applicative(), flatMap);
         }
         /**
@@ -697,7 +697,7 @@ public class CompletableFutures {
         public static <T> MonadPlus<CompletableFutureKind.µ> monadPlus(){
             Monoid<CompletableFuture<T>> mn = Monoids.firstCompleteCompletableFuture();
             Monoid<CompletableFutureKind<T>> m = Monoid.of(CompletableFutureKind.widen(mn.zero()), (f, g)-> CompletableFutureKind.widen(
-                    mn.apply(CompletableFutureKind.narrow(f), CompletableFutureKind.narrow(g))));
+                    mn.apply(CompletableFutureKind.narrowK(f), CompletableFutureKind.narrowK(g))));
 
             Monoid<Higher<CompletableFutureKind.µ,?>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
@@ -728,7 +728,7 @@ public class CompletableFutures {
          */
         public static <C2,T> Traverse<CompletableFutureKind.µ> traverse(){
 
-            return General.traverseByTraverse(applicative(), CompletableFutureInstances::traverseA);
+            return General.traverseByTraverse(applicative(), Instances::traverseA);
         }
 
         /**
@@ -747,12 +747,12 @@ public class CompletableFutures {
          * @return Type class for folding / reduction operations
          */
         public static <T> Foldable<CompletableFutureKind.µ> foldable(){
-            BiFunction<Monoid<T>,Higher<CompletableFutureKind.µ,T>,T> foldRightFn =  (m, l)-> m.apply(m.zero(), CompletableFutureKind.narrow(l).join());
-            BiFunction<Monoid<T>,Higher<CompletableFutureKind.µ,T>,T> foldLeftFn = (m, l)->  m.apply(m.zero(), CompletableFutureKind.narrow(l).join());
+            BiFunction<Monoid<T>,Higher<CompletableFutureKind.µ,T>,T> foldRightFn =  (m, l)-> m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
+            BiFunction<Monoid<T>,Higher<CompletableFutureKind.µ,T>,T> foldLeftFn = (m, l)->  m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
             return General.foldable(foldRightFn, foldLeftFn);
         }
         public static <T> Comonad<CompletableFutureKind.µ> comonad(){
-            Function<? super Higher<CompletableFutureKind.µ, T>, ? extends T> extractFn = maybe -> maybe.convert(CompletableFutureKind::narrow).join();
+            Function<? super Higher<CompletableFutureKind.µ, T>, ? extends T> extractFn = maybe -> maybe.convert(CompletableFutureKind::narrowK).join();
             return General.comonad(functor(), unit(), extractFn);
         }
 
@@ -773,7 +773,7 @@ public class CompletableFutures {
 
         private static <C2,T,R> Higher<C2, Higher<CompletableFutureKind.µ, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
                                                                                          Higher<CompletableFutureKind.µ, T> ds){
-            CompletableFuture<T> future = CompletableFutureKind.narrow(ds);
+            CompletableFuture<T> future = CompletableFutureKind.narrowK(ds);
             return applicative.map(CompletableFutureKind::completedFuture, fn.apply(future.join()));
         }
 

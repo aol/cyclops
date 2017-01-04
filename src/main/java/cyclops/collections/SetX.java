@@ -1020,11 +1020,11 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
      * <pre>
      * {@code 
      * SetX<? extends Fruit> set = SetX.of(apple,bannana);
-     * SetX<Fruit> fruitSet = SetX.narrow(set);
+     * SetX<Fruit> fruitSet = SetX.narrowK(set);
      * }
      * </pre>
      * 
-     * @param setX to narrow generic type
+     * @param setX to narrowK generic type
      * @return SetX with narrowed type
      */
     public static <T> SetX<T> narrow(final SetX<? extends T> setX) {

@@ -1362,7 +1362,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *
          * @return A zipper for Maybes
          */
-        public static <T,R> Applicative<µ> applicative(){
+        public static <T,R> Applicative<Maybe.µ> applicative(){
             BiFunction<Maybe< Function<T, R>>,Maybe<T>,Maybe<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }

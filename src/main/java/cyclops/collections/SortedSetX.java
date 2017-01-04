@@ -1031,11 +1031,11 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
      * <pre>
      * {@code 
      * SortedSetX<? extends Fruit> set = SortedSetX.of(apple,bannana);
-     * SortedSetX<Fruit> fruitSet = SortedSetX.narrow(set);
+     * SortedSetX<Fruit> fruitSet = SortedSetX.narrowK(set);
      * }
      * </pre>
      * 
-     * @param sortedSetX to narrow generic type
+     * @param sortedSetX to narrowK generic type
      * @return SortedSetX with narrowed type
      */
     public static <T> SortedSetX<T> narrow(final SortedSetX<? extends T> setX) {

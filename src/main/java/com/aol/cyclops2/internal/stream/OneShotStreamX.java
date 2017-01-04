@@ -15,17 +15,17 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 
-public class ExtendedStreamImpl<T> extends BaseExtendedStream<T> {
+public class OneShotStreamX<T> extends BaseExtendedStream<T> {
 
-    public ExtendedStreamImpl(Stream<T> stream) {
+    public OneShotStreamX(Stream<T> stream) {
         super(stream);
     }
 
-    public ExtendedStreamImpl(Spliterator<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
+    public OneShotStreamX(Spliterator<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
         super(stream, rev, split);
     }
 
-    public ExtendedStreamImpl(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
+    public OneShotStreamX(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
         super(stream, rev, split);
     }
     @Override
@@ -121,12 +121,12 @@ public class ExtendedStreamImpl<T> extends BaseExtendedStream<T> {
 
     @Override
     <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible, Optional<PushingSpliterator<?>> split) {
-        return new ExtendedStreamImpl<X>(stream,reversible,split);
+        return new OneShotStreamX<X>(stream,reversible,split);
     }
 
     @Override
     <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible, Optional<PushingSpliterator<?>> split) {
-        return new ExtendedStreamImpl<X>(stream,reversible,split);
+        return new OneShotStreamX<X>(stream,reversible,split);
     }
 
     @Override @SafeVarargs

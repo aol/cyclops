@@ -36,11 +36,11 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
      * <pre>
      * {@code 
      *  PBaagX<? extends Fruit> set = PBagX.of(apple,bannana);
-     *  PBagX<Fruit> fruitSet = PBagX.narrow(set);
+     *  PBagX<Fruit> fruitSet = PBagX.narrowK(set);
      * }
      * </pre>
      * 
-     * @param bagX to narrow generic type
+     * @param bagX to narrowK generic type
      * @return PBagX with narrowed type
      */
     public static <T> PBagX<T> narrow(final PBagX<? extends T> bagX) {

@@ -15,17 +15,17 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 
-public class ReactiveSeqImpl<T> extends BaseExtendedStream<T> {
+public class StreamX<T> extends BaseExtendedStream<T> {
 
-    public ReactiveSeqImpl(Stream<T> stream) {
+    public StreamX(Stream<T> stream) {
         super(stream);
     }
 
-    public ReactiveSeqImpl(Spliterator<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
+    public StreamX(Spliterator<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
         super(stream, rev, split);
     }
 
-    public ReactiveSeqImpl(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
+    public StreamX(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
         super(stream, rev, split);
     }
     @Override
@@ -37,12 +37,12 @@ public class ReactiveSeqImpl<T> extends BaseExtendedStream<T> {
 
     @Override
     <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible, Optional<PushingSpliterator<?>> split) {
-        return new ReactiveSeqImpl<X>(stream,reversible,split);
+        return new StreamX<X>(stream,reversible,split);
     }
 
     @Override
     <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible, Optional<PushingSpliterator<?>> split) {
-        return new ReactiveSeqImpl<X>(stream,reversible,split);
+        return new StreamX<X>(stream,reversible,split);
     }
     @Override
     public ReactiveSeq<T> cycle() {
