@@ -1,5 +1,7 @@
 package cyclops.async;
 
+import com.aol.cyclops2.hkt.Higher;
+import cyclops.Monoids;
 import cyclops.control.*;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -21,8 +23,15 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.instances.General;
+import cyclops.typeclasses.monad.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
@@ -53,12 +62,22 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Slf4j
-public class Future<T> implements To<Future<T>>,MonadicValue<T> {
+public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.µ,T> {
 
+    public static class µ {
+    }
     public <W extends WitnessType<W>> FutureT<W, T> liftM(W witness) {
         return FutureT.of(witness.adapter().unit(this));
     }
-
+    /**
+     * Convert the raw Higher Kinded Type for  FutureType types into the FutureType type definition class
+     *
+     * @param future HKT encoded list into a FutureType
+     * @return FutureType
+     */
+    public static <T> Future<T> narrowK(final Higher<Future.µ, T> future) {
+        return (Future<T>)future;
+    }
 
     /**
      * An empty Future
@@ -1290,5 +1309,253 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T> {
 
     public CompletableFuture<T> getFuture() {
         return this.future;
+    }
+    /**
+     * Companion class for creating Type Class instances for working with FutureWs
+     * @author johnmcclean
+     *
+     */
+    @UtilityClass
+    public static class Instances {
+
+
+        /**
+         *
+         * Transform a future, mulitplying every element by 2
+         *
+         * <pre>
+         * {@code
+         *  Future<Integer> future = FutureWs.functor().map(i->i*2, Future.widen(FutureW.ofResult(2));
+         *
+         *  //[4]
+         *
+         *
+         * }
+         * </pre>
+         *
+         * An example fluent api working with FutureWs
+         * <pre>
+         * {@code
+         *   Future<Integer> future = FutureWs.unit()
+        .unit("hello")
+        .then(h->FutureWs.functor().map((String v) ->v.length(), h))
+        .convert(Future::narrowK);
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A functor for FutureWs
+         */
+        public static <T,R>Functor<µ> functor(){
+            BiFunction<Future<T>,Function<? super T, ? extends R>,Future<R>> map = Instances::map;
+            return General.functor(map);
+        }
+        /**
+         * <pre>
+         * {@code
+         * Future<String> future = FutureWs.unit()
+        .unit("hello")
+        .convert(Future::narrowK);
+
+        //FutureW("hello")
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A factory for FutureWs
+         */
+        public static <T> Pure<µ> unit(){
+            return General.<Future.µ,T>unit(Instances::of);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.Future.widen;
+         * import static com.aol.cyclops.util.function.Lambda.l1;
+         * import static java.util.Arrays.asFutureW;
+         *
+        FutureWs.zippingApplicative()
+        .ap(widen(asFutureW(l1(this::multiplyByTwo))),widen(asFutureW(1,2,3)));
+         *
+         * //[2,4,6]
+         * }
+         * </pre>
+         *
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         * Future<Function<Integer,Integer>> futureFn =FutureWs.unit()
+         *                                                  .unit(Lambda.l1((Integer i) ->i*2))
+         *                                                  .convert(Future::narrowK);
+
+        Future<Integer> future = FutureWs.unit()
+        .unit("hello")
+        .then(h->FutureWs.functor().map((String v) ->v.length(), h))
+        .then(h->FutureWs.applicative().ap(futureFn, h))
+        .convert(Future::narrowK);
+
+        //FutureW("hello".length()*2))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A zipper for FutureWs
+         */
+        public static <T,R> Applicative<Future.µ> applicative(){
+            BiFunction<Future< Function<T, R>>,Future<T>,Future<R>> ap = Instances::ap;
+            return General.applicative(functor(), unit(), ap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.Future.widen;
+         * Future<Integer> future  = FutureWs.monad()
+        .flatMap(i->widen(FutureW.ofResult(0)), widen(FutureW.ofResult(2)))
+        .convert(Future::narrowK);
+         * }
+         * </pre>
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         *    Future<Integer> future = FutureWs.unit()
+        .unit("hello")
+        .then(h->FutureWs.monad().flatMap((String v) ->FutureWs.unit().unit(v.length()), h))
+        .convert(Future::narrowK);
+
+        //FutureW("hello".length())
+         *
+         * }
+         * </pre>
+         *
+         * @return Type class with monad functions for FutureWs
+         */
+        public static <T,R> Monad<µ> monad(){
+
+            BiFunction<Higher<Future.µ,T>,Function<? super T, ? extends Higher<Future.µ,R>>,Higher<Future.µ,R>> flatMap = Instances::flatMap;
+            return General.monad(applicative(), flatMap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  Future<String> future = FutureWs.unit()
+        .unit("hello")
+        .then(h->FutureWs.monadZero().filter((String t)->t.startsWith("he"), h))
+        .convert(Future::narrowK);
+
+        //FutureW["hello"]
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A filterable monad (with default value)
+         */
+        public static <T,R> MonadZero<µ> monadZero(){
+
+            return General.monadZero(monad(), Future.future());
+        }
+        /**
+         * <pre>
+         * {@code
+         *  Future<Integer> future = FutureWs.<Integer>monadPlus()
+        .plus(Future.widen(FutureW.future()), Future.widen(FutureW.ofResult(10)))
+        .convert(Future::narrowK);
+        //FutureW[10]
+         *
+         * }
+         * </pre>
+         * @return Type class for combining FutureWs by concatenation
+         */
+        public static <T> MonadPlus<Future.µ> monadPlus(){
+            Monoid<Future<T>> mn = Monoids.firstSuccessfulFuture();
+            Monoid<Future<T>> m = Monoid.of(mn.zero(), (f,g)->
+                    mn.apply(Future.narrowK(f), Future.narrowK(g)));
+
+            Monoid<Higher<Future.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  Monoid<Future<Integer>> m = Monoid.of(Future.widen(FutureW.future()()), (a,b)->a.isDone() ? b : a);
+        Future<Integer> future = FutureWs.<Integer>monadPlus(m)
+        .plus(Future.widen(FutureW.ofResult(5)), Future.widen(FutureW.ofResult(10)))
+        .convert(Future::narrowK);
+        //FutureW(5)
+         *
+         * }
+         * </pre>
+         *
+         * @param m Monoid to use for combining FutureWs
+         * @return Type class for combining FutureWs
+         */
+        public static <T> MonadPlus<µ> monadPlus(Monoid<Future<T>> m){
+            Monoid<Higher<Future.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+
+        /**
+         * @return Type class for traversables with traverse / sequence operations
+         */
+        public static <C2,T> Traverse<µ> traverse(){
+
+            return General.traverseByTraverse(applicative(), Instances::traverseA);
+        }
+
+        /**
+         *
+         * <pre>
+         * {@code
+         * int sum  = FutureWs.foldable()
+        .foldLeft(0, (a,b)->a+b, Future.widen(FutureW.ofResult(4)));
+
+        //4
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return Type class for folding / reduction operations
+         */
+        public static <T> Foldable<µ> foldable(){
+            BiFunction<Monoid<T>,Higher<Future.µ,T>,T> foldRightFn =  (m,l)-> m.apply(m.zero(), Future.narrowK(l).get());
+            BiFunction<Monoid<T>,Higher<Future.µ,T>,T> foldLeftFn = (m,l)->  m.apply(m.zero(), Future.narrowK(l).get());
+            return General.foldable(foldRightFn, foldLeftFn);
+        }
+        public static <T> Comonad<µ> comonad(){
+            Function<? super Higher<Future.µ, T>, ? extends T> extractFn = maybe -> maybe.convert(Future::narrowK).get();
+            return General.comonad(functor(), unit(), extractFn);
+        }
+
+        private <T> Future<T> of(T value){
+            return Future.ofResult(value);
+        }
+        private static <T,R> Future<R> ap(Future<Function< T, R>> lt,  Future<T> future){
+            return lt.combine(future, (a,b)->a.apply(b));
+
+        }
+        private static <T,R> Higher<Future.µ,R> flatMap( Higher<Future.µ,T> lt, Function<? super T, ? extends  Higher<Future.µ,R>> fn){
+            return Future.narrowK(lt).flatMap(fn.andThen(Future::narrowK));
+        }
+        private static <T,R> Future<R> map(Future<T> lt, Function<? super T, ? extends R> fn){
+            return lt.map(fn);
+        }
+
+
+        private static <C2,T,R> Higher<C2, Higher<Future.µ, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
+                                                                          Higher<Future.µ, T> ds){
+            Future<T> future = Future.narrowK(ds);
+            return applicative.map(Future::ofResult, fn.apply(future.get()));
+        }
+
     }
 }
