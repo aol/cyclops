@@ -494,7 +494,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * React <b>then</b>
+     * React <b>transform</b>
      *
      *
      *
@@ -504,20 +504,20 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * <pre>
      * {@code
         new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-                .then((it) -> it * 100)
-                .then((it) -> "*" + it)
+                .transform((it) -> it * 100)
+                .transform((it) -> "*" + it)
     
                 }
     </pre>
      *
-     * React then allows event reactors to be chained. Unlike React with, which
-     * returns a collection of Future references, React then is a fluent
+     * React transform allows event reactors to be chained. Unlike React with, which
+     * returns a collection of Future references, React transform is a fluent
      * interface that returns the React builder - allowing further reactors to
      * be added to the chain.
      *
-     * React then does not block.
+     * React transform does not block.
      *
-     * React with can be called after React then which gives access to the full
+     * React with can be called after React transform which gives access to the full
      * CompleteableFuture api. CompleteableFutures can be passed back into
      * SimpleReact via SimpleReact.react(streamOfCompleteableFutures);
      *
@@ -812,8 +812,8 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * <pre>
      * {@code 
         List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-                                                .then(it -> it * 100)
-                                                .then(it -> "*" + it)
+                                                .transform(it -> it * 100)
+                                                .transform(it -> "*" + it)
                                                 .block(status -> status.getCompleted()->1);
                 
          }       
@@ -897,14 +897,14 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * <pre>
       {@code
     List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 100, () -> 2, () -> 3)
-                    .then(it -> {
+                    .transform(it -> {
                         if (it == 100)
                             throw new RuntimeException("boo!");
     
                         return it;
                     })
                     .onFail(e -> 1)
-                    .then(it -> "*" + it)
+                    .transform(it -> "*" + it)
                     .block();
     
     
@@ -915,7 +915,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      *
      * In this example onFail recovers from the RuntimeException thrown when the
-     * input to the first 'then' stage is 100.
+     * input to the first 'transform' stage is 100.
      *
      * @param fn
      *            Recovery function, the exception is input, and the recovery
@@ -994,16 +994,16 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * <pre>
         {@code
         List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-            .then(it -> it * 100)
-            .then(it -> {
+            .transform(it -> it * 100)
+            .transform(it -> {
                 if (it == 100)
                     throw new RuntimeException("boo!");
     
                 return it;
             })
             .onFail(e -> 1)
-            .then(it -> "*" + it)
-            .then(it -> {
+            .transform(it -> "*" + it)
+            .transform(it -> {
     
                 if ("*200".equals(it))
                     throw new RuntimeException("boo!");
@@ -1041,7 +1041,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      * allOf is a non-blocking equivalent of block. The current thread is not
      * impacted by the calculations, but the reactive chain does not continue
-     * until all currently alloted tasks complete. The allOf task is then
+     * until all currently alloted tasks complete. The allOf task is transform
      * provided with a list of the results from the previous tasks in the chain.
      *
      * <pre>
@@ -1049,7 +1049,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
       boolean blocked[] = {false};
         new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
     
-                .then(it -> {
+                .transform(it -> {
                     try {
                         Thread.sleep(50000);
                     } catch (Exception e) {

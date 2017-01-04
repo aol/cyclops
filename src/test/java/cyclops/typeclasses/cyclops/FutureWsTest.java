@@ -9,8 +9,6 @@ import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import org.junit.Test;
 
-import java.util.function.Function;
-
 import static cyclops.function.Lambda.l1;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
@@ -32,7 +30,7 @@ public class FutureWsTest {
         
         Future<Integer> opt = Future.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Future.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->Future.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(Future::narrowK);
         
         assertThat(opt.join(),equalTo(Future.ofResult("hello".length()).join()));
@@ -54,8 +52,8 @@ public class FutureWsTest {
         
         Future<Integer> opt = Future.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Future.Instances.functor().map((String v) ->v.length(), h))
-                                     .then(h->Future.Instances.applicative().ap(optFn, h))
+                                     .transform(h->Future.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->Future.Instances.applicative().ap(optFn, h))
                                      .convert(Future::narrowK);
         
         assertThat(opt.join(),equalTo(Future.ofResult("hello".length()*2).join()));
@@ -71,7 +69,7 @@ public class FutureWsTest {
         
         Future<Integer> opt = Future.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Future.Instances.monad().flatMap((String v) ->Future.Instances.unit().unit(v.length()), h))
+                                     .transform(h->Future.Instances.monad().flatMap((String v) ->Future.Instances.unit().unit(v.length()), h))
                                      .convert(Future::narrowK);
         
         assertThat(opt.join(),equalTo(Future.ofResult("hello".length()).join()));
@@ -81,7 +79,7 @@ public class FutureWsTest {
         
         Future<String> opt = Future.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Future.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .transform(h->Future.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(Future::narrowK);
         
         assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello").join()));
@@ -91,7 +89,7 @@ public class FutureWsTest {
         
         Future<String> opt = Future.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Future.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .transform(h->Future.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(Future::narrowK);
         
         assertFalse(opt.toCompletableFuture().isDone());

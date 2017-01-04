@@ -6,9 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.CompletableFutures;
@@ -37,7 +35,7 @@ public class CompletableFuturesTest {
         
         CompletableFuture<Integer> opt = CompletableFutures.Instances.unit()
                                      .unit("hello")
-                                     .then(h->CompletableFutures.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->CompletableFutures.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(CompletableFutureKind::narrowK);
         
         assertThat(opt.toCompletableFuture().join(),equalTo(CompletableFuture.completedFuture("hello".length()).join()));
@@ -59,8 +57,8 @@ public class CompletableFuturesTest {
         
         CompletableFuture<Integer> opt = CompletableFutures.Instances.unit()
                                      .unit("hello")
-                                     .then(h->CompletableFutures.Instances.functor().map((String v) ->v.length(), h))
-                                     .then(h->CompletableFutures.Instances.applicative().ap(optFn, h))
+                                     .transform(h->CompletableFutures.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->CompletableFutures.Instances.applicative().ap(optFn, h))
                                      .convert(CompletableFutureKind::narrowK);
         
         assertThat(opt.toCompletableFuture().join(),equalTo(CompletableFuture.completedFuture("hello".length()*2).join()));
@@ -76,7 +74,7 @@ public class CompletableFuturesTest {
         
         CompletableFuture<Integer> opt = CompletableFutures.Instances.unit()
                                      .unit("hello")
-                                     .then(h->CompletableFutures.Instances.monad().flatMap((String v) ->CompletableFutures.Instances.unit().unit(v.length()), h))
+                                     .transform(h->CompletableFutures.Instances.monad().flatMap((String v) ->CompletableFutures.Instances.unit().unit(v.length()), h))
                                      .convert(CompletableFutureKind::narrowK);
         
         assertThat(opt.toCompletableFuture().join(),equalTo(CompletableFuture.completedFuture("hello".length()).join()));
@@ -86,7 +84,7 @@ public class CompletableFuturesTest {
         
         CompletableFuture<String> opt = CompletableFutures.Instances.unit()
                                      .unit("hello")
-                                     .then(h->CompletableFutures.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .transform(h->CompletableFutures.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(CompletableFutureKind::narrowK);
         
         assertThat(opt.toCompletableFuture().join(),equalTo(CompletableFuture.completedFuture("hello").join()));
@@ -96,7 +94,7 @@ public class CompletableFuturesTest {
         
         CompletableFuture<String> opt = CompletableFutures.Instances.unit()
                                      .unit("hello")
-                                     .then(h->CompletableFutures.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .transform(h->CompletableFutures.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(CompletableFutureKind::narrowK);
         
         assertFalse(opt.toCompletableFuture().isDone());

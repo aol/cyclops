@@ -600,7 +600,7 @@ public class Optionals {
          * {@code
          *   OptionalKind<Integer> list = Optionals.unit()
         .unit("hello")
-        .then(h->Optionals.functor().map((String v) ->v.length(), h))
+        .transform(h->Optionals.functor().map((String v) ->v.length(), h))
         .convert(OptionalKind::narrowK);
          *
          * }
@@ -656,8 +656,8 @@ public class Optionals {
 
         OptionalKind<Integer> list = Optionals.unit()
         .unit("hello")
-        .then(h->Optionals.functor().map((String v) ->v.length(), h))
-        .then(h->Optionals.applicative().ap(listFn, h))
+        .transform(h->Optionals.functor().map((String v) ->v.length(), h))
+        .transform(h->Optionals.applicative().ap(listFn, h))
         .convert(OptionalKind::narrowK);
 
         //Arrays.asOptional("hello".length()*2))
@@ -688,7 +688,7 @@ public class Optionals {
          * {@code
          *    OptionalKind<Integer> list = Optionals.unit()
         .unit("hello")
-        .then(h->Optionals.monad().flatMap((String v) ->Optionals.unit().unit(v.length()), h))
+        .transform(h->Optionals.monad().flatMap((String v) ->Optionals.unit().unit(v.length()), h))
         .convert(OptionalKind::narrowK);
 
         //Arrays.asOptional("hello".length())
@@ -709,7 +709,7 @@ public class Optionals {
          * {@code
          *  OptionalKind<String> list = Optionals.unit()
         .unit("hello")
-        .then(h->Optionals.monadZero().filter((String t)->t.startsWith("he"), h))
+        .transform(h->Optionals.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(OptionalKind::narrowK);
 
         //Arrays.asOptional("hello"));

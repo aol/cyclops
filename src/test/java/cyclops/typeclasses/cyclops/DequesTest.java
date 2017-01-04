@@ -4,8 +4,6 @@ import static cyclops.function.Lambda.l1;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.function.Function;
-
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.DequeX;
 import cyclops.control.Maybe;
@@ -32,7 +30,7 @@ public class DequesTest {
         
         DequeX<Integer> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->DequeX.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->DequeX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of("hello".length()).toArray()));
@@ -52,8 +50,8 @@ public class DequesTest {
         
         DequeX<Integer> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->DequeX.Instances.functor().map((String v) ->v.length(), h))
-                                     .then(h->DequeX.Instances.zippingApplicative().ap(listFn, h))
+                                     .transform(h->DequeX.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->DequeX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of("hello".length()*2).toArray()));
@@ -69,7 +67,7 @@ public class DequesTest {
         
         DequeX<Integer> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->DequeX.Instances.monad().flatMap((String v) ->DequeX.Instances.unit().unit(v.length()), h))
+                                     .transform(h->DequeX.Instances.monad().flatMap((String v) ->DequeX.Instances.unit().unit(v.length()), h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of("hello".length()).toArray()));
@@ -79,7 +77,7 @@ public class DequesTest {
         
         DequeX<String> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->DequeX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .transform(h->DequeX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of("hello").toArray()));
@@ -89,7 +87,7 @@ public class DequesTest {
         
         DequeX<String> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->DequeX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .transform(h->DequeX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of().toArray()));

@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  */
 public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
                                                                 Value<T>,
-        Filters<T>,
+                                                                Filters<T>,
                                                                 MonadicValue<T> {
 
 
@@ -272,7 +272,8 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
         return  (AnyMValue<W,R>)AnyM.super.flatMapA(fn);   
         
     }
-    default <R> AnyM<W,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn){
+
+    default <R> AnyMValue<W,R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> fn){
         return (AnyMValue<W,R>)MonadicValue.super.flatMapI(fn);
     }
     default <R> AnyMValue<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){

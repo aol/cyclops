@@ -49,8 +49,8 @@ public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
     }
     
     public <T,R> Higher<CRE,R> ap(Higher<CRE, ? extends Function<T, R>> fn, Higher<CRE, T> apply);
-    
-   
+
+
     
     /**
      * The default implementation of apBiFn is less efficient than ap2 (extra map operation)
@@ -64,12 +64,17 @@ public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
         return  ap(ap(map(Applicative::curry2,fn), apply), apply2);
     }
     
-    default <T,T2,R> Higher<CRE,R> ap2(Higher<CRE, Function<T, Function<T2, R>>> fn, Higher<CRE, T> apply, Higher<CRE, T2> apply2){
-        return  ap(ap(fn, apply), apply2);
+    default <T,T2,R> Higher<CRE,R> ap2(Higher<CRE, ? extends Function<T, ? extends Function<T2, R>>> fn, Higher<CRE, T> apply, Higher<CRE, T2> apply2){
+        Higher<CRE,Function<T,  Function<T2, R>>> noVariance = (Higher<CRE, Function<T, Function<T2, R>>>) fn;
+        return  ap(ap(noVariance, apply), apply2);
     }
     default <T,T2,T3,R> Higher<CRE,R> ap3(Higher<CRE, ? extends Function<T, ? extends Function<T2, ? extends Function<T3, R>>>> fn,
                                           Higher<CRE, T> apply, Higher<CRE, T2> apply2, Higher<CRE, T3> apply3){
-        return  ap(ap(ap(fn, apply), apply2),apply3);
+        Higher<CRE, Function<T, Function<T2, Function<T3, R>>>> fnToUse =
+                (Higher<CRE,  Function<T,  Function<T2, Function<T3, R>>>>) fn;
+        Higher<CRE, Function<T2,Function<T3, R>>> ap1 = ap(fnToUse, apply);
+        Higher<CRE, Function<T3, R>> ap2 = ap(ap1, apply2);
+        return  ap(ap2,apply3);
     }
   
     

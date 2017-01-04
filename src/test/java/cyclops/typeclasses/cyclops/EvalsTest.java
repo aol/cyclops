@@ -1,12 +1,9 @@
 
 
-import static com.sun.tools.doclint.Entity.Lambda;
 import static cyclops.function.Lambda.l1;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-
-import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Eval;
@@ -33,7 +30,7 @@ public class EvalsTest {
         
         Eval<Integer> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Eval.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->Eval.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now("hello".length())));
@@ -57,8 +54,8 @@ public class EvalsTest {
         
         Eval<Integer> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Eval.Instances.functor().map((String v) ->v.length(), h))
-                                     .then(h->Eval.Instances.applicative().ap(optFn, h))
+                                     .transform(h->Eval.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->Eval.Instances.applicative().ap(optFn, h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now("hello".length()*2)));
@@ -74,7 +71,7 @@ public class EvalsTest {
         
         Eval<Integer> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Eval.Instances.monad().flatMap((String v) ->Eval.Instances.unit().unit(v.length()), h))
+                                     .transform(h->Eval.Instances.monad().flatMap((String v) ->Eval.Instances.unit().unit(v.length()), h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now("hello".length())));
@@ -84,7 +81,7 @@ public class EvalsTest {
         
         Eval<String> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Eval.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .transform(h->Eval.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now("hello")));
@@ -94,7 +91,7 @@ public class EvalsTest {
         
         Eval<String> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Eval.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .transform(h->Eval.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now(null)));

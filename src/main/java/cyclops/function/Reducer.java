@@ -27,7 +27,7 @@ public interface Reducer<T> extends Monoid<T> {
     }
 
     /**
-     * Map a given Stream to required type (via mapToType method), then
+     * Map a given Stream to required type (via mapToType method), transform
      * reduce using this monoid
      * 
      * Example of multiple reduction using multiple Monoids and PowerTuples

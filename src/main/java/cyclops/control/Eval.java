@@ -844,7 +844,7 @@ public interface Eval<T> extends    To<Eval<T>>,
          * {@code
          *   Eval<Integer> list = Evals.unit()
         .unit("hello")
-        .then(h->Evals.functor().map((String v) ->v.length(), h))
+        .transform(h->Evals.functor().map((String v) ->v.length(), h))
         .convert(Eval::narrowK);
          *
          * }
@@ -901,8 +901,8 @@ public interface Eval<T> extends    To<Eval<T>>,
 
         Eval<Integer> list = Evals.unit()
         .unit("hello")
-        .then(h->Evals.functor().map((String v) ->v.length(), h))
-        .then(h->Evals.applicative().ap(listFn, h))
+        .transform(h->Evals.functor().map((String v) ->v.length(), h))
+        .transform(h->Evals.applicative().ap(listFn, h))
         .convert(Eval::narrowK);
 
         //Arrays.asEval("hello".length()*2))
@@ -933,7 +933,7 @@ public interface Eval<T> extends    To<Eval<T>>,
          * {@code
          *    Eval<Integer> list = Evals.unit()
         .unit("hello")
-        .then(h->Evals.monad().flatMap((String v) ->Evals.unit().unit(v.length()), h))
+        .transform(h->Evals.monad().flatMap((String v) ->Evals.unit().unit(v.length()), h))
         .convert(Eval::narrowK);
 
         //Arrays.asEval("hello".length())
@@ -954,7 +954,7 @@ public interface Eval<T> extends    To<Eval<T>>,
          * {@code
          *  Eval<String> list = Evals.unit()
         .unit("hello")
-        .then(h->Evals.monadZero().filter((String t)->t.startsWith("he"), h))
+        .transform(h->Evals.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(Eval::narrowK);
 
         //Arrays.asEval("hello"));

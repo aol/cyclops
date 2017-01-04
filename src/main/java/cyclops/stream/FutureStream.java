@@ -80,8 +80,12 @@ import com.nurkiewicz.asyncretry.RetryExecutor;
 
 import lombok.val;
 
-public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>, ReactiveSeq<U>, LazyToQueue<U>,
-        ConfigurableStream<U, FastFuture<U>>, FutureStreamSynchronousPublisher<U> {
+public interface FutureStream<U> extends LazySimpleReactStream<U>,
+                                          LazyStream<U>,
+                                            ReactiveSeq<U>,
+                                            LazyToQueue<U>,
+                                          ConfigurableStream<U, FastFuture<U>>,
+                                          FutureStreamSynchronousPublisher<U> {
 
     default LazyReact builder(int maxActiveTasks, Executor exec){
         return new LazyReact(maxActiveTasks,exec);
@@ -884,9 +888,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
     public FutureStream<U> maxActive(int concurrentTasks);
 
     /*
-     * Equivalent functionally to map / then but always applied on the completing thread (from the previous stage)
+     * Equivalent functionally to map / transform but always applied on the completing thread (from the previous stage)
      *
-     * When autoOptimize functionality is enabled, thenSync is the default behaviour for then / map operations
+     * When autoOptimize functionality is enabled, thenSync is the default behaviour for transform / map operations
      *
      * <pre>
      * {@code
@@ -1223,7 +1227,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * }
      * </pre>
      *
-     * Will emit 1 on start, then 2 after an hour, 3 after 2 hours and so on.
+     * Will emit 1 on start, transform 2 after an hour, 3 after 2 hours and so on.
      *
      * However all 4 numbers will be populated in the Stream immediately.
      *
@@ -1390,7 +1394,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>, LazyStream<U>
      * @return Next stage in stream
      *
      * @see
-     * com.aol.simple.react.stream.traits.FutureStream#then(java.util.function
+     * com.aol.simple.react.stream.traits.FutureStream#transform(java.util.function
      * .Function)
      */
     @Override

@@ -52,9 +52,9 @@ public class Matchables {
      * {@code 
      *  Eval<Integer> result = Matchables.future(CompletableFuture.completedFuture(10))
                                          .matches(c-> 
-                                                     c.is( when(some(10)), then(20)),  //success
+                                                     c.is( when(some(10)), transform(20)),  //success
                                                       
-                                                     c->c.is(when(instanceOf(RuntimeException.class)), then(2)), //failure
+                                                     c->c.is(when(instanceOf(RuntimeException.class)), transform(2)), //failure
                                                       
                                                      otherwise(3) //no match
                                                  );
@@ -78,15 +78,15 @@ public class Matchables {
      * <pre>
      * {@code 
      *  Eval<Integer> result = Matchables.future(FutureW.ofResult(1))
-                                         .matches(c-> c.is( when(some(1)), then(10)), 
-                                                  c->c.is(when(instanceOf(RuntimeException.class)), then(2)),
+                                         .matches(c-> c.is( when(some(1)), transform(10)),
+                                                  c->c.is(when(instanceOf(RuntimeException.class)), transform(2)),
                                                   otherwise(3));
         
         //Eval.now[10]
      * 
      *  Eval<Integer> result = Matchables.future(FutureW.ofError(new RuntimeException()))
-                                         .matches(c-> c.is( when(some(10)), then(2)), 
-                                                  c->c.is(when(instanceOf(RuntimeException.class)), then(2)),
+                                         .matches(c-> c.is( when(some(10)), transform(2)),
+                                                  c->c.is(when(instanceOf(RuntimeException.class)), transform(2)),
                                                   otherwise(3));
         
        //Eval.now(2)

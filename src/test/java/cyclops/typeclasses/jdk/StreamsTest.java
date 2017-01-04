@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,7 +36,7 @@ public class StreamsTest {
         
         StreamKind<Integer> list = Streams.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Streams.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->Streams.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(StreamKind::narrowK);
         
         assertThat(list.collect(Collectors.toList()),equalTo(Arrays.asList("hello".length())));
@@ -57,8 +56,8 @@ public class StreamsTest {
         
         StreamKind<Integer> list = Streams.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Streams.Instances.functor().map((String v) ->v.length(), h))
-                                     .then(h->Streams.Instances.zippingApplicative().ap(listFn, h))
+                                     .transform(h->Streams.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->Streams.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(StreamKind::narrowK);
         
         assertThat(list.collect(Collectors.toList()),equalTo(Arrays.asList("hello".length()*2)));
@@ -74,7 +73,7 @@ public class StreamsTest {
         
         StreamKind<Integer> list = Streams.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Streams.Instances.monad().flatMap((String v) ->Streams.Instances.unit().unit(v.length()), h))
+                                     .transform(h->Streams.Instances.monad().flatMap((String v) ->Streams.Instances.unit().unit(v.length()), h))
                                      .convert(StreamKind::narrowK);
         
         assertThat(list.collect(Collectors.toList()),equalTo(Arrays.asList("hello".length())));
@@ -84,7 +83,7 @@ public class StreamsTest {
         
         StreamKind<String> list = Streams.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Streams.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .transform(h->Streams.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(StreamKind::narrowK);
         
         assertThat(list.collect(Collectors.toList()),equalTo(Arrays.asList("hello")));
@@ -94,7 +93,7 @@ public class StreamsTest {
         
         StreamKind<String> list = Streams.Instances.unit()
                                      .unit("hello")
-                                     .then(h->Streams.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .transform(h->Streams.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(StreamKind::narrowK);
         
         assertThat(list.collect(Collectors.toList()),equalTo(Arrays.asList()));

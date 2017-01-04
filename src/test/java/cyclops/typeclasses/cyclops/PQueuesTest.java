@@ -4,12 +4,9 @@ import static cyclops.function.Lambda.l1;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.function.Function;
-
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.PQueueX;
 import cyclops.control.Maybe;
-import cyclops.function.Fn0;
 import cyclops.function.Fn1;
 import cyclops.function.Monoid;
 import org.junit.Test;
@@ -32,7 +29,7 @@ public class PQueuesTest {
         
         PQueueX<Integer> list = PQueueX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->PQueueX.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->PQueueX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(PQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PQueueX.of("hello".length()).toArray()));
@@ -52,8 +49,8 @@ public class PQueuesTest {
         
         PQueueX<Integer> list = PQueueX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->PQueueX.Instances.functor().map((String v) ->v.length(), h))
-                                     .then(h->PQueueX.Instances.zippingApplicative().ap(listFn, h))
+                                     .transform(h->PQueueX.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->PQueueX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(PQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PQueueX.of("hello".length()*2).toArray()));
@@ -69,7 +66,7 @@ public class PQueuesTest {
         
         PQueueX<Integer> list = PQueueX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->PQueueX.Instances.monad().flatMap((String v) ->PQueueX.Instances.unit().unit(v.length()), h))
+                                     .transform(h->PQueueX.Instances.monad().flatMap((String v) ->PQueueX.Instances.unit().unit(v.length()), h))
                                      .convert(PQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PQueueX.of("hello".length()).toArray()));
@@ -79,7 +76,7 @@ public class PQueuesTest {
         
         PQueueX<String> list = PQueueX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->PQueueX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .transform(h->PQueueX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(PQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PQueueX.of("hello").toArray()));
@@ -89,7 +86,7 @@ public class PQueuesTest {
         
         PQueueX<String> list = PQueueX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->PQueueX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .transform(h->PQueueX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(PQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PQueueX.empty().toArray()));

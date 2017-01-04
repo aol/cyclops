@@ -71,8 +71,8 @@ public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.
 		//		.flatMap(h-> head.when());
 		
 		ht.headMaybe().when(some-> Matchable.of(some).matches(
-											c->c.hasValues(1,2,3).then(i->"hello world"),
-											c->c.hasValues('b','b','c').then(i->"boo!")
+											c->c.hasValues(1,2,3).transform(i->"hello world"),
+											c->c.hasValues('b','b','c').transform(i->"boo!")
 									),()->"hello");
 									**/
 	 

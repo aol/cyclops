@@ -150,7 +150,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     <R> BaseSimpleReactStream<R> fromStream(Stream<R> stream);
 
     /**
-     * React <b>then</b>
+     * React <b>transform</b>
      * 
      * 
      * 
@@ -160,20 +160,20 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * <pre>
      * {@code 
      	new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-    			.then((it) -> it * 100)
-    			.then((it) -> "*" + it)
+    			.transform((it) -> it * 100)
+    			.transform((it) -> "*" + it)
     			
     			}
     </pre>
      *
-     * React then allows event reactors to be chained. Unlike React with, which
-     * returns a collection of Future references, React then is a fluent
+     * React transform allows event reactors to be chained. Unlike React with, which
+     * returns a collection of Future references, React transform is a fluent
      * interface that returns the React builder - allowing further reactors to
      * be added to the chain.
      * 
-     * React then does not block.
+     * React transform does not block.
      * 
-     * React with can be called after React then which gives access to the full
+     * React with can be called after React transform which gives access to the full
      * CompleteableFuture api. CompleteableFutures can be passed back into
      * SimpleReact via SimpleReact.react(streamOfCompleteableFutures);
      * 
@@ -315,14 +315,14 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * <pre>
       {@code
     List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 100, () -> 2, () -> 3)
-    				.then(it -> {
+    				.transform(it -> {
     					if (it == 100)
     						throw new RuntimeException("boo!");
     		
     					return it;
     				})
     				.onFail(e -> 1)
-    				.then(it -> "*" + it)
+    				.transform(it -> "*" + it)
     				.block();	  
       
       
@@ -333,7 +333,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * 
      * 
      * In this example onFail recovers from the RuntimeException thrown when the
-     * input to the first 'then' stage is 100.
+     * input to the first 'transform' stage is 100.
      * 
      * @param fn
      *            Recovery function, the exception is input, and the recovery
@@ -384,16 +384,16 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * <pre>
      	{@code
     	List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-    		.then(it -> it * 100)
-    		.then(it -> {
+    		.transform(it -> it * 100)
+    		.transform(it -> {
     			if (it == 100)
     				throw new RuntimeException("boo!");
     
     			return it;
     		})
     		.onFail(e -> 1)
-    		.then(it -> "*" + it)
-    		.then(it -> {
+    		.transform(it -> "*" + it)
+    		.transform(it -> {
     			
     			if ("*200".equals(it))
     				throw new RuntimeException("boo!");

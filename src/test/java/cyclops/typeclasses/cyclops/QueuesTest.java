@@ -4,8 +4,6 @@ import static cyclops.function.Lambda.l1;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.function.Function;
-
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.QueueX;
 import cyclops.control.Maybe;
@@ -32,7 +30,7 @@ public class QueuesTest {
         
         QueueX<Integer> list = QueueX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->QueueX.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->QueueX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(QueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(QueueX.of("hello".length()).toArray()));
@@ -52,8 +50,8 @@ public class QueuesTest {
         
         QueueX<Integer> list = QueueX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->QueueX.Instances.functor().map((String v) ->v.length(), h))
-                                     .then(h->QueueX.Instances.zippingApplicative().ap(listFn, h))
+                                     .transform(h->QueueX.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->QueueX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(QueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(QueueX.of("hello".length()*2).toArray()));
@@ -69,7 +67,7 @@ public class QueuesTest {
         
         QueueX<Integer> list = QueueX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->QueueX.Instances.monad().flatMap((String v) ->QueueX.Instances.unit().unit(v.length()), h))
+                                     .transform(h->QueueX.Instances.monad().flatMap((String v) ->QueueX.Instances.unit().unit(v.length()), h))
                                      .convert(QueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(QueueX.of("hello".length()).toArray()));
@@ -79,7 +77,7 @@ public class QueuesTest {
         
         QueueX<String> list = QueueX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->QueueX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .transform(h->QueueX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(QueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(QueueX.of("hello").toArray()));
@@ -89,7 +87,7 @@ public class QueuesTest {
         
         QueueX<String> list = QueueX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->QueueX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .transform(h->QueueX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(QueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(QueueX.of().toArray()));

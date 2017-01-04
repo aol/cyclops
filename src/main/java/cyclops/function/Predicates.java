@@ -146,7 +146,7 @@ public class Predicates {
 
      * 
      * Eval<Integer> result = Matchables.future(FutureW.ofResult(1))
-                                         .matches(c-> c.is( when(some(1)), then(10)), c->c.is(when(instanceOf(RuntimeException.class)), then(2)),otherwise(3));
+                                         .matches(c-> c.is( when(some(1)), transform(10)), c->c.is(when(instanceOf(RuntimeException.class)), transform(2)),otherwise(3));
         
        //Eval[10]
      * 
@@ -170,7 +170,7 @@ public class Predicates {
      *  import static cyclops2.function.Predicates.__
      * 
      *  Eval<String> result = Matchables.listOfValues(1,new MyCase(4,5,6))
-                                .matches(c->c.is(when(__,Predicates.has(4,5,6)),then("rec")),otherwise("n/a"));
+                                .matches(c->c.is(when(__,Predicates.has(4,5,6)),transform("rec")),otherwise("n/a"));
         
         //Eval["rec"]
      * 
@@ -197,12 +197,12 @@ public class Predicates {
      * {@code 
      *  import static com.aol.cyclops2.control.Matchable.whenGuard;
      *  import static com.aol.cyclops2.control.Matchable.otherwise;
-        import static com.aol.cyclops2.control.Matchable.then;
+        import static com.aol.cyclops2.control.Matchable.transform;
      *  import static cyclops2.function.Predicates.eq;
      *  import static cyclops2.function.Predicates.any;
      *  
      *  Matchable.of(Arrays.asList(1,2,3))
-                    .matches(c->c.is(whenGuard(eq(1),any(Integer.class),eq(4)),then("2")),otherwise("45"));
+                    .matches(c->c.is(whenGuard(eq(1),any(Integer.class),eq(4)),transform("2")),otherwise("45"));
      * 
      * }
      * </pre>
@@ -237,7 +237,7 @@ public class Predicates {
      *  {@code 
      *   Eval<String> url = Matchables.url(new URL("http://www.aol.com/path?q=hello"))
                                      .on$12_45()
-                                     .matches(c->c.is(when(eq("http"),in("www.aol.com","aol.com"),any(),not(eq("q=hello!"))), then("correct")),otherwise("miss"));
+                                     .matches(c->c.is(when(eq("http"),in("www.aol.com","aol.com"),any(),not(eq("q=hello!"))), transform("correct")),otherwise("miss"));
        
         //Eval.now("correct");
      *  

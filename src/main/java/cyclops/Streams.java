@@ -2690,7 +2690,7 @@ public class Streams {
          * {@code
          *   StreamKind<Integer> list = Streams.unit()
         .unit("hello")
-        .then(h->Streams.functor().map((String v) ->v.length(), h))
+        .transform(h->Streams.functor().map((String v) ->v.length(), h))
         .convert(StreamKind::narrow);
          *
          * }
@@ -2745,8 +2745,8 @@ public class Streams {
 
         StreamKind<Integer> list = Streams.unit()
         .unit("hello")
-        .then(h->Streams.functor().map((String v) ->v.length(), h))
-        .then(h->Streams.zippingApplicative().ap(listFn, h))
+        .transform(h->Streams.functor().map((String v) ->v.length(), h))
+        .transform(h->Streams.zippingApplicative().ap(listFn, h))
         .convert(StreamKind::narrow);
 
         //Stream.of("hello".length()*2))
@@ -2777,7 +2777,7 @@ public class Streams {
          * {@code
          *    StreamKind<Integer> list = Streams.unit()
         .unit("hello")
-        .then(h->Streams.monad().flatMap((String v) ->Streams.unit().unit(v.length()), h))
+        .transform(h->Streams.monad().flatMap((String v) ->Streams.unit().unit(v.length()), h))
         .convert(StreamKind::narrow);
 
         //Stream.of("hello".length())
@@ -2798,7 +2798,7 @@ public class Streams {
          * {@code
          *  StreamKind<String> list = Streams.unit()
         .unit("hello")
-        .then(h->Streams.monadZero().filter((String t)->t.startsWith("he"), h))
+        .transform(h->Streams.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(StreamKind::narrow);
 
         //Stream.of("hello"));

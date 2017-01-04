@@ -50,7 +50,7 @@ import lombok.experimental.Wither;
  * <pre>
  * {@code 
  *   new SimpleReact().react(this:query,this:query,this:query,this:query)
-                .then(this:process)
+                .transform(this:process)
                 .block(status -> status.getAllCompleted() >2 && status.getElapsedMillis()>200);
 
      //short circuit if 2 results after 200ms 
@@ -66,7 +66,7 @@ import lombok.experimental.Wither;
  *   
  *   new SimpleReact().from(files)
  *                    .thenAsync(FileUtils::load)
-                      .then(this:process)
+                      .transform(this:process)
                       .block();
 
  * 

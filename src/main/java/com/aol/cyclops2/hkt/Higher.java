@@ -43,7 +43,7 @@ public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{// , __<T1, T2>{
     default <T3,R> Higher<T1,R> apply_(BiFunction<? super T3,? super Higher<T1,T2>,? extends Higher<T1,R>> biFn, T3 param ){
         return biFn.apply(param,this);
     }
-    default <R> Higher<T1,R> then(Function<? super Higher<T1,T2>,? extends Higher<T1,R>> fn){
+    default <R> Higher<T1,R> transform(Function<? super Higher<T1,T2>,? extends Higher<T1,R>> fn){
         return fn.apply(this);
     }
     /**

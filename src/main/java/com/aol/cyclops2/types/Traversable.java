@@ -319,7 +319,7 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      * 
      * @param predicate
-     *            Batch until predicate holds, then open next batch
+     *            Batch until predicate holds, transform open next batch
      * @return SequenceM batched into lists determined by the predicate supplied
      */
     default Traversable<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
@@ -374,7 +374,7 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      * 
      * @param predicate
-     *            Batch while predicate holds, then open next batch
+     *            Batch while predicate holds, transform open next batch
      * @return SequenceM batched into lists determined by the predicate supplied
      */
     default Traversable<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
@@ -395,7 +395,7 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      * 
      * @param predicate
-     *            Batch while predicate holds, then open next batch
+     *            Batch while predicate holds, transform open next batch
      * @param factory
      *            Collection factory
      * @return SequenceM batched into collections determined by the predicate
@@ -421,7 +421,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * 
      * @param predicate
-     *            Batch until predicate holds, then open next batch
+     *            Batch until predicate holds, transform open next batch
      * @param factory
      *            Collection factory
      * @return SequenceM batched into collections determined by the predicate

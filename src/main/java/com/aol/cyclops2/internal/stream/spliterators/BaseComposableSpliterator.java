@@ -22,7 +22,7 @@ public abstract class BaseComposableSpliterator<T,R,X extends Spliterator<?>> ex
      * @param est                       the estimated size of this spliterator if known, otherwise
      *                                  {@code Long.MAX_VALUE}.
      * @param additionalCharacteristics properties of this spliterator's
-     *                                  source or elements.  If {@code SIZED} is reported then this
+     *                                  source or elements.  If {@code SIZED} is reported transform this
      *                                  spliterator will additionally report {@code SUBSIZED}.
      */
     protected BaseComposableSpliterator(long est, int additionalCharacteristics,Function<? super T, ? extends R> fn) {

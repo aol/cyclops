@@ -235,7 +235,7 @@ public class LazyReact implements ReactBuilder {
         CompletableFuture<String> future2 = CompletableFuture.supplyAsync(()->"hello2");
         new LazyReact().from(future1,future2)
                        .peek(System.out::println)
-                       .then(action->"result")
+                       .transform(action->"result")
                        .toList()
                        .size()
         //2               
@@ -321,7 +321,7 @@ public class LazyReact implements ReactBuilder {
      * Turn on automatic threading optimization. Tasks will be 'fanned' out across threads initially
      * and subsequent task completion events will trigger further processing on the same thread. Where
      * operations require working on the results of multiple tasks, data will be forwarded to a Queue, data
-     * read from the queue will then also be 'fanned' out for processing across threads (with subsequent events
+     * read from the queue will transform also be 'fanned' out for processing across threads (with subsequent events
      *  again occuring on the same thread). This is equivalent to optimal use of the async() and sync() operators
      * on a Stream. autoOptimize overrides direct calls to sync() and async() on the Stream.
      * By default autoOptimize is On.
@@ -457,7 +457,7 @@ public class LazyReact implements ReactBuilder {
      * List<String> titles = new LazyReact().fromStreamFutures(Stream.of(query("Hello, world!")))
                                             .flatMap(Collection::stream)
                                             .peek(System.out::println)
-                                            .<String>then(url -> getTitle(url))
+                                            .<String>transform(url -> getTitle(url))
                                             .filter(Objects::nonNull)
                                             .limit(5)
                                             .peek(title -> saveTitle(title) )

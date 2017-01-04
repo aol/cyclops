@@ -559,7 +559,7 @@ public class CompletableFutures {
          * {@code
          *   CompletableFutureKind<Integer> future = CompletableFutures.unit()
         .unit("hello")
-        .then(h->CompletableFutures.functor().map((String v) ->v.length(), h))
+        .transform(h->CompletableFutures.functor().map((String v) ->v.length(), h))
         .convert(CompletableFutureKind::narrowK);
          *
          * }
@@ -614,8 +614,8 @@ public class CompletableFutures {
 
         CompletableFutureKind<Integer> future = CompletableFutures.unit()
         .unit("hello")
-        .then(h->CompletableFutures.functor().map((String v) ->v.length(), h))
-        .then(h->CompletableFutures.applicative().ap(futureFn, h))
+        .transform(h->CompletableFutures.functor().map((String v) ->v.length(), h))
+        .transform(h->CompletableFutures.applicative().ap(futureFn, h))
         .convert(CompletableFutureKind::narrowK);
 
         //CompletableFuture.completedFuture("hello".length()*2))
@@ -646,7 +646,7 @@ public class CompletableFutures {
          * {@code
          *    CompletableFutureKind<Integer> future = CompletableFutures.unit()
         .unit("hello")
-        .then(h->CompletableFutures.monad().flatMap((String v) ->CompletableFutures.unit().unit(v.length()), h))
+        .transform(h->CompletableFutures.monad().flatMap((String v) ->CompletableFutures.unit().unit(v.length()), h))
         .convert(CompletableFutureKind::narrowK);
 
         //CompletableFuture.completedFuture("hello".length())
@@ -667,7 +667,7 @@ public class CompletableFutures {
          * {@code
          *  CompletableFutureKind<String> future = CompletableFutures.unit()
         .unit("hello")
-        .then(h->CompletableFutures.monadZero().filter((String t)->t.startsWith("he"), h))
+        .transform(h->CompletableFutures.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(CompletableFutureKind::narrowK);
 
         //CompletableFuture.completedFuture("hello"));

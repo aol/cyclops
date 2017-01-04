@@ -67,15 +67,15 @@ public interface General {
     static class GeneralApplicative<CRE,A,B> implements Applicative<CRE> {
         Functor<CRE> functor;
         Pure<CRE> pure;
-        BiFunction<? extends Higher<CRE, Function<A, B>>,? extends Higher<CRE,A>,? extends Higher<CRE,B>> applyRef;
+        BiFunction<? extends Higher<CRE, ? extends Function<A, B>>,? extends Higher<CRE,A>,? extends Higher<CRE,B>> applyRef;
         
         
-        <T,R> BiFunction<Higher<CRE, Function<T, R>>,Higher<CRE,T>,Higher<CRE,R>> applyRef(){
+        <T,R> BiFunction<Higher<CRE, ? extends Function<T, R>>,Higher<CRE,T>,Higher<CRE,R>> applyRef(){
             return (BiFunction)applyRef;
         }
         
         @Override
-        public <T,R> Higher<CRE,R> ap(Higher<CRE, Function< T,R>> fn, 
+        public <T,R> Higher<CRE,R> ap(Higher<CRE, ? extends Function< T,R>> fn,
                                     Higher<CRE,T> apply){
           
             return  this.<T,R>applyRef().apply(fn,apply);
@@ -132,7 +132,7 @@ public interface General {
 
 
         @Override
-        public <T,R> Higher<CRE,R> ap(Higher<CRE, Function< T,R>> fn,  Higher<CRE,T> apply){
+        public <T,R> Higher<CRE,R> ap(Higher<CRE, ? extends Function< T,R>> fn,  Higher<CRE,T> apply){
             return applicative.ap(fn, apply);
         }
     }
@@ -160,7 +160,7 @@ public interface General {
         }
 
         @Override
-        public <T,R> Higher<CRE,R> ap(Higher<CRE, Function< T,R>> fn,  Higher<CRE,T> apply){
+        public <T,R> Higher<CRE,R> ap(Higher<CRE, ? extends Function< T,R>> fn,  Higher<CRE,T> apply){
             return monad.ap(fn, apply);
         }
 
@@ -198,7 +198,7 @@ public interface General {
         }
 
         @Override
-        public <T,R> Higher<CRE,R> ap(Higher<CRE, Function< T,R>> fn,  Higher<CRE,T> apply){
+        public <T,R> Higher<CRE,R> ap(Higher<CRE, ? extends Function< T,R>> fn,  Higher<CRE,T> apply){
             return monad.ap(fn, apply);
         }
 
@@ -243,7 +243,7 @@ public interface General {
         }
 
         @Override
-        public <T,R> Higher<CRE,R> ap(Higher<CRE, Function< T,R>> fn,  Higher<CRE,T> apply){
+        public <T,R> Higher<CRE,R> ap(Higher<CRE, ? extends Function< T,R>> fn,  Higher<CRE,T> apply){
             return monad.ap(fn,apply);
         }
 
@@ -277,7 +277,7 @@ public interface General {
         }
 
         @Override
-        public <T,R> Higher<CRE,R> ap(Higher<CRE, Function< T,R>> fn,  Higher<CRE,T> apply){
+        public <T,R> Higher<CRE,R> ap(Higher<CRE, ? extends Function< T,R>> fn,  Higher<CRE,T> apply){
             return monad.ap(fn,apply);
         }
 
@@ -381,7 +381,7 @@ public interface General {
         }
 
         @Override
-        public <T,R> Higher<CRE,R> ap(Higher<CRE, Function< T,R>> fn,  Higher<CRE,T> apply){
+        public <T,R> Higher<CRE,R> ap(Higher<CRE, ? extends Function< T,R>> fn,  Higher<CRE,T> apply){
             return applicative.ap(fn, apply);
         }
 
@@ -417,7 +417,7 @@ public interface General {
         }
 
         @Override
-        public <T,R> Higher<CRE,R> ap(Higher<CRE, Function< T,R>> fn,  Higher<CRE,T> apply){
+        public <T,R> Higher<CRE,R> ap(Higher<CRE, ? extends Function< T,R>> fn,  Higher<CRE,T> apply){
             return applicative.ap(fn, apply);
         }
 

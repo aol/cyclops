@@ -4,9 +4,6 @@ import static cyclops.function.Lambda.l1;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.Arrays;
-import java.util.function.Function;
-
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.PStackX;
 import cyclops.control.Maybe;
@@ -14,8 +11,6 @@ import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import org.junit.Test;
-import org.pcollections.PStack;
-
 
 
 public class PStacksTest {
@@ -34,7 +29,7 @@ public class PStacksTest {
         
         PStackX<Integer> list = PStackX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->PStackX.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->PStackX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(PStackX::narrowK);
         
         assertThat(list,equalTo(PStackX.of("hello".length())));
@@ -54,8 +49,8 @@ public class PStacksTest {
         
         PStackX<Integer> list = PStackX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->PStackX.Instances.functor().map((String v) ->v.length(), h))
-                                     .then(h->PStackX.Instances.zippingApplicative().ap(listFn, h))
+                                     .transform(h->PStackX.Instances.functor().map((String v) ->v.length(), h))
+                                     .transform(h->PStackX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(PStackX::narrowK);
         
         assertThat(list,equalTo(PStackX.of("hello".length()*2)));
@@ -71,7 +66,7 @@ public class PStacksTest {
         
         PStackX<Integer> list = PStackX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->PStackX.Instances.monad().flatMap((String v) ->PStackX.Instances.unit().unit(v.length()), h))
+                                     .transform(h->PStackX.Instances.monad().flatMap((String v) ->PStackX.Instances.unit().unit(v.length()), h))
                                      .convert(PStackX::narrowK);
         
         assertThat(list,equalTo(PStackX.of("hello".length())));
@@ -81,7 +76,7 @@ public class PStacksTest {
         
         PStackX<String> list = PStackX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->PStackX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .transform(h->PStackX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(PStackX::narrowK);
         
         assertThat(list,equalTo(PStackX.of("hello")));
@@ -91,7 +86,7 @@ public class PStacksTest {
         
         PStackX<String> list = PStackX.Instances.unit()
                                      .unit("hello")
-                                     .then(h->PStackX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .transform(h->PStackX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(PStackX::narrowK);
         
         assertThat(list,equalTo(PStackX.empty()));

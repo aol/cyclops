@@ -1258,7 +1258,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * {@code
          *   DequeX<Integer> list = Deques.unit()
         .unit("hello")
-        .then(h->Deques.functor().map((String v) ->v.length(), h))
+        .transform(h->Deques.functor().map((String v) ->v.length(), h))
         .convert(DequeX::narrowK);
          *
          * }
@@ -1314,8 +1314,8 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
         DequeX<Integer> list = Deques.unit()
         .unit("hello")
-        .then(h->Deques.functor().map((String v) ->v.length(), h))
-        .then(h->Deques.zippingApplicative().ap(listFn, h))
+        .transform(h->Deques.functor().map((String v) ->v.length(), h))
+        .transform(h->Deques.zippingApplicative().ap(listFn, h))
         .convert(DequeX::narrowK);
 
         //DequeX.of("hello".length()*2))
@@ -1346,7 +1346,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * {@code
          *    DequeX<Integer> list = Deques.unit()
         .unit("hello")
-        .then(h->Deques.monad().flatMap((String v) ->Deques.unit().unit(v.length()), h))
+        .transform(h->Deques.monad().flatMap((String v) ->Deques.unit().unit(v.length()), h))
         .convert(DequeX::narrowK);
 
         //DequeX.of("hello".length())
@@ -1367,7 +1367,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * {@code
          *  DequeX<String> list = Deques.unit()
         .unit("hello")
-        .then(h->Deques.monadZero().filter((String t)->t.startsWith("he"), h))
+        .transform(h->Deques.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(DequeX::narrowK);
 
         //DequeX.of("hello"));

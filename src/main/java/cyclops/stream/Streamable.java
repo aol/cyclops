@@ -2806,7 +2806,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     			.size(),equalTo(2));
      * }
      * </pre>
-     * @param predicate Batch until predicate holds, then open next batch
+     * @param predicate Batch until predicate holds, transform open next batch
      * @return Streamable batched into lists determined by the predicate supplied
      */
 
@@ -2825,7 +2825,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     
      * }
      * </pre>
-     * @param predicate Batch while predicate holds, then open next batch
+     * @param predicate Batch while predicate holds, transform open next batch
      * @return Streamable batched into lists determined by the predicate supplied
      */
     @Override
@@ -2844,7 +2844,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     			.size(),equalTo(2));
      * }
      * </pre>
-     * @param predicate Batch while predicate holds, then open next batch
+     * @param predicate Batch while predicate holds, transform open next batch
      * @param factory Collection factory
      * @return Streamable batched into collections determined by the predicate supplied
      */
@@ -2866,7 +2866,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * </pre>
      * 
      * 
-     * @param predicate Batch until predicate holds, then open next batch
+     * @param predicate Batch until predicate holds, transform open next batch
      * @param factory Collection factory
      * @return Streamable batched into collections determined by the predicate supplied
      */

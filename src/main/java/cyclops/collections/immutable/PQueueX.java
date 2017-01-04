@@ -1261,7 +1261,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
          * {@code
          *   PQueueX<Integer> list = PQueues.unit()
         .unit("hello")
-        .then(h->PQueues.functor().map((String v) ->v.length(), h))
+        .transform(h->PQueues.functor().map((String v) ->v.length(), h))
         .convert(PQueueX::narrowK);
          *
          * }
@@ -1317,8 +1317,8 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
 
         PQueueX<Integer> list = PQueues.unit()
         .unit("hello")
-        .then(h->PQueues.functor().map((String v) ->v.length(), h))
-        .then(h->PQueues.zippingApplicative().ap(listFn, h))
+        .transform(h->PQueues.functor().map((String v) ->v.length(), h))
+        .transform(h->PQueues.zippingApplicative().ap(listFn, h))
         .convert(PQueueX::narrowK);
 
         //Arrays.asPQueue("hello".length()*2))
@@ -1349,7 +1349,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
          * {@code
          *    PQueueX<Integer> list = PQueues.unit()
         .unit("hello")
-        .then(h->PQueues.monad().flatMap((String v) ->PQueues.unit().unit(v.length()), h))
+        .transform(h->PQueues.monad().flatMap((String v) ->PQueues.unit().unit(v.length()), h))
         .convert(PQueueX::narrowK);
 
         //Arrays.asPQueue("hello".length())
@@ -1370,7 +1370,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
          * {@code
          *  PQueueX<String> list = PQueues.unit()
         .unit("hello")
-        .then(h->PQueues.monadZero().filter((String t)->t.startsWith("he"), h))
+        .transform(h->PQueues.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(PQueueX::narrowK);
 
         //Arrays.asPQueue("hello"));
