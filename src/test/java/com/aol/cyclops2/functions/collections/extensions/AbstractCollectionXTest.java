@@ -91,7 +91,15 @@ public abstract class AbstractCollectionXTest {
     public void foldTry(){
         assertThat(of(1,2,3).foldTry(l->l.reduce(Monoids.intSum), Throwable.class).get(),equalTo(6));
     }
-
+    @Test
+    public void plusLoop(){
+        assertThat(of(0,1,2).plusLoop(10,i->i+100).size(),equalTo(13));
+    }
+    @Test
+    public void plusLoopOpt(){
+        int[] i = {10};
+        assertThat(of(0,1,2).plusLoop(()->i[0]!=20? Optional.of(i[0]++) : Optional.empty()).size(),equalTo(13));
+    }
 
     @Test
     public void iterate(){
