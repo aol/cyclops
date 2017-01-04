@@ -3,6 +3,7 @@ package cyclops.collections.immutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.Reducers;
@@ -13,6 +14,12 @@ import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.instances.General;
+import cyclops.typeclasses.monad.*;
+import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -25,8 +32,14 @@ import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PQueue<T>> {
+public interface PQueueX<T> extends To<PQueueX<T>>,
+                                    PQueue<T>,
+                                    PersistentCollectionX<T>,
+                                    OnEmptySwitch<T, PQueue<T>>,
+                                    Higher<PQueueX.µ,T>{
 
+    public static class µ {
+    }
     /**
      * Narrow a covariant PQueueX
      * 
@@ -43,7 +56,27 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
     public static <T> PQueueX<T> narrow(final PQueueX<? extends T> queueX) {
         return (PQueueX<T>) queueX;
     }
-    
+
+    /**
+     * Widen a PQueueX nested inside another HKT encoded type
+     *
+     * @param list HTK encoded type containing  a PQueue to widen
+     * @return HKT encoded type with a widened PQueue
+     */
+    public static <C2,T> Higher<C2, Higher<PQueueX.µ,T>> widen2(Higher<C2, PQueueX<T>> list){
+        //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
+        //cast seems safer as Higher<PQueueType.µ,T> must be a PQueueType
+        return (Higher)list;
+    }
+    /**
+     * Convert the raw Higher Kinded Type for PQueue types into the PQueueType type definition class
+     *
+     * @param list HKT encoded list into a PQueueType
+     * @return PQueueType
+     */
+    public static <T> PQueueX<T> narrowK(final Higher<PQueueX.µ, T> list) {
+        return (PQueueX<T>)list;
+    }
     /**
      * Create a PQueueX that contains the Integers between start and end
      * 
@@ -1198,5 +1231,258 @@ public interface PQueueX<T> extends To<PQueueX<T>>,PQueue<T>, PersistentCollecti
     @Override
     default PQueueX<T> plusLoop(Supplier<Optional<T>> supplier) {
         return (PQueueX<T>)PersistentCollectionX.super.plusLoop(supplier);
+    }
+
+    /**
+     * Companion class for creating Type Class instances for working with PQueues
+     * @author johnmcclean
+     *
+     */
+    @UtilityClass
+    public static class Instances {
+
+
+        /**
+         *
+         * Transform a list, mulitplying every element by 2
+         *
+         * <pre>
+         * {@code
+         *  PQueueX<Integer> list = PQueues.functor().map(i->i*2, Arrays.asPQueue(1,2,3));
+         *
+         *  //[2,4,6]
+         *
+         *
+         * }
+         * </pre>
+         *
+         * An example fluent api working with PQueues
+         * <pre>
+         * {@code
+         *   PQueueX<Integer> list = PQueues.unit()
+        .unit("hello")
+        .then(h->PQueues.functor().map((String v) ->v.length(), h))
+        .convert(PQueueX::narrowK);
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A functor for PQueues
+         */
+        public static <T,R>Functor<µ> functor(){
+            BiFunction<PQueueX<T>,Function<? super T, ? extends R>,PQueueX<R>> map = Instances::map;
+            return General.functor(map);
+        }
+        /**
+         * <pre>
+         * {@code
+         * PQueueX<String> list = PQueues.unit()
+        .unit("hello")
+        .convert(PQueueX::narrowK);
+
+        //Arrays.asPQueue("hello"))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A factory for PQueues
+         */
+        public static <T> Pure<µ> unit(){
+            return General.<PQueueX.µ,T>unit(Instances::of);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.PQueueX.widen;
+         * import static com.aol.cyclops.util.function.Lambda.l1;
+         * import static java.util.Arrays.asPQueue;
+         *
+        PQueues.zippingApplicative()
+        .ap(widen(asPQueue(l1(this::multiplyByTwo))),widen(asPQueue(1,2,3)));
+         *
+         * //[2,4,6]
+         * }
+         * </pre>
+         *
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         * PQueueX<Function<Integer,Integer>> listFn =PQueues.unit()
+         *                                                  .unit(Lambda.l1((Integer i) ->i*2))
+         *                                                  .convert(PQueueX::narrowK);
+
+        PQueueX<Integer> list = PQueues.unit()
+        .unit("hello")
+        .then(h->PQueues.functor().map((String v) ->v.length(), h))
+        .then(h->PQueues.zippingApplicative().ap(listFn, h))
+        .convert(PQueueX::narrowK);
+
+        //Arrays.asPQueue("hello".length()*2))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A zipper for PQueues
+         */
+        public static <T,R> Applicative<PQueueX.µ> zippingApplicative(){
+            BiFunction<PQueueX< Function<T, R>>,PQueueX<T>,PQueueX<R>> ap = Instances::ap;
+            return General.applicative(functor(), unit(), ap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops.hkt.jdk.PQueueX.widen;
+         * PQueueX<Integer> list  = PQueues.monad()
+        .flatMap(i->widen(PQueueX.range(0,i)), widen(Arrays.asPQueue(1,2,3)))
+        .convert(PQueueX::narrowK);
+         * }
+         * </pre>
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         *    PQueueX<Integer> list = PQueues.unit()
+        .unit("hello")
+        .then(h->PQueues.monad().flatMap((String v) ->PQueues.unit().unit(v.length()), h))
+        .convert(PQueueX::narrowK);
+
+        //Arrays.asPQueue("hello".length())
+         *
+         * }
+         * </pre>
+         *
+         * @return Type class with monad functions for PQueues
+         */
+        public static <T,R> Monad<µ> monad(){
+
+            BiFunction<Higher<PQueueX.µ,T>,Function<? super T, ? extends Higher<PQueueX.µ,R>>,Higher<PQueueX.µ,R>> flatMap = Instances::flatMap;
+            return General.monad(zippingApplicative(), flatMap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  PQueueX<String> list = PQueues.unit()
+        .unit("hello")
+        .then(h->PQueues.monadZero().filter((String t)->t.startsWith("he"), h))
+        .convert(PQueueX::narrowK);
+
+        //Arrays.asPQueue("hello"));
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A filterable monad (with default value)
+         */
+        public static <T,R> MonadZero<µ> monadZero(){
+
+            return General.monadZero(monad(), PQueueX.empty());
+        }
+        /**
+         * <pre>
+         * {@code
+         *  PQueueX<Integer> list = PQueues.<Integer>monadPlus()
+        .plus(Arrays.asPQueue()), Arrays.asPQueue(10)))
+        .convert(PQueueX::narrowK);
+        //Arrays.asPQueue(10))
+         *
+         * }
+         * </pre>
+         * @return Type class for combining PQueues by concatenation
+         */
+        public static <T> MonadPlus<PQueueX.µ> monadPlus(){
+            Monoid<PQueueX<T>> m = Monoid.of(PQueueX.empty(), Instances::concat);
+            Monoid<Higher<PQueueX.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  Monoid<PQueueX<Integer>> m = Monoid.of(Arrays.asPQueue()), (a,b)->a.isEmpty() ? b : a);
+        PQueueX<Integer> list = PQueues.<Integer>monadPlus(m)
+        .plus(Arrays.asPQueue(5)), Arrays.asPQueue(10)))
+        .convert(PQueueX::narrowK);
+        //Arrays.asPQueue(5))
+         *
+         * }
+         * </pre>
+         *
+         * @param m Monoid to use for combining PQueues
+         * @return Type class for combining PQueues
+         */
+        public static <T> MonadPlus<µ> monadPlus(Monoid<PQueueX<T>> m){
+            Monoid<Higher<PQueueX.µ,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+
+        /**
+         * @return Type class for traversables with traverse / sequence operations
+         */
+        public static <C2,T> Traverse<µ> traverse(){
+            BiFunction<Applicative<C2>,PQueueX<Higher<C2, T>>,Higher<C2, PQueueX<T>>> sequenceFn = (ap,list) -> {
+
+                Higher<C2,PQueueX<T>> identity = ap.unit(PQueueX.empty());
+
+                BiFunction<Higher<C2,PQueueX<T>>,Higher<C2,T>,Higher<C2,PQueueX<T>>> combineToPQueue =   (acc,next) -> ap.apBiFn(ap.unit((a,b) ->a.plus(b)),acc,next);
+
+                BinaryOperator<Higher<C2,PQueueX<T>>> combinePQueues = (a,b)-> ap.apBiFn(ap.unit((l1,l2)-> l1.plusAll(l2)),a,b); ;
+
+                return list.stream()
+                        .reduce(identity,
+                                combineToPQueue,
+                                combinePQueues);
+
+
+            };
+            BiFunction<Applicative<C2>,Higher<PQueueX.µ,Higher<C2, T>>,Higher<C2, Higher<PQueueX.µ,T>>> sequenceNarrow  =
+                    (a,b) -> PQueueX.widen2(sequenceFn.apply(a, PQueueX.narrowK(b)));
+            return General.traverse(zippingApplicative(), sequenceNarrow);
+        }
+
+        /**
+         *
+         * <pre>
+         * {@code
+         * int sum  = PQueues.foldable()
+        .foldLeft(0, (a,b)->a+b, Arrays.asPQueue(1,2,3,4)));
+
+        //10
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return Type class for folding / reduction operations
+         */
+        public static <T> Foldable<µ> foldable(){
+            BiFunction<Monoid<T>,Higher<PQueueX.µ,T>,T> foldRightFn =  (m,l)-> PQueueX.narrowK(l).foldRight(m);
+            BiFunction<Monoid<T>,Higher<µ,T>,T> foldLeftFn = (m, l)-> PQueueX.narrowK(l).reduce(m);
+            return General.foldable(foldRightFn, foldLeftFn);
+        }
+
+        private static  <T> PQueueX<T> concat(PQueue<T> l1, PQueue<T> l2){
+
+            return PQueueX.fromIterable(l1.plusAll(l2));
+        }
+        private <T> PQueueX<T> of(T value){
+            return PQueueX.of(value);
+        }
+        private static <T,R> PQueueX<R> ap(PQueueX<Function< T, R>> lt,  PQueueX<T> list){
+            return PQueueX.fromIterable(lt).zip(list,(a,b)->a.apply(b));
+        }
+        private static <T,R> Higher<PQueueX.µ,R> flatMap( Higher<PQueueX.µ,T> lt, Function<? super T, ? extends  Higher<PQueueX.µ,R>> fn){
+            return PQueueX.fromIterable(PQueueX.narrowK(lt)).flatMap(fn.andThen(PQueueX::narrowK));
+        }
+        private static <T,R> PQueueX<R> map(PQueueX<T> lt, Function<? super T, ? extends R> fn){
+            return lt.map(fn);
+        }
     }
 }
