@@ -1289,7 +1289,7 @@ public abstract class AbstractCollectionXTest {
 	    public void batchBySizeCollection(){
 	        
 	        
-	        assertThat(of(1,2,3,4,5,6).grouped(3,()->new ListXImpl<Integer>()).get(0).get().size(),is(3));
+	        assertThat(of(1,2,3,4,5,6).grouped(3,()->ListX.empty()).get(0).get().size(),is(3));
 	        
 	       // assertThat(of(1,1,1,1,1,1).grouped(3,()->new ListXImpl<>()).get(1).get().size(),is(1));
 	    }
@@ -1511,14 +1511,14 @@ public abstract class AbstractCollectionXTest {
 	        @Test
             public void batchUntilSupplier(){
                 assertThat(of(1,2,3,4,5,6)
-                        .groupedUntil(i->false,()->new ListXImpl())
+                        .groupedUntil(i->false,()->ListX.empty())
                         .toListX().size(),equalTo(1));
                
             }
             @Test
             public void batchWhileSupplier(){
                 assertThat(of(1,2,3,4,5,6)
-                        .groupedWhile(i->true,()->new ListXImpl())
+                        .groupedWhile(i->true,()->ListX.empty())
                         .toListX()
                         .size(),equalTo(1));
                

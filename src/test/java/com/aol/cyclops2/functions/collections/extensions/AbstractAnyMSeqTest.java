@@ -1160,14 +1160,14 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
             @Test
             public void batchUntilSupplier(){
                 assertThat(of(1,2,3,4,5,6)
-                        .groupedUntil(i->false,()->new ListXImpl())
+                        .groupedUntil(i->false,()->ListX.empty())
                         .toListX().size(),equalTo(1));
                
             }
             @Test
             public void batchWhileSupplier(){
                 assertThat(of(1,2,3,4,5,6)
-                        .groupedWhile(i->true,()->new ListXImpl())
+                        .groupedWhile(i->true,()->ListX.empty())
                         .toListX()
                         .size(),equalTo(1));
                
