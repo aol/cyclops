@@ -125,7 +125,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @return Maybe created from Optional
      */
     public static <T> Maybe<T> fromOptional(Higher<OptionalKind.µ,T> optional){
-        return   fromOptional(OptionalKind.narrow(optional));
+        return   fromOptional(OptionalKind.narrowK(optional));
 
     }
 
