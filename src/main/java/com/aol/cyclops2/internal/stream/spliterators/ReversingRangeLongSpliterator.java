@@ -122,7 +122,7 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     @Override
     public Spliterator<Long> end(long num) {
         return new ReversingRangeLongSpliterator(
-                min, min+num, reverse);
+                start, start+num, reverse);
     }
 
 

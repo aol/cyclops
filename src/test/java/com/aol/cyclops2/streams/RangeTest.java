@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
+import cyclops.collections.ListX;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;
@@ -91,6 +92,27 @@ public class RangeTest {
 				 .limit(100)
 				 .count(),equalTo(100L));
 		
+	}
+
+	@Test
+	public void rangeLong(){
+		assertThat(ReactiveSeq.rangeLong(0,Long.MAX_VALUE)
+				.limit(2),equalTo(ListX.of(0,1)));
+	}
+	@Test
+	public void rangeLongReversed(){
+		assertThat(ReactiveSeq.rangeLong(0,Long.MAX_VALUE).reverse()
+				.limit(2),equalTo(ListX.of(1,0)));
+	}
+	@Test
+	public void rangeInt(){
+		assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE)
+				.limit(2).toListX(),equalTo(ListX.of(0,1)));
+	}
+	@Test
+	public void rangeIntReversed(){
+		assertThat(ReactiveSeq.rangeLong(0,Integer.MAX_VALUE).reverse()
+				.limit(2),equalTo(ListX.of(1,0)));
 	}
 	@Test
 	public void limitArray() throws InterruptedException{

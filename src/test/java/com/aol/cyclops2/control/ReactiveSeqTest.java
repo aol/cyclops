@@ -28,6 +28,18 @@ import static org.junit.Assert.assertThat;
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
+    @Test
+    public void multipathsInts() {
+
+        ReactiveSeq<Integer> list = ReactiveSeq.ofInts(1, 2, 3);
+        ReactiveSeq<Integer> by10 = list.map(i -> i * 10);
+        ReactiveSeq<Integer> plus2 = list.map(i -> i + 2);
+        ReactiveSeq<Integer> by10Plus2 = by10.map(i -> i + 2);
+        assertThat(by10.toListX(), equalTo(Arrays.asList(10, 20, 30)));
+        assertThat(plus2.toListX(), equalTo(Arrays.asList(3, 4, 5)));
+        assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12, 22, 32)));
+    }
+
     int count =0;
     @Test
     public void compareConcat(){

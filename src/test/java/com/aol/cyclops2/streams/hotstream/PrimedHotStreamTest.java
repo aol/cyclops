@@ -89,6 +89,34 @@ public class PrimedHotStreamTest {
 		assertThat(list,equalTo(Arrays.asList(0,1)));
 		
 	}
+	@Test
+	public void hotStreamCaptureLong() throws InterruptedException{
+
+		List<Long> list = ReactiveSeq.rangeLong(0,Long.MAX_VALUE)
+				.limit(1000)
+				.primedHotStream(exec)
+				.connect()
+				.limit(2)
+				.toList();
+
+		assertThat(list,equalTo(Arrays.asList(0l,1l)));
+
+	}
+	@Test
+	public void hotStreamCaptureReversed() throws InterruptedException{
+
+
+		List<Integer> list = ReactiveSeq.range(0,Integer.MAX_VALUE)
+				.limit(1000)
+				.reverse()
+				.primedHotStream(exec)
+				.connect()
+				.limit(2)
+				.toList();
+
+		assertThat(list,equalTo(Arrays.asList(999,998)));
+
+	}
 	volatile boolean active;
 	@Test
 	public void hotStreamConnectPausable() throws InterruptedException{

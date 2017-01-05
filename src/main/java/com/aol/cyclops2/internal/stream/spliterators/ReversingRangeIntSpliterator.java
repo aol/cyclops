@@ -20,7 +20,7 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     private boolean reverse;
 
     public ReversingRangeIntSpliterator(final int min, final int max, final boolean reverse) {
-        this.min = Math.min(min, max) - 1;
+        this.min = Math.min(min, max)-1;
         this.max = Math.max(min, max);
         this.reverse = this.max >= this.min ? reverse : !reverse;
         start =index = Math.min(min, max);
@@ -29,7 +29,7 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     @Override
     public ReversableSpliterator invert() {
         setReverse(!isReverse());
-        start =index = max - 1;
+        start = index = max - 1;
         return this;
     }
 
@@ -122,7 +122,7 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     @Override
     public Spliterator<Integer> end(long number) {
         return new ReversingRangeIntSpliterator(
-                min, min+(int)number, reverse);
+                start, start+(int)number, reverse);
     }
 
 
