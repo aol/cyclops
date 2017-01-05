@@ -209,6 +209,8 @@ public class Eval2Test {
 
 	@Test
 	public void testIterate() {
+		assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(
+						Stream.iterate(just.get(),i->i+1).limit(10).mapToInt(i->i).sum()));
 		assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
 	}
 

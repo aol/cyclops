@@ -34,7 +34,7 @@ public class IterateSpliterator<T> implements Spliterator<T>, CopyableSpliterato
 
 
 
-        action.accept(current = (current!=null ? fn.apply(current) : fn.apply(in)));
+        action.accept(current = (current!=null ? fn.apply(current) : in));
         
         return true;
 
@@ -44,7 +44,7 @@ public class IterateSpliterator<T> implements Spliterator<T>, CopyableSpliterato
     public void forEachRemaining(Consumer<? super T> action) {
 
         for(;;){
-            action.accept(current = (current!=null ? fn.apply(current) : fn.apply(in)));
+            action.accept(current = (current!=null ? fn.apply(current) : in));
         }
     }
 
