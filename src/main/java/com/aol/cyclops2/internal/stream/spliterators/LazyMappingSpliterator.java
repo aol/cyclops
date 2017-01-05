@@ -20,8 +20,8 @@ public class LazyMappingSpliterator<T,R> extends Spliterators.AbstractSpliterato
         super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED);
 
         this.source = source;
-        this.mapperSupplier=mapperSupplier;
-        this.mapper = mapperSupplier.get();
+        this.mapperSupplier=mapper;
+        this.mapper = mapper.get();
 
     }
     @Override

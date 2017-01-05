@@ -1064,23 +1064,21 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     @Override
     public ReactiveSeq<T> debounce(final long time, final TimeUnit t) {
         final long timeNanos = t.toNanos(time);
-        final long next = t.toNanos(time);
+
         Supplier<Predicate<? super T>> lazy = ()-> {
             final long[] last = {0};
-            long[] elapsedNanos = {1};
+
             return a-> {
+                long elapsedNanos  =  (System.nanoTime() - last[0]);
 
                 T nextValue = null;
-                if (elapsedNanos[0] > 0) {
+                if (elapsedNanos >= timeNanos) {
 
-
-                    if (last[0] == 0) {
                         last[0] = System.nanoTime();
                         return true;
-                    }
-                    elapsedNanos[0] = timeNanos - (System.nanoTime() - last[0]);
-                }
 
+
+                }
                 return false;
             };
         };
