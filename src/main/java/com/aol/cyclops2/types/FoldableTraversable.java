@@ -47,7 +47,7 @@ public interface FoldableTraversable<T> extends Fn1<Long,T>,
      * @param ex Executor to perform fold on
      * @return Future that will contain the result when complete
      */
-    default <R> Future<R> foldFuture(Function<? super FoldableTraversable<T>,? extends R> fn, Executor ex){
+    default <R> Future<R> foldFuture(Executor ex,Function<? super FoldableTraversable<T>,? extends R> fn){
         return Future.ofSupplier(()->fn.apply(this),ex);
     }
     default Future<Void> runFuture(Executor ex, Consumer<? super FoldableTraversable<T>> fn){

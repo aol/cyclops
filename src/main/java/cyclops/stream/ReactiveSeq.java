@@ -4534,7 +4534,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
             };
             BiFunction<Applicative<C2>,Higher<ReactiveSeq.µ,Higher<C2, T>>,Higher<C2, Higher<ReactiveSeq.µ,T>>> sequenceNarrow  =
-                    (a,b) -> Instances.widen2(sequenceFn.apply(a, Instances.narrowK(b)));
+                    (a,b) -> Instances.widen2(sequenceFn.apply(a, ReactiveSeq.narrowK(b)));
             return General.traverse(zippingApplicative(), sequenceNarrow);
         }
 
@@ -4569,7 +4569,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return lt.zip(list,(a,b)->a.apply(b));
         }
         private static <T,R> Higher<ReactiveSeq.µ,R> flatMap( Higher<ReactiveSeq.µ,T> lt, Function<? super T, ? extends  Higher<ReactiveSeq.µ,R>> fn){
-            return Instances.narrowK(lt).flatMap(fn.andThen(Instances::narrowK));
+            return ReactiveSeq.narrowK(lt).flatMap(fn.andThen(ReactiveSeq::narrowK));
         }
         private static <T,R> ReactiveSeq<R> map(ReactiveSeq<T> lt, Function<? super T, ? extends R> fn){
             return lt.map(fn);
@@ -4592,15 +4592,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
 
-        /**
-         * Convert the raw Higher Kinded Type for ReactiveSeq types into the ReactiveSeq type definition class
-         *
-         * @param future HKT encoded list into a ReactiveSeq
-         * @return ReactiveSeq
-         */
-        public static <T> ReactiveSeq<T> narrowK(final Higher<ReactiveSeq.µ, T> future) {
-            return (ReactiveSeq<T>) future;
-        }
+
 
         /**
          * Convert the HigherKindedType definition for a List into
@@ -4613,6 +4605,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return ((ReactiveSeq<T>) completableList);//.narrow();
 
         }
+    }
+    /**
+     * Convert the raw Higher Kinded Type for ReactiveSeq types into the ReactiveSeq type definition class
+     *
+     * @param future HKT encoded list into a ReactiveSeq
+     * @return ReactiveSeq
+     */
+    public static <T> ReactiveSeq<T> narrowK(final Higher<ReactiveSeq.µ, T> future) {
+        return (ReactiveSeq<T>) future;
     }
 
 }

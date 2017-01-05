@@ -55,7 +55,7 @@ public abstract class AbstractCollectionXTest {
 	static Executor ex = Executors.newFixedThreadPool(1);
     @Test
     public void foldFuture(){
-        assertThat(of(1,2,3).foldFuture(l->l.reduce(Monoids.intSum), ex).get(),equalTo(6));
+        assertThat(of(1,2,3).foldFuture(ex, l->l.reduce(Monoids.intSum)).get(),equalTo(6));
     }
     @Test
     public void foldLazy(){

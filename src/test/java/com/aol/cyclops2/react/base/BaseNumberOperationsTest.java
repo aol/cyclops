@@ -28,22 +28,22 @@ public abstract class BaseNumberOperationsTest {
 	
 	@Test
 	public void sumInt(){
-		assertThat(of(1,2,3,4).foldFuture(s->s.sumInt(i->i),exec).get(),
+		assertThat(of(1,2,3,4).foldFuture(exec,s->s.sumInt(i->i)).get(),
 				equalTo(10));
 	}
 	@Test
 	public void sumDouble(){
-		assertThat(of(1.0,2.0,3.0,4.0).foldFuture(s->s.sumDouble(i->i),exec).get(),
+		assertThat(of(1.0,2.0,3.0,4.0).foldFuture(exec,s->s.sumDouble(i->i)).get(),
 				equalTo(10.0));
 	}
 	@Test
 	public void sumLong(){
-		assertThat(of(1l,2l,3l,4l).foldFuture(s->s.sumLong(i->i),exec).get(),
+		assertThat(of(1l,2l,3l,4l).foldFuture(exec,s->s.sumLong(i->i)).get(),
 				equalTo(10l));
 	}
 	@Test
 	public void maxInt(){
-		assertThat(of(1,2,3,4).foldFuture(s->s.mapToInt(i->i).max(),exec).get().getAsInt(),
+		assertThat(of(1,2,3,4).foldFuture(exec,s->s.mapToInt(i->i).max()).get().getAsInt(),
 				equalTo(4));
 	}
 

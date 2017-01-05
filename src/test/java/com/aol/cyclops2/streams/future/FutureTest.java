@@ -36,14 +36,14 @@ public  class FutureTest {
 
 	@Test
 	public void testMapReduce(){
-		assertThat(of(1,2,3,4,5).map(it -> it*100).foldFuture(s->s
-					.reduce( (acc,next) -> acc+next),exec)
+		assertThat(of(1,2,3,4,5).map(it -> it*100).foldFuture(exec,s->s
+					.reduce( (acc,next) -> acc+next))
 					.get(),is(Optional.of(1500)));
 	}
 	@Test
 	public void testMapReduceSeed(){
 		assertThat(of(1,2,3,4,5).map(it -> it*100)
-				.foldFuture(s->s.reduce( 50,(acc,next) -> acc+next),exec).get()
+				.foldFuture(exec,s->s.reduce( 50,(acc,next) -> acc+next)).get()
 				,is(Future.ofResult(1550).get()));
 	}
 	

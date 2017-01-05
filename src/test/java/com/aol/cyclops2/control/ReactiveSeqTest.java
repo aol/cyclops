@@ -617,7 +617,7 @@ public class ReactiveSeqTest {
         ReactiveSeq<String> stream = pushable.stream();
         Executor ex= Executors.newFixedThreadPool(1);
         Future<List<String>> list = stream.peek(System.err::println)
-                                           .foldFuture(s->s.collect(Collectors.toList()),ex);
+                                           .foldFuture(ex,s->s.collect(Collectors.toList()));
       
         pushable.onNext("hello");
         pushable.onComplete();

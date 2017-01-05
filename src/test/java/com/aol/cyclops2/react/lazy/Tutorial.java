@@ -43,7 +43,7 @@ public class Tutorial {
     public void futureOperationsExamaple(){
        
         Future<Integer> asyncResult = ReactiveSeq.of(1,2,3,4)
-                                                            .foldFuture(s->s.reduce( 50,(acc,next) -> acc+next),Executors.newFixedThreadPool(1));
+                                                            .foldFuture(Executors.newFixedThreadPool(1),s->s.reduce( 50,(acc,next) -> acc+next));
         //CompletableFuture[1550]
         
         Eval<Integer> lazyResult = ListX.of(1,2,3,4)
