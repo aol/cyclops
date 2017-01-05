@@ -484,7 +484,7 @@ public class Streams {
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+     *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -501,7 +501,7 @@ public class Streams {
      *     
      *     4 
      *     Second batch processed!
-     *     The end!
+     *     The take!
      * }
      * </pre>
      * @param Stream - the Stream to consume data from	 
@@ -558,7 +558,7 @@ public class Streams {
      * <pre>
      * @{code
      *     Subscription next = Streams.forEachEvents(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");
      *     
@@ -860,7 +860,7 @@ public class Streams {
     }
 
     /**
-     * Append values to the end of this SequenceM
+     * Append values to the take of this SequenceM
      * <pre>
      * {@code 
      * List<String> result = 	of(1,2,3).append(100,200,300)
@@ -878,7 +878,7 @@ public class Streams {
     }
 
     /**
-     * Prepend given values to the start of the Stream
+     * Prepend given values to the skip of the Stream
      * <pre>
      * {@code 
      * List<String> result = 	of(1,2,3).prepend(100,200,300)

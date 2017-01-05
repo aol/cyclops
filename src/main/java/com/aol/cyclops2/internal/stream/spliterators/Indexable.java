@@ -7,7 +7,7 @@ import java.util.Spliterator;
  */
 public interface Indexable<T> {
 
-    Spliterator<T> start(long start);
-    Spliterator<T> end(long end);
+    Spliterator<T> skip(long start);
+    Spliterator<T> take(long end);
 
 }

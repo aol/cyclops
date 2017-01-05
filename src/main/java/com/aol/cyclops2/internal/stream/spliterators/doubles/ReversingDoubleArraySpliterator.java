@@ -154,13 +154,13 @@ public class ReversingDoubleArraySpliterator<Double> implements Spliterator.OfDo
     }
 
     @Override
-    public Spliterator<java.lang.Double> start(long offset) {
+    public Spliterator<java.lang.Double> skip(long offset) {
         this.start = index= this.start+(int)offset;
         return this;
     }
 
     @Override
-    public Spliterator<java.lang.Double> end(long num) {
+    public Spliterator<java.lang.Double> take(long num) {
         this.max = start+(int)num;
         return this;
     }

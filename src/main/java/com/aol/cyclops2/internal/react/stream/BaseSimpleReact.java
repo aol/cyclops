@@ -46,7 +46,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     /**
      * Start a reactive flow from a JDK Iterator
      * 
-     * @param iterator SimpleReact will iterate over this iterator concurrently to start the reactive dataflow
+     * @param iterator SimpleReact will iterate over this iterator concurrently to skip the reactive dataflow
      * @return Next stage in the reactive flow
      */
     @SuppressWarnings("unchecked")
@@ -58,7 +58,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     /**
      * Start a reactive flow from a Collection using an Iterator
      * 
-     * @param collection - Collection SimpleReact will iterate over at the start of the flow
+     * @param collection - Collection SimpleReact will iterate over at the skip of the flow
      *
      * @return Next stage in the reactive flow
      */
@@ -70,7 +70,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     /**
      * Start a reactive flow from a JDK Iterator
      * 
-     * @param iter SimpleReact will iterate over this iterator concurrently to start the reactive dataflow
+     * @param iter SimpleReact will iterate over this iterator concurrently to skip the reactive dataflow
      * @return Next stage in the reactive flow
      */
     @SuppressWarnings("unchecked")

@@ -30,7 +30,10 @@ public class StreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public ReactiveSeq<T> reverse() {
-
+        if(this.stream instanceof ReversableSpliterator){
+            ReversableSpliterator rev = (ReversableSpliterator)stream;
+            return createSeq(rev.invert(),reversible,split);
+        }
         return createSeq(Streams.reverse(this), reversible,split);
     }
 

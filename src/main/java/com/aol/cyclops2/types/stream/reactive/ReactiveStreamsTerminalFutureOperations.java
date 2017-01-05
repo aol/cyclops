@@ -92,7 +92,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
      *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .futureOperations(exec)
      *                                  .map(Supplier::get)
-     *          					    .forEach(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+     *          					    .forEach(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -109,7 +109,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
      *     
      *     4 
      *     Second batch processed!
-     *     The end!
+     *     The take!
      * }
      * </pre>	 
      * @param numberOfElements To consume from the Stream at this time
@@ -158,7 +158,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
      *     ReactiveTask next = ReactiveSeq.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .futureOperations(exec)
      *                                  .map(Supplier::get)
-     *          					    .forEachEvents(System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+     *          					    .forEachEvents(System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");
      *     

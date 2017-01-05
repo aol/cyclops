@@ -2514,7 +2514,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> prependS(Stream<? extends T> stream);
 
     /**
-     * Append values to the end of this ReactiveSeq
+     * Append values to the take of this ReactiveSeq
      * 
      * <pre>
      * {@code 
@@ -2536,7 +2536,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> prepend(T value);
 
     /**
-     * Prepend given values to the start of the Stream
+     * Prepend given values to the skip of the Stream
      * 
      * <pre>
      * {@code 
@@ -2736,7 +2736,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     HotStream<T> hotStream(Executor e);
 
     /**
-     * Return a HotStream that will start emitting data when the first connecting Stream connects.
+     * Return a HotStream that will skip emitting data when the first connecting Stream connects.
      * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
      *  For a hotStream that starts to output data immediately @see {@link ReactiveSeq#hotStream(Executor)}.
      * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
@@ -2784,7 +2784,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     PausableHotStream<T> pausableHotStream(Executor e);
 
     /**
-     * Return a pausable HotStream that will start emitting data when the first connecting Stream connects.
+     * Return a pausable HotStream that will skip emitting data when the first connecting Stream connects.
      * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
      *  For a hotStream that starts to output data immediately @see {@link ReactiveSeq#pausableHotStream(Executor)}.
      * The generated HotStream is pausable, for a unpausable HotStream @see {@link ReactiveSeq#primedHotStream(Executor)}.
@@ -3052,15 +3052,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Create an efficiently reversable Sequence that produces the integers
-     * between start and end
+     * between skip and take
      * 
      * @param start
-     *            Number of range to start from
+     *            Number of range to skip from
      * @param end
-     *            Number for range to end at
+     *            Number for range to take at
      * @return Range ReactiveSeq
      */
     public static ReactiveSeq<Integer> range(final int start, final int end) {
+        if(start>end)
+            return range(end,start);
         final ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(
                                                                                     start, end, false);
         return Streams.reactiveSeq(range, Optional.ofNullable(range),Optional.empty());
@@ -3069,15 +3071,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Create an efficiently reversable Sequence that produces the integers
-     * between start and end
+     * between skip and take
      * 
      * @param start
-     *            Number of range to start from
+     *            Number of range to skip from
      * @param end
-     *            Number for range to end at
+     *            Number for range to take at
      * @return Range ReactiveSeq
      */
     public static ReactiveSeq<Long> rangeLong(final long start, final long end) {
+        if(start>end)
+            return rangeLong(end,start);
         final ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(
                                                                                       start, end, false);
         return Streams.reactiveSeq(range, Optional.ofNullable(range),Optional.empty());
@@ -3641,8 +3645,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Return a Stream with elements before the provided start index removed,
-     * and elements after the provided end index removed
+     * Return a Stream with elements before the provided skip index removed,
+     * and elements after the provided take index removed
      * 
      * <pre>
      * {@code 

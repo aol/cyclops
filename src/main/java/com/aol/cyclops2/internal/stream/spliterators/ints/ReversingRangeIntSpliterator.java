@@ -13,7 +13,7 @@ import lombok.Setter;
 public class ReversingRangeIntSpliterator implements Spliterator.OfInt, ReversableSpliterator<Integer>, Indexable<Integer> {
 
     private final int min;
-    private int max;
+    private final int max;
     private int index;
     private int start;
 
@@ -22,30 +22,33 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     private boolean reverse;
 
     public ReversingRangeIntSpliterator(final int min, final int max, final boolean reverse) {
-        this.min = Math.min(min, max)-1;
-        this.max = Math.max(min, max);
-        this.reverse = this.max >= this.min ? reverse : !reverse;
-        start =index = Math.min(min, max);
+        this.min = min;
+        this.max = max;
+    //    this.reverse = this.max >= this.min ? reverse : !reverse;
+        this.reverse = reverse;
+        if(!reverse)
+            start =index = min;
+        else
+            start = index=max;
     }
 
     @Override
     public ReversableSpliterator invert() {
-        setReverse(!isReverse());
-        start = index = max - 1;
-        return this;
+        return new ReversingRangeIntSpliterator(min,max,!reverse);
+
     }
 
     @Override
     public boolean tryAdvance(final IntConsumer consumer) {
         Objects.requireNonNull(consumer);
         if (!reverse) {
-            if (index < max && index > min) {
+            if (index < max && index >= min) {
                 consumer.accept(index++);
                 return true;
             }
         }
         if (reverse) {
-            if (index > min && index < max) {
+            if (index > min && index <= max) {
                 consumer.accept(index--);
                 return true;
             }
@@ -71,7 +74,7 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     @Override
     public ReversableSpliterator copy() {
         return new ReversingRangeIntSpliterator(
-                                                start, max, reverse);
+                min, max, reverse);
     }
 
     /* (non-Javadoc)
@@ -81,17 +84,17 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     public void forEachRemaining(IntConsumer action) {
         int index = this.index; //use local index making spliterator reusable
         if (!reverse) {
-            for( ;index < max && index > min;) {
+            for( ;index < max && index >= min;) {
                 action.accept(index++);
-                
+
             }
         }
         if (reverse) {
-            for( ;index > min && index < max;) {
+            for( ;index > min && index <= max;) {
                 action.accept(index--);
-                
+
             }
-            
+
         }
     }
 
@@ -102,28 +105,46 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     public void forEachRemaining(Consumer<? super Integer> action) {
         int index = this.index; //use local index making spliterator reusable
         if (!reverse) {
-            for( ;index < max && index > min;) {
+            for( ;index < max && index >= min;) {
                 action.accept(index++);
             }
         }
         if (reverse) {
-            for( ;index > min && index < max;) {
-                action.accept(index--);   
+            for( ;index > min && index <= max;) {
+                action.accept(index--);
             }
-            
+
         }
     }
 
     @Override
-    public Spliterator<Integer> start(long offset) {
-        start=index =start+(int)offset;
-        return this;
+    public Spliterator<Integer> skip(long offset) {
+        if(reverse){
+            return new ReversingRangeIntSpliterator(
+                    min, max-(int)offset, reverse);
+
+        }else{
+            return new ReversingRangeIntSpliterator(
+                    start+(int)offset, max, reverse);
+        }
+
+
     }
 
     @Override
-    public Spliterator<Integer> end(long number) {
-        this.max = start+(int)number;
-        return this;
+    public Spliterator<Integer> take(long number) {
+        if(reverse){
+            return new ReversingRangeIntSpliterator(
+                    max-(int)number, max, reverse);
+
+        }
+        else{
+            return new ReversingRangeIntSpliterator(
+                    min, start+(int)number, reverse);
+
+        }
+
+
     }
 
 

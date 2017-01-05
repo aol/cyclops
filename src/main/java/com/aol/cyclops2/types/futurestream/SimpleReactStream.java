@@ -210,7 +210,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * Return first Stream out of provided Streams that starts emitted results
      *
      * @param futureStreams Streams to race
-     * @return First Stream to start emitting values
+     * @return First Stream to skip emitting values
      */
     @SafeVarargs
     public static <U> SimpleReactStream<U> firstOf(final SimpleReactStream<U>... futureStreams) {
@@ -261,7 +261,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     /**
      * Perform a limit operation on the underlying Stream of Futures
      * In contrast to EagerFutureStream#limit this removes entries basaed on their
-     * start position
+     * skip position
      *
      * <pre>
      * {@code
@@ -315,7 +315,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * Return a Stream with the same values as this Stream, but with all values omitted until the provided stream starts emitting values.
      * Provided Stream ends the stream of values from this stream.
      *
-     * @param s Stream that will start the emission of values from this stream
+     * @param s Stream that will skip the emission of values from this stream
      * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
      */
     default <T> ReactiveSeq<U> skipUntil(final SimpleReactStream<T> s) {

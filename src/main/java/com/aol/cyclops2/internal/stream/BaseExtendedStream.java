@@ -8,7 +8,6 @@ import com.aol.cyclops2.internal.stream.spliterators.push.ValueEmittingSpliterat
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.*;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.async.*;
 import cyclops.async.Future;
 import cyclops.async.Queue;
 import cyclops.collections.ListX;
@@ -31,7 +30,6 @@ import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import lombok.AllArgsConstructor;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -353,13 +351,13 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             ReversableSpliterator rev = reversible.get();
             if(rev instanceof Indexable){
                 Indexable<T> indexable = (Indexable)rev;
-                Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator) (indexable).start(num));
+                Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator) (indexable).skip(num));
                 return createSeq(copyOrGet(),newRev,split);
             }
         }**/
         if(this.stream instanceof Indexable){
             Indexable<T> indexable = (Indexable)stream;
-            return createSeq(indexable.start(num),reversible,split);
+            return createSeq(indexable.skip(num),reversible,split);
         }
         return createSeq(new SkipSpliterator<>(copyOrGet(),num), reversible,split);
     }
@@ -376,12 +374,12 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final ReactiveSeq<T> limit(final long num) {
-
+/**
        if(reversible.isPresent()){
            ReversableSpliterator rev = reversible.get();
                 if(rev instanceof Indexable) {
                     Indexable<T> indexable = (Indexable)rev;
-                    Spliterator<T> limit = indexable.end(num);
+                    Spliterator<T> limit = indexable.take(num);
                     if(limit instanceof  ReversableSpliterator) {
                         Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator)limit);
                         return createSeq(copyOrGet(), newRev, split);
@@ -389,13 +387,14 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
                 }
 
        }
-         /**
+ **/
+
        if(this.stream instanceof Indexable){
            Indexable<T> indexable = (Indexable)stream;
-           Spliterator<T> limit = indexable.end(num);
-           Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator) (indexable).end(num));
-           return createSeq(limit,reversible,split);
-       }**/
+           Spliterator<T> limit = indexable.take(num);
+         //  Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator) (indexable).take(num));
+           return createSeq(limit,Optional.empty(),split);
+       }
         return createSeq(new LimitSpliterator<T>(copyOrGet(),num), reversible,split);
     }
 

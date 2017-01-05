@@ -83,9 +83,9 @@ public class SimplePerfCheck {
 		for(int i=0;i<10_000;i++){
 			list = list.plus(1);
 		}
-		long start = System.currentTimeMillis();
+		long skip = System.currentTimeMillis();
 		list = list.map(i->i+1);
-		System.out.println("PStackX  Map took " + (System.currentTimeMillis()- start));
+		System.out.println("PStackX  Map took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.size());
 		
 		
@@ -97,9 +97,9 @@ public class SimplePerfCheck {
 		for(int i=0;i<1_000_000;i++){
 			list = list.plus(1);
 		}
-		long start = System.currentTimeMillis();
+		long skip = System.currentTimeMillis();
 		list = list.map(i->i+1);
-		System.out.println("PVectorX  Map took " + (System.currentTimeMillis()- start));
+		System.out.println("PVectorX  Map took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.size());
 		
 		
@@ -111,36 +111,36 @@ public class SimplePerfCheck {
 		for(int i=0;i<10_000;i++){
 			list = list.cons(i);
 		}
-		long start = System.currentTimeMillis();
+		long skip = System.currentTimeMillis();
 		list = list.map(i->i+1);
-		System.out.println("FJ List  Map took " + (System.currentTimeMillis()- start));
+		System.out.println("FJ List  Map took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.length());
 		
 		
 	}
 	@Test
 	public void fjList(){
-		long start = System.currentTimeMillis();
+		long skip = System.currentTimeMillis();
 		fj.data.List<Integer> list = fj.data.List.list();
 		for(int i=0;i<1_000_000;i++){
 			list = list.cons(i);
 		}
 		
 		
-		System.out.println("FJ List  prepend took " + (System.currentTimeMillis()- start));
+		System.out.println("FJ List  prepend took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.length());
 		
 		
 	}
 	@Test
 	public void jsListPrepend(){
-		long start = System.currentTimeMillis();
+		long skip = System.currentTimeMillis();
 		javaslang.collection.List<Integer> list = javaslang.collection.List.empty();
 		for(int i=0;i<1_000_000;i++){
 			list = list.prepend(i);
 		}
 		
-		System.out.println("Javaslang List  prepend took " + (System.currentTimeMillis()- start));
+		System.out.println("Javaslang List  prepend took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.length());
 		
 		
@@ -152,9 +152,9 @@ public class SimplePerfCheck {
 		for(int i=0;i<10_000;i++){
 			list = list.prepend(i);
 		}
-		long start = System.currentTimeMillis();
+		long skip = System.currentTimeMillis();
 		list = list.map(i->i+1);
-		System.out.println("Javaslang List  Map took " + (System.currentTimeMillis()- start));
+		System.out.println("Javaslang List  Map took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.length());
 		
 		

@@ -473,12 +473,12 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     public String toString();
 
     /**
-     * Construct an AnyM instance that wraps a range from start (inclusive) to end (exclusive) provided
+     * Construct an AnyM instance that wraps a range from skip (inclusive) to take (exclusive) provided
      * 
      * The AnyM will contain a SequenceM over the spefied range
      * 
-     * @param start Inclusive start of the range
-     * @param end Exclusive end of the range
+     * @param start Inclusive skip of the range
+     * @param end Exclusive take of the range
      * @return AnyM range
      */
     public static AnyMSeq<reactiveSeq,Integer> fromRange(final int start, final int end) {
@@ -487,12 +487,12 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     }
 
     /**
-     * Construct an AnyM instance that wraps a range from start (inclusive) to end (exclusive) provided
+     * Construct an AnyM instance that wraps a range from skip (inclusive) to take (exclusive) provided
      * 
      * The AnyM will contain a SequenceM over the spefied range
      * 
-     * @param start Inclusive start of the range
-     * @param end Exclusive end of the range
+     * @param start Inclusive skip of the range
+     * @param end Exclusive take of the range
      * @return AnyM range
      */
     public static AnyMSeq<reactiveSeq,Long> fromRangeLong(final long start, final long end) {

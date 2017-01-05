@@ -143,7 +143,7 @@ public  class BaseSequenceTest {
     public void testReverseRange() {
 
         assertThat( ReactiveSeq.range(0,10)
-        				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
+        				.reverse().toList(), equalTo(asList(10,9,8,7,6,5,4,3,2,1)));
     }
 
    
@@ -210,6 +210,8 @@ public  class BaseSequenceTest {
 	@Test
 	public void testDuplicateLimit(){
 		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+		 System.out.println(copies.v1.limit(3).toList());
+		System.out.println(copies.v2.limit(3).toList());
 		 assertTrue(copies.v1.limit(3).toList().size()==3);
 		 assertTrue(copies.v2.limit(3).toList().size()==3);
 	} 

@@ -360,12 +360,12 @@ public interface ListX<T> extends To<ListX<T>>,
    
 
     /**
-     * Create a ListX that contains the Integers between start and end
+     * Create a ListX that contains the Integers between skip and take
      * 
      * @param start
-     *            Number of range to start from
+     *            Number of range to skip from
      * @param end
-     *            Number for range to end at
+     *            Number for range to take at
      * @return Range ListX
      */
     public static ListX<Integer> range(final int start, final int end) {
@@ -374,12 +374,12 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /**
-     * Create a ListX that contains the Longs between start and end
+     * Create a ListX that contains the Longs between skip and take
      * 
      * @param start
-     *            Number of range to start from
+     *            Number of range to skip from
      * @param end
-     *            Number for range to end at
+     *            Number for range to take at
      * @return Range ListX
      */
     public static ListX<Long> rangeLong(final long start, final long end) {

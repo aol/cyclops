@@ -75,7 +75,7 @@ public class VertxTest {
 	    
         new SimpleReact(c->vertx.runOnContext(v -> c.run())).from(server)
                         .then(s->"server started")
-                        .onFail(e->"failed to start "+e.getMessage())
+                        .onFail(e->"failed to skip "+e.getMessage())
                         .peek(System.out::println);	    
 	    
 	    while(true){

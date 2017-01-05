@@ -64,12 +64,12 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /**
-    * Create a QueueX that contains the Integers between start and end
+    * Create a QueueX that contains the Integers between skip and take
     * 
     * @param start
-    *            Number of range to start from
+    *            Number of range to skip from
     * @param end
-    *            Number for range to end at
+    *            Number for range to take at
     * @return Range QueueX
     */
     public static QueueX<Integer> range(final int start, final int end) {
@@ -78,12 +78,12 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /**
-     * Create a QueueX that contains the Longs between start and end
+     * Create a QueueX that contains the Longs between skip and take
      * 
      * @param start
-     *            Number of range to start from
+     *            Number of range to skip from
      * @param end
-     *            Number for range to end at
+     *            Number for range to take at
      * @return Range QueueX
      */
     public static QueueX<Long> rangeLong(final long start, final long end) {

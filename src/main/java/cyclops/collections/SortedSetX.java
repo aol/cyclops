@@ -38,12 +38,12 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     /**
-    * Create a SortedSetX that contains the Integers between start and end
+    * Create a SortedSetX that contains the Integers between skip and take
     * 
     * @param start
-    *            Number of range to start from
+    *            Number of range to skip from
     * @param end
-    *            Number for range to end at
+    *            Number for range to take at
     * @return Range SortedSetX
     */
     public static SortedSetX<Integer> range(final int start, final int end) {
@@ -52,12 +52,12 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     /**
-     * Create a SortedSetX that contains the Longs between start and end
+     * Create a SortedSetX that contains the Longs between skip and take
      * 
      * @param start
-     *            Number of range to start from
+     *            Number of range to skip from
      * @param end
-     *            Number for range to end at
+     *            Number for range to take at
      * @return Range SortedSetX
      */
     public static SortedSetX<Long> rangeLong(final long start, final long end) {

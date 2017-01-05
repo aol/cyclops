@@ -55,7 +55,7 @@ public class EagerFutureStreamFunctions {
      * Return first Stream out of provided Streams that starts emitted results 
      * 
      * @param futureStreams Streams to race
-     * @return First Stream to start emitting values
+     * @return First Stream to skip emitting values
      */
     @SafeVarargs
     public static <U> SimpleReactStream<U> firstOf(final SimpleReactStream<U>... futureStreams) {

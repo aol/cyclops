@@ -116,7 +116,7 @@ import java.util.TreeSet;
  * in the seconds field means &quot;the seconds 0, 15, 30, and 45&quot;. And 
  * &quot;5/15&quot; in the seconds field means &quot;the seconds 5, 20, 35, and
  * 50&quot;.  Specifying '*' before the  '/' is equivalent to specifying 0 is
- * the value to start with. Essentially, for each field in the expression, there
+ * the value to skip with. Essentially, for each field in the expression, there
  * is a set of numbers that can be turned on or off. For seconds and minutes, 
  * the numbers range from 0 to 59. For hours 0 to 23, for days of the month 0 to
  * 31, and for months 0 to 11 (JAN to DEC). The &quot;/&quot; character simply helps you turn
@@ -507,7 +507,7 @@ public final class CronExpression implements Serializable, Cloneable {
 
             if (exprOn <= DAY_OF_WEEK) {
                 throw new ParseException(
-                                         "Unexpected end of expression.", expression.length());
+                                         "Unexpected take of expression.", expression.length());
             }
 
             if (exprOn <= YEAR) {
@@ -646,7 +646,7 @@ public final class CronExpression implements Serializable, Cloneable {
                 i++;
                 if (i >= s.length()) {
                     throw new ParseException(
-                                             "Unexpected end of string.", i);
+                                             "Unexpected take of string.", i);
                 }
 
                 incr = getNumericValue(s, i);
@@ -1067,7 +1067,7 @@ public final class CronExpression implements Serializable, Cloneable {
             }
         }
 
-        // if the end of the range is before the start, then we need to overflow into 
+        // if the take of the range is before the skip, then we need to overflow into
         // the next day, month etc. This is done by adding the maximum amount for that 
         // type, and using modulus max to determine the value being added.
         int max = -1;
@@ -1501,7 +1501,7 @@ public final class CronExpression implements Serializable, Cloneable {
 
                     final int lDay = getLastDayOfMonth(mon, cl.get(Calendar.YEAR));
 
-                    if (day + daysToAdd > lDay) { // will we pass the end of
+                    if (day + daysToAdd > lDay) { // will we pass the take of
                         // the month?
                         cl.set(Calendar.SECOND, 0);
                         cl.set(Calendar.MINUTE, 0);

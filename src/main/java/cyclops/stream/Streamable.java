@@ -439,7 +439,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /**
-     * Prepend given values to the start of the Stream
+     * Prepend given values to the skip of the Stream
      * <pre>
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
@@ -699,8 +699,8 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /**
-     * Return a Streamable with elements before the provided start index removed, and elements after the provided
-     * end index removed
+     * Return a Streamable with elements before the provided skip index removed, and elements after the provided
+     * take index removed
      * 
      * <pre>
      * {@code 
@@ -2012,7 +2012,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /**
-     * Append values to the end of this Streamable
+     * Append values to the take of this Streamable
      * <pre>
      * {@code 
      * List<String> result = Streamable.of(1,2,3)
@@ -2031,7 +2031,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /**
-     * Prepend given values to the start of the Stream
+     * Prepend given values to the skip of the Stream
      * <pre>
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
@@ -2362,10 +2362,10 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /**
-     * Create an efficiently reversable Sequence that produces the integers between start 
-     * and end
-     * @param start Number of range to start from
-     * @param end Number for range to end at
+     * Create an efficiently reversable Sequence that produces the integers between skip
+     * and take
+     * @param start Number of range to skip from
+     * @param end Number for range to take at
      * @return Range Streamable
      */
     public static Streamable<Integer> range(final int start, final int end) {
@@ -2374,10 +2374,10 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /**
-     * Create an efficiently reversable Sequence that produces the integers between start 
-     * and end
-     * @param start Number of range to start from
-     * @param end Number for range to end at
+     * Create an efficiently reversable Sequence that produces the integers between skip
+     * and take
+     * @param start Number of range to skip from
+     * @param end Number for range to take at
      * @return Range Streamable
      */
     public static Streamable<Long> rangeLong(final long start, final long end) {

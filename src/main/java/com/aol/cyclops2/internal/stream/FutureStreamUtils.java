@@ -96,7 +96,7 @@ public class FutureStreamUtils {
      * <pre>
      * {@code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
-     *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+     *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -113,7 +113,7 @@ public class FutureStreamUtils {
      *     
      *     4 
      *     Second batch processed!
-     *     The end!
+     *     The take!
      * }
      * </pre>
      * @param stream - the Stream to consume data from	 
@@ -193,7 +193,7 @@ public class FutureStreamUtils {
      * @param stream - the Stream to consume data from	 
      * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
-     * @return A Tuple containing a Future with a Subscription to this publisher, a runnable to start processing on a separate thread, and future that stores true / false depending on success
+     * @return A Tuple containing a Future with a Subscription to this publisher, a runnable to skip processing on a separate thread, and future that stores true / false depending on success
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachWithError(
             final Stream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
@@ -209,7 +209,7 @@ public class FutureStreamUtils {
      * <pre>
      * {@code
      *     Subscription next = Streams.forEachEvents(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
-     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");
      *     
@@ -228,7 +228,7 @@ public class FutureStreamUtils {
      * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      * @param onComplete To run after an onComplete event
-     * @return A Tuple containing a Future with a Subscription to this publisher, a runnable to start processing on a separate thread, and future that stores true / false depending on success
+     * @return A Tuple containing a Future with a Subscription to this publisher, a runnable to skip processing on a separate thread, and future that stores true / false depending on success
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachEvent(
             final Stream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,

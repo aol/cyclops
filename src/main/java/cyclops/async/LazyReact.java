@@ -910,7 +910,7 @@ public class LazyReact implements ReactBuilder {
      * 
      * }
      * </pre>
-     * @param iterator SimpleReact will iterate over this iterator concurrently to start the reactive dataflow
+     * @param iterator SimpleReact will iterate over this iterator concurrently to skip the reactive dataflow
      * @return  FutureStream
      */
     @SuppressWarnings("unchecked")
@@ -933,7 +933,7 @@ public class LazyReact implements ReactBuilder {
      * </pre>
      * 
      * 
-     * @param collection - Collection SimpleReact will iterate over at the start of the flow
+     * @param collection - Collection SimpleReact will iterate over at the skip of the flow
      *
      * @return  FutureStream
      */

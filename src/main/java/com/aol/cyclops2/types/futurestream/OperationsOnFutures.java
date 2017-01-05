@@ -770,7 +770,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Append values to the end of this SequenceM
+     * Append values to the take of this SequenceM
      * 
      * <pre>
      * {@code 
@@ -821,7 +821,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Prepend given values to the start of the Stream
+     * Prepend given values to the skip of the Stream
      * 
      * <pre>
      * {@code 

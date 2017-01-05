@@ -153,13 +153,13 @@ public class ReversingIntArraySpliterator<Integer> implements Spliterator.OfInt,
     }
 
     @Override
-    public Spliterator<java.lang.Integer> start(long offset) {
+    public Spliterator<java.lang.Integer> skip(long offset) {
         this.start = index= this.start+(int)offset;
         return this;
     }
 
     @Override
-    public Spliterator<java.lang.Integer> end(long num) {
+    public Spliterator<java.lang.Integer> take(long num) {
         this.max = start+(int)num;
         return this;
     }

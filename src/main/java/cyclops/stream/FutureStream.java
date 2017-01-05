@@ -401,8 +401,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Return a Stream with elements before the provided start index removed, and elements after the provided
-     * end index removed
+     * Return a Stream with elements before the provided skip index removed, and elements after the provided
+     * take index removed
      *
      * <pre>
      * {@code
@@ -482,7 +482,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      *     //[fast,1l],[slow,0l]
      * }</pre>
-     * The first result will still be fast, but the index will now be the start index 1
+     * The first result will still be fast, but the index will now be the skip index 1
      *
      * @return Access a set of operators that act on the underlying futures in this
      * Stream.
@@ -1230,7 +1230,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * }
      * </pre>
      *
-     * Will emit 1 on start, transform 2 after an hour, 3 after 2 hours and so on.
+     * Will emit 1 on skip, transform 2 after an hour, 3 after 2 hours and so on.
      *
      * However all 4 numbers will be populated in the Stream immediately.
      *
@@ -3188,7 +3188,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * {@code
      *     Subscription next = LazyFurtureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
-     *          					    .forEach(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+     *          					    .forEach(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -3205,7 +3205,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *     
      *     4 
      *     Second batch processed!
-     *     The end!
+     *     The take!
      * }
      * </pre>	 
      * @param numberOfElements To consume from the Stream at this time
@@ -3260,7 +3260,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * {@code
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get)
-     *          					    .forEachEvents(System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+     *          					    .forEachEvents(System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");
      *     

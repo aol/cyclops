@@ -153,7 +153,7 @@ public class LazyFutureStreamUtils {
      * <pre>
      * @{code
      *     Subscription next = StreamUtils.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+     *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -170,7 +170,7 @@ public class LazyFutureStreamUtils {
      *     
      *     4 
      *     Second batch processed!
-     *     The end!
+     *     The take!
      * }
      * </pre>
      * @param stream - the Stream to consume data from	 
@@ -285,7 +285,7 @@ public class LazyFutureStreamUtils {
      * <pre>
      * @{code
      *     Subscription next = StreamUtils.forEachEvents(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the end!"));
+     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");
      *     

@@ -27,12 +27,12 @@ import java.util.stream.Stream;
 public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEmptySwitch<T, Set<T>> {
 
     /**
-     * Create a SetX that contains the Integers between start and end
+     * Create a SetX that contains the Integers between skip and take
      * 
      * @param start
-     *            Number of range to start from
+     *            Number of range to skip from
      * @param end
-     *            Number for range to end at
+     *            Number for range to take at
      * @return Range SetX
      */
     public static SetX<Integer> range(final int start, final int end) {
@@ -41,12 +41,12 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     }
 
     /**
-     * Create a SetX that contains the Longs between start and end
+     * Create a SetX that contains the Longs between skip and take
      * 
      * @param start
-     *            Number of range to start from
+     *            Number of range to skip from
      * @param end
-     *            Number for range to end at
+     *            Number for range to take at
      * @return Range SetX
      */
     public static SetX<Long> rangeLong(final long start, final long end) {

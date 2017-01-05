@@ -52,12 +52,12 @@ public class TrampolineTest {
 	@Test
 	public void coroutine(){
 		results = new ArrayList();
-		Iterator<String> it = Arrays.asList("hello","world","end").iterator();
+		Iterator<String> it = Arrays.asList("hello","world","take").iterator();
 		val coroutine = new Trampoline[1];
 		coroutine[0] = Trampoline.more( ()-> it.hasNext() ? print(it.next(),coroutine[0]) : Trampoline.done(0));
 		withCoroutine(coroutine[0]);
 		
-		assertThat(results,equalTo(Arrays.asList(0,"hello",1,"world",2,"end",3,4)));
+		assertThat(results,equalTo(Arrays.asList(0,"hello",1,"world",2,"take",3,4)));
 	}
 	
 	private Trampoline<Integer> print(Object next, Trampoline trampoline) {

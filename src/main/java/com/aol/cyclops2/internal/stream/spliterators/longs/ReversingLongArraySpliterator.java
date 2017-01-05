@@ -153,13 +153,13 @@ public class ReversingLongArraySpliterator<Long> implements Spliterator.OfLong,R
     }
 
     @Override
-    public Spliterator<java.lang.Long> start(long offset) {
+    public Spliterator<java.lang.Long> skip(long offset) {
         this.start = index= this.start+(int)offset;
         return this;
     }
 
     @Override
-    public Spliterator<java.lang.Long> end(long num) {
+    public Spliterator<java.lang.Long> take(long num) {
         this.max = start+(int)num;
         return this;
     }
