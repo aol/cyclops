@@ -33,6 +33,8 @@ import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.*;
 
+import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
+import com.aol.cyclops2.internal.stream.BaseExtendedStream;
 import com.aol.cyclops2.types.FoldableTraversable;
 import com.aol.cyclops2.types.futurestream.*;
 import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
@@ -43,6 +45,7 @@ import cyclops.control.Trampoline;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
+import lombok.AllArgsConstructor;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -2606,9 +2609,16 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default Optional<U> findAny() {
-        return ReactiveSeq.oneShotStream(stream())
-                          .findAny();
+       Object[] result = {null};
+            //use forEachRemaining as it is the fast path for many operators
+             forEach(e -> {
+                result[0]=e;
+                throw new SimpleReactProcessingException();
+            });
+
+        return  Optional.ofNullable((U)result[0]);
     }
+
 
     /*
      * @see cyclops2.stream.ReactiveSeq#toSet()

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 public abstract class BaseJDKStreamTest {
@@ -66,6 +67,7 @@ public abstract class BaseJDKStreamTest {
 	}
 	@Test
 	public void testFindAny(){
+		assertThat(Arrays.asList(1,2,3),hasItem(ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findAny().get()));
 		assertThat(Arrays.asList(1,2,3),hasItem(of(1,2,3,4,5).filter(it -> it <3).findAny().get()));
 	}
 	@Test

@@ -484,7 +484,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
     @AllArgsConstructor
     private static class FoundValueException extends RuntimeException{
-       Object value;
+       private final Object value;
 
         @Override
         public Throwable fillInStackTrace() {
