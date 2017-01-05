@@ -1933,7 +1933,7 @@ public class Streams {
     public static <T> ReactiveSeq<T> oneShotStream(Stream<T> stream){
         return new OneShotStreamX<T>(stream,Optional.empty(), Optional.empty());
     }
-    public static <T> ReactiveSeq<T> oneShotStream(Spliterator<T> stream,final Optional<ReversableSpliterator> rev){
+    public static <T> OneShotStreamX<T> oneShotStream(Spliterator<T> stream,final Optional<ReversableSpliterator> rev){
         return new OneShotStreamX<T>(stream,rev, Optional.empty());
     }
 

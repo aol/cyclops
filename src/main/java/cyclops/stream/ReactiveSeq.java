@@ -11,6 +11,12 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.internal.stream.OneShotStreamX;
+import com.aol.cyclops2.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingIntArraySpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingRangeIntSpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingLongArraySpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingRangeLongSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.AnyM;
@@ -51,8 +57,9 @@ import cyclops.function.Fn3;
 /**
  * A powerful extended, sequential Stream type.
  * Extends JDK 8 java.util.stream.Stream.
- * Extends org.jooq.lambda.Seq.
- * Implements the reactive-stream api.
+ * Implements the reactive-stream publisher api.
+ * Replayable Stream by default, using primitive operators (ints,longs, doubles or jooλ results in conversion to a oneshot Stream
+ * (as of 2.0.0-MI1)
  * 
  * Features include
  *      Asynchronous execution
@@ -115,8 +122,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param input String to construct ReactiveSeq from
      * @return ReactiveSeq from a String
      */
-    public static  ReactiveSeq<Integer> fromString(String input){
-        return fromSpliterator(input.chars().spliterator());
+    public static OneShotStreamX<Integer> fromCharSequence(CharSequence input){
+        return Streams.<Integer>oneShotStream(input.chars().spliterator(),Optional.empty());
     }
     
     /**
@@ -124,52 +131,371 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq of multiple Integers
      */
     public static ReactiveSeq<Integer> ofInts(int... values){
-        return fromSpliterator(IntStream.of(values).spliterator());
+        return fromSpliterator(new ReversingIntArraySpliterator<>(values,0,values.length,false));
+
+    }
+    /*
+    * Fluent limit operation using primitive types
+    * e.g.
+    * <pre>
+    *  {@code
+    *    import static cyclops.ReactiveSeq.limitInts;
+    *
+    *    ReactiveSeq.ofInts(1,2,3)
+    *               .to(limitInts(1));
+    *
+    *   //[1]
+    *  }
+    *  </pre>
+    *
+    */
+    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> limitInts(long maxSize){
+
+        return a->a.ints(i->i,s->s.limit(maxSize));
+    }
+    /*
+   * Fluent limit operation using primitive types
+   * e.g.
+   * <pre>
+   *  {@code
+   *    import static cyclops.ReactiveSeq.skipInts;
+   *
+   *    ReactiveSeq.ofInts(1,2,3)
+   *               .to(limitInts(1));
+   *
+   *   //[1]
+   *  }
+   *  </pre>
+   *
+   */
+    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> skipInts(long skip){
+
+        return a->a.ints(i->i,s->s.skip(skip));
+    }
+    /*
+     * Fluent map operation using primitive types
+     * e.g.
+     * <pre>
+     *  {@code
+     *    import static cyclops.ReactiveSeq.mapInts;
+     *
+     *    ReactiveSeq.ofInts(1,2,3)
+     *               .to(mapInts(i->i*2));
+     *
+     *   //[2,4,6]
+     *  }
+     *  </pre>
+     *
+     */
+    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> mapInts(IntUnaryOperator b){
+
+        return a->a.ints(i->i,s->s.map(b));
+    }
+    /*
+    * Fluent filter operation using primitive types
+    * e.g.
+    * <pre>
+    *  {@code
+    *    import static cyclops.ReactiveSeq.filterInts;
+    *
+    *    ReactiveSeq.ofInts(1,2,3)
+    *               .to(filterInts(i->i>2));
+    *
+    *   //[3]
+    *  }
+    *  </pre>
+    *
+    */
+    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> filterInts(IntPredicate b){
+
+        return a->a.ints(i->i,s->s.filter(b));
+    }
+    /*
+     * Fluent flatMap operation using primitive types
+     * e.g.
+     * <pre>
+     *  {@code
+     *    import static cyclops.ReactiveSeq.flatMapInts;
+     *
+     *    ReactiveSeq.ofInts(1,2,3)
+     *               .to(flatMapInts(i->IntStream.of(i*2)));
+     *
+     *   //[2,4,6]
+     *  }
+     *  </pre>
+     *
+     */
+    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> flatMapInts(IntFunction<? extends IntStream> b){
+
+        return a->a.ints(i->i,s->s.flatMap(b));
+    }
+    /*
+     * Fluent integer concat operation using primitive types
+     * e.g.
+     * <pre>
+     *  {@code
+     *    import static cyclops.ReactiveSeq.concatInts;
+     *
+     *    ReactiveSeq.ofInts(1,2,3)
+     *               .to(concatInts(IntStream.range(5,10)));
+     *
+     *   //[1,2,3,5,6,7,8,9]
+     *  }
+     *  </pre>
+     *
+     */
+    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> concatInts( ReactiveSeq<Integer> b){
+        return a->fromSpliterator(IntStream.concat(a.mapToInt(i->i),b.mapToInt(i->i)).spliterator());
     }
    
-    /**
-     * Efficiently construct a ReactiveSeq from an int (will stored an processed as a primitive where possible).
-     * 
-     * @param value Value to construct ReactiveSeq from
-     * @return ReactiveSeq of one Integer
-     */
-    public static ReactiveSeq<Integer> ofInts(int value){
-        return fromSpliterator(IntStream.of(value).spliterator());
-    }
-    /**
+       /**
      * 
      * @param values longs to populate Stream from
      * @return ReactiveSeq of multiple Longs
      */
     public static ReactiveSeq<Long> ofLongs(long... values){
-        return fromSpliterator(LongStream.of(values).spliterator());
+        return fromSpliterator(new ReversingLongArraySpliterator<>(values,0,values.length,false));
     }
-    /**
-     * Efficiently construct a ReactiveSeq from an long (will stored an processed as a primitive where possible).
-     * 
-     * @param value Value to construct ReactiveSeq from
-     * @return ReactiveSeq of one Long
+
+
+    /*
+     * Fluent limit operation using primitive types
+     * e.g.
+     * <pre>
+     *  {@code
+     *    import static cyclops.ReactiveSeq.limitLongs;
+     *
+     *    ReactiveSeq.ofLongs(1,2,3)
+     *               .to(limitLongs(1));
+     *
+     *   //[1]
+     *  }
+     *  </pre>
+     *
      */
-    public static ReactiveSeq<Long> ofLongs(long value){
-        return fromSpliterator(LongStream.of(value).spliterator());
+    public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> limitLongs(long maxSize){
+
+        return a->a.longs(i->i,s->s.limit(maxSize));
     }
+    /*
+   * Fluent limit operation using primitive types
+   * e.g.
+   * <pre>
+   *  {@code
+   *    import static cyclops.ReactiveSeq.skipLongs;
+   *
+   *    ReactiveSeq.ofLongs(1,2,3)
+   *               .to(limitLongs(1));
+   *
+   *   //[1l]
+   *  }
+   *  </pre>
+   *
+   */
+    public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> skipLongs(long skip){
+
+        return a->a.longs(i->i,s->s.skip(skip));
+    }
+    /*
+     * Fluent map operation using primitive types
+     * e.g.
+     * <pre>
+     *  {@code
+     *    import static cyclops.ReactiveSeq.mapLongs;
+     *
+     *    ReactiveSeq.ofLongs(1l,2l,3l)
+     *               .to(mapLongs(i->i*2));
+     *
+     *   //[2l,4l,6l]
+     *  }
+     *  </pre>
+     *
+     */
+    public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> mapLongs(LongUnaryOperator b){
+
+        return a->a.longs(i->i,s->s.map(b));
+    }
+    /*
+    * Fluent filter operation using primitive types
+    * e.g.
+    * <pre>
+    *  {@code
+    *    import static cyclops.ReactiveSeq.filterInts;
+    *
+    *    ReactiveSeq.ofLongs(1l,2l,3l)
+    *               .to(filterLongs(i->i>2));
+    *
+    *   //[3l]
+    *  }
+    *  </pre>
+    *
+    */
+    public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> filterLongs(LongPredicate b){
+
+        return a->a.longs(i->i,s->s.filter(b));
+    }
+    /*
+     * Fluent flatMap operation using primitive types
+     * e.g.
+     * <pre>
+     *  {@code
+     *    import static cyclops.ReactiveSeq.flatMapLongs;
+     *
+     *    ReactiveSeq.ofLongs(1,2,3)
+     *               .to(flatMapLongs(i->LongStream.of(i*2)));
+     *
+     *   //[2l,4l,6l]
+     *  }
+     *  </pre>
+     *
+     */
+    public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> flatMapLongs(LongFunction<? extends LongStream> b){
+
+        return a->a.longs(i->i,s->s.flatMap(b));
+    }
+    /*
+     * Fluent integer concat operation using primitive types
+     * e.g.
+     * <pre>
+     *  {@code
+     *    import static cyclops.ReactiveSeq.concatLongs;
+     *
+     *    ReactiveSeq.ofLongs(1l,2l,3l)
+     *               .to(concatLongs(LongStream.range(5,10)));
+     *
+     *   //[1l,2l,3l,5l,6l,7l,8l,9l]
+     *  }
+     *  </pre>
+     *
+     */
+    public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> concatLongs( ReactiveSeq<Long> b){
+        return a->fromSpliterator(LongStream.concat(a.mapToLong(i->i),b.mapToLong(i->i)).spliterator());
+    }
+
     /**
      * 
      * @param values longs to populate Stream from
      * @return ReactiveSeq of multiple Longs
      */
     public static ReactiveSeq<Double> ofDoubles(double... values){
-        return fromSpliterator(DoubleStream.of(values).spliterator());
+        return fromSpliterator(new ReversingDoubleArraySpliterator<>(values,0,values.length,false));
     }
-    /**
-     * Efficiently construct a ReactiveSeq from an long (will stored an processed as a primitive where possible).
-     * 
-     * @param value Value to construct ReactiveSeq from
-     * @return ReactiveSeq of one Long
+
+    /*
+ * Fluent limit operation using primitive types
+ * e.g.
+ * <pre>
+ *  {@code
+ *    import static cyclops.ReactiveSeq.limitDoubles;
+ *
+ *    ReactiveSeq.ofDoubles(1d,2d,3d)
+ *               .to(limitDoubles(1));
+ *
+ *   //[1]
+ *  }
+ *  </pre>
+ *
+ */
+    public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> limitDouble(long maxSize){
+
+        return a->a.doubles(i->i,s->s.limit(maxSize));
+    }
+    /*
+   * Fluent limit operation using primitive types
+   * e.g.
+   * <pre>
+   *  {@code
+   *    import static cyclops.ReactiveSeq.skipDoubles;
+   *
+   *    ReactiveSeq.ofDoubles(1d,2d,3d)
+   *               .to(limitDoubles(1));
+   *
+   *   //[1d]
+   *  }
+   *  </pre>
+   *
+   */
+    public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> skipDoubles(long skip){
+
+        return a->a.doubles(i->i,s->s.skip(skip));
+    }
+    /*
+     * Fluent map operation using primitive types
+     * e.g.
+     * <pre>
+     *  {@code
+     *    import static cyclops.ReactiveSeq.mapDoubles;
+     *
+     *    ReactiveSeq.ofDoubles(1d,2d,3d)
+     *               .to(mapDoubles(i->i*2));
+     *
+     *   //[2d,4d,6d]
+     *  }
+     *  </pre>
+     *
      */
-    public static ReactiveSeq<Double> ofDouble(double value){
-        return fromSpliterator(DoubleStream.of(value).spliterator());
+    public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> mapDoubles(DoubleUnaryOperator b){
+
+        return a->a.doubles(i->i,s->s.map(b));
     }
+    /*
+    * Fluent filter operation using primitive types
+    * e.g.
+    * <pre>
+    *  {@code
+    *    import static cyclops.ReactiveSeq.filterDoubles;
+    *
+    *    ReactiveSeq.ofDoubles(1d,2d,3d)
+    *               .to(filterDoubles(i->i>2));
+    *
+    *   //[3d]
+    *  }
+    *  </pre>
+    *
+    */
+    public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> filterLongs(DoublePredicate b){
+
+        return a->a.doubles(i->i,s->s.filter(b));
+    }
+    /*
+     * Fluent flatMap operation using primitive types
+     * e.g.
+     * <pre>
+     *  {@code
+     *    import static cyclops.ReactiveSeq.flatMapDoubles;
+     *
+     *    ReactiveSeq.ofDoubles(1d,2d,3d)
+     *               .to(flatMapDoubles(i->DoubleStream.of(i*2)));
+     *
+     *   //[2d,4d,6d]
+     *  }
+     *  </pre>
+     *
+     */
+    public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> flatMapDoubles(DoubleFunction<? extends DoubleStream> b){
+
+        return a->a.doubles(i->i,s->s.flatMap(b));
+    }
+    /*
+     * Fluent integer concat operation using primitive types
+     * e.g.
+     * <pre>
+     *  {@code
+     *    import static cyclops.ReactiveSeq.concatDoubles;
+     *
+     *    ReactiveSeq.ofDoubles(1d,2d,3d)
+     *               .to(concatDoubles(DoubleStream.of(5,6,7,8,9)));
+     *
+     *   //[1d,2d,3d,5d,6d,7d,8d,9d]
+     *  }
+     *  </pre>
+     *
+     */
+    public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> concatDoubles( ReactiveSeq<Double> b){
+
+        return a->fromSpliterator(DoubleStream.concat(a.mapToDouble(i->i),b.mapToDouble(i->i)).spliterator());
+    }
+
     /**
      * Efficiently construct a ReactiveSeq from a single value
      * 

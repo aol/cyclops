@@ -20,6 +20,9 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static cyclops.function.Predicates.*;
+import static cyclops.stream.ReactiveSeq.mapDoubles;
+import static cyclops.stream.ReactiveSeq.mapInts;
+import static cyclops.stream.ReactiveSeq.mapLongs;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
@@ -34,10 +37,33 @@ public class ReactiveSeqTest {
         ReactiveSeq<Integer> list = ReactiveSeq.ofInts(1, 2, 3);
         ReactiveSeq<Integer> by10 = list.map(i -> i * 10);
         ReactiveSeq<Integer> plus2 = list.map(i -> i + 2);
-        ReactiveSeq<Integer> by10Plus2 = by10.map(i -> i + 2);
+        ReactiveSeq<Integer> by10Plus2 = by10.to(mapInts(i -> i + 2));
         assertThat(by10.toListX(), equalTo(Arrays.asList(10, 20, 30)));
         assertThat(plus2.toListX(), equalTo(Arrays.asList(3, 4, 5)));
         assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12, 22, 32)));
+    }
+
+    @Test
+    public void multipathsLongs() {
+
+        ReactiveSeq<Long> list = ReactiveSeq.ofLongs(1, 2, 3);
+        ReactiveSeq<Long> by10 = list.map(i -> i * 10);
+        ReactiveSeq<Long> plus2 = list.map(i -> i + 2);
+        ReactiveSeq<Long> by10Plus2 = by10.to(mapLongs(i -> i + 2));
+        assertThat(by10.toListX(), equalTo(Arrays.asList(10l, 20l, 30l)));
+        assertThat(plus2.toListX(), equalTo(Arrays.asList(3l, 4l, 5l)));
+        assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12l, 22l, 32l)));
+    }
+    @Test
+    public void multipathsDoubles() {
+
+        ReactiveSeq<Double> list = ReactiveSeq.ofDoubles(1, 2, 3);
+        ReactiveSeq<Double> by10 = list.map(i -> i * 10);
+        ReactiveSeq<Double> plus2 = list.map(i -> i + 2);
+        ReactiveSeq<Double> by10Plus2 = by10.to(mapDoubles(i -> i + 2));
+        assertThat(by10.toListX(), equalTo(Arrays.asList(10d, 20d, 30d)));
+        assertThat(plus2.toListX(), equalTo(Arrays.asList(3d, 4d, 5d)));
+        assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12d, 22d, 32d)));
     }
 
     int count =0;
@@ -646,7 +672,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void ofDouble(){
-        assertThat(ReactiveSeq.ofDouble(6.0)
+        assertThat(ReactiveSeq.ofDoubles(6.0)
                              .single(),equalTo(6.0));
     }
     

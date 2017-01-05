@@ -41,6 +41,7 @@ public class TopicTest {
 		Stream<String> data2 = topic.stream();
 		topic.fromStream(input);
 
+
 		assertThat(data1.limit(1).findFirst().get(), is("hello"));
 		assertThat(data2.limit(2).reduce("", (acc, next) -> acc + ' ' + next),
 				is(" hello world"));

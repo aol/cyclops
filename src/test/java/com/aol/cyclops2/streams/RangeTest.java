@@ -97,13 +97,23 @@ public class RangeTest {
 	@Test
 	public void rangeLong(){
 		assertThat(ReactiveSeq.rangeLong(0,Long.MAX_VALUE)
-				.limit(2),equalTo(ListX.of(0,1)));
+				.limit(2).toListX(),equalTo(ListX.of(0l,1l)));
 	}
 	@Test
 	public void rangeLongReversed(){
 		assertThat(ReactiveSeq.rangeLong(0,Long.MAX_VALUE).reverse()
-				.limit(2),equalTo(ListX.of(1,0)));
+				.limit(2).toListX(),equalTo(ListX.of(1l,0l)));
 	}
+    @Test
+    public void rangeLongReversedSkip(){
+        assertThat(ReactiveSeq.rangeLong(0,5).reverse()
+                .skip(3).toListX(),equalTo(ListX.of(1l,0l)));
+    }
+    @Test
+    public void rangeLongSkip(){
+        assertThat(ReactiveSeq.rangeLong(0,5)
+                .skip(3).toListX(),equalTo(ListX.of(3l,4l)));
+    }
 	@Test
 	public void rangeInt(){
 		assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE)
@@ -111,9 +121,29 @@ public class RangeTest {
 	}
 	@Test
 	public void rangeIntReversed(){
-		assertThat(ReactiveSeq.rangeLong(0,Integer.MAX_VALUE).reverse()
-				.limit(2),equalTo(ListX.of(1,0)));
+		assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE).reverse()
+				.limit(2).toListX(),equalTo(ListX.of(1,0)));
 	}
+    @Test
+    public void rangeIntReversedSkip2(){
+        assertThat(ReactiveSeq.range(0,5).reverse()
+                .skip(3).toListX(),equalTo(ListX.of(1,0)));
+    }
+    @Test
+    public void rangeIntSkip2(){
+        assertThat(ReactiveSeq.range(0,5)
+                .skip(3).toListX(),equalTo(ListX.of(3,4)));
+    }
+    @Test
+    public void rangeIntReversedSkip(){
+        assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE).reverse()
+                .limit(10).skip(8).toListX(),equalTo(ListX.of(1,0)));
+    }
+    @Test
+    public void rangeIntSkip(){
+        assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE)
+                .limit(10).skip(8).toListX(),equalTo(ListX.of(8,9)));
+    }
 	@Test
 	public void limitArray() throws InterruptedException{
 		
@@ -143,6 +173,13 @@ public class RangeTest {
 				 .skip(100)
 				 .count(),equalTo(900L));
 	}
+    @Test
+    public void skipRangeLong() throws InterruptedException{
+
+        assertThat(ReactiveSeq.rangeLong(0,1000)
+                .skip(100)
+                .count(),equalTo(900L));
+    }
 	@Test
 	public void skipRangeReversed() throws InterruptedException{
 		

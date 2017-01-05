@@ -68,7 +68,7 @@ compile cyclops2
 | type | description | characteristics |
 |------|-------------|-----------------|
 | FutureStream     | Asynchronous and parallel stream             | Lazy, async, parallel                 |
-| ReactiveSeq     | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Lazy, parallel option, primitive support, replayable, Higher kinded, Operator fusion                |
+| ReactiveSeq     | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
 | Streamable     | Capturing and caching replayable Stream type              | Lazy, caching                |
 | StreamSource     | Push data asynchronously into synchronous sequential or parallel Streams (e.g. JDK Stream, ReactiveSeq)              |             |
 

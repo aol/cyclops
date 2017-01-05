@@ -1,5 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators;
 
+import java.util.Spliterator;
+
 public interface ReversableSpliterator<T> extends CopyableSpliterator<T>{
 
     boolean isReverse();
@@ -12,4 +14,6 @@ public interface ReversableSpliterator<T> extends CopyableSpliterator<T>{
     }
 
     ReversableSpliterator<T> copy();
+
+
 }

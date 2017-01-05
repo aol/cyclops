@@ -1,42 +1,44 @@
-package com.aol.cyclops2.internal.stream.spliterators;
+package com.aol.cyclops2.internal.stream.spliterators.longs;
 
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-import java.util.function.IntConsumer;
+import java.util.function.LongConsumer;
 
+import com.aol.cyclops2.internal.stream.spliterators.Indexable;
+import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-public class ReversingRangeIntSpliterator implements Spliterator.OfInt, ReversableSpliterator<Integer>, Indexable<Integer> {
+@AllArgsConstructor
+public class ReversingRangeLongSpliterator implements Spliterator.OfLong, ReversableSpliterator<Long>,Indexable<Long> {
 
-    private final int min;
-    private final int max;
-    private int index;
-    private int start;
-
+    private long index;
+    private long start;
+    private final long min;
+    private long max;
     @Getter
     @Setter
     private boolean reverse;
 
-    public ReversingRangeIntSpliterator(final int min, final int max, final boolean reverse) {
-        this.min = Math.min(min, max)-1;
+    public ReversingRangeLongSpliterator(final long min, final long max, final boolean reverse) {
+        this.min = Math.min(min, max) - 1;
         this.max = Math.max(min, max);
         this.reverse = this.max >= this.min ? reverse : !reverse;
-        start =index = Math.min(min, max);
+        start= index = Math.min(min, max);
     }
 
     @Override
     public ReversableSpliterator invert() {
         setReverse(!isReverse());
-        start = index = max - 1;
+        start=index = max - 1;
         return this;
     }
 
     @Override
-    public boolean tryAdvance(final IntConsumer consumer) {
+    public boolean tryAdvance(final LongConsumer consumer) {
         Objects.requireNonNull(consumer);
-        //
         if (!reverse) {
             if (index < max && index > min) {
                 consumer.accept(index++);
@@ -63,34 +65,34 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     }
 
     @Override
-    public Spliterator.OfInt trySplit() {
+    public Spliterator.OfLong trySplit() {
         return this;
     }
 
     @Override
     public ReversableSpliterator copy() {
-        return new ReversingRangeIntSpliterator(
-                                                start, max, reverse);
+        return new ReversingRangeLongSpliterator(
+                                                 start, max, reverse);
     }
 
     /* (non-Javadoc)
      * @see java.util.Spliterator.OfInt#forEachRemaining(java.util.function.IntConsumer)
      */
     @Override
-    public void forEachRemaining(IntConsumer action) {
-        int index = this.index; //use local index making spliterator reusable
+    public void forEachRemaining(LongConsumer action) {
+
         if (!reverse) {
             for( ;index < max && index > min;) {
                 action.accept(index++);
-                
+
             }
         }
         if (reverse) {
             for( ;index > min && index < max;) {
                 action.accept(index--);
-                
+
             }
-            
+
         }
     }
 
@@ -98,8 +100,8 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
      * @see java.util.Spliterator.OfInt#forEachRemaining(java.util.function.Consumer)
      */
     @Override
-    public void forEachRemaining(Consumer<? super Integer> action) {
-        int index = this.index; //use local index making spliterator reusable
+    public void forEachRemaining(Consumer<? super Long> action) {
+
         if (!reverse) {
             for( ;index < max && index > min;) {
                 action.accept(index++);
@@ -107,22 +109,24 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
         }
         if (reverse) {
             for( ;index > min && index < max;) {
-                action.accept(index--);   
+                action.accept(index--);
             }
-            
+
         }
     }
 
     @Override
-    public Spliterator<Integer> start(long offset) {
-        return new ReversingRangeIntSpliterator(
-                this.start + (int)offset, max, reverse);
+    public ReversableSpliterator<Long> start(long offset) {
+        start=index=start+offset;
+        return this;
+
     }
 
     @Override
-    public Spliterator<Integer> end(long number) {
-        return new ReversingRangeIntSpliterator(
-                start, start+(int)number, reverse);
+    public ReversableSpliterator<Long> end(long num) {
+        this.max = start+num;
+        return this;
+
     }
 
 

@@ -11,8 +11,8 @@ import lombok.Setter;
 public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableSpliterator<T>, Indexable<T> {
 
     private final Object[] array;
-    private final int max;
-    private final int start;
+    private int max;
+    private int start;
     @Getter
     @Setter
     private boolean reverse;
@@ -110,15 +110,15 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
 
     @Override
     public Spliterator<T> start(long offset) {
+    this.start = index= this.start+(int)offset;
+    return this;
 
-        return new ReversingArraySpliterator<T>(
-                array, this.start+(int)offset, max,reverse);
     }
 
     @Override
     public Spliterator<T> end(long num) {
-        return new ReversingArraySpliterator<T>(
-                array, start, start+(int)num,reverse);
+        this.max = start+(int)num;
+        return this;
     }
 
 
