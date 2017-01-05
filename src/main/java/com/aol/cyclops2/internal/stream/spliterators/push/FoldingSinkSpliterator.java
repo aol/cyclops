@@ -23,7 +23,7 @@ public class FoldingSinkSpliterator<T> extends AbstractSpliterator<T>implements 
     }
 
     public void run(){
-        System.out.println("Setting " +total);
+
         action.accept(total);
     }
    
@@ -34,7 +34,7 @@ public class FoldingSinkSpliterator<T> extends AbstractSpliterator<T>implements 
      */
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
-       System.out.println("Woot!");
+
        tryAdvance(action);
     }
 

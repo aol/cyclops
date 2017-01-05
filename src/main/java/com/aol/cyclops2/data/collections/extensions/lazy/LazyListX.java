@@ -118,17 +118,12 @@ public class LazyListX<T> extends AbstractLazyMutableCollection<T,List<T>> imple
       return from(list);
     }
 
-    /**
-    @Override
-    public ReactiveSeq<T> stream() {
-        return lazy.stream();
-    }
-**/
+
 
 
     @Override
     public <X> LazyListX<X> fromStream(Stream<X> stream) {
-        System.out.println("From stream!");
+
         return new LazyListX<X>((List)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
     }
 

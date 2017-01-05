@@ -80,7 +80,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
 
     @Override
     public void onComplete() {
-        System.out.println("completing!" +action.getOnComplete());
+
         val run = action.getOnComplete();
         if(run!=null)
             run.run();

@@ -33,7 +33,7 @@ public class PublisherFlatMappingSpliterator<T,R> extends Spliterators.AbstractS
             active.forEachRemaining(action);
         }
         source.forEachRemaining(t->{
-            System.out.println("next Stream");
+
 
             Publisher<R> flatten = (Publisher<R>)mapper.apply(t);
             SeqSubscriber<R> sub = SeqSubscriber.subscriber(); //use sequential subscriber for iterable sequences, in future switch to pushsubscriber where appropriate

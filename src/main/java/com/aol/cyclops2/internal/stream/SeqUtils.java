@@ -164,7 +164,7 @@ public class SeqUtils {
                             if (current == data.size() - 1 && !complete) {
                                 final boolean result = iterator.hasNext();
                                 complete = !result;
-                                System.out.println("Complete " +  complete +  " result " + result);
+
 
                                 return result;
                             }

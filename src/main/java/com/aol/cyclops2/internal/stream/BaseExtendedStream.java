@@ -959,7 +959,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             if (s==value)
                 return (Stream) switchTo.get();
             return Stream.of(s);
-        })).peek(System.out::println);
+        }));
         return res;
     }
 

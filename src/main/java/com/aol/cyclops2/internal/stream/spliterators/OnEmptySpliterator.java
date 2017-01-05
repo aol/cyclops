@@ -43,7 +43,7 @@ public class OnEmptySpliterator<T> extends Spliterators.AbstractSpliterator<T> i
                 action.accept(e);
             });
             if(!found){
-                System.out.println("Not found - sending!!");
+
                 sent =true;
                 action.accept(value);
             }

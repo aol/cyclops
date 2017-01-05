@@ -47,7 +47,7 @@ public class OnEmptyThrowSpliterator<T> extends Spliterators.AbstractSpliterator
                 action.accept(e);
             });
             if(!found){
-                System.out.println("Not found - sending!!");
+
                 sent =true;
                 throw ExceptionSoftener.throwSoftenedException(t.get());
             }

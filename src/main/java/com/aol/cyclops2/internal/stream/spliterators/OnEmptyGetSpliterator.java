@@ -44,7 +44,7 @@ public class OnEmptyGetSpliterator<T> extends Spliterators.AbstractSpliterator<T
                 action.accept(e);
             });
             if(!found){
-                System.out.println("Not found - sending!!");
+
                 sent =true;
                 action.accept(value.get());
             }

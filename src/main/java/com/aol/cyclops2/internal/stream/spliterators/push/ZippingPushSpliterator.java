@@ -38,7 +38,7 @@ public class ZippingPushSpliterator<T1,T2,R> implements CopyableSpliterator<R>,
 
         @Override
         public void accept(T t) {
-            System.out.println("Zipper " + t);
+
             if(value==null){
                 value = t;
             }else{
