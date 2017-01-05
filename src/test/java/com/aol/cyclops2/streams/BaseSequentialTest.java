@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.collections.ListX;
+import cyclops.stream.Streamable;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -566,6 +567,37 @@ public class BaseSequentialTest {
 				assertThat(of(1,2,3).splitAtHead().v2.toListX(),equalTo(ListX.of(2,3)));
 			}
 
+    @Test
+    public void splitAtHeadImpl2(){
+        final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
+
+        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t.v2.skip(1).toList(),equalTo(ListX.of()));
+
+    }
+
+			@Test
+            public void splitAtHeadImpl(){
+                final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
+                Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = new Tuple2(
+                        t.v1.limit(1), t.v2.skip(1));
+                assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+                assertThat(t.v2.skip(1).toList(),equalTo(ListX.of()));
+                assertThat(dup.v1.toList(),equalTo(ListX.of(1)));
+                assertThat(dup.v2.toList(),equalTo(ListX.of()));
+            }
+			@Test
+			public void limitSkip(){
+				ReactiveSeq<Integer> stream = ReactiveSeq.of(1);
+				Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = stream.duplicate();
+				assertThat(dup.v1.limit(1).toList(),equalTo(ListX.of(1)));
+                assertThat(dup.v2.skip(1).toList(),equalTo(ListX.of()));
+
+
+                assertThat(Streamable.fromStream(dup.v1.limit(1)).toList(),equalTo(ListX.of(1)));
+                assertThat(Streamable.fromStream(dup.v2.skip(1)).toList(),equalTo(ListX.of()));
+
+			}
 		    @Test
 		    public void testSplitAtHead() {
 

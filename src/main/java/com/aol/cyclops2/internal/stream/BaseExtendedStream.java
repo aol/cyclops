@@ -346,6 +346,15 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final ReactiveSeq<T> skip(final long num) {
+       /** TODO future optimization so position of skip doesn't matter
+        if(reversible.isPresent()){
+            ReversableSpliterator rev = reversible.get();
+            if(rev instanceof Indexable){
+                Indexable<T> indexable = (Indexable)rev;
+                Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator) (indexable).start(num));
+                return createSeq(copyOrGet(),newRev,split);
+            }
+        }**/
         if(this.stream instanceof Indexable){
             Indexable<T> indexable = (Indexable)stream;
             return createSeq(indexable.start(num),reversible,split);
@@ -365,6 +374,16 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final ReactiveSeq<T> limit(final long num) {
+        /** TODO future optimization so position of limit doesn't matter
+       if(reversible.isPresent()){
+           ReversableSpliterator rev = reversible.get();
+           if(rev instanceof Indexable){
+               Indexable<T> indexable = (Indexable)rev;
+               Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator) (indexable).end(num));
+               return createSeq(copyOrGet(),newRev,split);
+           }
+       }
+         **/
        if(this.stream instanceof Indexable){
            Indexable<T> indexable = (Indexable)stream;
            return createSeq(indexable.end(num),reversible,split);

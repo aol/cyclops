@@ -22,8 +22,9 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
     public ReversingArraySpliterator(Object[] array,int start,int max,boolean reverse) {
         this.array = array;
         this.reverse=reverse;
-        this.max = max;
-        this.start= start;
+
+        this.max = Math.min(array.length,max);
+        this.start= Math.max(0,start);
         this.index = calcIndex();
     }
 
@@ -108,20 +109,17 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
     }
 
     @Override
-    public Spliterator<T> start(long start) {
+    public Spliterator<T> start(long offset) {
+
         return new ReversingArraySpliterator<T>(
-                array, (int)start, max,reverse);
+                array, this.start+(int)offset, max,reverse);
     }
 
     @Override
-    public Spliterator<T> end(long end) {
+    public Spliterator<T> end(long num) {
         return new ReversingArraySpliterator<T>(
-                array, start, (int)end,reverse);
+                array, start, start+(int)num,reverse);
     }
 
-    @Override
-    public Spliterator<T> startAndEnd(long start, long end) {
-        return new ReversingArraySpliterator<T>(
-                array, (int)start, (int)end,reverse);
-    }
+
 }

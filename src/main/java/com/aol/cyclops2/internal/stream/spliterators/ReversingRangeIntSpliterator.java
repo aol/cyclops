@@ -114,20 +114,16 @@ public class ReversingRangeIntSpliterator implements Spliterator.OfInt, Reversab
     }
 
     @Override
-    public Spliterator<Integer> start(long start) {
+    public Spliterator<Integer> start(long offset) {
         return new ReversingRangeIntSpliterator(
-                (int)start, max, reverse);
+                this.start + (int)offset, max, reverse);
     }
 
     @Override
-    public Spliterator<Integer> end(long end) {
+    public Spliterator<Integer> end(long number) {
         return new ReversingRangeIntSpliterator(
-                min, (int)end, reverse);
+                min, min+(int)number, reverse);
     }
 
-    @Override
-    public Spliterator<Integer> startAndEnd(long start, long end) {
-        return new ReversingRangeIntSpliterator(
-                (int)start, (int)end, reverse);
-    }
+
 }

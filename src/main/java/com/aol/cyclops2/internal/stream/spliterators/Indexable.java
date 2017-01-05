@@ -9,5 +9,5 @@ public interface Indexable<T> {
 
     Spliterator<T> start(long start);
     Spliterator<T> end(long end);
-    Spliterator<T> startAndEnd(long start, long end);
+
 }

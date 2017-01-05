@@ -114,20 +114,16 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     }
 
     @Override
-    public Spliterator<Long> start(long start) {
+    public Spliterator<Long> start(long offset) {
         return new ReversingRangeLongSpliterator(
-                start, max, reverse);
+                min+offset, max, reverse);
     }
 
     @Override
-    public Spliterator<Long> end(long end) {
+    public Spliterator<Long> end(long num) {
         return new ReversingRangeLongSpliterator(
-                min, end, reverse);
+                min, min+num, reverse);
     }
 
-    @Override
-    public Spliterator<Long> startAndEnd(long start, long end) {
-        return new ReversingRangeLongSpliterator(
-                start, end, reverse);
-    }
+
 }
