@@ -254,7 +254,7 @@ public class ReactiveSeqTest {
         ReactiveSeq<Integer> stream3 = stream.flatMap(s -> s).map(i -> i * 100);
 
         assertThat(stream2.toListX(),equalTo(ListX.of(10,20,30)));
-        assertThat(stream3.toListX(),equalTo(ListX.of(10,20,30)));
+        assertThat(stream3.toListX(),equalTo(ListX.of(100,200,300)));
 
     }
     @Test
@@ -387,6 +387,12 @@ public class ReactiveSeqTest {
     @Test
     public void skip(){
         assertThat(ReactiveSeq.of(1,2,3).skip(1).count(),equalTo(2l));
+        ReactiveSeq.of(10,1,10,2,10,3).skip(1).printOut();
+        ReactiveSeq.of(1,2,3).flatMap(i->Stream.of(10,i)).skip(1).printOut();
+    }
+    @Test
+    public void limit(){
+        assertThat(ReactiveSeq.of(1,2,3).limit(2).count(),equalTo(2l));
         ReactiveSeq.of(10,1,10,2,10,3).skip(1).printOut();
         ReactiveSeq.of(1,2,3).flatMap(i->Stream.of(10,i)).skip(1).printOut();
     }

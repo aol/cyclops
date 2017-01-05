@@ -348,7 +348,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     public final ReactiveSeq<T> skip(final long num) {
         if(this.stream instanceof Indexable){
             Indexable<T> indexable = (Indexable)stream;
-            return createSeq(indexable.end(num),reversible,split);
+            return createSeq(indexable.start(num),reversible,split);
         }
         return createSeq(new SkipSpliterator<>(copyOrGet(),num), reversible,split);
     }
@@ -367,7 +367,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     public final ReactiveSeq<T> limit(final long num) {
        if(this.stream instanceof Indexable){
            Indexable<T> indexable = (Indexable)stream;
-           return createSeq(indexable.start(num),reversible,split);
+           return createSeq(indexable.end(num),reversible,split);
        }
         return createSeq(new LimitSpliterator<T>(copyOrGet(),num), reversible,split);
     }
