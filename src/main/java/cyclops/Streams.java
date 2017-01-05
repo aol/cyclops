@@ -1945,6 +1945,15 @@ public class Streams {
                                           stream, rev,(Optional)push);
 
     }
+    public final static <T> ReactiveSeq<T> reactiveSeq(final Iterable<T> iterable){
+        return ReactiveSeq.fromIterable(iterable);
+    }
+    public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<T> stream){
+        return ReactiveSeq.fromStream(stream);
+    }
+    public final static <T> ReactiveSeq<T> reactiveSeq(final Seq<T> stream){
+        return ReactiveSeq.fromStream(stream);
+    }
     public final static <T> ReactiveSeq<T> reactiveSeq(final Spliterator<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<PushingSpliterator<?>> push) {
 
         return new StreamX<T>((Spliterator<T>)
