@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor
-public class ReversingRangeLongSpliterator implements Spliterator.OfLong, ReversableSpliterator<Long> {
+public class ReversingRangeLongSpliterator implements Spliterator.OfLong, ReversableSpliterator<Long>,Indexable<Long> {
 
     private long index;
     private long start;
@@ -113,4 +113,21 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
         }
     }
 
+    @Override
+    public Spliterator<Long> start(long start) {
+        return new ReversingRangeLongSpliterator(
+                start, max, reverse);
+    }
+
+    @Override
+    public Spliterator<Long> end(long end) {
+        return new ReversingRangeLongSpliterator(
+                min, end, reverse);
+    }
+
+    @Override
+    public Spliterator<Long> startAndEnd(long start, long end) {
+        return new ReversingRangeLongSpliterator(
+                start, end, reverse);
+    }
 }

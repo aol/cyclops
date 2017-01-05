@@ -2687,7 +2687,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @SafeVarargs
     public static <T> ReactiveSeq<T> of(final T... elements) {
         final ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(
-                                                                                    elements, false);
+                                                                                    elements,0, elements.length, false);
         return Streams.reactiveSeq(array, Optional.ofNullable(array),Optional.empty());
 
     }
@@ -2703,7 +2703,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @SafeVarargs
     public static <T> ReactiveSeq<T> reversedOf(final T... elements) {
         final ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(
-                                                                                    elements, false).invert();
+                                                                                    elements,0,elements.length, false).invert();
         return Streams.reactiveSeq(array, Optional.ofNullable(array),Optional.empty());
 
     }

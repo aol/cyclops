@@ -8,24 +8,28 @@ import lombok.Getter;
 import lombok.Setter;
 
 //@AllArgsConstructor
-public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableSpliterator<T> {
+public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableSpliterator<T>, Indexable<T> {
 
     private final Object[] array;
+    private final int max;
+    private final int start;
     @Getter
     @Setter
     private boolean reverse;
 
     int index = 0;
 
-    public ReversingArraySpliterator(Object[] array,boolean reverse) {
+    public ReversingArraySpliterator(Object[] array,int start,int max,boolean reverse) {
         this.array = array;
         this.reverse=reverse;
+        this.max = max;
+        this.start= start;
         this.index = calcIndex();
     }
 
     @Override
     public long estimateSize() {
-        return array.length;
+        return max;
     }
 
     @Override
@@ -43,9 +47,9 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
 
     private int calcIndex() {
         if(isReverse()) {
-            return array.length - 1;
+            return max - 1;
         }else{
-            return 0;
+            return start;
         }
     }
 
@@ -56,12 +60,12 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
         int index = this.index; //local index for replayability
 
         if (!reverse) {
-            for (;index < array.length && index > -1;) {
+            for (;index < max && index > -1;) {
                 action.accept((T) array[index++]);
 
             }
         } else {
-            for (;index > -1 & index < array.length;) {
+            for (;index > (start-1) & index < max;) {
                 action.accept((T) array[index--]);
 
             }
@@ -76,12 +80,12 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
 
 
         if (!reverse) {
-            if (index < array.length && index > -1) {
+            if (index < max && index > -1) {
                 action.accept((T) array[index++]);
                 return true;
             }
         } else {
-            if (index > -1 & index < array.length) {
+            if (index > (start-1) & index < max) {
                 action.accept((T) array[index--]);
                 return true;
             }
@@ -100,7 +104,24 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
     public ReversableSpliterator<T> copy() {
 
         return new ReversingArraySpliterator<T>(
-                                                array, reverse);
+                                                array, start,max,reverse);
     }
 
+    @Override
+    public Spliterator<T> start(long start) {
+        return new ReversingArraySpliterator<T>(
+                array, (int)start, max,reverse);
+    }
+
+    @Override
+    public Spliterator<T> end(long end) {
+        return new ReversingArraySpliterator<T>(
+                array, start, (int)end,reverse);
+    }
+
+    @Override
+    public Spliterator<T> startAndEnd(long start, long end) {
+        return new ReversingArraySpliterator<T>(
+                array, (int)start, (int)end,reverse);
+    }
 }
