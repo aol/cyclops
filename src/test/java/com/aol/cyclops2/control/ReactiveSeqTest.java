@@ -13,6 +13,7 @@ import reactor.core.publisher.Flux;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -337,7 +338,7 @@ public class ReactiveSeqTest {
     public void testReverseRange() {
 
         assertThat( ReactiveSeq.range(0,10)
-                .reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
+                .reverse().toList(), equalTo(asList(10,9,8,7,6,5,4,3,2,1)));
     }
 
     @Test
@@ -356,6 +357,15 @@ public class ReactiveSeqTest {
             System.out.println("Iteration " + k);
             assertThat(ReactiveSeq.range(0, 1000)
                     .parallel(s -> s.map(i -> i * 2))
+                    .count(), equalTo(1000L));
+        }
+    }
+    @Test
+    public void testParallel2(){
+        for(int k=0;k<1000;k++) {
+            System.out.println("Iteration " + k);
+            assertThat(ReactiveSeq.range(0, 1000)
+                    .parallel(new ForkJoinPool(10),s -> s.map(i -> i * 2))
                     .count(), equalTo(1000L));
         }
     }

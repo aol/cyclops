@@ -237,7 +237,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.concatInts;
      *
      *    ReactiveSeq.ofInts(1,2,3)
-     *               .to(concatInts(IntStream.range(5,10)));
+     *               .to(concatInts(ReactiveSeq.range(5,10)));
      *
      *   //[1,2,3,5,6,7,8,9]
      *  }
@@ -361,7 +361,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.concatLongs;
      *
      *    ReactiveSeq.ofLongs(1l,2l,3l)
-     *               .to(concatLongs(LongStream.range(5,10)));
+     *               .to(concatLongs(ReactiveSeq.ofLongs(5,10)));
      *
      *   //[1l,2l,3l,5l,6l,7l,8l,9l]
      *  }
@@ -484,7 +484,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.concatDoubles;
      *
      *    ReactiveSeq.ofDoubles(1d,2d,3d)
-     *               .to(concatDoubles(DoubleStream.of(5,6,7,8,9)));
+     *               .to(concatDoubles(ReactiveSeq.ofDoubles(5,6,7,8,9)));
      *
      *   //[1d,2d,3d,5d,6d,7d,8d,9d]
      *  }
@@ -697,6 +697,42 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     }
+    default <R> ReactiveSeq<R> parallel(ForkJoinPool fj,Function<? super Stream<T>,? extends Stream<R>> fn){
+        Queue<R> queue = QueueFactories.<R>unboundedNonBlockingQueue()
+                .build();
+
+        ReactiveSeq<? extends Iterator<R>> stream = ReactiveSeq.generate(() -> foldParallel(fj,fn))
+                .take(1)
+                .map(s->s.iterator());
+        Iterator[] it = {null};
+        Continuation[] store = {null};
+        Continuation cont =
+                new Continuation(()->{
+                    if(it[0]==null)
+                        it[0] = stream.apply(0l);
+                    Iterator<R> local = it[0];
+                    try {
+                        if (!local.hasNext()) {
+                            queue.close();
+                            return Continuation.empty();
+                        } else {
+                            queue.offer(local.next());
+                        }
+                    }catch(Throwable t){
+                        queue.close();
+                        throw ExceptionSoftener.throwSoftenedException(t);
+                    }
+                    return store[0];
+
+
+                });
+        ;
+        store[0]=cont;
+        queue.addContinuation(cont);
+        return queue.stream();
+
+
+    }
     default <R> R foldParallel(Function<? super Stream<T>,? extends R> fn){
 
 
@@ -724,6 +760,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         queue.addContinuation(cont);
         return fn.apply(queue.jdkStream().parallel());
+
+    }
+    default <R> R foldParallel(ForkJoinPool fj,Function<? super Stream<T>,? extends R> fn){
+
+        return fj.submit(() -> foldParallel(fn)).join();
 
     }
 
