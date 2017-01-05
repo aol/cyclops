@@ -1,48 +1,17 @@
 package com.aol.cyclops2.functions.collections.extensions;
 
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 
-import static java.util.Arrays.asList;
-import static java.util.Comparator.comparing;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.not;
-import static org.jooq.lambda.tuple.Tuple.tuple;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.aol.cyclops2.util.SimpleTimer;
+import cyclops.*;
 import cyclops.async.LazyReact;
+import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
+import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
@@ -54,17 +23,22 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cyclops.CyclopsCollectors;
-import cyclops.function.Monoid;
-import cyclops.Monoids;
-import cyclops.Reducers;
-import cyclops.Semigroups;
-import cyclops.Streams;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.ListX;
-import com.aol.cyclops2.data.collections.extensions.standard.ListXImpl;
-import com.aol.cyclops2.util.SimpleTimer;
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Arrays.asList;
+import static java.util.Comparator.comparing;
+import static org.hamcrest.Matchers.*;
+import static org.jooq.lambda.tuple.Tuple.tuple;
+import static org.junit.Assert.*;
 
 public abstract class AbstractCollectionXTest {
 	public abstract <T> FluentCollectionX<T> empty();

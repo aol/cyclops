@@ -38,7 +38,6 @@ import cyclops.Semigroups;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.ListX;
-import com.aol.cyclops2.data.collections.extensions.standard.ListXImpl;
 import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
 
 public abstract class AbstractTraversableTest {
