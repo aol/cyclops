@@ -56,7 +56,8 @@ configurations {
 	provided
 }
 dependencies {
-   
+
+	//compile group: 'org.derive4j.hkt', name: 'hkt', version: derive4jHKTVersion
 	compile 'com.nurkiewicz.asyncretry:asyncretry:'+asyncRetryVersion
 	compile 'org.pcollections:pcollections:'+pCollectionsVersion
 	compile "org.jooq:jool:${joolVersion}"
@@ -89,7 +90,7 @@ sourceSets {
 jacocoTestReport {
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/aol/cyclops/util/stream/scheduling/cron/**'])
+            fileTree(dir: it, exclude: ['com/aol/cyclops2/util/stream/scheduling/cron/**'])
         })
     }
 }
@@ -98,20 +99,22 @@ task testNG(type: Test) {
     reports.html.destination = file("$buildDir/reports/test")
 }
 
+
 task testSuite(type: Test) {
-    //include '**/*SuiteOne.*'
+
     include '**/*TestSuite.class'
     reports.junitXml.destination = "$buildDir/reports/test"
     reports.html.destination = "$buildDir/reports/test"
  }
+
  
 
 test {
         reports.html.destination = file("$buildDir/reports/test")
     
         dependsOn testNG
-        dependsOn testSuite 
-        forkEvery = 10
+     //   dependsOn testSuite
+        forkEvery = 5
         
         testLogging {
             events "started","passed", "skipped", "failed"//, "standardOut", "standardError"
@@ -131,13 +134,13 @@ javadoc {
 }
 modifyPom {
 	project {
-		name 'cyclops-react'
+		name 'cyclops2-react'
 		description 'Platform for Functional Reactive Programming with Java 8'
 		url 'https://github.com/aol/simple-react'
 		inceptionYear '2015'
 
 		groupId 'com.aol.simplereact'
-		artifactId 'cyclops-react'
+		artifactId 'cyclops2-react'
 		version "$version"
 		
 		scm {
@@ -165,6 +168,7 @@ modifyPom {
 				name 'Ke Wang'
 				email 'ke.wang@teamaol.com'
 			}
+
 			developer {
 				id 'tkountis'
 				name 'Thomas Kountis Wang'

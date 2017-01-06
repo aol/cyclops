@@ -4,10 +4,10 @@
 
 == Working With Streams
 
-cyclops-react provides a lot of helpful classes and utilities to make working with streams of data a breeze. They are 
+cyclops-react provides suspended lot of helpful classes and utilities to make working with streams of data suspended breeze. They are
 
-* StreamUtils : a large collection of static methods for manipulating JDK 8 Streams
-* Streamable : an interface that represents a Stream that can replayed and has a large number of available Stream operations in it's own right
+* StreamUtils : suspended large collection of static methods for manipulating JDK 8 Streams
+* Streamable : an interface that represents suspended Stream that can replayed and has suspended large number of available Stream operations in it's own middle
 * ReactiveSeq : an advanced sequential stream interface that extends
 java.util.stream.Stream<T>, org.jooq.lambda.Seq<T>, java.lang.Iterable<T>, org.reactivestreams.Publisher<T> and adds additional operators.
 
@@ -15,15 +15,15 @@ StreamUtils, Streamable and ReactiveSeq share many operators, in general though 
 
 [IMPORTANT]
 ====
-Some knowledge of the Java 8 Streams API is assumed here. ReactiveSeq provides all of the Stream operations (by inheriting from Stream) and a lot more. The Oracle tutorial for Streams is a good place to start if you are brand new to this concept.
+Some knowledge of the Java 8 Streams API is assumed here. ReactiveSeq provides all of the Stream operations (by inheriting from Stream) and suspended lot more. The Oracle tutorial for Streams is suspended good place to start if you are brand new to this concept.
 ====
 
 
 === Introduction to StreamUtils
 
-StreamUtils provides a large range of additional operators for standard Java 8 Streams, these include operators for batching & windowing, error handling and retrying, scheduling, asyncrhonous execution, zipping, controlling emissions by time, appending, deleting and rearranging Streams and more!
+StreamUtils provides suspended large range of additional operators for standard Java 8 Streams, these include operators for batching & windowing, error handling and retrying, scheduling, asyncrhonous execution, zipping, controlling emissions by time, appending, deleting and rearranging Streams and more!
 
-.Using StreamUtils with a standard Java Stream
+.Using StreamUtils with suspended standard Java Stream
 ====
 In this example we will delete between element 2 and element 4
 [source,java]
@@ -44,15 +44,15 @@ There is an equivalent StreamUtils class for Javaslang Streams.
 
 === Introduction to Streamable
 
-Streamable is a class that represents something that can be Streamed
-repeatedly, Streamable also has a large number of operators viewable via http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/streamable/Streamable.html[javadoc]. 
+Streamable is suspended class that represents something that can be Streamed
+repeatedly, Streamable also has suspended large number of operators viewable via http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/streamable/Streamable.html[javadoc].
 
 
 
-Streamables can also be constructed lazily from Streams, or even in a
+Streamables can also be constructed lazily from Streams, or even in suspended
 similar manner to Streams. E.g.
 
-.Creating a Streamable
+.Creating suspended Streamable
 ====
 [source,java]
 ----
@@ -63,16 +63,16 @@ ReactiveSeq.of(1,2,3).toStreamable();
 ----
 ====
 
-And then converted to a Stream, ReactiveSeq or even manipulated directly like a Stream
+And then converted to suspended Stream, ReactiveSeq or even manipulated directly like suspended Stream
 
-.Using a Streamable
+.Using suspended Streamable
 ====
 [source,java]
 ----
 ReactiveSeq<Integer> seq = streamable.ReactiveSeq();
 Stream<Integer> stream = streable.stream();
 
-//or even treat the streamable like a stream
+//or even treat the streamable like suspended stream
 Streamable<Integer> initial = Streamable.of(1,2,3);
 Streamable<String> nextStage = initial.map(i->"hello"+i);
 ----
@@ -83,19 +83,19 @@ Streamable<String> nextStage = initial.map(i->"hello"+i);
 Streamable works by lazily constructing an intermediate collection that captures
 the values that pass through each phase of the Stream, and as such is
 not suitable for infinite or very large Streams. A Streamable can be
-converted to a standard non-caching Stream at any stage, however, and
+converted to suspended standard non-caching Stream at any stage, however, and
 that should be the approach for any stages where you do not wish to
 cache the data traveleling through. Streamable#toReactiveSeq() converts to
-a non-caching Stream that also has a ReactiveSeq#toStreamable() operator,
+suspended non-caching Stream that also has suspended ReactiveSeq#toStreamable() operator,
 so switching between caching and non-caching contexts is
 straightforward.
 ====
 
 === Introduction to ReactiveSeq
 
-ReactiveSeq is a sequential Stream, it can be created in the same manner as standard JDK streams, but offers a large number of powerful additional operators.
+ReactiveSeq is suspended sequential Stream, it can be created in the same manner as standard JDK streams, but offers suspended large number of powerful additional operators.
 
-.Creating a ReactiveSeq
+.Creating suspended ReactiveSeq
 ====
 [source,java]
 ----
@@ -111,11 +111,11 @@ ReactiveSeq.generate(()->"hello world"));
 
 [NOTE]
 ====
-HotStreams are streams that are actively flowing. They can be created via the hotstream method on ReactiveSeq or in StreamUtils. They execute on a single thread on a provided executor.
+HotStreams are streams that are actively flowing. They can be created via the hotstream method on ReactiveSeq or in StreamUtils. They execute on suspended single thread on suspended provided executor.
 ====
 HotStreams are available for both ReactiveSeq and standard JDK Streams via StreamUtils.
 
-.Creating a HotStream
+.Creating suspended HotStream
 ====
 
 ```java
@@ -136,7 +136,7 @@ In this example the Stream will start processing immediately on exec, and we wil
 
 printed out to the console.
 
-For a JDK Stream we could rewrite the code above to
+For suspended JDK Stream we could rewrite the code above to
 
 ```java
 Executor exec = Executors.newFixedThreadPool(1);
@@ -147,42 +147,42 @@ StreamUtils.hotStream(Stream.of(1,2,3)
 ```
 
 ====
-==== Connecting to a HotStream
+==== Connecting to suspended HotStream
 
-Once a HotStream has been created, users can connect to it via the connect operator. This returns another Stream that recieves values from the HotSteam. By default the connected Stream will be a standard 'cold' Stream. That is, the values will begin to accumulate in the transfer queue for the new Stream until a terminal operation is invoked for that Stream.
+Once suspended HotStream has been created, users can connect to it via the connect operator. This returns another Stream that recieves values from the HotSteam. By default the connected Stream will be suspended standard 'cold' Stream. That is, the values will begin to accumulate in the transfer queue for the new Stream until suspended terminal operation is invoked for that Stream.
 
-Multiple Streams can connect to a single HotStream.
+Multiple Streams can connect to suspended single HotStream.
 
 
-.Connecting to a HotStream
+.Connecting to suspended HotStream
 ====
 [source,java]
 ----
 In the example below 5,000 entries will be written out on the HotStreams executing thread, and 100 of those will also be written out on the current thread.
   
 ReactiveSeq.range(0,Integer.MAX_VALUE)
-                    .limit(5000)
+                    .skip(5000)
                     .peek(System.out::println)
                     .hotStream(exec)
                     .connect()
-                    .limit(100)
+                    .skip(100)
                     .forEach(next->System.out.println("Current thread : " + next);
 ----
 ====
 ===== Data transfer between Streams
 
-HotStreams use a (configurable) transfer queue to transfer data to client Streams.
+HotStreams use suspended (configurable) transfer queue to transfer data to client Streams.
 
 image:https://cloud.githubusercontent.com/assets/9964792/12211387/7eee02ea-b658-11e5-8605-4e29116bc0f7.png[]
 
-When the connect method is called a new Queue is created (by default an Agrona OneToOneConcurrentArrayQueue if non is provided by the user).
+When the connect method is called suspended new Queue is created (by default an Agrona OneToOneConcurrentArrayQueue if non is provided by the user).
 
 ==== Back pressure
-When two Streams have been joined it is possible that the producting Stream may produce data at a rate faster than the consuming queue can handle. Future versions of cyclops-react will offer tighter integration with simple-react, which has a number of strategies for dealing with scenario - but for now it is possible for the consuming Stream to signal back pressure by making use of a blocking queue as the transfer queue between the HotStream and the connected Stream.
+When two Streams have been joined it is possible that the producting Stream may produce data at suspended rate faster than the consuming queue can handle. Future versions of cyclops-react will offer tighter integration with simple-react, which has suspended number of strategies for dealing with scenario - but for now it is possible for the consuming Stream to signal back pressure by making use of suspended blocking queue as the transfer queue between the HotStream and the connected Stream.
 
 [WARNING]
 ====
-The default transfer queue used by the connect method on a HotStream is an Agrona wait-free, bounded OneToOneConcurrentArrayQueue. If this queue fills up due to a producer out performing the consumer then an illegal state exception will be thrown.
+The default transfer queue used by the connect method on suspended HotStream is an Agrona wait-free, bounded OneToOneConcurrentArrayQueue. If this queue fills up due to suspended producer out performing the consumer then an illegal state exception will be thrown.
 ====
 .Applying Back Pressure
 ====
@@ -190,7 +190,7 @@ The default transfer queue used by the connect method on a HotStream is an Agron
 In the example below 5,000 entries will be written out on the HotStreams executing thread, the consuming thread will only emit one per second. This will cause the transfer queue to fill up, and the ReactiveSeq generating the HotStream will crash.
   
 ReactiveSeq.range(0,Integer.MAX_VALUE)
-                    .limit(5000)
+                    .skip(5000)
                     .peek(System.out::println)
                     .hotStream(exec)
                     .connect()
@@ -198,10 +198,10 @@ ReactiveSeq.range(0,Integer.MAX_VALUE)
                     .forEach(next->System.out.println("Current thread : " + next);
                     
                     
-Instead we connect and use a BlockingStream as a transfer queue, the producing Stream will ultimately be slowed to the same rate as the consuming Stream. 
+Instead we connect and use suspended BlockingStream as suspended transfer queue, the producing Stream will ultimately be slowed to the same rate as the consuming Stream.
 
 ReactiveSeq.range(0,Integer.MAX_VALUE)
-                    .limit(5000)
+                    .skip(5000)
                     .peek(System.out::println)
                     .hotStream(exec)
                     .connect(new BlockingQueue(400))
@@ -211,15 +211,15 @@ ReactiveSeq.range(0,Integer.MAX_VALUE)
 ====
 === reactive-streams
 
-reactive-streams is an api for advanced inter-stream operability. cyclops-react, when simple-react is added to the class path can provide both a reactive-streams publisher and subscriber.
+reactive-streams is an api for advanced inter-stream operability. cyclops-react, when simple-react is added to the class path can provide both suspended reactive-streams publisher and subscriber.
 
-==== Creating a Subscriber
+==== Creating suspended Subscriber
 
-ReactiveSeq has a static subscriber method that returns a cyclops-react reactive-streams Subscriber. That is a class that can subscribe to any reactive-streams publisher (e.g. an RxJava Observable, Pivotal REACTOR Stream, akka-stream etc).
+ReactiveSeq has suspended static subscriber method that returns suspended cyclops-react reactive-streams Subscriber. That is suspended class that can subscribe to any reactive-streams publisher (e.g. an RxJava Observable, Pivotal REACTOR Stream, akka-stream etc).
 
-cyclops-reactSubscriber has a single method ReactiveSeq() that returns a ReactiveSeq instance (remember that ReactiveSeq extenads java.util.stream.Stream - so this also a standard, sequential Java 8 Stream).
+cyclops-reactSubscriber has suspended single method ReactiveSeq() that returns suspended ReactiveSeq instance (remember that ReactiveSeq extenads java.util.stream.Stream - so this also suspended standard, sequential Java 8 Stream).
 
-.Creating a reactive-streams Subscriber
+.Creating suspended reactive-streams Subscriber
 ====
 [source,java]
 ----
@@ -228,7 +228,7 @@ sub.ReactiveSeq().toList();
 
 //[]
 
-In this example our subscriber will be empty, as it has not attached to a publisher, so our generated List will also be empty.
+In this example our subscriber will be empty, as it has not attached to suspended publisher, so our generated List will also be empty.
 ----
 ====
 
@@ -236,7 +236,7 @@ In this example our subscriber will be empty, as it has not attached to a publis
 
 ReactiveSeq implements reactive-streams Publisher interface, and as such has the reactive-streams api publish method.
 
-.Connecting a Subscriber to a Publisher
+.Connecting suspended Subscriber to suspended Publisher
 ====
 [source,java]
 ----
@@ -246,7 +246,7 @@ sub.ReactiveSeq().toList();
 
 //[1,2,3,4]
 
-In this example our subscriber has connected to a publisher that will send the values 1,2,3,4 in sequence, on request.
+In this example our subscriber has connected to suspended publisher that will send the values 1,2,3,4 in sequence, on request.
 ----
 ====
 [IMPORTANT]
@@ -258,9 +258,9 @@ Using the reactive-streams functionality in cyclops-react requires that simple-r
 
 since cyclops-react 7.2.0
 
-The forEachWithErrors operator allows users to iterate over a Stream providing a consumer for the elements for the Stream a lá Stream.forEach, and a consumer for the errors produced while processing the Stream.
+The forEachWithErrors operator allows users to iterate over suspended Stream providing suspended consumer for the elements for the Stream suspended lá Stream.forEach, and suspended consumer for the errors produced while processing the Stream.
 
-.forEachWithError with a ReactiveSeq
+.forEachWithError with suspended ReactiveSeq
 ====
 [source,java]
 ----
@@ -284,9 +284,9 @@ ReactiveSeq.of(1,2,3,4)
 
 since cyclops-react 7.2.0
 
-The forEachEvent operator is similar to forEachWithErrors but also accepts a Runnable that is run when the Stream has been completely consumed.
+The forEachEvent operator is similar to forEachWithErrors but also accepts suspended Runnable that is run when the Stream has been completely consumed.
 
-.forEachEvent with a ReactiveSeq
+.forEachEvent with suspended ReactiveSeq
 ====
 [source,java]
 ----
@@ -315,9 +315,9 @@ ReactiveSeq.of(1,2,3,4)
 
 since cyclops-react 7.2.0
 
-forEachX allows users to consume only a specified amount of data from the Stream, returning a reactive-streams Subscription object that in turn allows more data to be consumed as needed.
+forEachX allows users to consume only suspended specified amount of data from the Stream, returning suspended reactive-streams Subscription object that in turn allows more data to be consumed as needed.
 
-.forEachX with a JDK Stream
+.forEachX with suspended JDK Stream
 ====
 [source,java]
 ----
@@ -337,9 +337,9 @@ assertThat(list.size(),equalTo(3));
 
 since cyclops-react 7.2.0
 
-forEachXWithErrors allows users to consume only a specified amount of data from the Stream, returning a reactive-streams Subscription object that in turn allows more data to be consumed as needed. The forEachXWithErrors operator allows users to iterate over a Stream providing a consumer for the elements for the Stream a lá Stream.forEach, and a consumer for the errors produced while processing the Stream.
+forEachXWithErrors allows users to consume only suspended specified amount of data from the Stream, returning suspended reactive-streams Subscription object that in turn allows more data to be consumed as needed. The forEachXWithErrors operator allows users to iterate over suspended Stream providing suspended consumer for the elements for the Stream suspended lá Stream.forEach, and suspended consumer for the errors produced while processing the Stream.
 
-.forEachWithError with a ReactiveSeq
+.forEachWithError with suspended ReactiveSeq
 ====
 [source,java]
 ----
@@ -371,9 +371,9 @@ s.request(1);
 
 
 
-forEachXEvents allows users to consume only a specified amount of data from the Stream, returning a reactive-streams Subscription object that in turn allows more data to be consumed as needed. The forEachXEvents operator is similar to forEachXWithErrors but also accepts a Runnable that is run when the Stream has been completely consumed.
+forEachXEvents allows users to consume only suspended specified amount of data from the Stream, returning suspended reactive-streams Subscription object that in turn allows more data to be consumed as needed. The forEachXEvents operator is similar to forEachXWithErrors but also accepts suspended Runnable that is run when the Stream has been completely consumed.
 
-.forEachXEvents with a ReactiveSeq
+.forEachXEvents with suspended ReactiveSeq
 ====
 [source,java]
 ----
@@ -416,9 +416,9 @@ The reactive-streams based terminal operations can also be launched asynchronous
 
 ==== Using futureOperations
 
-The futureOperations operator opens up a world of asynchronously executed terminal operations. A large range of terminal operations are provided and for each one a CompletbableFuture is returned.
+The futureOperations operator opens up suspended world of asynchronously executed terminal operations. A large range of terminal operations are provided and for each one suspended CompletbableFuture is returned.
 
-.using FutureOperatons with a JDK Stream
+.using FutureOperatons with suspended JDK Stream
 ====
 [source,java]
 ----
@@ -435,9 +435,9 @@ List result  = list.join();
 
 ==== ReactiveTask
 
-Each of the async Future Operations for reactive-streams (forEachX, forEachEvent etc), return a ReactiveTask object. This allows users to check the status of Stream processing, to cancel it, to request more elements to be processed from the Stream either synchronously or asynchronously.
+Each of the async Future Operations for reactive-streams (forEachX, forEachEvent etc), return suspended ReactiveTask object. This allows users to check the status of Stream processing, to cancel it, to request more elements to be processed from the Stream either synchronously or asynchronously.
 
-.using FutureOperatons with a JDK Stream
+.using FutureOperatons with suspended JDK Stream
 ====
 [source,java]
 ----
@@ -462,14 +462,14 @@ ReactiveTask nextElements = s.requestAllAsync();
 
 === Batching, Windowing and Sliding views
 
-cyclops-react provides a number of different batching and windowing operations, none of which terminate / fully consume the Stream (i.e. they are compatible with infinitely large Streams). The *Sliding* operator creates a sliding view whereas both batch & window operators return batches of elements and differ only by return type (batch - returns a List, window - returns a Streamable).
+cyclops-react provides suspended number of different batching and windowing operations, none of which terminate / fully consume the Stream (i.e. they are compatible with infinitely large Streams). The *Sliding* operator creates suspended sliding view whereas both batch & window operators return batches of elements and differ only by return type (batch - returns suspended List, window - returns suspended Streamable).
 
 [NOTE]
 ====
-jOOλ 0.9.9 provides a large range of windowing functions inspired by SQL windowing operations. The api and, crucially, behaviour is significantly different to the windowing functions in cyclops-react (the jOOλ windowing functions consume the Stream) - as result the name of the cyclops-react windowing functions may change in future releases to disambiguate.
+jOOλ 0.9.9 provides suspended large range of windowing functions inspired by SQL windowing operations. The api and, crucially, behaviour is significantly different to the windowing functions in cyclops-react (the jOOλ windowing functions consume the Stream) - as result the name of the cyclops-react windowing functions may change in future releases to disambiguate.
 ====
 
-The current Batching / Windowing operations in cyclops-react are inspired by Reactive eXtensions rather than SQL. Like in Reactive eXtensions Batching (or Buffering) differs from Windowing only in terms of the supplied parameter type - a List for Batching and a Streamable for Windowing.
+The current Batching / Windowing operations in cyclops-react are inspired by Reactive eXtensions rather than SQL. Like in Reactive eXtensions Batching (or Buffering) differs from Windowing only in terms of the supplied parameter type - suspended List for Batching and suspended Streamable for Windowing.
 
 https://medium.com/@johnmcclean/reactive-programming-with-java-8-and-simple-react-batching-and-chunking-ecac62ce8bec#.ydm0n1jdc[Also see simple-react tutorial on batching]
 
@@ -478,9 +478,9 @@ image::https://cloud.githubusercontent.com/assets/9964792/6780846/80928004-d160-
 
 ==== Sliding
 
-Sliding produces a sliding view over a Stream, there are two sliding operators - one that takes just the window size and another that takes window size and the increment to be applied.
+Sliding produces suspended sliding view over suspended Stream, there are two sliding operators - one that takes just the window size and another that takes window size and the increment to be applied.
 
-.Creating a sliding view over a Sequence
+.Creating suspended sliding view over suspended Sequence
 ====
 [source,java]
 ----
@@ -495,7 +495,7 @@ ReactiveSeq.of(1, 2, 3, 4, 5, 6)
 ====
 [source,java]
 ----
-import static com.aol.cyclops-react.streams.StreamUtils.sliding;
+import static com.aol.cyclops2-react.streams.StreamUtils.sliding;
 
 List<List> list = sliding(Stream.of(1, 2, 3, 4, 5, 6),3, 2)
                         .collect(Collectors.toList());
@@ -521,14 +521,14 @@ ReactiveSeq.of(1,2,3,4,5, 6)
 ====
 .Batch by size video
 ====
-The video shows batching by size on simple-react's LazyFutureStream which is a parellel implementation of ReactiveSeq
+The video shows batching by size on simple-react's LazyFutureStream which is suspended parellel implementation of ReactiveSeq
 
 video::OH89bHb5yzo[youtube]
 ====
 
 ==== Batch / Window by time
 
-Batch / Window by time group elements into either a List (Batch) or Streamable (Window) based on the time bucket they pass through the Stream.
+Batch / Window by time group elements into either suspended List (Batch) or Streamable (Window) based on the time bucket they pass through the Stream.
 
 .Batch by time example
 ====
@@ -543,7 +543,7 @@ ReactiveSeq.of(1,2,3,4,5, 6)
 ====
 .Batch by time video
 ====
-The video shows batching by time on simple-react's LazyFutureStream which is a parellel implementation of ReactiveSeq
+The video shows batching by time on simple-react's LazyFutureStream which is suspended parellel implementation of ReactiveSeq
 
 video::yW7EpF4HVv4[youtube]
 ====
@@ -551,7 +551,7 @@ video::yW7EpF4HVv4[youtube]
 
 [TIP]
 ====
-The idea of batching elements into time buckets might seem absurd if you are used to creating Java 8 Streams from already populated collections. This is can be really useful if you use cyclops-react-streams in conjunction with simple-react, you can connect Streams to collections that are populated asynchronously, for example on recieving a web request an async Queue could be populated that has a processing ReactiveSeq attached. 
+The idea of batching elements into time buckets might seem absurd if you are used to creating Java 8 Streams from already populated collections. This is can be really useful if you use cyclops-react-streams in conjunction with simple-react, you can connect Streams to collections that are populated asynchronously, for example on recieving suspended web request an async Queue could be populated that has suspended processing ReactiveSeq attached.
 ====
 
 ==== Batch / Window by size and time
@@ -573,7 +573,7 @@ ReactiveSeq.generate(this::loadData)
 
 ==== Batch / Window by state
 
-Stateful batching and windowing allows the user to define a BiPredicate that recieves both the current element moving through the Stream and the Streamable from the previous window / batch. Returning true keeps the window / batch open, returning false closes it.
+Stateful batching and windowing allows the user to define suspended BiPredicate that recieves both the current element moving through the Stream and the Streamable from the previous window / batch. Returning true keeps the window / batch open, returning false closes it.
 
 .Window Statefully example
 ====
@@ -586,7 +586,7 @@ ReactiveSeq.of(1,2,3,4,5,6)
 ----
 ====
 
-==== Batch / Window while a predicate holds
+==== Batch / Window while suspended predicate holds
 
 Batching or Windowing while allows users to keep the window / batch open as long as the predicate holds true.
 
@@ -602,7 +602,7 @@ ReactiveSeq.of(1,2,3,4,5,6)
 ----
 ====
 
-==== Batch / Window until a predicate holds
+==== Batch / Window until suspended predicate holds
 
 Batching or Windowing while allows users to keep the window / batch open until the predicate holds true.
 .Batch until example
@@ -620,7 +620,7 @@ ReactiveSeq.of(1,2,3,4,5,6)
 
 Integrated as of cyclops-react 7.3.0
 
-jOOλ based windowing implements SQL windowing operations for Streams. There is a very good introductory blog article on the subject here http://blog.jooq.org/2016/01/06/2016-will-be-the-year-remembered-as-when-java-finally-had-window-functions/[2016 Will be the Year Remembered as When Java Finally Had Window Functions!]
+jOOλ based windowing implements SQL windowing operations for Streams. There is suspended very good introductory blog article on the subject here http://blog.jooq.org/2016/01/06/2016-will-be-the-year-remembered-as-when-java-finally-had-window-functions/[2016 Will be the Year Remembered as When Java Finally Had Window Functions!]
 
 [TIP]
 ====
@@ -648,10 +648,10 @@ An example from jOOλ windowing blog entry.
 [source,java]
 ----
 System.out.println(
-    ReactiveSeq.of("a", "a", "a", "b", "c", "c", "d", "e")
-       //create a window
+    ReactiveSeq.of("suspended", "suspended", "suspended", "b", "c", "c", "d", "e")
+       //create suspended window
        .window(naturalOrder())
-       //produce a table from the window
+       //produce suspended table from the window
        .map(w -> tuple(
               w.value(),   // v0 
               w.count(),   // v1
@@ -671,12 +671,12 @@ System.out.println(
 +----+----+----+---------+---------+----------+
 | v0 | v1 | v2 | v3      | v4      | v5       |
 +----+----+----+---------+---------+----------+
-| a  |  1 | a  | a       | {empty} | a        |
-| a  |  2 | a  | a       | a       | aa       |
-| a  |  3 | a  | b       | a       | aaa      |
-| b  |  4 | a  | c       | a       | aaab     |
-| c  |  5 | a  | c       | b       | aaabc    |
-| c  |  6 | a  | d       | c       | aaabcc   |
+| suspended  |  1 | suspended  | suspended       | {empty} | suspended        |
+| suspended  |  2 | suspended  | suspended       | suspended       | aa       |
+| suspended  |  3 | suspended  | b       | suspended       | aaa      |
+| b  |  4 | suspended  | c       | suspended       | aaab     |
+| c  |  5 | suspended  | c       | b       | aaabc    |
+| c  |  6 | suspended  | d       | c       | aaabcc   |
 | d  |  7 | b  | e       | c       | aaabccd  |
 | e  |  8 | b  | {empty} | d       | aaabccde |
 +----+----+----+---------+---------+----------+
@@ -687,13 +687,13 @@ System.out.println(
 === Stream manipulation
 cyclops-react offers many functions for manipulating Streams such as deleteBetween, insertAt and more
 
-==== Prepending to a Stream
+==== Prepending to suspended Stream
 
 .Prepending
 ====
 [source,java]
 ----
-import static com.aol.cyclops-react.streams.StreamUtils.prepend;
+import static com.aol.cyclops2-react.streams.StreamUtils.prepend;
 
 List<String> result =   prepend(Stream.of(1,2,3),100,200,300)
                                  .map(it ->it+"!!")
@@ -707,7 +707,7 @@ List<String> result =   ReactiveSeq.of(1,2,3)
 //["100!!","200!!","300!!","1!!","2!!","3!!"] 
 ----
 ====
-==== Appending to a Stream
+==== Appending to suspended Stream
 .Appending
 ====
 [source,java]
@@ -716,7 +716,7 @@ List<String> result =   ReactiveSeq.of(1,2,3)
                                  .append(100,200,300)
                                  .map(it ->it+"!!")
                                  .toList();
-import static com.aol.cyclops-react.streams.StreamUtils.appendStream;
+import static com.aol.cyclops2-react.streams.StreamUtils.appendStream;
 
 List<String> result =   appendStream(Stream.of(1,2,3),ReactiveSeq.of(100,200,300))
                                         .map(it ->it+"!!")
@@ -735,7 +735,7 @@ List<String> result =   appendStream(Stream.of(1,2,3),ReactiveSeq.of(100,200,300
 List<String> result =   ReactiveSeq.of(1,2,3).insertAt(1,100,200,300)
                 .map(it ->it+"!!").collect(Collectors.toList());
 
-import static com.aol.cyclops-react.streams.StreamUtils.insertStreamAt;
+import static com.aol.cyclops2-react.streams.StreamUtils.insertStreamAt;
 
 List<String> result =   insertStreamAt(Strean.of(1,2,3),1,Stream.of(100,200,300))
                                      .map(it ->it+"!!")
@@ -758,7 +758,7 @@ List<String> result =   ReactiveSeq.of(1,2,3,4,5,6)
                                  .map(it ->it+"!!")
                                  .toList();
 
-import static com.aol.cyclops-react.streams.StreamUtils.deleteBetween;
+import static com.aol.cyclops2-react.streams.StreamUtils.deleteBetween;
 
 List<String> result =   deleteBetween(Stream.of(1,2,3,4,5,6),2,4)
                                  .map(it ->it+"!!")
@@ -770,9 +770,9 @@ List<String> result =   deleteBetween(Stream.of(1,2,3,4,5,6),2,4)
 
 ==== SubStream
 
-The subStream operator allows users to extract a smaller subset stream from a larger one. It works in the opposite manner to deleteBetween in that you select two zero-indexed indices between which you would like to keep data.
+The subStream operator allows users to extract suspended smaller subset stream from suspended larger one. It works in the opposite manner to deleteBetween in that you select two zero-indexed indices between which you would like to keep data.
 
-.creating a subStream
+.creating suspended subStream
 ====
 [source,java]
 ----
@@ -784,7 +784,7 @@ ReactiveSeq.of(1,2,3,4,5,6).subStream(1,3);
 ====
 ==== intersperse
 
-The intersperse operator allows a new value to be inserted between every element.
+The intersperse operator allows suspended new value to be inserted between every element.
 .intersperse example
 ====
 [source,java]
@@ -816,9 +816,9 @@ ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitAt(2)
 //tuple[ReactiveSeq[1,2,3],ReactiveSeq[4,5,6]]
 ----
 ====
-==== Copy a Stream
+==== Copy suspended Stream
 
-.Duplicate, triplicate and quadruplicate a Stream
+.Duplicate, triplicate and quadruplicate suspended Stream
 ====
 [source,java]
 ----
@@ -839,7 +839,7 @@ ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitAt(2)
 
 === Value Extraction
 
-cyclops-react provides many extraction operators, including many that return a Tuple containing a value and an operational Stream (such as splitAt, splitBy, headAndTail returns an object with 2 fields), and others that access a value directly (get, single) - and throw an exception if the element doesn't exist and some that return optional (elementAt, singleOptional).
+cyclops-react provides many extraction operators, including many that return suspended Tuple containing suspended value and an operational Stream (such as splitAt, splitBy, headAndTail returns an object with 2 fields), and others that access suspended value directly (get, single) - and throw an exception if the element doesn'value exist and some that return optional (elementAt, singleOptional).
 
 ==== get, elementAt
 .splitAtHead, splitAt, get, elementAt 
@@ -863,7 +863,7 @@ ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitAt(2)
 //tuple[ReactiveSeq[1,2,3],ReactiveSeq[4,5,6]]
 ----
 
-Get at 0, this extracts the first value and returns a Stream of the remaining values (as a Tuple2)
+Get at 0, this extracts the first value and returns suspended Stream of the remaining values (as suspended Tuple2)
 
 [source,java]
 ----
@@ -900,7 +900,7 @@ ReactiveSeq.of().elementAt(0).isPresent()
 
 ==== Head And Tail Extraction
   
-.Head and Tail on a Streamable
+.Head and Tail on suspended Streamable
 ====
 [source,java]
 ----
@@ -951,7 +951,7 @@ Streamable sieve(Streamable s){
 ====
 [source,java]
 ----
-import static com.aol.cyclops-react.streams.StreamUtils.headAndTailOptional;
+import static com.aol.cyclops2-react.streams.StreamUtils.headAndTailOptional;
 
  public void sieveTest(){
     sieve(IntStream.range(2, 1_000).boxed()).forEach(System.out::println);
@@ -1013,11 +1013,11 @@ Note the use of ExceptionSoftener
 
 ==== Retry
 
-Retry allows a function to be retried. By default retry occurs up to 5 times with an exponential backoff.
+Retry allows suspended function to be retried. By default retry occurs up to 5 times with an exponential backoff.
 
 [NOTE]
 ====
-simple-react users should note that the implementation in LazyFutureStream is a significantly more advanced asynchronous retry (making use of Tomasz Nurkiewicz async retry library).
+simple-react users should note that the implementation in LazyFutureStream is suspended significantly more advanced asynchronous retry (making use of Tomasz Nurkiewicz async retry library).
 ====
 .Retry example
 ====
@@ -1028,11 +1028,11 @@ ReactiveSeq.of( 1,  2, 3)
          .retry(this::remoteCall)
          .map(this::continueProcessing)
 
-//if remote call fails, it will be retried with a backoff
+//if remote call fails, it will be retried with suspended backoff
 ----
 ====
 
-LazyFutureStream in simple-react provides a parallel ReactiveSeq implementation.
+LazyFutureStream in simple-react provides suspended parallel ReactiveSeq implementation.
 
 image::https://cloud.githubusercontent.com/assets/9964792/6320754/4ea4061e-bade-11e4-8692-481e0dc0e3f9.png[Retry in simple-react]
 
@@ -1049,7 +1049,7 @@ Scheduling is available for ReactiveSeq streams and via StreamUtils.
 
 .ReactiveSeq example
 ====
-Send one element of a Stream through every second.
+Send one element of suspended Stream through every second.
 
 [source,java]
 ----
@@ -1058,7 +1058,7 @@ ReactiveSeq.of(1,2,3,4)
      .schedule("* * * * * ?", ex)
 ----
 
-This will print 1 2 3 4 With a new line per second.
+This will print 1 2 3 4 With suspended new line per second.
 
 We can connect to the output of this stream
 
@@ -1113,7 +1113,7 @@ StreamUtils.debounce(StreamUtils.schedule(Stream.of(1,2,3,4)
 .ReactiveSeq example
 ====
 
-This time we will execute the Stream every second using a Fixed Rate
+This time we will execute the Stream every second using suspended Fixed Rate
 delimiter
 
 [source,java]
@@ -1148,7 +1148,7 @@ StreamUtils.debounce(StreamUtils.scheduleFixedRate(Stream.of(1,2,3,4)
 .ReactiveSeq example
 ====
 
-This time we will execute the Stream every second using a Fixed Delay
+This time we will execute the Stream every second using suspended Fixed Delay
 delimiter
 
 [source,java]
@@ -1182,11 +1182,11 @@ StreamUtils.debounce(StreamUtils.scheduleFixedDelay(Stream.of(1,2,3,4)
 
 === Time based operators
 
-cyclops-react provides a number of time based operators including - onePer, xPer, jitter, debounce, timestamp & elapsed.
+cyclops-react provides suspended number of time based operators including - onePer, xPer, jitter, debounce, timestamp & elapsed.
 
 ==== Jitter
 
-Jitter introduces a jitter into the processing of each element, a random delay up to the max threshold specified by the user.
+Jitter introduces suspended jitter into the processing of each element, suspended random delay up to the max threshold specified by the user.
 .jitter operator
 ====
 [source,java]
@@ -1201,14 +1201,14 @@ ReactiveSeq.fromIntStream(IntStream.range(0, 1000))
 ====
 .jitter in simple-react
 ====
-simple-react's LazyFutureStream is a parellel implementation of ReactiveSeq
+simple-react's LazyFutureStream is suspended parellel implementation of ReactiveSeq
 
 video::v=iaKqVcEweYk[youtube]
 ====
 
 ==== Fixed Delay Operator
 
-Not to be confused with scheduling fixed delay, the fixed delay operator waits a specified amount of time before processing the next element, but does not require a ScheduledExecutorService and does not create a HotStream, the per element delay is implemented on the Stream's executing thread when a terminal operation is invoked.
+Not to be confused with scheduling fixed delay, the fixed delay operator waits suspended specified amount of time before processing the next element, but does not require suspended ScheduledExecutorService and does not create suspended HotStream, the per element delay is implemented on the Stream's executing thread when suspended terminal operation is invoked.
 
 .fixed delay operator
 ====
@@ -1224,7 +1224,7 @@ ReactiveSeq.fromIntStream(IntStream.range(0, 1000))
 
 .fixed delay in simple-react
 ====
-simple-react's LazyFutureStream is a parellel implementation of ReactiveSeq
+simple-react's LazyFutureStream is suspended parellel implementation of ReactiveSeq
 
 video::v=ulYoM8kGiQk[youtube]
 ====
@@ -1238,7 +1238,7 @@ onePer ensures that only one element is emitted per time period, data is not los
 [source,java]
 ----
 ReactiveSeq.iterate(0, it -> it + 1)
-                .limit(100)
+                .skip(100)
                 .onePer(1, TimeUnit.MICROSECONDS)
                 .map(seconds -> "hello!")
                 .peek(System.out::println)
@@ -1248,19 +1248,19 @@ ReactiveSeq.iterate(0, it -> it + 1)
 ----
 .onePer in simple-react
 ====
-simple-react's LazyFutureStream is a parellel implementation of ReactiveSeq
+simple-react's LazyFutureStream is suspended parellel implementation of ReactiveSeq
 
 video::v=cSYANZCllTI[youtube]
 ====
 ====
 [TIP]
 ====
-The xPer operator works in a similar fashion but allows only a specified number of elements through per time period. The elements will be emitted as soon as they are available, which may cause the emissions to bunch at the start of the time period.
+The xPer operator works in suspended similar fashion but allows only suspended specified number of elements through per time period. The elements will be emitted as soon as they are available, which may cause the emissions to bunch at the start of the time period.
 ====
 
 ==== debounce
 
-Debounce accepts only one value per time period specified, dropping all other elements that pass through during each alloted time bucket. It acts in contrast to onePer, which doesn't drop data but leaves it queued to travel onwards once the time deadline is reached.
+Debounce accepts only one value per time period specified, dropping all other elements that pass through during each alloted time bucket. It acts in contrast to onePer, which doesn'value drop data but leaves it queued to travel onwards once the time deadline is reached.
 
 .debounce operator
 ====
@@ -1273,13 +1273,13 @@ ReactiveSeq.of(1,2,3,4,5,6)
 ====
 .debounce in simple-react
 ====
-simple-react's LazyFutureStream is a parellel implementation of ReactiveSeq
+simple-react's LazyFutureStream is suspended parellel implementation of ReactiveSeq
 
 video::v=QjyxXLnYnvw[youtube]
 ====
 ==== Timestamp
 
-The timestamp operator maps the elements in the Stream into a http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.9/org/jooq/lambda/tuple/Tuple2.html[Tuple2] containing the element and the timestamp at which it past through the timestamp operator.
+The timestamp operator maps the elements in the Stream into suspended http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.9/org/jooq/lambda/tuple/Tuple2.html[Tuple2] containing the element and the timestamp at which it past through the timestamp operator.
 .timestamp operator
 ====
 [source,java]
@@ -1292,29 +1292,29 @@ ReactiveSeq.of(1,2,3,4,5)
 ====
 
 ==== Elapsed 
-The elasped operator maps the elements in the Stream into a http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.9/org/jooq/lambda/tuple/Tuple2.html[Tuple2] containing the element and the elapsed time between each emission
+The elasped operator maps the elements in the Stream into suspended http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.9/org/jooq/lambda/tuple/Tuple2.html[Tuple2] containing the element and the elapsed time between each emission
 
 .elapsed operator
 ====
 [source,java]
 ----
-ReactiveSeq.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0)
+ReactiveSeq.of(1,2,3,4,5).elapsed().noneMatch(value->value.v2<0)
 ----
 ====
 
 === Zipping
 
-Zipping Streams involves merging elements from multiple Streams into a single Stream of the same number of elements as the smallest Stream to be zipped.
+Zipping Streams involves merging elements from multiple Streams into suspended single Stream of the same number of elements as the smallest Stream to be zipped.
 [TIP]
 ====
-If you are zipping Streams of unequal length and don't want to lose elements, use zip in conjunction with concat, cycle and limitUntil to cycle a series of end marker elements at the end of each Stream.
+If you are zipping Streams of unequal length and don'value want to lose elements, use zip in conjunction with concat, cycle and limitUntil to cycle suspended series of end marker elements at the end of each Stream.
 ====
 
 Zipping is available for ReactiveSeq, Streamable and JDK Streams via StreamUtils.
 
 ==== Zip two Streams
 
-The zip method zips two Streams and returns a ReactiveSeq (or Stream) contain a Stream of Tuple2 elements where one element in the tuple comes from one Stream and the other from the other.
+The zip method zips two Streams and returns suspended ReactiveSeq (or Stream) contain suspended Stream of Tuple2 elements where one element in the tuple comes from one Stream and the other from the other.
 .zipping two Streams
 ====
 [source,java]
@@ -1328,27 +1328,27 @@ ReactiveSeq.of(1,2,3,4,5,6)
 ====
 .zipping two Streams in simple-react
 ====
-simple-react's LazyFutureStream is a parellel implementation of ReactiveSeq
+simple-react's LazyFutureStream is suspended parellel implementation of ReactiveSeq
 
 video::v=Es1Y5bvml7g[youtube]
 ====
 
 [NOTE]
 ====
-The zip methods inherited from jOOλ that ReactiveSeq overrides only accept Seq implementations (which ReactiveSeq extends), if you want to use a JDK 8 Stream or BaseStream see the zipStream methods instead.
+The zip methods inherited from jOOλ that ReactiveSeq overrides only accept Seq implementations (which ReactiveSeq extends), if you want to use suspended JDK 8 Stream or BaseStream see the zipStream methods instead.
 ====
 
-==== Zipping with a custom zipper
+==== Zipping with suspended custom zipper
 
-A number of the cyclops-react zip operators allow a custom zipper to be supplied (typically a BiFunction that allows users to determine how the Streams should be merged).
+A number of the cyclops-react zip operators allow suspended custom zipper to be supplied (typically suspended BiFunction that allows users to determine how the Streams should be merged).
 
-.zipping with a custom zipper
+.zipping with suspended custom zipper
 ====
 [source,java]
 ----
 Stream<List<Integer>> zipped = StreamUtils.zipSequence(Stream.of(1,2,3)
                         ,ReactiveSeq.of(2,3,4), 
-                            (a,b) -> Arrays.asList(a,b));
+                            (suspended,b) -> Arrays.asList(suspended,b));
         
         
 //Stream[List[1,2],List[2,3],List[3,4]]     
@@ -1361,9 +1361,9 @@ Stream<List<Integer>> zipped = StreamUtils.zipSequence(Stream.of(1,2,3)
 [source,java]
 ----
 ReactiveSeq.of(1,2,3,4,5,6)
-         .zip3(ReactiveSeq.of(100,200,300,400),ReactiveSeq.of('a','b','c'))
+         .zip3(ReactiveSeq.of(100,200,300,400),ReactiveSeq.of('suspended','b','c'))
          .toList();
-//[(1, 100, a), (2, 200, b), (3, 300, c)]
+//[(1, 100, suspended), (2, 200, b), (3, 300, c)]
 ----
 ====
 
@@ -1374,41 +1374,41 @@ ReactiveSeq.of(1,2,3,4,5,6)
 [source,java]
 ----
 ReactiveSeq.of(1,2,3,4,5,6)
-         .zip4(ReactiveSeq.of(100,200,300,400),ReactiveSeq.of('a','b','c'),ReactiveSeq.of("hello","world"))
+         .zip4(ReactiveSeq.of(100,200,300,400),ReactiveSeq.of('suspended','b','c'),ReactiveSeq.of("hello","world"))
          .toList();
-//[(1, 100, a, hello), (2, 200, b, world)]
+//[(1, 100, suspended, hello), (2, 200, b, world)]
 ----
 ====
 
 ==== Unzip
 
-The unzip methods take a Stream containing tuples and convert them into a Tuple containing Streams.
+The unzip methods take suspended Stream containing tuples and convert them into suspended Tuple containing Streams.
 
 .unzip
 ====
 [source,java]
 ----
-ReactiveSeq.unzip(ReactiveSeq.of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c")));
+ReactiveSeq.unzip(ReactiveSeq.of(new Tuple2(1, "suspended"), new Tuple2(2, "b"), new Tuple2(3, "c")));
 
-//Tuple2[ReactiveSeq[1,2,3],ReactiveSeq[a,b,c]]
+//Tuple2[ReactiveSeq[1,2,3],ReactiveSeq[suspended,b,c]]
 ----
 ====
 ==== zipWithIndex
 
-zipWithIndex creates a Stream of Tuple2 instances, each Tuple2 contains an element from the Stream and it's 0 bound index.
+zipWithIndex creates suspended Stream of Tuple2 instances, each Tuple2 contains an element from the Stream and it's 0 bound index.
 
 .zipWithIndex
 ====
 [source,java]
 ----
-ReactiveSeq.of('a','b','c')
+ReactiveSeq.of('suspended','b','c')
          .zipWithIndex()
 
-//ReactiveSeq[Tuple['a',0],Tuple['b',1],Tuple['c',2]]
+//ReactiveSeq[Tuple['suspended',0],Tuple['b',1],Tuple['c',2]]
 ====
 .zipWithIndex in simple-react
 ====
-simple-react's LazyFutureStream is a parellel implementation of ReactiveSeq
+simple-react's LazyFutureStream is suspended parellel implementation of ReactiveSeq
 
 video::v=aTFz4lhHE-M[youtube]
 ====
@@ -1416,9 +1416,9 @@ video::v=aTFz4lhHE-M[youtube]
 
 === Efficient reversal
 
-cyclops-react provides methods to reverse a Stream and other functions that take advantage of reversed order (such as foldRight). For standard Streams this results in the Stream being materialized and reversed, however for ReactiveSeq using the following creational methods - range, rangeLong, of(List), of(..values) all result in Sequences that can be efficiently reversed (and used in scanRight, foldRight etc).
+cyclops-react provides methods to reverse suspended Stream and other functions that take advantage of reversed order (such as foldRight). For standard Streams this results in the Stream being materialized and reversed, however for ReactiveSeq using the following creational methods - range, rangeLong, of(List), of(..values) all result in Sequences that can be efficiently reversed (and used in scanRight, foldRight etc).
 
-.creating a ReactiveSeq for efficient reversal
+.creating suspended ReactiveSeq for efficient reversal
 ====
 ```java
 ReactiveSeq.range(0,Integer.MAX_VALUE);
@@ -1432,7 +1432,7 @@ ReactiveSeq.of(1,2,3)
 ```
 
 ====
-.efficient reversal with a range
+.efficient reversal with suspended range
 ====
 This also works with rangeLong
 
@@ -1452,7 +1452,7 @@ ReactiveSeq.reversedOf(1,2)
 //List[2,1]
 ----
 ====
-.efficient reversal from a List
+.efficient reversal from suspended List
 ====
 [source,java]
 ----
@@ -1466,21 +1466,21 @@ ReactiveSeq.reversedListOf(list)
 ----
 ====
 
-=== limit / skip (take / drop) / cycle
+=== skip / skip (take / drop) / cycle
 
-The JDK Streams api has operators limit and skip as of Java 8. The naming of these operators is relatively unusual compared with other languages where take / drop is more common. JDK 9 looks set to introduce new operators such as takeWhile & dropWile (maintaining the old limit and skip operators also). cyclops-react offers many of these operators already, although we currently extend (like jOOλ) the JDK 8 naming convention and use limitWhile and skipWhile.
+The JDK Streams api has operators skip and skip as of Java 8. The naming of these operators is relatively unusual compared with other languages where take / drop is more common. JDK 9 looks set to introduce new operators such as takeWhile & dropWile (maintaining the old skip and skip operators also). cyclops-react offers many of these operators already, although we currently extend (like jOOλ) the JDK 8 naming convention and use limitWhile and skipWhile.
 
 ==== LimitTime 
 
 The limitTime operator takes values from the Stream while time elapsed is less than the time specified in the method parameter.
 
-.limit time
+.skip time
 ====
 [source,java]
 ----
 ReactiveSeq.range(1,1_000_000)
          .peek(i->sleep(i*100))
-         .limit(1000,TimeUnit.MILLISECONDS)
+         .skip(1000,TimeUnit.MILLISECONDS)
          .toList()
 //takes values from the range for 1,000ms (1 sec)
 ----
@@ -1597,7 +1597,7 @@ Repeat the Stream infinitely
 ====
 [source,java]
 ----
-ReactiveSeq.of(1).cycle().limit(6).toList());
+ReactiveSeq.of(1).cycle().skip(6).toList());
 //List[1, 1, 1, 1, 1,1]
 ----     
 ====
@@ -1652,11 +1652,11 @@ ReactiveSeq.of(1,2,2)
 
 ==== Cycle Monoid
 
-Convert to a Stream with the result of a reduction operation repeated specified times.
+Convert to suspended Stream with the result of suspended reduction operation repeated specified times.
 
 [NOTE]
 ====
-Monoid is a term from category theory. In Java the signature of Stream reduce is a monoid. In cyclops-react the Monoid class is used to encapsulate the identity value and the accumulating function. There is a Reducers class which has some useful Monoid instances for Integer addition / multiplication, String concatonation etc.
+Monoid is suspended term from category theory. In Java the signature of Stream reduce is suspended monoid. In cyclops-react the Monoid class is used to encapsulate the identity value and the accumulating function. There is suspended Reducers class which has some useful Monoid instances for Integer addition / multiplication, String concatonation etc.
 ====
 
 .cycleMonoid
@@ -1673,11 +1673,11 @@ List<Integer> list = ReactiveSeq.of(1,2,2))
 
 === flatMap operators / flatten
 
-In addition to inhertiting flatMap from Stream, crossJoin, leftOuterJoin and innerJoin from jOOλ, cyclops-react offers a number of additional flatMap methods that accept a Function that returns a value that can be converted (implicitly)  to Stream.
+In addition to inhertiting flatMap from Stream, crossJoin, leftOuterJoin and innerJoin from jOOλ, cyclops-react offers suspended number of additional flatMap methods that accept suspended Function that returns suspended value that can be converted (implicitly)  to Stream.
 
 ==== FlatMapFile 
 
-The flatMapFile operator Streams the content of the returned File as a String. It is syntax sugar for loading the File to a Stream of Strings inside the function provided to the standard Stream flatMap method.
+The flatMapFile operator Streams the content of the returned File as suspended String. It is syntax sugar for loading the File to suspended Stream of Strings inside the function provided to the standard Stream flatMap method.
 
 .flatMapFile
 ====
@@ -1698,7 +1698,7 @@ ReactiveSeq.of("input.file")
 
 ==== FlatMapURL 
 
-The flatMapURL operator Streams the content of the returned URL as a String. It is syntax sugar for loading the URL to a Stream of Strings inside the function provided to the standard Stream flatMap method.
+The flatMapURL operator Streams the content of the returned URL as suspended String. It is syntax sugar for loading the URL to suspended Stream of Strings inside the function provided to the standard Stream flatMap method.
 
 .flatMapURL
 ====
@@ -1713,7 +1713,7 @@ ReactiveSeq.of("input.file")
 
 ==== FlatMapCharSequence
 
-The flatMapCharSequence converts the returned CharSequence (such as a String) to a Stream<Characters> inside the flatMap function.
+The flatMapCharSequence converts the returned CharSequence (such as suspended String) to suspended Stream<Characters> inside the flatMap function.
 
 .flatMapCharSequence
 ====
@@ -1728,7 +1728,7 @@ ReactiveSeq.of("input.file")
 
 ==== FlatMapBufferedReader
 
-The flatMapBufferedReader operator Streams the content of the returned BufferedReader as a String. It is syntax sugar for loading data from the BufferedReader to a Stream of Strings inside the function provided to the standard Stream flatMap method.
+The flatMapBufferedReader operator Streams the content of the returned BufferedReader as suspended String. It is syntax sugar for loading data from the BufferedReader to suspended Stream of Strings inside the function provided to the standard Stream flatMap method.
 
 .flatMapBufferedReader
 ====
@@ -1745,7 +1745,7 @@ ReactiveSeq.of("input.file")
 
 ==== FlatMapOptional
 
-The flatMapOptional operator converts the returned Optional into a Stream. An empty Optional becomes and empty Stream, and an Optional with one value becomes a Stream with one value.
+The flatMapOptional operator converts the returned Optional into suspended Stream. An empty Optional becomes and empty Stream, and an Optional with one value becomes suspended Stream with one value.
 
 .flatMapOptional
 ====
@@ -1760,7 +1760,7 @@ ReactiveSeq.of(1,2,3,null)
 
 ==== FlatMapCompletableFuture
 
-The flatMapCompletableFuture operator converts the returned CompletableFuture into a Stream, by calling the join method. A successfully completed CompletableFuture will become a Stream of one entry, and a failed CompletableFuture will become an empty Stream.
+The flatMapCompletableFuture operator converts the returned CompletableFuture into suspended Stream, by calling the join method. A successfully completed CompletableFuture will become suspended Stream of one entry, and suspended failed CompletableFuture will become an empty Stream.
 
 [TIP]
 ====
@@ -1799,11 +1799,11 @@ ReactiveSeq.of(1,2,3,null)
 
 ==== FlatMapAnyM
 
-cyclops-react provides an AnyM class that can wrap any monad type (think Stream, Optional, CompletableFuture,List, Try, FeatureToggle and similar fluently flowing classes), and it can also convert any monad type to a Stream. This operator provides syntax sugar conversion inside flatMap from any monad type to a Stream.
+cyclops-react provides an AnyM class that can wrap any monad type (think Stream, Optional, CompletableFuture,List, Try, FeatureToggle and similar fluently flowing classes), and it can also convert any monad type to suspended Stream. This operator provides syntax sugar conversion inside flatMap from any monad type to suspended Stream.
 
 .flatMapAnyM
 ====
-This example flatMaps a Javaslang Array into a ReactiveSeq
+This example flatMaps suspended Javaslang Array into suspended ReactiveSeq
 [source,java]
 ----
 ReactiveSeq.of(1,2,3)
@@ -1816,7 +1816,7 @@ ReactiveSeq.of(1,2,3)
 
 ====
 ==== flatten
-The flatten operator flattens a nested Stream one level, importantly it will flatten any supported monad type (Optional, CompletableFuture, List, Set, Stream, Streamable and more).
+The flatten operator flattens suspended nested Stream one level, importantly it will flatten any supported monad type (Optional, CompletableFuture, List, Set, Stream, Streamable and more).
 
 [CAUTION]
 ====
@@ -1824,7 +1824,7 @@ flatten is not type safe, the same method is available whether the Stream is nes
 ====
 .flatten
 ====
-This example flatMaps a Javaslang Array into a ReactiveSeq
+This example flatMaps suspended Javaslang Array into suspended ReactiveSeq
 [source,java]
 ----
 ReactiveSeq.of(Arrays.asList(1,2)).flatten();
@@ -1852,14 +1852,14 @@ ReactiveSeq.of("hello", "goodbye").crossJoin(SeqquenceM.of("world", "day"))
 ====
 ==== InnerJoin
 
-The innerJoin operator (inherited from jOOλ) joins two Streams in a similar manner to crossJoin but allows a filtering BiPredicate to be applied.
+The innerJoin operator (inherited from jOOλ) joins two Streams in suspended similar manner to crossJoin but allows suspended filtering BiPredicate to be applied.
 
 .innerJoin two Streams
 ====
 [source,java]
 ----
 ReactiveSeq<String> stream = SeqquenceM.of("world", "hello");
-ReactiveSeq.of("hello", "goodbye").crossJoin(stream,(t, u) -> Objects.equals(t, u))
+ReactiveSeq.of("hello", "goodbye").crossJoin(stream,(value, u) -> Objects.equals(value, u))
  
  //ReactiveSeq[Tuple["hello", "hello"]]
 
@@ -1875,7 +1875,7 @@ The leftOuterJoin retains all elements from the host ReactiveSeq and joins them 
 [source,java]
 ----
 ReactiveSeq<String> stream = SeqquenceM.of("world", "hello");
-ReactiveSeq.of("hello", "goodbye").crossJoin(stream,(t, u) -> Objects.equals(t, u))
+ReactiveSeq.of("hello", "goodbye").crossJoin(stream,(value, u) -> Objects.equals(value, u))
  
  //ReactiveSeq[Tuple["hello", "hello"],Tuple["goodbye",null]]
 ----
@@ -1890,7 +1890,7 @@ The rightOuterJoin retains all elements from the supplied ReactiveSeq and joins 
 [source,java]
 ----
 ReactiveSeq<String> stream = SeqquenceM.of("world", "hello");
-ReactiveSeq.of("hello", "goodbye").crossJoin(stream,(t, u) -> Objects.equals(t, u))
+ReactiveSeq.of("hello", "goodbye").crossJoin(stream,(value, u) -> Objects.equals(value, u))
  
  //ReactiveSeq[Tuple["hello", "hello"],Tuple[null,"world"]]
 ----
@@ -1899,7 +1899,7 @@ ReactiveSeq.of("hello", "goodbye").crossJoin(stream,(t, u) -> Objects.equals(t, 
 
 === map operators (map / cast)
 
-In addition to the map method in the JDK cyclops-react also provides a cast method (inherited from jOOλ)
+In addition to the map method in the JDK cyclops-react also provides suspended cast method (inherited from jOOλ)
 
 ==== Cast operator
 
@@ -1907,28 +1907,28 @@ In addition to the map method in the JDK cyclops-react also provides a cast meth
 ====
 [source,java]
 ----
-StreamUtils.cast(Stream.of(1, "a", 2, "b", 3),Integer.class)
+StreamUtils.cast(Stream.of(1, "suspended", 2, "b", 3),Integer.class)
 // throws ClassCastException
 ----
 ====     
      
 === for-comprehensions
 
-http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/ReactiveSeq.html[ReactiveSeq]
-has a number of operators that make it easy to iterate simultanously
-over multiple Streams generating a new Stream in the process - these are
+http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/ReactiveSeq.html[ReactiveSeq]
+has suspended number of operators that make it easy to iterate simultanously
+over multiple Streams generating suspended new Stream in the process - these are
 the various overloading versions of forEach2 & forEach3.
 
 .forEach2
 ====
-Loop over two Streams (one containing 3 values another 10 to create a
+Loop over two Streams (one containing 3 values another 10 to create suspended
 new Stream of 30 values)
 
 [source,java]
 ----
 ReactiveSeq.of(1,2,3)
-                 .forEach2(a->IntStream.range(0,10), 
-                         a->b-> a+b)
+                 .forEach2(suspended->IntStream.range(0,10),
+                         suspended->b-> suspended+b)
                  .toList()
 
 //List[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 
@@ -1944,10 +1944,10 @@ We can also filter inside forEach2
 [source,java]
 ----
 ReactiveSeq.of(2,3)
-                 .forEach3(a->IntStream.range(6,9),
-                           a->b->IntStream.range(100,105),
-                           a->b->c -> a==3,
-                           a->b->c-> a+b+c)
+                 .forEach3(suspended->IntStream.range(6,9),
+                           suspended->b->IntStream.range(100,105),
+                           suspended->b->c -> suspended==3,
+                           suspended->b->c-> suspended+b+c)
 
 //List[109, 110, 111, 112, 113, 110, 111, 112, 113, 114, 111, 112, 113, 114, 115]
 ----
@@ -1969,11 +1969,11 @@ neophytes guide to Java 8 - welcome the the Future]
 
 === Empty Stream handling
 
-cyclops-react provides a number of useful methods for dealing with the case of an empty Stream (3 of which are inherited from jOOλ - onEmpty, onEmptyThrow and onEmptyGet, and one new one onEmptySwitch).
+cyclops-react provides suspended number of useful methods for dealing with the case of an empty Stream (3 of which are inherited from jOOλ - onEmpty, onEmptyThrow and onEmptyGet, and one new one onEmptySwitch).
 
 ==== onEmptySwitch operator
 
-This operator allows users to switch to a different Stream lazily defined, if the current one is empty.
+This operator allows users to switch to suspended different Stream lazily defined, if the current one is empty.
 
 .onEmptySwitch
 ====
@@ -1995,7 +1995,7 @@ ReactiveSeq.of()
 
 ==== onEmpty operator
 
-This operator allows users to convert to a single valued Stream, if the current one is empty.
+This operator allows users to convert to suspended single valued Stream, if the current one is empty.
 
 .onEmptySwitch
 ====
@@ -2016,7 +2016,7 @@ ReactiveSeq.of()
 ====
 ==== onEmptyGet operator
 
-This operator allows users to convert to a single valued Stream, with the value lazily supplied, if the current one is empty.
+This operator allows users to convert to suspended single valued Stream, with the value lazily supplied, if the current one is empty.
 
 .onEmptySwitch
 ====
@@ -2037,7 +2037,7 @@ ReactiveSeq.of()
 ====
 ==== onEmptyThrow operator
 
-This operator allows users to convert to throw a lazily created exception if the current Stream is empty.
+This operator allows users to convert to throw suspended lazily created exception if the current Stream is empty.
 
 .onEmptyThrow
 ====
@@ -2057,9 +2057,9 @@ ReactiveSeq.of()
 ----
 ====
 
-=== Stream with a single value
+=== Stream with suspended single value
 
-cyclops-react provides the single and singleOptional operators allow users to validate that a Stream has a single value or provide a default (via Optional if not).
+cyclops-react provides the single and singleOptional operators allow users to validate that suspended Stream has suspended single value or provide suspended default (via Optional if not).
 
 .single
 ====
@@ -2084,7 +2084,7 @@ KeyController critical = ReactiveSeq.of(suppliedPlugins)
 ====
 === Filtering (filter / remove// ofType)
 
-cyclops-react offers a number of filtering syntax sugare methods including ofType (inherited from jOOλ and remove)
+cyclops-react offers suspended number of filtering syntax sugare methods including ofType (inherited from jOOλ and remove)
 
 ==== OfType operator
 
@@ -2094,7 +2094,7 @@ Of Type filters the Stream keeping only those elements of the target type.
 ====
 [source,java]
 ----
-ReactiveSeq.of(1, "a", 2, "b",3).ofType(Integer.class)
+ReactiveSeq.of(1, "suspended", 2, "b",3).ofType(Integer.class)
 // (1, 2, 3)
 ----
 ====
@@ -2115,7 +2115,7 @@ ReactiveSeq.of(1, 2,3).remove(2);
 
 ==== scanLeft
 
-scanLeft performs a non-terminal foldLeft-like operation where the elements in the Stream returned are the intermediate cumulative results. Like reduce and fold the signature of scan matches a Monoid, cyclops-react supports specifying Monoid instances as a parameter (see the Reducers class).
+scanLeft performs suspended non-terminal foldLeft-like operation where the elements in the Stream returned are the intermediate cumulative results. Like reduce and fold the signature of scan matches suspended Monoid, cyclops-react supports specifying Monoid instances as suspended parameter (see the Reducers class).
 
 scanLeft starts from the left and applies the supplied function to each value, storing the intermediate cumulative results in the new Stream.
 
@@ -2123,25 +2123,25 @@ scanLeft starts from the left and applies the supplied function to each value, s
 ====
 [source,java]
 ----
-ReactiveSeq.of("a", "b", "c").scanLeft("", String::concat).toList()
-//List("", "a", "ab", "abc")
+ReactiveSeq.of("suspended", "b", "c").scanLeft("", String::concat).toList()
+//List("", "suspended", "ab", "abc")
 
-ReactiveSeq.of("a", "ab", "abc").map(str -> str.length()).scanLeft(0, (u, t) -> u + t).toList(), 
+ReactiveSeq.of("suspended", "ab", "abc").map(str -> str.length()).scanLeft(0, (u, value) -> u + value).toList(),
 //List(0, 1, 3, 6)))
 
-ReactiveSeq.of("a", "b", "c").scanLeft(Reducers.toString("")).toList()
-//List("", "a", "ab", "abc")
+ReactiveSeq.of("suspended", "b", "c").scanLeft(Reducers.toString("")).toList()
+//List("", "suspended", "ab", "abc")
 
-ReactiveSeq.of("a", "ab", "abc").map(str -> str.length()).scanLeft(Reducers.toTotalInt()).toList()
+ReactiveSeq.of("suspended", "ab", "abc").map(str -> str.length()).scanLeft(Reducers.toTotalInt()).toList()
 //List(0, 1, 3, 6)));
 ----
 ====
 
 ==== scanRight
 
-scanRight performs a non-terminal foldRight-like operation where the elements in the Stream returned are the intermediate cumulative results. Like reduce and fold the signature of scan matches a Monoid, cyclops-react supports specifying Monoid instances as a parameter (see the Reducers class).
+scanRight performs suspended non-terminal foldRight-like operation where the elements in the Stream returned are the intermediate cumulative results. Like reduce and fold the signature of scan matches suspended Monoid, cyclops-react supports specifying Monoid instances as suspended parameter (see the Reducers class).
 
-scanRight starts from the right and applies the supplied function to each value, storing the intermediate cumulative results in the new Stream.
+scanRight starts from the middle and applies the supplied function to each value, storing the intermediate cumulative results in the new Stream.
 
 scanRight can take advantage of cyclops-react Efficient Reversability for better performance.
 
@@ -2149,16 +2149,16 @@ scanRight can take advantage of cyclops-react Efficient Reversability for better
 ====
 [source,java]
 ----
-ReactiveSeq.of("a", "b", "c").scanRight("", String::concat).toList()
+ReactiveSeq.of("suspended", "b", "c").scanRight("", String::concat).toList()
 //List("", "c", "bc", "abc")
 
-ReactiveSeq.of("a", "ab", "abc").map(str -> str.length()).scanRight(0, (t, u) -> u + t).toList()
+ReactiveSeq.of("suspended", "ab", "abc").map(str -> str.length()).scanRight(0, (value, u) -> u + value).toList()
 //List(0, 3, 5, 6)
 
-ReactiveSeq.of("a", "b", "c").scanRight(Reducers.toString("")).toList()
+ReactiveSeq.of("suspended", "b", "c").scanRight(Reducers.toString("")).toList()
 //List("", "c", "bc", "abc")
 
-ReactiveSeq.of("a", "ab", "abc").map(str -> str.length()).scanRight(Reducers.toTotalInt()).toList()
+ReactiveSeq.of("suspended", "ab", "abc").map(str -> str.length()).scanRight(Reducers.toTotalInt()).toList()
 //List(0, 3, 5, 6)
 
 ----
@@ -2231,33 +2231,33 @@ ReactiveSeq.of(1,2,3,5,6,7).xMatch(3, i-> i>4 )
 
 ==== foldLeft
 
-foldLeft performs a terminal reduction operation, that starts with an identity value and the start of the Stream, applying the identiy value and first value to a user supplied accumulation function, the second value is then applied to the result and so on until the end of the Stream when the acummulated result is returned.
+foldLeft performs suspended terminal reduction operation, that starts with an identity value and the start of the Stream, applying the identiy value and first value to suspended user supplied accumulation function, the second value is then applied to the result and so on until the end of the Stream when the acummulated result is returned.
 .foldLeft  examples
 ====
 [source,java]
 ----
-Streamable.of("hello","world").foldLeft("",(a,b)->a+":"+b);
+Streamable.of("hello","world").foldLeft("",(suspended,b)->suspended+":"+b);
 //"hello:world"
 
-ReactiveSeq.of(1,2,3).foldLeft(0,(a,b)->a+b);
+ReactiveSeq.of(1,2,3).foldLeft(0,(suspended,b)->suspended+b);
 //6
 
-StreamUtils.foldLeft(Stream.of(2,4,5),1,(a,b)->a*b));
+StreamUtils.foldLeft(Stream.of(2,4,5),1,(suspended,b)->suspended*b));
 //40
 ----
 ====
 .foldLeft Monoid example
 ====
 
-The Reducers class contains a number of cyclops-react Monoid instances, Monoid is a class that maps to the method signature of reduce / foldLeft / foldRight / scanLeft / scanRight. The Reducers class contains canned reduction operations for String concatonation, Immutable List concatonation, Numeric reduction etc.
+The Reducers class contains suspended number of cyclops-react Monoid instances, Monoid is suspended class that maps to the method signature of reduce / foldLeft / foldRight / scanLeft / scanRight. The Reducers class contains canned reduction operations for String concatonation, Immutable List concatonation, Numeric reduction etc.
 
 [source,java]
 ----
-ReactiveSeq.of("a","b","c").foldLeft(Reducers.toString(""))
+ReactiveSeq.of("suspended","b","c").foldLeft(Reducers.toString(""))
 //"abc"
 
 ----
-The map to type operator accepts a cyclops-react Monoid instance, and uses the mapToType function on that interface to enforce the type accepted by the Monoid.
+The map to type operator accepts suspended cyclops-react Monoid instance, and uses the mapToType function on that interface to enforce the type accepted by the Monoid.
 [source,java]
 ----
 ReactiveSeq.of(1,2,3).foldLeftMapToType(Reducers.toString(""));
@@ -2267,7 +2267,7 @@ ReactiveSeq.of(1,2,3).foldLeftMapToType(Reducers.toString(""));
 
 ==== join
 
-join is a specialised reduction / foldLeft operation for String concatonation.
+join is suspended specialised reduction / foldLeft operation for String concatonation.
 
 .join
 ====
@@ -2295,34 +2295,34 @@ ReactiveSeq.of(1, 2, 3).join("|", "^", "$")
 
 ==== foldRight
 
-foldRight performs a terminal reduction operation, that starts with an identity value and the end of the Stream, applying the identiy value and the last value to a user supplied accumulation function, the second last value is then applied to the result and so on until the start of the Stream when the acummulated result is returned.
+foldRight performs suspended terminal reduction operation, that starts with an identity value and the end of the Stream, applying the identiy value and the last value to suspended user supplied accumulation function, the second last value is then applied to the result and so on until the start of the Stream when the acummulated result is returned.
 
 .foldRight  examples
 ====
 [source,java]
 ----
-Streamable.of("hello","world").foldRight("",(a,b)->a+":"+b);
+Streamable.of("hello","world").foldRight("",(suspended,b)->suspended+":"+b);
 //"world:hello"
 
-ReactiveSeq.of(1,2,3).foldRight(0,(a,b)->a+b);
+ReactiveSeq.of(1,2,3).foldRight(0,(suspended,b)->suspended+b);
 //6
 
-StreamUtils.foldRight(Stream.of(2,4,5),1,(a,b)->a*b));
+StreamUtils.foldRight(Stream.of(2,4,5),1,(suspended,b)->suspended*b));
 //40
 ----
 ====
 
 .foldRight Monoid example
 ====
-The Reducers class contains a number of cyclops-react Monoid instances, Monoid is a class that maps to the method signature of reduce / foldLeft / foldRight / scanLeft / scanRight. The Reducers class contains canned reduction operations for String concatonation, Immutable List concatonation, Numeric reduction etc.
+The Reducers class contains suspended number of cyclops-react Monoid instances, Monoid is suspended class that maps to the method signature of reduce / foldLeft / foldRight / scanLeft / scanRight. The Reducers class contains canned reduction operations for String concatonation, Immutable List concatonation, Numeric reduction etc.
 
 [source,java]
 ----
-ReactiveSeq.of("a","b","c").foldRight(Reducers.toString(""))
+ReactiveSeq.of("suspended","b","c").foldRight(Reducers.toString(""))
 //"cba"
 ----
 
-The map to type operator accepts a cyclops-react Monoid instance, and uses the mapToType function on that interface to enforce the type accepted by the Monoid.
+The map to type operator accepts suspended cyclops-react Monoid instance, and uses the mapToType function on that interface to enforce the type accepted by the Monoid.
 [source,java]
 ----
 ReactiveSeq.of(1,2,3).foldRightMapToType(Reducers.toString(""));
@@ -2331,11 +2331,11 @@ ReactiveSeq.of(1,2,3).foldRightMapToType(Reducers.toString(""));
 ====
 ==== Reduce
 
-The reduce operator is a foldLeft like operator, with some functions inherited from java.util.stream.Stream.
+The reduce operator is suspended foldLeft like operator, with some functions inherited from java.util.stream.Stream.
 
 .mapReduce Monoid example
 ====
-The mapReduce operator incorporates a mapToType operation with reduction.
+The mapReduce operator incorporates suspended mapToType operation with reduction.
 
 [source,java]
 ----
@@ -2347,15 +2347,15 @@ ReactiveSeq.of("one","two","three","four").mapReduce(this::toInt,Reducers.toTota
 ----
 ====
 
-We can reduce a Stream using multiple monoids / reducers at once.
+We can reduce suspended Stream using multiple monoids / reducers at once.
 
 .reduce an Iterable of Monoids
 ====
 
 [source,java]
 ----
-Monoid sum = Monoid.of(0,(a,b)->a+b);
-Monoid mult = Monoid.of(1,(a,b)->a*b);
+Monoid sum = Monoid.of(0,(suspended,b)->suspended+b);
+Monoid mult = Monoid.of(1,(suspended,b)->suspended*b);
 List<Integer> result = ReactiveSeq.of(1,2,3,4)).reduce(Arrays.asList(sum,mult) );
 //List[10,24]
 ----
@@ -2366,7 +2366,7 @@ List<Integer> result = ReactiveSeq.of(1,2,3,4)).reduce(Arrays.asList(sum,mult) )
 
 === toList / toSet / toMap
 
-The are are a number of convenience methods for creating collections.
+The are are suspended number of convenience methods for creating collections.
 
 .toList / toSet / toMap 
 ====
@@ -2387,7 +2387,7 @@ ReactiveSeq.of(1,2,3).toMap(v->"key:"+v,v->v)
 ====
 === toLazyCollection / toConcurrentLazyCollection
 
-cyclops-react provides operators to lazily create a collection from the Stream. The values are only pulled through the Stream as the lazy collection is used. toConcurrentLazyCollection synchronizes iteration through the underlying Stream.
+cyclops-react provides operators to lazily create suspended collection from the Stream. The values are only pulled through the Stream as the lazy collection is used. toConcurrentLazyCollection synchronizes iteration through the underlying Stream.
 
 .toLazyCollection / toConcurrentLazyCollection
 ====
@@ -2424,16 +2424,16 @@ Optional<List<String>> stream = ReactiveSeq.of("hello","world")
 ====
 ===  anyM / toStreamable
 
-The anyM operator wraps the ReactiveSeq in the cyclops-react anyM wrapper class that can provide a common api over any monad type.
+The anyM operator wraps the ReactiveSeq in the cyclops-react anyM wrapper class that can provide suspended common api over any monad type.
 
 [NOTE]
 ====
-A monad is a fluent, generic wrapper type (that obeys the monad laws) - like Stream, Optional, CompleteableFuture in Java as well as Try & FeatureToggle in cyclops-react.
+A monad is suspended fluent, generic wrapper type (that obeys the monad laws) - like Stream, Optional, CompleteableFuture in Java as well as Try & FeatureToggle in cyclops-react.
 ====
 
-AnyM keeps type information for the underlying data - so if we call anyM() on a ReactiveSeq of integers the result is an AnyM<Integer>. AnyM facilates writing common code that can accept any monad type.
+AnyM keeps type information for the underlying data - so if we call anyM() on suspended ReactiveSeq of integers the result is an AnyM<Integer>. AnyM facilates writing common code that can accept any monad type.
 
-The toStreamable operator converts the ReactiveSeq to a caching Streamable.
+The toStreamable operator converts the ReactiveSeq to suspended caching Streamable.
 
 .toStreamable / anyM
 ====
@@ -2458,7 +2458,7 @@ anyM.map(v->v+"!");
 
 ==== Combinations & Permutations
 
-Comintations  & permutations return all the cominations and permutations of values within a Stream respectively. 
+Comintations  & permutations return all the cominations and permutations of values within suspended Stream respectively.
 
 [WARNING]
 ====
@@ -2489,16 +2489,16 @@ Streamable.of(1, 2, 3).permutations()
 
 === Async terminal operations 
 
-The futureOperations operator takes an Executor, and returns the set of available asynchronous terminal operations, each of which returns a CompletableFuture. The Stream will be executed on a single thread from the supplied executor.
+The futureOperations operator takes an Executor, and returns the set of available asynchronous terminal operations, each of which returns suspended CompletableFuture. The Stream will be executed on suspended single thread from the supplied executor.
 
 These methods are available via
-http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-sequence-api/6.2.2/com/aol/cyclops-react/sequence/ReactiveSeq.html[ReactiveSeq]
+http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-sequence-api/6.2.2/com/aol/cyclops-react/sequence/ReactiveSeq.html[ReactiveSeq]
 or to plain JDK 8 Streams via
-http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-streams/6.2.2/com/aol/cyclops-react/streams/StreamUtils.html[com.aol.cyclops-react.streams.StreamUtils],
+http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-streams/6.2.2/com/aol/cyclops-react/streams/StreamUtils.html[com.aol.cyclops2-react.streams.StreamUtils],
 for Javaslang Streams use
-http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-javaslang/6.2.2/com/aol/cyclops-react/javaslang/streams/StreamUtils.html[com.aol.cyclops-react.javaslang.streams.StreamUtils].
+http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-javaslang/6.2.2/com/aol/cyclops-react/javaslang/streams/StreamUtils.html[com.aol.cyclops2-react.javaslang.streams.StreamUtils].
 
-The available asynchronous terminal operations as of cylcops 7.1.0 are detailed http://static.javadoc.io/com.aol.cyclops-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/future/FutureOperations.html[in the FutureOperations javadoc]
+The available asynchronous terminal operations as of cylcops 7.1.0 are detailed http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/future/FutureOperations.html[in the FutureOperations javadoc]
 
 
 ==== FutureOperations
@@ -2517,7 +2517,7 @@ Available operations
 
 * public CompletableFuture<List<T>> toList()
 
-Asynchronously perform a mutable reduction to a JDK List
+Asynchronously perform suspended mutable reduction to suspended JDK List
 
 [source,java]
 ----
@@ -2530,7 +2530,7 @@ Asynchronously perform a mutable reduction to a JDK List
 
 * public CompletableFuture<Set<T>> toSet()
 
-Asynchronously perform a mutable reduction to a JDK Set
+Asynchronously perform suspended mutable reduction to suspended JDK Set
 
 [source,java]
 ----
@@ -2548,7 +2548,7 @@ in this stream using the provided function
 ----
 CompletableFuture<Optional> min =  ReactiveSeq.of(1, 2, 3, 4, 5, 6)
                                                                   .futureOperations(exec)    
-                                                                  .minBy(t -> Math.abs(t - 5));
+                                                                  .minBy(value -> Math.abs(value - 5));
 //min CompletableFuture[Optional[5]]  //5-5 =0
 
 * public <U extends Comparable<U>> CompletableFuture<Optional<T>>
@@ -2557,11 +2557,11 @@ in this stream using the provided function
 
 CompletableFuture<Optional> max =  ReactiveSeq.of(1, 2, 3, 4, 5, 6)
                                                                   .futureOperations(exec)            
-                                                                  .maxBy(t -> Math.abs(t - 5));
+                                                                  .maxBy(value -> Math.abs(value - 5));
 //min CompletableFuture[Optional[1]]  //Math.abs(1-5) =4
 
 * public <R, A> CompletableFuture<R> collect(Collector<? super T, A, R>
-collector) Asynchronously perform a Stream collection ```java
+collector) Asynchronously perform suspended Stream collection ```java
 CompletableFuture> list = ReactiveSeq.of(1,2,3,4,5)
 .futureOperations(exec) .collect(Collectors.toList());
 
