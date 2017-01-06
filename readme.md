@@ -17,7 +17,7 @@ This is the 2.x branch for 1.x click the link below
 
 # Documentation
 
-* [User Guide](https://github.com/aol/cyclops-react/wiki)
+* [User Guide](https://github.com/aol/cyclops-react/wiki) Primary tailored for 1.x still.
 * [javadoc](http://www.javadoc.io/doc/com.aol.simplereact/cyclops-react/)
 
 ## Gradle
