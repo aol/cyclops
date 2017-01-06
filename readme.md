@@ -2,7 +2,7 @@
 
 Future & functional based programming via JDK compatible extensions for Java 8 and above. 
 
-This is the 2.x branch for 1.x click here 
+This is the 2.x branch for 1.x click the link below
 
 * [1.x](https://github.com/aol/cyclops-react/tree/1.x)
 
