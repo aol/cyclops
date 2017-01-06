@@ -6,7 +6,8 @@ This is the 2.x branch for 1.x click here
 
 * [1.x](https://github.com/aol/cyclops-react/tree/1.x)
 
-2.x is namespaced differently so as not to collide with 1.x on the same classpath.
+2.x is namespaced differently so as not to collide with 1.x on the same classpath. cyclops-react 2.x is coming very soon! [Explore the code](https://github.com/aol/cyclops-react/tree/master/src/main/java/cyclops)
+
 
 # Getting cyclops-react
 
