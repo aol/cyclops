@@ -140,7 +140,7 @@ modifyPom {
 		inceptionYear '2015'
 
 		groupId 'com.aol.simplereact'
-		artifactId 'cyclops2-react'
+		artifactId 'cyclops-react'
 		version "$version"
 		
 		scm {

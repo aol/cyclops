@@ -293,19 +293,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     default  AnyM<W,T> filter(Predicate<? super T> fn){
         return adapter().filter(this, fn);
     }
-   /**
-    1. remove filterable
-    2. create filterableAnyM subclass with filter operations
-    3. remove AnyMValue / AnyMseq ?
-    4. Add combine iterable / zip
-    5. traverse / sequence methods
-    6. remove bind method
+
     
-    Monad transformers
-    1. 1 type only AnyM
-    2. map / filter (if filterable) / flatMap / flatMapT / zip - combine / fold - reduce operations
-       on nested data structures (reduce etc all via map)
-    3.  **/
     default <R> AnyM<W,R> coflatMapA(final Function<? super AnyM<W,T>, R> mapper) {
         return unit(Lambda.λ(()->mapper.apply(this))).map(Supplier::get);
     }
