@@ -17,7 +17,7 @@ This is the 2.x branch for 1.x click the link below
 
 # Documentation
 
-* [User Guide](https://github.com/aol/cyclops-react/wiki) Primary tailored for 1.x still.
+* [User Guide](https://github.com/aol/cyclops-react/wiki) Primarily tailored for 1.x still.
 * [javadoc](http://www.javadoc.io/doc/com.aol.simplereact/cyclops-react/)
 
 ## Gradle
@@ -115,7 +115,7 @@ compile cyclops2
 
 | type | description | characteristics |
 |------|-------------|-----------------|
-| PListX     | Functional extensions for working with persistent Lists            | Lazy, persistent, 3rd party support, Higher kinded                 |
+| PStackX     | Functional extensions for working with persistent Lists            | Lazy, persistent, 3rd party support, Higher kinded                 |
 | PVectorX     | Functional extensions for working with persistent Vectors            | Lazy, persistent, 3rd party support, Higher kinded                 |
 | PSetX     | Functional extensions for working with persistent Sets            | Lazy, persistent, 3rd party support                 |
 | POrderedSetX     | Functional extensions for working with persistent Ordered Sets            | Lazy, persistent, 3rd party support                 |
