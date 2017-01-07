@@ -65,7 +65,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     public BaseExtendedStream(final Stream<T> stream) {
 
-        this.stream = unwrapStream().spliterator();
+        this.stream = stream.spliterator();
         this.reversible = Optional.empty();
         this.split = Optional.empty();
 
@@ -86,9 +86,9 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     public Iterator<T> iterator(){
 
         if(!this.split.isPresent())
-            return Spliterators.iterator(copyOrGet());
+            return Spliterators.iterator(copy());
         //Iterator for push streams
-        Spliterator<T> split = copyOrGet();
+        Spliterator<T> split = copy();
         class QueueingIterator implements Iterator<T>,Consumer<T>{
 
             boolean available;
@@ -124,6 +124,10 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             
         }
         return new QueueingIterator();
+    }
+   public  <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
+        return ReactiveSeq.fromSpliterator(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(createSeq(copy()),fn));
+
     }
     
     public  <A,R> ReactiveSeq<R> collectSeq(Collector<? super T,A,R> c){
@@ -200,7 +204,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     public final Stream<T> unwrapStream() {
 
-        return StreamSupport.stream(copyOrGet(),false);
+        return StreamSupport.stream(copy(),false);
 
     }
 
@@ -226,28 +230,28 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final <S> ReactiveSeq<Tuple2<T, S>> zipS(final Stream<? extends S> second) {
-        return createSeq( new ZippingSpliterator<>(copyOrGet(),second.spliterator(),(a, b) -> new Tuple2<>(
+        return createSeq( new ZippingSpliterator<>(get(),second.spliterator(),(a, b) -> new Tuple2<>(
                                                         a, b)));
     }
     @Override
     public final <U, R> ReactiveSeq<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper){
-        return createSeq( new ZippingSpliterator<>(copyOrGet(),other.spliterator(),zipper));
+        return createSeq( new ZippingSpliterator<>(get(),other.spliterator(),zipper));
     }
     @Override
     public final <S, U,R> ReactiveSeq<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third,
                                                           final Fn3<? super T, ? super S, ? super U,? extends R> fn3) {
-        return createSeq( new Zipping3Spliterator<>(copyOrGet(),second.spliterator(),third.spliterator(),fn3));
+        return createSeq( new Zipping3Spliterator<>(get(),second.spliterator(),third.spliterator(),fn3));
     }
 
     @Override
     public <S, U> ReactiveSeq<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
-        return createSeq( new Zipping3Spliterator<>(copyOrGet(),second.spliterator(),third.spliterator(),(a,b,c)->Tuple.tuple(a,b,c)));
+        return createSeq( new Zipping3Spliterator<>(get(),second.spliterator(),third.spliterator(),(a, b, c)->Tuple.tuple(a,b,c)));
     }
 
 
     @Override
     public <T2, T3, T4, R> ReactiveSeq<R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return createSeq( new Zipping4Spliterator<>(copyOrGet(),second.spliterator(),third.spliterator(),fourth.spliterator(),fn));
+        return createSeq( new Zipping4Spliterator<>(get(),second.spliterator(),third.spliterator(),fourth.spliterator(),fn));
 
     }
 
@@ -266,36 +270,36 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final ReactiveSeq<PVectorX<T>> sliding(final int windowSize, final int increment) {
-        return createSeq(new SlidingSpliterator<>(copyOrGet(),Function.identity(), windowSize,increment), reversible,split);
+        return createSeq(new SlidingSpliterator<>(get(),Function.identity(), windowSize,increment), reversible,split);
     }
 
     @Override
     public final ReactiveSeq<ListX<T>> grouped(final int groupSize) {
-        return createSeq(new GroupingSpliterator<T,List<T>,ListX<T>>(copyOrGet(),()->new ArrayList(groupSize),c->ListX.fromIterable(c),groupSize), this.reversible,split);
+        return createSeq(new GroupingSpliterator<T,List<T>,ListX<T>>(get(),()->new ArrayList(groupSize), c->ListX.fromIterable(c),groupSize), this.reversible,split);
 
     }
     @Override
     public ReactiveSeq<ListX<T>> groupedStatefullyWhile(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullySpliterator<>(copyOrGet(),()->ListX.of(),Function.identity(), predicate), this.reversible,split);
+        return createSeq(new GroupedStatefullySpliterator<>(get(),()->ListX.of(),Function.identity(), predicate), this.reversible,split);
     }
     @Override
     public <C extends Collection<T>,R> ReactiveSeq<R> groupedStatefullyWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                                              Function<? super C, ? extends R> finalizer) {
-        return this.<R>createSeq(new GroupedStatefullySpliterator<T,C,R>(copyOrGet(),factory,finalizer, predicate), this.reversible,split);
+        return this.<R>createSeq(new GroupedStatefullySpliterator<T,C,R>(get(),factory,finalizer, predicate), this.reversible,split);
     }
     @Override
     public ReactiveSeq<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullySpliterator<>(copyOrGet(),()->ListX.of(),Function.identity(), predicate.negate()), this.reversible,split);
+        return createSeq(new GroupedStatefullySpliterator<>(get(),()->ListX.of(),Function.identity(), predicate.negate()), this.reversible,split);
     }
     @Override
     public <C extends Collection<T>,R> ReactiveSeq<R> groupedStatefullyUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                         Function<? super C, ? extends R> finalizer) {
-        return this.<R>createSeq(new GroupedStatefullySpliterator<T,C,R>(copyOrGet(),factory,finalizer, predicate.negate()), this.reversible,split);
+        return this.<R>createSeq(new GroupedStatefullySpliterator<T,C,R>(get(),factory,finalizer, predicate.negate()), this.reversible,split);
     }
 
     @Override
     public final ReactiveSeq<T> distinct() {
-        return createSeq(new DistinctSpliterator<T,T>(copyOrGet()), reversible,split);
+        return createSeq(new DistinctSpliterator<T,T>(get()), reversible,split);
     }
 
     @Override
@@ -307,7 +311,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     @Override
     public final <U> ReactiveSeq<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
 
-        return createSeq(ReactiveSeq.concat(ReactiveSeq.of(seed), StreamSupport.stream(new ScanLeftSpliterator<T,U>(copyOrGet(),
+        return createSeq(ReactiveSeq.concat(ReactiveSeq.of(seed), StreamSupport.stream(new ScanLeftSpliterator<T,U>(get(),
                                         seed,function),false)),reversible,this.split);
 
 
@@ -337,12 +341,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     }
 
-    @Override
-   public <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
-        //coflatMap lazily reconstructs the stream
-        return ReactiveSeq.fromSpliterator(new LazySingleSpliterator<T,Supplier<ReactiveSeq<T>>,R>(()->createSeq(copyOrGet(),reversible,split),in->fn.apply(in.get())));
 
-    }
 
     @Override
     public final ReactiveSeq<T> skip(final long num) {
@@ -352,19 +351,19 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             if(rev instanceof Indexable){
                 Indexable<T> indexable = (Indexable)rev;
                 Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator) (indexable).skip(num));
-                return createSeq(copyOrGet(),newRev,split);
+                return createSeq(get(),newRev,split);
             }
         }**/
         if(this.stream instanceof Indexable){
             Indexable<T> indexable = (Indexable)stream;
             return createSeq(indexable.skip(num),reversible,split);
         }
-        return createSeq(new SkipSpliterator<>(copyOrGet(),num), reversible,split);
+        return createSeq(new SkipSpliterator<>(get(),num), reversible,split);
     }
 
     @Override
     public final ReactiveSeq<T> skipWhile(final Predicate<? super T> p) {
-        return createSeq(new SkipWhileSpliterator<T>(copyOrGet(),p), reversible,split);
+        return createSeq(new SkipWhileSpliterator<T>(get(),p), reversible,split);
     }
 
     @Override
@@ -382,7 +381,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
                     Spliterator<T> limit = indexable.take(num);
                     if(limit instanceof  ReversableSpliterator) {
                         Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator)limit);
-                        return createSeq(copyOrGet(), newRev, split);
+                        return createSeq(get(), newRev, split);
                     }
                 }
 
@@ -395,12 +394,12 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
          //  Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator) (indexable).take(num));
            return createSeq(limit,Optional.empty(),split);
        }
-        return createSeq(new LimitSpliterator<T>(copyOrGet(),num), reversible,split);
+        return createSeq(new LimitSpliterator<T>(get(),num), reversible,split);
     }
 
     @Override
     public final ReactiveSeq<T> limitWhile(final Predicate<? super T> p) {
-        return createSeq(new LimitWhileSpliterator<T>(copyOrGet(), p), reversible,split);
+        return createSeq(new LimitWhileSpliterator<T>(get(), p), reversible,split);
     }
 
     @Override
@@ -464,12 +463,12 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
-        return createSeq(new SkipWhileSpliterator<T>(copyOrGet(),predicate),reversible,split );
+        return createSeq(new SkipWhileSpliterator<T>(get(),predicate),reversible,split );
     }
 
     @Override
     public ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
-        return createSeq(new LimitWhileClosedSpliterator<T>(copyOrGet(),predicate),reversible,split);
+        return createSeq(new LimitWhileClosedSpliterator<T>(get(),predicate),reversible,split);
     }
 
     @Override
@@ -493,13 +492,15 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return Streams.headAndTail(this);
     }
 
+
+
     @Override
     public final Optional<T> findFirst() {
 
        try {
 
            //use forEachRemaining as it is the fast path for many operators
-           stream.forEachRemaining(e -> {
+           copy().forEachRemaining(e -> {
                 throw new Queue.ClosedQueueException(Arrays.asList(e));
 
            });
@@ -560,7 +561,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     @Override
     public final T reduce(final T identity, final BinaryOperator<T> accumulator) {
        Object[] result = {identity};
-       stream.forEachRemaining(e->{
+       copy().forEachRemaining(e->{
            result[0] = accumulator.apply((T)result[0],e);
        });
         return (T)result[0];
@@ -667,7 +668,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             ComposableFunction f = (ComposableFunction)stream;
             return createSeq(f.compose(fn),reversible,split);
         }
-        return createSeq(new MappingSpliterator<T,R>(this.copyOrGet(),fn), reversible,split);
+        return createSeq(new MappingSpliterator<T,R>(this.get(),fn), reversible,split);
     }
 
     @Override
@@ -681,7 +682,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             FunctionSpliterator f = (FunctionSpliterator)stream;
             return createSeq(StreamFlatMappingSpliterator.compose(f,fn),reversible,split);
         }
-        return createSeq(new StreamFlatMappingSpliterator<>(copyOrGet(),fn), Optional.empty(),split);
+        return createSeq(new StreamFlatMappingSpliterator<>(get(),fn), Optional.empty(),split);
 
     }
 
@@ -697,7 +698,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             return createSeq(IterableFlatMappingSpliterator.compose(f,fn),reversible,split);
         }
 
-        return createSeq(new IterableFlatMappingSpliterator<>(copyOrGet(),fn), Optional.empty(),split);
+        return createSeq(new IterableFlatMappingSpliterator<>(get(),fn), Optional.empty(),split);
 
     }
     @Override
@@ -706,7 +707,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             FunctionSpliterator f = (FunctionSpliterator)stream;
             return createSeq(PublisherFlatMappingSpliterator.compose(f,fn),reversible,split);
         }
-        return createSeq(new PublisherFlatMappingSpliterator<>(copyOrGet(),fn), Optional.empty(),split);
+        return createSeq(new PublisherFlatMappingSpliterator<>(get(),fn), Optional.empty(),split);
    }
 
     @Override
@@ -756,12 +757,12 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
     @Override
     public final ReactiveSeq<T> filter(final Predicate<? super T> fn) {
-        return createSeq(new FilteringSpliterator<T>(copyOrGet(),fn).compose(), reversible,split);
+        return createSeq(new FilteringSpliterator<T>(get(),fn).compose(), reversible,split);
 
     }
 
     public final ReactiveSeq<T> filterLazyPredicate(final Supplier<Predicate<? super T>> fn) {
-        return createSeq(new LazyFilteringSpliterator<T>(copyOrGet(),fn), reversible,split);
+        return createSeq(new LazyFilteringSpliterator<T>(get(),fn), reversible,split);
 
     }
 
@@ -769,7 +770,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public void forEach(final Consumer<? super T> action) {
-        this.stream.forEachRemaining(action);
+        this.copy().forEachRemaining(action);
 
     }
 
@@ -777,7 +778,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     
     @Override
     public Spliterator<T> spliterator() {
-        return stream;
+        return copy();
     }
 
     @Override
@@ -977,10 +978,10 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public ReactiveSeq<T> appendS(final Stream<? extends T> other) {
-        return ReactiveSeq.concat(copyOrGet(),other.spliterator());
+        return ReactiveSeq.concat(get(),other.spliterator());
     }
     public ReactiveSeq<T> append(final Iterable<? extends T> other) {
-        return ReactiveSeq.concat(copyOrGet(),other.spliterator());
+        return ReactiveSeq.concat(get(),other.spliterator());
     }
 
     //TODO use spliterators and createSeq
@@ -1065,7 +1066,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     public  <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn){
         //not composable to the 'left' (as statefulness is lost)
-        return createSeq(new LazyMappingSpliterator<T,R>(this.copyOrGet(),fn), reversible,split);
+        return createSeq(new LazyMappingSpliterator<T,R>(this.get(),fn), reversible,split);
 
     }
 
@@ -1115,7 +1116,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public ReactiveSeq<ListX<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
-        return createSeq(new GroupedByTimeAndSizeSpliterator(this.copyOrGet(),()->ListX.fromIterable(new ArrayList<>(size)),
+        return createSeq(new GroupedByTimeAndSizeSpliterator(this.get(),()->ListX.fromIterable(new ArrayList<>(size)),
                         Function.identity(),size,time,t),
                 reversible,split);
 
@@ -1123,7 +1124,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public ReactiveSeq<ListX<T>> groupedByTime(final long time, final TimeUnit t) {
-        return createSeq(new GroupedByTimeSpliterator<>(copyOrGet(),
+        return createSeq(new GroupedByTimeSpliterator<>(get(),
                 ()->ListX.fromIterable(new ArrayList<>(100)),
                 Function.identity(),time, t), reversible,split);
     }
@@ -1140,12 +1141,12 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public ReactiveSeq<T> skip(final long time, final TimeUnit unit) {
-        return createSeq(new SkipWhileTimeSpliterator<T>(copyOrGet(), time, unit), this.reversible,split);
+        return createSeq(new SkipWhileTimeSpliterator<T>(get(), time, unit), this.reversible,split);
     }
 
     @Override
     public ReactiveSeq<T> limit(final long time, final TimeUnit unit) {
-        return createSeq(new LimitWhileTimeSpliterator<T>(copyOrGet(),time,unit),reversible,split);
+        return createSeq(new LimitWhileTimeSpliterator<T>(get(),time,unit),reversible,split);
 
     }
 
@@ -1195,14 +1196,14 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public ReactiveSeq<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
-        return createSeq(new GroupedWhileSpliterator<>(copyOrGet(),()->ListX.of(),Function.identity(), predicate), this.reversible,split);
+        return createSeq(new GroupedWhileSpliterator<>(get(),()->ListX.of(),Function.identity(), predicate), this.reversible,split);
 
 
     }
 
     @Override
     public <C extends Collection<? super T>> ReactiveSeq<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
-        return createSeq(new GroupedWhileSpliterator<>(copyOrGet(),factory,Function.identity(), predicate), this.reversible,split);
+        return createSeq(new GroupedWhileSpliterator<>(get(),factory,Function.identity(), predicate), this.reversible,split);
     }
 
     @Override
@@ -1213,7 +1214,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     @Override
     public <C extends Collection<? super T>> ReactiveSeq<C> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit,
             final Supplier<C> factory) {
-        return createSeq(new GroupedByTimeAndSizeSpliterator(this.copyOrGet(),factory,
+        return createSeq(new GroupedByTimeAndSizeSpliterator(this.get(),factory,
                         Function.identity(),size,time,unit),
                 reversible,split);
 
@@ -1225,21 +1226,21 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
                                                                                  final Supplier<C> factory,
                                                                                  Function<? super C, ? extends R> finalizer
     ) {
-        return createSeq(new GroupedByTimeAndSizeSpliterator(this.copyOrGet(),factory,
+        return createSeq(new GroupedByTimeAndSizeSpliterator(this.get(),factory,
                         finalizer,size,time,unit),
                 reversible,split);
 
     }
     @Override
     public <C extends Collection<? super T>,R> ReactiveSeq<R> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory, Function<? super C, ? extends R> finalizer) {
-        return createSeq(new GroupedByTimeSpliterator(this.copyOrGet(),factory,
+        return createSeq(new GroupedByTimeSpliterator(this.get(),factory,
                         finalizer,time,unit),
                 reversible,split);
 
     }
     @Override
     public <C extends Collection<? super T>> ReactiveSeq<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
-        return createSeq(new GroupedByTimeSpliterator(this.copyOrGet(),factory,
+        return createSeq(new GroupedByTimeSpliterator(this.get(),factory,
                         Function.identity(),time,unit),
                 reversible,split);
 
@@ -1247,28 +1248,28 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public <C extends Collection<? super T>> ReactiveSeq<C> grouped(final int size, final Supplier<C> factory) {
-        return createSeq(new GroupingSpliterator<>(copyOrGet(),factory, Function.identity(),size), this.reversible,split);
+        return createSeq(new GroupingSpliterator<>(get(),factory, Function.identity(),size), this.reversible,split);
 
     }
 
     @Override
     public ReactiveSeq<T> skipLast(final int num) {
-        return createSeq(SkipLastSpliterator.skipLast(copyOrGet(), num), this.reversible,split);
+        return createSeq(SkipLastSpliterator.skipLast(get(), num), this.reversible,split);
     }
 
     @Override
     public ReactiveSeq<T> limitLast(final int num) {
-        return createSeq(LimitLastSpliterator.limitLast(copyOrGet(), num), this.reversible,split);
+        return createSeq(LimitLastSpliterator.limitLast(get(), num), this.reversible,split);
     }
 
     @Override
     public ReactiveSeq<T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return createSeq(new RecoverSpliterator<T,Throwable>(copyOrGet(),fn,Throwable.class), this.reversible,split);
+        return createSeq(new RecoverSpliterator<T,Throwable>(get(),fn,Throwable.class), this.reversible,split);
     }
 
     @Override
     public <EX extends Throwable> ReactiveSeq<T> recover(final Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return createSeq(new RecoverSpliterator<T,EX>(copyOrGet(),fn,exceptionClass), this.reversible,split);
+        return createSeq(new RecoverSpliterator<T,EX>(get(),fn,exceptionClass), this.reversible,split);
     }
     
 
@@ -1307,7 +1308,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             s.setError(consumerError);
         });
 
-        new ForEachWithError<T>(this.copyOrGet(),consumerError).forEachRemaining(consumerElement);
+        new ForEachWithError<T>(this.copy(),consumerError).forEachRemaining(consumerElement);
 
 
     }
@@ -1320,7 +1321,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             s.setError(consumerError);
         });
 
-        new ForEachWithError<T>(this.copyOrGet(),consumerError,onComplete).forEachRemaining(consumerElement);
+        new ForEachWithError<T>(this.copy(),consumerError,onComplete).forEachRemaining(consumerElement);
     }
 
     @Override
@@ -1340,13 +1341,13 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public String format() {
-        return Seq.seq(this.copyOrGet())
+        return Seq.seq(this.copy())
                   .format();
     }
 
     @Override
     public Collectable<T> collectable() {
-        return Seq.seq(copyOrGet());
+        return Seq.seq(copy());
     }
 
     @Override
@@ -1355,7 +1356,10 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
 
-    Spliterator<T> copyOrGet() {
+    Spliterator<T> get() {
+        return stream;
+    }
+    Spliterator<T> copy() {
         return CopyableSpliterator.copy(stream);
     }
 }

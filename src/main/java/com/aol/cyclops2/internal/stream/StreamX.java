@@ -50,12 +50,12 @@ public class StreamX<T> extends BaseExtendedStream<T> {
     @Override
     public ReactiveSeq<T> cycle() {
         return  ReactiveSeq.fill(1)
-                .flatMap(i->createSeq(copyOrGet(),reversible,split));
+                .flatMap(i->createSeq(copy(),reversible,split));
     }
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
-        final Tuple2<Spliterator<T>, Spliterator<T>> tuple = Tuple.tuple(copyOrGet(),copyOrGet());
+        final Tuple2<Spliterator<T>, Spliterator<T>> tuple = Tuple.tuple(copy(),copy());
         return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy()),split))
                 .map2(s -> createSeq(s, reversible.map(r -> r.copy()),split));
     }
@@ -64,7 +64,7 @@ public class StreamX<T> extends BaseExtendedStream<T> {
     @SuppressWarnings("unchecked")
     public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate() {
 
-        final Tuple3<Spliterator<T>, Spliterator<T>, Spliterator<T>> tuple = Tuple.tuple(copyOrGet(),copyOrGet(),copyOrGet());
+        final Tuple3<Spliterator<T>, Spliterator<T>, Spliterator<T>> tuple = Tuple.tuple(copy(),copy(),copy());
         return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy()),split))
                 .map2(s -> createSeq(s, reversible.map(r -> r.copy()),split))
                 .map3(s -> createSeq(s, reversible.map(r -> r.copy()),split));
@@ -74,7 +74,7 @@ public class StreamX<T> extends BaseExtendedStream<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate() {
-        final Tuple4<Spliterator<T>, Spliterator<T>, Spliterator<T>, Spliterator<T>> tuple = Tuple.tuple(copyOrGet(),copyOrGet(),copyOrGet(),copyOrGet());
+        final Tuple4<Spliterator<T>, Spliterator<T>, Spliterator<T>, Spliterator<T>> tuple = Tuple.tuple(copy(),copy(),copy(),copy());
         return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy()),split))
                 .map2(s -> createSeq(s, reversible.map(r -> r.copy()),split))
                 .map3(s -> createSeq(s, reversible.map(r -> r.copy()),split))
@@ -118,7 +118,7 @@ public class StreamX<T> extends BaseExtendedStream<T> {
     public ReactiveSeq<T> cycle(long times) {
         return ReactiveSeq.fill(1)
                 .limit(times)
-                .flatMap(i -> createSeq(copyOrGet(), reversible, split));
+                .flatMap(i -> createSeq(copy(), reversible, split));
 
     }
 

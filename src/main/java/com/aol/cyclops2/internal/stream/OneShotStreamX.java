@@ -146,7 +146,7 @@ public class OneShotStreamX<T> extends BaseExtendedStream<T> {
         return createSeq(Streams.insertStreamAt(this, pos, stream), Optional.empty(),split);
 
     }
-    Spliterator<T> copyOrGet() {
+    Spliterator<T> get() {
         return stream;
     }
 

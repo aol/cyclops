@@ -77,6 +77,7 @@ dependencies {
 	testCompile 'io.vertx:vertx-core:3.0.0'
 	testCompile group: 'org.testng', name: 'testng', version:'5.14.10'
     testCompile 'io.javaslang:javaslang:2.0.2'
+
 	
 	
 
@@ -94,6 +95,20 @@ jacocoTestReport {
         })
     }
 }
+jmh {
+	jmhVersion = '1.14'
+	humanOutputFile = null
+	/**
+	if (project.hasProperty('jmh')) {
+		include = ".*" + project.jmh + ".*"
+	} else {
+		include = ".*"
+	}
+	 **/
+	include = ".*"
+}
+
+
 task testNG(type: Test) {
     useTestNG {}
     reports.html.destination = file("$buildDir/reports/test")

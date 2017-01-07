@@ -647,20 +647,20 @@ public abstract class BaseSeqTest {
 	    @Test
 	    public void testSplitAtHead() {
 	        assertEquals(Optional.empty(), of().splitAtHead().v1);
-	        assertEquals(asList(), ReactiveSeq.of().splitAtHead().v2.toList());
+	        assertEquals(asList(), of().splitAtHead().v2.toList());
 
-	        assertEquals(Optional.of(1), ReactiveSeq.of(1).splitAtHead().v1);
-	        assertEquals(asList(), ReactiveSeq.of(1).splitAtHead().v2.toList());
+	        assertEquals(Optional.of(1), of(1).splitAtHead().v1);
+	        assertEquals(asList(), of(1).splitAtHead().v2.toList());
 
-	        assertEquals(Optional.of(1), ReactiveSeq.of(1, 2).splitAtHead().v1);
-	        assertEquals(asList(2), ReactiveSeq.of(1, 2).splitAtHead().v2.toList());
+	        assertEquals(Optional.of(1), of(1, 2).splitAtHead().v1);
+	        assertEquals(asList(2), of(1, 2).splitAtHead().v2.toList());
 
-	        assertEquals(Optional.of(1), ReactiveSeq.of(1, 2, 3).splitAtHead().v1);
-	        assertEquals(Optional.of(2), ReactiveSeq.of(1, 2, 3).splitAtHead().v2.splitAtHead().v1);
-	        assertEquals(Optional.of(3), ReactiveSeq.of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
-	        assertEquals(asList(2, 3), ReactiveSeq.of(1, 2, 3).splitAtHead().v2.toList());
-	        assertEquals(asList(3), ReactiveSeq.of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toList());
-	        assertEquals(asList(), ReactiveSeq.of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v2.toList());
+	        assertEquals(Optional.of(1), of(1, 2, 3).splitAtHead().v1);
+	        assertEquals(Optional.of(2), of(1, 2, 3).splitAtHead().v2.splitAtHead().v1);
+	        assertEquals(Optional.of(3),of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
+	        assertEquals(asList(2, 3), of(1, 2, 3).splitAtHead().v2.toList());
+	        assertEquals(asList(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toList());
+	        assertEquals(asList(), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v2.toList());
 	    }
 
 	    @Test

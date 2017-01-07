@@ -294,7 +294,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return adapter().filter(this, fn);
     }
 
-    
+
     default <R> AnyM<W,R> coflatMapA(final Function<? super AnyM<W,T>, R> mapper) {
         return unit(Lambda.λ(()->mapper.apply(this))).map(Supplier::get);
     }

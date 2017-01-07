@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
  * 
  * <pre>
  * {@code 
- *    OptionalType<ListType<Integer>> nested;
+ *    OptionalType<ListX<Integer>> nested;
  *    
  *    Compose.compose(Optionals.functor(),Lists.functor())
  *           .map(i->i*2,nested);

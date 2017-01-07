@@ -32,6 +32,7 @@ import static org.junit.Assert.assertThat;
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
+
     @Test
     public void multipathsInts() {
 
@@ -65,6 +66,27 @@ public class ReactiveSeqTest {
         assertThat(by10.toListX(), equalTo(Arrays.asList(10d, 20d, 30d)));
         assertThat(plus2.toListX(), equalTo(Arrays.asList(3d, 4d, 5d)));
         assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12d, 22d, 32d)));
+    }
+    @Test
+    public void compareFindFirst(){
+        for(int i=0;i<10;i++)
+            count += Stream.of(1,2,3)
+                            .findFirst().get();
+        long time = System.currentTimeMillis();
+        for(int i=0;i<50000;i++)
+            count += Stream.of(1,2,3)
+                    .findFirst().get();
+
+        long stream = System.currentTimeMillis()-time;
+        for(int i=0;i<10;i++)
+            count += ReactiveSeq.of(1,2,3)
+                             .findFirst().get();
+        long time2 = System.currentTimeMillis();
+        for(int k=0;k<50000;k++)
+            count += ReactiveSeq.of(1,2,3)
+                                 .findFirst().get();
+        long rs = System.currentTimeMillis()-time2;
+        System.out.println("Stream " + stream + " rs " + rs + " count " + count);
     }
 
     int count =0;
@@ -284,6 +306,7 @@ public class ReactiveSeqTest {
 
 
     }
+
     @Test
     public void coflatMapTest(){
         ReactiveSeq<ReactiveSeq<Integer>> stream = ReactiveSeq.fromIterable(Arrays.asList(1,2,3))
@@ -362,6 +385,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void testParallel2(){
+
         for(int k=0;k<1000;k++) {
             System.out.println("Iteration " + k);
             assertThat(ReactiveSeq.range(0, 1000)
@@ -455,7 +479,7 @@ public class ReactiveSeqTest {
         assertThat(plus2.toListX(), equalTo(Arrays.asList(3, 4, 5)));
         assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12, 22, 32)));
     }
-
+/**
     @Test @Ignore
     public void limitPushTest(){
         ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
@@ -470,6 +494,7 @@ public class ReactiveSeqTest {
        //LimitSpliterator only supports iteration
         assertThat(res.single().size(),equalTo(3));
     }
+ **/
 
     @Test
     public void forEachWithErrorPush(){
@@ -625,7 +650,7 @@ public class ReactiveSeqTest {
         
     }
    
-    
+   /**
     @Test
     public void fold(){
         ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
@@ -648,6 +673,7 @@ public class ReactiveSeqTest {
         assertThat(res.single().size(),equalTo(2));
         
     }
+    **/
     @Test
     public void foldInt(){
         Double res= ReactiveSeq.range(1, 1000).mapToInt(i->i).map(i->i*2).filter(i->i<500).average().getAsDouble();

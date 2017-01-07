@@ -1,5 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators;
 
+import com.aol.cyclops2.internal.stream.StreamX;
+import cyclops.stream.ReactiveSeq;
+
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -48,6 +51,10 @@ public class LazySingleSpliterator<T, X,R> implements Spliterator<R>, CopyableSp
 
     @Override
     public Spliterator<R> copy() {
-        return new LazySingleSpliterator<>(in,fn);
+        if(in instanceof StreamX){
+            return new LazySingleSpliterator<>((X)ReactiveSeq.fromSpliterator(((StreamX)in).spliterator()), fn);
+        }else {
+            return new LazySingleSpliterator<>(in, fn);
+        }
     }
 }
