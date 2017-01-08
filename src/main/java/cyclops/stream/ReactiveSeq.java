@@ -12,6 +12,7 @@ import java.util.stream.*;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
+import com.aol.cyclops2.internal.stream.StreamX;
 import com.aol.cyclops2.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingIntArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingRangeIntSpliterator;
@@ -106,11 +107,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     public static class µ {
     }
-    <A,R> ReactiveSeq<R> collectSeq(Collector<? super T,A,R> c);
 
 
-
-    ReactiveSeq<T> fold(Monoid<T> monoid);
 
     //here be dragons, experimental - nearly all spliterators are iterative
     public static  <T> ReactiveSubscriber<T> pushable(){
@@ -512,7 +510,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq created from Spliterator
      */
     public static <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
-        return fromStream(StreamSupport.stream(spliterator, false));
+        return Streams.reactiveSeq(spliterator, Optional.empty(),Optional.empty());
     }
     public static <T> ReactiveSeq<T> fromSpliterator(PushingSpliterator<T> spliterator){
         return Streams.reactiveSeq(StreamSupport.stream(spliterator, false), Optional.empty(),Optional.of(spliterator));
@@ -648,10 +646,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param fn
      * @return
      */
-    default <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
-        return ReactiveSeq.fromSpliterator(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(this,fn));
-
-    }
+    <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn);
 
 
 
@@ -3230,11 +3225,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static <T> ReactiveSeq<T> fromIterable(final Iterable<T> iterable) {
         Objects.requireNonNull(iterable);
-        if(iterable instanceof ReactiveSeq)
-            return (ReactiveSeq)iterable;
+        if (iterable instanceof ReactiveSeq) {
+            return ReactiveSeq.fromSpliterator(iterable.spliterator());
+        }
+        //we can't just use the Iterable's Spliteratable as it might not be repeatable / copyable.
         return Streams.reactiveSeq(new IteratableSpliterator<T>(iterable), Optional.empty(), Optional.empty());
-    }
 
+
+    }
+    public static <T> ReactiveSeq<T> reactiveSeq(final Iterable<T> iterable) {
+        return fromIterable(iterable);
+
+
+    }
     /**
      * Construct a ReactiveSeq from an Iterator
      * 

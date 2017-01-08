@@ -47,10 +47,7 @@ public class FlatMapStreamUtilsTest {
 	public void flatMapSeqToCompletableFuture(){
 		assertThat(Streams.flatMapCompletableFuture(Seq.of(1,2,3), i->CompletableFuture.<Integer>completedFuture(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
 		}
-	@Test
-	public void flatMapSeqToSequenceM(){
-		assertThat(Streams.flatMapSequenceM(Seq.of(1,2,3), i-> ReactiveSeq.<Integer>of(i+2)).collect(Collectors.toList()),equalTo(Arrays.asList(3,4,5)));
-	}
+
 	
 	
 }

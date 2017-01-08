@@ -68,19 +68,19 @@ import java.util.stream.StreamSupport;
 @UtilityClass
 public class Streams {
     /**
-     * Perform a For Comprehension over a Stream, accepting 3 generating function.
+     * Perform a For Comprehension over a Stream, accepting 3 generating functions.
      * This results in a four level nested internal iteration over the provided Publishers.
      *
      *  <pre>
      * {@code
      *
-     *   import static Streams.forEach4;
+     *   import static cyclops.Streams.forEach4;
      *
-    forEach4(Stream.range(1,10),
-    a-> Stream.iterate(a,i->i+1).limit(10),
-    (a,b) -> Stream.<Integer>of(a+b),
-    (a,b,c) -> Stream.<Integer>just(a+b+c),
-    Tuple::tuple)
+          forEach4(IntStream.range(1,10).boxed(),
+                   a-> Stream.iterate(a,i->i+1).limit(10),
+                  (a,b) -> Stream.<Integer>of(a+b),
+                  (a,b,c) -> Stream.<Integer>just(a+b+c),
+                  Tuple::tuple)
      *
      * }
      * </pre>
@@ -123,12 +123,12 @@ public class Streams {
      *
      *  import static com.aol.cyclops2.reactor.Streames.forEach4;
      *
-     *  forEach4(Stream.range(1,10),
-    a-> Stream.iterate(a,i->i+1).limit(10),
-    (a,b) -> Stream.<Integer>just(a+b),
-    (a,b,c) -> Stream.<Integer>just(a+b+c),
-    (a,b,c,d) -> a+b+c+d <100,
-    Tuple::tuple);
+     *  forEach4(IntStream.range(1,10).boxed(),
+                 a-> Stream.iterate(a,i->i+1).limit(10),
+                 (a,b) -> Stream.<Integer>just(a+b),
+                 (a,b,c) -> Stream.<Integer>just(a+b+c),
+                 (a,b,c,d) -> a+b+c+d <100,
+                 Tuple::tuple);
      *
      * }
      * </pre>
@@ -174,10 +174,10 @@ public class Streams {
      *
      * import static Streams.forEach3;
      *
-     * forEach(Stream.range(1,10),
-    a-> Stream.iterate(a,i->i+1).limit(10),
-    (a,b) -> Stream.<Integer>of(a+b),
-    Tuple::tuple);
+     * forEach(IntStream.range(1,10).boxed(),
+                a-> Stream.iterate(a,i->i+1).limit(10),
+                (a,b) -> Stream.<Integer>of(a+b),
+                Tuple::tuple);
      *
      * }
      * </pre>
@@ -216,11 +216,12 @@ public class Streams {
      *
      * import static Streams.forEach;
      *
-     * forEach(Stream.range(1,10),
-    a-> Stream.iterate(a,i->i+1).limit(10),
-    (a,b) -> Stream.<Integer>of(a+b),
-    (a,b,c) ->a+b+c<10,
-    Tuple::tuple).toListX();
+     * forEach(IntStream.range(1,10).boxed(),
+               a-> Stream.iterate(a,i->i+1).limit(10),
+              (a,b) -> Stream.<Integer>of(a+b),
+              (a,b,c) ->a+b+c<10,
+              Tuple::tuple)
+                .toListX();
      * }
      * </pre>
      *
@@ -260,8 +261,9 @@ public class Streams {
      * {@code
      *
      *  import static Streams.forEach2;
-     *  forEach(Stream.range(1, 10), i -> Stream.range(i, 10), Tuple::tuple)
-    .subscribe(System.out::println);
+     *  forEach(IntStream.range(1, 10).boxed(),
+     *          i -> Stream.range(i, 10), Tuple::tuple)
+            .forEach(System.out::println);
 
     //(1, 1)
     (1, 2)
@@ -296,8 +298,11 @@ public class Streams {
      *
      *   import static Streams.forEach2;
      *
-     *   forEach(Stream.range(1, 10), i -> Stream.range(i, 10),(a,b) -> a>2 && b<10,Tuple::tuple)
-    .subscribe(System.out::println);
+     *   forEach(IntStream.range(1, 10).boxed(),
+     *           i -> Stream.range(i, 10),
+     *           (a,b) -> a>2 && b<10,
+     *           Tuple::tuple)
+           .forEach(System.out::println);
 
     //(3, 3)
     (3, 4)
@@ -522,7 +527,7 @@ public class Streams {
      *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
      * <pre>
      * @{code
-     *     Subscription next = StreanUtils.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("processed!");
@@ -699,7 +704,7 @@ public class Streams {
      * {@code 
      * ReactiveSeq.of(1,2,3).splitAt(1)
      * 
-     *  //SequenceM[1], SequenceM[2,3]
+     *  //Stream[1], Stream[2,3]
      * }
      * 
      * </pre>
@@ -716,7 +721,7 @@ public class Streams {
      * {@code
      *   ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
      *   
-     *   //SequenceM[1,2,3] SequenceM[4,5,6]
+     *   //Stream[1,2,3] Stream[4,5,6]
      * }
      * </pre>
      */
@@ -732,7 +737,7 @@ public class Streams {
      * {@code 
      *  ReactiveSeq.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
      *  
-     *  //SequenceM[1,3,5], SequenceM[2,4,6]
+     *  //Stream[1,3,5], Stream[2,4,6]
      * }
      *
      * </pre>
@@ -819,7 +824,7 @@ public class Streams {
     }
 
     /**
-     * Append Stream to this SequenceM
+     * Append Stream to this Stream
      * 
      * <pre>
      * {@code 
@@ -832,14 +837,14 @@ public class Streams {
      * </pre>
      * 
      * @param stream to append
-     * @return SequenceM with Stream appended
+     * @return Stream with Stream appended
      */
     public static final <T> Stream<T> appendStream(final Stream<T> stream1, final Stream<T> append) {
         return Stream.concat(stream1, append);
     }
 
     /**
-     * Prepend Stream to this SequenceM
+     * Prepend Stream to this Stream
      * 
      * <pre>
      * {@code 
@@ -852,7 +857,7 @@ public class Streams {
      * </pre>
      * 
      * @param stream to Prepend
-     * @return SequenceM with Stream prepended
+     * @return Stream with Stream prepended
      */
     public static final <T> Stream<T> prependStream(final Stream<T> stream1, final Stream<T> prepend) {
 
@@ -860,7 +865,7 @@ public class Streams {
     }
 
     /**
-     * Append values to the take of this SequenceM
+     * Append values to the take of this Stream
      * <pre>
      * {@code 
      * List<String> result = 	of(1,2,3).append(100,200,300)
@@ -871,7 +876,7 @@ public class Streams {
      * }
      * </pre>
      * @param values to append
-     * @return SequenceM with appended values
+     * @return Stream with appended values
      */
     public static final <T> Stream<T> append(final Stream<T> stream, final T... values) {
         return appendStream(stream, Stream.of(values));
@@ -887,7 +892,7 @@ public class Streams {
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
      * @param values to prepend
-     * @return SequenceM with values prepended
+     * @return Stream with values prepended
      */
     public static final <T> Stream<T> prepend(final Stream<T> stream, final T... values) {
         return appendStream(Stream.of(values), stream);
@@ -946,7 +951,7 @@ public class Streams {
      * </pre>
      * @param pos to insert Stream at
      * @param stream to insert
-     * @return newly conjoined SequenceM
+     * @return newly conjoined Stream
      */
     public static final <T> Stream<T> insertStreamAt(final Stream<T> stream1, final int pos, final Stream<T> insert) {
         final Tuple2<Stream<T>, Stream<T>> Tuple2 = duplicatePos(stream1, pos);
@@ -2005,21 +2010,7 @@ public class Streams {
         return stream.map(type::cast);
     }
 
-    /**
-     * flatMap operation
-     * <pre>
-     * {@code 
-     * 		assertThat(Streams.flatMapSequenceM(Stream.of(1,2,3),
-     * 							i->ReactiveSeq.of(i+2)).collect(Collectors.toList()),
-     * 								equalTo(Arrays.asList(3,4,5)));
-     * }
-     * </pre>
-     * @param fn
-     * @return
-     */
-    public final static <T, R> Stream<R> flatMapSequenceM(final Stream<T> stream, final Function<? super T, ReactiveSeq<? extends R>> fn) {
-        return stream.flatMap(fn);
-    }
+
     
     public final static <T> Stream<T> narrow(Stream<? extends T> stream){
         return (Stream<T>)stream;

@@ -69,6 +69,7 @@ public class OneShotStreamX<T> extends BaseExtendedStream<T> {
                 .map4(s -> createSeq(s, reversible.map(r -> r.copy()),split));
     }
 
+
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public final Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
@@ -146,7 +147,7 @@ public class OneShotStreamX<T> extends BaseExtendedStream<T> {
         return createSeq(Streams.insertStreamAt(this, pos, stream), Optional.empty(),split);
 
     }
-    Spliterator<T> copyOrGet() {
+    Spliterator<T> get() {
         return stream;
     }
 

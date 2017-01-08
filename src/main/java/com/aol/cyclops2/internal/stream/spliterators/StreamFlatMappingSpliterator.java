@@ -31,9 +31,7 @@ public class StreamFlatMappingSpliterator<T,R> extends Spliterators.AbstractSpli
         }
         source.forEachRemaining(t->{
 
-
-            Stream<R> flatten = (Stream<R>)mapper.apply(t);
-            flatten.forEach(action);
+            mapper.apply(t).spliterator().forEachRemaining(action);
         });
 
     }
