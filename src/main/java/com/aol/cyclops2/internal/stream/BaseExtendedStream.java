@@ -920,7 +920,8 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     @Override //TODO can be replaced by a dedicated Spliterator that keeps an index
     public ReactiveSeq<T> insertAtS(final int pos, final Stream<T> stream) {
         Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> s = this.splitAt(pos);
-        return ReactiveSeq.concat(s.v1,ReactiveSeq.fromStream(stream),s.v2);
+        return ReactiveSeq.concat(s.v1,ReactiveSeq.fromStream(
+                stream),s.v2);
 
     }
 
