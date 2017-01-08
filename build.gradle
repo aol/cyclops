@@ -149,7 +149,7 @@ javadoc {
 }
 modifyPom {
 	project {
-		name 'cyclops2-react'
+		name 'cyclops-react'
 		description 'Platform for Functional Reactive Programming with Java 8'
 		url 'https://github.com/aol/simple-react'
 		inceptionYear '2015'

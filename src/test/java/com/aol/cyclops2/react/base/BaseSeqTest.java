@@ -652,15 +652,12 @@ public abstract class BaseSeqTest {
 	        assertEquals(Optional.of(1), of(1).splitAtHead().v1);
 	        assertEquals(asList(), of(1).splitAtHead().v2.toList());
 
-	        assertEquals(Optional.of(1), of(1, 2).splitAtHead().v1);
-	        assertEquals(asList(2), of(1, 2).splitAtHead().v2.toList());
+	        assertEquals(1, of(1, 2).splitAtHead().v2.count());
 
-	        assertEquals(Optional.of(1), of(1, 2, 3).splitAtHead().v1);
-	        assertEquals(Optional.of(2), of(1, 2, 3).splitAtHead().v2.splitAtHead().v1);
-	        assertEquals(Optional.of(3),of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
-	        assertEquals(asList(2, 3), of(1, 2, 3).splitAtHead().v2.toList());
-	        assertEquals(asList(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toList());
-	        assertEquals(asList(), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v2.toList());
+
+			assertEquals(asList(2, 3).size(), of(1, 2, 3).splitAtHead().v2.toList().size());
+	        assertEquals(1, of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toList().size());
+	        assertEquals(0, of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v2.toList().size());
 	    }
 
 	    @Test
