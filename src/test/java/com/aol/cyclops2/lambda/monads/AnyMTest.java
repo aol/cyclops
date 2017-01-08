@@ -20,6 +20,8 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import cyclops.monads.Witness;
+import cyclops.monads.WitnessType;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -35,6 +37,30 @@ import reactor.core.publisher.Flux;
 
 
 public class AnyMTest {
+
+	@Test
+	public void optionalAndStream(){
+
+		AnyM<optional,Integer> opt = AnyM.ofNullable(10);
+		AnyM<optional,Integer> optTimes2 = by2(opt);
+
+		AnyM<stream,Integer> stream = AnyM.fromArray(10,20,30);
+		AnyM<stream,Integer> streamTimes2  = by2(stream);
+
+		Stream<Integer> rawStream = stream.to(Witness::stream);
+
+		Optional<Integer> rawOptional = opt.to(Witness::optional);
+
+
+	}
+
+	public <W extends WitnessType<W>> AnyM<W,Integer> by2(AnyM<W,Integer> toMultiply){
+
+		return toMultiply.map(i->i*2);
+
+	}
+
+
     @Test
     public void testApEval() {
 
