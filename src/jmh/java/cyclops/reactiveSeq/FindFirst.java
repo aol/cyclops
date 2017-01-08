@@ -14,7 +14,7 @@ import org.openjdk.jmh.annotations.Warmup;
 
 public class FindFirst {
 
- @Benchmark
+ //@Benchmark
  @BenchmarkMode(Mode.SampleTime)
  @OutputTimeUnit(TimeUnit.MILLISECONDS)
  @Warmup(
@@ -28,7 +28,7 @@ public class FindFirst {
   Stream.of(1,2,3)
           .findFirst().get();
  }
- @Benchmark
+ //@Benchmark
  @BenchmarkMode(Mode.SampleTime)
  @OutputTimeUnit(TimeUnit.MILLISECONDS)
  @Warmup(

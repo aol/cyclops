@@ -34,6 +34,7 @@ public class ConcatonatingSpliterator<IN,T> extends BaseComposableSpliterator<IN
     }
 
     private static <T> long size(Spliterator<T>... spliterators) {
+
         long size= 0;
         for(Spliterator<T> next : spliterators){
             size += next.estimateSize();

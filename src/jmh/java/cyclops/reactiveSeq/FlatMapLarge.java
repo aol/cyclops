@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 public class FlatMapLarge {
 
- @Benchmark
+// @Benchmark
  @BenchmarkMode(Mode.SampleTime)
  @OutputTimeUnit(TimeUnit.MILLISECONDS)
  @Warmup(
@@ -29,7 +29,7 @@ public class FlatMapLarge {
            .forEach(bh::consume);
 
  }
- @Benchmark
+// @Benchmark
  @BenchmarkMode(Mode.SampleTime)
  @OutputTimeUnit(TimeUnit.MILLISECONDS)
  @Warmup(

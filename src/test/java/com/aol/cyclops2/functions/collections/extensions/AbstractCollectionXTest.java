@@ -1722,7 +1722,7 @@ public abstract class AbstractCollectionXTest {
 	    @Test
 	    public void testCycleUntil() {
 	        count =0;
-	        System.out.println("List " + of(1, 2, 3).cycleUntil(next->count++==6).toListX());
+	        System.out.println("List " + of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());
 	        count =0;
 	        assertEquals(6,of(1, 2, 3).cycleUntil(next->count++==6).toListX().size());
 	       

@@ -1,5 +1,6 @@
 package com.aol.cyclops2.internal.stream;
 
+import com.aol.cyclops2.internal.stream.spliterators.CopyableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
 import cyclops.Streams;
@@ -47,10 +48,13 @@ public class StreamX<T> extends BaseExtendedStream<T> {
     <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible, Optional<PushingSpliterator<?>> split) {
         return new StreamX<X>(stream,reversible,split);
     }
+
     @Override
     public ReactiveSeq<T> cycle() {
+
+        Spliterator<T> t = copy();
         return  ReactiveSeq.fill(1)
-                .flatMap(i->createSeq(copy(),reversible,split));
+                .flatMap(i->createSeq(CopyableSpliterator.copy(t),reversible,split));
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 public class MapLarge {
 
- @Benchmark
+// @Benchmark
  @BenchmarkMode(Mode.SampleTime)
  @OutputTimeUnit(TimeUnit.MILLISECONDS)
  @Warmup(
@@ -30,7 +30,7 @@ public class MapLarge {
            .forEach(bh::consume);
 
  }
- @Benchmark
+// @Benchmark
  @BenchmarkMode(Mode.SampleTime)
  @OutputTimeUnit(TimeUnit.MILLISECONDS)
  @Warmup(

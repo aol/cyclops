@@ -310,9 +310,9 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final <U> ReactiveSeq<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
-
-        return createSeq(ReactiveSeq.concat(ReactiveSeq.of(seed), StreamSupport.stream(new ScanLeftSpliterator<T,U>(get(),
-                                        seed,function),false)),reversible,this.split);
+        return createSeq(new ConcatonatingSpliterator<>(new SingleSpliterator<U>(seed),
+                new ScanLeftSpliterator<T,U>(get(),
+                        seed,function)),reversible,this.split);
 
 
     }
@@ -778,6 +778,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     
     @Override
     public Spliterator<T> spliterator() {
+
         return copy();
     }
 
@@ -939,7 +940,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public T firstValue() {
-        return Streams.firstValue(unwrapStream());
+        return findFirst().get();
     }
 
     @Override
@@ -976,41 +977,52 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return createSeq(new OnEmptyThrowSpliterator<>(stream,supplier));
     }
 
-
+    private Spliterator<? extends T> avoidCopy(Stream<? extends T> stream ){
+        if(stream instanceof StreamX){
+            return ((StreamX)stream).get();
+        }
+        return stream.spliterator();
+    }
+    private Spliterator<? extends T> avoidCopy(Iterable<? extends T> stream ){
+        if(stream instanceof StreamX){
+            return ((StreamX)stream).get();
+        }
+        return stream.spliterator();
+    }
     @Override
     public ReactiveSeq<T> appendS(final Stream<? extends T> other) {
-        return ReactiveSeq.concat(get(),other.spliterator());
+        return ReactiveSeq.concat(get(),avoidCopy(other));
     }
     public ReactiveSeq<T> append(final Iterable<? extends T> other) {
-        return ReactiveSeq.concat(get(),other.spliterator());
+        return ReactiveSeq.concat(get(),avoidCopy(other));
     }
 
     //TODO use spliterators and createSeq
     @Override
     public ReactiveSeq<T> append(final T other) {
-        return ReactiveSeq.concat(unwrapStream(),Stream.of(other));
+        return ReactiveSeq.concat(get(),new SingleSpliterator<T>(other));
     }
 
     @Override
     public ReactiveSeq<T> append(final T... other) {
-        return ReactiveSeq.concat(unwrapStream(),Stream.of(other));
+        return ReactiveSeq.concat(get(),Stream.of(other).spliterator());
     }
     @Override
     public ReactiveSeq<T> prependS(final Stream<? extends T> other) {
-        return ReactiveSeq.concat(other,unwrapStream());
+        return ReactiveSeq.concat(avoidCopy(other),get());
     }
     public ReactiveSeq<T> prepend(final Iterable<? extends T> other) {
-        return ReactiveSeq.concat(StreamSupport.stream(other.spliterator(),false),unwrapStream());
+        return ReactiveSeq.concat(avoidCopy(other),get());
     }
 
     @Override
     public ReactiveSeq<T> prepend(final T other) {
-        return ReactiveSeq.concat(Stream.of(other),unwrapStream());
+        return ReactiveSeq.concat(new SingleSpliterator<T>(other),get());
     }
 
     @Override
     public ReactiveSeq<T> prepend(final T... other) {
-        return ReactiveSeq.concat(Stream.of(other),unwrapStream());
+        return ReactiveSeq.concat(Stream.of(other).spliterator(),get());
     }
 
 
@@ -1358,9 +1370,11 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
 
     Spliterator<T> get() {
+
         return stream;
     }
     Spliterator<T> copy() {
+
         return CopyableSpliterator.copy(stream);
     }
 }

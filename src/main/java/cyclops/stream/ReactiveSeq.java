@@ -510,7 +510,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq created from Spliterator
      */
     public static <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
-       // return fromStream(StreamSupport.stream(spliterator, false));
         return Streams.reactiveSeq(spliterator, Optional.empty(),Optional.empty());
     }
     public static <T> ReactiveSeq<T> fromSpliterator(PushingSpliterator<T> spliterator){
@@ -3226,16 +3225,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static <T> ReactiveSeq<T> fromIterable(final Iterable<T> iterable) {
         Objects.requireNonNull(iterable);
-       // return ReactiveSeq.fromSpliterator(iterable.spliterator());
+        return ReactiveSeq.fromSpliterator(iterable.spliterator());
 
-        if(iterable instanceof ReactiveSeq) {
-            if (iterable instanceof StreamX) {
-
-                return ReactiveSeq.fromSpliterator(iterable.spliterator());
-            }
-        }
-
-        return Streams.reactiveSeq(new IteratableSpliterator<T>(iterable), Optional.empty(), Optional.empty());
 
     }
     public static <T> ReactiveSeq<T> reactiveSeq(final Iterable<T> iterable) {

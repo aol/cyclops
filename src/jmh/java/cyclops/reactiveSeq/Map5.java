@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 public class Map5 {
 
- @Benchmark
+ //@Benchmark
  @BenchmarkMode(Mode.SampleTime)
  @OutputTimeUnit(TimeUnit.MILLISECONDS)
  @Warmup(
@@ -33,7 +33,7 @@ public class Map5 {
            .collect(Collectors.toList()));
   }
  }
- @Benchmark
+ //@Benchmark
  @BenchmarkMode(Mode.SampleTime)
  @OutputTimeUnit(TimeUnit.MILLISECONDS)
  @Warmup(
@@ -55,7 +55,7 @@ public class Map5 {
   }
  }
 
- @Benchmark
+ //@Benchmark
  @BenchmarkMode(Mode.SampleTime)
  @OutputTimeUnit(TimeUnit.MILLISECONDS)
  @Warmup(

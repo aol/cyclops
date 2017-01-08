@@ -4,6 +4,7 @@ import cyclops.Monoids;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
+import cyclops.collections.immutable.PBagX;
 import cyclops.control.Eval;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Ignore;
@@ -32,6 +33,10 @@ import static org.junit.Assert.assertThat;
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
+    @Test
+    public void cycleUntil(){
+        System.out.println("List " + PBagX.of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());
+    }
 
     @Test
     public void multipathsInts() {
