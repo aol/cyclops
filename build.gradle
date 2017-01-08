@@ -105,7 +105,7 @@ jmh {
 		include = ".*"
 	}
 	 **/
-    include = ".*"
+    include = ".*scrabble*"
 }
 
 
