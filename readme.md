@@ -76,7 +76,7 @@ Replaying Streams
 
 ```java
 Stream<Integer> stream = ReactiveSeq.range(0,1000)
-                                            .map(i->i*2);
+                                    .map(i->i*2);
 
 stream.forEach(System.out::println);
 List<Integer> replayed = stream.collect(Collectors.toList());
