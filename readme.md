@@ -25,7 +25,7 @@ This is the 2.x branch for 1.x click the link below
 where x.y.z represents the latest version
 
 ```groovy
-compile cyclops2
+compile 'com.aol.simplereact:cyclops-react:x.y.z'
 ```
 
 ## Maven
@@ -50,6 +50,80 @@ compile cyclops2
 
 * Third party integrations via cyclops modules (including Scala, JavasLang, FunctionalJava, Reactor and RxJava)
 
+# Getting started examples
+
+## Streaming
+
+Sequential Streams, with retry and forEach result + error.
+
+```java
+ReactiveSeq.range(0,1000)
+           .map(this::processNext)
+           .retry(this::mightFail)
+           .forEach(System.out::println, System.err::println);
+```
+
+Mixed Sequential and Parallel Stream
+
+```java
+ReactiveSeq.range(0, 1000)
+           .parallel(new ForkJoinPool(10),par -> par.map(this::parallelTransform))
+           .map(this::sequentialTransform)
+           .forEach(System.out::println)
+``` 
+
+Replaying Streams
+
+```java
+Stream<Integer> stream = ReactiveSeq.range(0,1000)
+                                            .map(i->i*2);
+
+stream.forEach(System.out::println);
+List<Integer> replayed = stream.collect(Collectors.toList());
+stream.map(i->"hello  " + i)
+      .forEach(System.out::println);
+```
+
+Asynchronous stream execution
+
+```java
+//cyclops.async.Future
+ Future<Integer> asyncResult = ReactiveSeq.of(1,2,3,4)
+                                           .foldFuture(Executors.newFixedThreadPool(1),s->s.reduce( 50,(acc,next) -> acc+next));
+                                           
+ asyncResult.peek(System.out::println)
+            .map(this::processResult);
+       
+```
+
+Lazy execution using extended Collections
+```java
+Eval<Integer> lazyResult = ListX.of(1,2,3,4)
+                                 .map(i->i*10)
+                                 .foldLazy(s->s
+                                 .reduce( 50,(acc,next) -> acc+next));
+```
+
+Lazy / terminating fold
+
+```java
+ReactiveSeq.generate(this::process)
+           .map(data->data.isSuccess())
+           .combine((a,b)-> a ? false : true, (a,b) -> a|b)
+           .findFirst(); //terminating reduction on infinite data structure
+
+```
+
+FutureStream - parallel / async Streaming
+
+```java
+new LazyReact(100,100).generate(()->"data") //100 active tasks, 100 threads
+                      .map(d->"produced on " + Thread.currentThread().getId())
+                      .peek(System.out::println)
+                      .map(this::process)
+                      .flatMap(e->ReactiveSeq.range(0,e))
+                      .run();
+```
 
 # 2.x Type dictionary
 
