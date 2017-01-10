@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import cyclops.Streams;
 
 import cyclops.async.LazyReact;
+import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.async.Queue;
 import cyclops.async.QueueFactories;
@@ -186,7 +187,7 @@ public class Javaone {
         
         Queue<String> transferQueue = QueueFactories.<String>boundedQueue(4)
                                                  .build();
-        
+
         new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
                                                       .map(d->"produced on " + Thread.currentThread().getId())
                                                       .peek(System.out::println)

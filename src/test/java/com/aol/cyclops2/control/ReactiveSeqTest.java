@@ -72,6 +72,21 @@ public class ReactiveSeqTest {
         assertThat(plus2.toListX(), equalTo(Arrays.asList(3d, 4d, 5d)));
         assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12d, 22d, 32d)));
     }
+
+    @Test
+    public void replayable(){
+
+        Stream<Integer> stream = ReactiveSeq.range(0,1000)
+                                            .map(i->i*2);
+
+        stream.forEach(System.out::println);
+        List<Integer> replayed = stream.collect(Collectors.toList());
+        stream.map(i->"hello  " + i)
+                .forEach(System.out::println);
+
+
+
+    }
     @Test
     public void compareFindFirst(){
         for(int i=0;i<10;i++)

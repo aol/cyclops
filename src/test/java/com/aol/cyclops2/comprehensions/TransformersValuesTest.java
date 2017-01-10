@@ -23,14 +23,32 @@ public class TransformersValuesTest {
     int count;
     @Test
     public void all(){
+
+
+
         FutureT<Witness.list,Integer> future1 = FutureT.of(ListX.of(Future.ofResult(1), Future.ofResult(2)).anyM());
-       // FutureT<Witness.list,Integer> future2 =
+
 
         future1.forEach2M(i->FutureT.of(ListX.of(Future.ofResult(i*4), Future.ofResult(i*8)).anyM()),
-                            (a,b)->a+b).printOut();
+                    (a,b)->a+b)
+                .printOut();
 
 
         
         
+    }
+
+    @Test
+    public void liftM(){
+
+        //Asynchronously generated string concatonated with another, inside a list
+        Future.ofSupplier(()->"Asynchronously generated string ")
+                .liftM(Witness.list.INSTANCE)
+                .forEach2M(a->Future.ofSupplier(()->a+"concatonated with another, inside a list")
+                                .liftM(Witness.list.INSTANCE),
+                        (a,b)->b)
+                .printOut();
+        
+
     }
 }
