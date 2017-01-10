@@ -1,6 +1,6 @@
 <img width="820" alt="screen shot 2016-02-22 at 8 44 42 pm" src="https://cloud.githubusercontent.com/assets/9964792/13232030/306b0d50-d9a5-11e5-9706-d44d7731790d.png">
 
-Future & functional based programming via JDK compatible extensions for Java 8 and above. 
+Powerful Streams and functional data types for building modern Java 8 applications. We extend JDK interfaces where possible for maximum integration. 
 
 This is the 2.x branch for 1.x click the link below
 
