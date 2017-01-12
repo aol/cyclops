@@ -24,7 +24,7 @@ public class TckAsynchronousPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createFailedPublisher() {
-		return null; //not possible to subscribe to failed Stream
+		return null; //not possible to subscribeAll to failed Stream
 		
 	}
 	

@@ -21,10 +21,25 @@ public class RecoverOperator<T,R> extends BaseOperator<T,R> {
     }
 
 
+    @Override
+    public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+        return source.subscribe(e-> {
+                    try {
+                        onNext.accept(mapper.apply(e));
+                    } catch (Throwable t) {
+                        try{
+                            onNext.accept(recover.apply(t));
+                        }catch(Throwable t2) {
+                            onError.accept(t2);
+                        }
+                    }
+                }
+                ,onError,onComplete);
+    }
 
     @Override
-    public void subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        source.subscribe(e-> {
+    public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+        source.subscribeAll(e-> {
                     try {
                         onNext.accept(mapper.apply(e));
                     } catch (Throwable t) {

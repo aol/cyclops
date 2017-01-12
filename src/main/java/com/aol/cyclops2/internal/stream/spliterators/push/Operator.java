@@ -1,5 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import org.reactivestreams.Subscription;
+
 import java.util.function.Consumer;
 
 /**
@@ -8,7 +10,7 @@ import java.util.function.Consumer;
 public interface Operator<T> {
 
 
-    public void cancel();
-    public void subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete);
+    public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete);
+    public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete);
 
 }

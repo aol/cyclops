@@ -32,13 +32,38 @@ public class GroupedByTimeOperator<T,C extends Collection<? super T>,R> extends 
     }
 
 
-
     @Override
-    public void subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+    public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         long toRun = t.toNanos(time);
         Collection[] next = {factory.get()};
         long[] start ={System.nanoTime()};
-        source.subscribe(e-> {
+        return source.subscribe(e-> {
+                    try {
+
+                        next[0].add(e);
+                        if(System.nanoTime()-start[0] > toRun){
+                            onNext.accept(finalizer.apply((C)next[0]));
+                            next[0] = factory.get();
+                            start[0] = System.nanoTime();
+                        }
+
+                    } catch (Throwable t) {
+
+                        onError.accept(t);
+                    }
+                }
+                ,onError,()->{
+                    onNext.accept(finalizer.apply((C)next[0]));
+                    onComplete.run();
+                });
+    }
+
+    @Override
+    public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+        long toRun = t.toNanos(time);
+        Collection[] next = {factory.get()};
+        long[] start ={System.nanoTime()};
+        source.subscribeAll(e-> {
                     try {
 
                         next[0].add(e);

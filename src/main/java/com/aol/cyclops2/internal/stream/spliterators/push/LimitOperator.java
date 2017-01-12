@@ -1,19 +1,22 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import org.reactivestreams.Subscription;
+
 import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class FilterOperator<T> extends BaseOperator<T,T> {
+public class LimitOperator<T,R> extends BaseOperator<T,T> {
 
 
-    Predicate<? super T> predicate;
+    long limit;
 
-    public FilterOperator(Operator<T> source, Predicate<? super T> predicate){
+    public LimitOperator(Operator<T> source,long limit){
         super(source);
-        this.predicate = predicate;
+        this.limit = limit;
+
 
 
     }
@@ -21,30 +24,28 @@ public class FilterOperator<T> extends BaseOperator<T,T> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        return  source.subscribe(e-> {
+        long[] count = {0};
+        StreamSubscription sub[] = {null};
+        sub[0] = source.subscribe(e-> {
                     try {
-                        if(predicate.test(e))
+                        if(count[0]++<limit)
                             onNext.accept(e);
+                        else{
+                            sub[0].cancel();
+                            onComplete.run();
+                        }
                     } catch (Throwable t) {
 
                         onError.accept(t);
                     }
                 }
                 ,onError,onComplete);
+        return sub[0];
     }
 
     @Override
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
 
-        source.subscribeAll(e-> {
-                    try {
-                        if(predicate.test(e))
-                            onNext.accept(e);
-                    } catch (Throwable t) {
-
-                        onError.accept(t);
-                    }
-                }
-                ,onError,onCompleteDs);
+        subscribe(onNext,onError,onCompleteDs).request(Long.MAX_VALUE);
     }
 }

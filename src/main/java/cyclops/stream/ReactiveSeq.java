@@ -3019,7 +3019,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *     SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
-     * 		ReactiveSeq.of(1,2,3).subscribe(sub);
+     * 		ReactiveSeq.of(1,2,3).subscribeAll(sub);
      * 		sub.stream().forEach(System.out::println);
      * 		
      * 		  1 

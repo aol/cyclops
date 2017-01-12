@@ -93,7 +93,7 @@ public class RxJavaConversionTest {
 	    .filter(title -> title != null)
 	    .take(5)
 	    .doOnNext(title -> saveTitleRx(title))
-	    .subscribe(title -> System.out.println(title));
+	    .subscribeAll(title -> System.out.println(title));
 	}
 	private Observable<String> saveTitleRx(String title) {
 		// TODO Auto-generated method stub

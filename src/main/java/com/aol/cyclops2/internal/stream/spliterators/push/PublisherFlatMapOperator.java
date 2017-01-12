@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * Created by johnmcclean on 12/01/2017.
@@ -19,6 +18,7 @@ import java.util.stream.Stream;
 public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
 
 
+    int maxCapacity=256;
     final Function<? super T, ? extends Publisher<? extends R>> mapper;;
 
     public PublisherFlatMapOperator(Operator<T> source, Function<? super T, ? extends Publisher<? extends R>> mapper){
@@ -73,18 +73,69 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
             }
         });
     }
+
     @Override
-    public void subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+    public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         Deque<Publisher<? extends R>> queued = new LinkedList<>();
         ManyToOneConcurrentArrayQueue<R> data = new ManyToOneConcurrentArrayQueue<R>(256);
         ManyToOneConcurrentArrayQueue<Throwable> errors = new ManyToOneConcurrentArrayQueue<>(256);
         List<Subscription> activeSubs = new ArrayList<>();
-        source.subscribe(e-> {
+        StreamSubscription[] sourceSub = {null};
+        StreamSubscription s = new StreamSubscription(){
+            @Override
+            public void request(long n) {
+                sourceSub[0].request(1l);
+                super.request(n);
+            }
+
+            @Override
+            public void cancel() {
+                sourceSub[0].cancel();
+                for(Subscription next : activeSubs){
+                    next.cancel();
+                }
+                super.cancel();
+            }
+        } ;
+        sourceSub[0] = source.subscribe(e-> {
+                    try {
+
+                        Publisher<? extends R> next = mapper.apply(e);
+
+                        queued.add(next);
+                        drainAndLaunch(s,onNext, queued, data, errors, activeSubs);
+                        if(s.isActive())
+                            sourceSub[0].request(1l);
+                    } catch (Throwable t) {
+
+                        onError.accept(t);
+                    }
+                }
+                ,onError,()->{
+                    while(activeSubs.size()>0 && data.size()>0 && queued.size()>0){
+                        //drain, create demand, launch queued publishers
+                        drainAndLaunch(s,onNext, queued, data, errors, activeSubs);
+                    }
+                    onComplete.run();
+                });
+
+        return s;
+    }
+
+    @Override
+    public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+        Deque<Publisher<? extends R>> queued = new LinkedList<>();
+        ManyToOneConcurrentArrayQueue<R> data = new ManyToOneConcurrentArrayQueue<R>(256);
+        ManyToOneConcurrentArrayQueue<Throwable> errors = new ManyToOneConcurrentArrayQueue<>(256);
+        List<Subscription> activeSubs = new ArrayList<>();
+        source.subscribeAll(e-> {
                     try {
 
                         Publisher<? extends R> next = mapper.apply(e);
                         queued.add(next);
-                        drainAndLaunch(onNext, queued, data, errors, activeSubs);
+                        StreamSubscription sub = new StreamSubscription();
+                        sub.request(maxCapacity);
+                        drainAndLaunch(sub,onNext, queued, data, errors, activeSubs);
 
                     } catch (Throwable t) {
 
@@ -94,14 +145,16 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
                 ,onError,()->{
                     while(activeSubs.size()>0 && data.size()>0 && queued.size()>0){
                         //drain, create demand, launch queued publishers
-                        drainAndLaunch(onNext, queued, data, errors, activeSubs);
+                        StreamSubscription sub = new StreamSubscription();
+                        sub.request(maxCapacity);
+                        drainAndLaunch(sub,onNext, queued, data, errors, activeSubs);
                     }
                     onCompleteDs.run();
                 });
     }
 
-    private void drainAndLaunch(Consumer<? super R> onNext, Deque<Publisher<? extends R>> queued, ManyToOneConcurrentArrayQueue<R> data, ManyToOneConcurrentArrayQueue<Throwable> errors, List<Subscription> activeSubs) {
-        drainAndCreateDemand(onNext, data, activeSubs);
+    private void drainAndLaunch(StreamSubscription maxCapacity,Consumer<? super R> onNext, Deque<Publisher<? extends R>> queued, ManyToOneConcurrentArrayQueue<R> data, ManyToOneConcurrentArrayQueue<Throwable> errors, List<Subscription> activeSubs) {
+        drainAndCreateDemand(maxCapacity,onNext, data, activeSubs);
 
 
         //add next publisher to active
@@ -113,17 +166,23 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
             Thread.yield();
         }
         subscribe(queued,data,errors,activeSubs);
-        drainAndCreateDemand(onNext, data, activeSubs);
+        drainAndCreateDemand(maxCapacity,onNext, data, activeSubs);
     }
 
-    private void drainAndCreateDemand(Consumer<? super R> onNext, ManyToOneConcurrentArrayQueue<R> data, List<Subscription> activeSubs) {
+    private void drainAndCreateDemand(StreamSubscription maxCapacity,Consumer<? super R> onNext, ManyToOneConcurrentArrayQueue<R> data, List<Subscription> activeSubs) {
         //drain queued DATA
         while(data.size()>0){
             onNext.accept(data.poll());
         }
 
-        int capacity = 256-(data.size()-activeSubs.size());
+        long capacity[] = {maxCapacity.requested.get()-(data.size()-activeSubs.size())};
         //create more demand
-        activeSubs.forEach(s->s.request(Math.min(1l,capacity/activeSubs.size())));
+        activeSubs.forEach(s-> {
+            if(capacity[0]> 0){
+                long request = capacity[0]/activeSubs.size();
+                s.request(request);
+                maxCapacity.requested.accumulateAndGet(request,(a,b)->a-b);
+            }
+        });
     }
 }

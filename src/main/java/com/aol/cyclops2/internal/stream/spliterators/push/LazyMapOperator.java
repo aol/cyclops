@@ -23,11 +23,11 @@ public class LazyMapOperator<T,R> implements Operator<R> {
 
 
     @Override
-    public void subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+    public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         Tuple2<Function<? super T, ? extends R>, Consumer<Consumer<? super R >>> local = events.get();
         Function<? super T, ? extends R> mapper = local.v1;
         Consumer<Consumer<? super R >> onComplete = local.v2;
-        source.subscribe(e-> {
+        source.subscribeAll(e-> {
                     try {
                         onNext.accept(mapper.apply(e));
                     } catch (Throwable t) {

@@ -20,11 +20,25 @@ public class LazyFilterOperator<T> extends BaseOperator<T,T> {
     }
 
 
+    @Override
+    public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+         Predicate<? super T> predicate = predicateSupplier.get();
+        return source.subscribe(e-> {
+                    try {
+                        if(predicate.test(e))
+                            onNext.accept(e);
+                    } catch (Throwable t) {
+
+                        onError.accept(t);
+                    }
+                }
+                ,onError,onComplete);
+    }
 
     @Override
-    public void subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+    public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         Predicate<? super T> predicate = predicateSupplier.get();
-        source.subscribe(e-> {
+        source.subscribeAll(e-> {
                     try {
                         if(predicate.test(e))
                             onNext.accept(e);

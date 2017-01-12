@@ -29,12 +29,32 @@ public class GroupedWhileOperator<T,C extends Collection<? super T>,R> extends B
 
     }
 
+    @Override
+    public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+        Collection[] next = {factory.get()};
+        return source.subscribe(e-> {
+                    try {
+                        next[0].add(e);
+                        if(predicate.test(e)){
+                            onNext.accept(finalizer.apply((C)next[0]));
+                            next[0] = factory.get();
+                        }
 
+                    } catch (Throwable t) {
+
+                        onError.accept(t);
+                    }
+                }
+                ,onError,()->{
+                    onNext.accept(finalizer.apply((C)next[0]));
+                    onComplete.run();
+                });
+    }
 
     @Override
-    public void subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+    public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         Collection[] next = {factory.get()};
-        source.subscribe(e-> {
+        source.subscribeAll(e-> {
                     try {
                         next[0].add(e);
                         if(predicate.test(e)){

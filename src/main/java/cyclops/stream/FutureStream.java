@@ -525,17 +525,17 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * Subscribe to this Stream
      * If this Stream is executing in async mode it will operate as an Async Publisher, otherwise it will operate as a Synchronous publisher.
-     * async() or sync() can be used just prior to subscribe.
+     * async() or sync() can be used just prior to subscribeAll.
      *
      * <pre>
      * {@code
      *  FutureStreamSubscriber<Integer> sub = new FutureStreamSubscriber();
-        FutureStream.of(1,2,3).subscribe(sub);
+        FutureStream.of(1,2,3).subscribeAll(sub);
         sub.getStream().forEach(System.out::println);
      * }
      * </pre>
      *	@param s Subscriber
-     * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
+     * @see org.reactivestreams.Publisher#subscribeAll(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super U> s) {

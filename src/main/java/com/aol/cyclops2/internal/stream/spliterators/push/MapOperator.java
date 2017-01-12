@@ -1,12 +1,9 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import com.aol.cyclops2.types.mixins.AsMappable;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import org.reactivestreams.Subscription;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Created by johnmcclean on 12/01/2017.
@@ -14,12 +11,12 @@ import java.util.function.Supplier;
 public class MapOperator<T,R> extends BaseOperator<T,R> {
 
 
-    Function<? super T, ? extends R> mapper;
+    final Function<? super T, ? extends R> mapper;
 
     public MapOperator(Operator<T> source, Function<? super T, ? extends R> mapper){
         super(source);
         this.mapper = mapper;
-        this.mapper = mapper;
+
 
 
 
@@ -32,9 +29,22 @@ public class MapOperator<T,R> extends BaseOperator<T,R> {
     }
 
     @Override
-    public void subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+    public Subscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+        return source.subscribe(e-> {
+                    try {
+                        onNext.accept(mapper.apply(e));
+                    } catch (Throwable t) {
 
-        source.subscribe(e-> {
+                        onError.accept(t);
+                    }
+                }
+                ,onError,onComplete);
+    }
+
+    @Override
+    public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+
+        source.subscribeAll(e-> {
                     try {
                         onNext.accept(mapper.apply(e));
                     } catch (Throwable t) {
