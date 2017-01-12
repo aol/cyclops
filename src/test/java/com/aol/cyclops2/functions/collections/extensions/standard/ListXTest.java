@@ -9,6 +9,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+import cyclops.collections.immutable.PVectorX;
+import cyclops.monads.Witness;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
@@ -19,6 +21,28 @@ import com.aol.cyclops2.functions.collections.extensions.CollectionXTestsWithNul
 import com.aol.cyclops2.types.Zippable;
 
 public class ListXTest extends CollectionXTestsWithNulls {
+
+    @Test
+    public void lazy(){
+
+
+        ListX<PVectorX<String>> list =     ListX.of(1,2,3,5,6,7,8)
+                                                .map(i->i*2)
+                                                .filter(i->i<4)
+                                                .sliding(2)
+                                                .map(vec -> vec.map(i->"value is " + i));
+
+
+          ListX.of(1,2,3,5,6,7,8)
+                .map(i->i*2)
+                .filter(i->i<4)
+                .slidingT(2)
+                .map(i->"value is " + i)
+                .unwrap()
+                  .to(Witness::stream);
+
+    }
+
     @Test
     public void coflatMapTest(){
         ListX<ListX<Integer>> list = ListX.of(1, 2, 3)

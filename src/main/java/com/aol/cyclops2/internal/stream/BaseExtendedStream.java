@@ -274,7 +274,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
     @Override
-    public final ReactiveSeq<ListX<T>> grouped(final int groupSize) {
+    public ReactiveSeq<ListX<T>> grouped(final int groupSize) {
         return createSeq(new GroupingSpliterator<T,List<T>,ListX<T>>(get(),()->new ArrayList(groupSize), c->ListX.fromIterable(c),groupSize), this.reversible,split);
 
     }
@@ -344,7 +344,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
 
     @Override
-    public final ReactiveSeq<T> skip(final long num) {
+    public ReactiveSeq<T> skip(final long num) {
        /** TODO future optimization so position of skip doesn't matter
         if(reversible.isPresent()){
             ReversableSpliterator rev = reversible.get();
@@ -372,7 +372,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
     @Override
-    public final ReactiveSeq<T> limit(final long num) {
+    public ReactiveSeq<T> limit(final long num) {
 /**
        if(reversible.isPresent()){
            ReversableSpliterator rev = reversible.get();

@@ -15,7 +15,7 @@ public class PushingSpliterator<T> implements Spliterator<T> {
 
     //TODO push based analoguges for the following Spliterators / operators
     //recover, iterator, foreach (error, oncomplete), zipXXX, groupXXX
-    //limitXXX, skipXXX, cycleXXXX, flatMap
+    //limitXXX, skipXXX, cycleXXXX, flatMap, duplicate, triplicate, quadruplicate
 
    
     public static void main(String[] args) throws InterruptedException{
