@@ -5,6 +5,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
 
     private void subscribe(Deque<Publisher<? extends R>> queued,
                            ManyToOneConcurrentArrayQueue<R> data,
+                           ManyToOneConcurrentArrayQueue<Throwable> errors,
                            List<Subscription> activeSubs){
 
         Publisher<? extends R> next = queued.poll();
@@ -47,10 +49,9 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
 
             @Override
             public void onNext(R r) {
-                while(!data.offer(r)){
-                    Thread.yield();
-                }
-
+                //Optimization check if this is the
+                //main thread and if so just call onNext
+                data.offer(r);
 
 
 
@@ -58,14 +59,16 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
 
             @Override
             public void onError(Throwable t) {
-                onError(t);
+                //Optimization check if this is the
+                //main thread and if so just call onError
+                errors.offer(t);
             }
 
             @Override
             public void onComplete() {
                 activeSubs.remove(sub);
                 if(queued.size()>0){
-                    subscribe(queued,data,activeSubs);
+                    subscribe(queued,data,errors,activeSubs);
                 }
             }
         });
@@ -73,30 +76,15 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
     @Override
     public void subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         Deque<Publisher<? extends R>> queued = new LinkedList<>();
-        ManyToOneConcurrentArrayQueue<R> data = new ManyToOneConcurrentArrayQueue<R>(1000);
-        List<Subscription> activeSubs;
+        ManyToOneConcurrentArrayQueue<R> data = new ManyToOneConcurrentArrayQueue<R>(256);
+        ManyToOneConcurrentArrayQueue<Throwable> errors = new ManyToOneConcurrentArrayQueue<>(256);
+        List<Subscription> activeSubs = new ArrayList<>();
         source.subscribe(e-> {
                     try {
 
                         Publisher<? extends R> next = mapper.apply(e);
                         queued.add(next);
-                        //drain queued DATA
-                        while(data.size()>0){
-                            onNext.accept(data.poll());
-                        }
-                        //create more demand
-                        activeSubs.forEach(s->s.request(Math.min(1l,capacity/activeSubs.size())));
-
-                        //add next publisher to active
-                        while( queued.size()>10) {
-                            if (data.size() > 0) {
-                                onNext.accept(data.poll());
-                            }
-
-                            Thread.yield();
-                        }
-                        subscribe(queued,data);
-                        //drain and create demand again
+                        drainAndLaunch(onNext, queued, data, errors, activeSubs);
 
                     } catch (Throwable t) {
 
@@ -106,8 +94,36 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
                 ,onError,()->{
                     while(activeSubs.size()>0 && data.size()>0 && queued.size()>0){
                         //drain, create demand, launch queued publishers
+                        drainAndLaunch(onNext, queued, data, errors, activeSubs);
                     }
                     onCompleteDs.run();
                 });
+    }
+
+    private void drainAndLaunch(Consumer<? super R> onNext, Deque<Publisher<? extends R>> queued, ManyToOneConcurrentArrayQueue<R> data, ManyToOneConcurrentArrayQueue<Throwable> errors, List<Subscription> activeSubs) {
+        drainAndCreateDemand(onNext, data, activeSubs);
+
+
+        //add next publisher to active
+        while( queued.size()>10) {
+            if (data.size() > 0) {
+                onNext.accept(data.poll());
+            }
+
+            Thread.yield();
+        }
+        subscribe(queued,data,errors,activeSubs);
+        drainAndCreateDemand(onNext, data, activeSubs);
+    }
+
+    private void drainAndCreateDemand(Consumer<? super R> onNext, ManyToOneConcurrentArrayQueue<R> data, List<Subscription> activeSubs) {
+        //drain queued DATA
+        while(data.size()>0){
+            onNext.accept(data.poll());
+        }
+
+        int capacity = 256-(data.size()-activeSubs.size());
+        //create more demand
+        activeSubs.forEach(s->s.request(Math.min(1l,capacity/activeSubs.size())));
     }
 }
