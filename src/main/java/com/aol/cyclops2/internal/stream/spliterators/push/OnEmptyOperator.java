@@ -1,0 +1,39 @@
+package com.aol.cyclops2.internal.stream.spliterators.push;
+
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+/**
+ * Created by johnmcclean on 12/01/2017.
+ */
+public class OnEmptyOperator<T> extends BaseOperator<T,T> {
+
+
+    Supplier<? extends T> value;
+
+    public OnEmptyOperator(Operator<T> source, Supplier<? extends T> value){
+        super(source);
+        this.value = value;
+
+
+    }
+
+
+
+    @Override
+    public void subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+
+        boolean[] data ={ false};
+        source.subscribe(e->{
+                    if(!data[0])
+                     data[0]=true;
+                    onNext.accept(e);
+                }
+                ,onError,()->{
+                        if(data[0]==false)
+                            onNext.accept(value.get());
+                        onCompleteDs.run();
+                });
+    }
+}
