@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class GroupedByTimeOperator<T,C extends Collection<? super T>,R> extends BaseOperator<T,R> {
+public class GroupedByTimeAndSizeOperator<T,C extends Collection<? super T>,R> extends BaseOperator<T,R> {
 
 
 
@@ -17,15 +17,19 @@ public class GroupedByTimeOperator<T,C extends Collection<? super T>,R> extends 
     private final Function<? super C, ? extends R> finalizer;
     private final long time;
     private final TimeUnit t;
+    private final int groupSize;
 
-    public GroupedByTimeOperator(Operator<T> source, Supplier<? extends C> factory,
-                                 Function<? super C, ? extends R> finalizer,long time,
-                                 TimeUnit t){
+
+    public GroupedByTimeAndSizeOperator(Operator<T> source, Supplier<? extends C> factory,
+                                        Function<? super C, ? extends R> finalizer, long time,
+                                        TimeUnit t,
+                                        int groupSize){
         super(source);
         this.factory = factory;
         this.finalizer = finalizer;
         this.time = time;
         this.t = t;
+        this.groupSize = groupSize;
 
 
 
@@ -58,16 +62,15 @@ public class GroupedByTimeOperator<T,C extends Collection<? super T>,R> extends 
                     try {
 
                         next[0].add(e);
-                        if(System.nanoTime()-start[0] > toRun){
+                        if(next[0].size()==groupSize || System.nanoTime()-start[0] > toRun){
                             onNext.accept(finalizer.apply((C)next[0]));
                             next[0] = factory.get();
                             start[0] = System.nanoTime();
                             if(sub.requested.decrementAndGet()>0){
                                 upstream[0].request(1l);
+                            }else{
+                                upstream[0].request(1l);
                             }
-                        }
-                        else{
-                            upstream[0].request(1l);
                         }
 
                     } catch (Throwable t) {

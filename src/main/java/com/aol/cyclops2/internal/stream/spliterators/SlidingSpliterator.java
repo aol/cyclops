@@ -51,10 +51,12 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
 
                 action.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
                 sent = true;
+
                 for (int i = 0; i < increment && list.get()
                         .size() > 0; i++)
                 list.mutate(var -> var.minus(0));
             }else{
+
                 sent =false;
             }
 

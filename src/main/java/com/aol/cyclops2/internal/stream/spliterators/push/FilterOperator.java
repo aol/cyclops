@@ -21,16 +21,21 @@ public class FilterOperator<T> extends BaseOperator<T,T> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        return  source.subscribe(e-> {
+        StreamSubscription[] upstream = {null};
+        upstream[0]= source.subscribe(e-> {
                     try {
                         if(predicate.test(e))
                             onNext.accept(e);
+                        else{
+                            upstream[0].request(1);
+                        }
                     } catch (Throwable t) {
 
                         onError.accept(t);
                     }
                 }
                 ,onError,onComplete);
+        return upstream[0];
     }
 
     @Override
