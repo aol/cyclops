@@ -31,7 +31,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             public void request(long n) {
                 leftSub[0].request(1);
                 rightSub[0].request(1);
-                super.request(n);
+                super.request(n-1);
             }
 
             @Override
