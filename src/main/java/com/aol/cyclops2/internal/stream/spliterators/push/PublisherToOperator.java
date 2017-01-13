@@ -5,6 +5,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.Spliterator;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 /**
@@ -14,8 +15,9 @@ public class PublisherToOperator<T> implements Operator<T> {
 
 
     final Publisher<T> split;
-    Runnable run;
+
     boolean closed= false;
+
     public PublisherToOperator(Publisher<? super T> split){
          this.split = (Publisher<T>)split;
 
@@ -30,6 +32,8 @@ public class PublisherToOperator<T> implements Operator<T> {
             @Override
             public void request(long n) {
                 super.request(n);
+                if(sArray[0]!=null)
+                    sArray[0].request(n);
 
             }
 
@@ -41,7 +45,7 @@ public class PublisherToOperator<T> implements Operator<T> {
                     sArray[0].cancel();
             }
         };
-        run = () -> {
+
             split.subscribe(new Subscriber<T>() {
                 @Override
                 public void onSubscribe(Subscription s) {
@@ -76,13 +80,13 @@ public class PublisherToOperator<T> implements Operator<T> {
                 }
             });
 
-        };
+
         return sub;
     }
 
     @Override
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        run = () -> {
+
             split.subscribe(new Subscriber<T>() {
                 @Override
                 public void onSubscribe(Subscription s) {
@@ -108,7 +112,7 @@ public class PublisherToOperator<T> implements Operator<T> {
                 }
             });
 
-        };
+
 
 
     }

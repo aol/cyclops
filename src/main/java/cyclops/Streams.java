@@ -2,11 +2,11 @@ package cyclops;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.spliterators.*;
+import cyclops.box.LazyImmutable;
 import cyclops.collections.immutable.PVectorX;
+import cyclops.function.*;
 import cyclops.higherkindedtypes.StreamKind;
 import cyclops.monads.AnyM;
-import cyclops.function.Monoid;
-import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import cyclops.box.Mutable;
@@ -22,8 +22,6 @@ import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.NonPausableHotStream;
 import com.aol.cyclops2.types.stream.PausableHotStream;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
@@ -1101,6 +1099,43 @@ public class Streams {
 
         })
                           .flatMap(Function.identity());
+    }
+    public static <T> Iterable<Iterable<T>> combineI(final Iterable<T> stream, final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
+
+        final Object UNSET = new Object();
+        return ()-> new Iterator<Iterable<T>>() {
+            T current = (T) UNSET;
+            final Iterator<T> it = stream.iterator();
+            @Override
+            public boolean hasNext() {
+                return it.hasNext() || current != UNSET;
+            }
+
+            @Override
+            public ReactiveSeq<T> next() {
+                while (it.hasNext()) {
+                    final T next = it.next();
+
+                    if (current == UNSET) {
+                        current = next;
+
+                    } else if (predicate.test(current, next)) {
+                        current = op.apply(current, next);
+
+                    } else {
+                        final T result = current;
+                        current = (T) UNSET;
+                        return ReactiveSeq.of(result, next);
+                    }
+                }
+                if (it.hasNext())
+                    return ReactiveSeq.empty();
+                final T result = current;
+                current = (T) UNSET;
+                return ReactiveSeq.of(result);
+            }
+
+        };
     }
 
     /**
@@ -2207,6 +2242,14 @@ public class Streams {
                                          .get()));
     }
 
+    public static final <A> Tuple2<Iterable<A>, Iterable<A>> toBufferingDuplicator(final Iterable<A> it) {
+        LazyImmutable<Tuple2<Iterator<A>, Iterator<A>>> iterators = LazyImmutable.def();
+
+
+
+        return Tuple.tuple(()-> iterators.computeIfAbsent(() -> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE)).v1,
+                                ()->iterators.computeIfAbsent(()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE)).v2);
+    }
     public static final <A> Tuple2<Iterator<A>, Iterator<A>> toBufferingDuplicator(final Iterator<A> iterator) {
         return toBufferingDuplicator(iterator, Long.MAX_VALUE);
     }
@@ -2219,6 +2262,13 @@ public class Streams {
                                                   bufferTo, bufferFrom, iterator, Long.MAX_VALUE, 0),
                           new DuplicatingIterator(
                                                   bufferFrom, bufferTo, iterator, pos, 0));
+    }
+
+    public static final <A> ListX<Iterable<A>> toBufferingCopier(final Iterable<A> it, final int copies) {
+        LazyImmutable<ListX<Iterator<A>>> iterators = LazyImmutable.def();
+        return  ListX.range(0,copies)
+                .zipWithIndex()
+                .map(t->()->iterators.computeIfAbsent(() -> toBufferingCopier(it.iterator(),copies)).get(t.v2).get());
     }
 
     public static final <A> ListX<Iterator<A>> toBufferingCopier(final Iterator<A> iterator, final int copies) {

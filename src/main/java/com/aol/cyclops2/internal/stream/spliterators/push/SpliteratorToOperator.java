@@ -20,7 +20,18 @@ public class SpliteratorToOperator<T> implements Operator<T> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        StreamSubscription sub = new StreamSubscription();
+        StreamSubscription sub = new StreamSubscription(){
+            @Override
+            public void request(long n) {
+                super.request(n);
+                run.run();
+            }
+
+            @Override
+            public void cancel() {
+                super.cancel();
+            }
+        };
         run = () -> {
             boolean canAdvance = true;
             while(sub.isActive()) {
@@ -54,7 +65,7 @@ public class SpliteratorToOperator<T> implements Operator<T> {
                 onCompleteDs.run();
 
         };
-
+        run.run();
 
     }
 }
