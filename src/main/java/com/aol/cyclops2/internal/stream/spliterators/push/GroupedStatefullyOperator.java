@@ -30,12 +30,34 @@ public class GroupedStatefullyOperator<T,C extends Collection<? super T>,R> exte
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         Collection[] next = {factory.get()};
-        return source.subscribe(e-> {
+        StreamSubscription[] upstream = {null};
+        StreamSubscription sub = new StreamSubscription(){
+            @Override
+            public void request(long n) {
+                if(n==Long.MAX_VALUE)
+                    upstream[0].request(n);
+                else {
+                    upstream[0].request(1);
+                }
+                super.request(n);
+            }
+
+            @Override
+            public void cancel() {
+                super.cancel();
+            }
+        };
+        upstream[0] =  source.subscribe(e-> {
                     try {
                         next[0].add(e);
                         if(predicate.test((C)next[0],e)){
                             onNext.accept(finalizer.apply((C)next[0]));
                             next[0] = factory.get();
+                            if(sub.requested.decrementAndGet()>0){
+                                upstream[0].request(1l);
+                            }
+                        }else{
+                            upstream[0].request(1l);
                         }
 
                     } catch (Throwable t) {
@@ -47,6 +69,7 @@ public class GroupedStatefullyOperator<T,C extends Collection<? super T>,R> exte
                     onNext.accept(finalizer.apply((C)next[0]));
                     onComplete.run();
                 });
+        return sub;
     }
 
     @Override

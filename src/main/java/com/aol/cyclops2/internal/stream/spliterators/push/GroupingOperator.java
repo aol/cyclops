@@ -32,11 +32,30 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         Collection[] next = {factory.get()};
-        return source.subscribe(e-> {
+        StreamSubscription[] upstream = {null};
+        StreamSubscription sub = new StreamSubscription(){
+            @Override
+            public void request(long n) {
+                if(n==Long.MAX_VALUE){
+                    upstream[0].request(n);
+                }else {
+                    upstream[0].request(n * groupSize);
+                }
+                super.request(n);
+            }
+
+            @Override
+            public void cancel() {
+                super.cancel();
+            }
+        };
+        upstream[0] = source.subscribe(e-> {
                     try {
+
                         next[0].add(e);
                         if(next[0].size()==groupSize){
                             onNext.accept(finalizer.apply((C)next[0]));
+                            sub.requested.decrementAndGet();
                             next[0] = factory.get();
                         }
 
@@ -47,8 +66,10 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
                 }
                 ,onError,()->{
                     onNext.accept(finalizer.apply((C)next[0]));
+                    sub.requested.decrementAndGet();
                     onComplete.run();
                 });
+        return sub;
     }
 
     @Override
