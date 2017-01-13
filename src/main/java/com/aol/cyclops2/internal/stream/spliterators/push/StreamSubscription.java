@@ -6,12 +6,13 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by johnmcclean on 12/01/2017.
+ *
  */
 public class StreamSubscription implements Subscription {
-    volatile boolean isActive;
+    volatile boolean isOpen;
     AtomicLong requested= new AtomicLong(0);
     public boolean isActive(){
-        return isActive && requested.get()>0;
+        return isOpen && requested.get()>0;
     }
     @Override
     public void request(long n) {
@@ -25,6 +26,6 @@ public class StreamSubscription implements Subscription {
 
     @Override
     public void cancel() {
-        isActive = false;
+        isOpen = false;
     }
 }

@@ -25,11 +25,28 @@ public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         StreamSubscription[] s = {null} ;
+        StreamSubscription res = new StreamSubscription(){
+            @Override
+            public void request(long n) {
+                s[0].request(1);
+                super.request(n-1);
+            }
+
+            @Override
+            public void cancel() {
+                s[0].cancel();
+                super.cancel();
+            }
+        };
         s[0] = source.subscribe(e-> {
                     try {
-                        Spliterator<? extends R> split = mapper.apply(e).spliterator();
-                        while(s[0].isActive()){
-                            split.tryAdvance(onNext);
+                        while(s[0].isActive()) {
+                            Spliterator<? extends R> split = mapper.apply(e).spliterator();
+                            boolean canAdvance = true;
+                            while (s[0].isActive() && canAdvance) {
+                                res.requested.decrementAndGet();
+                                canAdvance = split.tryAdvance(onNext);
+                            }
                         }
 
                     } catch (Throwable t) {
