@@ -48,5 +48,6 @@ public class RangeIntOperator<Integer> implements Operator<Integer> {
         for(int i=start;i<end;i++){
             ((Consumer)onNext).accept(i);
         }
+        onCompleteDs.run();
     }
 }

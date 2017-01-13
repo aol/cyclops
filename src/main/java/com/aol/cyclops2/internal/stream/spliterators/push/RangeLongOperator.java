@@ -30,12 +30,16 @@ public class RangeLongOperator<Long> implements Operator<Long> {
                         ((Consumer) onNext).accept(index[0]++);
 
                 }
+                if(index[0]>=end)
+                    onComplete.run();
 
             }
 
             @Override
             public void cancel() {
+
                 super.cancel();
+
             }
         };
         return sub;
@@ -47,5 +51,6 @@ public class RangeLongOperator<Long> implements Operator<Long> {
         for(long i=start;i<end;i++){
             ((Consumer)onNext).accept(i);
         }
+        onCompleteDs.run();
     }
 }
