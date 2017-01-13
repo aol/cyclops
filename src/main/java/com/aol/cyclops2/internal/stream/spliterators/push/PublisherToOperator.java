@@ -96,7 +96,9 @@ public class PublisherToOperator<T> implements Operator<T> {
 
                 @Override
                 public void onNext(T t) {
-                    onNext.accept(t);
+
+                        onNext.accept(t);
+
 
                 }
 

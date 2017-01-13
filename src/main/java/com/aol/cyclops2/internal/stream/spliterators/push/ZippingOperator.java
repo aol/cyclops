@@ -42,20 +42,29 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             }
         };
         leftSub[0]  = left.subscribe(e->{
-            if(rightQ.size()>0){
-                onNext.accept(fn.apply((T1)e,rightQ.poll()));
-            }else{
-                leftQ.offer((T1)e);
+            try {
+
+                if (rightQ.size() > 0) {
+                    onNext.accept(fn.apply((T1) e, rightQ.poll()));
+                } else {
+                    leftQ.offer((T1) e);
 
 
+                }
+            } catch (Throwable t) {
+                onError.accept(t);
             }
             createDemand(leftQ, rightQ, leftSub, rightSub, sub);
         },onError,onComplete);
         rightSub[0] = right.subscribe(e->{
-            if(leftQ.size()>0){
-                onNext.accept(fn.apply(leftQ.poll(),(T2)e));
-            }else{
-                rightQ.offer((T2)e);
+            try {
+                if (leftQ.size() > 0) {
+                    onNext.accept(fn.apply(leftQ.poll(), (T2) e));
+                } else {
+                    rightQ.offer((T2) e);
+                }
+            }catch(Throwable t){
+                onError.accept(t);
             }
             createDemand(leftQ, rightQ, leftSub, rightSub, sub);
         },onError,onComplete);
@@ -78,17 +87,25 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
         ConcurrentLinkedQueue<T1> leftQ = new ConcurrentLinkedQueue<T1>();
         ConcurrentLinkedQueue<T2> rightQ = new ConcurrentLinkedQueue<T2>();
         left.subscribeAll(e->{
-            if(rightQ.size()>0){
-                onNext.accept(fn.apply((T1)e,rightQ.poll()));
-            }else{
-                leftQ.offer((T1)e);
+            try {
+                if (rightQ.size() > 0) {
+                    onNext.accept(fn.apply((T1) e, rightQ.poll()));
+                } else {
+                    leftQ.offer((T1) e);
+                }
+            }catch(Throwable t){
+                onError.accept(t);
             }
         },onError,onCompleteDs);
         right.subscribeAll(e->{
-            if(leftQ.size()>0){
-                onNext.accept(fn.apply(leftQ.poll(),(T2)e));
-            }else{
-                rightQ.offer((T2)e);
+            try {
+                if (leftQ.size() > 0) {
+                    onNext.accept(fn.apply(leftQ.poll(), (T2) e));
+                } else {
+                    rightQ.offer((T2) e);
+                }
+            }catch(Throwable t){
+                onError.accept(t);
             }
         },onError,onCompleteDs);
 

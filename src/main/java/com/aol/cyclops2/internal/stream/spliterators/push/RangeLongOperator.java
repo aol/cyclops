@@ -26,8 +26,11 @@ public class RangeLongOperator<Long> implements Operator<Long> {
             public void request(long n) {
                 long items = n;
                 while(items-->0 && index[0] < end && isOpen) {
-
+                    try {
                         ((Consumer) onNext).accept(index[0]++);
+                    }catch(Throwable t){
+                        onError.accept(t);
+                    }
 
                 }
                 if(index[0]>=end)
@@ -49,7 +52,11 @@ public class RangeLongOperator<Long> implements Operator<Long> {
     public void subscribeAll(Consumer<? super Long> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
 
         for(long i=start;i<end;i++){
-            ((Consumer)onNext).accept(i);
+            try {
+                ((Consumer) onNext).accept(i);
+            }catch(Throwable t){
+                onError.accept(t);
+            }
         }
         onCompleteDs.run();
     }

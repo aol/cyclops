@@ -40,8 +40,11 @@ public class SingleValueOperator<T> implements Operator<T> {
 
     @Override
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-
-        onNext.accept(value);
+        try {
+            onNext.accept(value);
+        } catch (Throwable t) {
+            onError.accept(t);
+        }
         onCompleteDs.run();
     }
 }
