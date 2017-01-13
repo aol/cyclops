@@ -27,7 +27,8 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
             public void request(long n) {
                 if(n==Long.MAX_VALUE){
                     for(;index[0]<values.length;index[0]++){
-                        ((Consumer)onNext).accept(values[index[0]]);
+                        if(isOpen)
+                            ((Consumer)onNext).accept(values[index[0]]);
                     }
                     onComplete.run();
 
@@ -36,7 +37,8 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
 
 
                 for(long x =0;index[0]<values.length && x++<n;index[0]++){
-                    ((Consumer)onNext).accept(values[index[0]]);
+                    if(isOpen)
+                        ((Consumer)onNext).accept(values[index[0]]);
                 }
                 onComplete.run();
 
