@@ -12,9 +12,9 @@ public class LazyFilterOperator<T> extends BaseOperator<T,T> {
 
     Supplier<Predicate<? super T>> predicateSupplier;
 
-    public LazyFilterOperator(Operator<T> source, Supplier<Predicate<? super T>> predicate){
+    public LazyFilterOperator(Operator<T> source, Supplier<Predicate<? super T>> predicateSupplier){
         super(source);
-        this.predicateSupplier = predicate;
+        this.predicateSupplier = predicateSupplier;
 
 
     }
@@ -22,17 +22,22 @@ public class LazyFilterOperator<T> extends BaseOperator<T,T> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-         Predicate<? super T> predicate = predicateSupplier.get();
-        return source.subscribe(e-> {
+        Predicate<? super T> predicate = predicateSupplier.get();
+        StreamSubscription[] upstream = {null};
+        upstream[0]= source.subscribe(e-> {
                     try {
                         if(predicate.test(e))
                             onNext.accept(e);
+                        else{
+                            upstream[0].request(1);
+                        }
                     } catch (Throwable t) {
 
                         onError.accept(t);
                     }
                 }
                 ,onError,onComplete);
+        return upstream[0];
     }
 
     @Override
