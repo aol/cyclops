@@ -18,7 +18,9 @@ import java.util.stream.Stream;
 
 public interface Spouts {
 
-    static Subscription subscription()
+    static <T> ReactiveSeq<T> reactiveStream(Operator<T> s){
+        return new ReactiveStreamX<>(s);
+    }
     static <T> ReactiveSeq<T> iterate(final T seed, final UnaryOperator<T> f) {
         return new ReactiveStreamX(new IterateOperator<T>(seed,f));
 

@@ -14,7 +14,7 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.internal.stream.*;
 import com.aol.cyclops2.internal.stream.operators.*;
-import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.stream;
 import com.aol.cyclops2.types.stream.HeadAndTail;
@@ -1977,7 +1977,7 @@ public class Streams {
         return new OneShotStreamX<T>(stream,rev, Optional.empty());
     }
 
-    public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<PushingSpliterator<?>> push) {
+    public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<CapturingOperator<?>> push) {
         if (stream instanceof ReactiveSeq)
             return (ReactiveSeq) stream;
         
@@ -1994,7 +1994,7 @@ public class Streams {
     public final static <T> ReactiveSeq<T> reactiveSeq(final Seq<T> stream){
         return ReactiveSeq.fromStream(stream);
     }
-    public final static <T> ReactiveSeq<T> reactiveSeq(final Spliterator<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<PushingSpliterator<?>> push) {
+    public final static <T> ReactiveSeq<T> reactiveSeq(final Spliterator<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<CapturingOperator<?>> push) {
 
         return new StreamX<T>((Spliterator<T>)
                 stream, rev,(Optional)push);

@@ -12,13 +12,12 @@ import java.util.stream.*;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
-import com.aol.cyclops2.internal.stream.StreamX;
 import com.aol.cyclops2.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingIntArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingRangeIntSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingLongArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingRangeLongSpliterator;
-import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import cyclops.async.Future;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Eval;
@@ -513,7 +512,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public static <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
         return Streams.reactiveSeq(spliterator, Optional.empty(),Optional.empty());
     }
-    public static <T> ReactiveSeq<T> fromSpliterator(PushingSpliterator<T> spliterator){
+    public static <T> ReactiveSeq<T> fromSpliterator(CapturingOperator<T> spliterator){
         return Streams.reactiveSeq(StreamSupport.stream(spliterator, false), Optional.empty(),Optional.of(spliterator));
         
     }

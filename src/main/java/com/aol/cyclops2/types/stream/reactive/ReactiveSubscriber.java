@@ -1,15 +1,20 @@
 package com.aol.cyclops2.types.stream.reactive;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
+import com.aol.cyclops2.internal.stream.spliterators.push.StreamSubscription;
+import cyclops.box.LazyImmutable;
+import cyclops.stream.Spouts;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
+import sun.security.provider.Sun;
 
 /**
  * A reactive-streams Subscriber that can generate various forms of sequences from a publisher
@@ -31,24 +36,42 @@ import lombok.val;
 @AllArgsConstructor//(access=AccessLevel.PRIVATE)
 public class ReactiveSubscriber<T> implements Subscriber<T> {
 
-    private final PushingSpliterator<T> action = new PushingSpliterator<T>();;
-  
-   
-    private volatile Subscription s;
-    
+
+    volatile boolean isOpen;
+    AtomicLong requested= new AtomicLong(0);
+    private volatile Subscription s = new Subscription(){
+
+        @Override
+        public void request(long n) {
+            if(requested.get()==Long.MAX_VALUE)
+                return;
+            if(n==Long.MAX_VALUE)
+                requested.set(n);
+            requested.accumulateAndGet(n,(a,b)->a+b);
+        }
+
+        @Override
+        public void cancel() {
+            isOpen = false;
+        }
+    };
+    private volatile LazyImmutable<CapturingOperator<T>> action = LazyImmutable.def();
    
 
     public ReactiveSubscriber() {
     }
 
-    
+    volatile boolean streamCreated=  false;
 
     public ReactiveSeq<T> stream(){
-        return ReactiveSeq.fromSpliterator(action);
+        streamCreated = true;
+        return Spouts.reactiveStream(action.computeIfAbsent(()->new CapturingOperator<T>(s)));
     }
     @Override
     public void onSubscribe(final Subscription s) {
         Objects.requireNonNull(s);
+        if(streamCreated)
+            throw new IllegalStateException("Subscription passed after downstream Stream created. Subscribe with this Subscriber first, then extract the Stream");
         if (this.s == null) {
             this.s = s;
             s.request(1);
@@ -60,18 +83,17 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     @Override
     public void onNext(final T t) {
         Objects.requireNonNull(t);
-        val cons = action.getAction();
+        val cons = action.get().getAction();
         if(cons!=null) 
               cons.accept(t);
-        else
-            action.capture(t);
+
         
     }
 
     @Override
     public void onError(final Throwable t) {
         Objects.requireNonNull(t);
-        val cons = action.getError();
+        val cons = action.get().getError();
         if(cons!=null) 
               cons.accept(t);
         
@@ -81,7 +103,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     @Override
     public void onComplete() {
 
-        val run = action.getOnComplete();
+        val run = action.get().getOnComplete();
         if(run!=null)
             run.run();
 

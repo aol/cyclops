@@ -3,33 +3,20 @@ package com.aol.cyclops2.internal.stream;
 
 import com.aol.cyclops2.internal.stream.spliterators.push.CollectingSinkSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.FoldingSinkSpliterator;
-import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import com.aol.cyclops2.internal.stream.spliterators.push.ValueEmittingSpliterator;
-import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.*;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.async.Future;
 import cyclops.async.Queue;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.internal.stream.publisher.PublisherIterable;
 import com.aol.cyclops2.internal.stream.spliterators.*;
-import com.aol.cyclops2.types.FoldableTraversable;
-import com.aol.cyclops2.types.Unwrapable;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.Eval;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.monads.Witness;
-import com.aol.cyclops2.types.stream.CyclopsCollectable;
-import com.aol.cyclops2.types.stream.HeadAndTail;
-import com.aol.cyclops2.types.stream.HotStream;
-import com.aol.cyclops2.types.stream.PausableHotStream;
 import cyclops.function.Monoid;
-import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -40,12 +27,8 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.net.URL;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -60,7 +43,7 @@ import static java.util.Comparator.comparing;
 public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     final Spliterator<T> stream;
-    final Optional<PushingSpliterator<?>> split; //should be an Xor3 type here
+    final Optional<CapturingOperator<?>> split; //should be an Xor3 type here
     final Optional<ReversableSpliterator> reversible;
 
     public SpliteratorBasedStream(final Stream<T> stream) {
@@ -70,13 +53,13 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         this.split = Optional.empty();
 
     }
-    public SpliteratorBasedStream(final Spliterator<T> stream, final Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
+    public SpliteratorBasedStream(final Spliterator<T> stream, final Optional<ReversableSpliterator> rev, Optional<CapturingOperator<?>> split) {
         this.stream = stream;
         this.reversible = rev;
         this.split = split;
 
     }
-    public SpliteratorBasedStream(final Stream<T> stream, final Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
+    public SpliteratorBasedStream(final Stream<T> stream, final Optional<ReversableSpliterator> rev, Optional<CapturingOperator<?>> split) {
         this.stream = stream.spliterator();
         this.reversible = rev;
         this.split = split;
@@ -430,9 +413,9 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     abstract <X> ReactiveSeq<X> createSeq(Stream<X> stream,Optional<ReversableSpliterator> reversible,
-                                          Optional<PushingSpliterator<?>> split);
+                                          Optional<CapturingOperator<?>> split);
     abstract <X> ReactiveSeq<X> createSeq(Spliterator<X> stream,Optional<ReversableSpliterator> reversible,
-                                          Optional<PushingSpliterator<?>> split);
+                                          Optional<CapturingOperator<?>> split);
      <X> ReactiveSeq<X> createSeq(Spliterator<X> stream){
 
          return createSeq(stream, Optional.empty(), Optional.empty());

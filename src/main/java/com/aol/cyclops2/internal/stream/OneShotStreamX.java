@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream;
 
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
-import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import cyclops.Streams;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
@@ -21,11 +21,11 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
         super(stream);
     }
 
-    public OneShotStreamX(Spliterator<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
+    public OneShotStreamX(Spliterator<T> stream, Optional<ReversableSpliterator> rev, Optional<CapturingOperator<?>> split) {
         super(stream, rev, split);
     }
 
-    public OneShotStreamX(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
+    public OneShotStreamX(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<CapturingOperator<?>> split) {
         super(stream, rev, split);
     }
     @Override
@@ -121,12 +121,12 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
     }
 
     @Override
-    <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible, Optional<PushingSpliterator<?>> split) {
+    <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible, Optional<CapturingOperator<?>> split) {
         return new OneShotStreamX<X>(stream,reversible,split);
     }
 
     @Override
-    <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible, Optional<PushingSpliterator<?>> split) {
+    <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible, Optional<CapturingOperator<?>> split) {
         return new OneShotStreamX<X>(stream,reversible,split);
     }
 

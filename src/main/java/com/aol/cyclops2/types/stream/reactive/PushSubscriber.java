@@ -1,6 +1,6 @@
 package com.aol.cyclops2.types.stream.reactive;
 
-import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -33,7 +33,7 @@ public class PushSubscriber<T> implements Subscriber<T>{
 
     private volatile Subscription s;
 
-    private final PushingSpliterator<T> split= new PushingSpliterator<T>();
+    private final CapturingOperator<T> split= new CapturingOperator<T>();
 
 
 

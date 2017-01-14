@@ -3,7 +3,7 @@ package com.aol.cyclops2.internal.stream;
 import com.aol.cyclops2.internal.stream.spliterators.CopyableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.IteratableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
-import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import cyclops.Streams;
 import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
@@ -27,11 +27,11 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
         super(stream);
     }
 
-    public StreamX(Spliterator<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
+    public StreamX(Spliterator<T> stream, Optional<ReversableSpliterator> rev, Optional<CapturingOperator<?>> split) {
         super(stream, rev, split);
     }
 
-    public StreamX(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
+    public StreamX(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<CapturingOperator<?>> split) {
         super(stream, rev, split);
     }
     @Override
@@ -49,12 +49,12 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     }
 
     @Override
-    <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible, Optional<PushingSpliterator<?>> split) {
+    <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible, Optional<CapturingOperator<?>> split) {
         return new StreamX<X>(stream,reversible,split);
     }
 
     @Override
-    <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible, Optional<PushingSpliterator<?>> split) {
+    <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible, Optional<CapturingOperator<?>> split) {
         return new StreamX<X>(stream,reversible,split);
     }
 
