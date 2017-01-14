@@ -1,12 +1,7 @@
 package com.aol.cyclops2.streams;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -52,6 +47,10 @@ public class BaseSequentialTest {
     public void dropRight(){
         assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
     }
+	@Test
+	public void dropRightNeg(){
+		assertThat(of(1,2,3).dropRight(1).toList(),not(hasItems(3)));
+	}
     @Test
     public void dropRightEmpty(){
         assertThat(of().dropRight(1).toList(),equalTo(Arrays.asList()));
@@ -588,7 +587,7 @@ public class BaseSequentialTest {
             }
 			@Test
 			public void limitSkip(){
-				ReactiveSeq<Integer> stream = ReactiveSeq.of(1);
+				ReactiveSeq<Integer> stream = of(1);
 				Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = stream.duplicate();
 				assertThat(dup.v1.limit(1).toList(),equalTo(ListX.of(1)));
                 assertThat(dup.v2.skip(1).toList(),equalTo(ListX.of()));
