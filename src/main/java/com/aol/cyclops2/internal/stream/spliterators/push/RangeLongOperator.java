@@ -1,11 +1,14 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import com.aol.cyclops2.internal.stream.spliterators.push.util.Decorators;
+import cyclops.async.Queue;
+
 import java.util.function.Consumer;
 
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class RangeLongOperator<Long> implements Operator<Long> {
+public class RangeLongOperator implements Operator<Long> {
 
 
     final long start;
@@ -21,20 +24,40 @@ public class RangeLongOperator<Long> implements Operator<Long> {
     @Override
     public StreamSubscription subscribe(Consumer<? super Long> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         int[] index = {0};
+
         StreamSubscription sub = new StreamSubscription(){
             @Override
             public void request(long n) {
-                long items = n;
-                while(items-->0 && index[0] < end && isOpen) {
-                    try {
-                        ((Consumer) onNext).accept(index[0]++);
-                    }catch(Throwable t){
-                        onError.accept(t);
+                singleActiveRequest(n,()-> {
+
+                    if(requested.get()==Long.MAX_VALUE){
+                        pushAll();
+                        return true;
                     }
+                    while (isActive() && index[0] < end) {
+                        try {
+                            requested.decrementAndGet();
+                            ((Consumer) onNext).accept(index[0]++);
+                        } catch (Throwable t) {
+                            onError.accept(t);
+                        }
+
+                    }
+                    if (index[0] >= end) {
+                        onComplete.run();
+                        return true;
+                    }
+                    return false;
+                });
+            }
+
+            private void pushAll() {
+                try{
+                    subscribeAll(Decorators.openCheck(this,onNext),onError,onComplete);
+                }catch (Queue.ClosedQueueException e) {
 
                 }
-                if(index[0]>=end)
-                    onComplete.run();
+                requested.set(0);
 
             }
 

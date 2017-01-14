@@ -1,5 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import com.aol.cyclops2.internal.stream.spliterators.push.util.Decorators;
+import cyclops.async.Queue;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -25,17 +28,37 @@ public class RangeIntOperator implements Operator<Integer> {
         StreamSubscription sub = new StreamSubscription(){
             @Override
             public void request(long n) {
-                long items = n;
-                while(items-->0 && index[0] < end && isOpen) {
-                    try {
-                        ((Consumer) onNext).accept(index[0]++);
-                    }catch(Throwable t){
-                        onError.accept(t);
+                singleActiveRequest(n,()-> {
+                    if(requested.get()==Long.MAX_VALUE) {
+                        pushAll();
+                        return true;
                     }
 
-                }
+                    while (isActive() && index[0] < end) {
+                        try {
+                            requested.decrementAndGet();
+                            ((Consumer) onNext).accept(index[0]++);
+                        } catch (Throwable t) {
+                            onError.accept(t);
+                        }
 
+                    }
+                    if(index[0]==end){
+                        onComplete.run();
+                        return true;
+                    }
+                    return false;
+                });
             }
+            private void pushAll() {
+                try{
+                    subscribeAll(Decorators.openCheck(this,onNext),onError,onComplete);
+                }catch (Queue.ClosedQueueException e) {
+
+                }
+                requested.set(0);
+            }
+
 
             @Override
             public void cancel() {
@@ -49,11 +72,8 @@ public class RangeIntOperator implements Operator<Integer> {
     public void subscribeAll(Consumer<? super Integer> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
 
         for(int i=start;i<end;i++){
-            try {
-                ((Consumer) onNext).accept(i);
-            }catch(Throwable t){
-                onError.accept(t);
-            }
+             ((Consumer) onNext).accept(i);
+
         }
         onCompleteDs.run();
     }

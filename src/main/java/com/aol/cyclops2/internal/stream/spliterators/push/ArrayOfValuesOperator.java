@@ -1,5 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
@@ -23,28 +24,38 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
 
 
         StreamSubscription sub = new StreamSubscription(){
+            AtomicBoolean active = new AtomicBoolean(false);
             @Override
             public void request(long n) {
-                if(n==Long.MAX_VALUE){
-                    for(;index[0]<values.length;index[0]++){
-                        if(isOpen)
-                            ((Consumer)onNext).accept(values[index[0]]);
+                singleActiveRequest(n,()->{
+                    if (n == Long.MAX_VALUE) {
+                        pushAll();
+
+                        return true;
                     }
-                    onComplete.run();
 
-                    return;
+
+                    while (isActive() && index[0]<values.length) {
+                        requested.decrementAndGet();
+                        ((Consumer) onNext).accept(values[index[0]++]);
+                    }
+
+                    if (index[0] == values.length) {
+                        onComplete.run();
+                        return true;
+                    }
+                    return false;
+                });
+
+            }
+
+            private void pushAll() {
+                for (; index[0] < values.length; index[0]++) {
+                    if (isOpen)
+                        ((Consumer) onNext).accept(values[index[0]]);
                 }
-
-
-                for(long x =0;index[0]<values.length && x++<n;index[0]++){
-                    if(isOpen)
-                        ((Consumer)onNext).accept(values[index[0]]);
-                }
-                if(index[0]==values.length)
-                    onComplete.run();
-
-
-
+                requested.set(0);
+                onComplete.run();
             }
 
             @Override

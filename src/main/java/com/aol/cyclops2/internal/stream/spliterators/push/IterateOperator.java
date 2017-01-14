@@ -1,5 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import com.aol.cyclops2.internal.stream.spliterators.push.util.Decorators;
+import cyclops.async.Queue;
+
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
@@ -26,12 +29,28 @@ public class IterateOperator<T> implements Operator<T> {
         StreamSubscription sub = new StreamSubscription(){
             @Override
             public void request(long n) {
-                long items = n;
-                while(items-->0 && isOpen) {
-                    next.accept( current[0] = (current[0]!=null ? fn.apply((T)current[0]) : in));
+                this.singleActiveRequest(n,()-> {
+                    if(requested.get()==Long.MAX_VALUE){
+                        pushAll();
+                        return true;
+                    }
+                    while (isActive()) {
+                        requested.decrementAndGet();
+                        next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
+
+                    }
+                    return false;
+                });
+
+            }
+
+            private void pushAll() {
+                try{
+                    subscribeAll(Decorators.openCheck(this,onNext),onError,onComplete);
+                }catch (Queue.ClosedQueueException e) {
 
                 }
-
+                requested.set(0);
             }
 
             @Override

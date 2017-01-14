@@ -25,11 +25,14 @@ public class LazySingleValueOperator<T,R> implements Operator<R> {
         StreamSubscription sub = new StreamSubscription(){
             @Override
             public void request(long n) {
-                if(n>0 && !sent[0]) {
-                    onNext.accept(fn.apply(value));
-                    sent[0] = true;
-                }
+                singleActiveRequest(1, () -> {
 
+                    if (n > 0 && !sent[0]) {
+                        onNext.accept(fn.apply(value));
+                        sent[0] = true;
+                    }
+                    return true;
+                });
             }
 
             @Override

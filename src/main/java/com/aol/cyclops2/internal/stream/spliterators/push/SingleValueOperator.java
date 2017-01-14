@@ -23,10 +23,14 @@ public class SingleValueOperator<T> implements Operator<T> {
         StreamSubscription sub = new StreamSubscription(){
             @Override
             public void request(long n) {
-                if(n>0 && !sent[0]) {
-                    onNext.accept(value);
-                    sent[0] = true;
-                }
+                singleActiveRequest(1, ()->{
+                    if (n > 0 && !sent[0]) {
+                        onNext.accept(value);
+                        requested.decrementAndGet();
+                        sent[0] = true;
+                    }
+                    return true;
+                });
 
             }
 
