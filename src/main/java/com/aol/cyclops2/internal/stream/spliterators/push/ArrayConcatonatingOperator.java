@@ -13,7 +13,7 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
     private final Operator<IN>[] operators;
 
 
-    public ArrayConcatonatingOperator(Operator<IN>[] sources){
+    public ArrayConcatonatingOperator(Operator<IN>... sources){
         this.operators=sources;
 
 

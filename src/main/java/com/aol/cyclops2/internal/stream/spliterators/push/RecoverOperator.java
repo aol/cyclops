@@ -6,15 +6,15 @@ import java.util.function.Function;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class RecoverOperator<T,R> extends BaseOperator<T,R> {
+public class RecoverOperator<T> extends BaseOperator<T,T> {
 
 
-    final Function<? super T, ? extends R> mapper;
-    final Function<? super Throwable,? extends R> recover;
 
-    public RecoverOperator(Operator<T> source, Function<? super T, ? extends R> fn, Function<? super Throwable,? extends R> recover){
+    final Function<? super Throwable,? extends T> recover;
+
+    public RecoverOperator(Operator<T> source, Function<? super Throwable,? extends T> recover){
         super(source);
-        this.mapper = fn;
+
         this.recover = recover;
 
 
@@ -22,10 +22,10 @@ public class RecoverOperator<T,R> extends BaseOperator<T,R> {
 
 
     @Override
-    public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+    public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         return source.subscribe(e-> {
                     try {
-                        onNext.accept(mapper.apply(e));
+                        onNext.accept(e);
                     } catch (Throwable t) {
                         try{
                             onNext.accept(recover.apply(t));
@@ -34,14 +34,21 @@ public class RecoverOperator<T,R> extends BaseOperator<T,R> {
                         }
                     }
                 }
-                ,onError,onComplete);
+                ,e->{
+                    try{
+                        onNext.accept(recover.apply(e));
+                    } catch (Throwable t) {
+                        onError.accept(t);
+                    }
+
+                },onComplete);
     }
 
     @Override
-    public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+    public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         source.subscribeAll(e-> {
                     try {
-                        onNext.accept(mapper.apply(e));
+                        onNext.accept(e);
                     } catch (Throwable t) {
                         try{
                             onNext.accept(recover.apply(t));
@@ -50,6 +57,13 @@ public class RecoverOperator<T,R> extends BaseOperator<T,R> {
                         }
                     }
                 }
-                ,onError,onCompleteDs);
+                ,e->{
+                    try{
+                        onNext.accept(recover.apply(e));
+                    } catch (Throwable t) {
+                        onError.accept(t);
+                    }
+
+                },onCompleteDs);
     }
 }

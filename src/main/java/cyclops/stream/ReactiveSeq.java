@@ -1384,8 +1384,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq batched into lists determined by the predicate supplied
      */
     @Override
-    ReactiveSeq<ListX<T>> groupedUntil(Predicate<? super T> predicate);
+    default ReactiveSeq<ListX<T>> groupedUntil(Predicate<? super T> predicate){
+        return groupedWhile(predicate.negate());
 
+    }
     /**
      * Create a ReactiveSeq batched by List, where each batch is populated while
      * the predicate holds
@@ -1451,7 +1453,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *         supplied
      */
     @Override
-    <C extends Collection<? super T>> ReactiveSeq<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory);
+    default <C extends Collection<? super T>> ReactiveSeq<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory){
+        return groupedWhile(predicate.negate(),factory);
+    }
+
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#grouped(java.util.function.Function, java.util.stream.Collector)
@@ -1743,7 +1748,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Stream with elements skipped until predicate holds
      */
     @Override
-    ReactiveSeq<T> skipUntil(Predicate<? super T> p);
+    default ReactiveSeq<T> skipUntil(Predicate<? super T> p) {
+        return skipWhile(p.negate());
+    }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#skipUntilClosed(java.util.function.Predicate)
@@ -2371,7 +2378,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see java.util.stream.Stream#peek(java.util.function.Consumer)
      */
     @Override
-    ReactiveSeq<T> peek(Consumer<? super T> c);
+    default ReactiveSeq<T> peek(Consumer<? super T> c){
+
+            return map(i->{c.accept(i); return i;});
+
+    }
 
     /**
      * flatMap operation

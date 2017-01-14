@@ -372,7 +372,10 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return mapLazyFn(lazy);
 
     }
-
+    @Override
+    public final ReactiveSeq<T> sorted() {
+        return createSeq(unwrapStream().sorted());
+    }
 
     public  abstract <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn);
     public abstract ReactiveSeq<T> filterLazyPredicate(final Supplier<Predicate<? super T>> fn);
