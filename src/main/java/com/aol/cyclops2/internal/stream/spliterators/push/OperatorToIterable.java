@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
@@ -27,8 +28,9 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
 
     public Iterator<T> iterator(){
         return new Iterator<T>() {
-            AtomicReference<T> value = new AtomicReference<>(null);
-            AtomicReference<Throwable> error = new AtomicReference<>(null);
+            Object UNSET = new Object();
+            AtomicReference value = new AtomicReference<>(UNSET);
+            AtomicReference error = new AtomicReference<>(UNSET);
             AtomicBoolean done = new AtomicBoolean(false);
             boolean requested = false;
             volatile  boolean awaiting = false;
@@ -45,32 +47,32 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
 
             @Override
             public boolean hasNext() {
-                if (!requested) {
+                if (!requested && !done.get()) {
                     awaiting = true;
                     sub.request(1l);
                     requested = true;
+                    while(awaiting){
+                        LockSupport.parkNanos(0l);
+                    }
 
                 }
-                return !done.get();
+                return (!done.get() || value.get()!=UNSET || error.get()!=UNSET) ;
             }
 
             @Override
             public T next() {
-                if (!requested) {
-                    sub.request(1l);
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
 
                 }
                 requested = false;
-                while(awaiting){
-                    LockSupport.parkNanos(0l);
-                }
-                if (error.get() != null) {
-                    Throwable t = error.get();
-                    error.set(null);
+                if (error.get() != UNSET) {
+                    Throwable t = (Throwable)error.get();
+                    error.set(UNSET);
                     defaultErrorHandler.accept(t);
                 }
-                T result = value.get();
-                value.set(null);
+                T result = (T)value.get();
+                value.set(UNSET);
                 return result;
             }
         };

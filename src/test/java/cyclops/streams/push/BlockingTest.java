@@ -7,6 +7,7 @@ import cyclops.stream.Spouts;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
@@ -55,6 +56,19 @@ public class BlockingTest {
     @Test
     public void findFirst(){
         assertThat(Spouts.of(1,2,3).findFirst().get(),equalTo(1));
+    }
+
+    @Test
+    public void testIterator(){
+        assertThat(Spouts.of(1).iterator().next(),equalTo(1));
+        assertThat(Spouts.of(1).iterator().hasNext(),equalTo(true));
+        Iterator<Integer> it = Spouts.of(1,2).iterator();
+        assertThat(it.hasNext(),equalTo(true));
+        assertThat(it.next(),equalTo(1));
+        assertThat(it.hasNext(),equalTo(true));
+        assertThat(it.next(),equalTo(2));
+        assertThat(it.hasNext(),equalTo(false));
+
     }
 
     Integer result = null;

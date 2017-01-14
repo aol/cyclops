@@ -40,7 +40,8 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
                     if(isOpen)
                         ((Consumer)onNext).accept(values[index[0]]);
                 }
-                onComplete.run();
+                if(index[0]==values.length)
+                    onComplete.run();
 
 
 
