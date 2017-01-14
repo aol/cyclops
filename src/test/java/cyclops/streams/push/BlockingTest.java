@@ -6,6 +6,8 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
@@ -55,6 +57,24 @@ public class BlockingTest {
         assertThat(Spouts.of(1,2,3).findFirst().get(),equalTo(1));
     }
 
+    Integer result = null;
+    @Test
+    public void simple(){
+
+        Spouts.of(1).forEach(i->result = i);
+        assertThat(result,equalTo(1));
+        Spouts.of(1).map(i->i*2).forEach(i->result = i);
+        assertThat(result,equalTo(2));
+    }
+    @Test
+    public void simpleList(){
+        List<Integer> list = new ArrayList<>();
+        Spouts.of(1,2).forEach(list::add);
+        assertThat(list,equalTo(ListX.of(1,2)));
+        list = new ArrayList<>();
+        Spouts.of(1,2).map(i->i*2).forEach(list::add);
+        assertThat(list,equalTo(ListX.of(2,4)));
+    }
 
 
     @Test

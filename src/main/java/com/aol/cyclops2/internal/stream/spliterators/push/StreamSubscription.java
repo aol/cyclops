@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  */
 public class StreamSubscription implements Subscription {
-    volatile boolean isOpen;
+    volatile boolean isOpen = true;
     AtomicLong requested= new AtomicLong(0);
     public boolean isActive(){
         return isOpen && requested.get()>0;

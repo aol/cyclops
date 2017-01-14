@@ -74,7 +74,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         Throwable[] error = {null};
 
             Subscription sub[] = {null};
-            //use for EachRemaining as it is the fast path for many operators
+            //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
             sub[0] = source.subscribe(e -> {
                     result[0] = e;
                     sub[0].cancel();
@@ -84,7 +84,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                 error[0] = e;
                 sub[0].cancel();
             },()->{});
-
+        sub[0].request(1l);
         if(error[0]!=null)
             throw ExceptionSoftener.throwSoftenedException(error[0]);
 
