@@ -473,6 +473,14 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     public T firstValue() {
         return findFirst().get();
     }
+    @Override
+    public Optional<T> reduce(BinaryOperator<T> accumulator) {
+        return unwrapStream().reduce(accumulator);
+    }
 
+    @Override
+    public T reduce(T identity, BinaryOperator<T> accumulator) {
+        return unwrapStream().reduce(identity,accumulator);
+    }
 }
 

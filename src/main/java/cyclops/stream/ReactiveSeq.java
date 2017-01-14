@@ -98,7 +98,6 @@ import cyclops.function.Fn3;
  * @param <T> Data type of elements within the Stream
  */
 public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
-                                        Unwrapable, 
                                         Stream<T>, 
                                         OnEmptySwitch<T, Stream<T>>,
                                         FoldableTraversable<T>,
@@ -800,11 +799,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     <U, R> ReactiveSeq<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper);
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Unwrapable#unwrap()
-     */
-    @Override
-    <R> R unwrap();
+
 
     /**
      * join / flatten one level of a nested hierarchy
@@ -1176,7 +1171,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with sliding view
      */
     @Override
-    ReactiveSeq<PVectorX<T>> sliding(int windowSize);
+    default ReactiveSeq<PVectorX<T>> sliding(int windowSize){
+        return sliding(windowSize,1);
+    }
 
     /**
      * Create a sliding view over this Sequence
@@ -1199,11 +1196,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with sliding view
      */
     @Override
-    default ReactiveSeq<PVectorX<T>> sliding(int windowSize, int increment){
-
-            return sliding(windowSize,1);
-
-    }
+    ReactiveSeq<PVectorX<T>> sliding(int windowSize, int increment);
 
     /**
      * Group elements in a Stream
@@ -2881,7 +2874,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param e
      * @return
      */
-    HotStream<T> primedHotStream(Executor e);
+    default HotStream<T> primedHotStream(Executor e){
+        return Streams.primedHotStream(this, e);
+    }
+
+
+
 
     /**
      * Turns this ReactiveSeq into a HotStream, a connectable & pausable Stream, being executed on a thread on the 
@@ -2906,7 +2904,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param e Executor to execute this ReactiveSeq on
      * @return a Connectable HotStream
      */
-    PausableHotStream<T> pausableHotStream(Executor e);
+    default PausableHotStream<T> pausableHotStream(Executor e){
+        return Streams.pausableHotStream(this, e);
+    }
 
     /**
      * Return a pausable HotStream that will skip emitting data when the first connecting Stream connects.
@@ -2929,7 +2929,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param e
      * @return
      */
-    PausableHotStream<T> primedPausableHotStream(Executor e);
+    default PausableHotStream<T> primedPausableHotStream(Executor e){
+        return Streams.primedPausableHotStream(this, e);
+    }
 
     /**
      * <pre>

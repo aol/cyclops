@@ -4,12 +4,13 @@ import com.aol.cyclops2.internal.stream.publisher.PublisherIterable;
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.FoldableTraversable;
+import com.aol.cyclops2.types.Traversable;
 import com.aol.cyclops2.types.stream.CyclopsCollectable;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.Streams;
-import cyclops.async.Future;
+import cyclops.async.*;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Eval;
@@ -17,7 +18,9 @@ import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -30,6 +33,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
@@ -38,6 +42,7 @@ import java.util.function.*;
 import java.util.stream.BaseStream;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static com.aol.cyclops2.internal.comprehensions.comprehenders.StreamAdapter.stream;
 
@@ -45,6 +50,7 @@ import static com.aol.cyclops2.internal.comprehensions.comprehenders.StreamAdapt
 @AllArgsConstructor
 public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
+    @Getter
     final Operator<T> source;
 
     @Override
@@ -54,9 +60,11 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
 
+    @Override
+    public Iterator<T> iterator() {
+        return new OperatorToIterable<>(source).iterator();
+    }
 
-
-   
     <X> ReactiveSeq<X> createSeq(Operator<X> stream) {
         return new ReactiveStreamX<X>(stream);
     }
@@ -65,6 +73,30 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public  <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
         return createSeq(new LazySingleValueOperator<ReactiveSeq<T>,R>(createSeq( source),fn));
 
+    }
+
+    static final Object UNSET = new Object();
+    @Override
+    public final Optional<T> findFirst() {
+        Object[] result = {UNSET};
+        Throwable[] error = {null};
+
+            Subscription sub[] = {null};
+            //use for EachRemaining as it is the fast path for many operators
+            sub[0] = source.subscribe(e -> {
+                    result[0] = e;
+                    sub[0].cancel();
+
+
+            },e->{
+                error[0] = e;
+                sub[0].cancel();
+            },()->{});
+
+        if(error[0]!=null)
+            throw ExceptionSoftener.throwSoftenedException(error[0]);
+
+        return result[0]==UNSET ? Optional.empty() : Optional.of((T)result[0]);
     }
 
 
@@ -90,17 +122,22 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public ReactiveSeq<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullySpliterator<>( source,()->ListX.of(),Function.identity(), predicate.negate()), this.reversible,split);
+        return createSeq(new GroupedStatefullyOperator<>( source,()->ListX.of(),Function.identity(), predicate.negate()));
     }
     @Override
     public <C extends Collection<T>,R> ReactiveSeq<R> groupedStatefullyUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                                              Function<? super C, ? extends R> finalizer) {
-        return this.<R>createSeq(new GroupedStatefullySpliterator<T,C,R>( source,factory,finalizer, predicate.negate()), this.reversible,split);
+        return this.<R>createSeq(new GroupedStatefullyOperator<>( source,factory,finalizer, predicate.negate()));
     }
 
     @Override
     public final ReactiveSeq<T> distinct() {
-        return createSeq(new DistinctSpliterator<T,T>( source),);
+
+        Supplier<Predicate<? super T>> predicate = ()->{
+            Set<T> values = new HashSet<>();
+            return in-> values.add(in);
+        };
+        return this.filterLazyPredicate(predicate);
     }
 
     @Override
@@ -127,19 +164,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
 
-
-
-
-
-
-
     @Override
     public final ReactiveSeq<T> skipWhile(final Predicate<? super T> p) {
         return createSeq(new SkipWhileOperator<>( source,p));
     }
-
-
-
 
 
     @Override
@@ -162,6 +190,11 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
         return createSeq(new LimitWhileClosedOperator<>( source,predicate));
+    }
+
+    @Override
+    public String format() {
+        return null;
     }
 
 
@@ -204,6 +237,28 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     }
 
+    @Override
+    public Spliterator<T> spliterator() {
+        return new OperatorToIterable<>(source).spliterator();
+    }
+
+    @Override
+    public Stream<T> unwrapStream() {
+        return StreamSupport.stream(new OperatorToIterable<>(source).spliterator(),false);
+    }
+
+    @Override
+    protected <R> ReactiveSeq<R> createSeq(Stream<R> rStream) {
+        if(stream instanceof ReactiveSeq)
+            return (ReactiveSeq)rStream;
+        return new ReactiveStreamX<>(new SpliteratorToOperator<>(rStream.spliterator()));
+    }
+
+    @Override
+    public <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn) {
+        return createSeq(new LazyMapOperator<>(source,fn));
+    }
+
     public final ReactiveSeq<T> filterLazyPredicate(final Supplier<Predicate<? super T>> fn) {
         return createSeq(new LazyFilterOperator<T>( source,fn));
 
@@ -213,7 +268,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void forEach(final Consumer<? super T> action) {
-        this. source.subscribeAll(action,e->{},()->{});
+        this.source.subscribeAll(action,e->{},()->{});
 
     }
     @Override
@@ -248,6 +303,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
+    public <U> Traversable<U> unitIterator(Iterator<U> it) {
+        Iterable<U> iterable = ()->it;
+        return createSeq(new SpliteratorToOperator<U>(iterable.spliterator()));
+    }
+
+    @Override
     public void subscribe(final Subscriber<? super T> sub) {
         sub.onSubscribe(source.subscribe(sub::onNext,sub::onError,sub::onComplete));
     }
@@ -278,42 +339,42 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public <X extends Throwable> ReactiveSeq<T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return createSeq(new OnEmptyOperator<T>(source,()->{throw supplier.get();}));
+        return createSeq(new OnEmptyOperator<T>(source,()->{throw ExceptionSoftener.throwSoftenedException(supplier.get());}));
     }
     @Override
     public ReactiveSeq<T> appendS(final Stream<? extends T> other) {
-        return ReactiveSeq.concat( source,avoidCopy(other));
+        return Spouts.concat( this,(Stream<T>)other);
     }
     public ReactiveSeq<T> append(final Iterable<? extends T> other) {
-        return ReactiveSeq.concat( source,avoidCopy(other));
+        return Spouts.concat( this,(Stream<T>)ReactiveSeq.fromIterable(other));
     }
 
     //TODO use spliterators and createSeq
     @Override
     public ReactiveSeq<T> append(final T other) {
-        return ReactiveSeq.concat( source,new SingleSpliterator<T>(other));
+        return Spouts.concat( this,Spouts.of(other));
     }
 
     @Override
     public ReactiveSeq<T> append(final T... other) {
-        return ReactiveSeq.concat( source,Stream.of(other).spliterator());
+        return ReactiveSeq.concat( this,Spouts.of(other));
     }
     @Override
     public ReactiveSeq<T> prependS(final Stream<? extends T> other) {
-        return ReactiveSeq.concat(avoidCopy(other), source);
+        return ReactiveSeq.concat((Stream<T>)(other), this);
     }
     public ReactiveSeq<T> prepend(final Iterable<? extends T> other) {
-        return ReactiveSeq.concat(avoidCopy(other), source);
+        return ReactiveSeq.concat((Stream<T>)(other),this);
     }
 
     @Override
     public ReactiveSeq<T> prepend(final T other) {
-        return ReactiveSeq.concat(new SingleSpliterator<T>(other), source);
+        return Spouts.concat(Spouts.of(other), this);
     }
 
     @Override
     public ReactiveSeq<T> prepend(final T... other) {
-        return ReactiveSeq.concat(Stream.of(other).spliterator(), source);
+        return Spouts.concat(Spouts.of(other), this);
     }
 
 
@@ -321,7 +382,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public <U> ReactiveSeq<T> distinct(final Function<? super T, ? extends U> keyExtractor) {
         Supplier<Predicate<? super T>> predicate = ()->{
             Set<U> values = new HashSet<>();
-            return in-> values.add(keyExtractor.apply(in);
+            return in-> values.add(keyExtractor.apply(in));
         };
         return this.filterLazyPredicate(predicate);
     }
@@ -490,6 +551,17 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
+    public <U, R> ReactiveSeq<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        Operator<U> right;
+        if(other instanceof ReactiveStreamX){
+            right = ((ReactiveStreamX<U>)other).source;
+        }else{
+            right = new SpliteratorToOperator<U>(((Stream<U>)other).spliterator());
+        }
+        return createSeq(new ZippingOperator<>(source,right,zipper));
+    }
+
+    @Override
     public HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
         return Streams.schedule(this, cron, ex);
 
@@ -592,6 +664,30 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                 Tuple2.v1.filter(splitter), Tuple2.v2.filter(splitter.negate()));
 
     }
+
+    @Override
+    public <U> ReactiveSeq<Tuple2<T, U>> zipS(Stream<? extends U> other) {
+        Operator<U> right;
+        if(other instanceof ReactiveStreamX){
+            right = ((ReactiveStreamX<U>)other).source;
+        }else{
+            right = new SpliteratorToOperator<U>(((Stream<U>)other).spliterator());
+        }
+        return createSeq(new ZippingOperator<>(source,right,Tuple::tuple));
+
+    }
+
+    @Override
+    public <S, U> ReactiveSeq<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
+        return zip(second,Tuple::tuple).zip(third,(a,b)->Tuple.tuple(a.v1,a.v2,b));
+    }
+
+    @Override
+    public <T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth) {
+        return zip(second,Tuple::tuple).zip(third,(a,b)->Tuple.tuple(a.v1,a.v2,b))
+                .zip(fourth,(a,b)->(Tuple4<T,T2,T3,T4>)Tuple.tuple(a.v1,a.v2,a.v3,b));
+    }
+
     @Override
     public ReactiveSeq<T> cycle(long times) {
         return grouped(Integer.MAX_VALUE)

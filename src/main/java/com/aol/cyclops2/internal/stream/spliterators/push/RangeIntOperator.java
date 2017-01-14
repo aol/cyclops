@@ -6,7 +6,7 @@ import java.util.function.Function;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class RangeIntOperator<Integer> implements Operator<Integer> {
+public class RangeIntOperator implements Operator<Integer> {
 
 
     final int start;

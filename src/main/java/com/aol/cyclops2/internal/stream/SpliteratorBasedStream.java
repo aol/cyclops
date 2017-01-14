@@ -57,7 +57,7 @@ import static java.util.Comparator.comparing;
  * Specific operators in the specific base class
  *
  */
-public abstract class SpliteratorBasedStream<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T> {
+public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     final Spliterator<T> stream;
     final Optional<PushingSpliterator<?>> split; //should be an Xor3 type here
@@ -260,12 +260,6 @@ public abstract class SpliteratorBasedStream<T> implements Unwrapable, ReactiveS
 
 
 
-    @Override
-    public final ReactiveSeq<T> sorted() {
-        return createSeq(unwrapStream().sorted(), reversible,split);
-    }
-
-
 
 
 
@@ -444,7 +438,7 @@ public abstract class SpliteratorBasedStream<T> implements Unwrapable, ReactiveS
          return createSeq(stream, Optional.empty(), Optional.empty());
 
      }
-    <X> ReactiveSeq<X> createSeq(Stream<X> stream){
+    protected <X> ReactiveSeq<X> createSeq(Stream<X> stream){
 
         return createSeq(stream, Optional.empty(), Optional.empty());
 
@@ -782,20 +776,7 @@ public abstract class SpliteratorBasedStream<T> implements Unwrapable, ReactiveS
         new ForEachWithError<T>(this.copy(),consumerError,onComplete).forEachRemaining(consumerElement);
     }
 
-    @Override
-    public HotStream<T> primedHotStream(final Executor e) {
-        return Streams.primedHotStream(this, e);
-    }
 
-    @Override
-    public PausableHotStream<T> pausableHotStream(final Executor e) {
-        return Streams.pausableHotStream(this, e);
-    }
-
-    @Override
-    public PausableHotStream<T> primedPausableHotStream(final Executor e) {
-        return Streams.primedPausableHotStream(this, e);
-    }
 
     @Override
     public String format() {
