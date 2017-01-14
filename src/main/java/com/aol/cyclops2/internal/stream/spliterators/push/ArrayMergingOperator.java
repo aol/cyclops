@@ -1,5 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -7,13 +9,13 @@ import java.util.function.Consumer;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
+public class ArrayMergingOperator<IN> implements Operator<IN> {
 
 
     private final Operator<IN>[] operators;
 
 
-    public ArrayConcatonatingOperator(Operator<IN>[] sources){
+    public ArrayMergingOperator(Operator<IN>[] sources){
         this.operators=sources;
 
 
@@ -37,17 +39,24 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
     @Override
     public StreamSubscription subscribe(Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         List<StreamSubscription> subs = new ArrayList<>(operators.length);
+
         int index[] = {0};
         boolean[] finished = {false};
         long[] count = {0};
         StreamSubscription sub = new StreamSubscription(){
             @Override
             public void request(long n) {
-                if(isOpen && index[0]++ < subs.size() && !finished[0]) {
+                long req = n;
+                while(req>0 && isOpen && index[0]++ < subs.size() && !finished[0]) {
+
                     subs.get(index[0]).request(1l);
+                    index[0]++;
+                    if(index[0]>subs.size())
+                        index[0]=0;
+                    req--;
                     count[0]++;
                 }
-                super.request(n-1);
+                super.request(n-(n-req));
             }
 
             @Override
@@ -67,6 +76,9 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
                             if(sub.isOpen && count[0]< sub.requested.get()) {
                                 subs.get(index[0]).request(1l);
 
+                                index[0]++;
+                                if(index[0]>subs.size())
+                                    index[0]=0;
                                 count[0]++;
                             }
                         }
@@ -80,7 +92,6 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
                         else{
                             if(sub.isOpen && count[0]< sub.requested.get()) {
                                 subs.get(index[0]).request(1l);
-
                                 count[0]++;
                             }
                         }

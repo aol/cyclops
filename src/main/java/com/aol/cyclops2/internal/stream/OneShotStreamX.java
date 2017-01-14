@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 
-public class OneShotStreamX<T> extends BaseExtendedStream<T> {
+public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
 
     public OneShotStreamX(Stream<T> stream) {
         super(stream);

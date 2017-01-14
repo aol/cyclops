@@ -19,7 +19,9 @@ import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingRangeIntSplit
 import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingLongArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingRangeLongSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
+import cyclops.async.Future;
 import cyclops.collections.immutable.PVectorX;
+import cyclops.control.Eval;
 import cyclops.monads.AnyM;
 import cyclops.async.*;
 import cyclops.control.Trampoline;
@@ -1084,6 +1086,95 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default Seq<T> seq(){
         return Seq.seq((Stream<T>)this);
     }
+    @Override
+   default ReactiveSeq<T> shuffle(final Random random) {
+        return coflatMap(r->{ List<T> list = r.toList(); Collections.shuffle(list,random); return list;})
+                .flatMap(c->c.stream());
+
+    }
+
+    @Override
+    default ReactiveSeq<T> slice(final long from, final long to) {
+
+        return skip(Math.max(from, 0)).limit(Math.max(to - Math.max(from, 0), 0));
+
+    }
+
+    @Override
+    default <U extends Comparable<? super U>> ReactiveSeq<T> sorted(final Function<? super T, ? extends U> function) {
+        return createSeq(sorted(Comparator.comparing(function)),
+                reversible,split);
+    }
+    @Override
+    public boolean endsWithIterable(final Iterable<T> iterable) {
+        return Streams.endsWith(this, iterable);
+    }
+
+    @Override
+    public HotStream<T> hotStream(final Executor e) {
+        return Streams.hotStream(this, e);
+    }
+
+    @Override
+    public T firstValue() {
+        return findFirst().get();
+    }
+
+    @Override
+    default ReactiveSeq<T> shuffle() {
+        return coflatMap(r->{ List<T> list = r.toList(); Collections.shuffle(list); return list;})
+                .flatMap(c->c.stream());
+
+    }
+    @Override
+    default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
+        return seq().foldLeft(identity, accumulator);
+
+    }
+    @Override
+    default ReactiveSeq<T> intersperse(final T value) {
+
+        return flatMap(t -> Stream.of(value, t)).skip(1l);
+
+    }
+    @Override
+    default <U> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
+        return sorted(Comparator.comparing(function, comparator));
+
+    }
+    @Override
+    default HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
+        return Streams.schedule(this, cron, ex);
+
+    }
+
+    @Override
+    default HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
+        return Streams.scheduleFixedDelay(this, delay, ex);
+    }
+
+    @Override
+    default HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
+        return Streams.scheduleFixedRate(this, rate, ex);
+
+    }
+
+    default ReactiveSeq<T> cycle(final Monoid<T> m, final long times) {
+        return unit(m.reduce(this)).cycle(times);
+
+    }
+
+
+    default ReactiveSeq<T> cycleWhile(final Predicate<? super T> predicate) {
+
+        return cycle().limitWhile(predicate);
+    }
+
+
+    default ReactiveSeq<T> cycleUntil(final Predicate<? super T> predicate) {
+        return cycleWhile(predicate.negate());
+    }
+
     /**
      * Add an index to the current Stream
      * 
@@ -1142,7 +1233,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with sliding view
      */
     @Override
-    ReactiveSeq<PVectorX<T>> sliding(int windowSize, int increment);
+    default ReactiveSeq<PVectorX<T>> sliding(int windowSize, int increment){
+
+            return sliding(windowSize,1);
+
+    }
 
     /**
      * Group elements in a Stream
@@ -1454,7 +1549,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with values combined scanning left
      */
     @Override
-    ReactiveSeq<T> scanLeft(Monoid<T> monoid);
+    default ReactiveSeq<T> scanLeft(Monoid<T> monoid){
+
+            return scanLeft(monoid.zero(),monoid);
+
+
+
+    }
 
     /**
      * Scan left
@@ -1480,7 +1581,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      */
     @Override
-    ReactiveSeq<T> scanRight(Monoid<T> monoid);
+    default ReactiveSeq<T> scanRight(Monoid<T> monoid){
+        return reverse().scanLeft(monoid.zero(), (u, t) -> monoid.apply(t, u));
+    }
+
 
     /**
      * Scan right
@@ -1494,7 +1598,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      */
     @Override
-    <U> ReactiveSeq<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner);
+    default <U> ReactiveSeq<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner){
+        return reverse().scanLeft(identity,(u,t)->combiner.apply(t,u));
+    }
 
     /**
      * <pre>
@@ -1504,6 +1610,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     ReactiveSeq<T> sorted();
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
@@ -1525,7 +1632,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Sorted Stream
      */
     @Override
-    ReactiveSeq<T> sorted(Comparator<? super T> c);
+   default  ReactiveSeq<T> sorted(Comparator<? super T> c){
+
+            final Supplier<TreeSet<T>> supplier =  () -> new TreeSet<T>(c);
+            return coflatMap(r-> r.collect(Collectors.toCollection(supplier))  )
+                    .flatMap(col->col.stream());
+
+
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Traversable#takeWhile(java.util.function.Predicate)
@@ -3012,6 +3126,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return zip(ReactiveSeq.generate(() -> System.currentTimeMillis()));
     }
 
+    @Override
+     default <R> Future<R> foldFuture(Function<? super FoldableTraversable<T>,? extends R> fn, Executor ex){
+
+        return Future.ofSupplier(()->{
+
+            return fn.apply(this);
+        },ex);
+    }
+    @Override
+    default <R> Eval<R> foldLazy(Function<? super CyclopsCollectable<T>,? extends R> fn, Executor ex){
+
+        return Eval.later(()->fn.apply(this));
+    }
     /**
      * Create a subscriber that can listen to Reactive Streams (simple-react,
      * RxJava AkkaStreams, Kontraktor, QuadarStreams etc)

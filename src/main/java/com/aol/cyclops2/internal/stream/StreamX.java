@@ -12,7 +12,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -22,7 +21,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 
-public class StreamX<T> extends BaseExtendedStream<T> {
+public class StreamX<T> extends SpliteratorBasedStream<T> {
 
     public StreamX(Stream<T> stream) {
         super(stream);
@@ -71,7 +70,7 @@ public class StreamX<T> extends BaseExtendedStream<T> {
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
 
         Tuple2<Iterable<T>, Iterable<T>> copy = Streams.toBufferingDuplicator(() -> Spliterators.iterator(copy()));
-        copy.map((a,b)->Tuple.tuple(createSeq(new IteratableSpliterator<>(a)),createSeq(new IteratableSpliterator<>(b))));
+        return copy.map((a,b)->Tuple.tuple(createSeq(new IteratableSpliterator<>(a)),createSeq(new IteratableSpliterator<>(b))));
 
     }
 
