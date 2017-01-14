@@ -985,7 +985,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Stream with reduced values repeated
      */
     @Override
-    ReactiveSeq<T> cycle(Monoid<T> m, long times);
+    default ReactiveSeq<T> cycle(Monoid<T> m, long times){
+        return unit(m.reduce(this)).cycle(times);
+    }
 
     /**
      * Repeat in a Stream while specified predicate holds
@@ -1006,7 +1008,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Repeating Stream
      */
     @Override
-    ReactiveSeq<T> cycleWhile(Predicate<? super T> predicate);
+    default ReactiveSeq<T> cycleWhile(Predicate<? super T> predicate){
+        return cycle().limitWhile(predicate);
+    }
 
     /**
      * Repeat in a Stream until specified predicate holds
@@ -1028,7 +1032,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Repeating Stream
      */
     @Override
-    ReactiveSeq<T> cycleUntil(Predicate<? super T> predicate);
+    default ReactiveSeq<T> cycleUntil(Predicate<? super T> predicate){
+        return cycleWhile(predicate.negate());
+
+    }
+
+
+
+
 
     /**
      * Zip 2 streams into one
@@ -1102,23 +1113,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default <U extends Comparable<? super U>> ReactiveSeq<T> sorted(final Function<? super T, ? extends U> function) {
-        return createSeq(sorted(Comparator.comparing(function)),
-                reversible,split);
-    }
-    @Override
-    public boolean endsWithIterable(final Iterable<T> iterable) {
-        return Streams.endsWith(this, iterable);
+        return sorted(Comparator.comparing(function));
     }
 
-    @Override
-    public HotStream<T> hotStream(final Executor e) {
-        return Streams.hotStream(this, e);
-    }
 
-    @Override
-    public T firstValue() {
-        return findFirst().get();
-    }
 
     @Override
     default ReactiveSeq<T> shuffle() {
@@ -1131,49 +1129,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return seq().foldLeft(identity, accumulator);
 
     }
-    @Override
-    default ReactiveSeq<T> intersperse(final T value) {
 
-        return flatMap(t -> Stream.of(value, t)).skip(1l);
 
-    }
-    @Override
     default <U> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function, Comparator<? super U> comparator) {
         return sorted(Comparator.comparing(function, comparator));
 
     }
-    @Override
-    default HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
-        return Streams.schedule(this, cron, ex);
-
-    }
-
-    @Override
-    default HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
-        return Streams.scheduleFixedDelay(this, delay, ex);
-    }
-
-    @Override
-    default HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
-        return Streams.scheduleFixedRate(this, rate, ex);
-
-    }
-
-    default ReactiveSeq<T> cycle(final Monoid<T> m, final long times) {
-        return unit(m.reduce(this)).cycle(times);
-
-    }
 
 
-    default ReactiveSeq<T> cycleWhile(final Predicate<? super T> predicate) {
-
-        return cycle().limitWhile(predicate);
-    }
 
 
-    default ReactiveSeq<T> cycleUntil(final Predicate<? super T> predicate) {
-        return cycleWhile(predicate.negate());
-    }
+
 
     /**
      * Add an index to the current Stream
@@ -2526,7 +2492,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 
      */
     @Override
-    ReactiveSeq<T> intersperse(T value);
+    default ReactiveSeq<T> intersperse(T value){
+        return flatMap(t -> Stream.of(value, t)).skip(1l);
+    }
 
     /**
      * Keep only those elements in a stream that are of a given type.
@@ -2632,13 +2600,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     public ReactiveSeq<T> onClose(Runnable closeHandler);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#shuffle()
-     */
-    @Override
-    public ReactiveSeq<T> shuffle();
+
 
 
 
@@ -2883,7 +2845,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Executor to execute this ReactiveSeq on
      * @return a Connectable HotStream
      */
-    HotStream<T> hotStream(Executor e);
+    default HotStream<T> hotStream(final Executor e) {
+        return Streams.hotStream(this, e);
+    }
 
     /**
      * Return a HotStream that will skip emitting data when the first connecting Stream connects.
@@ -3126,7 +3090,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return zip(ReactiveSeq.generate(() -> System.currentTimeMillis()));
     }
 
-    @Override
+
      default <R> Future<R> foldFuture(Function<? super FoldableTraversable<T>,? extends R> fn, Executor ex){
 
         return Future.ofSupplier(()->{
@@ -3134,7 +3098,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return fn.apply(this);
         },ex);
     }
-    @Override
+
     default <R> Eval<R> foldLazy(Function<? super CyclopsCollectable<T>,? extends R> fn, Executor ex){
 
         return Eval.later(()->fn.apply(this));
@@ -3526,29 +3490,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     <U> ReactiveSeq<T> distinct(Function<? super T, ? extends U> keyExtractor);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#shuffle(java.util.Random)
-     */
-    @Override
-    ReactiveSeq<T> shuffle(Random random);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#slice(long, long)
-     */
-    @Override
-    ReactiveSeq<T> slice(long from, long to);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
-     */
-    @Override
-    <U extends Comparable<? super U>> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function);
+
+
+
 
     /**
      * emit x elements per time period
@@ -3914,7 +3860,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Connectable HotStream of output from scheduled Stream
      */
     @Override
-    HotStream<T> schedule(String cron, ScheduledExecutorService ex);
+    default HotStream<T> schedule(String cron, ScheduledExecutorService ex){
+        return Streams.schedule(this, cron, ex);
+
+    }
+
 
     /**
      * Execute this Stream on a schedule
@@ -3949,7 +3899,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Connectable HotStream of output from scheduled Stream
      */
     @Override
-    HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex);
+    default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex){
+        return Streams.scheduleFixedDelay(this, delay, ex);
+    }
 
     /**
      * Execute this Stream on a schedule
@@ -3981,7 +3933,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Connectable HotStream of output from scheduled Stream
      */
     @Override
-    HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex);
+    default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex){
+        return Streams.scheduleFixedRate(this, rate, ex);
+    }
 
     /**
      * [equivalent to count]
@@ -4351,7 +4305,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate);
 
     ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate);
-    <U> ReactiveSeq<T> sorted(Function<? super T, ? extends U> function, Comparator<? super U> comparator);
 
 
     String format();

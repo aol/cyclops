@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 
 
 @AllArgsConstructor
-public class ReactiveStreamX<T> extends SpliteratorBasedStream<T> {
+public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     final Operator<T> source;
 
@@ -68,37 +68,17 @@ public class ReactiveStreamX<T> extends SpliteratorBasedStream<T> {
         return ReactiveSeq.fromSpliterator(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(createSeq( source),fn));
 
     }
-    public <R> Future<R> foldFuture(Function<? super FoldableTraversable<T>,? extends R> fn, Executor ex){
-        split.ifPresent(p->p.setHold(true));
-        split.ifPresent(p->p.setOnComplete(()->p.setHold(false)));
-        return Future.ofSupplier(()->{
 
-            return fn.apply(this);
-        },ex);
-    }
-    public <R> Eval<R> foldLazy(Function<? super CyclopsCollectable<T>,? extends R> fn, Executor ex){
-        split.ifPresent(p->p.setHold(true));
-        split.ifPresent(p->p.setOnComplete(()->p.setHold(false)));
-        return Eval.later(()->fn.apply(this));
-    }
-    @Override
-    public <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
-        return seq().foldLeft(identity, accumulator);
 
-    }
-    @Override
-    public final ReactiveSeq<PVectorX<T>> sliding(final int windowSize) {
-        return sliding(windowSize,1);
-    }
 
     @Override
     public final ReactiveSeq<PVectorX<T>> sliding(final int windowSize, final int increment) {
-        return createSeq(new SlidingSpliterator<>( source,Function.identity(), windowSize,increment),);
+        return createSeq(new SlidingOperator<>( source,Function.identity(), windowSize,increment));
     }
 
     @Override
     public ReactiveSeq<ListX<T>> grouped(final int groupSize) {
-        return createSeq(new GroupingSpliterator<T,List<T>,ListX<T>>( source,()->new ArrayList(groupSize), c->ListX.fromIterable(c),groupSize), this.reversible,split);
+        return createSeq(new GroupingOperator<T,List<T>,ListX<T>>( source,()->new ArrayList(groupSize), c->ListX.fromIterable(c),groupSize), this.reversible,split);
 
     }
     @Override
@@ -544,9 +524,7 @@ public class ReactiveStreamX<T> extends SpliteratorBasedStream<T> {
     @Override
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
                                                       final Consumer<? super Throwable> consumerError) {
-        this.split.ifPresent(s->{
-            s.setError(consumerError);
-        });
+        
         return Streams.forEachXWithError(this, numberOfElements, consumer, consumerError);
     }
 
@@ -624,8 +602,8 @@ public class ReactiveStreamX<T> extends SpliteratorBasedStream<T> {
     }
     @Override
     public ReactiveSeq<T> cycle() {
-        return coflatMap(s->ReactiveSeq.fromIterable(s.toList()).cycle())
-                .flatMap(i->i);
+        return ReactiveSeq.fill(1)
+                          .flatMap(i -> createSeq( source));;
 
     }
 
@@ -702,7 +680,7 @@ public class ReactiveStreamX<T> extends SpliteratorBasedStream<T> {
     public ReactiveSeq<T> cycle(long times) {
         return ReactiveSeq.fill(1)
                 .limit(times)
-                .flatMap(i -> createSeq( source, reversible, split));
+                .flatMap(i -> createSeq( source));
 
     }
 

@@ -30,12 +30,16 @@ import java.util.stream.*;
  */
 public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>  {
 
-    public Stream<T> unwrapStream();
+    public abstract Stream<T> unwrapStream();
     @Override
     public final ReactiveSeq<T> parallel() {
         return this;
     }
 
+    @Override
+    public boolean endsWithIterable(final Iterable<T> iterable) {
+        return Streams.endsWith(this, iterable);
+    }
     @Override
     public final boolean allMatch(final Predicate<? super T> c) {
         return unwrapStream().allMatch(c);
@@ -223,33 +227,35 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
     @Override
     public final <R> ReactiveSeq<R> flatMapStream(final Function<? super T, BaseStream<? extends R, ?>> fn) {
-        return createSeq(Streams.flatMapStream(this, fn), reversible,split);
+        return createSeq(Streams.flatMapStream(this, fn));
 
     }
 
     public final <R> ReactiveSeq<R> flatMapOptional(final Function<? super T, Optional<? extends R>> fn) {
-        return createSeq(Streams.flatMapOptional(this, fn), reversible,split);
+        return createSeq(Streams.flatMapOptional(this, fn));
 
     }
 
+    protected abstract <R> ReactiveSeq<R> createSeq(Stream<R> rStream);
+
     public final <R> ReactiveSeq<R> flatMapCompletableFuture(final Function<? super T, CompletableFuture<? extends R>> fn) {
-        return createSeq(Streams.flatMapCompletableFuture(this, fn), reversible,split);
+        return createSeq(Streams.flatMapCompletableFuture(this, fn));
     }
 
     public final ReactiveSeq<Character> flatMapCharSequence(final Function<? super T, CharSequence> fn) {
-        return createSeq(Streams.flatMapCharSequence(this, fn), reversible,split);
+        return createSeq(Streams.flatMapCharSequence(this, fn));
     }
 
     public final ReactiveSeq<String> flatMapFile(final Function<? super T, File> fn) {
-        return createSeq(Streams.flatMapFile(this, fn), reversible,split);
+        return createSeq(Streams.flatMapFile(this, fn));
     }
 
     public final ReactiveSeq<String> flatMapURL(final Function<? super T, URL> fn) {
-        return createSeq(Streams.flatMapURL(this, fn), reversible,split);
+        return createSeq(Streams.flatMapURL(this, fn));
     }
 
     public final ReactiveSeq<String> flatMapBufferedReader(final Function<? super T, BufferedReader> fn) {
-        return createSeq(Streams.flatMapBufferedReader(this, fn), reversible,split);
+        return createSeq(Streams.flatMapBufferedReader(this, fn));
     }
     @Override
     public boolean isParallel() {
@@ -369,7 +375,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
 
     public  abstract <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn);
-
+    public abstract ReactiveSeq<T> filterLazyPredicate(final Supplier<Predicate<? super T>> fn);
     @Override
     public ReactiveSeq<T> onePer(final long time, final TimeUnit t) {
         final long next = t.toNanos(time);
@@ -460,7 +466,10 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     public boolean endsWith(final Stream<T> iterable) {
         return Streams.endsWith(this, () -> iterable.iterator());
     }
-
+    @Override
+    public T firstValue() {
+        return findFirst().get();
+    }
 
 }
 
