@@ -510,7 +510,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq created from Spliterator
      */
     public static <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
-        return Streams.reactiveSeq(spliterator, Optional.empty(),Optional.empty());
+        return Streams.reactiveSeq(spliterator, Optional.empty());
     }
 
     /**
@@ -3149,7 +3149,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public static <T> ReactiveSeq<T> of(final T... elements) {
         final ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(
                                                                                     elements,0, elements.length, false);
-        return Streams.reactiveSeq(array, Optional.ofNullable(array),Optional.empty());
+        return Streams.reactiveSeq(array, Optional.ofNullable(array));
 
     }
 
@@ -3165,7 +3165,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public static <T> ReactiveSeq<T> reversedOf(final T... elements) {
         final ReversingArraySpliterator<T> array = new ReversingArraySpliterator<T>(
                                                                                     elements,0,elements.length, false).invert();
-        return Streams.reactiveSeq(array, Optional.ofNullable(array),Optional.empty());
+        return Streams.reactiveSeq(array, Optional.ofNullable(array));
 
     }
 
@@ -3181,7 +3181,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Objects.requireNonNull(elements);
         final ReversingListSpliterator<T> list = new ReversingListSpliterator<T>(
                                                                               elements, false).invert();
-        return Streams.reactiveSeq(list, Optional.ofNullable(list),Optional.empty());
+        return Streams.reactiveSeq(list, Optional.ofNullable(list));
 
     }
 
@@ -3200,7 +3200,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return range(end,start);
         final ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(
                                                                                     start, end, false);
-        return Streams.reactiveSeq(range, Optional.ofNullable(range),Optional.empty());
+        return Streams.reactiveSeq(range, Optional.ofNullable(range));
 
     }
 
@@ -3219,7 +3219,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return rangeLong(end,start);
         final ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(
                                                                                       start, end, false);
-        return Streams.reactiveSeq(range, Optional.ofNullable(range),Optional.empty());
+        return Streams.reactiveSeq(range, Optional.ofNullable(range));
 
     }
 
@@ -3234,7 +3234,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Objects.requireNonNull(stream);
         if (stream instanceof ReactiveSeq)
             return (ReactiveSeq<T>) stream;
-        return Streams.reactiveSeq(stream, Optional.empty(),Optional.empty());
+        return Streams.reactiveSeq(stream, Optional.empty());
     }
     public static <T> ReactiveSeq<T> oneShotStream(final Stream<T> stream) {
         Objects.requireNonNull(stream);
@@ -3252,7 +3252,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static ReactiveSeq<Integer> fromIntStream(final IntStream stream) {
         Objects.requireNonNull(stream);
-        return Streams.reactiveSeq(stream.boxed(), Optional.empty(),Optional.empty());
+        return Streams.reactiveSeq(stream.boxed(), Optional.empty());
 
     }
 
@@ -3265,7 +3265,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static ReactiveSeq<Long> fromLongStream(final LongStream stream) {
         Objects.requireNonNull(stream);
-        return Streams.reactiveSeq(stream.boxed(), Optional.empty(),Optional.empty());
+        return Streams.reactiveSeq(stream.boxed(), Optional.empty());
     }
 
     /**
@@ -3277,7 +3277,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static ReactiveSeq<Double> fromDoubleStream(final DoubleStream stream) {
         Objects.requireNonNull(stream);
-        return Streams.reactiveSeq(stream.boxed(), Optional.empty(),Optional.empty());
+        return Streams.reactiveSeq(stream.boxed(), Optional.empty());
     }
 
     /**
@@ -3292,7 +3292,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Objects.requireNonNull(list);
         final ReversingListSpliterator array = new ReversingListSpliterator<T>(
                                                                                list, false);
-        return Streams.reactiveSeq(array, Optional.ofNullable(array),Optional.empty());
+        return Streams.reactiveSeq(array, Optional.ofNullable(array));
     }
     public static <T> ReactiveSeq<T> oneShotList(final List<T> list) {
         Objects.requireNonNull(list);
@@ -3328,7 +3328,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return ReactiveSeq.fromSpliterator(iterable.spliterator());
         }
         //we can't just use the Iterable's Spliteratable as it might not be repeatable / copyable.
-        return Streams.reactiveSeq(new IteratableSpliterator<T>(iterable), Optional.empty(), Optional.empty());
+        return Streams.reactiveSeq(new IteratableSpliterator<T>(iterable), Optional.empty());
 
 
     }
@@ -3353,7 +3353,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see Stream#iterate(Object, UnaryOperator)
      */
     static <T> ReactiveSeq<T> iterate(final T seed, final UnaryOperator<T> f) {
-        return Streams.reactiveSeq(new IterateSpliterator<T>(seed,f),Optional.empty(),Optional.empty());
+        return Streams.reactiveSeq(new IterateSpliterator<T>(seed,f),Optional.empty());
 
     }
 
@@ -3389,7 +3389,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see Stream#generate(Supplier)
      */
     static <T> ReactiveSeq<T> generate(final Supplier<T> s) {
-        return Streams.reactiveSeq(Stream.generate(s).spliterator(), Optional.empty(),Optional.empty());
+        return Streams.reactiveSeq(Stream.generate(s).spliterator(), Optional.empty());
 
     }
 
@@ -4406,21 +4406,21 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         for(Stream<? extends T> next : streams){
             array[index++] = next.spliterator();
         }
-        return Streams.reactiveSeq(new ArrayConcatonatingSpliterator<T,T>(array),Optional.empty(),Optional.empty());
+        return Streams.reactiveSeq(new ArrayConcatonatingSpliterator<T,T>(array),Optional.empty());
     }
     static <T> ReactiveSeq<T> concat(Spliterator<? extends T>...array){
 
-        return Streams.reactiveSeq(new ArrayConcatonatingSpliterator<T,T>((Spliterator[])array),Optional.empty(),Optional.empty());
+        return Streams.reactiveSeq(new ArrayConcatonatingSpliterator<T,T>((Spliterator[])array),Optional.empty());
     }
     static <T> ReactiveSeq<T> concat(Stream<? extends T> left, Stream<? extends T> right){
 
         return Streams.reactiveSeq(new ConcatonatingSpliterator<T,T>((Spliterator<T>)left.spliterator(),
-                (Spliterator<T>)right.spliterator()),Optional.empty(),Optional.empty());
+                (Spliterator<T>)right.spliterator()),Optional.empty());
     }
     static <T> ReactiveSeq<T> concat(Spliterator<? extends T> left, Spliterator<? extends T> right){
 
         return Streams.reactiveSeq(new ConcatonatingSpliterator<T,T>((Spliterator<T>)left,
-                (Spliterator<T>)right),Optional.empty(),Optional.empty());
+                (Spliterator<T>)right),Optional.empty());
     }
 
     static class Instances {

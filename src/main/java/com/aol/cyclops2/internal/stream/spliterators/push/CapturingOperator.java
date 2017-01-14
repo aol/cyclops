@@ -23,6 +23,8 @@ public class CapturingOperator<T> implements Operator<T> {
     @Getter
     Runnable onComplete;
     final Subscription s;
+    private volatile  boolean initialized;
+
     public CapturingOperator(Subscription s){
         this.s = s;
     }
@@ -49,6 +51,7 @@ public class CapturingOperator<T> implements Operator<T> {
         this.action=onNext;
         this.error = onError;
         this.onComplete = onComplete;
+        this.initialized = true;
         return subscription;
     }
 
@@ -57,5 +60,10 @@ public class CapturingOperator<T> implements Operator<T> {
         this.action=onNext;
         this.error = onError;
         this.onComplete = onComplete;
+        this.initialized = true;
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 }

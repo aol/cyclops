@@ -1967,22 +1967,22 @@ public class Streams {
     }
     public static <T> ReactiveSeq<T> oneShotStreamI(final Iterable<T> iterable) {
         Objects.requireNonNull(iterable);
-        return new OneShotStreamX<T>(new IteratableSpliterator<T>(iterable), Optional.empty(), Optional.empty());
+        return new OneShotStreamX<T>(new IteratableSpliterator<T>(iterable), Optional.empty());
 
     }
     public static <T> ReactiveSeq<T> oneShotStream(Stream<T> stream){
-        return new OneShotStreamX<T>(stream,Optional.empty(), Optional.empty());
+        return new OneShotStreamX<T>(stream,Optional.empty());
     }
     public static <T> OneShotStreamX<T> oneShotStream(Spliterator<T> stream,final Optional<ReversableSpliterator> rev){
-        return new OneShotStreamX<T>(stream,rev, Optional.empty());
+        return new OneShotStreamX<T>(stream,rev);
     }
 
-    public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<CapturingOperator<?>> push) {
+    public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<? super T> stream, final Optional<ReversableSpliterator> rev) {
         if (stream instanceof ReactiveSeq)
             return (ReactiveSeq) stream;
         
             return new StreamX<T>((Stream<T>)
-                                          stream, rev,(Optional)push);
+                                          stream, rev);
 
     }
     public final static <T> ReactiveSeq<T> reactiveSeq(final Iterable<T> iterable){
@@ -1994,10 +1994,10 @@ public class Streams {
     public final static <T> ReactiveSeq<T> reactiveSeq(final Seq<T> stream){
         return ReactiveSeq.fromStream(stream);
     }
-    public final static <T> ReactiveSeq<T> reactiveSeq(final Spliterator<? super T> stream, final Optional<ReversableSpliterator> rev,Optional<CapturingOperator<?>> push) {
+    public final static <T> ReactiveSeq<T> reactiveSeq(final Spliterator<? super T> stream, final Optional<ReversableSpliterator> rev) {
 
         return new StreamX<T>((Spliterator<T>)
-                stream, rev,(Optional)push);
+                stream, rev);
 
     }
 

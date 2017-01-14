@@ -1,0 +1,74 @@
+package cyclops.streams.push;
+
+import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
+import cyclops.collections.ListX;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
+import org.junit.Test;
+
+import java.util.concurrent.locks.LockSupport;
+import java.util.stream.Collectors;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * Created by johnmcclean on 14/01/2017.
+ */
+public class BlockingTest {
+    @Test
+    public void blockingOrNot(){
+        ReactiveSubscriber<Integer> sub = Spouts.subscriber();
+
+        System.out.println("Starting!");
+        Thread t =  new Thread(()->{
+            while(!sub.isInitialized()){
+                System.out.println(sub.isInitialized());
+                LockSupport.parkNanos(0l);
+            }
+            for(int i=0;i<100;i++){
+                sub.onNext(1);
+            }
+            System.out.println("On Complete!");
+            sub.onComplete();
+        });
+
+        t.start();
+
+        //sub.onComplete();
+        sub.stream().peek(System.out::println).collect(Collectors.toList());
+      //   sub.stream().forEach(System.out::println);
+        sub.onNext(1);
+        System.out.println("End!");
+        while(true){
+
+        }
+    }
+
+    @Test
+    public void spoutCollect(){
+        assertThat(Spouts.of(1,2,3).collect(Collectors.toList()),equalTo(ListX.of(1,2,3)));
+    }
+
+
+
+    @Test
+    public void collect(){
+        ReactiveSubscriber<Integer> sub = Spouts.subscriber();
+        ReactiveSeq.of(1,2,3).peek(System.out::println).subscribe(sub);
+        System.out.println(sub.stream().peek(System.out::println).collect(Collectors.toList()));
+    }
+    @Test
+    public void forEach(){
+        ReactiveSubscriber<Integer> sub = Spouts.subscriber();
+        ReactiveSeq.of(1,2,3).subscribe(sub);
+        sub.stream().forEach(System.out::println);
+    }
+    @Test
+    public void init(){
+        ReactiveSubscriber<Integer> sub = Spouts.subscriber();
+        sub.stream().forEach(System.out::println);
+        assertTrue(sub.isInitialized());
+    }
+}

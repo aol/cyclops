@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -30,13 +31,25 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
             AtomicReference<Throwable> error = new AtomicReference<>(null);
             AtomicBoolean done = new AtomicBoolean(false);
             boolean requested = false;
-            StreamSubscription sub = source.subscribe(e -> value.set(e), e -> error.set(e), () -> done.set(true));
+            volatile  boolean awaiting = false;
+            StreamSubscription sub = source.subscribe(e ->{
+                value.set(e);
+                awaiting = false;
+            } , e -> {
+                error.set(e);
+                awaiting = false;
+            }, () -> {
+                done.set(true);
+                awaiting = false;
+            });
 
             @Override
             public boolean hasNext() {
                 if (!requested) {
+                    awaiting = true;
                     sub.request(1l);
                     requested = true;
+
                 }
                 return !done.get();
             }
@@ -48,6 +61,9 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
 
                 }
                 requested = false;
+                while(awaiting){
+                    LockSupport.parkNanos(0l);
+                }
                 if (error.get() != null) {
                     Throwable t = error.get();
                     error.set(null);

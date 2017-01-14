@@ -21,12 +21,12 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
         super(stream);
     }
 
-    public OneShotStreamX(Spliterator<T> stream, Optional<ReversableSpliterator> rev, Optional<CapturingOperator<?>> split) {
-        super(stream, rev, split);
+    public OneShotStreamX(Spliterator<T> stream, Optional<ReversableSpliterator> rev) {
+        super(stream, rev);
     }
 
-    public OneShotStreamX(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<CapturingOperator<?>> split) {
-        super(stream, rev, split);
+    public OneShotStreamX(Stream<T> stream, Optional<ReversableSpliterator> rev) {
+        super(stream, rev);
     }
     @Override
     public ReactiveSeq<T> reverse() {
@@ -34,18 +34,18 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
             reversible.ifPresent(r -> r.invert());
             return this;
         }
-        return createSeq(Streams.reverse(this), reversible,split);
+        return createSeq(Streams.reverse(this), reversible);
     }
 
     @Override
     public final ReactiveSeq<T> cycle() {
-        return createSeq(Streams.cycle(unwrapStream()), reversible,split);
+        return createSeq(Streams.cycle(unwrapStream()), reversible);
     }
     @Override
     public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
         final Tuple2<Stream<T>, Stream<T>> tuple = Streams.duplicate(unwrapStream());
-        return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map2(s -> createSeq(s, reversible.map(r -> r.copy()),split));
+        return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map2(s -> createSeq(s, reversible.map(r -> r.copy())));
     }
 
     @Override
@@ -53,9 +53,9 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
     public final Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate() {
 
         final Tuple3<Stream<T>, Stream<T>, Stream<T>> tuple = Streams.triplicate(unwrapStream());
-        return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map2(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map3(s -> createSeq(s, reversible.map(r -> r.copy()),split));
+        return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map2(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map3(s -> createSeq(s, reversible.map(r -> r.copy())));
 
     }
 
@@ -63,10 +63,10 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
     @SuppressWarnings("unchecked")
     public final Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate() {
         final Tuple4<Stream<T>, Stream<T>, Stream<T>, Stream<T>> tuple = Streams.quadruplicate(unwrapStream());
-        return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map2(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map3(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map4(s -> createSeq(s, reversible.map(r -> r.copy()),split));
+        return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map2(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map3(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map4(s -> createSeq(s, reversible.map(r -> r.copy())));
     }
 
 
@@ -83,68 +83,68 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
     @Override
     public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitAt(final int where) {
         return Streams.splitAt(this, where)
-                .map1(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map2(s -> createSeq(s, reversible.map(r -> r.copy()),split));
+                .map1(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map2(s -> createSeq(s, reversible.map(r -> r.copy())));
 
     }
 
     @Override
     public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitBy(final Predicate<T> splitter) {
         return Streams.splitBy(this, splitter)
-                .map1(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map2(s -> createSeq(s, reversible.map(r -> r.copy()),split));
+                .map1(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map2(s -> createSeq(s, reversible.map(r -> r.copy())));
     }
 
     @Override
     public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partition(final Predicate<? super T> splitter) {
         return Streams.partition(this, splitter)
-                .map1(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map2(s -> createSeq(s, reversible.map(r -> r.copy()),split));
+                .map1(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map2(s -> createSeq(s, reversible.map(r -> r.copy())));
     }
 
 
     @Override
     public final ReactiveSeq<T> cycleWhile(final Predicate<? super T> predicate) {
 
-        return createSeq(Streams.cycle(unwrapStream()), reversible,split)
+        return createSeq(Streams.cycle(unwrapStream()), reversible)
                 .limitWhile(predicate);
     }
 
     @Override
     public final ReactiveSeq<T> cycleUntil(final Predicate<? super T> predicate) {
-        return createSeq(Streams.cycle(unwrapStream()), reversible,split)
+        return createSeq(Streams.cycle(unwrapStream()), reversible)
                 .limitWhile(predicate.negate());
     }
     @Override
     public ReactiveSeq<T> cycle(long times) {
-        return createSeq(Streams.cycle(times, Streamable.fromStream(unwrapStream())), reversible,split);
+        return createSeq(Streams.cycle(times, Streamable.fromStream(unwrapStream())), reversible);
     }
 
     @Override
-    <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible, Optional<CapturingOperator<?>> split) {
-        return new OneShotStreamX<X>(stream,reversible,split);
+    <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible) {
+        return new OneShotStreamX<X>(stream,reversible);
     }
 
     @Override
-    <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible, Optional<CapturingOperator<?>> split) {
-        return new OneShotStreamX<X>(stream,reversible,split);
+    <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible) {
+        return new OneShotStreamX<X>(stream,reversible);
     }
 
     @Override @SafeVarargs
     public  final ReactiveSeq<T> insertAt(final int pos, final T... values) {
-        return createSeq(Streams.insertAt(this, pos, values), Optional.empty(),split);
+        return createSeq(Streams.insertAt(this, pos, values), Optional.empty());
 
     }
 
     @Override
     public ReactiveSeq<T> deleteBetween(final int start, final int end) {
-        return createSeq(Streams.deleteBetween(this, start, end), Optional.empty(),split);
+        return createSeq(Streams.deleteBetween(this, start, end), Optional.empty());
     }
 
     @Override
     public ReactiveSeq<T> insertAtS(final int pos, final Stream<T> stream) {
 
-        return createSeq(Streams.insertStreamAt(this, pos, stream), Optional.empty(),split);
+        return createSeq(Streams.insertStreamAt(this, pos, stream), Optional.empty());
 
     }
     Spliterator<T> get() {

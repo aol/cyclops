@@ -27,20 +27,20 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
         super(stream);
     }
 
-    public StreamX(Spliterator<T> stream, Optional<ReversableSpliterator> rev, Optional<CapturingOperator<?>> split) {
-        super(stream, rev, split);
+    public StreamX(Spliterator<T> stream, Optional<ReversableSpliterator> rev) {
+        super(stream, rev);
     }
 
-    public StreamX(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<CapturingOperator<?>> split) {
-        super(stream, rev, split);
+    public StreamX(Stream<T> stream, Optional<ReversableSpliterator> rev) {
+        super(stream, rev);
     }
     @Override
     public ReactiveSeq<T> reverse() {
         if(this.stream instanceof ReversableSpliterator){
             ReversableSpliterator rev = (ReversableSpliterator)stream;
-            return createSeq(rev.invert(),reversible,split);
+            return createSeq(rev.invert(),reversible);
         }
-        return createSeq(Streams.reverse(this), reversible,split);
+        return createSeq(Streams.reverse(this), reversible);
     }
 
     @Override
@@ -49,13 +49,13 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     }
 
     @Override
-    <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible, Optional<CapturingOperator<?>> split) {
-        return new StreamX<X>(stream,reversible,split);
+    <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible) {
+        return new StreamX<X>(stream,reversible);
     }
 
     @Override
-    <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible, Optional<CapturingOperator<?>> split) {
-        return new StreamX<X>(stream,reversible,split);
+    <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible) {
+        return new StreamX<X>(stream,reversible);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
 
         Spliterator<T> t = copy();
         return  ReactiveSeq.fill(1)
-                .flatMap(i->createSeq(CopyableSpliterator.copy(t),reversible,split));
+                .flatMap(i->createSeq(CopyableSpliterator.copy(t),reversible));
     }
 
     @Override
@@ -134,7 +134,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     public ReactiveSeq<T> cycle(long times) {
         return ReactiveSeq.fill(1)
                 .limit(times)
-                .flatMap(i -> createSeq(copy(), reversible, split));
+                .flatMap(i -> createSeq(copy(), reversible));
 
     }
 

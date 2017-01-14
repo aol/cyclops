@@ -55,17 +55,22 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
             isOpen = false;
         }
     };
-    private volatile LazyImmutable<CapturingOperator<T>> action = LazyImmutable.def();
+    private volatile CapturingOperator<T> action=  null;
    
 
     public ReactiveSubscriber() {
     }
 
     volatile boolean streamCreated=  false;
+    CapturingOperator<T> getAction(){
+        if(action==null)
+             action = new CapturingOperator<T>(s);
+        return action;
+    }
 
     public ReactiveSeq<T> stream(){
         streamCreated = true;
-        return Spouts.reactiveStream(action.computeIfAbsent(()->new CapturingOperator<T>(s)));
+        return Spouts.reactiveStream(getAction());
     }
     @Override
     public void onSubscribe(final Subscription s) {
@@ -83,7 +88,8 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     @Override
     public void onNext(final T t) {
         Objects.requireNonNull(t);
-        val cons = action.get().getAction();
+
+        val cons = getAction().getAction();
         if(cons!=null) 
               cons.accept(t);
 
@@ -93,7 +99,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     @Override
     public void onError(final Throwable t) {
         Objects.requireNonNull(t);
-        val cons = action.get().getError();
+        val cons = getAction().getError();
         if(cons!=null) 
               cons.accept(t);
         
@@ -103,13 +109,17 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     @Override
     public void onComplete() {
 
-        val run = action.get().getOnComplete();
+
+        val run = getAction().getOnComplete();
+        System.out.println("Run is " +  run);
         if(run!=null)
             run.run();
 
     }
+    public boolean isInitialized() {
+        return getAction().isInitialized();
+    }
 
-    
 
-   
+
 }
