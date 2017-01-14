@@ -512,11 +512,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public static <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
         return Streams.reactiveSeq(spliterator, Optional.empty(),Optional.empty());
     }
-    public static <T> ReactiveSeq<T> fromSpliterator(CapturingOperator<T> spliterator){
-        return Streams.reactiveSeq(StreamSupport.stream(spliterator, false), Optional.empty(),Optional.of(spliterator));
-        
-    }
-   
+
     /**
      * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
      * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,

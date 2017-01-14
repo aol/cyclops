@@ -4,6 +4,7 @@ import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.StreamX;
 import com.aol.cyclops2.internal.stream.spliterators.IterateSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
+import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.Streams;
 import lombok.experimental.UtilityClass;
 import org.reactivestreams.Subscription;
@@ -18,6 +19,9 @@ import java.util.stream.Stream;
 
 public interface Spouts {
 
+    static <T> ReactiveSubscriber<T> subscriber(){
+        return new ReactiveSubscriber<T>();
+    }
     static <T> ReactiveSeq<T> reactiveStream(Operator<T> s){
         return new ReactiveStreamX<>(s);
     }
