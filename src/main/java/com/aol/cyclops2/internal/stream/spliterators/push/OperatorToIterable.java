@@ -16,9 +16,11 @@ import java.util.function.Function;
 public class OperatorToIterable<T,R>  implements Iterable<T> {
 
     Operator<T> source;
+    final Consumer<? super Throwable> defaultErrorHandler;
 
-    public OperatorToIterable(Operator<T> source){
+    public OperatorToIterable(Operator<T> source, Consumer<? super Throwable> defaultErrorHandler){
        this.source= source;
+       this.defaultErrorHandler = defaultErrorHandler;
 
     }
 
@@ -49,7 +51,7 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
                 if (error.get() != null) {
                     Throwable t = error.get();
                     error.set(null);
-                    throw ExceptionSoftener.throwSoftenedException(t);
+                    defaultErrorHandler.accept(t);
                 }
                 T result = value.get();
                 value.set(null);

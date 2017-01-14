@@ -1,19 +1,12 @@
 package com.aol.cyclops2.internal.stream;
 
-import com.aol.cyclops2.internal.stream.publisher.PublisherIterable;
-import com.aol.cyclops2.internal.stream.spliterators.*;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
-import com.aol.cyclops2.types.FoldableTraversable;
 import com.aol.cyclops2.types.Traversable;
-import com.aol.cyclops2.types.stream.CyclopsCollectable;
 import com.aol.cyclops2.types.stream.HotStream;
-import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.Streams;
-import cyclops.async.*;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.Eval;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -21,6 +14,7 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.Wither;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -29,18 +23,10 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.net.URL;
 import java.util.*;
-import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.BaseStream;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -52,7 +38,13 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Getter
     final Operator<T> source;
+    @Wither
+    final Consumer<? super Throwable> defaultErrorHandler;
 
+    public ReactiveStreamX(Operator<T> source){
+        this.source = source;
+        this.defaultErrorHandler = e->{ throw ExceptionSoftener.throwSoftenedException(e);};
+    }
     @Override
     public ReactiveSeq<T> reverse() {
         return coflatMap(s->ReactiveSeq.reversedListOf(s.toList()))
@@ -62,7 +54,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new OperatorToIterable<>(source).iterator();
+        return new OperatorToIterable<>(source,this.defaultErrorHandler).iterator();
     }
 
     <X> ReactiveSeq<X> createSeq(Operator<X> stream) {
@@ -239,12 +231,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public Spliterator<T> spliterator() {
-        return new OperatorToIterable<>(source).spliterator();
+        return new OperatorToIterable<>(source,this.defaultErrorHandler).spliterator();
     }
 
     @Override
     public Stream<T> unwrapStream() {
-        return StreamSupport.stream(new OperatorToIterable<>(source).spliterator(),false);
+        return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler).spliterator(),false);
     }
 
     @Override
@@ -268,7 +260,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void forEach(final Consumer<? super T> action) {
-        this.source.subscribeAll(action,e->{},()->{});
+        this.source.subscribeAll(action,this.defaultErrorHandler,()->{});
 
     }
     @Override
@@ -503,7 +495,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer) {
-        StreamSubscription sub = source.subscribe(consumer, e->{}, ()->{});
+        StreamSubscription sub = source.subscribe(consumer, this.defaultErrorHandler, ()->{});
         sub.request(numberOfElements);
         return sub;
     }
@@ -596,7 +588,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
-        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source);
+        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler);
         Tuple2<Iterable<T>, Iterable<T>> copy = Streams.toBufferingDuplicator(sourceIt);
         Tuple2<Operator<T>, Operator<T>> operators = copy.map((a,b)->
             Tuple.tuple(new SpliteratorToOperator<T>(a.spliterator()),new SpliteratorToOperator<T>(b.spliterator()))
@@ -608,7 +600,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate() {
-        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source);
+        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler);
         ListX<SpliteratorToOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 3)
                                          .map(it->new SpliteratorToOperator<>(it.spliterator()));
 
@@ -621,7 +613,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate() {
-        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source);
+        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler);
         ListX<SpliteratorToOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 4)
                 .map(it->new SpliteratorToOperator<>(it.spliterator()));
 

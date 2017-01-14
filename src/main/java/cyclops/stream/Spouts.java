@@ -6,6 +6,7 @@ import com.aol.cyclops2.internal.stream.spliterators.IterateSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import cyclops.Streams;
 import lombok.experimental.UtilityClass;
+import org.reactivestreams.Subscription;
 
 import java.util.Optional;
 import java.util.function.UnaryOperator;
@@ -16,6 +17,8 @@ import java.util.stream.Stream;
  */
 
 public interface Spouts {
+
+    static Subscription subscription()
     static <T> ReactiveSeq<T> iterate(final T seed, final UnaryOperator<T> f) {
         return new ReactiveStreamX(new IterateOperator<T>(seed,f));
 
