@@ -60,12 +60,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     <X> ReactiveSeq<X> createSeq(Operator<X> stream) {
         return new ReactiveStreamX<X>(stream);
     }
-    <R> ReactiveSeq<R> mapSubscribe(Supplier<Tuple2<Function<? super T, ? extends R>, Consumer<Consumer<? super R >>>> events){
-        Operator<T> source;
-        return new LazyMapOperator<>(source,events);
-    }
+
+
     public  <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
-        return ReactiveSeq.fromSpliterator(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(createSeq( source),fn));
+        return createSeq(new LazySingleValueOperator<ReactiveSeq<T>,R>(createSeq( source),fn));
 
     }
 
@@ -78,17 +76,17 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<ListX<T>> grouped(final int groupSize) {
-        return createSeq(new GroupingOperator<T,List<T>,ListX<T>>( source,()->new ArrayList(groupSize), c->ListX.fromIterable(c),groupSize), this.reversible,split);
+        return createSeq(new GroupingOperator<T,List<T>,ListX<T>>( source,()->new ArrayList(groupSize), c->ListX.fromIterable(c),groupSize));
 
     }
     @Override
     public ReactiveSeq<ListX<T>> groupedStatefullyWhile(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullySpliterator<>( source,()->ListX.of(),Function.identity(), predicate), this.reversible,split);
+        return createSeq(new GroupedStatefullyOperator<>( source,()->ListX.of(),Function.identity(), predicate));
     }
     @Override
     public <C extends Collection<T>,R> ReactiveSeq<R> groupedStatefullyWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                                              Function<? super C, ? extends R> finalizer) {
-        return this.<R>createSeq(new GroupedStatefullySpliterator<T,C,R>( source,factory,finalizer, predicate), this.reversible,split);
+        return this.<R>createSeq(new GroupedStatefullyOperator<>( source,factory,finalizer, predicate));
     }
     @Override
     public ReactiveSeq<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
@@ -518,34 +516,31 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer) {
-        return Streams.forEachX(this, numberOfElements, consumer);
+        StreamSubscription sub = source.subscribe(consumer, e->{}, ()->{});
+        sub.request(numberOfElements);
+        return sub;
     }
 
     @Override
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
                                                       final Consumer<? super Throwable> consumerError) {
-        
-        return Streams.forEachXWithError(this, numberOfElements, consumer, consumerError);
+
+        StreamSubscription sub = source.subscribe(consumer, consumerError, ()->{});
+        sub.request(numberOfElements);
+        return sub;
     }
 
     @Override
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
                                                       final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
-        this.split.ifPresent(s->{
-            s.setError(consumerError);
-            s.setOnComplete(onComplete);
-        });
-        return Streams.forEachXEvents(this, numberOfElements, consumer, consumerError, onComplete);
+        StreamSubscription sub = source.subscribe(consumer, consumerError, onComplete);
+        sub.request(numberOfElements);
+        return sub;
     }
 
     @Override
     public <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
-        this.split.ifPresent(s->{
-            s.setHold(false);
-            s.setError(consumerError);
-        });
-
-        new ForEachWithError<T>(this. source,consumerError).forEachRemaining(consumerElement);
+        source.subscribeAll(consumerElement,consumerError,()->{});
 
 
     }
@@ -553,12 +548,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
                                               final Runnable onComplete) {
-        this.split.ifPresent(s->{
-            s.setHold(false);
-            s.setError(consumerError);
-        });
+        source.subscribeAll(consumerElement,consumerError,onComplete);
 
-        new ForEachWithError<T>(this. source,consumerError,onComplete).forEachRemaining(consumerElement);
+
     }
 
 
@@ -588,10 +580,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     }
     
-    @Override
-    public ReactiveSeq<ListX<T>> grouped(final int groupSize) {
-        return createSeq(new GroupingOperator<T,List<T>,ListX<T>>(source,()->new ArrayList(groupSize),l->ListX.fromIterable(l),groupSize));
-    }
+
     @Override
     public ReactiveSeq<T> limit(long num){
         return createSeq(new LimitOperator<>(source,num));
@@ -678,9 +667,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public ReactiveSeq<T> cycle(long times) {
-        return ReactiveSeq.fill(1)
-                .limit(times)
-                .flatMap(i -> createSeq( source));
+        return grouped(Integer.MAX_VALUE)
+                .flatMapI(s->s.cycle(times));
 
     }
 
