@@ -51,8 +51,9 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
 
             private void pushAll() {
                 for (; index[0] < values.length; index[0]++) {
-                    if (isOpen)
-                        ((Consumer) onNext).accept(values[index[0]]);
+                    if(!isOpen)
+                        break;
+                   ((Consumer) onNext).accept(values[index[0]]);
                 }
                 requested.set(0);
                 onComplete.run();

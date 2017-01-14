@@ -1,8 +1,5 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import com.aol.cyclops2.internal.stream.spliterators.push.util.Decorators;
-import cyclops.async.Queue;
-
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
@@ -45,10 +42,14 @@ public class IterateOperator<T> implements Operator<T> {
             }
 
             private void pushAll() {
-                try{
-                    subscribeAll(Decorators.openCheck(this,onNext),onError,onComplete);
-                }catch (Queue.ClosedQueueException e) {
-
+                for(;;){
+                    if(!isOpen)
+                        break;
+                    try {
+                        next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
+                    }catch(Throwable t){
+                        onError.accept(t);
+                    }
                 }
                 requested.set(0);
             }

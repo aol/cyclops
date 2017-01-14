@@ -51,10 +51,15 @@ public class RangeIntOperator implements Operator<Integer> {
                 });
             }
             private void pushAll() {
-                try{
-                    subscribeAll(Decorators.openCheck(this,onNext),onError,onComplete);
-                }catch (Queue.ClosedQueueException e) {
-
+                for(;index[0]<end;index[0]++){
+                    if(!isOpen)
+                        break;
+                    try {
+                        if(!isOpen)
+                            ((Consumer) onNext).accept(index[0]);
+                    }catch(Throwable t){
+                        onError.accept(t);
+                    }
                 }
                 requested.set(0);
             }
