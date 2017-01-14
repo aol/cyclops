@@ -12,7 +12,9 @@ import java.util.stream.Collectors;
  * Created by johnmcclean on 14/01/2017.
  */
 public class PushSequentialTest extends BaseSequentialTest {
-    <U> ReactiveSeq<U> of(U... array){
+    @Override
+    protected <U> ReactiveSeq<U> of(U... array){
+
         return Spouts.of(array);
     }
 

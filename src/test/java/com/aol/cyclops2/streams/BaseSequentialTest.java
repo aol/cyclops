@@ -26,7 +26,7 @@ import org.junit.Test;
 import cyclops.stream.ReactiveSeq;
 public class BaseSequentialTest {
 
-	<U> ReactiveSeq<U> of(U... array){
+	protected <U> ReactiveSeq<U> of(U... array){
 			  return ReactiveSeq.of(array);
 	}
 	
@@ -435,7 +435,7 @@ public class BaseSequentialTest {
 		   
 		    @Test
 		    public void testSkipWhile() {
-		    	 Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, 3, 4, 5);
+		    	 Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 		         assertEquals(asList(1, 2, 3, 4, 5), s.get().skipWhile(i -> false).toList());
 		         assertEquals(asList(3, 4, 5), s.get().skipWhile(i -> i % 3 != 0).toList());
@@ -446,7 +446,7 @@ public class BaseSequentialTest {
 
 		    @Test
 		    public void testSkipUntil() {
-		    	Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, 3, 4, 5);
+		    	Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 		        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
 		        assertEquals(asList(3, 4, 5), s.get().skipUntil(i -> i % 3 == 0).toList());

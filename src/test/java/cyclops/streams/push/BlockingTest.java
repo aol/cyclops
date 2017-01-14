@@ -50,6 +50,10 @@ public class BlockingTest {
     public void spoutCollect(){
         assertThat(Spouts.of(1,2,3).collect(Collectors.toList()),equalTo(ListX.of(1,2,3)));
     }
+    @Test
+    public void findFirst(){
+        assertThat(Spouts.of(1,2,3).findFirst().get(),equalTo(1));
+    }
 
 
 
