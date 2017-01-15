@@ -36,7 +36,9 @@ public class SpliteratorToOperator<T> implements Operator<T> {
             boolean canAdvance = true;
             while(sub.isActive()) {
                 try {
+                    sub.requested.decrementAndGet();
                     canAdvance = split.tryAdvance(onNext);
+
                 } catch (Throwable t) {
                     onError.accept(t);
                 }

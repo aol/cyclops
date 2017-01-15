@@ -26,8 +26,11 @@ public class LimitOperator<T,R> extends BaseOperator<T,T> {
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         long[] count = {0};
         StreamSubscription sub[] = {null};
+
         sub[0] = source.subscribe(e-> {
+
                     try {
+                        System.out.println(count[0] + " " + limit);
                         if(count[0]++<limit)
                             onNext.accept(e);
                         else{
@@ -35,7 +38,6 @@ public class LimitOperator<T,R> extends BaseOperator<T,T> {
                             onComplete.run();
                         }
                     } catch (Throwable t) {
-
                         onError.accept(t);
                     }
                 }

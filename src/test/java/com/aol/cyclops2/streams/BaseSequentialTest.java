@@ -245,7 +245,7 @@ public class BaseSequentialTest {
 		@Test
 		public void zipInOrder(){
 			
-			//this is not 100% reliable for EagerSequenceM use zipFutures instead
+
 				List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6).limit(6)
 															.zip( of(100,200,300,400).limit(4))
 															.collect(Collectors.toList());

@@ -120,6 +120,10 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     public AnyM<W,FluentSequenceX<T>> unwrap() {
         return run;
     }
+    public <R> R unwrapTo(Function<? super AnyM<W,FluentSequenceX<T>>,? extends R> fn) {
+
+        return unwrap().to(fn);
+    }
 
     /**
      * Peek at the current value of the List

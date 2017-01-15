@@ -1,6 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 import java.util.function.UnaryOperator;
 
 /**
@@ -24,20 +26,21 @@ public class IterateOperator<T> implements Operator<T> {
         Object[] current = {in};
         Consumer next = onNext;
         StreamSubscription sub = new StreamSubscription(){
+            LongConsumer work = n-> {
+                if(n==Long.MAX_VALUE){
+                    pushAll();
+                    return;
+                }
+                while (isActive()) {
+                    requested.decrementAndGet();
+                    next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
+
+                }
+
+            };
             @Override
             public void request(long n) {
-                this.singleActiveRequest(n,()-> {
-                    if(requested.get()==Long.MAX_VALUE){
-                        pushAll();
-                        return true;
-                    }
-                    while (isActive()) {
-                        requested.decrementAndGet();
-                        next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
-
-                    }
-                    return false;
-                });
+                this.singleActiveRequest(n,work);
 
             }
 

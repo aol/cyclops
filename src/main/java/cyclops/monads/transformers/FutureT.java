@@ -63,6 +63,10 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
         return run;
     }
 
+    public <R> R unwrapTo(Function<? super AnyM<W,Future<T>>, ? extends R> fn) {
+        return unwrap().to(fn);
+    }
+
     private FutureT(final AnyM<W,Future<T>> run) {
         this.run = run;
     }

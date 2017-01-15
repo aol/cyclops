@@ -1,13 +1,12 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import com.aol.cyclops2.internal.stream.publisher.PublisherIterable;
 import org.reactivestreams.Subscription;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
+import java.util.concurrent.atomic.AtomicLongFieldUpdater;
+import java.util.function.*;
 
 /**
  * Created by johnmcclean on 12/01/2017.
@@ -20,36 +19,27 @@ public class StreamSubscription implements Subscription {
         return isOpen && requested.get()>0;
     }
 
-    AtomicBoolean active = new AtomicBoolean(false);
-    public void singleActiveRequest(long n, BooleanSupplier work){
+    public void singleActiveRequest(long n, LongConsumer work){
+        if(this.requestInternal(n))
+               work.accept(n);
+    }
 
 
-        this.requestInternal(n);
-        while(requested.get()!=0) {
+    private boolean requestInternal(long n) {
 
-                if (active.compareAndSet(false, true)) {
-
-                    if(work.getAsBoolean()){
-                        return;
-                    }
-                    active.set(false);
-                }else{
-                    return;
-                }
+        for (; ; ) {
+            long currentRequests = requested.get();
+            if (Long.MAX_VALUE==currentRequests) {
+                return false;
+            }
+            long newTotal = currentRequests + n;
+            if (requested.compareAndSet(currentRequests, newTotal <0 ? Long.MAX_VALUE : newTotal)) {
+                return currentRequests==0;
             }
 
-
-
-
+        }
     }
-    private void requestInternal(long n) {
 
-        if(requested.get()==Long.MAX_VALUE)
-            return;
-        if(n==Long.MAX_VALUE)
-            requested.set(n);
-        requested.accumulateAndGet(n,(a,b)->a+b);
-    }
 
     @Override
     public void request(long n) {

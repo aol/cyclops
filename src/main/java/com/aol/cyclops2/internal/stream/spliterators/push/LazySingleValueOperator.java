@@ -2,6 +2,7 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.LongConsumer;
 
 /**
  * Created by johnmcclean on 12/01/2017.
@@ -23,16 +24,17 @@ public class LazySingleValueOperator<T,R> implements Operator<R> {
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         boolean[] sent = {false};
         StreamSubscription sub = new StreamSubscription(){
+            LongConsumer work = n -> {
+
+                if (n > 0 && !sent[0]) {
+                    onNext.accept(fn.apply(value));
+                    sent[0] = true;
+                }
+
+            };
             @Override
             public void request(long n) {
-                singleActiveRequest(1, () -> {
-
-                    if (n > 0 && !sent[0]) {
-                        onNext.accept(fn.apply(value));
-                        sent[0] = true;
-                    }
-                    return true;
-                });
+                singleActiveRequest(1, work);
             }
 
             @Override

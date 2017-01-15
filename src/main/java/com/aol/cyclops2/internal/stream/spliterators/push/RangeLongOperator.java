@@ -4,6 +4,7 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 import cyclops.async.Queue;
 
 import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 
 /**
  * Created by johnmcclean on 12/01/2017.
@@ -26,29 +27,30 @@ public class RangeLongOperator implements Operator<Long> {
         int[] index = {0};
 
         StreamSubscription sub = new StreamSubscription(){
+            LongConsumer work = n->{
+
+                if(requested.get()==Long.MAX_VALUE) {
+                    pushAll();
+                }
+                while (isActive() && index[0] < end) {
+                    try {
+                        requested.decrementAndGet();
+                        ((Consumer) onNext).accept(index[0]++);
+                    } catch (Throwable t) {
+                        onError.accept(t);
+                    }
+
+                }
+                if (index[0] >= end) {
+                    onComplete.run();
+
+                }
+
+            };
+
             @Override
             public void request(long n) {
-                singleActiveRequest(n,()-> {
-
-                    if(requested.get()==Long.MAX_VALUE){
-                        pushAll();
-                        return true;
-                    }
-                    while (isActive() && index[0] < end) {
-                        try {
-                            requested.decrementAndGet();
-                            ((Consumer) onNext).accept(index[0]++);
-                        } catch (Throwable t) {
-                            onError.accept(t);
-                        }
-
-                    }
-                    if (index[0] >= end) {
-                        onComplete.run();
-                        return true;
-                    }
-                    return false;
-                });
+                singleActiveRequest(n, work );
             }
 
             private void pushAll() {

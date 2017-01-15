@@ -39,7 +39,7 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
                 if(n==Long.MAX_VALUE){
                     upstream[0].request(n);
                 }else {
-                    upstream[0].request(n * groupSize);
+                    upstream[0].request(n ); //we can't multiply by groupSize - doesn't work with Sets
                 }
                 super.request(n);
             }
@@ -57,6 +57,11 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
                             onNext.accept(finalizer.apply((C)next[0]));
                             sub.requested.decrementAndGet();
                             next[0] = factory.get();
+                            if(sub.requested.decrementAndGet()>0){
+                                upstream[0].request(1l);
+                            }
+                        }else{
+                             upstream[0].request(1l);
                         }
 
                     } catch (Throwable t) {

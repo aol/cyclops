@@ -1,7 +1,10 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.LongConsumer;
+import java.util.function.LongFunction;
 
 /**
  * Created by johnmcclean on 12/01/2017.
@@ -24,28 +27,28 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
 
 
         StreamSubscription sub = new StreamSubscription(){
-            AtomicBoolean active = new AtomicBoolean(false);
+            LongConsumer work = n->{
+                if (n == Long.MAX_VALUE) {
+                    pushAll();
+
+                    return;
+                }
+
+
+                while (isActive() && index[0]<values.length) {
+                    requested.decrementAndGet();
+                    ((Consumer) onNext).accept(values[index[0]++]);
+                }
+
+                if (index[0] >= values.length) {
+                    onComplete.run();
+
+                }
+
+            };
             @Override
             public void request(long n) {
-                singleActiveRequest(n,()->{
-                    if (n == Long.MAX_VALUE) {
-                        pushAll();
-
-                        return true;
-                    }
-
-
-                    while (isActive() && index[0]<values.length) {
-                        requested.decrementAndGet();
-                        ((Consumer) onNext).accept(values[index[0]++]);
-                    }
-
-                    if (index[0] >= values.length) {
-                        onComplete.run();
-                        return true;
-                    }
-                    return false;
-                });
+                singleActiveRequest(n,work);
 
             }
 

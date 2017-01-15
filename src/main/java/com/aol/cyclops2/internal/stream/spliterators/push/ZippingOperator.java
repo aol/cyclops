@@ -55,7 +55,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
                 onError.accept(t);
             }
             createDemand(leftQ, rightQ, leftSub, rightSub, sub);
-        },onError,onComplete);
+        },onError,()->{
+            rightSub[0].cancel();
+            onComplete.run();
+        });
         rightSub[0] = right.subscribe(e->{
             try {
                 if (leftQ.size() > 0) {
@@ -67,7 +70,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
                 onError.accept(t);
             }
             createDemand(leftQ, rightQ, leftSub, rightSub, sub);
-        },onError,onComplete);
+        },onError,()->{
+            leftSub[0].cancel();
+            onComplete.run();
+        });
 
         return sub;
     }
@@ -83,31 +89,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        //would likely get better performance with a SPSC Queue, but would be bounded
-        ConcurrentLinkedQueue<T1> leftQ = new ConcurrentLinkedQueue<T1>();
-        ConcurrentLinkedQueue<T2> rightQ = new ConcurrentLinkedQueue<T2>();
-        left.subscribeAll(e->{
-            try {
-                if (rightQ.size() > 0) {
-                    onNext.accept(fn.apply((T1) e, rightQ.poll()));
-                } else {
-                    leftQ.offer((T1) e);
-                }
-            }catch(Throwable t){
-                onError.accept(t);
-            }
-        },onError,onCompleteDs);
-        right.subscribeAll(e->{
-            try {
-                if (leftQ.size() > 0) {
-                    onNext.accept(fn.apply(leftQ.poll(), (T2) e));
-                } else {
-                    rightQ.offer((T2) e);
-                }
-            }catch(Throwable t){
-                onError.accept(t);
-            }
-        },onError,onCompleteDs);
+        subscribe(onNext,onError,onCompleteDs).request(Long.MAX_VALUE);
 
     }
 }
