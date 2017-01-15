@@ -65,8 +65,10 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
                     }
                 }
                 ,onError,()->{
-                    onNext.accept(finalizer.apply((C)next[0]));
-                    sub.requested.decrementAndGet();
+                    if(next[0].size()>0) {
+                        onNext.accept(finalizer.apply((C) next[0]));
+                        sub.requested.decrementAndGet();
+                    }
                     onComplete.run();
                 });
         return sub;
@@ -89,7 +91,8 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
                     }
                 }
                 ,onError,()->{
-                    onNext.accept(finalizer.apply((C)next[0]));
+                    if(next[0].size()>0)
+                        onNext.accept(finalizer.apply((C)next[0]));
                     onCompleteDs.run();
                 });
     }

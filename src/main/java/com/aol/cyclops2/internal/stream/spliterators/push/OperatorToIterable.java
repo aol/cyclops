@@ -41,17 +41,29 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
                 error.set(e);
                 awaiting = false;
             }, () -> {
+
                 done.set(true);
                 awaiting = false;
             });
 
+            boolean unRead(){
+                return (value.get()!=UNSET || error.get()!=UNSET);
+            }
+            boolean complete(){
+                if(done.get() && !unRead())
+                    return true;
+                return false;
+            }
             @Override
             public boolean hasNext() {
-                if (!requested && !done.get()) {
+                if(complete())
+                    return false;
+                if (!requested) {
                     awaiting = true;
                     sub.request(1l);
                     requested = true;
                     while(awaiting){
+
                         LockSupport.parkNanos(0l);
                     }
 

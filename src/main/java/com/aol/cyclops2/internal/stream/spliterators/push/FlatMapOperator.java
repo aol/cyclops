@@ -32,7 +32,7 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
             @Override
             public void request(long n) {
                 s[0].request(1);
-                super.request(n-1);
+                super.request(n);
             }
 
             @Override
@@ -43,14 +43,14 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
         };
         s[0] = source.subscribe(e-> {
                     try {
-                        while(s[0].isActive()) {
+
                             Spliterator<? extends R> split = mapper.apply(e).spliterator();
                             boolean canAdvance = true;
-                            while (s[0].isActive() && canAdvance) {
+                            while (res.isActive() && canAdvance) {
                                 res.requested.decrementAndGet();
                                 canAdvance = split.tryAdvance(onNext);
                             }
-                        }
+
 
                     } catch (Throwable t) {
 
@@ -59,7 +59,7 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
                 }
                 ,onError,onComplete);
 
-        return s[0];
+        return res;
     }
 
     @Override

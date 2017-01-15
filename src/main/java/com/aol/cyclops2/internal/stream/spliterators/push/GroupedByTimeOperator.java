@@ -59,7 +59,8 @@ public class GroupedByTimeOperator<T,C extends Collection<? super T>,R> extends 
 
                         next[0].add(e);
                         if(System.nanoTime()-start[0] > toRun){
-                            onNext.accept(finalizer.apply((C)next[0]));
+                            if(next[0].size()>0)
+                                onNext.accept(finalizer.apply((C)next[0]));
                             next[0] = factory.get();
                             start[0] = System.nanoTime();
                             if(sub.requested.decrementAndGet()>0){
@@ -76,7 +77,8 @@ public class GroupedByTimeOperator<T,C extends Collection<? super T>,R> extends 
                     }
                 }
                 ,onError,()->{
-                    onNext.accept(finalizer.apply((C)next[0]));
+                    if(next[0].size()>0)
+                        onNext.accept(finalizer.apply((C)next[0]));
                     onComplete.run();
                 });
 
@@ -104,7 +106,8 @@ public class GroupedByTimeOperator<T,C extends Collection<? super T>,R> extends 
                     }
                 }
                 ,onError,()->{
-                    onNext.accept(finalizer.apply((C)next[0]));
+                    if(next[0].size()>0)
+                     onNext.accept(finalizer.apply((C)next[0]));
                     onCompleteDs.run();
                 });
     }
