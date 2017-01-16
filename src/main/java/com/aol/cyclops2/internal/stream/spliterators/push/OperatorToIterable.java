@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
@@ -45,6 +46,9 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
                 done.set(true);
                 awaiting = false;
             });
+            public void forEachRemaining(Consumer<? super T> action) {
+               source.subscribeAll(action,defaultErrorHandler,()->{});
+            }
 
             boolean unRead(){
                 return (value.get()!=UNSET || error.get()!=UNSET);
@@ -87,6 +91,7 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
                 value.set(UNSET);
                 return result;
             }
+
         };
     }
 

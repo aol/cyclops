@@ -1,29 +1,26 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BooleanSupplier;
+import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
-import java.util.function.LongFunction;
 
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class ArrayOfValuesOperator<T> implements Operator<T> {
+public class IterableSourceOperator<T> implements Operator<T> {
 
 
-    final Object[] values;
+    final Iterable<T> values;
 
 
-    public ArrayOfValuesOperator(T... values){
+    public IterableSourceOperator(Iterable<T> values){
         this.values = values;
     }
 
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        final int index[] = {0};
+        final Iterator<T> it = values.iterator();
 
 
         StreamSubscription sub = new StreamSubscription(){
@@ -35,13 +32,13 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
                 }
 
 
-                while (isActive() && index[0]<values.length) {
+                while (isActive() && it.hasNext()) {
 
-                    ((Consumer) onNext).accept(values[index[0]++]);
+                    ((Consumer) onNext).accept(it.next());
                     requested.decrementAndGet();
                 }
 
-                if (index[0] >= values.length) {
+                if (!it.hasNext()) {
                     onComplete.run();
 
                 }
@@ -54,10 +51,10 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
             }
 
             private void pushAll() {
-                for (; index[0] < values.length; index[0]++) {
+                while(it.hasNext()){
                     if(!isOpen)
                         break;
-                   ((Consumer) onNext).accept(values[index[0]]);
+                   ((Consumer) onNext).accept(it.next());
                 }
                 requested.set(0);
                 onComplete.run();
@@ -73,8 +70,9 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
 
     @Override
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        for(int i=0;i<values.length;i++)
-            ((Consumer)onNext).accept(values[i]);
+        final Iterator<T> it = values.iterator();
+        while(it.hasNext())
+            ((Consumer)onNext).accept(it.next());
         onCompleteDs.run();
     }
 }

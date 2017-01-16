@@ -55,11 +55,12 @@ public class RangeLongOperator implements Operator<Long> {
 
             private void pushAll() {
                 for(;index[0]<end;index[0]++){
-                    if(!isOpen)
-                        break;
-                    try {
 
-                         ((Consumer) onNext).accept(index[0]);
+                    try {
+                        if(!isOpen)
+                            ((Consumer) onNext).accept(index[0]);
+                        else
+                            break;
                     }catch(Throwable t){
                         onError.accept(t);
                     }

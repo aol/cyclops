@@ -30,16 +30,25 @@ public interface Spouts {
 
     }
     public static ReactiveSeq<Integer> range(int start, int end){
-        return new ReactiveStreamX<Integer>(new RangeIntOperator(start,end));
+        if(start<end)
+            return new ReactiveStreamX<Integer>(new RangeIntOperator(start,end));
+        else
+            return new ReactiveStreamX<Integer>(new RangeIntOperator(end,start));
     }
     public static  ReactiveSeq<Long> rangeLong(long start, long end){
-        return new ReactiveStreamX<>(new RangeLongOperator(start,end));
+        if(start<end)
+            return new ReactiveStreamX<>(new RangeLongOperator(start,end));
+        else
+            return new ReactiveStreamX<>(new RangeLongOperator(end,start));
     }
     public static  <T> ReactiveSeq<T> of(T value){
         return new ReactiveStreamX<>(new SingleValueOperator<T>(value));
     }
     public static  <T> ReactiveSeq<T> of(T... values){
         return new ReactiveStreamX<>(new ArrayOfValuesOperator<T>(values));
+    }
+    public static  <T> ReactiveSeq<T> fromIterable(Iterable<T> iterable){
+        return new ReactiveStreamX<>(new IterableSourceOperator<T>(iterable));
     }
     public static  <T> ReactiveSeq<T> concat(Stream<T>... streams){
         Operator<T>[] operators = new Operator[streams.length];

@@ -25,7 +25,7 @@ public class RangeIntOperator implements Operator<Integer> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super Integer> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        int[] index = {0};
+        int[] index = {Math.min(start,end)};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work =  n ->{
                 if(n==Long.MAX_VALUE) {
@@ -54,11 +54,12 @@ public class RangeIntOperator implements Operator<Integer> {
             }
             private void pushAll() {
                 for(;index[0]<end;index[0]++){
-                    if(!isOpen)
-                        break;
+
                     try {
-                        if(!isOpen)
+                        if(isOpen)
                             ((Consumer) onNext).accept(index[0]);
+                        else
+                            break;
                     }catch(Throwable t){
                         onError.accept(t);
                     }
@@ -78,10 +79,12 @@ public class RangeIntOperator implements Operator<Integer> {
     @Override
     public void subscribeAll(Consumer<? super Integer> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
 
-        for(int i=start;i<end;i++){
-             ((Consumer) onNext).accept(i);
 
-        }
+            for (int i = start; i < end; i++) {
+                ((Consumer) onNext).accept(i);
+
+            }
+
         onCompleteDs.run();
     }
 }
