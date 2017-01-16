@@ -1,9 +1,14 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import cyclops.box.Mutable;
+import cyclops.box.MutableBoolean;
 import lombok.AllArgsConstructor;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -26,11 +31,16 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
         OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
         StreamSubscription  leftSub[] = {null};
         StreamSubscription  rightSub[] = {null};
+
+        AtomicBoolean completing = new AtomicBoolean(false);
         StreamSubscription sub = new StreamSubscription(){
             @Override
             public void request(long n) {
+
                 leftSub[0].request(1);
                 rightSub[0].request(1);
+
+
                 super.request(n-1);
             }
 
@@ -42,6 +52,8 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             }
         };
         leftSub[0]  = left.subscribe(e->{
+
+
             try {
 
                 if (rightQ.size() > 0) {
@@ -56,10 +68,23 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             }
             createDemand(leftQ, rightQ, leftSub, rightSub, sub);
         },onError,()->{
-            rightSub[0].cancel();
-            onComplete.run();
+
+            drain(leftQ,rightQ,onNext);
+
+
+            if (leftQ.size()==0 && !completing.get()) {
+                completing.set(true);
+                rightSub[0].cancel();
+                onComplete.run();
+
+            }
+
+
+
+
         });
         rightSub[0] = right.subscribe(e->{
+
             try {
                 if (leftQ.size() > 0) {
                     onNext.accept(fn.apply(leftQ.poll(), (T2) e));
@@ -71,14 +96,32 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             }
             createDemand(leftQ, rightQ, leftSub, rightSub, sub);
         },onError,()->{
-            leftSub[0].cancel();
-            onComplete.run();
+
+
+            drain(leftQ,rightQ,onNext);
+
+            if (rightQ.size()==0 && !completing.get()) {
+                completing.set(true);
+                leftSub[0].cancel();
+                onComplete.run();
+
+            }
+
+
         });
 
         return sub;
     }
 
-    private void createDemand(OneToOneConcurrentArrayQueue<T1> leftQ, OneToOneConcurrentArrayQueue<T2> rightQ, StreamSubscription[] leftSub, StreamSubscription[] rightSub, StreamSubscription sub) {
+    private void drain(OneToOneConcurrentArrayQueue<T1> leftQ, OneToOneConcurrentArrayQueue<T2> rightQ, Consumer<? super R> onNext) {
+        while(leftQ.size()>0 && rightQ.size()>0){
+            onNext.accept(fn.apply(leftQ.poll(), rightQ.poll()));
+        }
+    }
+
+    private void createDemand(OneToOneConcurrentArrayQueue<T1> leftQ, OneToOneConcurrentArrayQueue<T2> rightQ,
+                              StreamSubscription[] leftSub, StreamSubscription[] rightSub,
+                              StreamSubscription sub) {
         if(sub.isActive() && leftQ.size() < 256 && rightQ.size()<256){
             long request = Math.min(256,sub.requested.get());
             rightSub[0].request(request);

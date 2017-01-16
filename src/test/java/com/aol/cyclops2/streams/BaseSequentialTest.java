@@ -2,6 +2,7 @@ package com.aol.cyclops2.streams;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
+import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
 
 import cyclops.collections.ListX;
 import cyclops.stream.Streamable;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -424,10 +426,15 @@ public class BaseSequentialTest {
 		    }
 
 		    @Test
+			public void zip2(){
+				assertThat(of(1,2).zipS(of('a','b')).toList(),equalTo(ListX.of(tuple(1,'a'), tuple(2,'b'))));
+			}
+		    @Test
 		    public void testZipWithIndex() {
-		    	//assertEquals(asList(), of().zipWithIndex().toList());
-		       // assertEquals(asList(tuple("a", 0L)), of("a").zip(of(0L)).toList());
-		        //assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
+			System.out.println();
+		    	assertEquals(asList(), of().zipWithIndex().toList());
+		        assertEquals(asList(tuple("a", 0L)), of("a").zip(of(0L)).toList());
+		        assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
 		    	assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L)), of("a", "b").zipWithIndex().toList());
 		        assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L), new Tuple2("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
 		    }
