@@ -27,6 +27,7 @@ public class SingleValueOperator<T> implements Operator<T> {
                     onNext.accept(value);
                     requested.decrementAndGet();
                     sent[0] = true;
+                    onComplete.run();
                 }
 
             };

@@ -1,6 +1,7 @@
 package com.aol.cyclops2.streams;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.*;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
@@ -8,17 +9,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.collections.ListX;
+import cyclops.control.Maybe;
+import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
+import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
@@ -45,6 +45,50 @@ public class BaseSequentialTest {
 	Integer value2() {
 		return 5;
 	}
+	@Test
+	public void flatMapI(){
+		assertThat(of(1,2,3)
+				.flatMapI(i-> ReactiveSeq.of(10,20,30*i))
+				.toList(),equalTo(ListX.of(10,20,30,10,20,60,10,20,90)));
+	}
+
+	@Test
+	public void flatMapStreamFilter(){
+		assertThat(of(1,2,3,null).flatMap(i->ReactiveSeq.of(i).filter(Objects::nonNull))
+						.collect(Collectors.toList()),
+				Matchers.equalTo(Arrays.asList(1,2,3)));
+	}
+	@Test
+	public void flatMapIStream(){
+		assertThat(of(1,2,3,null).flatMapI(i->ReactiveSeq.of(i).filter(Objects::nonNull))
+						.collect(Collectors.toList()),
+				Matchers.equalTo(Arrays.asList(1,2,3,null)));
+	}
+	@Test
+	public void flatMapIMaybe(){
+		assertThat(of(1,2,3,null).flatMapI(Maybe::ofNullable)
+						.collect(Collectors.toList()),
+				Matchers.equalTo(Arrays.asList(1,2,3,null)));
+	}
+	@Test
+	public void flatMapStream(){
+		assertThat(of(1,2,3,null).flatMap(Stream::of)
+						.collect(Collectors.toList()),
+				Matchers.equalTo(Arrays.asList(1,2,3,null)));
+	}
+	@Test
+	public void flatMap(){
+		assertThat(of(1,2,3)
+				.flatMap(i-> Stream.of(10,20,30*i))
+				.toList(),equalTo(ListX.of(10,20,30,10,20,60,10,20,90)));
+	}
+	@Test
+	public void flatMapSimple(){
+		assertThat(of(1)
+				.flatMap(i-> Stream.of(10,20))
+				.toList(),equalTo(ListX.of(10,20)));
+	}
+
 	@Test
     public void dropRight(){
         assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));

@@ -1,5 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -16,8 +17,13 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
 
 
     public ArrayOfValuesOperator(T... values){
-        this.values = values;
 
+        this.values = values;
+        System.out.println("Displaying " + values.length);
+        for(int i=0;i<values.length;i++) {
+            System.out.println(values[i]);
+        }
+        System.out.println("Displaying Complete ");
     }
 
 

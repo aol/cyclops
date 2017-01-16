@@ -9,6 +9,7 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.Serializable;
@@ -21,8 +22,14 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-public class ExentsionOperatorsTest {
-	
+public class ExtensionOperatorsTest {
+
+	@Test
+	public void flatMapStreamFilterSimple(){
+		assertThat(Spouts.of(1,null).flatMap(i->ReactiveSeq.of(i).filter(Objects::nonNull))
+						.collect(Collectors.toList()),
+				Matchers.equalTo(Arrays.asList(1)));
+	}
     @Test
     public void combine(){
         assertThat(Spouts.of(1,1,2,3)

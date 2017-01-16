@@ -10,7 +10,7 @@ import java.util.function.Function;
 public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
 
 
-    final Function<? super T, ? extends Iterable<? extends R>> mapper;;
+    final Function<? super T, ? extends Iterable<? extends R>> mapper;
 
     public IterableFlatMapOperator(Operator<T> source, Function<? super T, ? extends Iterable<? extends R>> mapper){
         super(source);
@@ -25,11 +25,14 @@ public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         StreamSubscription[] s = {null} ;
+
+        Runnable[] thunk= {()->s[0].request(1)};
+        boolean[] completeRecieved = {false};
         StreamSubscription res = new StreamSubscription(){
             @Override
             public void request(long n) {
-                s[0].request(1);
-                super.request(n-1);
+                super.request(n);
+                thunk[0].run();
             }
 
             @Override
@@ -40,23 +43,44 @@ public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
         };
         s[0] = source.subscribe(e-> {
                     try {
-                        while(s[0].isActive()) {
-                            Spliterator<? extends R> split = mapper.apply(e).spliterator();
-                            boolean canAdvance = true;
-                            while (s[0].isActive() && canAdvance) {
-                                res.requested.decrementAndGet();
+                        Spliterator<? extends R> split = mapper.apply(e).spliterator();
+
+                        thunk[0] = () -> {
+
+                            boolean canAdvance = false;
+                            while (res.isActive()) {
                                 canAdvance = split.tryAdvance(onNext);
+                                if(canAdvance)
+                                    res.requested.decrementAndGet();
+                                else {
+                                    if(completeRecieved[0])
+                                        onComplete.run();
+                                    break;
+                                }
+
+
                             }
-                        }
+                            if(!canAdvance && res.isActive())
+                                s[0].request(1);
+
+
+                        };
+                        thunk[0].run();
+
+
 
                     } catch (Throwable t) {
 
                         onError.accept(t);
                     }
                 }
-                ,onError,onComplete);
+                ,onError,()->{
+                    completeRecieved[0]=true;
+                    thunk[0].run();
 
-        return s[0];
+                });
+
+        return res;
     }
 
 

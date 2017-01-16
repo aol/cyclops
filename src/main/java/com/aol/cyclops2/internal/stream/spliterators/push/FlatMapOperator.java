@@ -3,6 +3,7 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 import org.reactivestreams.Subscription;
 
 import java.util.Spliterator;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -28,11 +29,14 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         StreamSubscription[] s = {null} ;
+
+        Runnable[] thunk= {()->s[0].request(1)};
+        boolean[] completeRecieved = {false};
         StreamSubscription res = new StreamSubscription(){
             @Override
             public void request(long n) {
-                s[0].request(1);
                 super.request(n);
+                thunk[0].run();
             }
 
             @Override
@@ -43,13 +47,30 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
         };
         s[0] = source.subscribe(e-> {
                     try {
+                        Spliterator<? extends R> split = mapper.apply(e).spliterator();
 
-                            Spliterator<? extends R> split = mapper.apply(e).spliterator();
-                            boolean canAdvance = true;
-                            while (res.isActive() && canAdvance) {
-                                res.requested.decrementAndGet();
-                                canAdvance = split.tryAdvance(onNext);
-                            }
+                        thunk[0] = () -> {
+
+                                boolean canAdvance = false;
+                                while (res.isActive()) {
+                                    canAdvance = split.tryAdvance(onNext);
+                                    if(canAdvance)
+                                        res.requested.decrementAndGet();
+                                    else {
+                                        if(completeRecieved[0])
+                                            onComplete.run();
+                                        break;
+                                    }
+
+
+                                }
+                            if(!canAdvance && res.isActive())
+                                s[0].request(1);
+
+
+                         };
+                        thunk[0].run();
+
 
 
                     } catch (Throwable t) {
@@ -57,7 +78,11 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
                         onError.accept(t);
                     }
                 }
-                ,onError,onComplete);
+                ,onError,()->{
+                    completeRecieved[0]=true;
+                    thunk[0].run();
+
+                });
 
         return res;
     }
