@@ -36,8 +36,9 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
 
 
                 while (isActive() && index[0]<values.length) {
-                    requested.decrementAndGet();
+
                     ((Consumer) onNext).accept(values[index[0]++]);
+                    requested.decrementAndGet();
                 }
 
                 if (index[0] >= values.length) {

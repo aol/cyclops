@@ -36,11 +36,9 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
         StreamSubscription sub = new StreamSubscription(){
             @Override
             public void request(long n) {
-                if(n==Long.MAX_VALUE){
-                    upstream[0].request(n);
-                }else {
-                    upstream[0].request(n ); //we can't multiply by groupSize - doesn't work with Sets
-                }
+
+                upstream[0].request(n ); //we can't multiply by groupSize - doesn't work with Sets
+
                 super.request(n);
             }
 

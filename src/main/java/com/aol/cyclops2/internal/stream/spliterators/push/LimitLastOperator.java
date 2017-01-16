@@ -20,18 +20,45 @@ public class LimitLastOperator<T,R> extends BaseOperator<T,T> {
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         final ArrayDeque<T> buffer = new ArrayDeque<T>(limit);
-        StreamSubscription sub[] = {null};
-        sub[0] = source.subscribe(e-> {
+        StreamSubscription upstream[] = {null};
+        Runnable[] thunk = {()->{}};
+        StreamSubscription result = new StreamSubscription(){
+            @Override
+            public void request(long n) {
+                super.request(n);
+                upstream[0].request(n );
+                thunk[0].run();
+
+            }
+
+            @Override
+            public void cancel() {
+                super.cancel();
+            }
+        };
+        upstream[0] = source.subscribe(e-> {
                     if (buffer.size() == limit) {
                         buffer.poll();
                     }
+                    upstream[0].request(1l);
+
                     buffer.offer(e);
                 }
                 ,onError,()->{
-                    for(T next : buffer)
-                        onNext.accept(next);
+                 thunk[0] = ()->{
+                    while(buffer.size()>0){
+                        if(result.isActive())
+                            onNext.accept(buffer.poll());
+                        else
+                            return;
+                        result.requested.decrementAndGet();
+                    }
+                    onComplete.run();
+                 };
+
+                 thunk[0].run();
                 });
-        return sub[0];
+        return result;
     }
 
     @Override

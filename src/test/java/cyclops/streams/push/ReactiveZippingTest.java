@@ -2,6 +2,7 @@ package cyclops.streams.push;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static cyclops.stream.ReactiveSeq.of;
 import static java.util.Arrays.asList;
