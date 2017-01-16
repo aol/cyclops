@@ -133,8 +133,8 @@ public class ReactiveRangeTest {
 	}
 	@Test
 	public void rangeIntReversed(){
-		assertThat(Spouts.range(0,Integer.MAX_VALUE).reverse()
-				.limit(2).toListX(),equalTo(ListX.of(2147483647, 2147483646)));
+		assertThat(Spouts.range(0,10).reverse()
+				.limit(2).toListX(),equalTo(ListX.of(9, 8)));
 	}
     @Test
     public void rangeIntReversedSkip2(){
