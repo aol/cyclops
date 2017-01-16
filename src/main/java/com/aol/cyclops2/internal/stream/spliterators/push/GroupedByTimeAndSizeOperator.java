@@ -96,7 +96,7 @@ public class GroupedByTimeAndSizeOperator<T,C extends Collection<? super T>,R> e
                     try {
 
                         next[0].add(e);
-                        if(System.nanoTime()-start[0] > toRun){
+                        if(next[0].size()==groupSize || System.nanoTime()-start[0] > toRun){
                             onNext.accept(finalizer.apply((C)next[0]));
                             next[0] = factory.get();
                             start[0] = System.nanoTime();

@@ -39,17 +39,18 @@ public class LimitLastOneOperator<T,R> extends BaseOperator<T,T> {
         };
         upstream[0] = source.subscribe(e-> {
                     last[0] = e;
+                    upstream[0].request(1l);
                 }
                 ,onError,()->{
                     thunk[0] = ()-> {
                         if (result.isActive() && last[0] != UNSET) {
                             onNext.accept((T) last[0]);
-                            onComplete.run();
                         }
+                        onComplete.run();
                     };
                     thunk[0].run();
                 });
-        return upstream[0];
+        return result;
     }
 
     @Override

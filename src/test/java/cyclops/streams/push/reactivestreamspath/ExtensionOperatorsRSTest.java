@@ -1,4 +1,4 @@
-package cyclops.streams.push;
+package cyclops.streams.push.reactivestreamspath;
 
 
 import cyclops.Semigroups;
@@ -22,19 +22,19 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-public class ExtensionOperatorsTest {
+public class ExtensionOperatorsRSTest {
 
 	@Test
 	public void flatMapStreamFilterSimple(){
 		assertThat(Spouts.of(1,null).flatMap(i->ReactiveSeq.of(i).filter(Objects::nonNull))
-						.collect(Collectors.toList()),
+						.to(Streamable::fromStream).collect(Collectors.toList()),
 				Matchers.equalTo(Arrays.asList(1)));
 	}
     @Test
     public void combine(){
         assertThat(Spouts.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .toListX(),equalTo(ListX.of(4,3))); 
+                   .to(Streamable::fromStream).toListX(),equalTo(ListX.of(4,3))); 
                    
     }
 	@Test
@@ -223,31 +223,31 @@ public class ExtensionOperatorsTest {
 	public void testSkipLast(){
 		assertThat(Spouts.of(1,2,3,4,5)
 							.skipLast(2)
-							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
+							.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastEmpty(){
 		assertThat(Spouts.of()
 							.skipLast(2)
-							.collect(Collectors.toList()),equalTo(Arrays.asList()));
+							.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void testLimitLast(){
 		assertThat(Spouts.of(1,2,3,4,5)
 							.limitLast(2)
-							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
+							.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
 	}
 	@Test
 	public void testLimitLast1(){
 		assertThat(Spouts.of(1,2,3,4,5)
 				.limitLast(1)
-				.collect(Collectors.toList()),equalTo(Arrays.asList(5)));
+				.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList(5)));
 	}
 	@Test
 	public void testLimitLastEmpty(){
 		assertThat(Spouts.of()
 							.limitLast(2)
-							.collect(Collectors.toList()),equalTo(Arrays.asList()));
+							.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void endsWith(){
@@ -367,7 +367,7 @@ public class ExtensionOperatorsTest {
 				  				.stream()
 				  				.map(i->i*2)
 				  				.peek(i-> peek=i)
-				  				.collect(Collectors.toList());
+				  				.to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(peek,equalTo(6));
 	}
 	@Test
@@ -377,7 +377,7 @@ public class ExtensionOperatorsTest {
 				  				.stream()
 				  				.map(i->i*2)
 				  				.peek(System.out::println)
-				  				.collect(Collectors.toList());
+				  				.to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList(2,6),equalTo(list));
 	}
 	@Test
@@ -415,13 +415,13 @@ public class ExtensionOperatorsTest {
 	@Test
 	public void flatMapCompletableFuture(){
 		assertThat(Spouts.of(1,2,3).flatMapAnyM(i-> AnyM.fromArray(i+2))
-				  								.collect(Collectors.toList()),
+				  								.to(Streamable::fromStream).collect(Collectors.toList()),
 				  								equalTo(Arrays.asList(3,4,5)));
 	}
 	@Test
 	public void flatMapMaybe(){
 		assertThat(Spouts.of(1,2,3,null).flatMapI(Maybe::ofNullable)
-			      										.collect(Collectors.toList()),
+			      										.to(Streamable::fromStream).collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
@@ -435,7 +435,7 @@ public class ExtensionOperatorsTest {
 	}
 	@Test(expected=ClassCastException.class)
 	public void cast(){
-		Spouts.of(1,2,3).cast(String.class).collect(Collectors.toList());
+		Spouts.of(1,2,3).cast(String.class).to(Streamable::fromStream).collect(Collectors.toList());
 	}
 	@Test
 	public void xMatch(){

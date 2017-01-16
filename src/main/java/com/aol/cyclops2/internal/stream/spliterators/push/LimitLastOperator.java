@@ -66,7 +66,7 @@ public class LimitLastOperator<T,R> extends BaseOperator<T,T> {
 
         final ArrayDeque<T> buffer = new ArrayDeque<T>(limit);
        
-        source.subscribe(e-> {
+        source.subscribeAll(e-> {
                     if (buffer.size() == limit) {
                         buffer.poll();
                     }

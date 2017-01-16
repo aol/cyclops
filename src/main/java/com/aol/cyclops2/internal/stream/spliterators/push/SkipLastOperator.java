@@ -61,10 +61,12 @@ public class SkipLastOperator<T,R> extends BaseOperator<T,T> {
         ArrayDeque<T> buffer = new ArrayDeque<T>();
         source.subscribeAll(e->{
             try {
+
                 if (buffer.size() == skip) {
                     onNext.accept(buffer.poll());
 
                 }
+                buffer.offer(e);
             }catch(Throwable t){
                 onError.accept(t);
             }

@@ -46,9 +46,11 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
                 done.set(true);
                 awaiting = false;
             });
+
             public void forEachRemaining(Consumer<? super T> action) {
                source.subscribeAll(action,defaultErrorHandler,()->{});
             }
+
 
             boolean unRead(){
                 return (value.get()!=UNSET || error.get()!=UNSET);
