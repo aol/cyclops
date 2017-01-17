@@ -27,8 +27,10 @@ public class MapOperator<T,R> extends BaseOperator<T,R> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+
         return source.subscribe(e-> {
                     try {
+
                         onNext.accept(mapper.apply(e));
                     } catch (Throwable t) {
 

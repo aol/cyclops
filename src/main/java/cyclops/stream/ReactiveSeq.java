@@ -3325,7 +3325,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public static <T> ReactiveSeq<T> fromIterable(final Iterable<T> iterable) {
         Objects.requireNonNull(iterable);
         if (iterable instanceof ReactiveSeq) {
-            return ReactiveSeq.fromSpliterator(iterable.spliterator());
+            return (ReactiveSeq<T>)iterable;
+            //return ReactiveSeq.fromSpliterator(iterable.spliterator());
         }
         //we can't just use the Iterable's Spliteratable as it might not be repeatable / copyable.
         return Streams.reactiveSeq(new IteratableSpliterator<T>(iterable), Optional.empty());

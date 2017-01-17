@@ -10,6 +10,7 @@ import lombok.experimental.UtilityClass;
 import org.reactivestreams.Subscription;
 
 import java.util.Optional;
+import java.util.Spliterator;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
@@ -49,6 +50,9 @@ public interface Spouts {
     }
     public static  <T> ReactiveSeq<T> fromIterable(Iterable<T> iterable){
         return new ReactiveStreamX<>(new IterableSourceOperator<T>(iterable));
+    }
+    public static  <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
+        return new ReactiveStreamX<>(new SpliteratorToOperator<T>(spliterator));
     }
     public static  <T> ReactiveSeq<T> concat(Stream<T>... streams){
         Operator<T>[] operators = new Operator[streams.length];

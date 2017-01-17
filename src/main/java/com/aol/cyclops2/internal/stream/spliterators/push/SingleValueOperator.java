@@ -23,7 +23,7 @@ public class SingleValueOperator<T> implements Operator<T> {
         boolean[] sent = {false};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
-                if (n > 0 && !sent[0]) {
+                if (n > 0 && !sent[0] && isActive()) {
                     onNext.accept(value);
                     requested.decrementAndGet();
                     sent[0] = true;

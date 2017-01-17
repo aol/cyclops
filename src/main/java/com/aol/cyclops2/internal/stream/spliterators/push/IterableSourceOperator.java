@@ -22,7 +22,7 @@ public class IterableSourceOperator<T> implements Operator<T> {
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         final Iterator<T> it = values.iterator();
 
-
+        boolean complete[] ={false};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
                 if (n == Long.MAX_VALUE) {
@@ -31,21 +31,23 @@ public class IterableSourceOperator<T> implements Operator<T> {
                     return;
                 }
 
-
                 while (isActive() && it.hasNext()) {
 
                     ((Consumer) onNext).accept(it.next());
                     requested.decrementAndGet();
                 }
 
-                if (!it.hasNext()) {
+                if (!it.hasNext() && !complete[0]) {
                     onComplete.run();
+                    complete[0]=true;
 
                 }
 
             };
             @Override
             public void request(long n) {
+                if(n<=0)
+                    onError.accept(new IllegalArgumentException( "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                 singleActiveRequest(n,work);
 
             }

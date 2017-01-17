@@ -23,6 +23,8 @@ public class SpliteratorToOperator<T> implements Operator<T> {
         StreamSubscription sub = new StreamSubscription(){
             @Override
             public void request(long n) {
+                if(n<=0)
+                    onError.accept(new IllegalArgumentException( "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                 super.request(n);
                 run.run();
             }
@@ -34,10 +36,13 @@ public class SpliteratorToOperator<T> implements Operator<T> {
         };
         run = () -> {
             boolean canAdvance = true;
-            while(sub.isActive()) {
+            while(sub.isActive() && canAdvance) {
                 try {
-                    sub.requested.decrementAndGet();
+
                     canAdvance = split.tryAdvance(onNext);
+                    if(canAdvance)
+                      sub.requested.decrementAndGet();
+
 
                 } catch (Throwable t) {
                     onError.accept(t);

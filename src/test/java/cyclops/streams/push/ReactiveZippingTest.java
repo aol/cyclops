@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static cyclops.stream.ReactiveSeq.of;
+import static cyclops.stream.Spouts.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.jooq.lambda.tuple.Tuple.tuple;

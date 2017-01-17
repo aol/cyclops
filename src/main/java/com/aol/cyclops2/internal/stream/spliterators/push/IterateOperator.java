@@ -32,14 +32,17 @@ public class IterateOperator<T> implements Operator<T> {
                     return;
                 }
                 while (isActive()) {
-                    requested.decrementAndGet();
+
                     next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
+                    requested.decrementAndGet();
 
                 }
 
             };
             @Override
             public void request(long n) {
+                if(n<=0)
+                    onError.accept(new IllegalArgumentException( "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                 this.singleActiveRequest(n,work);
 
             }
@@ -59,7 +62,6 @@ public class IterateOperator<T> implements Operator<T> {
 
             @Override
             public void cancel() {
-                onComplete.run();
                 super.cancel();
             }
         };

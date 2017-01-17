@@ -40,9 +40,11 @@ public class SkipLastOneOperator<T,R> extends BaseOperator<T,T> {
                             onNext.accept((T)buffer[0]);
                         }
                         else {
+
                             sub[0].request(1);
 
                         }
+                        buffer[0]=e;
 
                     } catch (Throwable t) {
 
@@ -61,8 +63,11 @@ public class SkipLastOneOperator<T,R> extends BaseOperator<T,T> {
                 if (buffer[0] == UNSET) {
 
                 } else {
-                    onNext.accept(e);
+
+                    onNext.accept((T)buffer[0]);
+
                 }
+                buffer[0]=e;
             }catch(Throwable t){
                 onError.accept(t);
             }

@@ -224,12 +224,19 @@ public  class CoreReactiveStreamXTest {
 		assertEquals(asList(3, 4, 5), of(1, 2, 3, 4, 5).skipUntil(i -> i % 3 == 0).toList());
 	}
 	@Test
+    public void simpleZip(){
+        of(1,2,3)
+                .zip(of(100,200))
+                .forEach(System.out::println);
+    }
+	@Test
 	public void zip2of(){
 
 		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
-				.zip(of(100,200,300,400).stream())
-				.toListX();
+				                            .zip(of(100,200,300,400).stream())
+				                            .toListX();
 
+		System.out.println(list);
 
 		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
@@ -253,7 +260,12 @@ public  class CoreReactiveStreamXTest {
 	}
     @Test
 	public void dropRight(){
+		System.out.println(of(1,2,3).skipLast(1).toList());
 		assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
+	}
+	@Test
+	public void dropRight2(){
+		assertThat(of(1,2,3).dropRight(2).toList(),hasItems(1));
 	}
 	@Test
 	public void skipLast1(){
