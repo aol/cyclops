@@ -581,7 +581,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public ReactiveSeq<T> cycle() {
-        return grouped(Integer.MAX_VALUE)
+        return grouped(Integer.MAX_VALUE,()->new ArrayList<>(100_000))
+                    .map(ListX::fromIterable)
                           .flatMapI(s -> s.cycle(Long.MAX_VALUE));
 
     }
@@ -682,7 +683,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> cycle(long times) {
-        return grouped(Integer.MAX_VALUE)
+        return grouped(Integer.MAX_VALUE,()->new ArrayList<>(100_000))
+                .map(ListX::fromIterable)
                 .flatMapI(s->s.cycle(times));
 
     }
