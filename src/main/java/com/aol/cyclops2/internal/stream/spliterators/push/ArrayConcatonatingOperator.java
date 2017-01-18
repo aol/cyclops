@@ -11,9 +11,6 @@ import java.util.function.Consumer;
  */
 public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
 
-    //connect one at a time
-    //onComplete - connect next
-    //until last when onComplete is propagated
 
     private final DequeX<Operator<IN>> operators;
 
@@ -70,12 +67,11 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
             @Override
             public void request(long n) {
 
-                System.out.println("Requested  " + n +  " open " + ensureOpen());
                 if (ensureOpen()) {
+                    if(n<=0)
+                        onError.accept(new IllegalArgumentException( "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                     super.request(n);
                     active[0].request(1);
-
-
                 }
 
 
@@ -90,14 +86,14 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
 
         for(Operator<IN> next : operators){
             subs.add(next.subscribe(e-> {
-                System.out.println("next " +e);
+
                         try {
                             onNext.accept(e);
                         } catch (Throwable t) {
 
                             onError.accept(t);
                         }finally{
-                            System.out.println(e);
+
                             handleSubCompletion(ensureOpenRef[0],sub.requested.decrementAndGet(),onComplete, subs, finished, active, sub);
                         }
                     }
@@ -105,7 +101,7 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
                         onError.accept(t);
                         handleSubCompletion(ensureOpenRef[0],sub.requested.decrementAndGet(),onComplete, subs, finished, active, sub);
                     },()->{
-                System.out.println("OnComplete");
+
                         active[0].cancel();
                         handleSubCompletion(ensureOpenRef[0],sub.requested.get(),onComplete, subs, finished, active, sub);
                     }));
@@ -118,17 +114,11 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
 
     private void handleSubCompletion(BooleanSupplier ensureOpen,long remaining, Runnable onComplete, QueueX<StreamSubscription> subs, boolean[] finished, StreamSubscription[] active, StreamSubscription sub) {
         if(sub.isOpen) {
+            System.out.println("Remaining is " + remaining);
+            if(remaining>0 && ensureOpen.getAsBoolean()){
 
-                System.out.println("Remaining " + remaining +  "  "  + ensureOpen.getAsBoolean());
-                if(remaining>0 && ensureOpen.getAsBoolean()){
-                    System.out.println("requesting 1");
-                    active[0].request(1l);
-
-                }
-
-
-
-
+                active[0].request(1l);
+            }
 
         }
         if(subs.size()==0 && !ensureOpen.getAsBoolean()){

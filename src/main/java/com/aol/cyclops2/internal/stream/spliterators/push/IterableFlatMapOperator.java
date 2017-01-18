@@ -3,6 +3,7 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.LongConsumer;
 
 /**
  * Created by johnmcclean on 12/01/2017.
@@ -29,10 +30,14 @@ public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
         Runnable[] thunk= {()->s[0].request(1)};
         boolean[] completeRecieved = {false};
         StreamSubscription res = new StreamSubscription(){
+            LongConsumer work = n-> {
+                thunk[0].run();
+            };
             @Override
             public void request(long n) {
-                super.request(n);
-                thunk[0].run();
+                if(n<=0)
+                    onError.accept(new IllegalArgumentException( "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                this.singleActiveRequest(n,work);
             }
 
             @Override
@@ -49,7 +54,11 @@ public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
 
                             boolean canAdvance = false;
                             while (res.isActive()) {
-                                canAdvance = split.tryAdvance(onNext);
+                                try {
+                                    canAdvance = split.tryAdvance(onNext);
+                                }catch(Throwable t){
+                                    onError.accept(t);
+                                }
                                 if(canAdvance)
                                     res.requested.decrementAndGet();
                                 else {

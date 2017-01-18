@@ -1,4 +1,4 @@
-package com.aol.cyclops2.internal.stream.spliterators.push.filter;
+package com.aol.cyclops2.internal.stream.spliterators.push.flatMap.stream;
 
 
 import cyclops.stream.Spouts;
@@ -8,16 +8,16 @@ import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
 @Test
-public class FilterTckArrayConcatPublisherTest extends PublisherVerification<Long>{
+public class FlatMapTckPublisherTest extends PublisherVerification<Long>{
 
-	public FilterTckArrayConcatPublisherTest(){
+	public FlatMapTckPublisherTest(){
 		  super(new TestEnvironment(300L));
 	}
 	
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return Spouts.concat(Spouts.of(),Spouts.iterate(0l, i->i+1l)).filter(i->true).limit(elements);
+		return Spouts.iterate(0l, i->i+1l).flatMap(i->Spouts.of(i)).limit(elements);
 		
 	}
 

@@ -40,9 +40,9 @@ public abstract class AbstractOperatorTest {
     public abstract Operator<Integer> createTwoAndError();
     public abstract Operator<Integer> createThreeErrors();
 
-    ListX<Integer> values;
-    ListX<Throwable> errors;
-    boolean onComplete;
+    protected ListX<Integer> values;
+    protected ListX<Throwable> errors;
+    protected boolean onComplete;
 
     @Test
     public void subscribeEmpty() throws Exception {
@@ -201,6 +201,7 @@ public abstract class AbstractOperatorTest {
         assertThat(errors.size(),equalTo(3));
         assertTrue(onComplete);
     }
+
     @Test
     public void subscribeThreeErrorsMaxLong() throws Exception {
         Subscription sub = threeErrors.subscribe(values::add,errors::add,()->onComplete =true);
