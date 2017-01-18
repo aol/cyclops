@@ -1,5 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.spliterator;
 
+import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.push.FilterOperator;
 import com.aol.cyclops2.internal.stream.spliterators.push.SpliteratorToOperator;
 import cyclops.collections.ListX;
@@ -11,6 +12,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -152,4 +154,36 @@ public class SpliteratorToOperatorTest {
         assertThat(values.size(),equalTo(2));
     }
 
+    @Test
+    public void streamOf2(){
+        new ReactiveStreamX<>(new SpliteratorToOperator<>(Stream.of(2,3).spliterator()))
+                .subscribe(new Subscriber<Integer>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        sub=s;
+
+                    }
+
+                    @Override
+                    public void onNext(Integer aLong) {
+                        count.incrementAndGet();
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        error.incrementAndGet();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        complete.incrementAndGet();
+                    }
+                });
+
+        sub.request(3l);
+        assertThat(count.get(),equalTo(2));
+        assertThat(complete.get(),equalTo(1));
+
+
+    }
 }

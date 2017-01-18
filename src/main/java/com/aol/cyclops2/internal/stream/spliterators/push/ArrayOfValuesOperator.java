@@ -43,6 +43,7 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
 
                 if (index[0] >= values.length) {
                     onComplete.run();
+                    cancel();
 
                 }
 
@@ -61,6 +62,7 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
                 }
                 requested.set(0);
                 onComplete.run();
+                cancel();
             }
 
             @Override

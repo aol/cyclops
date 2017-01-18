@@ -1,6 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 
 /**
  * Created by johnmcclean on 17/01/2017.
@@ -23,8 +24,10 @@ public class Fixtures {
                             cancel();
                         }
 
-                        else
+                        else if(index<3)
                             onNext.accept(index++);
+                        else
+                            break;
 
                         requested.decrementAndGet();
                     }
@@ -50,20 +53,25 @@ public class Fixtures {
         @Override
         public StreamSubscription subscribe(Consumer<? super Integer> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
             return new StreamSubscription(){
+
                 int index = 2;
                 @Override
                 public void request(long n) {
                     super.request(n);
+
                     while(isActive()){
                         if(index==3) {
-                            onError.accept(new RuntimeException());
                             index++;
+                            onError.accept(new RuntimeException());
+
                             onComplete.run();
                             cancel();
                         }
 
-                        else
+                        else if(index==2)
                             onNext.accept(index++);
+                        else
+                            break;
 
                         requested.decrementAndGet();
                     }

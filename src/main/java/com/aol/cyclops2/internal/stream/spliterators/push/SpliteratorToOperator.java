@@ -43,6 +43,7 @@ public class SpliteratorToOperator<T> implements Operator<T> {
                     if(!canAdvance[0] || !isOpen) {
                         if(!closed[0]) {
                             closed[0] = true;
+                            cancel();
                             onComplete.run();
                         }
                     }

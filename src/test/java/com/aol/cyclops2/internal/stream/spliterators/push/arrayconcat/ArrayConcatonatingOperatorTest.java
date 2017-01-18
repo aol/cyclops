@@ -21,9 +21,14 @@ public class ArrayConcatonatingOperatorTest extends AbstractOperatorTest {
     }
 
     public Operator<Integer> createThree(){
+
         return new ArrayConcatonatingOperator<>(new ArrayOfValuesOperator<>(1),
                 new ArrayOfValuesOperator<>(),
                 new SpliteratorToOperator<>(Stream.of(2,3).spliterator()));
+        /**
+        return new ArrayConcatonatingOperator<>(new SpliteratorToOperator<>(Stream.of(1).spliterator()),
+                new ArrayOfValuesOperator<>(),
+                new ArrayOfValuesOperator<>(2,3));**/
     }
     public Operator<Integer> createTwoAndError(){
         return new ArrayConcatonatingOperator<>(new ArrayOfValuesOperator<>(),

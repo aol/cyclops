@@ -24,8 +24,8 @@ public class RangeLongOperator implements Operator<Long> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super Long> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        int[] index = {0};
-
+        long[] index = {0};
+        boolean completed[] = {false};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
 
@@ -34,15 +34,19 @@ public class RangeLongOperator implements Operator<Long> {
                 }
                 while (isActive() && index[0] < end) {
                     try {
-                        requested.decrementAndGet();
+
                         ((Consumer) onNext).accept(index[0]++);
+                        requested.decrementAndGet();
                     } catch (Throwable t) {
                         onError.accept(t);
                     }
 
                 }
                 if (index[0] >= end) {
-                    onComplete.run();
+                    if(!completed[0]) {
+                        completed[0]=true;
+                        onComplete.run();
+                    }
 
                 }
 
@@ -50,6 +54,10 @@ public class RangeLongOperator implements Operator<Long> {
 
             @Override
             public void request(long n) {
+                if(n<=0) {
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
                 singleActiveRequest(n, work );
             }
 
@@ -57,13 +65,20 @@ public class RangeLongOperator implements Operator<Long> {
                 for(;index[0]<end;index[0]++){
 
                     try {
-                        if(!isOpen)
+                        if(isOpen)
                             ((Consumer) onNext).accept(index[0]);
                         else
                             break;
                     }catch(Throwable t){
                         onError.accept(t);
                     }
+                }
+                if(index[0]==end){
+                    if(!completed[0]) {
+                        completed[0]=true;
+                        onComplete.run();
+                    }
+
                 }
                 requested.set(0);
 

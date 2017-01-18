@@ -50,7 +50,6 @@ public abstract class AbstractOperatorTest {
         sub.request(1l);
         assertThat(values.size(),equalTo(0));
         assertThat(errors.size(),equalTo(0));
-    //    assertTrue(onComplete);
         sub.request(1l);
         assertThat(values.size(),equalTo(0));
         assertThat(errors.size(),equalTo(0));
@@ -62,7 +61,6 @@ public abstract class AbstractOperatorTest {
         sub.request(1l);
         assertThat(values.size(),equalTo(1));
         assertThat(errors.size(),equalTo(0));
-//        assertTrue(onComplete);
         sub.request(1l);
         assertThat("Values " + values,values.size(),equalTo(1));
         assertThat(errors.size(),equalTo(0));
