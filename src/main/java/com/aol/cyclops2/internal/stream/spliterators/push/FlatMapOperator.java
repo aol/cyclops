@@ -92,7 +92,13 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
                         onError.accept(t);
                     }
                 }
-                ,onError,()->{
+                ,t->{
+                onError.accept(t);
+                res.requested.decrementAndGet();
+                 if(res.isActive()){
+                     s[0].request(1);
+                 }
+                },()->{
                     completeRecieved[0]=true;
                     thunk[0].run();
 

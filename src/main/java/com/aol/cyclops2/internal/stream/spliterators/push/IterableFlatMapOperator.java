@@ -26,9 +26,16 @@ public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         StreamSubscription[] s = {null} ;
-
-        Runnable[] thunk= {()->s[0].request(1)};
         boolean[] completeRecieved = {false};
+        Runnable[] thunk= {()->{
+            if(completeRecieved[0]){
+                onComplete.run();
+            }else{
+                s[0].request(1);
+            }
+        }};
+
+
         StreamSubscription res = new StreamSubscription(){
             LongConsumer work = n-> {
                 thunk[0].run();
@@ -37,7 +44,9 @@ public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
             public void request(long n) {
                 if(n<=0)
                     onError.accept(new IllegalArgumentException( "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+
                 this.singleActiveRequest(n,work);
+
             }
 
             @Override
@@ -83,7 +92,13 @@ public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
                         onError.accept(t);
                     }
                 }
-                ,onError,()->{
+                ,t->{
+                    onError.accept(t);
+                    res.requested.decrementAndGet();
+                    if(res.isActive()){
+                        s[0].request(1);
+                    }
+                },()->{
                     completeRecieved[0]=true;
                     thunk[0].run();
 

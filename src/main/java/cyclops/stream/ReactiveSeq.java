@@ -1049,6 +1049,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
+
         return zipS(ReactiveSeq.fromIterable(other));
     }
 

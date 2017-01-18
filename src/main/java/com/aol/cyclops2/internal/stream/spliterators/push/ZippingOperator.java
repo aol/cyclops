@@ -12,6 +12,7 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.LongConsumer;
 
 /**
  * Created by johnmcclean on 12/01/2017.
@@ -34,14 +35,27 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
 
         AtomicBoolean completing = new AtomicBoolean(false);
         StreamSubscription sub = new StreamSubscription(){
+            LongConsumer work = n->{
+                if(n==Long.MAX_VALUE){
+                    while(leftSub[0].isOpen && rightSub[0].isOpen){
+                        leftSub[0].request(1);
+                        rightSub[0].request(1);
+                    }
+                    onComplete.run();
+                    return;
+                }
+                requested.accumulateAndGet(n,(a,n2)->a-n2);
+                leftSub[0].request(n);
+                rightSub[0].request(n);
+            };
             @Override
             public void request(long n) {
+                if(n<=0) {
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
+                this.singleActiveRequest(n,work);
 
-                leftSub[0].request(1);
-                rightSub[0].request(1);
-
-
-                super.request(n-1);
             }
 
             @Override
@@ -57,6 +71,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             try {
 
                 if (rightQ.size() > 0) {
+
                     onNext.accept(fn.apply((T1) e, rightQ.poll()));
                 } else {
                     leftQ.offer((T1) e);
@@ -66,7 +81,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             } catch (Throwable t) {
                 onError.accept(t);
             }
-            createDemand(leftQ, rightQ, leftSub, rightSub, sub);
+
         },onError,()->{
 
             drain(leftQ,rightQ,onNext);
@@ -87,14 +102,16 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
 
             try {
                 if (leftQ.size() > 0) {
+
                     onNext.accept(fn.apply(leftQ.poll(), (T2) e));
+
                 } else {
                     rightQ.offer((T2) e);
                 }
             }catch(Throwable t){
                 onError.accept(t);
             }
-            createDemand(leftQ, rightQ, leftSub, rightSub, sub);
+
         },onError,()->{
 
 
@@ -119,16 +136,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
         }
     }
 
-    private void createDemand(OneToOneConcurrentArrayQueue<T1> leftQ, OneToOneConcurrentArrayQueue<T2> rightQ,
-                              StreamSubscription[] leftSub, StreamSubscription[] rightSub,
-                              StreamSubscription sub) {
-        if(sub.isActive() && leftQ.size() < 256 && rightQ.size()<256){
-            long request = Math.min(256,sub.requested.get());
-            rightSub[0].request(request);
-            leftSub[0].request(request);
-            sub.requested.accumulateAndGet(request,(a,b)->a-b);
-        }
-    }
+
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {

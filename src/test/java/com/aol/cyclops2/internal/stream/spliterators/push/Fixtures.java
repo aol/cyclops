@@ -18,8 +18,9 @@ public class Fixtures {
                     super.request(n);
                     while(isActive()){
                         if(index==3) {
-                            onError.accept(new RuntimeException());
                             index++;
+                            onError.accept(new RuntimeException());
+
                             onComplete.run();
                             cancel();
                         }

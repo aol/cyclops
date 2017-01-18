@@ -151,6 +151,7 @@ public abstract class AbstractOperatorTest {
         sub.request(1l);
         assertThat("Values " + values,values.size(),equalTo(2));
         assertThat(errors.size(),equalTo(1));
+        sub.request(1l);
         assertTrue(onComplete);
     }
     @Test
