@@ -22,11 +22,31 @@ public class SpliteratorToOperator<T> implements Operator<T> {
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         boolean closed[]= {false};
+        boolean canAdvance[] = {true};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n-> {
 
 
-                run.run();
+                    while(isActive() && canAdvance[0]) {
+                        try {
+
+                            canAdvance[0] = split.tryAdvance(onNext);
+                            if(canAdvance[0])
+                                requested.decrementAndGet();
+
+
+                        } catch (Throwable t) {
+                            t.printStackTrace();
+                            onError.accept(t);
+                        }
+                    }
+                    if(!canAdvance[0] || !isOpen) {
+                        if(!closed[0]) {
+                            closed[0] = true;
+                            onComplete.run();
+                        }
+                    }
+
 
             };
             @Override
@@ -35,7 +55,8 @@ public class SpliteratorToOperator<T> implements Operator<T> {
                     onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                     return;
                 }
-                this.singleActiveRequest(n,work);
+                if(isOpen)
+                    this.singleActiveRequest(n,work);
 
             }
 
@@ -44,31 +65,10 @@ public class SpliteratorToOperator<T> implements Operator<T> {
                 super.cancel();
             }
         };
-        boolean canAdvance[] = {true};
 
 
-        run = () -> {
-
-            while(sub.isActive() && canAdvance[0]) {
-                try {
-
-                    canAdvance[0] = split.tryAdvance(onNext);
-                    if(canAdvance[0])
-                      sub.requested.decrementAndGet();
 
 
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                    onError.accept(t);
-                }
-            }
-            if(!canAdvance[0] || !sub.isOpen) {
-                if(!closed[0]) {
-                    closed[0] = true;
-                    onComplete.run();
-                }
-            }
-        };
         return sub;
     }
 

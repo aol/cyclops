@@ -26,6 +26,7 @@ public class RangeIntOperator implements Operator<Integer> {
     @Override
     public StreamSubscription subscribe(Consumer<? super Integer> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         int[] index = {Math.min(start,end)};
+        boolean completed[] = {false};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work =  n ->{
                 if(n==Long.MAX_VALUE) {
@@ -35,21 +36,29 @@ public class RangeIntOperator implements Operator<Integer> {
 
                 while (isActive() && index[0] < end) {
                     try {
-                        requested.decrementAndGet();
+
                         ((Consumer) onNext).accept(index[0]++);
+                        requested.decrementAndGet();
                     } catch (Throwable t) {
                         onError.accept(t);
                     }
 
                 }
                 if(index[0]==end){
-                    onComplete.run();
+                    if(!completed[0]) {
+                        completed[0]=true;
+                        onComplete.run();
+                    }
 
                 }
 
             };
             @Override
             public void request(long n) {
+                if(n<=0) {
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
                 singleActiveRequest(n,work);
             }
             private void pushAll() {
@@ -63,6 +72,13 @@ public class RangeIntOperator implements Operator<Integer> {
                     }catch(Throwable t){
                         onError.accept(t);
                     }
+                }
+                if(index[0]==end){
+                    if(!completed[0]) {
+                        completed[0]=true;
+                        onComplete.run();
+                    }
+
                 }
                 requested.set(0);
             }

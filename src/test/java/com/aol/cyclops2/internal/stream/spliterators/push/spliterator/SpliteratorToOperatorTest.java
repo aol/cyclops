@@ -41,7 +41,7 @@ public class SpliteratorToOperatorTest {
     public void cancel(){
 
         Spouts.fromSpliterator(ReactiveSeq.iterate(0l,i->i+1l).spliterator())
-                .limit(3)
+                .limit(5)
                 .filter(i->true).subscribe(new Subscriber<Long>() {
                     @Override
                     public void onSubscribe(Subscription s) {
@@ -70,8 +70,11 @@ public class SpliteratorToOperatorTest {
         assertThat(error.get(),equalTo(0));
         assertThat(complete.get(),equalTo(0));
         sub.request(3l);
+        assertThat(count.get(),equalTo(4));
+        assertThat(error.get(),equalTo(0));
+        assertThat(complete.get(),equalTo(0));
         sub.cancel();
-        assertThat(count.get(),equalTo(3));
+        assertThat(count.get(),equalTo(4));
         assertThat(error.get(),equalTo(0));
         assertThat(complete.get(),equalTo(0));
     }
@@ -139,7 +142,7 @@ public class SpliteratorToOperatorTest {
         sub.cancel();
         sub.request(1l);
         assertThat(values.size(),equalTo(1));
-        assertTrue(onComplete);
+        assertFalse(onComplete);
     }
     @Test
     public void requestTwo(){
