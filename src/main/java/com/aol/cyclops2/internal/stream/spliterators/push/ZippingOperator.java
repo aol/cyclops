@@ -7,6 +7,7 @@ import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
@@ -32,21 +33,21 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
         OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
         StreamSubscription  leftSub[] = {null};
         StreamSubscription  rightSub[] = {null};
-
+        boolean[] stopRequests = {false};
         AtomicBoolean completing = new AtomicBoolean(false);
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
                 if(n==Long.MAX_VALUE){
-                    while(leftSub[0].isOpen && rightSub[0].isOpen){
+                    while(leftSub[0].isOpen && rightSub[0].isOpen && !stopRequests[0]){
                         leftSub[0].request(1);
                         rightSub[0].request(1);
                     }
                     onComplete.run();
                     return;
                 }
-                requested.accumulateAndGet(n,(a,n2)->a-n2);
-                leftSub[0].request(n);
-                rightSub[0].request(n);
+                requested.accumulateAndGet(Math.min(n,256),(a,n2)->a-n2);
+                leftSub[0].request(Math.min(n,256));
+                rightSub[0].request(Math.min(n,256));
             };
             @Override
             public void request(long n) {
@@ -71,8 +72,19 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             try {
 
                 if (rightQ.size() > 0) {
-
                     onNext.accept(fn.apply((T1) e, rightQ.poll()));
+                    if(sub.isActive() && !stopRequests[0]){
+                        leftSub[0].request(1);
+                        rightSub[0].request(1);
+                        sub.requested.decrementAndGet();
+
+                    }
+
+                    if(stopRequests[0] && rightQ.size()==0){
+                        leftSub[0].cancel();
+                        onComplete.run();
+
+                    }
                 } else {
                     leftQ.offer((T1) e);
 
@@ -87,13 +99,13 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             drain(leftQ,rightQ,onNext);
 
 
-            if (leftQ.size()==0 && !completing.get()) {
+            if (leftQ.size()==0 || stopRequests[0]) {
                 completing.set(true);
                 rightSub[0].cancel();
                 onComplete.run();
 
             }
-
+            stopRequests[0]=true;
 
 
 
@@ -104,7 +116,18 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
                 if (leftQ.size() > 0) {
 
                     onNext.accept(fn.apply(leftQ.poll(), (T2) e));
+                    if(sub.isActive() &&!stopRequests[0]){
+                        leftSub[0].request(1);
+                        rightSub[0].request(1);
+                        sub.requested.decrementAndGet();
 
+                    }
+
+                    if(stopRequests[0] && leftQ.size()==0){
+                        rightSub[0].cancel();
+                        onComplete.run();
+
+                    }
                 } else {
                     rightQ.offer((T2) e);
                 }
@@ -117,12 +140,13 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
 
             drain(leftQ,rightQ,onNext);
 
-            if (rightQ.size()==0 && !completing.get()) {
-                completing.set(true);
+            if (rightQ.size()==0 || stopRequests[0]) {
+
                 leftSub[0].cancel();
                 onComplete.run();
 
             }
+            stopRequests[0]=true;
 
 
         });

@@ -316,7 +316,10 @@ public class ReactiveZippingTest {
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
 	}
 
-	
+	@Test
+	public void zipWithIndexToList(){
+		of("a").zipWithIndex().toList();
+	}
 	@Test
 	public void testZipWithIndex() {
 		assertEquals(asList(), of().zipWithIndex().toList());
