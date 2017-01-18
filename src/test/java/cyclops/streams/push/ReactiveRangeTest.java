@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -53,13 +54,13 @@ public class ReactiveRangeTest {
     public void intStreamCompareReversed(){
 
 
-        assertThat(11,
+        assertThat(0,
                 equalTo(Spouts.range(-5,6).reverse().sumInt(i->i)));
 
     }
     @Test
     public void longStreamCompareReversed(){
-        assertThat(11L,
+        assertThat(0L,
                 equalTo(Spouts.rangeLong(-5,6).reverse().sumLong(i->i)));
     }
 
@@ -113,13 +114,13 @@ public class ReactiveRangeTest {
 	}
 	@Test
 	public void rangeLongReversed(){
-		assertThat(Spouts.rangeLong(0,Long.MAX_VALUE).reverse()
-				.limit(2).toListX(),equalTo(ListX.of(9223372036854775807l, 9223372036854775806l)));
+		assertThat(Spouts.rangeLong(0,10).reverse()
+				.limit(2).toListX(),equalTo(ListX.of(9l, 8l)));
 	}
     @Test
     public void rangeLongReversedSkip(){
         assertThat(Spouts.rangeLong(0,5).reverse()
-                .skip(3).toListX(),equalTo(ListX.of(2l,1l)));
+                .skip(3).toListX(),equalTo(ListX.of(1l,0l)));
     }
     @Test
     public void rangeLongSkip(){
@@ -139,7 +140,7 @@ public class ReactiveRangeTest {
     @Test
     public void rangeIntReversedSkip2(){
         assertThat(Spouts.range(0,5).reverse()
-                .skip(3).toListX(),equalTo(ListX.of(2,1)));
+                .skip(3).toListX(),equalTo(ListX.of(1,0)));
     }
 
     @Test

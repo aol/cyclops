@@ -26,9 +26,11 @@ public class LazySingleValueOperator<T,R> implements Operator<R> {
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n -> {
 
-                if (n > 0 && !sent[0]) {
+                if (n > 0 && !sent[0] && isActive()) {
                     onNext.accept(fn.apply(value));
                     sent[0] = true;
+                    onComplete.run();
+
                 }
 
             };

@@ -1,15 +1,18 @@
 package cyclops.streams.push.reactivestreamspath;
 
 import cyclops.Reducers;
+import cyclops.collections.ListX;
 import cyclops.stream.Streamable;
 import org.junit.Test;
 
 import static cyclops.stream.Spouts.of;
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class ReactiveScanningRSTest {
+
 	@Test
 	public void testScanLeftStringConcat() {
 		assertThat(of("a", "b", "c").scanLeft("", String::concat).to(Streamable::fromStream).toList(), is(asList("", "a", "ab", "abc")));
@@ -28,6 +31,18 @@ public class ReactiveScanningRSTest {
 	@Test
 	public void testScanLeftSumMonoid() {
 		assertThat(of("a", "ab", "abc").map(str -> str.length()).scanLeft(Reducers.toTotalInt()).to(Streamable::fromStream).toList(), is(asList(0, 1, 3, 6)));
+	}
+	@Test
+    public void coflatMap(){
+        assertThat(of("a", "b", "c").coflatMap(s->s.toList()).to(Streamable::fromStream).toList(),equalTo(
+                ListX.of(ListX.of("a","b","c"))));
+
+    }
+	@Test
+	public void reverse(){
+        assertThat(of("a", "b", "c").reverse().to(Streamable::fromStream).toList(),equalTo(
+                ListX.of("c","b","a")));
+
 	}
 
 	@Test

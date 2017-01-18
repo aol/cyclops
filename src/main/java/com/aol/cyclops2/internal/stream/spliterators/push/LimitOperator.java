@@ -31,7 +31,7 @@ public class LimitOperator<T,R> extends BaseOperator<T,T> {
         sub[0] = source.subscribe(e-> {
 
                     try {
-
+                        System.out.println("e is " +e);
                         if(count[0]++<limit)
                             onNext.accept(e);
                         else{

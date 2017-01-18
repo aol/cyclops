@@ -62,13 +62,13 @@ public class BaseSequentialTest {
 	public void flatMapIStream(){
 		assertThat(of(1,2,3,null).flatMapI(i->ReactiveSeq.of(i).filter(Objects::nonNull))
 						.collect(Collectors.toList()),
-				Matchers.equalTo(Arrays.asList(1,2,3,null)));
+				Matchers.equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void flatMapIMaybe(){
 		assertThat(of(1,2,3,null).flatMapI(Maybe::ofNullable)
 						.collect(Collectors.toList()),
-				Matchers.equalTo(Arrays.asList(1,2,3,null)));
+				Matchers.equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void flatMapStream(){

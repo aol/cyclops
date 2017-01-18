@@ -31,8 +31,9 @@ public class IterateOperator<T> implements Operator<T> {
                     pushAll();
                     return;
                 }
+                System.out.println("n is " + n + " active "  + isActive());
                 while (isActive()) {
-
+                    System.out.println("pusing value");
                     next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
                     requested.decrementAndGet();
 
@@ -52,6 +53,7 @@ public class IterateOperator<T> implements Operator<T> {
                     if(!isOpen)
                         break;
                     try {
+                        System.out.println("pusing value all path");
                         next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
                     }catch(Throwable t){
                         onError.accept(t);
