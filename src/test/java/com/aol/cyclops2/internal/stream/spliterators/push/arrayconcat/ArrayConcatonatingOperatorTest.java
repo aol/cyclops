@@ -1,4 +1,6 @@
-package com.aol.cyclops2.internal.stream.spliterators.push;
+package com.aol.cyclops2.internal.stream.spliterators.push.arrayconcat;
+
+import com.aol.cyclops2.internal.stream.spliterators.push.*;
 
 import java.util.stream.Stream;
 
@@ -7,7 +9,7 @@ import static org.junit.Assert.*;
 /**
  * Created by johnmcclean on 17/01/2017.
  */
-public class ArrayConcatonatingOperatorTest extends AbstractOperatorTest{
+public class ArrayConcatonatingOperatorTest extends AbstractOperatorTest {
 
 
     public Operator<Integer> createEmpty(){

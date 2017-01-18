@@ -2,6 +2,7 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 
 /**
  * Created by johnmcclean on 12/01/2017.
@@ -11,7 +12,7 @@ public class SpliteratorToOperator<T> implements Operator<T> {
 
     final Spliterator<T> split;
     Runnable run;
-    boolean closed= false;
+
     public SpliteratorToOperator(Spliterator<? super T> split){
          this.split = (Spliterator<T>)split;
 
@@ -20,13 +21,22 @@ public class SpliteratorToOperator<T> implements Operator<T> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+        boolean closed[]= {false};
         StreamSubscription sub = new StreamSubscription(){
+            LongConsumer work = n-> {
+
+
+                run.run();
+
+            };
             @Override
             public void request(long n) {
-                if(n<=0)
-                    onError.accept(new IllegalArgumentException( "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
-                super.request(n);
-                run.run();
+                if(n<=0) {
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
+                this.singleActiveRequest(n,work);
+
             }
 
             @Override
@@ -34,23 +44,29 @@ public class SpliteratorToOperator<T> implements Operator<T> {
                 super.cancel();
             }
         };
+        boolean canAdvance[] = {true};
+
+
         run = () -> {
-            boolean canAdvance = true;
-            while(sub.isActive() && canAdvance) {
+
+            while(sub.isActive() && canAdvance[0]) {
                 try {
 
-                    canAdvance = split.tryAdvance(onNext);
-                    if(canAdvance)
+                    canAdvance[0] = split.tryAdvance(onNext);
+                    if(canAdvance[0])
                       sub.requested.decrementAndGet();
 
 
                 } catch (Throwable t) {
+                    t.printStackTrace();
                     onError.accept(t);
                 }
             }
-            if(!canAdvance || !sub.isOpen) {
-                closed = true;
-                onComplete.run();
+            if(!canAdvance[0] || !sub.isOpen) {
+                if(!closed[0]) {
+                    closed[0] = true;
+                    onComplete.run();
+                }
             }
         };
         return sub;
@@ -58,21 +74,21 @@ public class SpliteratorToOperator<T> implements Operator<T> {
 
     @Override
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        run = () -> {
-            boolean canAdvance = true;
-           while(canAdvance){
+
+        boolean canAdvance = true;
+        while(canAdvance){
                 try {
                     canAdvance = split.tryAdvance(onNext);
                 } catch (Throwable t) {
                     onError.accept(t);
                 }
-            }
+        }
 
-                closed = true;
-                onCompleteDs.run();
 
-        };
-        run.run();
+        onCompleteDs.run();
+
+
+
 
     }
 }

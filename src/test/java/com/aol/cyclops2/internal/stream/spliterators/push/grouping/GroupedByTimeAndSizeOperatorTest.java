@@ -1,4 +1,6 @@
-package com.aol.cyclops2.internal.stream.spliterators.push;
+package com.aol.cyclops2.internal.stream.spliterators.push.grouping;
+
+import com.aol.cyclops2.internal.stream.spliterators.push.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +12,7 @@ import static org.junit.Assert.*;
 /**
  * Created by johnmcclean on 17/01/2017.
  */
-public class GroupedByTimeAndSizeOperatorTest extends AbstractOperatorTest{
+public class GroupedByTimeAndSizeOperatorTest extends AbstractOperatorTest {
 
 
     public Operator<Integer> createEmpty(){

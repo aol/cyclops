@@ -27,21 +27,30 @@ public class LimitOperator<T,R> extends BaseOperator<T,T> {
         long[] count = {0};
         StreamSubscription sub[] = {null};
 
+        boolean completed[] = {false};
         sub[0] = source.subscribe(e-> {
 
                     try {
-                        System.out.println(count[0] + " " + limit);
+
                         if(count[0]++<limit)
                             onNext.accept(e);
                         else{
                             sub[0].cancel();
-                            onComplete.run();
+                            if(!completed[0]) {
+                                completed[0]=true;
+                                onComplete.run();
+                            }
                         }
                     } catch (Throwable t) {
                         onError.accept(t);
                     }
                 }
-                ,onError,onComplete);
+                ,onError,()->{
+                    if(!completed[0]) {
+                        completed[0]=true;
+                        onComplete.run();
+                    }
+                });
         return sub[0];
     }
 
