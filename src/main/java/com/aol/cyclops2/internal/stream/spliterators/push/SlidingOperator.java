@@ -42,6 +42,10 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
         StreamSubscription sub = new StreamSubscription(){
             @Override
             public void request(long n) {
+                if(n<=0) {
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
                 if(n==Long.MAX_VALUE)
                     upstream[0].request(n);
                 else {
@@ -52,6 +56,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
 
             @Override
             public void cancel() {
+                upstream[0].cancel();
                 super.cancel();
             }
         };
@@ -63,8 +68,9 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                         if(list.get().size()==windowSize) {
 
                             onNext.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
+                            sub.requested.decrementAndGet();
                             sent[0] = true;
-                            if(sub.requested.decrementAndGet()>0){
+                            if(sub.isActive()){
                                 upstream[0].request(1l);
                             }
                             for (int i = 0; i < increment && list.get()

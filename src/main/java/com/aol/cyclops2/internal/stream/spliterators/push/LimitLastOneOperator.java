@@ -34,6 +34,7 @@ public class LimitLastOneOperator<T,R> extends BaseOperator<T,T> {
 
             @Override
             public void cancel() {
+                upstream[0].cancel();
                 super.cancel();
             }
         };

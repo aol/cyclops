@@ -44,6 +44,7 @@ public class GroupedStatefullyOperator<T,C extends Collection<? super T>,R> exte
 
             @Override
             public void cancel() {
+                upstream[0].cancel();
                 super.cancel();
             }
         };

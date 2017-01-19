@@ -46,6 +46,8 @@ public class GroupedWhileOperator<T,C extends Collection<? super T>,R> extends B
 
             @Override
             public void cancel() {
+
+                upstream[0].cancel();
                 super.cancel();
             }
         };

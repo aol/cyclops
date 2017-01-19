@@ -55,6 +55,7 @@ public class GroupedByTimeAndSizeOperator<T,C extends Collection<? super T>,R> e
 
             @Override
             public void cancel() {
+                upstream[0].cancel();
                 super.cancel();
             }
         };

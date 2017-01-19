@@ -51,6 +51,7 @@ public class GroupedByTimeOperator<T,C extends Collection<? super T>,R> extends 
 
             @Override
             public void cancel() {
+                upstream[0].cancel();
                 super.cancel();
             }
         };

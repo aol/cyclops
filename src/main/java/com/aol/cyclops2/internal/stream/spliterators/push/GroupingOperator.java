@@ -36,15 +36,22 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
         StreamSubscription sub = new StreamSubscription(){
             @Override
             public void request(long n) {
-
-                upstream[0].request(n ); //we can't multiply by groupSize - doesn't work with Sets
-
+                if(n<=0) {
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
                 super.request(n);
+                System.out.println("requesting!");
+                upstream[0].request(1 ); //we can't multiply by groupSize - doesn't work with Sets
+
+
             }
 
             @Override
             public void cancel() {
+                upstream[0].cancel();
                 super.cancel();
+
             }
         };
         upstream[0] = source.subscribe(e-> {
@@ -54,8 +61,10 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
                         if(next[0].size()==groupSize){
                             onNext.accept(finalizer.apply((C)next[0]));
                             sub.requested.decrementAndGet();
+                            System.out.println("Remaining " + sub.requested);
                             next[0] = factory.get();
-                            if(sub.requested.decrementAndGet()>0){
+                            if(sub.isActive()){
+
                                 upstream[0].request(1l);
                             }
                         }else{

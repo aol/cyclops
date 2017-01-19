@@ -31,19 +31,24 @@ public class IterateOperator<T> implements Operator<T> {
                     pushAll();
                     return;
                 }
-                System.out.println("n is " + n + " active "  + isActive());
-                while (isActive()) {
-                    System.out.println("pusing value");
-                    next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
-                    requested.decrementAndGet();
 
+                while (isActive()) {
+                    System.out.println("n is " + n + " active "  + isActive());
+                    System.out.println("pusing value requested = " + requested.get());
+                    next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
+
+                    requested.decrementAndGet();
+                    System.out.println("Decrementing! " + requested.get());
                 }
+                System.out.println("End req");
 
             };
             @Override
             public void request(long n) {
-                if(n<=0)
-                    onError.accept(new IllegalArgumentException( "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                if(n<=0) {
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
                 this.singleActiveRequest(n,work);
 
             }
