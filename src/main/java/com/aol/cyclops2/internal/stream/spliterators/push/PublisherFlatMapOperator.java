@@ -1,6 +1,11 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import com.aol.cyclops2.types.mixins.Printable;
+import cyclops.async.Queue;
+import cyclops.box.Mutable;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+import org.pcollections.PVector;
+import org.pcollections.TreePVector;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -9,13 +14,18 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.LongConsumer;
 
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
+public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements Printable {
 
 
     int maxCapacity=256;
@@ -30,62 +40,53 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
 
     }
 
-
-
-    private void subscribe(Deque<Publisher<? extends R>> queued,
-                           ManyToOneConcurrentArrayQueue<R> data,
-                           ManyToOneConcurrentArrayQueue<Throwable> errors,
-                           List<Subscription> activeSubs){
-
-        Publisher<? extends R> next = queued.poll();
-        next.subscribe(new Subscriber<R>() {
-            Subscription sub;
-            @Override
-            public void onSubscribe(Subscription s) {
-                s.request(1l);
-                sub=s;
-                activeSubs.add(s);
-            }
-
-            @Override
-            public void onNext(R r) {
-                //Optimization check if this is the
-                //main thread and if so just call onNext
-                data.offer(r);
+    AtomicInteger active = new AtomicInteger(0);
 
 
 
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                //Optimization check if this is the
-                //main thread and if so just call onError
-                errors.offer(t);
-            }
-
-            @Override
-            public void onComplete() {
-                activeSubs.remove(sub);
-                if(queued.size()>0){
-                    subscribe(queued,data,errors,activeSubs);
-                }
-            }
-        });
-    }
 
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        Deque<Publisher<? extends R>> queued = new LinkedList<>();
+
         ManyToOneConcurrentArrayQueue<R> data = new ManyToOneConcurrentArrayQueue<R>(256);
         ManyToOneConcurrentArrayQueue<Throwable> errors = new ManyToOneConcurrentArrayQueue<>(256);
-        List<Subscription> activeSubs = new ArrayList<>();
+        Deque<Subscription> activeSubs = new ConcurrentLinkedDeque<>();
         StreamSubscription[] sourceSub = {null};
+        AtomicLong activeRequests = new AtomicLong(0);
         StreamSubscription s = new StreamSubscription(){
+            LongConsumer work = n-> {
+
+                while((data.size()>0 || activeRequests.get()>0) && isActive()) {
+
+                    Object nextV = data.poll();
+                    if(nextV!=null) {
+                        onNext.accept(nilsafe(nextV));
+                        requested.decrementAndGet();
+                        activeRequests.decrementAndGet();
+                    }
+                    if(activeRequests.get()<100){
+                        activeSubs.forEach(sub-> {
+                                    if (isActive() && activeRequests.get()<100) {
+                                        activeRequests.incrementAndGet();
+                                        sub.request(1l);
+
+                                        System.out.println("Making more requests!! " + activeRequests.get());
+                                    }
+
+                                }
+                        );
+                    }
+
+                }
+                if(isActive()  && active.get()<10)
+                    sourceSub[0].request(1l);
+                System.out.println("******Requested "+  n);
+
+            };
             @Override
             public void request(long n) {
                 sourceSub[0].request(1l);
-                super.request(n);
+                this.singleActiveRequest(n,work);
             }
 
             @Override
@@ -101,20 +102,109 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
                     try {
 
                         Publisher<? extends R> next = mapper.apply(e);
+                        next.subscribe(new Subscriber<R>() {
+                            Subscription sub;
+                            @Override
+                            public void onSubscribe(Subscription s) {
+                                activeSubs.offer(s);
+                                sub=s;
+                                activeRequests.incrementAndGet();
+                                s.request(1l);
 
-                        queued.add(next);
-                        drainAndLaunch(s,onNext, queued, data, errors, activeSubs);
-                        if(s.isActive())
-                            sourceSub[0].request(1l);
+                            }
+
+                            @Override
+                            public void onNext(R r) {
+                                System.out.println("On next " + r);
+                                data.offer((R)nilsafe(r));
+                                if(s.isActive()  && active.get()<10)
+                                    sourceSub[0].request(1l);
+                                if (s.isActive() && activeRequests.get()<100) {
+                                    System.out.println("Requesting..");
+                                    activeRequests.incrementAndGet();
+                                    sub.request(1l);
+
+                                }
+
+                            }
+
+                            @Override
+                            public void onError(Throwable t) {
+                                errors.offer(t);
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                activeRequests.decrementAndGet();
+                                if(s.isActive()  && active.get()<10)
+                                    sourceSub[0].request(1l);
+                                else if(s.isActive()){
+                                    activeSubs.forEach(sub-> {
+                                        if (s.isActive() && activeRequests.get() < 100) {
+                                            activeRequests.incrementAndGet();
+                                                    sub.request(1l);
+
+                                        }
+                                        }
+                                    );
+                                }
+                                System.out.println("Complete! " + activeSubs);
+                                activeSubs.remove(sub);
+                                System.out.println("After Complete! " + activeSubs);
+                            }
+                        });
+
+
+                        while((data.size()>0  || activeRequests.get()>0) && s.isActive()) {
+
+                            Object nextV = data.poll();
+                            if(nextV!=null) {
+                                onNext.accept(nilsafe(nextV));
+                                s.requested.decrementAndGet();
+                                activeRequests.decrementAndGet();
+                            }
+                            if(s.isActive()  && active.get()<10)
+                                sourceSub[0].request(1l);
+                            if(activeRequests.get()<(100-activeSubs.size())) {
+                                activeSubs.forEach(sub -> {
+                                            if (s.isActive() && activeRequests.get() < 100) {
+                                                activeRequests.incrementAndGet();
+                                                sub.request(1l);
+                                            }
+
+                                        }
+                                );
+                            }
+
+
+                        }
+
+
                     } catch (Throwable t) {
 
                         onError.accept(t);
                     }
                 }
                 ,onError,()->{
-                    while(activeSubs.size()>0 && data.size()>0 && queued.size()>0){
-                        //drain, create demand, launch queued publishers
-                        drainAndLaunch(s,onNext, queued, data, errors, activeSubs);
+                    System.out.println("Oncomplete!! " + activeRequests.get());
+                    while((data.size()>0 ||   active.get()>0 || activeRequests.get()>0) && s.isActive()) {
+
+                        Object nextV = data.poll();
+                        if(nextV!=null) {
+                            onNext.accept(nilsafe(nextV));
+                            s.requested.decrementAndGet();
+                            activeRequests.decrementAndGet();
+                        }
+                        if(s.isActive()){
+                            activeSubs.forEach(sub-> {
+                                        if (s.isActive() && activeRequests.get()<100) {
+                                            activeRequests.incrementAndGet();
+                                            sub.request(1l);
+
+                                        }
+                                    }
+                            );
+                        }
                     }
                     onComplete.run();
                 });
@@ -124,10 +214,10 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        Deque<Publisher<? extends R>> queued = new LinkedList<>();
+        Deque<Publisher<? extends R>> queued = new ConcurrentLinkedDeque<>();
         ManyToOneConcurrentArrayQueue<R> data = new ManyToOneConcurrentArrayQueue<R>(256);
         ManyToOneConcurrentArrayQueue<Throwable> errors = new ManyToOneConcurrentArrayQueue<>(256);
-        List<Subscription> activeSubs = new ArrayList<>();
+        AtomicReference<PVector<Subscription>> activeSubs = new AtomicReference<>(TreePVector.empty());
         source.subscribeAll(e-> {
                     try {
 
@@ -135,7 +225,7 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
                         queued.add(next);
                         StreamSubscription sub = new StreamSubscription();
                         sub.request(maxCapacity);
-                        drainAndLaunch(sub,onNext, queued, data, errors, activeSubs);
+                        drainAndLaunch(sub,onNext, queued, data, errors);
 
                     } catch (Throwable t) {
 
@@ -143,46 +233,93 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> {
                     }
                 }
                 ,onError,()->{
-                    while(activeSubs.size()>0 && data.size()>0 && queued.size()>0){
+
+                    while(active.get()>0 || data.size()>0 || queued.size()>0){
                         //drain, create demand, launch queued publishers
-                        StreamSubscription sub = new StreamSubscription();
-                        sub.request(maxCapacity);
-                        drainAndLaunch(sub,onNext, queued, data, errors, activeSubs);
+                        Object next = data.poll();
+                        if(next!=null)
+                            onNext.accept(print(nilsafe(next)));
+
+
                     }
                     onCompleteDs.run();
                 });
     }
 
-    private void drainAndLaunch(StreamSubscription maxCapacity,Consumer<? super R> onNext, Deque<Publisher<? extends R>> queued, ManyToOneConcurrentArrayQueue<R> data, ManyToOneConcurrentArrayQueue<Throwable> errors, List<Subscription> activeSubs) {
-        drainAndCreateDemand(maxCapacity,onNext, data, activeSubs);
-
-
-        //add next publisher to active
-        while( queued.size()>10) {
-            if (data.size() > 0) {
-                onNext.accept(data.poll());
-            }
-
-            Thread.yield();
+    private <T> T nilsafe(Object o){
+        if(Queue.NILL==o){
+            return null;
         }
-        subscribe(queued,data,errors,activeSubs);
-        drainAndCreateDemand(maxCapacity,onNext, data, activeSubs);
+        return (T)o;
     }
 
-    private void drainAndCreateDemand(StreamSubscription maxCapacity,Consumer<? super R> onNext, ManyToOneConcurrentArrayQueue<R> data, List<Subscription> activeSubs) {
-        //drain queued DATA
-        while(data.size()>0){
-            onNext.accept(data.poll());
+    private void drainAndLaunch(StreamSubscription maxCapacity,Consumer<? super R> onNext, Deque<Publisher<? extends R>> queued, ManyToOneConcurrentArrayQueue<R> data, ManyToOneConcurrentArrayQueue<Throwable> errors) {
+
+        while(queued.size()>0 && active.get()<10) {
+            subscribe(queued, data, errors);
+            Object next = data.poll();
+            if(next!=null)
+                onNext.accept(print(nilsafe(next)));
+
         }
 
-        long capacity[] = {maxCapacity.requested.get()-(data.size()-activeSubs.size())};
-        //create more demand
-        activeSubs.forEach(s-> {
-            if(capacity[0]> 0){
-                long request = capacity[0]/activeSubs.size();
-                s.request(request);
-                maxCapacity.requested.accumulateAndGet(request,(a,b)->a-b);
+
+
+    }
+
+    private void subscribe(Deque<Publisher<? extends R>> queued,
+                           ManyToOneConcurrentArrayQueue<R> data,
+                           ManyToOneConcurrentArrayQueue<Throwable> errors){
+
+
+        Publisher<? extends R> next = queued.poll();
+        if(next==null)
+            return;
+        next.subscribe(new Subscriber<R>() {
+            AtomicReference<Subscription> sub;
+
+            private Object nilsafe(Object o){
+                if(o==null)
+                    return Queue.NILL;
+                return o;
+            }
+
+            @Override
+            public void onSubscribe(Subscription s) {
+
+                this.sub=new AtomicReference<>(s);
+                active.incrementAndGet();
+                s.request(1l);
+
+            }
+
+            @Override
+            public void onNext(R r) {
+                //Optimization check if this is the
+                //main thread and if so just call onNext
+                data.offer((R)nilsafe(r));
+                sub.get().request(1l);
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                //Optimization check if this is the
+                //main thread and if so just call onError
+                errors.offer(t);
+                sub.get().request(1l);
+            }
+
+            @Override
+            public void onComplete() {
+
+
+                if(queued.size()>0){
+                    subscribe(queued,data,errors);
+                }
+                active.decrementAndGet();
             }
         });
     }
+
 }

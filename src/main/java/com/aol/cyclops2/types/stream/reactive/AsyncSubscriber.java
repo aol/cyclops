@@ -12,6 +12,7 @@ import org.reactivestreams.Subscription;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * A subscriber for Observable type Streams that avoid the overhead of applying backpressure.
@@ -135,6 +136,10 @@ public class AsyncSubscriber<T> implements Subscriber<T> {
         return getAction().isInitialized();
     }
 
-
+    public void awaitInitialization(){
+        while(!isInitialized()){
+            LockSupport.parkNanos(0l);
+        }
+    }
 
 }
