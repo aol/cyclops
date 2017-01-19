@@ -1,8 +1,11 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Queue;
 import cyclops.box.Mutable;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
@@ -15,6 +18,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -44,87 +48,70 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
 
 
 
-
+    //refactor into methods
+    //add support for errors
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
 
         ManyToOneConcurrentArrayQueue<R> data = new ManyToOneConcurrentArrayQueue<R>(256);
         ManyToOneConcurrentArrayQueue<Throwable> errors = new ManyToOneConcurrentArrayQueue<>(256);
-        Deque<Subscription> activeSubs = new ConcurrentLinkedDeque<>();
+
         StreamSubscription[] sourceSub = {null};
-        AtomicLong activeRequests = new AtomicLong(0);
+
+        AtomicReference<Subscription> activeSub = new AtomicReference<>(null);
         StreamSubscription s = new StreamSubscription(){
-            LongConsumer work = n-> {
 
-                while((data.size()>0 || activeRequests.get()>0) && isActive()) {
-
-                    Object nextV = data.poll();
-                    if(nextV!=null) {
-                        onNext.accept(nilsafe(nextV));
-                        requested.decrementAndGet();
-                        activeRequests.decrementAndGet();
-                    }
-                    if(activeRequests.get()<100){
-                        activeSubs.forEach(sub-> {
-                                    if (isActive() && activeRequests.get()<100) {
-                                        activeRequests.incrementAndGet();
-                                        sub.request(1l);
-
-                                        System.out.println("Making more requests!! " + activeRequests.get());
-                                    }
-
-                                }
-                        );
-                    }
-
-                }
-                if(isActive()  && active.get()<10)
-                    sourceSub[0].request(1l);
-                System.out.println("******Requested "+  n);
-
-            };
             @Override
             public void request(long n) {
-                sourceSub[0].request(1l);
-                this.singleActiveRequest(n,work);
+                super.request(n);
+                Subscription activeS = activeSub.get();
+
+                if(activeS!=null){
+                   activeS.request(1l);
+                   if(!activeSub.compareAndSet(activeS,activeS)){
+                       sourceSub[0].request(1l);
+                   }
+                }else {
+                    sourceSub[0].request(1l);
+                }
+
             }
 
             @Override
             public void cancel() {
                 sourceSub[0].cancel();
-                for(Subscription next : activeSubs){
-                    next.cancel();
-                }
+                activeSub.get().cancel();
                 super.cancel();
             }
         } ;
+       AtomicBoolean complete = new AtomicBoolean(false);
+
         sourceSub[0] = source.subscribe(e-> {
                     try {
 
                         Publisher<? extends R> next = mapper.apply(e);
+                        Spouts.reactiveSubscriber().
+                        ReactiveSeq<R> stream = new ReactiveStreamX(new OperatorToIterable(next));
+                        active.incrementAndGet();
                         next.subscribe(new Subscriber<R>() {
                             Subscription sub;
                             @Override
                             public void onSubscribe(Subscription s) {
-                                activeSubs.offer(s);
+                                activeSub.set(s);
                                 sub=s;
-                                activeRequests.incrementAndGet();
-                                s.request(1l);
+                                 s.request(1l);
 
                             }
 
                             @Override
                             public void onNext(R r) {
-                                System.out.println("On next " + r);
-                                data.offer((R)nilsafe(r));
-                                if(s.isActive()  && active.get()<10)
-                                    sourceSub[0].request(1l);
-                                if (s.isActive() && activeRequests.get()<100) {
-                                    System.out.println("Requesting..");
-                                    activeRequests.incrementAndGet();
+                                System.out.println("On next " + r + " on " + Thread.currentThread().getId());
+                               // data.offer((R)nilsafe(r));
+                                onNext.accept(r);
+                                s.requested.decrementAndGet();
+                                if(s.isActive())
                                     sub.request(1l);
 
-                                }
 
                             }
 
@@ -135,49 +122,16 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
 
                             @Override
                             public void onComplete() {
-                                activeRequests.decrementAndGet();
-                                if(s.isActive()  && active.get()<10)
-                                    sourceSub[0].request(1l);
-                                else if(s.isActive()){
-                                    activeSubs.forEach(sub-> {
-                                        if (s.isActive() && activeRequests.get() < 100) {
-                                            activeRequests.incrementAndGet();
-                                                    sub.request(1l);
 
-                                        }
-                                        }
-                                    );
-                                }
-                                System.out.println("Complete! " + activeSubs);
-                                activeSubs.remove(sub);
-                                System.out.println("After Complete! " + activeSubs);
+                                complete.set(true);
                             }
                         });
-
-
-                        while((data.size()>0  || activeRequests.get()>0) && s.isActive()) {
-
-                            Object nextV = data.poll();
-                            if(nextV!=null) {
-                                onNext.accept(nilsafe(nextV));
-                                s.requested.decrementAndGet();
-                                activeRequests.decrementAndGet();
-                            }
-                            if(s.isActive()  && active.get()<10)
-                                sourceSub[0].request(1l);
-                            if(activeRequests.get()<(100-activeSubs.size())) {
-                                activeSubs.forEach(sub -> {
-                                            if (s.isActive() && activeRequests.get() < 100) {
-                                                activeRequests.incrementAndGet();
-                                                sub.request(1l);
-                                            }
-
-                                        }
-                                );
-                            }
-
+                        while(s.isActive() && complete.get()){
 
                         }
+                        complete.set(false);
+
+
 
 
                     } catch (Throwable t) {
@@ -186,27 +140,10 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                     }
                 }
                 ,onError,()->{
-                    System.out.println("Oncomplete!! " + activeRequests.get());
-                    while((data.size()>0 ||   active.get()>0 || activeRequests.get()>0) && s.isActive()) {
 
-                        Object nextV = data.poll();
-                        if(nextV!=null) {
-                            onNext.accept(nilsafe(nextV));
-                            s.requested.decrementAndGet();
-                            activeRequests.decrementAndGet();
-                        }
-                        if(s.isActive()){
-                            activeSubs.forEach(sub-> {
-                                        if (s.isActive() && activeRequests.get()<100) {
-                                            activeRequests.incrementAndGet();
-                                            sub.request(1l);
+                        onComplete.run();
 
-                                        }
-                                    }
-                            );
-                        }
-                    }
-                    onComplete.run();
+
                 });
 
         return s;

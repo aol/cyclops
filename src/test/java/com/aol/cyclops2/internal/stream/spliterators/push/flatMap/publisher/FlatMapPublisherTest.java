@@ -12,8 +12,11 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
@@ -84,8 +87,10 @@ public class FlatMapPublisherTest {
     }
     Subscription subs;
     AtomicInteger count;
+    AtomicBoolean complete;
     @Test
     public void flatMapPAsyncRS(){
+        complete = new AtomicBoolean(false);
         count = new AtomicInteger(0);
         ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
         Spouts.of(1, 2, 3).peek(System.out::println)
@@ -110,16 +115,19 @@ public class FlatMapPublisherTest {
 
                     @Override
                     public void onComplete() {
-
+                        complete.set(true);
                     }
                 });
         subs.request(Long.MAX_VALUE);
+        while(!complete.get()){
+
+        }
         assertThat(count.get(),equalTo(6));
 
     }
     @Test
     public void flatMapPAsyncRS2(){
-        for(int k=0;k<1;k++) {
+        for(int k=0;k<1000;k++) {
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
                     .flatMapP(i -> nextAsyncRS())
@@ -146,12 +154,16 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapPAsyncRS3(){
-        for(int k=0;k<1;k++) {
+        for(int k=0;k<100;k++) {
             SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
                     .flatMapP(i -> nextAsyncRS())
                     .subscribe(sub);
+            /**Iterator<Integer> it = sub.iterator();
 
+            while(it.hasNext()){
+                System.out.println("it " + it.next());
+            }**/
             List<Integer> res = sub.stream().collect(Collectors.toList());
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
@@ -173,18 +185,38 @@ public class FlatMapPublisherTest {
     }
     private Publisher<Integer> nextAsyncRS() {
         ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
+        AtomicLong req = new AtomicLong(0);
+        sub.onSubscribe(new Subscription() {
 
+            @Override
+            public void request(long n) {
+
+               req.addAndGet(n);
+
+            }
+
+            @Override
+            public void cancel() {
+
+            }
+        });
         new Thread(()->{
+            int sent=0;
+            while(sent<2){
+                if(req.get()>0){
+                    sub.onNext(++sent);
 
-            Flux.just(1,2).subscribe(sub);
+                    req.decrementAndGet();
+                }
+            }
+            sub.onComplete();
+
+
+           // Flux.just(1,2).subscribe(sub);
 
 
         }).start();
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
         return sub.reactiveStream();
     }
     private Publisher<Integer> nextAsync() {

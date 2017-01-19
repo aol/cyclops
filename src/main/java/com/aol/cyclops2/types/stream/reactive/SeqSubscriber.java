@@ -90,21 +90,24 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
 
     @Override
     public void onNext(final T t) {
-        unread = true;
+
         Objects.requireNonNull(t);
         lastValue.set(t);
+        unread = true;
     }
 
     @Override
     public void onError(final Throwable t) {
         Objects.requireNonNull(t);
         lastError.set(t);
+        unread = true;
     }
 
     @Override
     public void onComplete() {
-        complete = true;
+
         this.onComplete.run();
+        complete = true;
 
     }
 
@@ -143,13 +146,19 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
             public boolean hasNext() {
                 if (!requested) {
                     reset();
+                    System.out.println("Reset ? " + lastValue.get());
                     s.request(1l);
                     requested = true;
-                    if (unread)
+                    while(!unread && !complete) {
+                    }
+                    System.out.println("Unread " + unread + "  "+  complete);
+                    if(unread){
+                        System.out.println("**next** " +  next);
                         next = get();
+                    }
                     else
                         next = UNSET;
-
+                    System.out.println("NextValue " +  next);
                 }
                 return next != UNSET;
             }
@@ -184,6 +193,9 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
                     s.request(1l);
                 else
                     requested = false;
+                while(!unread && !complete) {
+                }
+                System.out.println("Unread " + unread + "  "+  complete);
                 final Object next = complete ? !unread ? UNSET : get() : get();
 
                 if (next != UNSET) {
