@@ -371,7 +371,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#fromStream(java.util.stream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#fromStream(java.util.reactiveStream.Stream)
      */
     @Override
     default <X> DequeX<X> fromStream(final Stream<X> stream) {
@@ -449,7 +449,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.Collection#stream()
+     * @see java.util.Collection#reactiveStream()
      */
     @Override
     default ReactiveSeq<T> stream() {
@@ -598,7 +598,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function, java.util.stream.Collector)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function, java.util.reactiveStream.Collector)
      */
     @Override
     default <K, A, D> DequeX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
@@ -633,7 +633,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> DequeX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -780,7 +780,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> DequeX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -791,7 +791,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <S, U> DequeX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -800,7 +800,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <T2, T3, T4> DequeX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -1017,7 +1017,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default DequeX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1053,7 +1053,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default DequeX<T> retainAllS(final Stream<? extends T> seq) {

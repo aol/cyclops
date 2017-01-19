@@ -4,6 +4,7 @@ import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.StreamX;
 import com.aol.cyclops2.internal.stream.spliterators.IterateSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
+import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.Streams;
 import lombok.experimental.UtilityClass;
@@ -20,12 +21,42 @@ import java.util.stream.Stream;
 
 public interface Spouts {
 
-    static <T> ReactiveSubscriber<T> subscriber(){
+    /**
+     * Create an Subscriber for Observable style asynchronous push based Streams.
+     * Streams generated from AsyncSubscribers are not backpressure aware (in cases
+     * where backpressue is not needed they may perform better).
+     * For backpressure aware Streams see {@link Spouts#reactiveSubscriber}
+     *
+     * @param <T> Stream data type
+     * @return Async Stream Subscriber
+     */
+    static <T> AsyncSubscriber<T> asyncSubscriber(){
+        return new AsyncSubscriber<T>();
+    }
+
+    /**
+     *   Create an Subscriber for Observable style asynchronous push based Streams,
+     *   that implements backpressure internally via the reactive-streams spec.
+     *
+     *   Subscribers signal demand via their subscription and publishers push data to subscribers
+     *   synchronously or asynchronously, never exceeding signalled demand
+     *
+     * @param <T> Stream data type
+     * @return An async Stream Subscriber that supports efficient backpressure via reactive-streams
+     */
+    static <T> ReactiveSubscriber<T> reactiveSubscriber(){
         return new ReactiveSubscriber<T>();
     }
     static <T> ReactiveSeq<T> reactiveStream(Operator<T> s){
+        return new ReactiveStreamX<>(s).withAsync(ReactiveStreamX.Type.BACKPRESSURE);
+    }
+    static <T> ReactiveSeq<T> asyncStream(Operator<T> s){
+        return new ReactiveStreamX<>(s).withAsync(ReactiveStreamX.Type.NO_BACKPRESSURE);
+    }
+    static <T> ReactiveSeq<T> syncStream(Operator<T> s){
         return new ReactiveStreamX<>(s);
     }
+
     static <T> ReactiveSeq<T> iterate(final T seed, final UnaryOperator<T> f) {
         return new ReactiveStreamX(new IterateOperator<T>(seed,f));
 

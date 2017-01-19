@@ -1,8 +1,10 @@
 package com.aol.cyclops2.types.stream.reactive;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.push.StreamSubscription;
 import cyclops.box.LazyImmutable;
 import cyclops.stream.Spouts;
@@ -17,49 +19,27 @@ import lombok.val;
 import sun.security.provider.Sun;
 
 /**
- * A reactive-streams Subscriber that can generate various forms of sequences from a publisher
- * 
- * <pre>
- * {@code 
- *    SeqSubscriber<Integer> ints = SeqSubscriber.subscriber();
- *    ReactiveSeq.of(1,2,3)
- *               .publish(ints);
- *    
- *   ListX list = ints.toListX();
- * }
- * </pre>
+ * A Subscriber for Observable type event driven Streams that implement backpressure via the reactive-streams API
+
  * 
  * @author johnmcclean
  *
  * @param <T> Subscriber type
  */
-@AllArgsConstructor//(access=AccessLevel.PRIVATE)
+
 public class ReactiveSubscriber<T> implements Subscriber<T> {
 
 
     volatile boolean isOpen;
-    AtomicLong requested= new AtomicLong(0);
-    private volatile Subscription s = new Subscription(){
+    private volatile Subscription s;
 
-        @Override
-        public void request(long n) {
-            if(requested.get()==Long.MAX_VALUE)
-                return;
-            if(n==Long.MAX_VALUE)
-                requested.set(n);
-            requested.accumulateAndGet(n,(a,b)->a+b);
-        }
-
-        @Override
-        public void cancel() {
-            isOpen = false;
-        }
-    };
     private volatile CapturingOperator<T> action=  null;
    
 
     public ReactiveSubscriber() {
     }
+
+
 
     volatile boolean streamCreated=  false;
     CapturingOperator<T> getAction(){
@@ -68,20 +48,39 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
         return action;
     }
 
-    public ReactiveSeq<T> stream(){
+    /**
+     * <pre>
+     *    {@code
+     *           ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
+
+                Flux.just(1,2,3).subscribe(sub);
+                sub.reactiveStream().forEach(System.out::println);
+
+     *          //note JDK Stream based terminal operations may block the current thread
+     *          //see ReactiveSeq#collectAll ReactiveSeq#foldAll for non-blocking alternatives
+     *    }
+     * </pre>
+     *
+     * @return A push-based asychronous event driven Observable-style Stream that implements Backpressure via the reactive-streams API
+     */
+    public ReactiveSeq<T> reactiveStream(){
         streamCreated = true;
+        if(s==null){
+            if(streamCreated)
+                throw new IllegalStateException("Stream has been created before a Subscription has been passed to this Subscriber. Subscribe with this Subscriber first, then extract the Stream.");
+
+        }
         return Spouts.reactiveStream(getAction());
     }
+
+
     @Override
     public void onSubscribe(final Subscription s) {
         Objects.requireNonNull(s);
         if(streamCreated)
-            throw new IllegalStateException("Subscription passed after downstream Stream created. Subscribe with this Subscriber first, then extract the Stream");
-        if (this.s == null) {
-            this.s = s;
-            s.request(1);
-        } else
-            s.cancel();
+              throw new IllegalStateException("Subscription passed after downstream Stream created. Subscribe with this Subscriber first, then extract the Stream");
+
+        this.s = s;
 
     }
 
@@ -111,7 +110,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
 
 
         val run = getAction().getOnComplete();
-        System.out.println("Run is " +  run);
+
         if(run!=null)
             run.run();
 

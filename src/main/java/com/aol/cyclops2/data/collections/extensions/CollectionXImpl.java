@@ -240,7 +240,7 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#fromStream(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#fromStream(java.util.reactiveStream.Stream)
      */
     @Override
     public <X> MutableCollectionX<X> fromStream(final Stream<X> stream) {

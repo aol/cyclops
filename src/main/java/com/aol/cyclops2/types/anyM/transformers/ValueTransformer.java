@@ -77,11 +77,11 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#stream()
+     * @see com.aol.cyclops2.types.Value#reactiveStream()
      */
    //Return StreamT
-  /**  public AnyM<W,? extends ReactiveSeq<T>> stream() {
-        return this.transformerStream().map(v->v.stream());
+  /**  public AnyM<W,? extends ReactiveSeq<T>> reactiveStream() {
+        return this.transformerStream().map(v->v.reactiveStream());
     }**/
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Value#unapply()
@@ -123,7 +123,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return unitAnyM(this.transformerStream().map(v->v.zipP(publisher,f)));
     }
      /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
    
     public <U> ValueTransformer<W,Tuple2<T,U>> zipS(Stream<? extends U> other) {

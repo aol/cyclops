@@ -267,7 +267,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a stream.
+     * Start a reactive dataflow from a reactiveStream.
      * 
      * @param stream that will be used to drive the reactive dataflow
      * @return Next stage in the reactive flow
@@ -391,7 +391,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a stream of CompletableFutures.
+     * Start a reactive dataflow from a reactiveStream of CompletableFutures.
      * 
      * @param stream of CompletableFutures that will be used to drive the reactive dataflow
      * @return Next stage in the reactive flow
@@ -403,7 +403,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a stream.
+     * Start a reactive dataflow from a reactiveStream.
      * 
      * @param stream that will be used to drive the reactive dataflow
      * @return Next stage in the reactive flow
@@ -415,7 +415,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a stream.
+     * Start a reactive dataflow from a reactiveStream.
      * 
      * @param stream that will be used to drive the reactive dataflow
      * @return Next stage in the reactive flow
@@ -427,7 +427,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a stream.
+     * Start a reactive dataflow from a reactiveStream.
      * 
      * @param stream that will be used to drive the reactive dataflow
      * @return Next stage in the reactive flow

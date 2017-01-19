@@ -169,9 +169,9 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * Lazily construct a Right Either from the supplied publisher
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-         Either4<Throwable,String,String,Integer> either = Either4.fromPublisher(stream);
+         Either4<Throwable,String,String,Integer> either = Either4.fromPublisher(reactiveStream);
         
          //Either[1]
      * 
@@ -614,7 +614,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -627,7 +627,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> Either4<LT1, LT2, LT3, Tuple2<RT, U>> zipS(final Stream<? extends U> other) {

@@ -172,7 +172,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#stream()
+     * @see com.aol.cyclops2.types.Value#reactiveStream()
      */
     @Override
     public ReactiveSeq<T> stream() {

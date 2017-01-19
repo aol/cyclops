@@ -123,7 +123,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /*
      * (non-Javadoc)
      * 
-     * @see java.util.stream.Stream#reduce(java.lang.Object,
+     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
     default AnyM<W,T> reduce(final T identity, final BinaryOperator<T> accumulator) {
@@ -133,7 +133,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /*
      * (non-Javadoc)
      * 
-     * @see java.util.stream.Stream#reduce(java.lang.Object,
+     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
      * java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
     default <U> AnyM<W,U> reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
@@ -481,8 +481,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *                                          .map(i -> i + 2)
      *                                          .toConcurrentLazyStreamable();
      * 
-     *  assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     *  assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
      * }
      * </pre>
      * 

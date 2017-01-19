@@ -477,7 +477,7 @@ public class FluentFunctions {
 
 
         /**
-         * @return A stream generated from this suppliers Value
+         * @return A reactiveStream generated from this suppliers Value
          */
         public ReactiveSeq<R> generate() {
             return ReactiveSeq.generate(fn);

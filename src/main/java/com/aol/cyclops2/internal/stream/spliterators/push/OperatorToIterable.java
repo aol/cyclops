@@ -20,10 +20,18 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
 
     Operator<T> source;
     final Consumer<? super Throwable> defaultErrorHandler;
+    final boolean async;
 
     public OperatorToIterable(Operator<T> source, Consumer<? super Throwable> defaultErrorHandler){
        this.source= source;
        this.defaultErrorHandler = defaultErrorHandler;
+       async=false;
+
+    }
+    public OperatorToIterable(Operator<T> source, Consumer<? super Throwable> defaultErrorHandler,boolean async){
+        this.source= source;
+        this.defaultErrorHandler = defaultErrorHandler;
+        this.async = async;
 
     }
 
@@ -48,7 +56,10 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
             });
 
             public void forEachRemaining(Consumer<? super T> action) {
-               source.subscribeAll(action,defaultErrorHandler,()->{});
+                if(async)
+                    Iterator.super.forEachRemaining(action);
+
+                 source.subscribeAll(action,defaultErrorHandler,()->{});
             }
 
 

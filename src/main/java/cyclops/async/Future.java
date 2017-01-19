@@ -204,9 +204,9 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
      * 
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Future<Integer> future = Future.fromPublisher(stream,ex);
+        Future<Integer> future = Future.fromPublisher(reactiveStream,ex);
         
         //Future[1]
      * 
@@ -228,9 +228,9 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
      * Construct a Future asyncrhonously that contains a single value extracted from the supplied Iterable
      * <pre>
      * {@code 
-     *  ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *  ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Future<Integer> future = Future.fromIterable(stream,ex);
+        Future<Integer> future = Future.fromIterable(reactiveStream,ex);
         
         //Future[1]
      * 
@@ -250,9 +250,9 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
      * Construct a Future syncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Future<Integer> future = Future.fromPublisher(stream);
+        Future<Integer> future = Future.fromPublisher(reactiveStream);
         
         //Future[1]
      * 
@@ -272,9 +272,9 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
      * 
      * <pre>
      * {@code 
-     *  ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *  ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Future<Integer> future = Future.fromIterable(stream);
+        Future<Integer> future = Future.fromIterable(reactiveStream);
         
         //Future[1]
      * 
@@ -837,7 +837,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Value#stream()
+     * @see com.aol.cyclops2.types.Value#reactiveStream()
      */
     @Override
     public ReactiveSeq<T> stream() {
@@ -1253,7 +1253,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -1264,7 +1264,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     public <U> Future<Tuple2<T, U>> zipS(final Stream<? extends U> other) {

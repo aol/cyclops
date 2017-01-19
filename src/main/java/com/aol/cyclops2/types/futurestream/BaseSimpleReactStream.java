@@ -36,7 +36,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     ReactBuilder getSimpleReact();
 
     /**
-     * Keep only those elements in a stream that are of a given type.
+     * Keep only those elements in a reactiveStream that are of a given type.
      * 
      * 
      * 
@@ -54,7 +54,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /*
-     * Cast all elements in this stream to specified type. May throw {@link
+     * Cast all elements in this reactiveStream to specified type. May throw {@link
      * ClassCastException}.
      * 
      * SimpleReactStream.of(1, "a", 2, "b", 3).cast(Integer.class)
@@ -72,8 +72,8 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     * Returns a stream with a given value interspersed between any two values
-     * of this stream.
+     * Returns a reactiveStream with a given value interspersed between any two values
+     * of this reactiveStream.
      * 
      * <code>
      * 
@@ -255,7 +255,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     /**
      * Allows aggregate values in a Stream to be flatten into a single Stream.
      * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
-     * into a single flattened stream
+     * into a single flattened reactiveStream
      * 
      * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
      * @return SimpleReactStream
@@ -446,7 +446,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     Queue<U> toQueue();
 
     /**
-     * Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
+     * Create a 'free threaded' asynchronous reactiveStream that runs on a single thread (not current)
      * The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator is invoked.
      * 
      */
@@ -458,7 +458,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     * Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
+     * Create a 'free threaded' asynchronous reactiveStream that runs on a single thread (not current)
      * The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator is invoked.
      * 
      */
@@ -471,7 +471,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     *  Create a sequential synchronous stream that runs on the current thread
+     *  Create a sequential synchronous reactiveStream that runs on the current thread
      * 
      * 
      */
@@ -480,7 +480,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     *  Create a sequential synchronous stream that runs on the current thread
+     *  Create a sequential synchronous reactiveStream that runs on the current thread
      * 
      * 
      */
@@ -490,7 +490,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     *  Create a sequential synchronous stream that runs on the current thread
+     *  Create a sequential synchronous reactiveStream that runs on the current thread
      * @see Stream#of(Object)
      * 
      */
@@ -502,7 +502,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     * Create a sequential synchronous stream that runs on the current thread
+     * Create a sequential synchronous reactiveStream that runs on the current thread
      * @see Stream#of(Object[])
      * 
      */
@@ -515,7 +515,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     *  Create an empty sequential synchronous stream that runs on the current thread
+     *  Create an empty sequential synchronous reactiveStream that runs on the current thread
      * 
      * 
      */
@@ -529,7 +529,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * to change to a different pool
      * 
      * @param array
-     *            Array of value to form the reactive stream / sequence
+     *            Array of value to form the reactive reactiveStream / sequence
      * @return SimpleReact Stage
      */
     public static <U> SimpleReactStream<U> parallel(final U... array) {
@@ -538,7 +538,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     *  Create a 'free threaded' asynchronous stream that runs on the supplied CompletableFutures executor service (unless async operator invoked
+     *  Create a 'free threaded' asynchronous reactiveStream that runs on the supplied CompletableFutures executor service (unless async operator invoked
      *  , in which it will switch to the common 'free' thread executor)
      *  Subsequent tasks will be executed synchronously unless the async() operator is invoked.
      *  
@@ -552,7 +552,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     *  Create a 'free threaded' asynchronous stream that runs on the supplied CompletableFutures executor service (unless async operator invoked
+     *  Create a 'free threaded' asynchronous reactiveStream that runs on the supplied CompletableFutures executor service (unless async operator invoked
      *  , in which it will switch to the common 'free' thread executor)
      *  Subsequent tasks will be executed synchronously unless the async() operator is invoked.
      *  
@@ -566,7 +566,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     *  Create a 'free threaded' asynchronous stream that runs on a single thread (not current)
+     *  Create a 'free threaded' asynchronous reactiveStream that runs on a single thread (not current)
      *  The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator
      *  is invoked.
      *  

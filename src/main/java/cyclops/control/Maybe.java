@@ -191,9 +191,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * Construct a Maybe  that contains a single value extracted from the supplied reactive-streams Publisher
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Maybe<Integer> maybe = Maybe.fromPublisher(stream);
+        Maybe<Integer> maybe = Maybe.fromPublisher(reactiveStream);
         
         //Maybe[1]
      * 
@@ -213,9 +213,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
      *  Construct a Maybe  that contains a single value extracted from the supplied Iterable
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Maybe<Integer> maybe = Maybe.fromIterable(stream);
+        Maybe<Integer> maybe = Maybe.fromIterable(reactiveStream);
         
         //Maybe[1]
      * 
@@ -704,7 +704,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -716,7 +716,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> Maybe<Tuple2<T, U>> zipS(final Stream<? extends U> other) {

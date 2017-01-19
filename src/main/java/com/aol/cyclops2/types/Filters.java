@@ -33,7 +33,7 @@ public interface Filters<T> {
     Filters<T> filter(Predicate<? super T> predicate);
 
     /**
-     * Keep only those elements in a stream that are of a given type.
+     * Keep only those elements in a reactiveStream that are of a given type.
      * 
      * <pre>
      * {@code 

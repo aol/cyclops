@@ -3,6 +3,7 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Spliterator;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -23,10 +24,15 @@ public class CapturingOperator<T> implements Operator<T> {
     @Getter
     Runnable onComplete;
     final Subscription s;
-    private volatile  boolean initialized;
+    private AtomicBoolean initialized = new AtomicBoolean(false);
 
     public CapturingOperator(Subscription s){
         this.s = s;
+    }
+
+    public CapturingOperator(){
+        this.subscription = new StreamSubscription();
+        this.s=null;
     }
 
     StreamSubscription subscription = new StreamSubscription(){
@@ -48,10 +54,11 @@ public class CapturingOperator<T> implements Operator<T> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+
         this.action=onNext;
         this.error = onError;
         this.onComplete = onComplete;
-        this.initialized = true;
+        this.initialized.set(true);
         return subscription;
     }
 
@@ -60,10 +67,10 @@ public class CapturingOperator<T> implements Operator<T> {
         this.action=onNext;
         this.error = onError;
         this.onComplete = onComplete;
-        this.initialized = true;
+        this.initialized.set(true);
     }
 
     public boolean isInitialized() {
-        return initialized;
+        return initialized.get();
     }
 }

@@ -57,7 +57,7 @@ import lombok.experimental.Wither;
                                                       .run();
         
 
-        transferQueue.stream()
+        transferQueue.reactiveStream()
                   .map(e->"Consumed on " + Thread.currentThread().getId())
                   .futureOperations(Executors.newFixedThreadPool(1))
                   .forEach(System.out::println);
@@ -189,7 +189,7 @@ public class Queue<T> implements Adapter<T> {
      * 
      * <pre>
      * {@code 
-     *        use queue.stream().parallel() to convert to a parallel Stream
+     *        use queue.reactiveStream().parallel() to convert to a parallel Stream
      *  }
      * </pre>
      * 
@@ -216,7 +216,7 @@ public class Queue<T> implements Adapter<T> {
      * 
      * <pre>
      * {@code 
-     *        use queue.stream().parallel() to convert to a parallel Stream
+     *        use queue.reactiveStream().parallel() to convert to a parallel Stream
      *  }
      * </pre>
      * @see Queue#jdkStream(int) for an alternative that sends more poision pills for use with parallel Streams.

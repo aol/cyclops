@@ -305,7 +305,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
 
     /**
      * Perform a two level nested internal iteration over this MonadicValue and the
-     * supplied stream
+     * supplied reactiveStream
      * 
      * <pre>
      * {@code 

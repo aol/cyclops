@@ -25,7 +25,7 @@ import lombok.AccessLevel;
  * 
  * <pre>
  * {@code 
- *    SeqSubscriber<Integer> ints = SeqSubscriber.subscriber();
+ *    SeqSubscriber<Integer> ints = SeqSubscriber.reactiveSubscriber();
  *    ReactiveSeq.of(1,2,3)
  *               .publish(ints);
  *    

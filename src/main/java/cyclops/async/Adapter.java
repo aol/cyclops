@@ -59,7 +59,7 @@ public interface Adapter<T> {
     }
 
     /**
-     * @return Sequential future stream generated from this adapter {@see  Adapter#futureStream(LazyReact) }
+     * @return Sequential future reactiveStream generated from this adapter {@see  Adapter#futureStream(LazyReact) }
      */
     default FutureStream<T> futureStream() {
         return new LazyReact().fromStream(stream());

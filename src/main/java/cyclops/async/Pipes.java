@@ -252,8 +252,8 @@ public class Pipes<K, V> {
         pipes.push("data-queue", "world");
         
         //on a separate thread
-        ReactiveSeq<String> stream = pipes.reactiveSeq("data-queue");
-        stream.forEach(System.out::println);
+        ReactiveSeq<String> reactiveStream = pipes.reactiveSeq("data-queue");
+        reactiveStream.forEach(System.out::println);
         //"world"
        
       
@@ -545,8 +545,8 @@ public class Pipes<K, V> {
      * Pipes.register("test", QueueFactories.
     										<String>boundedNonBlockingQueue(100)
     											.build());
-    	LazyFutureStream<String> stream =  PipesToLazyStreams.cpuBoundStream("test");
-    	stream.filter(it->it!=null).peek(System.out::println).run();
+    	LazyFutureStream<String> reactiveStream =  PipesToLazyStreams.cpuBoundStream("test");
+    	reactiveStream.filter(it->it!=null).peek(System.out::println).run();
      * 
      * }</pre>
      * 
@@ -571,7 +571,7 @@ public class Pipes<K, V> {
      * Subscribe synchronously to a pipe
      * 
      * @param key for registered simple-react async.Adapter
-     * @param subscriber Reactive Streams subscriber for data on this pipe
+     * @param subscriber Reactive Streams reactiveSubscriber for data on this pipe
      */
     public void subscribeTo(final K key, final Subscriber<V> subscriber) {
         registered.get(key)
@@ -585,14 +585,14 @@ public class Pipes<K, V> {
      * 
      *  <pre>
      *  {@code 
-     *  SeqSubscriber<String> subscriber = SeqSubscriber.subscriber();
+     *  SeqSubscriber<String> reactiveSubscriber = SeqSubscriber.reactiveSubscriber();
         Queue<String> queue = new Queue();
         pipes.register("hello", queue);
-        pipes.subscribeTo("hello",subscriber,ForkJoinPool.commonPool());
+        pipes.subscribeTo("hello",reactiveSubscriber,ForkJoinPool.commonPool());
         queue.offer("world");
         queue.close();
        
-        assertThat(subscriber.stream().findAny().get(),equalTo("world"));
+        assertThat(reactiveSubscriber.reactiveStream().findAny().get(),equalTo("world"));
      *  
      *  
      *  }
@@ -600,7 +600,7 @@ public class Pipes<K, V> {
      * 
      * 
      * @param key for registered simple-react async.Adapter
-     * @param subscriber Reactive Streams subscriber for data on this pipe
+     * @param subscriber Reactive Streams reactiveSubscriber for data on this pipe
      */
     public void subscribeTo(final K key, final Subscriber<V> subscriber, final Executor subscribeOn) {
         CompletableFuture.runAsync(() -> subscribeTo(key, subscriber), subscribeOn);
@@ -636,7 +636,7 @@ public class Pipes<K, V> {
         queue.offer(4);
         queue.close();
        
-        assertThat(queue.stream().toList(),equalTo(Arrays.asList(1,2,3,4)));
+        assertThat(queue.reactiveStream().toList(),equalTo(Arrays.asList(1,2,3,4)));
      * 
      * }
      * </pre>

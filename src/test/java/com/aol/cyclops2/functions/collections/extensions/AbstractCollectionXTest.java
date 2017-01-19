@@ -985,7 +985,7 @@ public abstract class AbstractCollectionXTest {
 	/**
 	@Test
 	public void splitBy(){
-		assertThat( of(1, 2, 3, 4, 5, 6).stream().splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
+		assertThat( of(1, 2, 3, 4, 5, 6).reactiveStream().splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
 		assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v2.toList(),equalTo(Arrays.asList(4,5,6)));
 	}
 	**/

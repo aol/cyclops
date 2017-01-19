@@ -90,7 +90,7 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Generating a streamCompletableFutures will register the Stream as a subscriber to this topic.
+     * Generating a streamCompletableFutures will register the Stream as a reactiveSubscriber to this topic.
      * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
      * 
      * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
@@ -101,7 +101,7 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Generating a stream will register the Stream as a subscriber to this topic.
+     * Generating a reactiveStream will register the Stream as a reactiveSubscriber to this topic.
      * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
      * @return Stream of data
      */

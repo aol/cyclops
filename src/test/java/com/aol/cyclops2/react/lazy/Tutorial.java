@@ -60,7 +60,7 @@ public class Tutorial {
     @Test
     public void IO(){
         
-        //stream builder with 50 threads and 50 active futures
+        //reactiveStream builder with 50 threads and 50 active futures
         LazyReact react = new LazyReact(50,50)
                                 .autoOptimizeOn(); //cache processing results
         
@@ -509,7 +509,7 @@ public class Tutorial {
 	}
 
 	/**
-	 * create a stream of time intervals in seconds
+	 * create a reactiveStream of time intervals in seconds
 	 */
 	@Test @Ignore
 	public void secondsTimeInterval() {
@@ -753,7 +753,7 @@ public class Tutorial {
 				.map(this::processOrders)
 				.forEach(System.out::println);
 			/**	
-				.flatMap(Collection::stream)
+				.flatMap(Collection::reactiveStream)
 				.peek(individual -> System.out.println("Flattened : "
 						+ individual))
 				.forEach(this::save);**/

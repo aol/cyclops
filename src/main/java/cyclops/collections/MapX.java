@@ -60,7 +60,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     public <K, V> Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> getCollector();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Folds#stream()
+     * @see com.aol.cyclops2.types.Folds#reactiveStream()
      */
     @Override
     default ReactiveSeq<Tuple2<K, V>> stream() {
@@ -167,7 +167,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     boolean isEmpty();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#allMatch(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#allMatch(java.util.function.Predicate)
      */
     @Override
     default boolean allMatch(final Predicate<? super Tuple2<K, V>> c) {
@@ -175,7 +175,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#anyMatch(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#anyMatch(java.util.function.Predicate)
      */
     @Override
     default boolean anyMatch(final Predicate<? super Tuple2<K, V>> c) {
@@ -183,7 +183,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#noneMatch(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#noneMatch(java.util.function.Predicate)
      */
     @Override
     default boolean noneMatch(final Predicate<? super Tuple2<K, V>> c) {
@@ -191,7 +191,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#max(java.util.Comparator)
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#max(java.util.Comparator)
      */
     @Override
     default Optional<Tuple2<K, V>> max(final Comparator<? super Tuple2<K, V>> comparator) {
@@ -199,7 +199,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#min(java.util.Comparator)
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#min(java.util.Comparator)
      */
     @Override
     default Optional<Tuple2<K, V>> min(final Comparator<? super Tuple2<K, V>> comparator) {
@@ -293,7 +293,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default MapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -329,7 +329,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default MapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {

@@ -29,7 +29,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * A reactive-streams subscriber, backed by a cyclops2-react async.Queue, for merging data from multiple publishers into a single Stream
+ * A reactive-streams reactiveSubscriber, backed by a cyclops2-react async.Queue, for merging data from multiple publishers into a single Stream
  * 
  * @author johnmcclean
  *
@@ -52,7 +52,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     /**
      * Create a QueueBasedSubscriber, backed by the provided Queue
      * 
-     * @param q Queue backing the subscriber
+     * @param q Queue backing the reactiveSubscriber
      * @param counter Counter for tracking connections to the queue and data volumes
      * @param maxConcurrency Maximum number of subscriptions
      * @return QueueBasedSubscriber

@@ -29,20 +29,20 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
     /**
      * Create a LazyFluentCollection from a Flux.
      * The created LazyFluentCollection will be of the same type as the object this method is called on.
-     * i.e. Calling stream(Flux) on a LazyListX results in a LazyListX
+     * i.e. Calling reactiveStream(Flux) on a LazyListX results in a LazyListX
      *
      *
      * <pre>
      * {@code
      *
      *     LazyListX<Integer> lazyInts = LazyListX.of(1,2,3);
-     *     LazyListX<String> lazyStrs = lazyInts.stream(Flux.just("hello","world"));
+     *     LazyListX<String> lazyStrs = lazyInts.reactiveStream(Flux.just("hello","world"));
      *
      * }
      * </pre>
-     * Calling stream(Flux) on a LazySetX results in a LazySetX etc.
+     * Calling reactiveStream(Flux) on a LazySetX results in a LazySetX etc.
      *
-     * The same collection / reduction method will be used in the newly created Object. I.e. Calling  stream(Flux) on
+     * The same collection / reduction method will be used in the newly created Object. I.e. Calling  reactiveStream(Flux) on
      * a collection which as an Immutable Collector  will result in an Immutable Collection.
      *
 

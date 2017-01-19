@@ -150,7 +150,7 @@ public interface Value<T> extends Folds<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Folds#stream()
+     * @see com.aol.cyclops2.types.Folds#reactiveStream()
      */
     @Override
     default ReactiveSeq<T> stream() {

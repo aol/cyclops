@@ -332,9 +332,9 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
      * Lazily construct a Right Either from the supplied publisher
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-         Either<Throwable,Integer> future = Either.fromPublisher(stream);
+         Either<Throwable,Integer> future = Either.fromPublisher(reactiveStream);
         
          //Either[1]
      * 
@@ -945,7 +945,7 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -958,7 +958,7 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> Either<ST, Tuple2<PT, U>> zipS(final Stream<? extends U> other) {

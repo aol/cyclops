@@ -790,8 +790,8 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Returns a stream with a given value interspersed between any two values
-     * of this stream.
+     * Returns a reactiveStream with a given value interspersed between any two values
+     * of this reactiveStream.
      * 
      * 
      * // (1, 0, 2, 0, 3, 0, 4) ReactiveSeq.of(1, 2, 3, 4).intersperse(0)
@@ -991,7 +991,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Insert data into a stream at given position
+     * Insert data into a reactiveStream at given position
      *
      * <pre>
      * {@code
@@ -1032,7 +1032,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Insert a Stream into the middle of this stream at the specified position
+     * Insert a Stream into the middle of this reactiveStream at the specified position
      *
      * <pre>
      * {@code

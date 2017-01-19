@@ -114,9 +114,9 @@ public interface Either3<LT1, LT2, RT>
      * Lazily construct a Right Either from the supplied publisher
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-         Either3<Throwable,String,Integer> future = Either3.fromPublisher(stream);
+         Either3<Throwable,String,Integer> future = Either3.fromPublisher(reactiveStream);
         
          //Either[1]
      * 
@@ -555,7 +555,7 @@ public interface Either3<LT1, LT2, RT>
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -568,7 +568,7 @@ public interface Either3<LT1, LT2, RT>
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> Either3<LT1, LT2, Tuple2<RT, U>> zipS(final Stream<? extends U> other) {

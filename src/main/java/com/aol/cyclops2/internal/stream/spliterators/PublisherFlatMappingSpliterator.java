@@ -36,7 +36,7 @@ public class PublisherFlatMappingSpliterator<T,R> extends Spliterators.AbstractS
 
 
             Publisher<R> flatten = (Publisher<R>)mapper.apply(t);
-            SeqSubscriber<R> sub = SeqSubscriber.subscriber(); //use sequential subscriber for iterable sequences, in future switch to pushsubscriber where appropriate
+            SeqSubscriber<R> sub = SeqSubscriber.subscriber(); //use sequential reactiveSubscriber for iterable sequences, in future switch to pushsubscriber where appropriate
             flatten.subscribe(sub);
             sub.spliterator().forEachRemaining(action);
 

@@ -171,7 +171,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     }
 
     /**
-     * Cancel the CompletableFutures in this stage of the stream
+     * Cancel the CompletableFutures in this stage of the reactiveStream
      */
     @Override
     public void cancel() {
@@ -351,7 +351,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.stream.ReactiveSeq#headAndTail()
+     * @see cyclops2.reactiveStream.ReactiveSeq#headAndTail()
      */
     @Override
     public HeadAndTail<U> headAndTail() {

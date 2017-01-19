@@ -26,7 +26,7 @@ import cyclops.async.wait.WaitStrategy;
                                                       .run();
         
 
-       transferQueue.stream()
+       transferQueue.reactiveStream()
                     .map(e->"Consumed on " + Thread.currentThread().getId())
                      .futureOperations(Executors.newFixedThreadPool(1))
                      .forEach(System.out::println);
@@ -56,7 +56,7 @@ public class QueueFactories {
                                                       .run();
         
 
-         transferQueue.stream()
+         transferQueue.reactiveStream()
                       .map(e->"Consumed on " + Thread.currentThread().getId())
                       .futureOperations(Executors.newFixedThreadPool(1))
                       .forEach(System.out::println);

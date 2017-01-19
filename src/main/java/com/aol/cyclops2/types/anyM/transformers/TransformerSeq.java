@@ -200,7 +200,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#zipStream(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Traversable#zipStream(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> Traversable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -218,7 +218,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Traversable#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <S, U> Traversable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -229,7 +229,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Traversable#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -328,7 +328,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
+     * @see com.aol.cyclops2.types.Traversable#grouped(java.util.function.Function, java.util.reactiveStream.Collector)
      */
     @Override
     default <K, A, D> Traversable<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,

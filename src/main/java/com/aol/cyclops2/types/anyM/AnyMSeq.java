@@ -296,7 +296,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.AnyM#collect(java.util.stream.Collector)
+     * @see cyclops2.monads.AnyM#collect(java.util.reactiveStream.Collector)
      */
     @Override
     default <R, A> R collect(final Collector<? super T, A, R> collector) {
@@ -485,7 +485,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Traversable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> AnyMSeq<W,R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -496,7 +496,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Traversable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> AnyMSeq<W,Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -516,7 +516,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Traversable#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <S, U> AnyMSeq<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -525,7 +525,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Traversable#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <T2, T3, T4> AnyMSeq<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -634,7 +634,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
+     * @see com.aol.cyclops2.types.Traversable#grouped(java.util.function.Function, java.util.reactiveStream.Collector)
      */
     @Override
     default <K, A, D> AnyMSeq<W,Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
@@ -939,7 +939,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer)
+     * @see com.aol.cyclops2.types.reactiveStream.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer)
      */
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer) {
@@ -948,7 +948,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.aol.cyclops2.types.reactiveStream.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
@@ -958,7 +958,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
+     * @see com.aol.cyclops2.types.reactiveStream.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
      */
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
@@ -968,7 +968,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.aol.cyclops2.types.reactiveStream.reactive.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
@@ -978,7 +978,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
+     * @see com.aol.cyclops2.types.reactiveStream.reactive.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
      */
     @Override
     default <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,

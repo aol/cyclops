@@ -177,7 +177,7 @@ public interface Folds<T> extends ToStream<T> {
      * 	Monoid<Integer> mult = Monoid.of(1, (a, b) -&gt; a * b);
      * 	List<Integer> result = ReactiveSeq.of(1, 2, 3, 4)
      *                                    .reduce(Arrays.asList(sum, mult)
-     *                                    .stream());
+     *                                    .reactiveStream());
      * 
      * 	assertThat(result, equalTo(Arrays.asList(10, 24)));
      * 

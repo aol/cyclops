@@ -1,10 +1,12 @@
 package cyclops.streams.push;
 
+import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Test;
+import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,31 +24,48 @@ import static org.junit.Assert.assertTrue;
 public class BlockingTest {
     @Test
     public void blockingOrNot(){
-        ReactiveSubscriber<Integer> sub = Spouts.subscriber();
 
-        System.out.println("Starting!");
-        Thread t =  new Thread(()->{
-            while(!sub.isInitialized()){
-                System.out.println(sub.isInitialized());
-                LockSupport.parkNanos(0l);
-            }
-            for(int i=0;i<100;i++){
-                sub.onNext(1);
-            }
-            System.out.println("On Complete!");
-            sub.onComplete();
-        });
+        for(int k=0;k<1000;k++) {
+            AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
 
-        t.start();
+            System.out.println("Starting!");
+            Thread t = new Thread(() -> {
+                //  System.out.println("Initiailizing..");
+                while (!sub.isInitialized()) {
+                    // System.out.println(sub.isInitialized());
+                    LockSupport.parkNanos(0l);
+                }
+                //  System.out.println("Initialized!");
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("On Next!");
+                for (int i = 0; i < 100; i++) {
+                    sub.onNext(1);
+                }
+                System.out.println("On Complete!");
+                sub.onComplete();
+            });
 
-        //sub.onComplete();
-        sub.stream().peek(System.out::println).collect(Collectors.toList());
-      //   sub.stream().forEach(System.out::println);
-        sub.onNext(1);
-        System.out.println("End!");
-        while(true){
-
+            t.start();
+            System.out.println("Setting up Stream!");
+            //sub.onComplete();
+            assertThat(sub.stream().peek(System.out::println).collect(Collectors.toList()).size(), equalTo(100));
+            //   sub.reactiveStream().forEach(System.out::println);
+            sub.onNext(1);
+            System.out.println("End!");
         }
+
+    }
+
+    @Test
+    public void reactiveStreams(){
+        ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
+
+        Flux.just(1,2,3).subscribe(sub);
+        sub.reactiveStream().forEach(System.out::println);
     }
 
     @Test
@@ -93,20 +112,27 @@ public class BlockingTest {
 
     @Test
     public void collect(){
-        ReactiveSubscriber<Integer> sub = Spouts.subscriber();
+        ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
         ReactiveSeq.of(1,2,3).peek(System.out::println).subscribe(sub);
-        System.out.println(sub.stream().peek(System.out::println).collect(Collectors.toList()));
+        System.out.println(sub.reactiveStream().peek(System.out::println).collect(Collectors.toList()));
     }
     @Test
     public void forEach(){
-        ReactiveSubscriber<Integer> sub = Spouts.subscriber();
+        ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
         ReactiveSeq.of(1,2,3).subscribe(sub);
-        sub.stream().forEach(System.out::println);
+        sub.reactiveStream().forEach(System.out::println);
+    }
+    @Test(expected = IllegalStateException.class)
+    public void initError(){
+        ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
+        sub.reactiveStream().forEach(System.out::println);
+
     }
     @Test
     public void init(){
-        ReactiveSubscriber<Integer> sub = Spouts.subscriber();
-        sub.stream().forEach(System.out::println);
+        ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
+        Flux.just(1,2,3).subscribe(sub);
+        sub.reactiveStream().forEach(System.out::println);
         assertTrue(sub.isInitialized());
     }
 }

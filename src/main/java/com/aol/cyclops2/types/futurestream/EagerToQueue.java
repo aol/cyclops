@@ -36,8 +36,8 @@ public interface EagerToQueue<U> extends ToQueue<U> {
      * The supplied function can be used to determine properties of the Queue to be used
      * 
      *  @param fn Function to be applied to default Queue. Returned Queue will be used to conver this Stream to a Queue
-     *	@return This stream converted to a Queue
-     * @see com.aol.cyclops2.react.stream.traits.ToQueue#toQueue(java.util.function.Function)
+     *	@return This reactiveStream converted to a Queue
+     * @see com.aol.cyclops2.react.reactiveStream.traits.ToQueue#toQueue(java.util.function.Function)
      */
     @Override
     default Queue<U> toQueue(final Function<Queue, Queue> modifier) {
@@ -58,7 +58,7 @@ public interface EagerToQueue<U> extends ToQueue<U> {
      * 
      *	@param shards Map of key to Queue shards
      *	@param sharder Sharding function, element to key converter
-     * @see com.aol.cyclops2.react.stream.traits.ToQueue#toQueue(java.util.Map, java.util.function.Function)
+     * @see com.aol.cyclops2.react.reactiveStream.traits.ToQueue#toQueue(java.util.Map, java.util.function.Function)
      */
     @Override
     default <K> void toQueue(final Map<K, Queue<U>> shards, final Function<? super U, ? extends K> sharder) {

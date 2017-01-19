@@ -242,7 +242,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
     }
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
+     * @see org.jooq.lambda.Collectable#collect(java.util.reactiveStream.Collector)
      */
     
     default <R, A> R collect(final Collector<? super T, A, R> collector) {

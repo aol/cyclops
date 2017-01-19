@@ -691,7 +691,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
 
     /* (non-Javadoc)
-     * @see java.util.Collection#stream()
+     * @see java.util.Collection#reactiveStream()
      */
     @Override
     default ReactiveSeq<T> stream() {
@@ -878,7 +878,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function, java.util.stream.Collector)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function, java.util.reactiveStream.Collector)
      */
     @Override
     default <K, A, D> ListX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
@@ -1102,7 +1102,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> ListX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -1112,7 +1112,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <S, U> ListX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -1121,7 +1121,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <T2, T3, T4> ListX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -1338,7 +1338,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default ListX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1374,7 +1374,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default ListX<T> retainAllS(final Stream<? extends T> seq) {

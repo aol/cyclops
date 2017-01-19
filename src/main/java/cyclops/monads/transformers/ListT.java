@@ -289,7 +289,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.stream.CyclopsCollectable#collectable()
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectable()
      
     @Override
     public Collectable<T> collectable() {
@@ -394,7 +394,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.ListT#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see cyclops2.monads.transformers.ListT#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
      */
     @Override
     public <U, R> ListT<W,R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -405,7 +405,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#zipStream(java.util.stream.Stream)
+     * @see cyclops2.monads.transformers.values.ListT#zipStream(java.util.reactiveStream.Stream)
      */
     @Override
     public <U> ListT<W,Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -425,7 +425,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see cyclops2.monads.transformers.values.ListT#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     public <S, U> ListT<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -434,7 +434,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see cyclops2.monads.transformers.values.ListT#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     public <T2, T3, T4> ListT<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -534,7 +534,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#grouped(java.util.function.Function, java.util.stream.Collector)
+     * @see cyclops2.monads.transformers.values.ListT#grouped(java.util.function.Function, java.util.reactiveStream.Collector)
      */
     @Override
     public <K, A, D> ListT<W,Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {

@@ -17,7 +17,7 @@ package cyclops.async;
                                                       .run();
         
 
-        transferQueue.stream()
+        transferQueue.reactiveStream()
                   .map(e->"Consumed on " + Thread.currentThread().getId())
                   .futureOperations(Executors.newFixedThreadPool(1))
                   .forEach(System.out::println);

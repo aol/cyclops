@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.Traversable;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.Streams;
+import cyclops.async.*;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
@@ -41,9 +42,15 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Wither
     final Consumer<? super Throwable> defaultErrorHandler;
 
+    @Wither
+    final Type async;
+
+    public static enum Type {SYNC, BACKPRESSURE, NO_BACKPRESSURE}
+
     public ReactiveStreamX(Operator<T> source){
         this.source = source;
         this.defaultErrorHandler = e->{ throw ExceptionSoftener.throwSoftenedException(e);};
+        this.async = Type.SYNC;
     }
     @Override
     public ReactiveSeq<T> reverse() {
@@ -54,11 +61,20 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new OperatorToIterable<>(source,this.defaultErrorHandler).iterator();
+        if(async==Type.NO_BACKPRESSURE){
+
+            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                    .build();
+
+            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            return queue.stream().iterator();
+
+        }
+        return new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).iterator();
     }
 
     <X> ReactiveSeq<X> createSeq(Operator<X> stream) {
-        return new ReactiveStreamX<X>(stream);
+        return new ReactiveStreamX<X>(stream,defaultErrorHandler,async);
     }
 
 
@@ -231,12 +247,21 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public Spliterator<T> spliterator() {
-        return new OperatorToIterable<>(source,this.defaultErrorHandler).spliterator();
+        return unwrapStream().spliterator();
     }
 
     @Override
     public Stream<T> unwrapStream() {
-        return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler).spliterator(),false);
+        if(async==Type.NO_BACKPRESSURE){
+           // System.out.println("Setting up queue..");
+            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                    .build();
+
+            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            return queue.stream();
+
+        }
+        return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).spliterator(),false);
     }
 
     @Override
@@ -260,7 +285,13 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void forEach(final Consumer<? super T> action) {
-        this.source.subscribeAll(action,this.defaultErrorHandler,()->{});
+        if(async==Type.BACKPRESSURE){
+            this.source.subscribe(action, this.defaultErrorHandler, () -> {
+            }).request(Long.MAX_VALUE);
+        }else {
+            this.source.subscribeAll(action, this.defaultErrorHandler, () -> {
+            });
+        }
 
     }
     @Override
@@ -519,7 +550,13 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
-        source.subscribeAll(consumerElement,consumerError,()->{});
+        if(async==Type.BACKPRESSURE){
+            this.source.subscribe(consumerElement, consumerError, () -> {
+            }).request(Long.MAX_VALUE);
+        }else {
+            source.subscribeAll(consumerElement, consumerError, () -> {
+            });
+        }
 
 
     }
@@ -527,7 +564,11 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
                                               final Runnable onComplete) {
-        source.subscribeAll(consumerElement,consumerError,onComplete);
+        if(async==Type.BACKPRESSURE){
+            this.source.subscribe(consumerElement, consumerError, onComplete).request(Long.MAX_VALUE);
+        }else {
+            source.subscribeAll(consumerElement, consumerError, onComplete);
+        }
 
 
     }
@@ -589,7 +630,16 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
-        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler);
+        if(async==Type.NO_BACKPRESSURE){
+
+            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                    .build();
+            Topic<T> topic = new Topic<>(queue);
+            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            return Tuple.tuple(topic.stream(),topic.stream());
+
+        }
+        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
         Tuple2<Iterable<T>, Iterable<T>> copy = Streams.toBufferingDuplicator(sourceIt);
         Tuple2<Operator<T>, Operator<T>> operators = copy.map((a,b)->
             Tuple.tuple(new SpliteratorToOperator<T>(a.spliterator()),new SpliteratorToOperator<T>(b.spliterator()))
@@ -601,7 +651,16 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate() {
-        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler);
+        if(async==Type.NO_BACKPRESSURE){
+
+            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                    .build();
+            Topic<T> topic = new Topic<>(queue);
+            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            return Tuple.tuple(topic.stream(),topic.stream(),topic.stream());
+
+        }
+        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
         ListX<SpliteratorToOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 3)
                                          .map(it->new SpliteratorToOperator<>(it.spliterator()));
 
@@ -614,7 +673,16 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate() {
-        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler);
+        if(async==Type.NO_BACKPRESSURE){
+
+            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                    .build();
+            Topic<T> topic = new Topic<>(queue);
+            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            return Tuple.tuple(topic.stream(),topic.stream(),topic.stream(),topic.stream());
+
+        }
+        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
         ListX<SpliteratorToOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 4)
                 .map(it->new SpliteratorToOperator<>(it.spliterator()));
 
