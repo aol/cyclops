@@ -1,11 +1,9 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Queue;
 import cyclops.box.Mutable;
 import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
@@ -13,12 +11,8 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -47,91 +41,70 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
     AtomicInteger active = new AtomicInteger(0);
 
 
-
-    //refactor into methods
-    //add support for errors
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+        StreamSubscription[] s = {null};
+        boolean[] completeRecieved = {false};
+        Runnable[] thunk = {() -> {
+            if (completeRecieved[0]) {
+                onComplete.run();
+            } else {
+                s[0].request(1);
+            }
+        }};
 
-        ManyToOneConcurrentArrayQueue<R> data = new ManyToOneConcurrentArrayQueue<R>(256);
-        ManyToOneConcurrentArrayQueue<Throwable> errors = new ManyToOneConcurrentArrayQueue<>(256);
 
-        StreamSubscription[] sourceSub = {null};
-
-        AtomicReference<Subscription> activeSub = new AtomicReference<>(null);
-        StreamSubscription s = new StreamSubscription(){
+        StreamSubscription res = new StreamSubscription() {
+            LongConsumer work = n -> {
+                thunk[0].run();
+            };
 
             @Override
             public void request(long n) {
-                super.request(n);
-                Subscription activeS = activeSub.get();
+                if (n <= 0)
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
 
-                if(activeS!=null){
-                   activeS.request(1l);
-                   if(!activeSub.compareAndSet(activeS,activeS)){
-                       sourceSub[0].request(1l);
-                   }
-                }else {
-                    sourceSub[0].request(1l);
-                }
+                this.singleActiveRequest(n, work);
 
             }
 
             @Override
             public void cancel() {
-                sourceSub[0].cancel();
-                activeSub.get().cancel();
+                s[0].cancel();
                 super.cancel();
             }
-        } ;
-       AtomicBoolean complete = new AtomicBoolean(false);
-
-        sourceSub[0] = source.subscribe(e-> {
+        };
+        s[0] = source.subscribe(e -> {
                     try {
-
                         Publisher<? extends R> next = mapper.apply(e);
-                        Spouts.reactiveSubscriber().
-                        ReactiveSeq<R> stream = new ReactiveStreamX(new OperatorToIterable(next));
-                        active.incrementAndGet();
-                        next.subscribe(new Subscriber<R>() {
-                            Subscription sub;
-                            @Override
-                            public void onSubscribe(Subscription s) {
-                                activeSub.set(s);
-                                sub=s;
-                                 s.request(1l);
+                        ReactiveSeq<R> seq = ReactiveSeq.fromPublisher(next);
+                        Spliterator<R> split = seq.spliterator();
 
-                            }
+                        thunk[0] = () -> {
 
-                            @Override
-                            public void onNext(R r) {
-                                System.out.println("On next " + r + " on " + Thread.currentThread().getId());
-                               // data.offer((R)nilsafe(r));
-                                onNext.accept(r);
-                                s.requested.decrementAndGet();
-                                if(s.isActive())
-                                    sub.request(1l);
+                            boolean canAdvance = false;
+                            while (res.isActive()) {
+                                try {
+                                    canAdvance = split.tryAdvance(onNext);
+                                } catch (Throwable t) {
+                                    onError.accept(t);
+                                }
+                                if (canAdvance)
+                                    res.requested.decrementAndGet();
+                                else {
+                                    if (completeRecieved[0])
+                                        onComplete.run();
+                                    break;
+                                }
 
 
                             }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                errors.offer(t);
-                            }
-
-                            @Override
-                            public void onComplete() {
-
-                                complete.set(true);
-                            }
-                        });
-                        while(s.isActive() && complete.get()){
-
-                        }
-                        complete.set(false);
+                            if (!canAdvance && res.isActive())
+                                s[0].request(1);
 
 
+                        };
+                        thunk[0].run();
 
 
                     } catch (Throwable t) {
@@ -139,14 +112,19 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                         onError.accept(t);
                     }
                 }
-                ,onError,()->{
-
-                        onComplete.run();
-
+                , t -> {
+                    onError.accept(t);
+                    res.requested.decrementAndGet();
+                    if (res.isActive()) {
+                        s[0].request(1);
+                    }
+                }, () -> {
+                    completeRecieved[0] = true;
+                    thunk[0].run();
 
                 });
 
-        return s;
+        return res;
     }
 
     @Override

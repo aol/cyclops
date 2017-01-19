@@ -131,6 +131,7 @@ public class FlatMapPublisherTest {
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
                     .flatMapP(i -> nextAsyncRS())
+                  //  .flatMapP(i->Spouts.of(1,2))
                     .subscribe(sub);
 
             List<Integer> res = sub.reactiveStream().collect(Collectors.toList());
