@@ -52,7 +52,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                 if(n==Long.MAX_VALUE)
                     upstream[0].request(n);
                 else {
-                    upstream[0].request(1);
+                    upstream[0].request(n);
                 }
 
             }
@@ -73,9 +73,6 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                             onNext.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
                             sub.requested.decrementAndGet();
                             sent[0] = true;
-                            if(sub.isActive()){
-                                upstream[0].request(1l);
-                            }
                             for (int i = 0; i < increment && list.get()
                                     .size() > 0; i++)
                                 list.mutate(var -> var.minus(0));

@@ -52,11 +52,9 @@ public class GroupedByTimeAndSizeOperator<T,C extends Collection<? super T>,R> e
                 if(!isOpen)
                     return;
                 super.request(n);
-                if(n==Long.MAX_VALUE)
+
                     upstream[0].request(n);
-                else {
-                    upstream[0].request(1);
-                }
+
 
             }
 
@@ -74,9 +72,7 @@ public class GroupedByTimeAndSizeOperator<T,C extends Collection<? super T>,R> e
                             onNext.accept(finalizer.apply((C)next[0]));
                             next[0] = factory.get();
                             start[0] = System.nanoTime();
-                            if(sub.requested.decrementAndGet()>0 && sub.isOpen){
-                                upstream[0].request(1l);
-                            }
+                            sub.requested.decrementAndGet();
                         }else{
                             upstream[0].request(1l);
                         }

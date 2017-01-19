@@ -10,8 +10,6 @@ import java.util.function.Supplier;
  */
 public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseOperator<T,R> {
 
-
-
     private final Supplier<? extends C> factory;
     private final Function<? super C, ? extends R> finalizer;
     private final int groupSize;
@@ -23,9 +21,6 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
         this.factory = factory;
         this.finalizer = finalizer;
         this.groupSize = groupSize;
-
-
-
     }
 
 
@@ -44,7 +39,7 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
                     return;
                 super.request(n);
 
-                 upstream[0].request(1 ); //we can't multiply by groupSize - doesn't work with Sets
+                 upstream[0].request(n ); //we can't multiply by groupSize - doesn't work with Sets
 
 
             }
@@ -58,16 +53,12 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
         };
         upstream[0] = source.subscribe(e-> {
                     try {
-
                         next[0].add(e);
                         if(next[0].size()==groupSize){
                             onNext.accept(finalizer.apply((C)next[0]));
 
                             next[0] = factory.get();
-                            if(sub.requested.decrementAndGet()>0 && sub.isOpen){
 
-                                upstream[0].request(1l);
-                            }
                         }else{
                              upstream[0].request(1l);
                         }
