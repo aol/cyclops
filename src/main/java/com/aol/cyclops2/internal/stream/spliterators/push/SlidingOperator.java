@@ -46,12 +46,15 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                     onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                     return;
                 }
+                if(!isOpen)
+                    return;
+                super.request(n);
                 if(n==Long.MAX_VALUE)
                     upstream[0].request(n);
                 else {
                     upstream[0].request(1);
                 }
-                super.request(n);
+
             }
 
             @Override
@@ -76,7 +79,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                             for (int i = 0; i < increment && list.get()
                                     .size() > 0; i++)
                                 list.mutate(var -> var.minus(0));
-                        }else{
+                        }else if(sub.isOpen){
                             upstream[0].request(1l);
                             sent[0]=false;
                         }
@@ -87,8 +90,13 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                         onError.accept(t);
                     }
                 }
-                ,onError,()->{
-                    if(!sent[0])
+                ,t->{
+                    onError.accept(t);
+                    sub.requested.decrementAndGet();
+                    if(sub.isActive())
+                        upstream[0].request(1);
+                },()->{
+                    if(!sent[0] && list.get().size()>0)
                         onNext.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
                     sub.requested.decrementAndGet();
                     onComplete.run();
@@ -121,7 +129,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                     }
                 }
                 ,onError,()->{
-                    if(!sent[0])
+                    if(!sent[0]  && list.get().size()>0)
                         onNext.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
                     onCompleteDs.run();
                 });

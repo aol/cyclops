@@ -22,10 +22,17 @@ public class SkipOperator<T,R> extends BaseOperator<T,T> {
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         long[] count = {0};
+        boolean[] skipping ={true};
         StreamSubscription sub[] = {null};
         StreamSubscription res = new StreamSubscription(){
             @Override
             public void request(long n) {
+                if(n<=0) {
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
+                if(!isOpen)
+                    return;
                 super.request(n);
                 sub[0].request(n);
             }
@@ -38,8 +45,10 @@ public class SkipOperator<T,R> extends BaseOperator<T,T> {
         };
         sub[0] = source.subscribe(e-> {
                     try {
-                        if(count[0]++<skip){
+                        if(skipping[0] && count[0]++<skip){
                             sub[0].request(1l);
+                            if(count[0]>=skip)
+                                skipping[0]=false;
                         }
                         else {
                             onNext.accept(e);

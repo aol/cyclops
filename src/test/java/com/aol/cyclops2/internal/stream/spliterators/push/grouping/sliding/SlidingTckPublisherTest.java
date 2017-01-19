@@ -1,4 +1,4 @@
-package com.aol.cyclops2.internal.stream.spliterators.push.grouping;
+package com.aol.cyclops2.internal.stream.spliterators.push.grouping.sliding;
 
 
 import cyclops.stream.Spouts;

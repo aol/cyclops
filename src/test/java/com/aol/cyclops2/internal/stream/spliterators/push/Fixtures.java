@@ -49,6 +49,48 @@ public class Fixtures {
             onComplete.run();
         }
     };
+    public static Operator<Integer> threeAndErrorSource = new Operator<Integer>(){
+
+        @Override
+        public StreamSubscription subscribe(Consumer<? super Integer> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+            return new StreamSubscription(){
+                int index = 1;
+                @Override
+                public void request(long n) {
+                    super.request(n);
+                    while(isActive()){
+                        if(index==4) {
+                            index++;
+                            onError.accept(new RuntimeException());
+
+                            onComplete.run();
+                            cancel();
+                        }
+
+                        else if(index<4)
+                            onNext.accept(index++);
+                        else
+                            break;
+
+                        requested.decrementAndGet();
+                    }
+                }
+
+                @Override
+                public void cancel() {
+                    super.cancel();
+                }
+            };
+        }
+
+        @Override
+        public void subscribeAll(Consumer<? super Integer> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+            onNext.accept(1);
+            onNext.accept(2);
+            onError.accept(new RuntimeException());
+            onComplete.run();
+        }
+    };
     public static Operator<Integer> oneAndErrorSource = new Operator<Integer>(){
 
         @Override

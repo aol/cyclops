@@ -40,8 +40,10 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
                     onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                     return;
                 }
+                if(!isOpen)
+                    return;
                 super.request(n);
-                if(isOpen)
+
                  upstream[0].request(1 ); //we can't multiply by groupSize - doesn't work with Sets
 
 

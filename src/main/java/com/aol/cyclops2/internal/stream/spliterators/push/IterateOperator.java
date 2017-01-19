@@ -49,6 +49,8 @@ public class IterateOperator<T> implements Operator<T> {
                     onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                     return;
                 }
+                if(!isOpen)
+                    return;
                 this.singleActiveRequest(n,work);
 
             }
