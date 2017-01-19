@@ -1,11 +1,13 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.grouping;
 
 import cyclops.stream.Spouts;
+import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,6 +20,12 @@ public class GroupedTest {
     AtomicInteger count = new AtomicInteger();
     AtomicInteger error = new AtomicInteger();
     AtomicInteger complete = new AtomicInteger();
+    @Before
+    public void setup(){
+        count = new AtomicInteger();
+        error = new AtomicInteger();
+        complete = new AtomicInteger();
+    }
     @Test
     public void limitPosition(){
         Spouts.iterate(0l, i->i+1l).grouped(1).map(l->l.get(0)).limit(5)
@@ -56,4 +64,6 @@ public class GroupedTest {
         assertThat(complete.get(),equalTo(0));
 
     }
+
+
 }

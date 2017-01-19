@@ -45,12 +45,19 @@ public class GroupedByTimeAndSizeOperator<T,C extends Collection<? super T>,R> e
         StreamSubscription sub = new StreamSubscription(){
             @Override
             public void request(long n) {
+                if(n<=0) {
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
+                if(!isOpen)
+                    return;
+                super.request(n);
                 if(n==Long.MAX_VALUE)
                     upstream[0].request(n);
                 else {
                     upstream[0].request(1);
                 }
-                super.request(n);
+
             }
 
             @Override
@@ -67,7 +74,7 @@ public class GroupedByTimeAndSizeOperator<T,C extends Collection<? super T>,R> e
                             onNext.accept(finalizer.apply((C)next[0]));
                             next[0] = factory.get();
                             start[0] = System.nanoTime();
-                            if(sub.requested.decrementAndGet()>0){
+                            if(sub.requested.decrementAndGet()>0 && sub.isOpen){
                                 upstream[0].request(1l);
                             }
                         }else{
@@ -79,9 +86,14 @@ public class GroupedByTimeAndSizeOperator<T,C extends Collection<? super T>,R> e
                         onError.accept(t);
                     }
                 }
-                ,onError,()->{
+                ,t->{onError.accept(t);
+                    sub.requested.decrementAndGet();
+                    if(sub.isActive())
+                        upstream[0].request(1);
+                },()->{
                     if(next[0].size()>0)
                         onNext.accept(finalizer.apply((C)next[0]));
+                    sub.cancel();
                     onComplete.run();
                 });
 

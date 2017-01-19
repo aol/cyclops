@@ -41,8 +41,8 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
                     return;
                 }
                 super.request(n);
-                System.out.println("requesting!");
-                upstream[0].request(1 ); //we can't multiply by groupSize - doesn't work with Sets
+                if(isOpen)
+                 upstream[0].request(1 ); //we can't multiply by groupSize - doesn't work with Sets
 
 
             }
@@ -60,10 +60,9 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
                         next[0].add(e);
                         if(next[0].size()==groupSize){
                             onNext.accept(finalizer.apply((C)next[0]));
-                            sub.requested.decrementAndGet();
-                            System.out.println("Remaining " + sub.requested);
+
                             next[0] = factory.get();
-                            if(sub.isActive()){
+                            if(sub.requested.decrementAndGet()>0 && sub.isOpen){
 
                                 upstream[0].request(1l);
                             }
@@ -76,7 +75,11 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
                         onError.accept(t);
                     }
                 }
-                ,onError,()->{
+                ,t->{onError.accept(t);
+                    sub.requested.decrementAndGet();
+                    if(sub.isActive())
+                     upstream[0].request(1);
+                },()->{
                     if(next[0].size()>0) {
                         onNext.accept(finalizer.apply((C) next[0]));
                         sub.requested.decrementAndGet();
