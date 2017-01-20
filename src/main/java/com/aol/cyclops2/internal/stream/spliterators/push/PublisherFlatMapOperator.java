@@ -13,6 +13,7 @@ import org.reactivestreams.Subscription;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -43,28 +44,46 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
 
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        StreamSubscription[] s = {null};
-        boolean[] completeRecieved = {false};
-        Runnable[] thunk = {() -> {
-            if (completeRecieved[0]) {
-                onComplete.run();
-            } else {
-                s[0].request(1);
-            }
-        }};
 
+        final AtomicBoolean activePush= new AtomicBoolean(false);
+        final AtomicBoolean working = new AtomicBoolean(false);
+        final AtomicReference<Subscription> activeSub = new AtomicReference<>(null);
+        final StreamSubscription[] s = {null};
 
+        final AtomicBoolean completed = new AtomicBoolean(false);
+        final AtomicBoolean completeRecieved = new AtomicBoolean(false);
+        final AtomicInteger demanded = new AtomicInteger(0);
         StreamSubscription res = new StreamSubscription() {
-            LongConsumer work = n -> {
-                thunk[0].run();
-            };
 
             @Override
             public void request(long n) {
                 if (n <= 0)
                     onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                super.request(n);
 
-                this.singleActiveRequest(n, work);
+                if(activeSub.get()==null) {
+
+                    s[0].request(1l);
+                }
+                else {
+
+                    Subscription sub = activeSub.get();
+                    if(requested.get()>0 && working.compareAndSet(false,true)) {
+                        System.out.println("Request attempting demand signal..");
+
+                        if(activeSub.compareAndSet(sub,sub)){
+                            System.out.println("Request: Inner Signal demand for 1. inner requests " + demanded.incrementAndGet()
+                                    + "  current demand " + requested.get() + " working? " + working.get() +  " sub " + activeSub.get());
+                            sub.request(1l);
+                        }
+
+
+
+                    }
+
+                }
+
+
 
             }
 
@@ -74,37 +93,112 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                 super.cancel();
             }
         };
+        final AtomicReference<Runnable> completer = new AtomicReference<>(()->{
+
+        });
+
+        final AtomicInteger pushed = new AtomicInteger(0);
         s[0] = source.subscribe(e -> {
+            System.out.println("E is" + e);
                     try {
                         Publisher<? extends R> next = mapper.apply(e);
-                        ReactiveSeq<R> seq = ReactiveSeq.fromPublisher(next);
-                        Spliterator<R> split = seq.spliterator();
 
-                        thunk[0] = () -> {
+                        next.subscribe(new Subscriber<R>() {
 
-                            boolean canAdvance = false;
-                            while (res.isActive()) {
-                                try {
-                                    canAdvance = split.tryAdvance(onNext);
-                                } catch (Throwable t) {
-                                    onError.accept(t);
+                            @Override
+                            public void onSubscribe(Subscription s) {
+
+
+                                active.incrementAndGet();
+                                activeSub.set(s);
+                                working.set(false);
+                                if(res.isActive()) {
+
+                                    if(working.compareAndSet(false,true)) {
+                                        System.out.println("On Subscribe: Inner signal demand for 1. inner requests "
+                                                + demanded.incrementAndGet() + "working? " + working.get() + " current demand" +
+                                                res.requested.get()
+                                                +   " sub " + activeSub.get() );
+                                        s.request(1l);
+                                    }
+
                                 }
-                                if (canAdvance)
-                                    res.requested.decrementAndGet();
-                                else {
-                                    if (completeRecieved[0])
-                                        onComplete.run();
-                                    break;
-                                }
-
 
                             }
-                            if (!canAdvance && res.isActive())
-                                s[0].request(1);
+
+                            @Override
+                            public void onNext(R r) {
+
+                                System.out.println("ON next " + r +  " " + activePush.get());
+                                while(!activePush.compareAndSet(false,true)) {
+                                }
+                                System.out.println("Active Push! " + res.isActive());
+                                System.out.println("Pushing " + r + " demand " + res.requested.get() + " " + Thread.currentThread().getId());
+                                onNext.accept(r);
+
+                                res.requested.decrementAndGet();
+                                System.out.println("DECREMENTING********************** " + res.requested.get());
+                                working.set(false);
+                                System.out.println("Ending active push " + activePush.get() + "  pushed so far " + pushed.incrementAndGet() +  " demand " + res.requested.get());
+                                activePush.set(false);
+
+                                if(res.isActive() && working.compareAndSet(false,true)){
+                                    System.out.println("On Next : Inner signal demand for 1 inner requests " + demanded.incrementAndGet() +  " sub " + activeSub.get());
+                                    activeSub.get().request(1l);
+
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable t) {
+                                onError.accept(t);
+                                res.requested.decrementAndGet();
+                                working.set(false);
+                                if(res.isActive() && working.compareAndSet(false,true)){
+                                    System.out.println("On Error : Inner signal demand for 1 inner requests " + demanded.incrementAndGet() +  " sub " + activeSub.get());
+                                    activeSub.get().request(1l);
+
+                                }
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                working.set(false);
+
+                                System.out.println("Inner OC " + active.get() + " " +  completeRecieved.get() + " demand " + res.requested.get());
+
+                                if(completeRecieved.get()) {
+                                    System.out.println("!!!!!!!!!!!!!!!!!ON COMPLETE!!");
+                                    onComplete.run();
+                                    active.decrementAndGet();
+                                    return;
+
+                                }else{
+                                    System.out.println("request from outer");
+
+                                    s[0].request(1l);
+                                    active.decrementAndGet();
+
+                                }
+                                if(completeRecieved.get() && active.get()==0) {
+
+                                        completed.set(true);
+                                        System.out.println("!!!!!!!!!!!!!!!!!ON COMPLETE!!");
+                                        onComplete.run();
+
+                                   // active.decrementAndGet();
+
+                                }else if(active.get()==0){
+                                    completer.set(()->{
+                                        completed.set(true);
+                                        System.out.println("!&&&&&&&&&&&&&&&&!ON COMPLETE!!");
+                                        onComplete.run();
+                                    });
+                                }
+                            }
+                        });
 
 
-                        };
-                        thunk[0].run();
 
 
                     } catch (Throwable t) {
@@ -114,13 +208,23 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                 }
                 , t -> {
                     onError.accept(t);
+                    System.out.println("ON ERROR!!!!! DECREMENTING!");
                     res.requested.decrementAndGet();
                     if (res.isActive()) {
                         s[0].request(1);
                     }
                 }, () -> {
-                    completeRecieved[0] = true;
-                    thunk[0].run();
+
+                    System.out.println("on complete start! " + active.get());
+
+                    completeRecieved.set(true);
+                    completer.get().run();
+                    /**
+                    if(active.get()==0){
+                        System.out.println("----------ON COMPLETE!!");
+                        onComplete.run();
+                    }
+                     **/
 
                 });
 
@@ -149,13 +253,15 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                 }
                 ,onError,()->{
 
-                    while(active.get()>0 || data.size()>0 || queued.size()>0){
+                    while(active.get()>0 || data.size()>0 || queued.size()>0 || errors.size()>0){
                         //drain, create demand, launch queued publishers
                         Object next = data.poll();
                         if(next!=null)
                             onNext.accept(print(nilsafe(next)));
 
-
+                        if(errors.size()>0){
+                                onError.accept(errors.poll());
+                        }
                     }
                     onCompleteDs.run();
                 });
@@ -175,6 +281,7 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
             Object next = data.poll();
             if(next!=null)
                 onNext.accept(print(nilsafe(next)));
+
 
         }
 

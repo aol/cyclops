@@ -25,7 +25,7 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         final int index[] = {0};
 
-
+        boolean[] completeSent = {false};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
                 if (n == Long.MAX_VALUE) {
@@ -42,8 +42,11 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
                 }
 
                 if (index[0] >= values.length) {
-                    onComplete.run();
-                    cancel();
+                    if(!completeSent[0]) {
+                        completeSent[0]=true;
+                        onComplete.run();
+                        cancel();
+                    }
 
                 }
 
@@ -63,8 +66,11 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
                    ((Consumer) onNext).accept(values[index[0]]);
                 }
                 requested.set(0);
-                onComplete.run();
-                cancel();
+                if(!completeSent[0]) {
+                    completeSent[0]=true;
+                    onComplete.run();
+                    cancel();
+                }
             }
 
             @Override

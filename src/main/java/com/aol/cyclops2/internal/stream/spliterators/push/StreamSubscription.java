@@ -14,7 +14,7 @@ import java.util.function.*;
  */
 public class StreamSubscription implements Subscription {
     public volatile boolean isOpen = true;
-    AtomicLong requested= new AtomicLong(0);
+    final AtomicLong requested= new AtomicLong(0);
     public boolean isActive(){
         return isOpen && requested.get()>0;
     }

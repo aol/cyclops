@@ -37,11 +37,11 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
 
     public Iterator<T> iterator(){
         return new Iterator<T>() {
-            Object UNSET = new Object();
-            AtomicReference value = new AtomicReference<>(UNSET);
-            AtomicReference error = new AtomicReference<>(UNSET);
-            AtomicBoolean done = new AtomicBoolean(false);
-            boolean requested = false;
+            final Object UNSET = new Object();
+            final AtomicReference value = new AtomicReference<>(UNSET);
+            final AtomicReference error = new AtomicReference<>(UNSET);
+            final AtomicBoolean done = new AtomicBoolean(false);
+            volatile boolean requested = false;
             volatile  boolean awaiting = false;
             StreamSubscription sub = source.subscribe(e ->{
                 value.set(e);
@@ -79,7 +79,7 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
                     awaiting = true;
                     sub.request(1l);
                     requested = true;
-                    while(awaiting){
+                    while(awaiting && !done.get()){
 
                         LockSupport.parkNanos(0l);
                     }

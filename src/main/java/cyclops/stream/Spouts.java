@@ -76,6 +76,11 @@ public interface Spouts {
     public static  <T> ReactiveSeq<T> of(T value){
         return new ReactiveStreamX<>(new SingleValueOperator<T>(value));
     }
+
+    public static <T> ReactiveSeq<T> empty(){
+        return of();
+    }
+
     public static  <T> ReactiveSeq<T> of(T... values){
         return new ReactiveStreamX<>(new ArrayOfValuesOperator<T>(values));
     }
