@@ -63,6 +63,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                 .flatMap(i->i);
     }
 
+    @Override
+    public ReactiveSeq<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+        return createSeq(new CombineOperator<>(source,predicate,op)).flatMap(i->i);
+    }
 
     @Override
     public ReactiveSeq<T> reduceAll(T identity, BinaryOperator<T> accumulator){

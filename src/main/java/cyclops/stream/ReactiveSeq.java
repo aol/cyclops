@@ -110,10 +110,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
 
-    //here be dragons, experimental - nearly all spliterators are iterative
-    public static  <T> ReactiveSubscriber<T> pushable(){
-        return new ReactiveSubscriber<>();
-    }
+
     /**
      * Construct a ReactiveSeq from a String
      * 

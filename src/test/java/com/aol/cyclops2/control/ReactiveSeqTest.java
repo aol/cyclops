@@ -6,6 +6,7 @@ import cyclops.async.Future;
 import cyclops.collections.immutable.PBagX;
 import cyclops.control.Eval;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
@@ -460,7 +461,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void replay(){
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
         ReactiveSeq<String> stream1 = stream.map(str->"hello world " + str);
         Spliterator<String> sp = stream1.spliterator();
@@ -516,7 +517,7 @@ public class ReactiveSeqTest {
 
     @Test
     public void forEachWithErrorPush(){
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
       //  pushable.onComplete();
         stream.map(i->i+"-hello").limit(2)
@@ -528,7 +529,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void block(){
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
         new Thread(()->{active.set(false); pushable.onComplete();}).run();
         stream.forEach(System.out::println);
@@ -536,7 +537,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void blockToList(){
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
         new Thread(()->{active.set(false); pushable.onComplete();}).run();
         stream.toList();
@@ -544,7 +545,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void blockToListAddOne(){
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
         new Thread(()->{
             pushable.onNext("hello");
@@ -557,7 +558,7 @@ public class ReactiveSeqTest {
     
     @Test
     public void limitLast(){
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
         pushable.onNext("hello1");
         
@@ -570,7 +571,7 @@ public class ReactiveSeqTest {
 
     @Test
     public void testFlatMap(){
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
 
         pushable.onNext("hello");
@@ -582,7 +583,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void testIterator(){
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
 
         pushable.onNext("hello");
@@ -613,7 +614,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void forEachWithError(){
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSubscriber<String> pushable =  Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
 
         pushable.onNext("hello");
@@ -629,7 +630,7 @@ public class ReactiveSeqTest {
         Stream<Integer> s = Stream.of(1,2,3);
         Iterator<Integer> it = s.iterator();
         int i = it.next();
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
         new Thread(()->{
             pushable.onNext("hello");
@@ -643,7 +644,7 @@ public class ReactiveSeqTest {
     
     @Test
     public void lazy(){
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
         
         Eval<List<String>> list = stream.peek(System.err::println)
@@ -656,7 +657,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void push(){
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
+        ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
         Executor ex= Executors.newFixedThreadPool(1);
         Future<List<String>> list = stream.peek(System.err::println)
