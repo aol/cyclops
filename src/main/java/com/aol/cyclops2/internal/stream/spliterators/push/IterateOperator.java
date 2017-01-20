@@ -33,14 +33,13 @@ public class IterateOperator<T> implements Operator<T> {
                 }
 
                 while (isActive()) {
-                    System.out.println("n is " + n + " active "  + isActive());
-                    System.out.println("pusing value requested = " + requested.get());
+
                     next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
 
                     requested.decrementAndGet();
-                    System.out.println("Decrementing! " + requested.get());
+
                 }
-                System.out.println("End req");
+
 
             };
             @Override

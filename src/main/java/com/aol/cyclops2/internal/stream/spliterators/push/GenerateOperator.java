@@ -17,23 +17,31 @@ public class GenerateOperator<T> implements Operator<T> {
         this.value = value;
 
     }
-
-
+    
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         boolean[] sent = {false};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
-                if (n > 0 && isActive()) {
+                while (isActive()) {
+
                     onNext.accept(value.get());
                     requested.decrementAndGet();
 
+
                 }
+
 
             };
             @Override
             public void request(long n) {
-                singleActiveRequest(1, work);
+                if(n<=0) {
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
+                if(!isOpen)
+                    return;
+                singleActiveRequest(n, work);
 
             }
 
