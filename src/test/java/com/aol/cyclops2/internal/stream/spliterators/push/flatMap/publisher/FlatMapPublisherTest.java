@@ -128,7 +128,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapPAsyncRS2(){
-        for(int k=0;k<100000;k++) {
+        for(int k=0;k<1000;k++) {
             System.out.println("********0---------------------K " + k);
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
@@ -139,7 +139,7 @@ public class FlatMapPublisherTest {
             List<Integer> res = sub.reactiveStream().collect(Collectors.toList());
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
-          /**
+
             assertThat(res, hasItems(1, 2));
             int one = 0;
             int two = 0;
@@ -153,7 +153,7 @@ public class FlatMapPublisherTest {
             }
             assertThat(one, equalTo(3));
             assertThat(two, equalTo(3));
-           **/
+        
         }
 
     }
