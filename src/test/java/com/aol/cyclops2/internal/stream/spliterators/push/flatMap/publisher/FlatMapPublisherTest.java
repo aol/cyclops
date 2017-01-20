@@ -90,42 +90,45 @@ public class FlatMapPublisherTest {
     AtomicBoolean complete;
     @Test
     public void flatMapPAsyncRS(){
-        complete = new AtomicBoolean(false);
-        count = new AtomicInteger(0);
-        ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
-        Spouts.of(1, 2, 3).peek(System.out::println)
-                .flatMapP(i -> nextAsyncRS())
-                .subscribe(new Subscriber<Integer>() {
-                    @Override
-                    public void onSubscribe(Subscription s) {
-                        subs=s;
+        for(int k=0;k<1000;k++) {
+            complete = new AtomicBoolean(false);
+            count = new AtomicInteger(0);
+            ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
+            Spouts.of(1, 2, 3).peek(System.out::println)
+                    .flatMapP(i -> nextAsyncRS())
+                    .subscribe(new Subscriber<Integer>() {
+                        @Override
+                        public void onSubscribe(Subscription s) {
+                            subs = s;
 
-                    }
+                        }
 
-                    @Override
-                    public void onNext(Integer integer) {
-                        System.out.println("RECIEVED " + integer);
-                       assertThat(integer, Matchers.isOneOf(1,2));
-                       System.out.println("count " + count.incrementAndGet());
-                    }
+                        @Override
+                        public void onNext(Integer integer) {
+                            System.out.println("RECIEVED " + integer);
+                            assertThat(integer, Matchers.isOneOf(1, 2));
+                            System.out.println("count " + count.incrementAndGet());
+                        }
 
-                    @Override
-                    public void onError(Throwable t) {
+                        @Override
+                        public void onError(Throwable t) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onComplete() {
-                        complete.set(true);
-                    }
-                });
-        subs.request(Long.MAX_VALUE);
-        while(!complete.get()){
+                        @Override
+                        public void onComplete() {
+                            complete.set(true);
+                        }
+                    });
+            subs.request(Long.MAX_VALUE);
+            while (!complete.get()) {
 
+            }
+            assertThat(count.get(), equalTo(6));
         }
-        assertThat(count.get(),equalTo(6));
 
     }
+
     @Test
     public void flatMapPAsyncRS2(){
         for(int k=0;k<1000;k++) {
@@ -153,13 +156,13 @@ public class FlatMapPublisherTest {
             }
             assertThat(one, equalTo(3));
             assertThat(two, equalTo(3));
-        
+
         }
 
     }
     @Test
     public void flatMapPAsyncRS3(){
-        for(int k=0;k<1;k++) {
+        for(int k=0;k<100;k++) {
             SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
                     .flatMapP(i -> nextAsyncRS())

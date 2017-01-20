@@ -25,15 +25,15 @@ public abstract class AbstractLazyMutableCollection<T, C extends Collection<T>> 
     @Getter(AccessLevel.PROTECTED)
     private volatile C list;
     @Getter(AccessLevel.PROTECTED)
-    private final AtomicReference<ReactiveSeq<T>> seq;
+    private final AtomicReference<ReactiveSeq<T>> seq = new AtomicReference<>(null);
     @Getter(AccessLevel.PROTECTED)
     private final Collector<T, ?, C> collectorInternal;
-    AtomicBoolean updating = new AtomicBoolean(false);
-    AtomicReference<Throwable> error = new AtomicReference<>(null);
+    final AtomicBoolean updating = new AtomicBoolean(false);
+    final AtomicReference<Throwable> error = new AtomicReference<>(null);
 
     public AbstractLazyMutableCollection(C list, ReactiveSeq<T> seq, Collector<T, ?, C> collector) {
         this.list = list;
-        this.seq = new AtomicReference<>(seq);
+        this.seq.set(seq);
         this.collectorInternal = collector;
     }
 
@@ -44,9 +44,11 @@ public abstract class AbstractLazyMutableCollection<T, C extends Collection<T>> 
         if (seq.get() != null) {
             if(updating.compareAndSet(false, true)) { //check if can materialize
                 try{
+
                     ReactiveSeq<T> toUse = seq.get();
                     if(toUse!=null){//dbl check - as we may pass null check on on thread and set updating false on another
                         list = toUse.collect(collectorInternal);
+
                         seq.set(null);
                     }
                 }catch(Throwable t){

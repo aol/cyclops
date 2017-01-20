@@ -42,7 +42,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
                         leftSub[0].request(1);
                         rightSub[0].request(1);
                     }
-                    onComplete.run();
+
                     return;
                 }
                 requested.accumulateAndGet(Math.min(n,256),(a,n2)->a-n2);
@@ -99,6 +99,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             drain(leftQ,rightQ,onNext);
 
 
+
             if (leftQ.size()==0 || stopRequests[0]) {
                 completing.set(true);
                 rightSub[0].cancel();
@@ -129,7 +130,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
 
                     }
                 } else {
-                    rightQ.offer((T2) e);
+                        rightQ.offer((T2) e);
                 }
             }catch(Throwable t){
                 onError.accept(t);

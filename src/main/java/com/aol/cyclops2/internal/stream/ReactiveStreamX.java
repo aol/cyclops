@@ -27,7 +27,10 @@ import org.reactivestreams.Subscription;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -60,6 +63,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
     @Override
+    public ReactiveSeq<T> reduceAll(T identity, BinaryOperator<T> accumulator){
+        return createSeq(new ReduceAllOperator<>(source,identity,accumulator));
+    }
+    @Override
+    public <R, A> ReactiveSeq<R> collectAll(Collector<? super T, A, R> collector){
+        return createSeq(new CollectAllOperator<T,A,R>(source,collector));
+    }
+    @Override
     public Iterator<T> iterator() {
         if(async==Type.NO_BACKPRESSURE){
 
@@ -86,25 +97,31 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     static final Object UNSET = new Object();
     @Override
     public final Optional<T> findFirst() {
-        Object[] result = {UNSET};
-        Throwable[] error = {null};
+        final AtomicReference<T> result = new AtomicReference<T>(null);
+        final AtomicBoolean available = new AtomicBoolean(false);
+        final AtomicReference<Throwable> error = new AtomicReference<>(null);
 
             Subscription sub[] = {null};
             //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
             sub[0] = source.subscribe(e -> {
-                    result[0] = e;
+                    result.set(e);
                     sub[0].cancel();
-
+                    available.set(true);
 
             },e->{
-                error[0] = e;
+                error.set(e);
                 sub[0].cancel();
-            },()->{});
+                available.set(true);
+            },()->available.set(true));
         sub[0].request(1l);
-        if(error[0]!=null)
-            throw ExceptionSoftener.throwSoftenedException(error[0]);
+        while(!available.get()){
 
-        return result[0]==UNSET ? Optional.empty() : Optional.of((T)result[0]);
+        }
+        if(error.get()!=null)
+            throw ExceptionSoftener.throwSoftenedException(error.get());
+
+
+        return Optional.ofNullable(result.get());
     }
 
 
@@ -261,7 +278,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             return queue.stream();
 
         }
-        return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).spliterator(),false);
+        //return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).spliterator(),false);
+        return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,true).spliterator(),false);
     }
 
     @Override

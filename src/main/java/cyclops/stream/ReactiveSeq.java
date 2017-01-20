@@ -2056,6 +2056,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     T reduce(T identity, BinaryOperator<T> accumulator);
 
+    default ReactiveSeq<T> reduceAll(T identity, BinaryOperator<T> accumulator){
+        return coflatMap(s->s.reduce(identity,accumulator));
+    }
     /*
      * (non-Javadoc)
      * 
@@ -2119,6 +2122,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return seq().collect(supplier,accumulator,combiner);
     }
 
+    default <R, A> ReactiveSeq<R> collectAll(Collector<? super T, A, R> collector){
+        return coflatMap(s->s.collect(collector));
+    }
     /**
      * Performs a <a href="package-summary.html#MutableReduction">mutable
      * reduction</a> operation on the elements of this reactiveStream using a
@@ -2169,6 +2175,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default <R, A> R collect(Collector<? super T, A, R> collector) {
+
         return seq().collect(collector);
     }
 

@@ -117,6 +117,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final <R, A> R collect(final Collector<? super T, A, R> collector) {
+        System.out.println("Collect! break point here fuck ye!");
         return unwrapStream().collect(collector);
 
 
