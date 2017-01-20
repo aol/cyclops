@@ -46,7 +46,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     final Consumer<? super Throwable> defaultErrorHandler;
 
     @Wither
-    final Type async;
+    final Type async; //SYNC streams should switch to either Backpressured or No backpressure when zip or flatMapP are called
+                     //zip can check the provided Stream settings for async usage
+                     //flatMapP should assume async
 
     public static enum Type {SYNC, BACKPRESSURE, NO_BACKPRESSURE}
 

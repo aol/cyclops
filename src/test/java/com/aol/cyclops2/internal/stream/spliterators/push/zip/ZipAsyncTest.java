@@ -60,6 +60,14 @@ public class ZipAsyncTest {
 
     }
     @Test
+    public void asyncReduce(){
+        assertThat(Spouts.of(1, 2, 3, 4, 5)
+                .peek(System.out::println)
+
+                .reduceAll(0,(a,b)->a+b)
+                .single(),equalTo(15));
+    }
+    @Test
     public void asyncCollect(){
 
 
