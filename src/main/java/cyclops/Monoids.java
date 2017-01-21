@@ -261,11 +261,11 @@ public interface Monoids {
     static <T> Monoid<Publisher<T>> merge() {
         return Monoid.of(Spouts.empty(),Semigroups.merge());
     }
-    static <T> Monoid<ReactiveSeq<T>> combineLatestReactiveSeq () {
-        return Monoid.of(Spouts.empty(),Semigroups.combineLatestReactiveSeq());
+    static <T> Monoid<ReactiveSeq<T>> mergeLatestReactiveSeq () {
+        return Monoid.of(Spouts.empty(),Semigroups.mergeLatestReactiveSeq());
     }
-    static <T> Monoid<Publisher<T>> combineLatest() {
-        return Monoid.of(Spouts.empty(),Semigroups.combineLatest());
+    static <T> Monoid<Publisher<T>> mergeLatest() {
+        return Monoid.of(Spouts.empty(),Semigroups.mergeLatest());
     }
     static <T> Monoid<Publisher<T>> amb() {
         return Monoid.of(Spouts.empty(), Semigroups.amb());

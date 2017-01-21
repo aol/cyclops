@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.Monoids;
 import cyclops.Semigroups;
 import cyclops.collections.ListX;
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
@@ -86,8 +87,12 @@ public class SpoutsTest {
         }
     }
     @Test
-    public void merge(){
+    public void combineLatest(){
+        Spouts.combineLatest(Spouts.of(100,200,300),nextAsyncRS(),(a,b)-> Tuple.tuple(a,b)).printOut();
 
+    }
+    @Test
+    public void merge(){
         Spouts.merge(Spouts.of(1,2,3),Spouts.of(5,6,7)).printOut();
         Spouts.merge(Spouts.of(10,20,30),nextAsyncRS()).printOut();
 
@@ -95,10 +100,10 @@ public class SpoutsTest {
 
     }
     @Test
-    public void combineLatest(){
+    public void mergeLatest(){
 
-       Spouts.combineLatest(Spouts.of(1,2,3),Spouts.of(5,6,7)).printOut();
-       Spouts.combineLatest(Spouts.of(10,20,30),nextAsyncRS()).printOut();
+       Spouts.mergeLatest(Spouts.of(1,2,3),Spouts.of(5,6,7)).printOut();
+       Spouts.mergeLatest(Spouts.of(10,20,30),nextAsyncRS()).printOut();
 
 
 

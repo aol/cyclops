@@ -10,13 +10,13 @@ import java.util.function.LongConsumer;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class CombineLatestOperator<IN> implements Operator<IN> {
+public class MergeLatestOperator<IN> implements Operator<IN> {
 
 
     private final Operator<IN>[] operators;
 
 
-    public CombineLatestOperator(Operator<IN>[] sources){
+    public MergeLatestOperator(Operator<IN>[] sources){
         this.operators=sources;
 
 

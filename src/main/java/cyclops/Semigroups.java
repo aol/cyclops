@@ -5,7 +5,6 @@ import com.aol.cyclops2.internal.stream.spliterators.push.StreamSubscription;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.futurestream.EagerFutureStreamFunctions;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
-import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.collections.*;
@@ -29,10 +28,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -301,11 +298,11 @@ public interface Semigroups {
     static <T> Semigroup<Publisher<T>> merge() {
         return (a,b) -> Spouts.merge(a,b);
     }
-    static <T> Semigroup<ReactiveSeq<T>> combineLatestReactiveSeq () {
-        return (a,b) -> Spouts.combineLatest(a,b);
+    static <T> Semigroup<ReactiveSeq<T>> mergeLatestReactiveSeq() {
+        return (a,b) -> Spouts.mergeLatest(a,b);
     }
-    static <T> Semigroup<Publisher<T>> combineLatest() {
-        return (a,b) -> Spouts.combineLatest(a,b);
+    static <T> Semigroup<Publisher<T>> mergeLatest() {
+        return (a,b) -> Spouts.mergeLatest(a,b);
     }
     static <T> Semigroup<Publisher<T>> amb() {
         return (a, b) -> {

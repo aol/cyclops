@@ -99,6 +99,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     <X> ReactiveStreamX<X> createSeq(Operator<X> stream) {
         return new ReactiveStreamX<X>(stream,defaultErrorHandler,async);
     }
+    <X> ReactiveStreamX<X> createSeq(Operator<X> stream, Type async) {
+        return new ReactiveStreamX<X>(stream,defaultErrorHandler,async);
+    }
 
 
     public  <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
@@ -626,7 +629,18 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }else{
             right = new SpliteratorToOperator<U>(((Stream<U>)other).spliterator());
         }
-        return createSeq(new ZippingOperator<>(source,right,zipper));
+        return createSeq(new ZippingOperator<>(source,right,zipper),async);
+    }
+    @Override
+    public <U, R> ReactiveSeq<R> zipLatest(final Publisher<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+
+        Operator<U> right;
+        if(other instanceof ReactiveStreamX){
+            right = ((ReactiveStreamX<U>)other).source;
+        }else{
+            right = new PublisherToOperator<U>((Publisher<U>)other);
+        }
+        return createSeq(new ZippingLatestOperator<>(source,right,zipper),Type.BACKPRESSURE);
     }
 
     @Override
