@@ -1,9 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
@@ -11,13 +10,13 @@ import java.util.function.LongConsumer;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class ArrayMergingOperator<IN> implements Operator<IN> {
+public class CombineLatestOperator<IN> implements Operator<IN> {
 
 
     private final Operator<IN>[] operators;
 
 
-    public ArrayMergingOperator(Operator<IN>[] sources){
+    public CombineLatestOperator(Operator<IN>[] sources){
         this.operators=sources;
 
 
@@ -45,14 +44,20 @@ public class ArrayMergingOperator<IN> implements Operator<IN> {
         AtomicInteger completed = new AtomicInteger(0);
         AtomicInteger index = new AtomicInteger(0);
 
+
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
-                if(isActive()) {
 
-                    int toUse = index.incrementAndGet()-1;
-                    if(toUse+1>=subs.size())
-                        index.set(0);
-                    subs.get(toUse).request(1l);
+                for(long k=0;k<Math.max(n,subs.size());k++) {
+                    if(!isActive())
+                        break;
+                        int toUse = index.incrementAndGet() - 1;
+                        if (toUse+1 >= subs.size()) {
+                            index.set(0);
+
+                        }
+                        subs.get(toUse).request(1l);
+
 
 
 
@@ -71,8 +76,9 @@ public class ArrayMergingOperator<IN> implements Operator<IN> {
             }
         };
 
-        for(Operator<IN> next : operators){
-            subs.add(next.subscribe(e-> {
+        for(int i=0;i<operators.length;i++){
+            int current = i;
+            subs.add(operators[current].subscribe(e-> {
                         try {
                             onNext.accept(e);
                             sub.requested.decrementAndGet();
@@ -81,21 +87,18 @@ public class ArrayMergingOperator<IN> implements Operator<IN> {
                             onError.accept(t);
                         }finally{
                             if(sub.isActive()) {
-                                int toUse = index.incrementAndGet()-1;
-                                if(toUse+1>=subs.size())
-                                    index.set(0);
-                                subs.get(toUse).request(1l);
-
-
-
-
+                                subs.get(current).request(1l);
                             }
                         }
                     }
                     ,onError,()->{
+
                         if(completed.incrementAndGet()== subs.size()){
+                            System.out.println("Running on complete");
                             onComplete.run();
+                            sub.cancel();
                         }
+                        System.out.println("Complete " + completed.get());
 
                     }));
         }

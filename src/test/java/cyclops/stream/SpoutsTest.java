@@ -86,9 +86,19 @@ public class SpoutsTest {
         }
     }
     @Test
+    public void merge(){
+
+        Spouts.merge(Spouts.of(1,2,3),Spouts.of(5,6,7)).printOut();
+        Spouts.merge(Spouts.of(10,20,30),nextAsyncRS()).printOut();
+
+
+
+    }
+    @Test
     public void combineLatest(){
+
        Spouts.combineLatest(Spouts.of(1,2,3),Spouts.of(5,6,7)).printOut();
-        Spouts.combineLatest(Spouts.of(10,20,30),nextAsyncRS()).printOut();
+       Spouts.combineLatest(Spouts.of(10,20,30),nextAsyncRS()).printOut();
 
 
 
