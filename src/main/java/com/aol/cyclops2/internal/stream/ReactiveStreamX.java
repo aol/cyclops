@@ -52,10 +52,16 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     public static enum Type {SYNC, BACKPRESSURE, NO_BACKPRESSURE}
 
+
     public ReactiveStreamX(Operator<T> source){
         this.source = source;
         this.defaultErrorHandler = e->{ throw ExceptionSoftener.throwSoftenedException(e);};
         this.async = Type.SYNC;
+    }
+    public ReactiveStreamX(Operator<T> source,Type async){
+        this.source = source;
+        this.defaultErrorHandler = e->{ throw ExceptionSoftener.throwSoftenedException(e);};
+        this.async = async;
     }
     @Override
     public ReactiveSeq<T> reverse() {
