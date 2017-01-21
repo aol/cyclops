@@ -295,6 +295,12 @@ public interface Semigroups {
     static <T> Semigroup<ReactiveSeq<T>> ambReactiveSeq() {
         return (a,b)->(ReactiveSeq<T>)Semigroups.<T>amb().apply(a,b);
     }
+    static <T> Semigroup<ReactiveSeq<T>> combineLatestReactiveSeq () {
+        return (a,b) -> Spouts.combineLatest(a,b);
+    }
+    static <T> Semigroup<Publisher<T>> combineLatest() {
+        return (a,b) -> Spouts.combineLatest(a,b);
+    }
     static <T> Semigroup<Publisher<T>> amb() {
         return (a, b) -> {
             ReactiveSubscriber<T> res = Spouts.reactiveSubscriber();
