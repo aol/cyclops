@@ -146,14 +146,14 @@ public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, Convertable
             public boolean hasNext() {
                 if (!requested) {
                     reset();
-                    System.out.println("Reset ? " + lastValue.get());
+
                     s.request(1l);
                     requested = true;
                     while(!unread && !complete) {
                     }
-                    System.out.println("Unread " + unread + "  "+  complete);
+                    
                     if(unread){
-                        System.out.println("**next** " +  next);
+
                         next = get();
                     }
                     else

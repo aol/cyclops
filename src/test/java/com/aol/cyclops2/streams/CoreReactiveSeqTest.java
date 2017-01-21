@@ -15,12 +15,16 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.Streams;
+import cyclops.async.QueueFactories;
+import cyclops.async.Topic;
 import cyclops.collections.ListX;
+import org.hamcrest.Matcher;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -31,6 +35,7 @@ import cyclops.function.Monoid;
 import cyclops.async.LazyReact;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
+import reactor.core.publisher.Flux;
 
 
 //see BaseSequentialSeqTest for in order tests
@@ -46,9 +51,94 @@ public  class CoreReactiveSeqTest {
 		empty = of();
 		nonEmpty = of(1);
 	}
-	
-	
-	
+
+	@Test
+    public void publishToAndMerge(){
+	    cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+                                            .build();
+
+        Thread t=  new Thread( ()-> {
+
+            while(true) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                    System.out.println("Closing!");
+                    queue.close();
+
+            }
+        });
+        t.start();
+	    assertThat(ReactiveSeq.of(1,2,3)
+                             .publishTo(queue)
+                             .peek(System.out::println)
+                             .merge(queue)
+                             .toListX(),equalTo(ListX.of(1,1,2,2,3,3)));
+    }
+
+    @Test
+    public void fanOut(){
+
+        assertThat(ReactiveSeq.of(1,2,3,4)
+                   .fanOut(s1->s1.filter(i->i%2==0).map(i->i*2),
+                           s2->s2.filter(i->i%2!=0).map(i->i*100))
+                   .toListX(),equalTo(ListX.of(4,100,8,300)));
+        assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9)
+                .fanOut(s1->s1.filter(i->i%3==0).map(i->i*2),
+                        s2->s2.filter(i->i%3==1).map(i->i*100),
+                        s3->s3.filter(i->i%3==2).map(i->i*1000))
+                .toListX(),equalTo(ListX.of(6, 100, 400, 12, 400, 700, 18, 700)));
+        assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10,11,12)
+                             .fanOut(s1->s1.filter(i->i%4==0).map(i->i*2),
+                                     s2->s2.filter(i->i%4==1).map(i->i*100),
+                                     s3->s3.filter(i->i%4==2).map(i->i*1000),
+                                     s4->s4.filter(i->i%4==3).map(i->i*10000))
+                .toListX(),equalTo(ListX.of(8, 100, 500, 30000, 16, 500, 900, 70000, 24, 900, 110000)));
+    }
+    @Test
+    public void iteratePred(){
+        assertThat(ReactiveSeq.iterate(0,i->i<10,i->i+1)
+                    .toListX().size(),equalTo(10));
+    }
+	@Test
+    public void broadcastTest(){
+	    Topic<Integer> topic = ReactiveSeq.of(1,2,3)
+                                          .broadcast();
+
+
+        ReactiveSeq<Integer> stream1 = topic.stream();
+        ReactiveSeq<Integer> stream2 = topic.stream();
+	    assertThat(stream1.toListX(),equalTo(ListX.of(1,2,3)));
+        assertThat(stream2.stream().toListX(),equalTo(ListX.of(1,2,3)));
+
+    }
+    @Test
+    public void broadcastThreads() throws InterruptedException {
+        Topic<Integer> topic = ReactiveSeq.range(0,100_000)
+                                          .broadcast();
+
+       Thread t=  new Thread( ()-> {
+            ReactiveSeq<Integer> stream2 = topic.stream();
+            assertThat(stream2.takeRight(1).single(), equalTo(99_999));
+        });
+       t.start();
+
+        ReactiveSeq<Integer> stream1 = topic.stream();
+
+        assertThat(stream1.takeRight(1).single(),equalTo(99_999));
+
+       t.join();
+    }
+
+
+
+    @Test
+	public void ambTest(){
+		assertThat(ReactiveSeq.of(1,2,3).ambWith(Flux.just(10,20,30)).toListX(),equalTo(ListX.of(10,20,30)));
+	}
 	
 
     @Test

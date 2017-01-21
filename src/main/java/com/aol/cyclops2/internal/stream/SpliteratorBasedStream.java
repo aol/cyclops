@@ -5,8 +5,12 @@ import com.aol.cyclops2.internal.stream.spliterators.push.CollectingSinkSplitera
 import com.aol.cyclops2.internal.stream.spliterators.push.FoldingSinkSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import com.aol.cyclops2.internal.stream.spliterators.push.ValueEmittingSpliterator;
+import com.aol.cyclops2.types.futurestream.Continuation;
+import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import cyclops.*;
 import cyclops.async.Queue;
+import cyclops.async.QueueFactories;
+import cyclops.async.QueueFactory;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.internal.stream.publisher.PublisherIterable;
 import com.aol.cyclops2.internal.stream.spliterators.*;
@@ -400,6 +404,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         return createSeq(new IterableFlatMappingSpliterator<>(get(),fn), Optional.empty());
 
     }
+    /**
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
         if(this.stream instanceof FunctionSpliterator){
@@ -407,7 +412,65 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
             return createSeq(PublisherFlatMappingSpliterator.compose(f,fn),reversible);
         }
         return createSeq(new PublisherFlatMappingSpliterator<>(get(),fn), Optional.empty());
-   }
+   }**/
+    /**
+     * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
+     * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
+     * method to subscribe asynchronously also. A default limit of 10k active publishers is enforced, along with a default limit of 5k queued values before
+     * backpressure is applied.
+     *
+     * @param mapper
+     * @return
+     */
+    public <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return flatMapP(mapper, 10_000);
+    }
+
+    /**
+     * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
+     * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
+     * method to subscribe asynchronously also. Active publishers are limited by the maxConcurrency parameter, along with a default limit of 5k queued values before
+     * backpressure is applied.
+     *
+     * @param mapper
+     * @return
+     */
+    public <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper, final int maxConcurrency) {
+        return flatMapP(mapper, maxConcurrency, QueueFactories.boundedQueue(5_000));
+    }
+
+    /**
+     * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
+     * are configured to publish asynchronously.
+     * Active publishers are limited by the maxConcurrency parameter. The QueueFactory parameter can be used to control the maximum queued elements @see {@link QueueFactories}
+     *
+     *
+     */
+    public <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper, final int maxConcurrency,
+                                                final QueueFactory<R> factory) {
+        final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
+        final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
+
+        final ReactiveSeq<T> stream = stream();
+        final Supplier<Continuation> sp = () -> {
+
+            stream.map(mapper)
+                    .forEach(p -> {
+                        c.active.incrementAndGet();
+                        p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));
+
+                    } , i -> {
+                    } , () -> {
+                        init.close();
+                    });
+
+            return Continuation.empty();
+        };
+        final Continuation continuation = new Continuation(
+                sp);
+        init.addContinuation(continuation);
+        return ReactiveSeq.fromStream(init.jdkStream());
+    }
 
 
 

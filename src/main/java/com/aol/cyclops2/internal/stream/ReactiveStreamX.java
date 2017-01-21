@@ -2,6 +2,7 @@ package com.aol.cyclops2.internal.stream;
 
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.Traversable;
+import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.Streams;
@@ -609,6 +610,44 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
 
+    }
+    @Override
+    public ReactiveSeq<T> mergeP(final Collection<? extends Publisher<T>> publishers, final QueueFactory<T> factory){
+        return Spouts.mergeLatest(ReactiveSeq.fromIterable(publishers));
+    }
+    @Override
+    public ReactiveSeq<T> mergeP(final Collection<? extends Publisher<T>> publishers){
+        return Spouts.mergeLatest(ReactiveSeq.fromIterable(publishers));
+    }
+    @Override
+   public Topic<T> broadcast(){
+        cyclops.async.Queue<T> queue = QueueFactories.<T>boundedNonBlockingQueue(1000)
+                .build()
+                .withTimeout(1);
+
+        Topic<T> topic = new Topic<>(queue,QueueFactories.<T>boundedNonBlockingQueue(1000));
+        AtomicBoolean wip = new AtomicBoolean(false);
+        Subscription s= source.subscribe(topic::offer,e->topic.close(),()->topic.close());
+        Continuation cont =
+                new Continuation(()->{
+
+                    if(wip.compareAndSet(false,true)){
+                        try {
+                            //use the first consuming thread to write this Stream onto the Queue
+                            s.request(1000-queue.size());
+                        }finally {
+                            wip.set(false);
+                        }
+
+                    }
+
+
+                    return Continuation.empty();
+                });
+
+
+        queue.addContinuation(cont);
+        return topic;
     }
 
 

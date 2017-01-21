@@ -2,10 +2,12 @@ package cyclops.stream;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
+import com.aol.cyclops2.internal.stream.spliterators.IteratePredicateSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.UnfoldSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
+import cyclops.Streams;
 import cyclops.collections.ListX;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.Pure;
@@ -70,6 +72,9 @@ public interface Spouts {
 
     static <T> ReactiveSeq<T> iterate(final T seed, final UnaryOperator<T> f) {
         return new ReactiveStreamX(new IterateOperator<T>(seed,f));
+    }
+    static <T> ReactiveSeq<T> iterate(final T seed, Predicate<? super T> pred, final UnaryOperator<T> f) {
+        return new ReactiveStreamX(new IteratePredicateOperator<T>(seed,f,pred));
 
     }
     public static ReactiveSeq<Integer> range(int start, int end){
@@ -88,6 +93,12 @@ public interface Spouts {
         return new ReactiveStreamX<>(new SingleValueOperator<T>(value));
     }
 
+    public static <T> ReactiveSeq<T> ofNullable(T nullable){
+        if(nullable==null){
+            return empty();
+        }
+        return of(nullable);
+    }
     public static <T> ReactiveSeq<T> empty(){
         return of();
     }
@@ -148,17 +159,20 @@ public interface Spouts {
         }
         return new ReactiveStreamX<T>(new MergeLatestOperator<T>(op), ReactiveStreamX.Type.BACKPRESSURE);
     }
-    static <T> ReactiveSeq<T> amb(ListX<? extends ReactiveSeq<? extends T>> list){
+    static <T> ReactiveSeq<T> amb(ListX<? extends Publisher<? extends T>> list){
         return amb(list.toArray(new ReactiveSeq[0]));
     }
-    static <T> ReactiveSeq<T> amb(ReactiveSeq<? extends T>... array){
+    static <T> ReactiveSeq<T> amb(Publisher<? extends T>... array){
+        return ambWith(array);
+    }
+    static <T> ReactiveSeq<T> ambWith(Publisher<? extends T>[] array){
         ReactiveSubscriber<T> res = Spouts.reactiveSubscriber();
 
         AtomicInteger first = new AtomicInteger(0);
         AtomicBoolean[] complete = new AtomicBoolean[array.length];
         Subscription[] subs = new Subscription[array.length];
         for(int i=0;i<array.length;i++) {
-            complete[i].set(false);
+            complete[i] = new AtomicBoolean(false);
         }
         Subscription winner[] ={null};
 
@@ -166,7 +180,7 @@ public interface Spouts {
 
 
         for(int i=0;i<array.length;i++){
-            ReactiveSeq<T> next = (ReactiveSeq<T>)array[i];
+            Publisher<T> next = (Publisher<T>)array[i];
             final int index= i;
             next.subscribe(new Subscriber<T>() {
                 boolean won = false;

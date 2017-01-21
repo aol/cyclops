@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
@@ -18,9 +19,13 @@ import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingRangeIntSplit
 import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingLongArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingRangeLongSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
+import com.aol.cyclops2.internal.stream.spliterators.push.SpliteratorToOperator;
+import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
+import com.sun.tools.internal.ws.api.TJavaGeneratorExtension;
 import cyclops.async.Future;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Eval;
+import cyclops.control.Xor;
 import cyclops.monads.AnyM;
 import cyclops.async.*;
 import cyclops.control.Trampoline;
@@ -39,6 +44,8 @@ import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
+import lombok.experimental.var;
+import lombok.val;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -3148,6 +3155,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return fromStream(Stream.empty());
     }
 
+    public static <T> ReactiveSeq<T> ofNullable(T nullable){
+        if(nullable==null){
+            return empty();
+        }
+        return of(nullable);
+    }
+
     /**
      * Create an efficiently reversable Sequence from the provided elements
      * 
@@ -3367,6 +3381,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return Streams.reactiveSeq(new IterateSpliterator<T>(seed,f),Optional.empty());
 
     }
+    static <T> ReactiveSeq<T> iterate(final T seed, Predicate<? super T> pred, final UnaryOperator<T> f) {
+        return Streams.reactiveSeq(new IteratePredicateSpliterator<T>(seed,f,pred),Optional.empty());
+
+    }
 
     static <T> ReactiveSeq<T> deferredI(Supplier<? extends Iterable<? extends T>> lazy){
         return ReactiveSeq.of(1).flatMapI(i->lazy.get());
@@ -3477,6 +3495,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     ReactiveSeq<T> onEmptySwitch(final Supplier<? extends Stream<T>> switchTo) ;
+
 
 
     /*
@@ -4409,6 +4428,143 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default <T2, T3, T4, R> ReactiveSeq<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (ReactiveSeq<R>)FoldableTraversable.super.zip4(second,third,fourth,fn);
+    }
+    /**
+     A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
+     * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#mergePublisher(Collection, QueueFactory)}
+     * method to subscribe asynchronously also. Max concurrency is determined by the publishers collection size, along with a default limit of 5k queued values before
+     * backpressure is applied.
+     *
+     * @param publishers Publishers to merge
+     * @return Return Stream of merged data
+     */
+    default ReactiveSeq<T> mergeP(final Collection<? extends Publisher<T>> publishers) {
+        return mergeP(publishers, QueueFactories.boundedQueue(5_000));
+    }
+
+    /**
+     * A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
+     * are configured to publish asynchronously.
+     * The QueueFactory parameter can be used by pull based Streams to control the maximum queued elements @see {@link QueueFactories}
+     * Push based reactive-streams signal demand via their subscription.
+     *
+     *
+     */
+    default ReactiveSeq<T> mergeP(final Collection<? extends Publisher<T>> publishers, final QueueFactory<T> factory) {
+        final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
+        c.active.set(publishers.size() + 1);
+        final QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory, c, publishers.size());
+
+        final Supplier<Continuation> sp = () -> {
+            subscribe(init);
+            for (final Publisher next : publishers) {
+                next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, publishers.size()));
+            }
+
+            init.close();
+
+            return Continuation.empty();
+        };
+        final Continuation continuation = new Continuation(
+                sp);
+        init.addContinuation(continuation);
+        return ReactiveSeq.fromStream(init.jdkStream());
+    }
+    default ReactiveSeq<T> publishTo(Adapter<T>... adapters){
+        return peek(e->{
+            for(Adapter<T> next:  adapters){
+                next.offer(e);
+            }
+        });
+    }
+    default ReactiveSeq<T> merge(Adapter<T>... adapters){
+        return mergeP(ListX.of(adapters).map(a->a.stream()));
+    }
+    default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path1,
+                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path2){
+        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate();
+        Tuple2<ReactiveSeq<? extends R>, ReactiveSeq<T>>  d2 = d.map1(path1);
+        Tuple2<ReactiveSeq<R>, ? extends ReactiveSeq<R>> d3 = (Tuple2)d2.map2(path2);
+
+        return d3.v1.mergeP(ListX.of(d3.v2));
+
+    }
+    default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path1,
+                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path2,
+                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path3){
+
+        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate();
+        val res = d.map1(path1).map2(path2).map3(path3);
+
+        return res.v1.mergeP(ListX.of(res.v2,res.v2));
+
+    }
+    default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path1,
+                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path2,
+                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path3,
+                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path4){
+
+        val d = quadruplicate();
+        val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
+
+        return res.v1.mergeP(ListX.of(res.v2,res.v2,res.v4));
+
+    }
+    default Topic<T> broadcast(){
+        cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                                                    .build()
+                                                    .withTimeout(1);
+
+
+        Topic<T> topic = new Topic<T>(queue,QueueFactories.<T>unboundedNonBlockingQueue());
+        AtomicBoolean wip = new AtomicBoolean(false);
+        Spliterator<T> split = this.spliterator();
+        Continuation ref[] = {null};
+        Continuation cont =
+                new Continuation(()->{
+
+                    if(wip.compareAndSet(false,true)){
+                        try {
+
+                            //use the first consuming thread to write this Stream onto the Queue
+                            if(!split.tryAdvance(topic::offer)){
+                                topic.close();
+                                return Continuation.empty();
+
+                            }
+                        }finally {
+                            wip.set(false);
+                        }
+
+                    }
+
+
+                    return ref[0];
+                });
+
+        ref[0]=cont;
+        queue.addContinuation(cont);
+        return topic;
+    }
+    default Xor<Throwable,T> firstOrError(){
+        Optional<T> opt = this.findFirst();
+        try {
+            if (opt.isPresent()) {
+                return Xor.primary(opt.get());
+            } else {
+                return Xor.secondary(new NoSuchElementException());
+            }
+        }catch(Throwable t){
+            return Xor.secondary(t);
+        }
+    }
+    default ReactiveSeq<T> ambWith(Publisher<T> racer){
+        return Spouts.amb(this,racer);
+    }
+    default ReactiveSeq<T> ambWith(Publisher<T>... racers){
+        ListX<Publisher<T>> list = ListX.of(racers);
+        list.add(0, this);
+        return Spouts.amb(list);
     }
 
     static <T> ReactiveSeq<T> concat(Stream<? extends T>...streams){

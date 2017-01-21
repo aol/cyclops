@@ -88,6 +88,7 @@ public class SpoutsTest {
     }
     @Test
     public void combineLatest(){
+
         Spouts.combineLatest(Spouts.of(100,200,300),nextAsyncRS(),(a,b)-> Tuple.tuple(a,b)).printOut();
 
     }

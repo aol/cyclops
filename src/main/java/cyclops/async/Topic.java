@@ -35,13 +35,14 @@ public class Topic<T> implements Adapter<T> {
     private volatile PMap<ReactiveSeq<?>, Queue<T>> streamToQueue = HashTreePMap.empty();
     private final Object lock = new Object();
     private volatile int index = 0;
+    private final QueueFactory<T> factory;
 
     /**
      * Construct a new Topic
      */
     public Topic() {
         final Queue<T> q = new Queue<T>();
-
+        factory = QueueFactories.unboundedQueue();
         distributor.addQueue(q);
     }
 
@@ -50,7 +51,11 @@ public class Topic<T> implements Adapter<T> {
      * @param q Queue to back this Topic with
      */
     public Topic(final Queue<T> q) {
-
+        factory = QueueFactories.unboundedQueue();
+        distributor.addQueue(q);
+    }
+    public Topic(final Queue<T> q,QueueFactory<T> factory) {
+        this.factory = factory;
         distributor.addQueue(q);
     }
 
