@@ -1,6 +1,7 @@
 package cyclops;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops2.internal.stream.spliterators.push.StreamSubscription;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.futurestream.EagerFutureStreamFunctions;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
@@ -292,44 +293,36 @@ public interface Semigroups {
     }
     static <T> Semigroup<ReactiveSeq<T>> ambReactiveSeq() {
         return (a, b) -> {
-            ReactiveSubscriber<T> res1 = Spouts.reactiveSubscriber();
-            ReactiveSubscriber<T> res2 = Spouts.reactiveSubscriber();
+            ReactiveSubscriber<T> res = Spouts.reactiveSubscriber();
+
             AtomicInteger first = new AtomicInteger(0);
             AtomicBoolean aComplete = new AtomicBoolean(false);
             AtomicBoolean bComplete = new AtomicBoolean(false);
             AtomicReference<T> valueA = new AtomicReference<T>(null);
             AtomicReference<T> valueB = new AtomicReference<T>(null);
-            ReactiveSubscriber<T> sub1 = Spouts.reactiveSubscriber();
-            ReactiveSubscriber<T> sub2 = Spouts.reactiveSubscriber();
+            ReactiveSubscriber<T> sub = Spouts.reactiveSubscriber();
+
             AtomicBoolean aActive = new AtomicBoolean(false);
             AtomicBoolean bActive = new AtomicBoolean(false);
-            Supplier<ReactiveSeq<T>> lazy = ()-> {
+            Subscription subA[] ={null};
+            Subscription subB[] ={null};
+            Subscription winner[] ={null};
                 a.subscribe(new Subscriber<T>() {
+                    boolean won= false;
                     @Override
                     public void onSubscribe(Subscription s) {
-                        sub1.onSubscribe(new Subscription() {
-                            @Override
-                            public void request(long n) {
-                                if (first.get()==1) {
-                                    s.request(n);
+                        subA[0]=s;
 
-                                }
-                            }
-
-                            @Override
-                            public void cancel() {
-                                if (aActive.get())
-                                    s.cancel();
-                            }
-                        });
-                        s.request(1);
                     }
 
                     @Override
                     public void onNext(T t) {
-
-                        if (first.get()==1 || first.compareAndSet(0, 1)) {
-                            sub1.onNext(t);
+                        if(won) {
+                            sub.onNext(t);
+                        }else if (first.compareAndSet(0, 1)) {
+                            winner[0]=subA[0];
+                            sub.onNext(t);
+                            won =true;
                         }
 
                     }
@@ -337,7 +330,7 @@ public interface Semigroups {
                     @Override
                     public void onError(Throwable t) {
                         if (first.get()==1)
-                            sub1.onError(t);
+                            sub.onError(t);
                     }
 
                     @Override
@@ -345,35 +338,26 @@ public interface Semigroups {
 
                         aComplete.set(true);
                         if (first.get()==1 || bComplete.get()) {
-                            sub1.onComplete();
+                            sub.onComplete();
                         }
                     }
                 });
                 b.subscribe(new Subscriber<T>() {
+                    boolean won = false;
                     @Override
                     public void onSubscribe(Subscription s) {
-                        sub2.onSubscribe(new Subscription() {
-                            @Override
-                            public void request(long n) {
-                                if (first.get()==2) {
-                                    s.request(n);
-                                }
-
-                            }
-
-                            @Override
-                            public void cancel() {
-                                if (first.get()==2)
-                                    s.cancel();
-                            }
-                        });
-                        s.request(1);
+                        subB[0]=s;
                     }
 
                     @Override
                     public void onNext(T t) {
+                        if(won) {
+                            sub.onNext(t);
+                        }
                         if (first.get()==2 || first.compareAndSet(0, 2)) {
-                            sub2.onNext(t);
+                            winner[0]=subB[0];
+                            sub.onNext(t);
+                            won=true;
                         }
 
                     }
@@ -381,23 +365,58 @@ public interface Semigroups {
                     @Override
                     public void onError(Throwable t) {
                         if (first.get()==2)
-                            sub2.onError(t);
+                            sub.onError(t);
                     }
 
                     @Override
                     public void onComplete() {
                         bComplete.set(true);
                         if (first.get()==2 || aComplete.get()) {
-                            sub2.onComplete();
+                            sub.onComplete();
                         }
                     }
                 });
 
-                return sub1.reactiveStream().onEmptySwitch(()->sub2.reactiveStream());
-            };
-            return ReactiveSeq.generate(lazy)
-                         .limit(1)
-                    .flatMap(i->i);
+                sub.onSubscribe(new StreamSubscription() {
+                    int count = 0;
+                    {
+                      //  request(1l);
+                    }
+                    @Override
+                    public void request(long n) {
+                        if(count==0) {
+                            subA[0].request(1l);
+                            subB[0].request(1l);
+
+                            if(n-1>0)
+                                super.request(n-1);
+                            if(first.get()!=0){
+                                count=2;
+                            }else
+                                count=1;
+                        }else if(count<2){
+                            if(first.get()!=0){
+                                count=2;
+                            }
+                            super.request(n);
+                        }
+                        else if(count==2){
+                            if(requested.get()>0)
+                                winner[0].request(requested.get());
+                            winner[0].request(n);
+                            count=2;
+                        }
+                        else{
+                            winner[0].request(n);
+                        }
+                    }
+
+                    @Override
+                    public void cancel() {
+                        winner[0].cancel();
+                    }
+                });
+                return sub.reactiveStream();
 
 
         };
