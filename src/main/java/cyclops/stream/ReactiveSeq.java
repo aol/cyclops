@@ -3363,13 +3363,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     }
 
-    static <T> ReactiveSeq<T> deferedI(Supplier<? extends Iterable<? extends T>> lazy){
+    static <T> ReactiveSeq<T> deferredI(Supplier<? extends Iterable<? extends T>> lazy){
         return ReactiveSeq.of(1).flatMapI(i->lazy.get());
     }
-    static <T> ReactiveSeq<T> deferedP(Supplier<? extends Publisher<? extends T>> lazy){
+    static <T> ReactiveSeq<T> deferredP(Supplier<? extends Publisher<? extends T>> lazy){
         return ReactiveSeq.of(1).flatMapP(i->lazy.get());
     }
-    static <T> ReactiveSeq<T> defered(Supplier<? extends Stream<? extends T>> lazy){
+    static <T> ReactiveSeq<T> deferred(Supplier<? extends Stream<? extends T>> lazy){
         return ReactiveSeq.of(1).flatMap(i->lazy.get());
     }
     /**

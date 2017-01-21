@@ -17,7 +17,7 @@ public class GenerateOperator<T> implements Operator<T> {
         this.value = value;
 
     }
-    
+
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         boolean[] sent = {false};

@@ -90,7 +90,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).iterator();
     }
 
-    <X> ReactiveSeq<X> createSeq(Operator<X> stream) {
+    <X> ReactiveStreamX<X> createSeq(Operator<X> stream) {
         return new ReactiveStreamX<X>(stream,defaultErrorHandler,async);
     }
 
@@ -258,7 +258,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
 
-        return createSeq(new PublisherFlatMapOperator<>( source,fn));
+        ReactiveStreamX<R> res = createSeq(new PublisherFlatMapOperator<>(source, fn));
+        if(this.async == Type.SYNC){
+            //flatMapP could recieve a asyncrhonous Streams so we force onto the async path
+            return res.withAsync(Type.NO_BACKPRESSURE);
+        }
+        return res;
     }
 
 
@@ -284,8 +289,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             return queue.stream();
 
         }
-        //return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).spliterator(),false);
-        return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,true).spliterator(),false);
+    //    return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).spliterator(),false);
+       return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,true).spliterator(),false);
     }
 
     @Override
@@ -758,7 +763,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }else{
             right = new SpliteratorToOperator<U>(((Stream<U>)other).spliterator());
         }
-        return createSeq(new ZippingOperator<>(source,right,Tuple::tuple));
+        ReactiveStreamX<Tuple2<T, U>> res = createSeq(new ZippingOperator<>(source, right, Tuple::tuple));
+        if(this.async == Type.SYNC){
+            //zip could recieve an asyncrhonous Stream so we force onto the async path
+            return res.withAsync(Type.NO_BACKPRESSURE);
+        }
+        return res;
 
     }
 

@@ -614,6 +614,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void forEachWithError(){
+
         ReactiveSubscriber<String> pushable =  Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
 

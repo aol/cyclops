@@ -2,6 +2,10 @@ package cyclops;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.futurestream.EagerFutureStreamFunctions;
+import com.aol.cyclops2.types.futurestream.SimpleReactStream;
+import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
+import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.collections.*;
 import cyclops.collections.immutable.*;
@@ -12,14 +16,21 @@ import cyclops.control.Xor;
 import cyclops.function.Semigroup;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.Seq;
 import org.pcollections.PCollection;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -276,6 +287,122 @@ public interface Semigroups {
         return (a, b) -> a.appendS(b);
     }
 
+    static <T> Semigroup<ReactiveSeq<T>> firstNonEmptyReactiveSeq() {
+        return (a, b) -> a.onEmptySwitch(()->b);
+    }
+    static <T> Semigroup<ReactiveSeq<T>> ambReactiveSeq() {
+        return (a, b) -> {
+            ReactiveSubscriber<T> res1 = Spouts.reactiveSubscriber();
+            ReactiveSubscriber<T> res2 = Spouts.reactiveSubscriber();
+            AtomicInteger first = new AtomicInteger(0);
+            AtomicBoolean aComplete = new AtomicBoolean(false);
+            AtomicBoolean bComplete = new AtomicBoolean(false);
+            AtomicReference<T> valueA = new AtomicReference<T>(null);
+            AtomicReference<T> valueB = new AtomicReference<T>(null);
+            ReactiveSubscriber<T> sub1 = Spouts.reactiveSubscriber();
+            ReactiveSubscriber<T> sub2 = Spouts.reactiveSubscriber();
+            AtomicBoolean aActive = new AtomicBoolean(false);
+            AtomicBoolean bActive = new AtomicBoolean(false);
+            Supplier<ReactiveSeq<T>> lazy = ()-> {
+                a.subscribe(new Subscriber<T>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        sub1.onSubscribe(new Subscription() {
+                            @Override
+                            public void request(long n) {
+                                if (first.get()==1) {
+                                    s.request(n);
+
+                                }
+                            }
+
+                            @Override
+                            public void cancel() {
+                                if (aActive.get())
+                                    s.cancel();
+                            }
+                        });
+                        s.request(1);
+                    }
+
+                    @Override
+                    public void onNext(T t) {
+
+                        if (first.get()==1 || first.compareAndSet(0, 1)) {
+                            sub1.onNext(t);
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        if (first.get()==1)
+                            sub1.onError(t);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                        aComplete.set(true);
+                        if (first.get()==1 || bComplete.get()) {
+                            sub1.onComplete();
+                        }
+                    }
+                });
+                b.subscribe(new Subscriber<T>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        sub2.onSubscribe(new Subscription() {
+                            @Override
+                            public void request(long n) {
+                                if (first.get()==2) {
+                                    s.request(n);
+                                }
+
+                            }
+
+                            @Override
+                            public void cancel() {
+                                if (first.get()==2)
+                                    s.cancel();
+                            }
+                        });
+                        s.request(1);
+                    }
+
+                    @Override
+                    public void onNext(T t) {
+                        if (first.get()==2 || first.compareAndSet(0, 2)) {
+                            sub2.onNext(t);
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        if (first.get()==2)
+                            sub2.onError(t);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        bComplete.set(true);
+                        if (first.get()==2 || aComplete.get()) {
+                            sub2.onComplete();
+                        }
+                    }
+                });
+
+                return sub1.reactiveStream().onEmptySwitch(()->sub2.reactiveStream());
+            };
+            return ReactiveSeq.generate(lazy)
+                         .limit(1)
+                    .flatMap(i->i);
+
+
+        };
+    }
+
     /**
      * @return Combination of two Seq's : b is appended to a
      */
@@ -321,6 +448,10 @@ public interface Semigroups {
      */
     static <T> Semigroup<Future<T>> firstCompleteFuture() {
         return (a, b) -> Future.anyOf(a,b);
+    }
+
+    static <T> Semigroup<SimpleReactStream<T>> firstOfSimpleReact() {
+        return (a, b) -> EagerFutureStreamFunctions.firstOf(a,b);
     }
     /**
      * @return Combine two Future's by taking the first successful

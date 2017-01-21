@@ -34,7 +34,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
- * Represents a computation that can be defered (always), cached (later) or immediate(now).
+ * Represents a computation that can be deferred (always), cached (later) or immediate(now).
  * Supports tail recursion via map / flatMap. 
  * Computations are always Lazy even when performed against a Now instance. 
  * Heavily inspired by Cats Eval @link https://github.com/typelevel/cats/blob/master/core/src/main/scala/cats/Eval.scala

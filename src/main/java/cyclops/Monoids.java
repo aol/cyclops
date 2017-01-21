@@ -2,7 +2,10 @@ package cyclops;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.futurestream.EagerFutureStreamFunctions;
+import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 import cyclops.async.Future;
+import cyclops.async.SimpleReact;
 import cyclops.collections.*;
 import cyclops.collections.immutable.*;
 import cyclops.control.Ior;
@@ -248,6 +251,12 @@ public interface Monoids {
     static <T> Monoid<ReactiveSeq<T>> combineReactiveSeq() {
         return Monoid.of(ReactiveSeq.empty(), Semigroups.combineReactiveSeq());
     }
+    static <T> Monoid<ReactiveSeq<T>> firstNonEmptyReactiveSeq() {
+        return Monoid.of(ReactiveSeq.empty(), Semigroups.firstNonEmptyReactiveSeq());
+    }
+    static <T> Monoid<ReactiveSeq<T>> ambReactiveSeq() {
+        return Monoid.of(ReactiveSeq.empty(), Semigroups.ambReactiveSeq());
+    }
 
     /**
      * @return Combination of two Seq's : b is appended to a
@@ -293,6 +302,10 @@ public interface Monoids {
      */
     static <T> Monoid<Future<T>> firstCompleteFuture() {
        return Monoid.of(Future.future(), Semigroups.firstCompleteFuture());
+    }
+
+    static <T> Monoid<SimpleReactStream<T>> firstOfSimpleReact() {
+        return Monoid.of(new SimpleReact().of(),Semigroups.firstOfSimpleReact());
     }
     /**
      * @return Combine two Future's by taking the first successful

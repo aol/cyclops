@@ -8,6 +8,7 @@ import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.push.StreamSubscription;
 import cyclops.box.LazyImmutable;
 import cyclops.stream.Spouts;
+import lombok.Getter;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -31,7 +32,8 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
 
 
     volatile boolean isOpen;
-    private volatile Subscription s;
+    @Getter
+    private volatile Subscription subscription;
 
     private volatile CapturingOperator<T> action=  null;
    
@@ -44,7 +46,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     volatile boolean streamCreated=  false;
     CapturingOperator<T> getAction(){
         if(action==null)
-             action = new CapturingOperator<T>(s);
+             action = new CapturingOperator<T>(subscription);
         return action;
     }
 
@@ -65,7 +67,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
      */
     public ReactiveSeq<T> reactiveStream(){
         streamCreated = true;
-        if(s==null){
+        if(subscription==null){
             if(streamCreated)
                 throw new IllegalStateException("Stream has been created before a Subscription has been passed to this Subscriber. Subscribe with this Subscriber first, then extract the Stream.");
 
@@ -80,7 +82,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
         if(streamCreated)
               throw new IllegalStateException("Subscription passed after downstream Stream created. Subscribe with this Subscriber first, then extract the Stream");
 
-        this.s = s;
+        this.subscription = s;
 
     }
 

@@ -58,8 +58,8 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
             public void forEachRemaining(Consumer<? super T> action) {
                 if(async)
                     Iterator.super.forEachRemaining(action);
-
-                 source.subscribeAll(action,defaultErrorHandler,()->{});
+                else
+                      source.subscribeAll(action,defaultErrorHandler,()->{});
             }
 
 
