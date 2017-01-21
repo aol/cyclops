@@ -25,7 +25,7 @@ public class IteratePredicateOperator<T> implements Operator<T> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        Object[] current = {in};
+        Object[] current = {null};
         Consumer next = onNext;
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n-> {
@@ -66,8 +66,15 @@ public class IteratePredicateOperator<T> implements Operator<T> {
                     if(!isOpen)
                         break;
                     try {
-                        System.out.println("pusing value all path");
-                        next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
+                        current[0] = (current[0] != null ? fn.apply((T) current[0]) : in);
+                        if(pred.test((T)current[0])) {
+                            next.accept(current[0]);
+                        }
+                        else{
+                            cancel();
+                            onComplete.run();
+                            return;
+                        }
                     }catch(Throwable t){
                         onError.accept(t);
                     }
@@ -85,7 +92,7 @@ public class IteratePredicateOperator<T> implements Operator<T> {
 
     @Override
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        T current = in;
+        T current = null;
         for(;;){
             try {
                 current = (current != null ? fn.apply(current) : in);

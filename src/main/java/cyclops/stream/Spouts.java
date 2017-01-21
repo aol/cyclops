@@ -145,7 +145,7 @@ public interface Spouts {
         return new ReactiveStreamX<R>(new ZippingLatestOperator<T1,T2,R>(op1,op2,fn), ReactiveStreamX.Type.BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> mergeLatest(Publisher<? extends Publisher<T>> publisher){
-        return mergeLatest((Publisher[])Spouts.from(publisher).toArray());
+        return mergeLatest((Publisher[])ReactiveSeq.fromPublisher(publisher).toArray(s->new Publisher[s]));
     }
     static <T> ReactiveSeq<T> mergeLatest(Publisher<T>... array){
         Operator<T>[] op = new Operator[array.length];
