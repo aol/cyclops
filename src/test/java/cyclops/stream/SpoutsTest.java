@@ -6,7 +6,6 @@ import cyclops.Monoids;
 import cyclops.Semigroups;
 import cyclops.collections.ListX;
 import org.junit.Test;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 
@@ -70,11 +69,11 @@ public class SpoutsTest {
     }
     @Test
     public void ambMonoid(){
-        assertThat(Monoids.<Integer>ambReactiveSeq().reduce(Stream.of((Spouts.of(1,2,3)),Spouts.of(100,200,300))).toListX(),equalTo(ListX.of(1,2,3)));
+        assertThat(Monoids.<Integer>amb().reduce(Stream.of((Spouts.of(1,2,3)),Spouts.of(100,200,300))).toListX(),equalTo(ListX.of(1,2,3)));
 
-        //    assertThat(Monoids.<Integer>ambReactiveSeq()
+        //    assertThat(Monoids.<Integer>amb()
        //         .apply(nextAsync(),Spouts.of(100,200,300)).toListX(),equalTo(ListX.of(100,200,300)));
-     //   assertThat(Monoids.<Integer>ambReactiveSeq().reduce(Stream.of((nextAsync()),Spouts.of(100,200,300))).toListX(),equalTo(ListX.of(100,200,300)));
+     //   assertThat(Monoids.<Integer>amb().reduce(Stream.of((nextAsync()),Spouts.of(100,200,300))).toListX(),equalTo(ListX.of(100,200,300)));
        // assertThat(Spouts.amb(ListX.of(nextAsync(),Spouts.of(100,200,300))).toListX(),equalTo(ListX.of(100,200,300)));
     }
 
@@ -89,16 +88,16 @@ public class SpoutsTest {
     public void ambSemigroupTest(){
 
         System.out.println(
-    Semigroups.<Integer>ambReactiveSeq()
-        .apply(Spouts.of(100,200,300),nextAsync()).collect(Collectors.toList()));
+    Semigroups.<Integer>amb()
+        .apply(Spouts.of(100,200,300),nextAsyncRS()).collect(Collectors.toList()));
 /**
         ReactiveSeq.fromPublisher(Flux.amb(nextAsync(),nextAsyncRS()))
                 .forEach(System.out::println);
 **/
  /**
-        assertThat(Semigroups.<Integer>ambReactiveSeq()
+        assertThat(Semigroups.<Integer>amb()
                 .apply(Spouts.of(100,200,300),nextAsyncRS()).toListX(),equalTo(ListX.of(100,200,300)));
-        assertThat(Semigroups.<Integer>ambReactiveSeq()
+        assertThat(Semigroups.<Integer>amb()
                 .apply(nextAsyncRS(),Spouts.of(100,200,300)).toListX(),equalTo(ListX.of(100,200,300)));
 **/
     }

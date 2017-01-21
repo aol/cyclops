@@ -20,6 +20,7 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.Seq;
 import org.pcollections.PCollection;
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -291,19 +292,18 @@ public interface Semigroups {
     static <T> Semigroup<ReactiveSeq<T>> firstNonEmptyReactiveSeq() {
         return (a, b) -> a.onEmptySwitch(()->b);
     }
-    static <T> Semigroup<ReactiveSeq<T>> ambReactiveSeq() {
+
+    static <T> Semigroup<Publisher<T>> amb() {
         return (a, b) -> {
             ReactiveSubscriber<T> res = Spouts.reactiveSubscriber();
 
             AtomicInteger first = new AtomicInteger(0);
             AtomicBoolean aComplete = new AtomicBoolean(false);
             AtomicBoolean bComplete = new AtomicBoolean(false);
-            AtomicReference<T> valueA = new AtomicReference<T>(null);
-            AtomicReference<T> valueB = new AtomicReference<T>(null);
+
             ReactiveSubscriber<T> sub = Spouts.reactiveSubscriber();
 
-            AtomicBoolean aActive = new AtomicBoolean(false);
-            AtomicBoolean bActive = new AtomicBoolean(false);
+
             Subscription subA[] ={null};
             Subscription subB[] ={null};
             Subscription winner[] ={null};
@@ -329,7 +329,8 @@ public interface Semigroups {
 
                     @Override
                     public void onError(Throwable t) {
-                        if (first.get()==1)
+                        aComplete.set(true);
+                        if (won || bComplete.get())
                             sub.onError(t);
                     }
 
@@ -337,7 +338,7 @@ public interface Semigroups {
                     public void onComplete() {
 
                         aComplete.set(true);
-                        if (first.get()==1 || bComplete.get()) {
+                        if (won || bComplete.get()) {
                             sub.onComplete();
                         }
                     }
@@ -364,14 +365,15 @@ public interface Semigroups {
 
                     @Override
                     public void onError(Throwable t) {
-                        if (first.get()==2)
+                        bComplete.set(true);
+                        if (won || aComplete.get())
                             sub.onError(t);
                     }
 
                     @Override
                     public void onComplete() {
                         bComplete.set(true);
-                        if (first.get()==2 || aComplete.get()) {
+                        if (won || aComplete.get()) {
                             sub.onComplete();
                         }
                     }
@@ -379,9 +381,7 @@ public interface Semigroups {
 
                 sub.onSubscribe(new StreamSubscription() {
                     int count = 0;
-                    {
-                      //  request(1l);
-                    }
+
                     @Override
                     public void request(long n) {
                         if(count==0) {

@@ -2,16 +2,11 @@ package cyclops.stream;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
-import com.aol.cyclops2.internal.stream.StreamX;
-import com.aol.cyclops2.internal.stream.spliterators.IterateSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.UnfoldSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.Monoids;
-import cyclops.Streams;
-import cyclops.async.QueueFactories;
-import cyclops.async.QueueFactory;
 import cyclops.collections.ListX;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.Pure;
@@ -19,17 +14,13 @@ import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
-import lombok.experimental.UtilityClass;
-import org.agrona.TimerWheel;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.util.Optional;
-import java.util.Queue;
 import java.util.Spliterator;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -118,11 +109,11 @@ public interface Spouts {
     }
     static <T> ReactiveSeq<T> amb(ListX<? extends ReactiveSeq<? extends T>> list){
         ListX<ReactiveSeq<T>> narrowed = (ListX<ReactiveSeq<T>>)list;
-        return narrowed.reduce(Monoids.ambReactiveSeq());
+        return narrowed.reduce(Monoids.amb());
     }
     static <T> ReactiveSeq<T> amb(ReactiveSeq<? extends T>... array){
         ReactiveStreamX<ReactiveSeq<T>> narrowed = new ReactiveStreamX<ReactiveSeq<T>>(new ArrayOfValuesOperator<ReactiveSeq<T>>((ReactiveSeq<T>[])array));
-        return narrowed.reduce(Monoids.ambReactiveSeq());
+        return narrowed.reduce(Monoids.amb());
     }
     static  ReactiveSeq<Integer> interval(String cron,ScheduledExecutorService exec) {
         ReactiveSubscriber<Integer> sub = reactiveSubscriber();

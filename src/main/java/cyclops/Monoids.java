@@ -2,7 +2,6 @@ package cyclops;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.futurestream.EagerFutureStreamFunctions;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 import cyclops.async.Future;
 import cyclops.async.SimpleReact;
@@ -16,7 +15,9 @@ import cyclops.function.Monoid;
 import cyclops.function.Semigroup;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.Seq;
+import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -254,8 +255,8 @@ public interface Monoids {
     static <T> Monoid<ReactiveSeq<T>> firstNonEmptyReactiveSeq() {
         return Monoid.of(ReactiveSeq.empty(), Semigroups.firstNonEmptyReactiveSeq());
     }
-    static <T> Monoid<ReactiveSeq<T>> ambReactiveSeq() {
-        return Monoid.of(ReactiveSeq.empty(), Semigroups.ambReactiveSeq());
+    static <T> Monoid<Publisher<T>> amb() {
+        return Monoid.of(Spouts.empty(), Semigroups.amb());
     }
 
     /**
