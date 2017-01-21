@@ -16,12 +16,14 @@ import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -108,12 +110,118 @@ public interface Spouts {
 
     }
     static <T> ReactiveSeq<T> amb(ListX<? extends ReactiveSeq<? extends T>> list){
-        ListX<ReactiveSeq<T>> narrowed = (ListX<ReactiveSeq<T>>)list;
-        return narrowed.reduce(Monoids.amb());
+        return amb(list.toArray(new ReactiveSeq[0]));
     }
     static <T> ReactiveSeq<T> amb(ReactiveSeq<? extends T>... array){
-        ReactiveStreamX<ReactiveSeq<T>> narrowed = new ReactiveStreamX<ReactiveSeq<T>>(new ArrayOfValuesOperator<ReactiveSeq<T>>((ReactiveSeq<T>[])array));
-        return narrowed.reduce(Monoids.amb());
+        ReactiveSubscriber<T> res = Spouts.reactiveSubscriber();
+
+        AtomicInteger first = new AtomicInteger(0);
+        AtomicBoolean[] complete = new AtomicBoolean[array.length];
+        Subscription[] subs = new Subscription[array.length];
+        for(int i=0;i<array.length;i++) {
+            complete[i].set(false);
+        }
+        Subscription winner[] ={null};
+
+        ReactiveSubscriber<T> sub = Spouts.reactiveSubscriber();
+
+
+        for(int i=0;i<array.length;i++){
+            ReactiveSeq<T> next = (ReactiveSeq<T>)array[i];
+            final int index= i;
+            next.subscribe(new Subscriber<T>() {
+                boolean won = false;
+
+                @Override
+                public void onSubscribe(Subscription s) {
+                    subs[index] = s;
+
+                }
+
+                @Override
+                public void onNext(T t) {
+                    if (won) {
+                        sub.onNext(t);
+                    } else if (first.compareAndSet(0, index)) {
+                        winner[0] = subs[index];
+                        sub.onNext(t);
+                        won = true;
+                    }
+
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    complete[index].set(true);
+                    if (won || othersComplete(index))
+                        sub.onError(t);
+                }
+
+                @Override
+                public void onComplete() {
+
+                    complete[index].set(true);
+                    if (won || othersComplete(index)) {
+                        sub.onComplete();
+                    }
+                }
+
+                boolean othersComplete(int avoid){
+                    boolean allComplete = true;
+                    for(int i=0;i<array.length;i++) {
+                        if(i!=avoid) {
+                            allComplete = allComplete && complete[i].get();
+                            if(!allComplete)
+                                return false;
+                        }
+                    }
+                    return allComplete;
+                }
+            });
+        }
+
+
+        sub.onSubscribe(new StreamSubscription() {
+            int count = 0;
+
+            @Override
+            public void request(long n) {
+                if(count==0) {
+                    for(int i=0;i<array.length;i++) {
+                        subs[i].request(1l);
+                    }
+
+
+                    if(n-1>0)
+                        super.request(n-1);
+                    if(first.get()!=0){
+                        count=2;
+                    }else
+                        count=1;
+                }else if(count<2){
+                    if(first.get()!=0){
+                        count=2;
+                    }
+                    super.request(n);
+                }
+                else if(count==2){
+                    if(requested.get()>0)
+                        winner[0].request(requested.get());
+                    winner[0].request(n);
+                    count=2;
+                }
+                else{
+                    winner[0].request(n);
+                }
+            }
+
+            @Override
+            public void cancel() {
+                winner[0].cancel();
+            }
+        });
+        return sub.reactiveStream();
+
     }
     static  ReactiveSeq<Integer> interval(String cron,ScheduledExecutorService exec) {
         ReactiveSubscriber<Integer> sub = reactiveSubscriber();

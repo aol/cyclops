@@ -292,7 +292,9 @@ public interface Semigroups {
     static <T> Semigroup<ReactiveSeq<T>> firstNonEmptyReactiveSeq() {
         return (a, b) -> a.onEmptySwitch(()->b);
     }
-
+    static <T> Semigroup<ReactiveSeq<T>> ambReactiveSeq() {
+        return (a,b)->(ReactiveSeq<T>)Semigroups.<T>amb().apply(a,b);
+    }
     static <T> Semigroup<Publisher<T>> amb() {
         return (a, b) -> {
             ReactiveSubscriber<T> res = Spouts.reactiveSubscriber();

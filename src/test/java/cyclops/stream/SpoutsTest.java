@@ -69,7 +69,8 @@ public class SpoutsTest {
     }
     @Test
     public void ambMonoid(){
-        assertThat(Monoids.<Integer>amb().reduce(Stream.of((Spouts.of(1,2,3)),Spouts.of(100,200,300))).toListX(),equalTo(ListX.of(1,2,3)));
+        assertThat(Monoids.<Integer>ambReactiveSeq().reduce(Stream.of((Spouts.of(1,2,3)),Spouts.of(100,200,300))).toListX(),equalTo(ListX.of(1,2,3)));
+
 
         //    assertThat(Monoids.<Integer>amb()
        //         .apply(nextAsync(),Spouts.of(100,200,300)).toListX(),equalTo(ListX.of(100,200,300)));
@@ -87,9 +88,9 @@ public class SpoutsTest {
     @Test
     public void ambSemigroupTest(){
 
-        System.out.println(
+        System.out.println(ReactiveSeq.fromPublisher(
     Semigroups.<Integer>amb()
-        .apply(Spouts.of(100,200,300),nextAsyncRS()).collect(Collectors.toList()));
+        .apply(Spouts.of(100,200,300),nextAsyncRS())).collect(Collectors.toList()));
 /**
         ReactiveSeq.fromPublisher(Flux.amb(nextAsync(),nextAsyncRS()))
                 .forEach(System.out::println);

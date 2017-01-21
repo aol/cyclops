@@ -258,6 +258,9 @@ public interface Monoids {
     static <T> Monoid<Publisher<T>> amb() {
         return Monoid.of(Spouts.empty(), Semigroups.amb());
     }
+    static <T> Monoid<ReactiveSeq<T>> ambReactiveSeq() {
+        return Monoid.of(Spouts.empty(), Semigroups.ambReactiveSeq());
+    }
 
     /**
      * @return Combination of two Seq's : b is appended to a

@@ -32,7 +32,17 @@ public class CapturingOperator<T> implements Operator<T> {
 
     public CapturingOperator(){
         this.subscription = new StreamSubscription();
-        this.s=null;
+        this.s=new Subscription() {
+            @Override
+            public void request(long n) {
+
+            }
+
+            @Override
+            public void cancel() {
+
+            }
+        };
     }
 
     StreamSubscription subscription = new StreamSubscription(){
