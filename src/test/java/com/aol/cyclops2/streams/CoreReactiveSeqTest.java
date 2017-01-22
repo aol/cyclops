@@ -25,6 +25,8 @@ import cyclops.Streams;
 import cyclops.async.QueueFactories;
 import cyclops.async.Topic;
 import cyclops.collections.ListX;
+import cyclops.stream.Spouts;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -52,7 +54,20 @@ public  class CoreReactiveSeqTest {
 		empty = of();
 		nonEmpty = of(1);
 	}
-
+    @Test
+    public void enqueued(){
+        assertThat(ReactiveSeq.enqueued(sub->{
+            sub.onNext(1);
+            sub.onNext(2);
+            sub.onComplete();
+        }).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
+    }
+    @Test
+    public void iterable(){
+        assertThat(ReactiveSeq.iterable(sub->{
+            Flux.just(1,2).subscribe(sub);
+        }).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
+    }
 	@Test
     public void publishToAndMerge(){
 	    cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)

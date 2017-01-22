@@ -142,11 +142,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
      * reactive-streams susbscription can be used to determine demand (or ignored and data passed
-     * via onNext, onError) excess supply is enqueued
+     * via onNext, onError) excess supply over demand is enqueued
      *
      * <pre>
      *     {@code
-     *      ReactiveSeq<Integer> input = ReactiveSeq.queueBasedSubscriber(subscriber->{
+     *      ReactiveSeq<Integer> input = ReactiveSeq.enqueued(subscriber->{
      *                                                          listener.onEvent(subscriber::onNext);
      *                                                          listener.onError(susbscriber::onError);
      *                                                          closeListener.onEvent(subscriber::onClose);
@@ -161,17 +161,20 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     static <T> ReactiveSeq<T> enqueued(Consumer<? super Subscriber<T>> sub){
         final Counter c = new Counter();
         c.active.set(1);
+
         QueueBasedSubscriber<T> s = QueueBasedSubscriber.subscriber(c,1);
         sub.accept(s);
+        s.close();
         return s.reactiveSeq();
     }
-    static <T> ReactiveSeq<T> enqueued(Consumer<? super Subscriber<T>>... subs){
+    static <T> ReactiveSeq<T> enqueuedAll(Consumer<? super Subscriber<T>>... subs){
         final Counter c = new Counter();
         c.active.set(subs.length);
         QueueBasedSubscriber<T> s = QueueBasedSubscriber.subscriber(c,subs.length);
 
         for(Consumer<? super Subscriber<T>> next : subs)
             next.accept(s);
+        s.close();
         return s.reactiveSeq();
     }
     static <T> ReactiveSeq<T> enqueued(Queue<T> q,Consumer<? super Subscriber<T>> sub){
