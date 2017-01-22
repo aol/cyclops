@@ -4480,6 +4480,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<T> merge(Adapter<T>... adapters){
         return mergeP(ListX.of(adapters).map(a->a.stream()));
     }
+    default <R1,R2,R3> ReactiveSeq<R3> fanOutZipIn(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R1>> path1,
+                                                    Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R2>> path2,
+                                                     BiFunction<? super R1, ? super R2, ? extends R3> zipFn){
+        val d = duplicate();
+        val res = d.map1(path1).map2(path2);
+
+        return res.v1.zipS(res.v2,zipFn);
+
+    }
     default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path1,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path2){
         Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate();
@@ -4496,7 +4505,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate();
         val res = d.map1(path1).map2(path2).map3(path3);
 
-        return res.v1.mergeP(ListX.of(res.v2,res.v2));
+        return res.v1.mergeP(ListX.of(res.v2,res.v3));
+
+    }
+    default <R1,R2,R3,R4> ReactiveSeq<R4> fanOutZipIn(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R1>> path1,
+                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R2>> path2,
+                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R3>> path3,
+                                            Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn){
+
+        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate();
+        val res = d.map1(path1).map2(path2).map3(path3);
+
+        return res.v1.zip3(res.v2,res.v3,zipFn);
 
     }
     default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path1,
@@ -4508,6 +4528,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
 
         return res.v1.mergeP(ListX.of(res.v2,res.v2,res.v4));
+
+    }
+    default <R1,R2,R3,R4,R5> ReactiveSeq<R5> fanOutZipIn(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R1>> path1,
+                                                    Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R2>> path2,
+                                                    Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R3>> path3,
+                                                    Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R4>> path4,
+                                                    Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn){
+
+        val d = quadruplicate();
+        val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
+
+        return res.v1.zip4(res.v2,res.v3,res.v4,zipFn);
 
     }
     default Topic<T> broadcast(){
