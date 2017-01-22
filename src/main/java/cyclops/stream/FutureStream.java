@@ -3,17 +3,7 @@ package cyclops.stream;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +29,7 @@ import com.aol.cyclops2.types.futurestream.*;
 import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import cyclops.*;
 import cyclops.async.*;
+import cyclops.async.Queue;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Trampoline;
 import cyclops.function.Lambda;
@@ -1943,6 +1934,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                           fromStream(duplicated.v1), fromStream(duplicated.v2));
     }
 
+
     /**
      * Partition a reactiveStream in two given a predicate. Two LazyFutureStreams are
      * returned but Seq interface specifies return type is Seq. See partitionFutureStream to
@@ -2667,6 +2659,30 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return Streams.duplicate(stream())
                 .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream);
     }
+    /*
+     * Duplicate a FutureStream into two equivalent Streams.
+     * Two LazyFutureStreams are
+     * returned but Seq interface specifies return type is Seq. See duplicateFutureStream to
+     * see an alternative which returns FutureStream
+     *
+     * <pre>
+     * {@code
+     *
+     * // tuple((1, 2, 3), (1, 2, 3))
+     *
+     * FutureStream.of(1, 2, 3).duplicate()
+     * }
+     * </pre>
+     *
+     * @see FutureStream#copy(int)
+     *
+     * @see #duplicate(Stream)
+     */
+    @Override
+    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicate(Supplier<List<U>> bufferFactory) {
+        return Streams.duplicate(stream(),bufferFactory)
+                .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream);
+    }
 
     /*
      * Triplicate the data in this Stream. To triplicate into 3 LazyFutureStreams use actOnFutures#triplicate
@@ -2682,12 +2698,36 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
+     * Triplicate the data in this Stream. To triplicate into 3 LazyFutureStreams use actOnFutures#triplicate
+     *
+     * @see cyclops2.reactiveStream.ReactiveSeq#triplicate()
+     */
+    @Override
+    default Tuple3<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> triplicate(Supplier<Deque<U>> bufferFactory) {
+        return Streams.triplicate(stream(),bufferFactory)
+                .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream)
+                .map3(ReactiveSeq::oneShotStream);
+
+    }
+
+    /*
      * Quadruplicate the data in this Stream. To quadruplicate into 3 LazyFutureStreams use actOnFutures#quadruplicate
      * @see cyclops2.reactiveStream.ReactiveSeq#quadruplicate()
      */
     @Override
     default Tuple4<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> quadruplicate() {
         return Streams.quadruplicate(stream())
+                .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream)
+                .map3(ReactiveSeq::oneShotStream).map4(ReactiveSeq::oneShotStream);
+
+    }
+    /*
+     * Quadruplicate the data in this Stream. To quadruplicate into 3 LazyFutureStreams use actOnFutures#quadruplicate
+     * @see cyclops2.reactiveStream.ReactiveSeq#quadruplicate()
+     */
+    @Override
+    default Tuple4<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> quadruplicate(Supplier<Deque<U>> bufferFactory) {
+        return Streams.quadruplicate(stream(),bufferFactory)
                 .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream)
                 .map3(ReactiveSeq::oneShotStream).map4(ReactiveSeq::oneShotStream);
 

@@ -9,6 +9,7 @@ import cyclops.async.Topic;
 import cyclops.collections.ListX;
 import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
@@ -123,6 +124,24 @@ public class SpoutsTest {
                 .peek(System.out::println)
                 .merge(queue)
                 .toListX(), Matchers.equalTo(ListX.of(1,1,2,2,3,3)));
+    }
+    @Test
+    public void duplicateTest(){
+        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> tp = Spouts.of(1, 2, 3, 4).duplicate();
+
+     //   tp.v1.printOut();
+     //  tp.v2.printOut();
+        System.out.println("Merge!");
+     //   tp.v1.mergeP(tp.v2).printOut();
+
+        Spouts.of("a","b","c").mergeP(ReactiveSeq.of("bb","cc")).printOut();
+    }
+    @Test
+    public void fanOut2(){
+        assertThat(Spouts.of(1,2,3,4)
+                .fanOut(s1->s1.filter(i->i%2==0).map(i->i*2),
+                        s2->s2.filter(i->i%2!=0).map(i->i*100))
+                .toListX(), Matchers.equalTo(ListX.of(4,100,8,300)));
     }
 
     @Test

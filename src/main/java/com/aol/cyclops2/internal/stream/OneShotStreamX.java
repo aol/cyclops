@@ -9,9 +9,12 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
+import java.util.Deque;
+import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 
@@ -47,6 +50,12 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
         return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy())))
                 .map2(s -> createSeq(s, reversible.map(r -> r.copy())));
     }
+    @Override
+    public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate(Supplier<List<T>> bufferFactory) {
+        final Tuple2<Stream<T>, Stream<T>> tuple = Streams.duplicate(unwrapStream(),bufferFactory);
+        return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map2(s -> createSeq(s, reversible.map(r -> r.copy())));
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -58,11 +67,30 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
                 .map3(s -> createSeq(s, reversible.map(r -> r.copy())));
 
     }
+    @Override
+    @SuppressWarnings("unchecked")
+    public final Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate(Supplier<Deque<T>> bufferFactory) {
+
+        final Tuple3<Stream<T>, Stream<T>, Stream<T>> tuple = Streams.triplicate(unwrapStream(),bufferFactory);
+        return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map2(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map3(s -> createSeq(s, reversible.map(r -> r.copy())));
+
+    }
 
     @Override
     @SuppressWarnings("unchecked")
     public final Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate() {
         final Tuple4<Stream<T>, Stream<T>, Stream<T>, Stream<T>> tuple = Streams.quadruplicate(unwrapStream());
+        return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map2(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map3(s -> createSeq(s, reversible.map(r -> r.copy())))
+                .map4(s -> createSeq(s, reversible.map(r -> r.copy())));
+    }
+    @Override
+    @SuppressWarnings("unchecked")
+    public final Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate(Supplier<Deque<T>> bufferFactory) {
+        final Tuple4<Stream<T>, Stream<T>, Stream<T>, Stream<T>> tuple = Streams.quadruplicate(unwrapStream(),bufferFactory);
         return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy())))
                 .map2(s -> createSeq(s, reversible.map(r -> r.copy())))
                 .map3(s -> createSeq(s, reversible.map(r -> r.copy())))

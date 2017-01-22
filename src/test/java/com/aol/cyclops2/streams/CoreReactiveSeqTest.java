@@ -25,9 +25,12 @@ import cyclops.Streams;
 import cyclops.async.QueueFactories;
 import cyclops.async.Topic;
 import cyclops.collections.ListX;
+import cyclops.monads.Witness;
 import cyclops.stream.Spouts;
+import lombok.val;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -108,6 +111,217 @@ public  class CoreReactiveSeqTest {
                 .toListX(),equalTo(ListX.of(104,308)));
     }
     @Test
+    public void mergePTest(){
+        ListX<Integer> list = ReactiveSeq.of(3,6,9).mergeP(ReactiveSeq.of(2,4,8),ReactiveSeq.of(1,5,7)).toListX();
+        assertThat(list,hasItems(1,2,3,4,5,6,7,8,9));
+        assertThat(list.size(),equalTo(9));
+    }
+    @Test
+    public void duplicateTest(){
+        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> tuples = ReactiveSeq.of(1, 2, 3, 4, 5, 6, 7, 8, 9).duplicate();
+
+        Tuple2<Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
+                .map2(s -> s.iterator());
+
+        List<Integer> result = new ArrayList<>();
+        while(its.v1.hasNext() || its.v2.hasNext() ){
+            if(its.v1.hasNext()){
+                result.add(its.v1.next());
+            }
+            if(its.v2.hasNext()){
+                result.add(its.v2.next());
+            }
+
+        }
+
+        System.out.println(result);
+
+        assertThat(result,hasItems(1,2,3,4,5,6,7,8,9));
+        assertThat(result.size(),equalTo(18));
+    }
+    @Test
+    public void duplicatePropertiesTest(){
+        for(int i=0;i<1000;i++) {
+            Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> tuples = ReactiveSeq.range(0,i).duplicate();
+
+            Tuple2<Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
+                    .map2(s -> s.iterator());
+
+            List<Integer> result = new ArrayList<>();
+            while (its.v1.hasNext() || its.v2.hasNext()) {
+                if (its.v1.hasNext()) {
+                    result.add(its.v1.next());
+                }
+                if (its.v2.hasNext()) {
+                    result.add(its.v2.next());
+                }
+
+            }
+
+            System.out.println(result);
+            for(int x=0;x<i;x++) {
+                assertThat(result, hasItem(x));
+
+            }
+            assertThat(result.size(), equalTo(i*2));
+        }
+    }
+    @Test
+    public void bufferingCopierTest(){
+        for(int i=0;i<1000;i++) {
+            for(int k=1;k<5;k++) {
+                System.out.println (" Length : " + i + " - copies " + k);
+                ListX<Iterable<Integer>> list = Streams.toBufferingCopier(ListX.range(0, i), k);
+                ListX<Integer> result = list.map(it -> ReactiveSeq.fromIterable(it))
+                        .flatMapS(s -> s);
+
+                for (int x = 0; x < i; x++) {
+                    assertThat("Failed on " + i + " and " + k,result, hasItem(x));
+
+                }
+                assertThat("Failed on " + i + " and " + k,result.size(), equalTo(i * k));
+            }
+
+        }
+    }
+    @Test
+    public void bufferingCopierTriplicateCompare(){
+
+
+        ListX<Iterable<Integer>> list = Streams.toBufferingCopier(ReactiveSeq.of(0, 1), 3);
+        Tuple3<Iterator<Integer>, Iterator<Integer>, Iterator<Integer>> its = Tuple.tuple(list.get(0).iterator(),
+                list.get(1).iterator(),
+                list.get(2).iterator());
+
+        List<Integer> result = new ArrayList<>();
+        while (its.v1.hasNext() || its.v2.hasNext() || its.v3.hasNext()) {
+            if (its.v1.hasNext()) {
+                result.add(its.v1.next() +100);
+            }
+            if (its.v2.hasNext()) {
+                result.add(its.v2.next()+200);
+            }
+            if (its.v3.hasNext()) {
+                result.add(its.v3.next()+300);
+            }
+        }
+
+        System.out.println(result);
+
+        assertThat(result.size(), equalTo(2 * 3));
+
+
+
+    }
+    @Test
+    public void triplicateBug(){
+        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> tuples = ReactiveSeq.of(0,1).triplicate();
+
+        Tuple3<Iterator<Integer>, Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
+                .map2(s -> s.iterator())
+                .map3(s -> s.iterator());
+
+        List<Integer> result = new ArrayList<>();
+        while(its.v1.hasNext() || its.v2.hasNext() || its.v3.hasNext()){
+            if(its.v1.hasNext()){
+                result.add(its.v1.next());
+            }
+            if(its.v2.hasNext()){
+                result.add(its.v2.next());
+            }
+            if(its.v3.hasNext()){
+                result.add(its.v3.next());
+            }
+        }
+
+        System.out.println(result);
+        for(int x=0;x<2;x++) {
+            assertThat(result, hasItem(x));
+
+        }
+        assertThat(result.size(), equalTo(2*3));
+    }
+    @Test
+    public void triplicatePropertiesTest(){
+        for(int i=0;i<1000;i++) {
+            Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> tuples = ReactiveSeq.range(0,i).triplicate();
+
+            Tuple3<Iterator<Integer>, Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
+                    .map2(s -> s.iterator())
+                    .map3(s -> s.iterator());
+
+            List<Integer> result = new ArrayList<>();
+            while(its.v1.hasNext() || its.v2.hasNext() || its.v3.hasNext()){
+                if(its.v1.hasNext()){
+                    result.add(its.v1.next());
+                }
+                if(its.v2.hasNext()){
+                    result.add(its.v2.next());
+                }
+                if(its.v3.hasNext()){
+                    result.add(its.v3.next());
+                }
+            }
+
+            System.out.println(result);
+            for(int x=0;x<i;x++) {
+                assertThat(result, hasItem(x));
+
+            }
+            assertThat(result.size(), equalTo(i*3));
+        }
+    }
+    @Test
+    public void triplicateTest(){
+        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> tuples = ReactiveSeq.of(1, 2, 3, 4, 5, 6, 7, 8, 9).triplicate();
+
+        Tuple3<Iterator<Integer>, Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
+                .map2(s -> s.iterator())
+                .map3(s -> s.iterator());
+
+        List<Integer> result = new ArrayList<>();
+        while(its.v1.hasNext() || its.v2.hasNext() || its.v3.hasNext()){
+            if(its.v1.hasNext()){
+                result.add(its.v1.next());
+            }
+            if(its.v2.hasNext()){
+                result.add(its.v2.next());
+            }
+            if(its.v3.hasNext()){
+                result.add(its.v3.next());
+            }
+        }
+
+        System.out.println(result);
+
+        assertThat(result,hasItems(1,2,3,4,5,6,7,8,9));
+        assertThat(result.size(),equalTo(27));
+    }
+    @Test
+    public void triplicateFanOut(){
+       /** val triple = ReactiveSeq.of(1,2,3,4,5,6,7,8,9).triplicate();
+
+        triple.v1.printOut();
+        triple.v2.printOut();
+        triple.v3.printOut();
+**/
+
+
+        assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9)
+                .fanOut(s1->s1.peek(System.out::println).filter(i->i%3==0).map(i->i),
+                        s2->s2.filter(i->i%3==1).map(i->i),
+                        s3->s3.filter(i->i%3==2).map(i->i))
+                .toListX(),equalTo(ListX.of(6, 100, 400, 2000,12, 400, 700, 18, 700)));
+
+        /**
+        assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9)
+                .fanOut(s1->s1.peek(System.out::println).filter(i->i%3==0).map(i->i*2),
+                        s2->s2.filter(i->i%3==1).map(i->i*100),
+                        s3->s3.filter(i->i%3==2).map(i->i*1000))
+                .toListX(),equalTo(ListX.of(6, 100, 400, 2000,12, 400, 700, 18, 700)));
+         **/
+    }
+    @Test
     public void fanOut(){
 
         assertThat(ReactiveSeq.of(1,2,3,4)
@@ -118,13 +332,13 @@ public  class CoreReactiveSeqTest {
                 .fanOut(s1->s1.filter(i->i%3==0).map(i->i*2),
                         s2->s2.filter(i->i%3==1).map(i->i*100),
                         s3->s3.filter(i->i%3==2).map(i->i*1000))
-                .toListX(),equalTo(ListX.of(6, 100, 400, 12, 400, 700, 18, 700)));
+                .toListX(),equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
         assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10,11,12)
                              .fanOut(s1->s1.filter(i->i%4==0).map(i->i*2),
                                      s2->s2.filter(i->i%4==1).map(i->i*100),
                                      s3->s3.filter(i->i%4==2).map(i->i*1000),
                                      s4->s4.filter(i->i%4==3).map(i->i*10000))
-                .toListX(),equalTo(ListX.of(8, 100, 500, 30000, 16, 500, 900, 70000, 24, 900, 110000)));
+                .toListX(),equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
     }
     @Test
     public void iteratePred(){

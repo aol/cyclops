@@ -19,11 +19,11 @@ public class MultiCastOperator<T> extends BaseOperator<T,T> {
 
     }
 
-    ListX<Consumer<? super T>> registeredOnNext;
-    ListX<Consumer<? super Throwable>> registeredOnError;
-    ListX<Runnable> registeredOnComplete;
+    ListX<Consumer<? super T>> registeredOnNext = ListX.empty();
+    ListX<Consumer<? super Throwable>> registeredOnError= ListX.empty();
+    ListX<Runnable> registeredOnComplete= ListX.empty();
     boolean registered = false;
-
+    StreamSubscription result;
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
@@ -31,14 +31,15 @@ public class MultiCastOperator<T> extends BaseOperator<T,T> {
         registeredOnError.add(onError);
         registeredOnComplete.add(onComplete);
         if(!registered) {
-            return source.subscribe(e -> {
+            registered = true;
+            result = source.subscribe(e -> {
 
                         registeredOnNext.forEach(n->n.accept(e));
 
                     }
                     , e->registeredOnError.forEach(t->t.accept(e)), ()->registeredOnComplete.forEach(n->n.run()));
         }
-        return null;
+        return result;
     }
 
     @Override

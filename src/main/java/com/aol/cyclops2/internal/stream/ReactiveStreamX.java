@@ -557,8 +557,23 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         };
         return createSeq(new RecoverOperator<>( source,fn.compose(accept)));
     }
+/**
+    @Override
+    public <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path1,
+                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path2){
+
+        Operator<T> multi= new MultiCastOperator<>(source);
+        ReactiveSeq<T> seq1 = createSeq(multi);
+        ReactiveSeq<T> seq2 = createSeq(multi);
+
+        ReactiveSeq<R> res1 = (ReactiveSeq<R>)path1.apply(seq1);
+        ReactiveSeq<R> res2 = (ReactiveSeq<R>)path1.apply(seq2);
 
 
+        return res1.mergeP(ListX.of(res2));
+
+    }
+**/
 
 
 
@@ -612,12 +627,19 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     }
     @Override
-    public ReactiveSeq<T> mergeP(final Collection<? extends Publisher<T>> publishers, final QueueFactory<T> factory){
-        return Spouts.mergeLatest(ReactiveSeq.fromIterable(publishers));
+    public ReactiveSeq<T> mergeP(final QueueFactory<T> factory,final Publisher<T>... publishers){
+        Publisher<T>[] pubs = new Publisher[publishers.length+1];
+        pubs[0]=this;
+        System.arraycopy(publishers,0,pubs,1,publishers.length);
+        return Spouts.mergeLatest(pubs);
     }
     @Override
-    public ReactiveSeq<T> mergeP(final Collection<? extends Publisher<T>> publishers){
-        return Spouts.mergeLatest(ReactiveSeq.fromIterable(publishers));
+    public ReactiveSeq<T> mergeP(final Publisher<T>... publishers){
+        Publisher<T>[] pubs = new Publisher[publishers.length+1];
+        pubs[0]=this;
+        System.arraycopy(publishers,0,pubs,1,publishers.length);
+
+        return Spouts.mergeLatest(pubs);
     }
     @Override
    public Topic<T> broadcast(){
@@ -735,6 +757,25 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return operators.map((a,b)->Tuple.tuple(createSeq(a),createSeq(b)));
 
     }
+    @Override
+    public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate(Supplier<List<T>> bufferFactory) {
+        if(async==Type.NO_BACKPRESSURE){
+
+            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                    .build();
+            Topic<T> topic = new Topic<>(queue);
+            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            return Tuple.tuple(topic.stream(),topic.stream());
+
+        }
+        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
+        Tuple2<Iterable<T>, Iterable<T>> copy = Streams.toBufferingDuplicator(sourceIt,bufferFactory);
+        Tuple2<Operator<T>, Operator<T>> operators = copy.map((a,b)->
+                Tuple.tuple(new SpliteratorToOperator<T>(a.spliterator()),new SpliteratorToOperator<T>(b.spliterator()))
+        );
+        return operators.map((a,b)->Tuple.tuple(createSeq(a),createSeq(b)));
+
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -751,6 +792,27 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
         ListX<SpliteratorToOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 3)
                                          .map(it->new SpliteratorToOperator<>(it.spliterator()));
+
+        return Tuple.tuple(createSeq(copy.get(0)),
+                createSeq(copy.get(1)),
+                createSeq(copy.get(2)));
+
+    }
+    @Override
+    @SuppressWarnings("unchecked")
+    public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate(Supplier<Deque<T>> bufferFactory) {
+        if(async==Type.NO_BACKPRESSURE){
+
+            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                    .build();
+            Topic<T> topic = new Topic<>(queue);
+            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            return Tuple.tuple(topic.stream(),topic.stream(),topic.stream());
+
+        }
+        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
+        ListX<SpliteratorToOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 3,bufferFactory)
+                .map(it->new SpliteratorToOperator<>(it.spliterator()));
 
         return Tuple.tuple(createSeq(copy.get(0)),
                 createSeq(copy.get(1)),
@@ -778,6 +840,27 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                             createSeq(copy.get(1)),
                             createSeq(copy.get(2)),
                             createSeq(copy.get(3)));
+    }
+    @Override
+    @SuppressWarnings("unchecked")
+    public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate(Supplier<Deque<T>> bufferFactory) {
+        if(async==Type.NO_BACKPRESSURE){
+
+            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                    .build();
+            Topic<T> topic = new Topic<>(queue);
+            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            return Tuple.tuple(topic.stream(),topic.stream(),topic.stream(),topic.stream());
+
+        }
+        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
+        ListX<SpliteratorToOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 4,bufferFactory)
+                .map(it->new SpliteratorToOperator<>(it.spliterator()));
+
+        return Tuple.tuple(createSeq(copy.get(0)),
+                createSeq(copy.get(1)),
+                createSeq(copy.get(2)),
+                createSeq(copy.get(3)));
     }
 
     @Override

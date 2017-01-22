@@ -944,6 +944,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return duplicated reactiveStream
      */
     Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate();
+    Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate(Supplier<List<T>> bufferFactory);
 
     /**
      * Triplicates a Stream Buffers intermediate values, leaders may change
@@ -959,6 +960,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @SuppressWarnings("unchecked")
     Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate();
+
+    Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate(Supplier<Deque<T>> bufferFactory);
 
     /**
      * Makes four copies of a Stream Buffers intermediate values, leaders may
@@ -979,6 +982,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @SuppressWarnings("unchecked")
     Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate();
+    Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate(Supplier<Deque<T>> bufferFactory);
 
     /**
      * Split a Stream at it's head (similar to headAndTail)
@@ -4514,8 +4518,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param publishers Publishers to merge
      * @return Return Stream of merged data
      */
-    default ReactiveSeq<T> mergeP(final Collection<? extends Publisher<T>> publishers) {
-        return mergeP(publishers, QueueFactories.boundedQueue(5_000));
+    default ReactiveSeq<T> mergeP(final Publisher<T>... publishers) {
+        return mergeP(QueueFactories.boundedQueue(5_000),publishers);
     }
 
     /**
@@ -4526,15 +4530,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      */
-    default ReactiveSeq<T> mergeP(final Collection<? extends Publisher<T>> publishers, final QueueFactory<T> factory) {
+    default ReactiveSeq<T> mergeP(final QueueFactory<T> factory,final Publisher<T>... publishers) {
         final Counter c = new Counter();
-        c.active.set(publishers.size() + 1);
-        final QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory, c, publishers.size());
+        c.active.set(publishers.length + 1);
+        final QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory, c, publishers.length);
 
         final Supplier<Continuation> sp = () -> {
             subscribe(init);
             for (final Publisher next : publishers) {
-                next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, publishers.size()));
+                next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, publishers.length));
             }
 
             init.close();
@@ -4554,12 +4558,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         });
     }
     default ReactiveSeq<T> merge(Adapter<T>... adapters){
-        return mergeP(ListX.of(adapters).map(a->a.stream()));
+        return mergeP(ReactiveSeq.of(adapters).map(a->a.stream()).toArray(n->new Publisher[n]));
     }
     default <R1,R2,R3> ReactiveSeq<R3> fanOutZipIn(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R1>> path1,
                                                     Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R2>> path2,
                                                      BiFunction<? super R1, ? super R2, ? extends R3> zipFn){
-        val d = duplicate();
+        val d = duplicate(()->new ArrayList<T>(100));
         val res = d.map1(path1).map2(path2);
 
         return res.v1.zipS(res.v2,zipFn);
@@ -4568,7 +4572,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R1,R2,R3> ReactiveSeq<R3> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<T>, ? extends Stream<R1>> path1,
                                                    Function<? super Stream<T>, ? extends Stream<R2>> path2,
                                                    BiFunction<? super R1, ? super R2, ? extends R3> zipFn){
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate();
+        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayList<T>(100));
         Tuple2<? extends Stream<R1>, ? extends Stream<R2>> d2 = d.map1(path1).map2(path2);
 
         ReactiveSeq<R1> res1 = parallel(fj, path1);
@@ -4578,23 +4582,23 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path1,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path2){
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate();
+        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayList<T>(100));
         Tuple2<ReactiveSeq<? extends R>, ReactiveSeq<T>>  d2 = d.map1(path1);
         Tuple2<ReactiveSeq<R>, ? extends ReactiveSeq<R>> d3 = (Tuple2)d2.map2(path2);
 
-        return d3.v1.mergeP(ListX.of(d3.v2));
+        return d3.v1.mergeP(d3.v2);
 
     }
 
     default <R> ReactiveSeq<R> parallelFanOut(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<R>> path1,
                                       Function<? super Stream<T>, ? extends Stream<R>> path2){
 
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate();
+        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayList<T>(100));
         Tuple2<? extends Stream<R>, ? extends Stream<R>> d2 = d.map1(path1).map2(path2);
 
         ReactiveSeq<R> res1 = parallel(fj, path1);
         ReactiveSeq<R> res2 = parallel(fj, path2);
-        return res1.mergeP(ListX.of(res2));
+        return res1.mergeP(res2);
 
 
 
@@ -4603,23 +4607,23 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path2,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path3){
 
-        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate();
+        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3);
 
-        return res.v1.mergeP(ListX.of(res.v2,res.v3));
+        return res.v1.mergeP(res.v2,res.v3);
 
     }
     default <R> ReactiveSeq<R> parallelFanOut(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<R>> path1,
                                               Function<? super Stream<T>, ? extends Stream<R>> path2,
                                               Function<? super Stream<T>, ? extends Stream<R>> path3){
 
-        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate();
+        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3);
 
         ReactiveSeq<R> res1 = parallel(fj, path1);
         ReactiveSeq<R> res2 = parallel(fj, path2);
         ReactiveSeq<R> res3 = parallel(fj, path3);
-        return res1.mergeP(ListX.of(res2,res3));
+        return res1.mergeP(res2,res3);
 
 
 
@@ -4629,7 +4633,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                       Function<? super Stream<T>, ? extends Stream<R3>> path3,
                                                       Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn){
 
-        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate();
+        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3);
         ReactiveSeq<R1> res1 = parallel(fj, path1);
         ReactiveSeq<R2> res2 = parallel(fj, path2);
@@ -4642,7 +4646,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R3>> path3,
                                             Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn){
 
-        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate();
+        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3);
 
         return res.v1.zip3(res.v2,res.v3,zipFn);
@@ -4653,10 +4657,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path3,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path4){
 
-        val d = quadruplicate();
+        val d = quadruplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
 
-        return res.v1.mergeP(ListX.of(res.v2,res.v3,res.v4));
+        return res.v1.mergeP(res.v2,res.v3,res.v4);
 
     }
     default <R> ReactiveSeq<R> parallelFanOut(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<R>> path1,
@@ -4664,13 +4668,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                       Function<? super Stream<T>, ? extends Stream<R>> path3,
                                       Function<? super Stream<T>, ? extends Stream<R>> path4){
 
-        val d = quadruplicate();
+        val d = quadruplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
         ReactiveSeq<R> res1 = parallel(fj, path1);
         ReactiveSeq<R> res2 = parallel(fj, path2);
         ReactiveSeq<R> res3 = parallel(fj, path3);
         ReactiveSeq<R> res4 = parallel(fj, path4);
-        return res1.mergeP(ListX.of(res2,res3,res4));
+        return res1.mergeP(res2,res3,res4);
 
     }
 
@@ -4680,7 +4684,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                     Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R4>> path4,
                                                     Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn){
 
-        val d = quadruplicate();
+        val d = quadruplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
 
         return res.v1.zip4(res.v2,res.v3,res.v4,zipFn);
@@ -4692,7 +4696,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                          Function<? super Stream<T>, ? extends Stream<R4>> path4,
                                                          Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn){
 
-        val d = quadruplicate();
+        val d = quadruplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
         ReactiveSeq<R1> res1 = parallel(fj, path1);
         ReactiveSeq<R2> res2 = parallel(fj, path2);

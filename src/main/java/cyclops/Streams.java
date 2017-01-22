@@ -766,6 +766,26 @@ public class Streams {
         return new Tuple2(
                           Streams.stream(Tuple2.v1()), Streams.stream(Tuple2.v2()));
     }
+    /**
+     * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
+     * can be safely applied to the leading reactiveStream. Not thread-safe.
+     * <pre>
+     * {@code
+     *  Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+    assertTrue(copies.v1.anyMatch(i->i==2));
+    assertTrue(copies.v2.anyMatch(i->i==2));
+     *
+     * }
+     * </pre>
+     *
+     * @return duplicated reactiveStream
+     */
+    public final static <T> Tuple2<Stream<T>, Stream<T>> duplicate(final Stream<T> stream,Supplier<List<T>> bufferFactory) {
+
+        final Tuple2<Iterator<T>, Iterator<T>> Tuple2 = Streams.toBufferingDuplicator(stream.iterator(),bufferFactory);
+        return new Tuple2(
+                Streams.stream(Tuple2.v1()), Streams.stream(Tuple2.v2()));
+    }
 
     private final static <T> Tuple2<Stream<T>, Stream<T>> duplicatePos(final Stream<T> stream, final int pos) {
 
@@ -796,6 +816,28 @@ public class Streams {
                           it.next(), it.next(), it.next());
 
     }
+    /**
+     * Triplicates a Stream
+     * Buffers intermediate values, leaders may change positions so a limit
+     * can be safely applied to the leading reactiveStream. Not thread-safe.
+     * <pre>
+     * {@code
+     * 	Tuple3<ReactiveSeq<Tuple3<T1,T2,T3>>,ReactiveSeq<Tuple3<T1,T2,T3>>,ReactiveSeq<Tuple3<T1,T2,T3>>> Tuple3 = sequence.triplicate();
+
+     * }
+     * </pre>
+     */
+    @SuppressWarnings("unchecked")
+    public final static <T> Tuple3<Stream<T>, Stream<T>, Stream<T>> triplicate(final Stream<T> stream, Supplier<Deque<T>> bufferFactory) {
+
+        final Stream<Stream<T>> its = Streams.toBufferingCopier(stream.iterator(), 3,bufferFactory)
+                .stream()
+                .map(it -> Streams.stream(it));
+        final Iterator<Stream<T>> it = its.iterator();
+        return new Tuple3(
+                it.next(), it.next(), it.next());
+
+    }
 
     /**
      * Makes four copies of a Stream
@@ -819,6 +861,29 @@ public class Streams {
         final Iterator<Stream<T>> it = its.iterator();
         return new Tuple4(
                           it.next(), it.next(), it.next(), it.next());
+    }
+    /**
+     * Makes four copies of a Stream
+     * Buffers intermediate values, leaders may change positions so a limit
+     * can be safely applied to the leading reactiveStream. Not thread-safe.
+     *
+     * <pre>
+     * {@code
+     *
+     * 		Tuple4<ReactiveSeq<Tuple4<T1,T2,T3,T4>>,ReactiveSeq<Tuple4<T1,T2,T3,T4>>,ReactiveSeq<Tuple4<T1,T2,T3,T4>>,ReactiveSeq<Tuple4<T1,T2,T3,T4>>> quad = sequence.quadruplicate();
+
+     * }
+     * </pre>
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public final static <T> Tuple4<Stream<T>, Stream<T>, Stream<T>, Stream<T>> quadruplicate(final Stream<T> stream, Supplier<Deque<T>> bufferFactory) {
+        final Stream<Stream<T>> its = Streams.toBufferingCopier(stream.iterator(), 4,bufferFactory)
+                .stream()
+                .map(it -> Streams.stream(it));
+        final Iterator<Stream<T>> it = its.iterator();
+        return new Tuple4(
+                it.next(), it.next(), it.next(), it.next());
     }
 
     /**
@@ -2242,6 +2307,14 @@ public class Streams {
                                          .get()));
     }
 
+    public static final <A> Tuple2<Iterable<A>, Iterable<A>> toBufferingDuplicator(final Iterable<A> it,Supplier<List<A>> bufferFactory) {
+        LazyImmutable<Tuple2<Iterator<A>, Iterator<A>>> iterators = LazyImmutable.def();
+
+
+
+        return Tuple.tuple(()-> iterators.computeIfAbsent(() -> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE,bufferFactory)).v1,
+                ()->iterators.computeIfAbsent(()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE,bufferFactory)).v2);
+    }
     public static final <A> Tuple2<Iterable<A>, Iterable<A>> toBufferingDuplicator(final Iterable<A> it) {
         LazyImmutable<Tuple2<Iterator<A>, Iterator<A>>> iterators = LazyImmutable.def();
 
@@ -2263,6 +2336,20 @@ public class Streams {
                           new DuplicatingIterator(
                                                   bufferFrom, bufferTo, iterator, pos, 0));
     }
+    public static final <A> Tuple2<Iterator<A>, Iterator<A>> toBufferingDuplicator(final Iterator<A> iterator, Supplier<List<A>> bufferFactory) {
+        return toBufferingDuplicator(iterator, Long.MAX_VALUE,bufferFactory);
+    }
+
+    public static final <A> Tuple2<Iterator<A>, Iterator<A>> toBufferingDuplicator(final Iterator<A> iterator, final long pos,Supplier<List<A>> bufferFactory) {
+        final List<A> bufferTo = bufferFactory.get();
+        final List<A> bufferFrom = bufferFactory.get();
+        return new Tuple2(
+                new DuplicatingIterator(
+                        bufferTo, bufferFrom, iterator, Long.MAX_VALUE, 0),
+                new DuplicatingIterator(
+                        bufferFrom, bufferTo, iterator, pos, 0));
+    }
+
 
     public static final <A> ListX<Iterable<A>> toBufferingCopier(final Iterable<A> it, final int copies) {
         LazyImmutable<ListX<Iterator<A>>> iterators = LazyImmutable.def();
@@ -2270,22 +2357,47 @@ public class Streams {
                 .zipWithIndex()
                 .map(t->()->iterators.computeIfAbsent(() -> toBufferingCopier(it.iterator(),copies)).get(t.v2).get());
     }
+    public static final <A> ListX<Iterable<A>> toBufferingCopier(final Iterable<A> it, final int copies,Supplier<Deque<A>> bufferSupplier) {
+        LazyImmutable<ListX<Iterator<A>>> iterators = LazyImmutable.def();
+        return  ListX.range(0,copies)
+                .zipWithIndex()
+                .map(t->()->iterators.computeIfAbsent(() -> toBufferingCopier(it.iterator(),copies,bufferSupplier)).get(t.v2).get());
+    }
 
     public static final <A> ListX<Iterator<A>> toBufferingCopier(final Iterator<A> iterator, final int copies) {
         final List<Iterator<A>> result = new ArrayList<>();
-        final List<CopyingIterator<A>> leaderboard = new LinkedList<>();
-        final LinkedList<A> buffer = new LinkedList<>();
-        for (int i = 0; i < copies; i++)
-            result.add(new CopyingIterator(
-                                           iterator, leaderboard, buffer, copies));
+
+        ArrayList<Deque<A>> localBuffers = new ArrayList<>(copies);
+        for(int i=0;i<copies;i++) {
+            final Deque<A> buffer = new LinkedList<A>();
+            localBuffers.add(buffer);
+            result.add(new CopyingIterator(localBuffers,
+                    iterator,  buffer));
+        }
+
+
+        return ListX.fromIterable(result);
+    }
+    public static final <A> ListX<Iterator<A>> toBufferingCopier(final Iterator<A> iterator, final int copies, Supplier<Deque<A>> bufferSupplier) {
+        final List<Iterator<A>> result = new ArrayList<>();
+
+        ArrayList<Deque<A>> localBuffers = new ArrayList<>(copies);
+        for(int i=0;i<copies;i++) {
+            final Deque<A> buffer = bufferSupplier.get();
+            localBuffers.add(buffer);
+            result.add(new CopyingIterator(localBuffers,
+                    iterator,  buffer));
+        }
+
+
         return ListX.fromIterable(result);
     }
 
     @AllArgsConstructor
     static class DuplicatingIterator<T> implements Iterator<T> {
 
-        LinkedList<T> bufferTo;
-        LinkedList<T> bufferFrom;
+        List<T> bufferTo;
+        List<T> bufferFrom;
         Iterator<T> it;
         long otherLimit = Long.MAX_VALUE;
         long counter = 0;
@@ -2317,70 +2429,45 @@ public class Streams {
 
     static class CopyingIterator<T> implements Iterator<T> {
 
-        LinkedList<T> buffer;
+        ArrayList<Deque<T>> localBuffers;
+        Deque<T> buffer;
         Iterator<T> it;
-        List<CopyingIterator<T>> leaderboard = new LinkedList<>();
-        boolean added = false;
-        int total = 0;
-        int counter = 0;
+
+
 
         @Override
         public boolean hasNext() {
 
-            if (isLeader())
-                return it.hasNext();
-            if (isLast())
-                return buffer.size() > 0 || it.hasNext();
-            if (it.hasNext())
-                return true;
-            return counter < buffer.size();
-        }
+            return buffer.size() > 0 || it.hasNext();
 
-        private boolean isLeader() {
-            return leaderboard.size() == 0 || this == leaderboard.get(0);
-        }
-
-        private boolean isLast() {
-            return leaderboard.size() == total && this == leaderboard.get(leaderboard.size() - 1);
         }
 
         @Override
         public T next() {
+            if (buffer.size() > 0)
+                return buffer.poll();
 
-            if (!added) {
-
-                this.leaderboard.add(this);
-                added = true;
-            }
-
-            if (isLeader()) {
-
-                return handleLeader();
-            }
-            if (isLast()) {
-
-                if (buffer.size() > 0)
-                    return buffer.poll();
-                return it.next();
-            }
-            if (counter < buffer.size())
-                return buffer.get(counter++);
             return handleLeader(); //exceed buffer, now leading
 
         }
 
+        private void offer(T value){
+            for(Deque<T> next : localBuffers ){
+                if(next!=buffer)
+                    next.add(value);
+            }
+        }
         private T handleLeader() {
             final T next = it.next();
-            buffer.offer(next);
+            offer(next);
             return next;
         }
 
-        public CopyingIterator(final Iterator<T> it, final List<CopyingIterator<T>> leaderboard, final LinkedList<T> buffer, final int total) {
+        public CopyingIterator(ArrayList<Deque<T>> localBuffers,final Iterator<T> it, final Deque<T> buffer) {
 
             this.it = it;
-            this.leaderboard = leaderboard;
             this.buffer = buffer;
-            this.total = total;
+            this.localBuffers = localBuffers;
         }
     }
 

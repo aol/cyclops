@@ -71,8 +71,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
     @Override
     public Iterator<T> iterator(){
-
-        
+        return Spliterators.iterator(copy());
+        /**
         //Iterator for push streams
         Spliterator<T> split = copy();
         class QueueingIterator implements Iterator<T>,Consumer<T>{
@@ -110,6 +110,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
             
         }
         return new QueueingIterator();
+            **/
     }
    public  <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
         return ReactiveSeq.fromSpliterator(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(createSeq(copy()),fn));

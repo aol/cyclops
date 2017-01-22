@@ -134,6 +134,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
                                   factory) {
             @Override
             public T get() {
+                System.out.println("Requesting " + counter.subscription.size());
                 counter.subscription.forEach(s -> s.request(1));
 
                 return super.get();
@@ -186,6 +187,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
         }
         counter.subscription.plus(subscription);
 
+        System.out.println("Requesting 1");
         s.request(1);
 
     }
@@ -197,6 +199,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     public void onNext(final T t) {
 
         Objects.requireNonNull(t);
+        System.out.println("Next " + t);
         queue.add(t);
         counter.added++;
 
@@ -234,6 +237,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     @Override
     public void onComplete() {
 
+        System.out.println("On Complete!");
         counter.active.decrementAndGet();
         counter.subscription.minus(subscription);
         if (queue != null && counter.active.get() == 0) {
