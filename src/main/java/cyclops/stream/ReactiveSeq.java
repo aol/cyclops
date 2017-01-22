@@ -20,7 +20,8 @@ import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingLongArraySpl
 import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingRangeLongSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import com.aol.cyclops2.internal.stream.spliterators.push.SpliteratorToOperator;
-import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
+import com.aol.cyclops2.types.stream.reactive.*;
+import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
 import com.sun.tools.internal.ws.api.TJavaGeneratorExtension;
 import cyclops.async.Future;
 import cyclops.collections.immutable.PVectorX;
@@ -34,7 +35,6 @@ import com.aol.cyclops2.internal.stream.spliterators.*;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.*;
-import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import cyclops.*;
 import cyclops.async.Queue;
 import cyclops.function.Monoid;
@@ -57,11 +57,10 @@ import cyclops.collections.ListX;
 import cyclops.collections.MapX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.monads.Witness;
-import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Fn4;
 import cyclops.function.Fn3;
+import org.reactivestreams.Subscriber;
 
 /**
  * A powerful extended, sequential Stream type.
@@ -117,6 +116,80 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
 
+    /**
+     * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
+     * reactive-streams susbscription may be used to iterate over incoming data.
+     * Passing more data that demand signalled will result in data loss
+     *
+     * <pre>
+     *     {@code
+     *      ReactiveSeq<Integer> input = ReactiveSeq.iterable(subscriber->{
+     *                                                          Flux.just(1,2,3)
+     *                                                              .subscribe(subscriber);
+     *                                                      });
+     *      }
+     * </pre>
+     *
+     * @param sub
+     * @param <T>
+     * @return
+     */
+    static <T> ReactiveSeq<T> iterable(Consumer<? super Subscriber<T>> sub){
+        SeqSubscriber<T> s = SeqSubscriber.subscriber();
+        sub.accept(s);
+        return s.stream();
+    }
+    /**
+     * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
+     * reactive-streams susbscription can be used to determine demand (or ignored and data passed
+     * via onNext, onError) excess supply is enqueued
+     *
+     * <pre>
+     *     {@code
+     *      ReactiveSeq<Integer> input = ReactiveSeq.queueBasedSubscriber(subscriber->{
+     *                                                          listener.onEvent(subscriber::onNext);
+     *                                                          listener.onError(susbscriber::onError);
+     *                                                          closeListener.onEvent(subscriber::onClose);
+     *                                                      });
+     *      }
+     * </pre>
+     *
+     * @param sub
+     * @param <T>
+     * @return
+     */
+    static <T> ReactiveSeq<T> enqueued(Consumer<? super Subscriber<T>> sub){
+        final Counter c = new Counter();
+        c.active.set(1);
+        QueueBasedSubscriber<T> s = QueueBasedSubscriber.subscriber(c,1);
+        sub.accept(s);
+        return s.reactiveSeq();
+    }
+    static <T> ReactiveSeq<T> enqueued(Consumer<? super Subscriber<T>>... subs){
+        final Counter c = new Counter();
+        c.active.set(subs.length);
+        QueueBasedSubscriber<T> s = QueueBasedSubscriber.subscriber(c,subs.length);
+
+        for(Consumer<? super Subscriber<T>> next : subs)
+            next.accept(s);
+        return s.reactiveSeq();
+    }
+    static <T> ReactiveSeq<T> enqueued(Queue<T> q,Consumer<? super Subscriber<T>> sub){
+        final Counter c = new Counter();
+        c.active.set(1);
+        QueueBasedSubscriber<T> s = QueueBasedSubscriber.subscriber(q,c,1);
+        sub.accept(s);
+        return s.reactiveSeq();
+    }
+    static <T> ReactiveSeq<T> enqueued(QueueFactory<T> factory,Consumer<? super Subscriber<T>>... subs){
+        final Counter c = new Counter();
+        c.active.set(subs.length);
+        QueueBasedSubscriber<T> s = QueueBasedSubscriber.subscriber(factory,c,subs.length);
+
+        for(Consumer<? super Subscriber<T>> next : subs)
+            next.accept(s);
+        return s.reactiveSeq();
+    }
 
     /**
      * Construct a ReactiveSeq from a String
@@ -4451,7 +4524,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      */
     default ReactiveSeq<T> mergeP(final Collection<? extends Publisher<T>> publishers, final QueueFactory<T> factory) {
-        final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
+        final Counter c = new Counter();
         c.active.set(publishers.size() + 1);
         final QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory, c, publishers.size());
 
