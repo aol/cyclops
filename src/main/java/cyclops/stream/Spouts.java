@@ -48,6 +48,30 @@ public interface Spouts {
     }
 
     /**
+     * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
+     * reactive-streams susbscription is ignored (i.e. this Stream is backpressure free)
+     *
+     * <pre>
+     *     {@code
+     *      ReactiveSeq<Integer> input = Spouts.async(subscriber->{
+     *                                                          listener.onEvent(subscriber::onNext);
+     *                                                          listener.onError(susbscriber::onError);
+     *                                                          closeListener.onEvent(subscriber::onClose);
+     *                                                      });
+     *      }
+     * </pre>
+     *
+     * @param sub
+     * @param <T>
+     * @return
+     */
+    static <T> ReactiveSeq<T> async(Consumer<? super Subscriber<T>> sub){
+        AsyncSubscriber<T> s = asyncSubscriber();
+        sub.accept(s);
+        return s.stream();
+    }
+
+    /**
      *   Create an Subscriber for Observable style asynchronous push based Streams,
      *   that implements backpressure internally via the reactive-streams spec.
      *
@@ -59,6 +83,12 @@ public interface Spouts {
      */
     static <T> ReactiveSubscriber<T> reactiveSubscriber(){
         return new ReactiveSubscriber<T>();
+    }
+
+    static <T> ReactiveSeq<T> reactive(Consumer<? super Subscriber<T>> sub){
+        ReactiveSubscriber<T> reactive = new ReactiveSubscriber<T>();
+        sub.accept(reactive);
+        return reactive.reactiveStream();
     }
     static <T> ReactiveSeq<T> reactiveStream(Operator<T> s){
         return new ReactiveStreamX<>(s).withAsync(ReactiveStreamX.Type.BACKPRESSURE);

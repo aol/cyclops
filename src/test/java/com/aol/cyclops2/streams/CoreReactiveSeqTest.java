@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -80,6 +81,18 @@ public  class CoreReactiveSeqTest {
     }
 
     @Test
+    public void parallelFanOut(){
+        assertThat(ReactiveSeq.of(1,2,3,4)
+                .parallelFanOut(ForkJoinPool.commonPool(), s1->s1.filter(i->i%2==0).map(i->i*2),
+                        s2->s2.filter(i->i%2!=0).map(i->i*100))
+                .toListX(),equalTo(ListX.of(4,100,8,300)));
+
+        assertThat(ReactiveSeq.of(1,2,3,4)
+                .parallelFanOutZipIn(ForkJoinPool.commonPool(), s1->s1.filter(i->i%2==0).map(i->i*2),
+                        s2->s2.filter(i->i%2!=0).map(i->i*100),(a,b)->a+b)
+                .toListX(),equalTo(ListX.of(104,308)));
+    }
+    @Test
     public void fanOut(){
 
         assertThat(ReactiveSeq.of(1,2,3,4)
@@ -100,6 +113,7 @@ public  class CoreReactiveSeqTest {
     }
     @Test
     public void iteratePred(){
+
         assertThat(ReactiveSeq.iterate(0,i->i<10,i->i+1)
                     .toListX().size(),equalTo(10));
     }
