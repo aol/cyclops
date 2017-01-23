@@ -52,7 +52,8 @@ public class ReactiveRangeTest {
     }
     @Test
     public void intStreamCompareReversed(){
-
+        assertThat(Spouts.range(-5,6).toList(),equalTo(ListX.of(-5,-4,-3,-2,-1,0,1,2,3,4,5)));
+        Spouts.range(-5,6).reverse().printOut();
 
         assertThat(0,
                 equalTo(Spouts.range(-5,6).reverse().sumInt(i->i)));
@@ -60,6 +61,9 @@ public class ReactiveRangeTest {
     }
     @Test
     public void longStreamCompareReversed(){
+        assertThat(Spouts.rangeLong(-5,6).toList(),equalTo(ListX.of(-5,-4,-3,-2,-1,0,1,2,3,4,5).map(Integer::longValue)));
+        Spouts.rangeLong(-5,6).printOut();
+		Spouts.rangeLong(-5,6).reverse().printOut();
         assertThat(0L,
                 equalTo(Spouts.rangeLong(-5,6).reverse().sumLong(i->i)));
     }

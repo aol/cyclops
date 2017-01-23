@@ -24,7 +24,7 @@ public class RangeLongOperator implements Operator<Long> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super Long> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        long[] index = {0};
+        long[] index = {start};
         boolean completed[] = {false};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{

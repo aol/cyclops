@@ -25,7 +25,7 @@ public class RangeIntOperator implements Operator<Integer> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super Integer> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        int[] index = {Math.min(start,end)};
+        int[] index = {start};
         boolean completed[] = {false};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work =  n ->{

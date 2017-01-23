@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple3;
 import org.reactivestreams.Subscription;
 
@@ -233,6 +234,7 @@ public class FutureStreamUtils {
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachEvent(
             final Stream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
             final Runnable onComplete) {
+
         final CompletableFuture<Subscription> subscription = new CompletableFuture<>();
         final CompletableFuture<Boolean> streamCompleted = new CompletableFuture<>();
         return tuple(subscription, () -> {
@@ -270,8 +272,14 @@ public class FutureStreamUtils {
                     try {
                         if (errored)
                             return (T) UNSET;
-                        else
-                            return it.next();
+                        else {
+                            try {
+                                return it.next();
+                            }catch(Throwable t){
+                                consumerError.accept(t);
+                                return (T) UNSET;
+                            }
+                        }
                     } finally {
                         errored = false;
                     }
