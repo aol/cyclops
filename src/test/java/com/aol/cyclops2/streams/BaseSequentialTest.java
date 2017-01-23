@@ -626,15 +626,41 @@ public class BaseSequentialTest {
 
     }
 
+    @Test
+    public void limitReplay(){
+        final ReactiveSeq<Integer> t = of(1).map(i->i).flatMap(i->Stream.of(i));
+        assertThat(t.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t.limit(1).toList(),equalTo(ListX.of(1)));
+    }
+
+    @Test
+    public void duplicateReplay(){
+        final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
+        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+    }
+    @Test
+    public void splitLimit(){
+        ReactiveSeq<Integer> stream = of(1);
+        final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = stream.duplicate();
+        assertThat(stream.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+    }
+
 			@Test
             public void splitAtHeadImpl(){
                 final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
+
+
+
                 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = new Tuple2(
                         t.v1.limit(1), t.v2.skip(1));
                 assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
                 assertThat(t.v2.skip(1).toList(),equalTo(ListX.of()));
                 assertThat(dup.v1.toList(),equalTo(ListX.of(1)));
                 assertThat(dup.v2.toList(),equalTo(ListX.of()));
+
             }
 			@Test
 			public void limitSkip(){

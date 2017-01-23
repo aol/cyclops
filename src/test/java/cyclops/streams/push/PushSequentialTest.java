@@ -32,5 +32,10 @@ public class PushSequentialTest extends BaseSequentialTest {
 
         return Spouts.of(array);
     }
-
+    @Test
+    public void duplicateReplay(){
+        final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
+        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+    }
 }

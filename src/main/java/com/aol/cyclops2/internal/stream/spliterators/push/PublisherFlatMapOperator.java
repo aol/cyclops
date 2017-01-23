@@ -188,11 +188,15 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
 
                                    // active.decrementAndGet();
 
-                                }else if(active.get()==0){
+                                }
+                                else if(active.get()==0){
+                                    System.out.println("*******Active is " + active.get());
                                     completer.set(()->{
-                                        completed.set(true);
-                                        System.out.println("!&&&&&&&&&&&&&&&&!ON COMPLETE!!");
-                                        onComplete.run();
+                                        if(active.get()==0) {
+                                            completed.set(true);
+                                            System.out.println("!&&&&&&&&&&&&&&&&!ON COMPLETE!!");
+                                            onComplete.run();
+                                        }
                                     });
                                 }
                             }

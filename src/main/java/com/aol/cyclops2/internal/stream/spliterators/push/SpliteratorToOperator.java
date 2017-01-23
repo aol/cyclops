@@ -11,7 +11,7 @@ public class SpliteratorToOperator<T> implements Operator<T> {
 
 
     final Spliterator<T> split;
-    Runnable run;
+
 
     public SpliteratorToOperator(Spliterator<? super T> split){
          this.split = (Spliterator<T>)split;

@@ -47,6 +47,8 @@ public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T
 
     @Override
     public Spliterator<T> copy() {
+
+      System.out.println("Source " + source);
         return new IteratableSpliterator<>(source);
     }
 }

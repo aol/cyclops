@@ -2308,20 +2308,12 @@ public class Streams {
     }
 
     public static final <A> Tuple2<Iterable<A>, Iterable<A>> toBufferingDuplicator(final Iterable<A> it,Supplier<List<A>> bufferFactory) {
-        LazyImmutable<Tuple2<Iterator<A>, Iterator<A>>> iterators = LazyImmutable.def();
-
-
-
-        return Tuple.tuple(()-> iterators.computeIfAbsent(() -> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE,bufferFactory)).v1,
-                ()->iterators.computeIfAbsent(()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE,bufferFactory)).v2);
+        return Tuple.tuple(()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE,bufferFactory).v1,
+                ()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE,bufferFactory).v2);
     }
     public static final <A> Tuple2<Iterable<A>, Iterable<A>> toBufferingDuplicator(final Iterable<A> it) {
-        LazyImmutable<Tuple2<Iterator<A>, Iterator<A>>> iterators = LazyImmutable.def();
-
-
-
-        return Tuple.tuple(()-> iterators.computeIfAbsent(() -> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE)).v1,
-                                ()->iterators.computeIfAbsent(()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE)).v2);
+        return Tuple.tuple(()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE).v1,
+                            ()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE).v2);
     }
     public static final <A> Tuple2<Iterator<A>, Iterator<A>> toBufferingDuplicator(final Iterator<A> iterator) {
         return toBufferingDuplicator(iterator, Long.MAX_VALUE);

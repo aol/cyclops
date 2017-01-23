@@ -96,7 +96,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             },i->queue.close(),queue::close);
             Continuation[] contRef ={null};
             Continuation cont = new Continuation(()->{
-                System.out.println("Requesting !");
                 sub.request(1l);
                 return contRef[0];
             });
@@ -326,6 +325,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     protected <R> ReactiveSeq<R> createSeq(Stream<R> rStream) {
         if(stream instanceof ReactiveSeq)
             return (ReactiveSeq)rStream;
+        if(stream instanceof Iterable)
+            return new ReactiveStreamX<>(new IterableSourceOperator<>((Iterable<R>)rStream));
         return new ReactiveStreamX<>(new SpliteratorToOperator<>(rStream.spliterator()));
     }
 
@@ -386,7 +387,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public <U> Traversable<U> unitIterator(Iterator<U> it) {
         Iterable<U> iterable = ()->it;
-        return createSeq(new SpliteratorToOperator<U>(iterable.spliterator()));
+        return createSeq(new IterableSourceOperator<U>(iterable));
     }
 
     @Override
@@ -765,14 +766,21 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
-            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Subscription sub = this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Continuation[] contRef ={null};
+            Continuation cont = new Continuation(()->{
+                sub.request(1l);
+                return contRef[0];
+            });
+            contRef[0]=cont;
+            queue.addContinuation(cont);
             return Tuple.tuple(topic.stream(),topic.stream());
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
         Tuple2<Iterable<T>, Iterable<T>> copy = Streams.toBufferingDuplicator(sourceIt);
         Tuple2<Operator<T>, Operator<T>> operators = copy.map((a,b)->
-            Tuple.tuple(new SpliteratorToOperator<T>(a.spliterator()),new SpliteratorToOperator<T>(b.spliterator()))
+            Tuple.tuple(new IterableSourceOperator<T>(a),new IterableSourceOperator<T>(b))
         );
         return operators.map((a,b)->Tuple.tuple(createSeq(a),createSeq(b)));
 
@@ -784,14 +792,21 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
-            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Subscription sub = this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Continuation[] contRef ={null};
+            Continuation cont = new Continuation(()->{
+                sub.request(1l);
+                return contRef[0];
+            });
+            contRef[0]=cont;
+            queue.addContinuation(cont);
             return Tuple.tuple(topic.stream(),topic.stream());
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
         Tuple2<Iterable<T>, Iterable<T>> copy = Streams.toBufferingDuplicator(sourceIt,bufferFactory);
         Tuple2<Operator<T>, Operator<T>> operators = copy.map((a,b)->
-                Tuple.tuple(new SpliteratorToOperator<T>(a.spliterator()),new SpliteratorToOperator<T>(b.spliterator()))
+                Tuple.tuple(new IterableSourceOperator<T>(a),new IterableSourceOperator<T>(b))
         );
         return operators.map((a,b)->Tuple.tuple(createSeq(a),createSeq(b)));
 
@@ -805,13 +820,20 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
-            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Subscription sub =this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Continuation[] contRef ={null};
+            Continuation cont = new Continuation(()->{
+                sub.request(1l);
+                return contRef[0];
+            });
+            contRef[0]=cont;
+            queue.addContinuation(cont);
             return Tuple.tuple(topic.stream(),topic.stream(),topic.stream());
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
-        ListX<SpliteratorToOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 3)
-                                         .map(it->new SpliteratorToOperator<>(it.spliterator()));
+        ListX<IterableSourceOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 3)
+                                         .map(it->new IterableSourceOperator<>(it));
 
         return Tuple.tuple(createSeq(copy.get(0)),
                 createSeq(copy.get(1)),
@@ -826,13 +848,20 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
-            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Subscription sub = this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Continuation[] contRef ={null};
+            Continuation cont = new Continuation(()->{
+                sub.request(1l);
+                return contRef[0];
+            });
+            contRef[0]=cont;
+            queue.addContinuation(cont);
             return Tuple.tuple(topic.stream(),topic.stream(),topic.stream());
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
-        ListX<SpliteratorToOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 3,bufferFactory)
-                .map(it->new SpliteratorToOperator<>(it.spliterator()));
+        ListX<IterableSourceOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 3,bufferFactory)
+                .map(it->new IterableSourceOperator<>(it));
 
         return Tuple.tuple(createSeq(copy.get(0)),
                 createSeq(copy.get(1)),
@@ -848,13 +877,20 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
-            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Subscription sub =this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Continuation[] contRef ={null};
+            Continuation cont = new Continuation(()->{
+                sub.request(1l);
+                return contRef[0];
+            });
+            contRef[0]=cont;
+            queue.addContinuation(cont);
             return Tuple.tuple(topic.stream(),topic.stream(),topic.stream(),topic.stream());
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
-        ListX<SpliteratorToOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 4)
-                .map(it->new SpliteratorToOperator<>(it.spliterator()));
+        ListX<IterableSourceOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 4)
+                .map(it->new IterableSourceOperator<>(it));
 
         return Tuple.tuple(createSeq(copy.get(0)),
                             createSeq(copy.get(1)),
@@ -869,13 +905,20 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
-            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Subscription sub = this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Continuation[] contRef ={null};
+            Continuation cont = new Continuation(()->{
+                sub.request(1l);
+                return contRef[0];
+            });
+            contRef[0]=cont;
+            queue.addContinuation(cont);
             return Tuple.tuple(topic.stream(),topic.stream(),topic.stream(),topic.stream());
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
-        ListX<SpliteratorToOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 4,bufferFactory)
-                .map(it->new SpliteratorToOperator<>(it.spliterator()));
+        ListX<IterableSourceOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 4,bufferFactory)
+                .map(it->new IterableSourceOperator<>(it));
 
         return Tuple.tuple(createSeq(copy.get(0)),
                 createSeq(copy.get(1)),
@@ -922,7 +965,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         Operator<U> right;
         if(other instanceof ReactiveStreamX){
             right = ((ReactiveStreamX<U>)other).source;
+        }else if(other instanceof Iterable){
+            right = new IterableSourceOperator<U>(((Iterable<U>)other));
         }else{
+            //not replayable
             right = new SpliteratorToOperator<U>(((Stream<U>)other).spliterator());
         }
         ReactiveStreamX<Tuple2<T, U>> res = createSeq(new ZippingOperator<>(source, right, Tuple::tuple));
