@@ -107,14 +107,15 @@ public interface Maybe<T> extends To<Maybe<T>>,
     static <T> Maybe<T> fromLazy(Eval<Maybe<T>> lazy){
         return new Lazy<T>(lazy);
     }
+
+
+    
     static <T> Maybe<T> fromFuture(Future<T> future){
-        return new Lazy<T>(Eval.later( ()->{
-        try{
-           return Maybe.of(future.get());
-        }catch(Throwable t){
-           return Maybe.none();
-        }}
-        ));
+        Future<Maybe<T>> maybeF = future.map(Maybe::just)
+                .recover(t -> Maybe.<T>none());
+        Eval<Maybe<T>> evalF = Eval.fromFuture(maybeF);
+        return fromLazy(evalF);
+
     }
     public static <T,R> Function<? super T, ? extends Maybe<R>> arrow(Function<?  super T, ? extends R> fn){
         return in-> Maybe.ofNullable(fn.apply(in));
@@ -214,9 +215,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @return Maybe populated with first value from Publisher (Maybe.empty if Publisher empty)
      */
     public static <T> Maybe<T> fromPublisher(final Publisher<T> pub) {
-        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
-        pub.subscribe(sub);
-        return sub.toMaybe();
+        return fromFuture(Future.fromPublisher(pub));
     }
 
     /**
