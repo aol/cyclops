@@ -51,7 +51,7 @@ public class MaybeTest implements Printable {
         Future<Integer> future = Future.future();
         Thread t=  new Thread(()->{
             try {
-                Thread.sleep(100l);
+                Thread.sleep(1000l);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -59,9 +59,11 @@ public class MaybeTest implements Printable {
         });
         t.start();
 
-
         Maybe.fromFuture(future)
-                .map(i->i*2);
+              .map(i->i*2)
+              .forEach(System.out::println);
+
+
 
     }
     

@@ -109,7 +109,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
 
-    
+
     static <T> Maybe<T> fromFuture(Future<T> future){
         Future<Maybe<T>> maybeF = future.map(Maybe::just)
                 .recover(t -> Maybe.<T>none());
@@ -194,8 +194,10 @@ public interface Maybe<T> extends To<Maybe<T>>,
      */
     @Override
     default <R> Maybe<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        final MonadicValue<R> m = MonadicValue.super.flatMapP(mapper);
-        return (Maybe<R>) m;
+        return this.flatMap(a -> {
+            final Publisher<? extends R> publisher = mapper.apply(a);
+            return Maybe.fromPublisher(publisher);
+        });
     }
   
     /**
@@ -1023,6 +1025,10 @@ public interface Maybe<T> extends To<Maybe<T>>,
             return this;
         }
 
+        @Override
+        public void forEach(Consumer<? super T> action) {
+            this.lazy.forEach(action);
+        }
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -1082,7 +1088,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
             return new Lazy<T>(
                                     lazy.map(m -> m.recoverWith(fn)));
         }
-       
+
         @Override
         public String toString() {
             Maybe<T> maybe = lazy.get();
@@ -1271,6 +1277,10 @@ public interface Maybe<T> extends To<Maybe<T>>,
         @Override
         public <R> Nothing<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
             return (Nothing<R>) EMPTY;
+        }
+        @Override
+        public void forEach(Consumer<? super T> action) {
+
         }
     }
 

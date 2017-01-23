@@ -24,8 +24,8 @@ public class EvalTest {
 
     @Test
     public void reactive(){
-        Eval.fromPublisher(Flux.create(s->{
-            new Thread(()-> {
+        Eval<Integer> react = Eval.fromPublisher(Flux.create(s -> {
+            new Thread(() -> {
                 try {
                     Thread.sleep(1000l);
                 } catch (InterruptedException e) {
@@ -34,9 +34,11 @@ public class EvalTest {
                 s.onNext(1);
                 s.onComplete();
             }).start();
-        })).forEach(System.out::println);
+        }));
+        react.map(i->i*2)
+                .flatMap(i->Eval.now(i*3))
+                .forEach(System.out::println);
 
-        System.out.println("Waiting!");
 
     }
     @Test

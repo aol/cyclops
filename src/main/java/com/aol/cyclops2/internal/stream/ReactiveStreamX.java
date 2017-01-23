@@ -306,7 +306,15 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
 
-            this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Subscription sub =this.source.subscribe(queue::offer,i->queue.close(),queue::close);
+            Continuation[] contRef ={null};
+            Continuation cont = new Continuation(()->{
+                System.out.println("Requesting !");
+                sub.request(1l);
+                return contRef[0];
+            });
+            contRef[0]=cont;
+            queue.addContinuation(cont);
             return queue.stream();
 
         }

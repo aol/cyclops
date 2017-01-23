@@ -107,10 +107,6 @@ public interface Eval<T> extends    To<Eval<T>>,
      */
     public static <T> Eval<T> fromPublisher(final Publisher<T> pub) {
         return fromFuture(Future.fromPublisher(pub));
-        /**
-        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
-        pub.subscribe(sub);
-        return sub.toEvalLater();**/
     }
     public static <T> Eval<T> coeval(final Future<Eval<T>> pub) {
         return new Module.FutureAlways<T>(pub);
@@ -349,7 +345,10 @@ public interface Eval<T> extends    To<Eval<T>>,
      */
     @Override
     default <R> Eval<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return (Eval<R>)MonadicValue.super.flatMapP(mapper);
+        return this.flatMap(a -> {
+            final Publisher<? extends R> publisher = mapper.apply(a);
+            return Eval.fromPublisher(publisher);
+        });
     }
 
 
