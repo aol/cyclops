@@ -650,6 +650,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         Topic<T> topic = new Topic<>(queue,QueueFactories.<T>boundedNonBlockingQueue(1000));
         AtomicBoolean wip = new AtomicBoolean(false);
         Subscription s= source.subscribe(topic::offer,e->topic.close(),()->topic.close());
+        Continuation contRef[] = {null};
         Continuation cont =
                 new Continuation(()->{
 
@@ -664,10 +665,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     }
 
 
-                    return Continuation.empty();
+                    return contRef[0];
                 });
 
-
+        contRef[0] =cont;
         queue.addContinuation(cont);
         return topic;
     }
