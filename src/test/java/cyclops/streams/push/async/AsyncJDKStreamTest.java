@@ -55,6 +55,14 @@ public class AsyncJDKStreamTest {
 		assertThat(of( asList("1","10"), asList("2"),asList("3"),asList("4")).flatMapStream( list -> list.stream() ).collect(Collectors.toList() 
 						),hasItem("10"));
 	}
+    @Test
+    public void testFlatMap2(){
+
+	     System.out.println(of( asList("1","10"), asList("2"),asList("3"),asList("4")).flatMap( list -> list.stream() ).collect(Collectors.toList()));
+
+        assertThat(of( asList("1","10"), asList("2"),asList("3"),asList("4")).flatMap( list -> list.stream() ).collect(Collectors.toList()
+        ),hasItem("10"));
+    }
 	
 	@Test
 	public void testMapReduce(){
@@ -164,9 +172,10 @@ public class AsyncJDKStreamTest {
 		assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1).collect(Collectors.toList()),equalTo(Arrays.asList(5,4,3,2,1)));
 	}
 	@Test
-	public void forEach() {
+	public void forEach() throws InterruptedException {
 		List<Integer> list = new ArrayList<>();
 		of(1,5,3,4,2).forEach(it-> list.add(it));
+		Thread.sleep(500l);
 		assertThat(list,hasItem(1));
 		assertThat(list,hasItem(2));
 		assertThat(list,hasItem(3));

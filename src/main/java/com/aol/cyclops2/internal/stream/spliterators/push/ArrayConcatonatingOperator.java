@@ -1,8 +1,11 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import cyclops.collections.DequeX;
+import cyclops.collections.ListX;
 import cyclops.collections.QueueX;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
@@ -12,11 +15,11 @@ import java.util.function.Consumer;
 public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
 
 
-    private final DequeX<Operator<IN>> operators;
+    private final ListX<Operator<IN>> operators;
 
 
     public ArrayConcatonatingOperator(Operator<IN>... sources){
-        this.operators = DequeX.empty();
+        this.operators = ListX.empty();
         for(Operator<IN> next : sources){
             operators.add(next);
         }
@@ -26,7 +29,7 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
 
     private void subscribe(int index, boolean[] completed,Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs){
 
-        operators.get(index).get().subscribeAll(e-> {
+        operators.get(index).subscribeAll(e-> {
                     try {
                         onNext.accept(e);
                     } catch (Throwable t) {
@@ -132,6 +135,22 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
     @Override
     public void subscribeAll(Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
 
-       subscribe(0,new boolean[]{false},onNext,onError,onCompleteDs);
+        subscribeAll(0,onNext,onError,onCompleteDs);
+
+
+
+    }
+    public void subscribeAll(int index,Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+        if(index>=operators.size()) {
+            onCompleteDs.run();
+            return;
+        }
+
+
+        Operator<IN> next = operators.get(index);
+        next.subscribeAll(onNext,onError,()->subscribeAll(index+1,onNext,onError,onCompleteDs));
+
+
+
     }
 }

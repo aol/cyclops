@@ -30,6 +30,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -90,17 +91,15 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
 
-            StreamSubscription sub = this.source.subscribe(n->{
-                System.out.println("Adding " + n);
-                queue.offer(n);
-            },i->queue.close(),queue::close);
-            Continuation[] contRef ={null};
+            AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
-                sub.request(1l);
-                return contRef[0];
+                if(wip.compareAndSet(false,true)) {
+                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                }
+                return Continuation.empty();
             });
-            contRef[0]=cont;
-            queue.addContinuation(cont);
+
+
             return queue.stream().iterator();
 
         }
@@ -305,15 +304,16 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
 
-            Subscription sub =this.source.subscribe(queue::offer,i->queue.close(),queue::close);
-            Continuation[] contRef ={null};
+            AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
-                System.out.println("Requesting !");
-                sub.request(1l);
-                return contRef[0];
+                if(wip.compareAndSet(false,true)) {
+                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                }
+                return Continuation.empty();
             });
-            contRef[0]=cont;
+
             queue.addContinuation(cont);
+
             return queue.stream();
 
         }
@@ -356,8 +356,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public long count() {
 
+        AtomicBoolean complete = new AtomicBoolean(false);
         long[] result = {0};
-        forEach(t -> result[0]++);
+        forEach(t -> result[0]++,e->{},()->complete.set(true));
+        while(!complete.get()){
+            LockSupport.parkNanos(0l);
+        }
         return result[0];
 
 
@@ -766,13 +770,15 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
-            Subscription sub = this.source.subscribe(queue::offer,i->queue.close(),queue::close);
-            Continuation[] contRef ={null};
+
+            AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
-                sub.request(1l);
-                return contRef[0];
+                if(wip.compareAndSet(false,true)) {
+                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                }
+                return Continuation.empty();
             });
-            contRef[0]=cont;
+
             queue.addContinuation(cont);
             return Tuple.tuple(topic.stream(),topic.stream());
 
@@ -792,13 +798,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
-            Subscription sub = this.source.subscribe(queue::offer,i->queue.close(),queue::close);
-            Continuation[] contRef ={null};
+            AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
-                sub.request(1l);
-                return contRef[0];
+                if(wip.compareAndSet(false,true)) {
+                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                }
+                return Continuation.empty();
             });
-            contRef[0]=cont;
+
             queue.addContinuation(cont);
             return Tuple.tuple(topic.stream(),topic.stream());
 
@@ -820,13 +827,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
-            Subscription sub =this.source.subscribe(queue::offer,i->queue.close(),queue::close);
-            Continuation[] contRef ={null};
+            AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
-                sub.request(1l);
-                return contRef[0];
+                if(wip.compareAndSet(false,true)) {
+                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                }
+                return Continuation.empty();
             });
-            contRef[0]=cont;
+
             queue.addContinuation(cont);
             return Tuple.tuple(topic.stream(),topic.stream(),topic.stream());
 
@@ -848,13 +856,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
-            Subscription sub = this.source.subscribe(queue::offer,i->queue.close(),queue::close);
-            Continuation[] contRef ={null};
+            AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
-                sub.request(1l);
-                return contRef[0];
+                if(wip.compareAndSet(false,true)) {
+                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                }
+                return Continuation.empty();
             });
-            contRef[0]=cont;
+
             queue.addContinuation(cont);
             return Tuple.tuple(topic.stream(),topic.stream(),topic.stream());
 
@@ -877,13 +886,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
-            Subscription sub =this.source.subscribe(queue::offer,i->queue.close(),queue::close);
-            Continuation[] contRef ={null};
+            AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
-                sub.request(1l);
-                return contRef[0];
+                if(wip.compareAndSet(false,true)) {
+                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                }
+                return Continuation.empty();
             });
-            contRef[0]=cont;
+
             queue.addContinuation(cont);
             return Tuple.tuple(topic.stream(),topic.stream(),topic.stream(),topic.stream());
 
@@ -905,13 +915,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
-            Subscription sub = this.source.subscribe(queue::offer,i->queue.close(),queue::close);
-            Continuation[] contRef ={null};
+            AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
-                sub.request(1l);
-                return contRef[0];
+                if(wip.compareAndSet(false,true)) {
+                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                }
+                return Continuation.empty();
             });
-            contRef[0]=cont;
+
             queue.addContinuation(cont);
             return Tuple.tuple(topic.stream(),topic.stream(),topic.stream(),topic.stream());
 
