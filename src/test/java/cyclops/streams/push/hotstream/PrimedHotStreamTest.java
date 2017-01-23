@@ -110,7 +110,7 @@ public class PrimedHotStreamTest {
 				.limit(2)
 				.toList();
 
-		assertThat(list,equalTo(Arrays.asList(1000,999)));
+		assertThat(list,equalTo(Arrays.asList(999,998)));
 
 	}
 	volatile boolean active;
