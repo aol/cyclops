@@ -6,6 +6,7 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
@@ -25,6 +26,7 @@ import java.util.stream.*;
 
 import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
 import com.aol.cyclops2.types.FoldableTraversable;
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.futurestream.*;
 import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import cyclops.*;
@@ -32,6 +34,7 @@ import cyclops.async.*;
 import cyclops.async.Queue;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Trampoline;
+import cyclops.control.Xor;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
@@ -79,12 +82,223 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                           ConfigurableStream<U, FastFuture<U>>,
                                           FutureStreamSynchronousPublisher<U> {
 
+
+    @Override
+    default <R> FutureStream<R> parallel(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R>> fn) {
+        return fromStream(stream().parallel(fj,fn));
+    }
+
+    @Override
+    default <U1, R> FutureStream<R> zipLatest(final Publisher<? extends U1> other, final BiFunction<? super U, ? super U1, ? extends R> zipper) {
+        return fromStream(stream().zipLatest(other,zipper));
+    }
+
+    @Override
+    default FutureStream<U> skipUntilClosed(final Predicate<? super U> p) {
+        return fromStream(stream().skipUntilClosed(p));
+    }
+
+    @Override
+    default ReactiveSeq<U> limitUntilClosed(final Predicate<? super U> p) {
+        return fromStream(stream().limitUntilClosed(p));
+    }
+
+    @Override
+    default FutureStream<U> reduceAll(U identity, BinaryOperator<U> accumulator) {
+        return fromStream(stream().reduceAll(identity,accumulator));
+    }
+
+    @Override
+    default <R, A> FutureStream<R> collectAll(Collector<? super U, A, R> collector) {
+        return fromStream(stream().collectAll(collector));
+    }
+
+    @Override
+    default FutureStream<U> append(U value){
+        return fromStream(stream().append(value));
+    }
+
+    @Override
+    default FutureStream<Tuple2<U, Long>> timestamp() {
+        return fromStream(stream().timestamp());
+    }
+
+    @Override
+    default <R> FutureStream<R> retry(final Function<? super U, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return fromStream(stream().retry(fn,retries,delay,timeUnit));
+    }
+
+    @Override
+    default FutureStream<ReactiveSeq<U>> combinations(final int size) {
+        return fromStream(stream().combinations());
+    }
+
+    @Override
+    default FutureStream<U> removeAllS(final Stream<? extends U> stream) {
+        return fromStream(stream().removeAllS(stream));
+    }
+
+    @Override
+    default FutureStream<U> removeAllS(final Iterable<? extends U> it) {
+        return fromStream(stream().removeAllS(it));
+    }
+
+    @Override
+    default FutureStream<U> removeAllS(final U... values) {
+        return fromStream(stream().removeAllS(values));
+    }
+
+    @Override
+    default FutureStream<U> retainAllS(final Iterable<? extends U> it) {
+        return fromStream(stream().removeAllS(it));
+    }
+
+    @Override
+    default FutureStream<U> retainAllS(final Stream<? extends U> stream) {
+        return fromStream(stream().retainAllS(stream));
+    }
+
+    @Override
+    default FutureStream<U> retainAllS(final U... values) {
+        return fromStream(stream().retainAllS(values));
+    }
+
+    @Override
+    default FutureStream<U> zip(BinaryOperator<Zippable<U>> combiner, final Zippable<U> app) {
+        return fromStream(stream().zip(combiner,app));
+    }
+
+    @Override
+    default <R> FutureStream<R> zipWith(Iterable<Function<? super U, ? extends R>> fn) {
+        return fromStream(stream().zipWith(fn));
+    }
+
+    @Override
+    default <R> FutureStream<R> zipWithS(Stream<Function<? super U, ? extends R>> fn) {
+        return fromStream(stream().zipWithS(fn));
+    }
+
+    @Override
+    default <R> FutureStream<R> zipWithP(Publisher<Function<? super U, ? extends R>> fn) {
+        return fromStream(stream().zipWithP(fn));
+    }
+
+    @Override
+    default <U1> FutureStream<Tuple2<U, U1>> zipP(final Publisher<? extends U1> other) {
+        return fromStream(stream().zipP(other));
+    }
+
+    @Override
+    default <S, U1, R> FutureStream<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U1> third, final Fn3<? super U, ? super S, ? super U1, ? extends R> fn3) {
+        return fromStream(stream().zip3(second,third,fn3));
+    }
+
+    @Override
+    default <T2, T3, T4, R> FutureStream<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super U, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return fromStream(stream().zip4(second,third,fourth,fn));
+    }
+
+    @Override
+    default FutureStream<U> mergeP(final Publisher<U>... publishers) {
+        return fromStream(stream().mergeP(publishers));
+    }
+
+    @Override
+    default FutureStream<U> mergeP(final QueueFactory<U> factory, final Publisher<U>... publishers) {
+        return fromStream(stream().mergeP(factory,publishers));
+    }
+
+    @Override
+    default FutureStream<U> merge(Adapter<U>... adapters) {
+        return fromStream(stream().merge(adapters));
+    }
+
+    @Override
+    default <R1, R2, R3> FutureStream<R3> fanOutZipIn(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R1>> path1, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R2>> path2, BiFunction<? super R1, ? super R2, ? extends R3> zipFn) {
+        return fromStream(stream().fanOutZipIn(path1,path2,zipFn));
+    }
+
+    @Override
+    default <R1, R2, R3> FutureStream<R3> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R1>> path1, Function<? super Stream<U>, ? extends Stream<R2>> path2, BiFunction<? super R1, ? super R2, ? extends R3> zipFn) {
+        return fromStream(stream().parallelFanOutZipIn(fj,path1,path2,zipFn));
+    }
+
+    @Override
+    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path1, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path2) {
+        return fromStream(stream().fanOut(path1,path2));
+    }
+
+    @Override
+    default <R> FutureStream<R> parallelFanOut(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R>> path1, Function<? super Stream<U>, ? extends Stream<R>> path2) {
+        return fromStream(stream().parallelFanOut(fj,path1,path2));
+    }
+
+    @Override
+    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path1, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path2, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path3) {
+        return fromStream(stream().fanOut(path1,path2,path3));
+    }
+
+    @Override
+    default <R> FutureStream<R> parallelFanOut(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R>> path1, Function<? super Stream<U>, ? extends Stream<R>> path2, Function<? super Stream<U>, ? extends Stream<R>> path3) {
+        return fromStream(stream().parallelFanOut(fj,path1, path2, path3));
+    }
+
+    @Override
+    default <R1, R2, R3, R4> FutureStream<R4> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R1>> path1, Function<? super Stream<U>, ? extends Stream<R2>> path2, Function<? super Stream<U>, ? extends Stream<R3>> path3, Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn) {
+        return fromStream(stream().parallelFanOutZipIn(fj,path1, path2, path3,zipFn));
+    }
+
+    @Override
+    default <R1, R2, R3, R4> FutureStream<R4> fanOutZipIn(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R1>> path1, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R2>> path2, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R3>> path3, Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn) {
+        return fromStream(stream().fanOutZipIn(path1, path2, path3,zipFn));
+    }
+
+    @Override
+    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path1, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path2, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path3, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path4) {
+        return fromStream(stream().fanOut(path1, path2, path3,path4));
+    }
+
+    @Override
+    default <R> FutureStream<R> parallelFanOut(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R>> path1, Function<? super Stream<U>, ? extends Stream<R>> path2, Function<? super Stream<U>, ? extends Stream<R>> path3, Function<? super Stream<U>, ? extends Stream<R>> path4) {
+        return fromStream(stream().parallelFanOut(fj,path1, path2, path3,path4));
+    }
+
+    @Override
+    default <R1, R2, R3, R4, R5> FutureStream<R5> fanOutZipIn(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R1>> path1, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R2>> path2, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R3>> path3, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R4>> path4, Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn) {
+        return fromStream(stream().fanOutZipIn(path1, path2, path3,path4,zipFn));
+    }
+
+    @Override
+    default <R1, R2, R3, R4, R5> FutureStream<R5> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R1>> path1, Function<? super Stream<U>, ? extends Stream<R2>> path2, Function<? super Stream<U>, ? extends Stream<R3>> path3, Function<? super Stream<U>, ? extends Stream<R4>> path4, Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn) {
+        return fromStream(stream().parallelFanOutZipIn(fj,path1, path2, path3,path4,zipFn));
+    }
+
+    @Override
+    default Topic<U> broadcast() {
+        return new Topic<U>(toQueue(),this.getQueueFactory());
+    }
+
+
+
+    @Override
+    default FutureStream<U> ambWith(Publisher<U> racer) {
+        return fromStream(Spouts.amb(this,racer));
+    }
+
+    @Override
+    default FutureStream<U> ambWith(Publisher<U>[] racers) {
+        ListX<Publisher<U>> list = ListX.of(racers);
+        list.add(0, this);
+        return fromStream(Spouts.amb(list));
+    }
+
     default LazyReact builder(int maxActiveTasks, Executor exec){
         return new LazyReact(maxActiveTasks,exec);
     }
     default LazyReact builder(){
         return new LazyReact();
     }
+
     default <R> Future<R> foldFuture(Function<? super FoldableTraversable<U>,? extends R> fn){
         return Future.ofSupplier(()->fn.apply(this),getSimpleReact().getExecutor());
     }

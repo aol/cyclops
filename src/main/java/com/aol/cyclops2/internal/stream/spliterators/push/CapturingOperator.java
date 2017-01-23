@@ -28,9 +28,28 @@ public class CapturingOperator<T> implements Operator<T> {
 
     public CapturingOperator(Subscription s){
         this.s = s;
+        onInit = ()->{};
     }
 
+
+    final Runnable onInit;
+    public CapturingOperator(Runnable onInit){
+        this.onInit = onInit;
+        this.subscription = new StreamSubscription();
+        this.s=new Subscription() {
+            @Override
+            public void request(long n) {
+
+            }
+
+            @Override
+            public void cancel() {
+
+            }
+        };
+    }
     public CapturingOperator(){
+        this.onInit = ()->{};
         this.subscription = new StreamSubscription();
         this.s=new Subscription() {
             @Override
@@ -69,6 +88,7 @@ public class CapturingOperator<T> implements Operator<T> {
         this.error = onError;
         this.onComplete = onComplete;
         this.initialized.set(true);
+        onInit.run();
         return subscription;
     }
 
@@ -78,6 +98,7 @@ public class CapturingOperator<T> implements Operator<T> {
         this.error = onError;
         this.onComplete = onComplete;
         this.initialized.set(true);
+        onInit.run();
     }
 
     public boolean isInitialized() {

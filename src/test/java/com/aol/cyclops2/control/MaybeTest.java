@@ -45,6 +45,25 @@ public class MaybeTest implements Printable {
         none = Maybe.none();
 
     }
+
+    @Test
+    public void reactive(){
+        Future<Integer> future = Future.future();
+        Thread t=  new Thread(()->{
+            try {
+                Thread.sleep(100l);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            future.complete(10);
+        });
+        t.start();
+
+
+        Maybe.fromFuture(future)
+                .map(i->i*2);
+
+    }
     
     @Test
     public void recoverWith(){

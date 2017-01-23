@@ -25,6 +25,7 @@ import java.util.Spliterator;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -67,8 +68,12 @@ public interface Spouts {
      */
     static <T> ReactiveSeq<T> async(Consumer<? super Subscriber<T>> sub){
         AsyncSubscriber<T> s = asyncSubscriber();
-        sub.accept(s);
-        return s.stream();
+        return s.registerAndstream(()->{
+            while(!s.isInitialized()){
+                LockSupport.parkNanos(1l);
+            }
+            sub.accept(s);
+        });
     }
 
     /**

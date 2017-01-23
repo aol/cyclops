@@ -58,6 +58,12 @@ public class AsyncSubscriber<T> implements Subscriber<T> {
 
 
     volatile boolean streamCreated=  false;
+    CapturingOperator<T> getAction(Runnable onInit){
+        while(action.get()==null) {
+            action.compareAndSet(null, new CapturingOperator<T>(onInit));
+        }
+        return action.get();
+    }
     CapturingOperator<T> getAction(){
         while(action.get()==null) {
             action.compareAndSet(null, new CapturingOperator<T>());
@@ -91,7 +97,12 @@ public class AsyncSubscriber<T> implements Subscriber<T> {
      **/
     public ReactiveSeq<T> stream(){
         streamCreated = true;
-        return Spouts.asyncStream(getAction());
+        return Spouts.asyncStream(getAction(()->{}));
+    }
+    public ReactiveSeq<T> registerAndstream(Runnable r){
+        streamCreated = true;
+
+        return Spouts.asyncStream(getAction(r));
     }
 
 

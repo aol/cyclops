@@ -4,9 +4,11 @@ import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.Monoids;
 import cyclops.Semigroups;
+import cyclops.async.Future;
 import cyclops.async.QueueFactories;
 import cyclops.async.Topic;
 import cyclops.collections.ListX;
+
 import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -14,9 +16,12 @@ import org.junit.Test;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 
+import java.util.*;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,12 +35,53 @@ import static org.junit.Assert.*;
 public class SpoutsTest {
 
     @Test
+    public void iteratorTest(){
+        for(int x=100;x<10000;x=x+1000) {
+            Set<Integer> result = new HashSet<>(x);
+            int max = x;
+            Iterator<Integer> it = Spouts.<Integer>async(sub -> {
+
+                for (int i = 0; i < max; i++) {
+                    sub.onNext(i);
+                }
+                sub.onComplete();
+
+            }).iterator();
+
+
+            while (it.hasNext()) {
+                result.add(it.next());
+            }
+            assertThat(result.size(),equalTo(x));
+        }
+    }
+
+    @Test
+    public void parallelFanOut2(){
+
+        assertThat(Spouts.of(1,2,3,4)
+                .parallelFanOut(ForkJoinPool.commonPool(), s1->s1.filter(i->i%2==0).map(i->i*2),
+                        s2->s2.filter(i->i%2!=0).map(i->i*100))
+                .toListX(), Matchers.equalTo(ListX.of(4,100,8,300)));
+        assertThat(Spouts.of(1,2,3,4,5,6,7,8,9)
+                .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%3==0).map(i->i*2),
+                        s2->s2.filter(i->i%3==1).map(i->i*100),
+                        s3->s3.filter(i->i%3==2).map(i->i*1000))
+                .toListX(), Matchers.equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+        assertThat(Spouts.of(1,2,3,4,5,6,7,8,9,10,11,12)
+                .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%4==0).map(i->i*2),
+                        s2->s2.filter(i->i%4==1).map(i->i*100),
+                        s3->s3.filter(i->i%4==2).map(i->i*1000),
+                        s4->s4.filter(i->i%4==3).map(i->i*10000))
+                .toListX(), Matchers.equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
+    }
+    @Test
     public void async(){
        assertThat(Spouts.async(sub->{
             sub.onNext(1);
             sub.onNext(2);
             sub.onComplete();
-        }).toList(),equalTo(ListX.of(1,2)));
+           }).toList(),equalTo(ListX.of(1,2)));
     }
     @Test
     public void generate() throws Exception {

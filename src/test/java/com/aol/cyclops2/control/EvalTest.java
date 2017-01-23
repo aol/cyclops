@@ -1,9 +1,11 @@
 package com.aol.cyclops2.control;
 
+import cyclops.async.Future;
 import cyclops.control.Eval;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
+import reactor.core.publisher.Flux;
 
 import java.util.stream.Stream;
 
@@ -19,6 +21,33 @@ public class EvalTest {
         
         
     }
+
+    @Test
+    public void reactive(){
+        Eval.fromPublisher(Flux.create(s->{
+            new Thread(()-> {
+                try {
+                    Thread.sleep(1000l);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                s.onNext(1);
+                s.onComplete();
+            }).start();
+        })).forEach(System.out::println);
+
+        System.out.println("Waiting!");
+
+    }
+    @Test
+	public void coeval(){
+		Future<Eval<Integer>> input = Future.future();
+    	Eval<Integer> reactive = Eval.coeval(input);
+
+    	reactive.forEach(System.out::println);
+
+    	input.complete(Eval.now(10));
+	}
 
     @Test
     public void testZip(){

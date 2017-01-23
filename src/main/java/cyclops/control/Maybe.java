@@ -3,6 +3,7 @@ package cyclops.control;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.*;
 import cyclops.Monoids;
+import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
@@ -105,6 +106,15 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
     static <T> Maybe<T> fromLazy(Eval<Maybe<T>> lazy){
         return new Lazy<T>(lazy);
+    }
+    static <T> Maybe<T> fromFuture(Future<T> future){
+        return new Lazy<T>(Eval.later( ()->{
+        try{
+           return Maybe.of(future.get());
+        }catch(Throwable t){
+           return Maybe.none();
+        }}
+        ));
     }
     public static <T,R> Function<? super T, ? extends Maybe<R>> arrow(Function<?  super T, ? extends R> fn){
         return in-> Maybe.ofNullable(fn.apply(in));

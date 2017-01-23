@@ -334,6 +334,25 @@ public  class CoreReactiveSeqTest {
                 .toListX(),equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
     }
     @Test
+    public void parallelFanOut2(){
+
+        assertThat(ReactiveSeq.of(1,2,3,4)
+                .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%2==0).map(i->i*2),
+                        s2->s2.filter(i->i%2!=0).map(i->i*100))
+                .toListX(),equalTo(ListX.of(4,100,8,300)));
+        assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9)
+                .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%3==0).map(i->i*2),
+                        s2->s2.filter(i->i%3==1).map(i->i*100),
+                        s3->s3.filter(i->i%3==2).map(i->i*1000))
+                .toListX(),equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+        assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10,11,12)
+                .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%4==0).map(i->i*2),
+                        s2->s2.filter(i->i%4==1).map(i->i*100),
+                        s3->s3.filter(i->i%4==2).map(i->i*1000),
+                        s4->s4.filter(i->i%4==3).map(i->i*10000))
+                .toListX(),equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
+    }
+    @Test
     public void iteratePred(){
 
         assertThat(ReactiveSeq.iterate(0,i->i<10,i->i+1)

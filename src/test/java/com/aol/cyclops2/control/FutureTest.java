@@ -10,6 +10,7 @@ import cyclops.control.*;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import lombok.val;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -53,6 +54,15 @@ public class FutureTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void sub(){
+        Future<Integer> f = Future.future();
+
+        Spouts.from(f).forEach(System.out::println);
+
+        f.complete(10);
     }
     
     @Test
