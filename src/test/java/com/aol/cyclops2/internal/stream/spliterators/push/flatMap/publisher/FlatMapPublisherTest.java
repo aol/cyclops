@@ -4,14 +4,17 @@ import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
 import cyclops.collections.ListX;
+import cyclops.control.Maybe;
 import cyclops.stream.Spouts;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -20,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
+import static cyclops.stream.Spouts.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
@@ -29,6 +33,17 @@ import static org.hamcrest.Matchers.hasItems;
  */
 public class FlatMapPublisherTest {
 
+    @Test
+    public void flatMapPublisher() throws InterruptedException{
+        //of(1,2,3)
+        //		.flatMapP(i->Maybe.of(i)).printOut();
+
+        Assert.assertThat(of(1,2,3)
+                .flatMapP(i-> Maybe.of(i))
+                .toListX(), Matchers.equalTo(Arrays.asList(1,2,3)));
+
+
+    }
     @Test
     public void flatMapP(){
         assertThat(Spouts.of(1,2,3)

@@ -1,4 +1,4 @@
-package cyclops.streams.push.reactivestreams;
+package cyclops.streams.push;
 
 import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
 import cyclops.async.LazyReact;

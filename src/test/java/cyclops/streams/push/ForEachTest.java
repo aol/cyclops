@@ -1,4 +1,4 @@
-package cyclops.streams.push.reactivestreams;
+package cyclops.streams.push;
 
 import cyclops.Streams;
 import cyclops.stream.Spouts;
