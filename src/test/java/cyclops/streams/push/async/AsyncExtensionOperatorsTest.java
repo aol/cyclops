@@ -256,6 +256,12 @@ public class AsyncExtensionOperatorsTest {
 							.skipLast(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
+    @Test
+    public void testSkipLast1Empty(){
+        assertThat(of()
+                .skipLast(1)
+                .collect(Collectors.toList()),equalTo(Arrays.asList()));
+    }
 	@Test
 	public void testLimitLast(){
 		assertThat(of(1,2,3,4,5)
@@ -274,6 +280,12 @@ public class AsyncExtensionOperatorsTest {
 							.limitLast(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
+    @Test
+    public void testLimitLast1Empty(){
+        assertThat(of()
+                .limitLast(1)
+                .collect(Collectors.toList()),equalTo(Arrays.asList()));
+    }
 	@Test
 	public void endsWith(){
 		assertTrue(of(1,2,3,4,5,6)

@@ -114,7 +114,6 @@ public class AsyncSubscriber<T> implements Subscriber<T> {
 
     @Override
     public void onNext(final T t) {
-        Objects.requireNonNull(t);
 
         val cons = getAction().getAction();
         if(cons!=null) 

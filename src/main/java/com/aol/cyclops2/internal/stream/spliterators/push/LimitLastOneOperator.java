@@ -66,6 +66,7 @@ public class LimitLastOneOperator<T,R> extends BaseOperator<T,T> {
                 ,onError,()->{
                     if(last[0]!=UNSET)
                         onNext.accept((T)last[0]);
+                    onCompleteDs.run();
                 });
     }
 }

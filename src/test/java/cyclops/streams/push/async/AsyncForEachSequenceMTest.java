@@ -8,6 +8,9 @@ import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Supplier;
 
 import static org.hamcrest.Matchers.*;
@@ -20,10 +23,13 @@ public class AsyncForEachSequenceMTest {
 		error= null;
 		complete =false;
 	}
-	volatile int times = 0;
+    AtomicInteger times = new AtomicInteger(0);
 	@Test
 	public void emptyOnComplete(){
 	    of().forEach(e->{}, e->{}, ()->complete=true);
+	    while(!complete){
+	        LockSupport.parkNanos(0l);
+        }
 	    assertTrue(complete);
 	}
 	protected <U> ReactiveSeq<U> of(U... array){
@@ -40,14 +46,18 @@ public class AsyncForEachSequenceMTest {
 	}
 	@Test
 	public void onComplete(){
+
         of(1, 2, 3, 4, 5, 6, 7, 8, 9)
                     .map(this::load)
                     .forEach(System.out::println,
                 aEx -> System.err.println(aEx + ":" + aEx.getMessage()), () -> {
-                    times++;
+                    times.incrementAndGet();
                     System.out.println("Over");
                 });
-        assertThat(times,equalTo(1));
+        while(times.get()==0){
+            LockSupport.parkNanos(0l);
+        }
+        assertThat(times.get(),equalTo(1));
 	}
 	@Test
     public void onCompleteXEvents(){
@@ -55,10 +65,13 @@ public class AsyncForEachSequenceMTest {
                     .map(this::load)
                    .forEach(Long.MAX_VALUE,System.out::println,
                 aEx -> System.err.println(aEx + ":" + aEx.getMessage()), () -> {
-                    times++;
+                       times.incrementAndGet();
                     System.out.println("Over");
                 });
-        assertThat(times,equalTo(1));
+        while(times.get()==0){
+            LockSupport.parkNanos(0l);
+        }
+        assertThat(times.get(),equalTo(1));
     }
 	
 	//this::load is simple
@@ -218,7 +231,9 @@ public class AsyncForEachSequenceMTest {
 				.map(Supplier::get)
 				 .forEach(i->list.add(i), e->error=e,()->complete=true);
 		
-		
+		while(!complete){
+            LockSupport.parkNanos(0l);
+        }
 		
 		assertThat(list,hasItems(1,2,3));
 		assertThat(list.size(),equalTo(3));
