@@ -5,7 +5,9 @@ import cyclops.box.MutableBoolean;
 import lombok.AllArgsConstructor;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -61,8 +63,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
 
             @Override
             public void cancel() {
-                leftSub[0].cancel();
-                rightSub[0].cancel();
+                if(leftSub[0]!=null)
+                     leftSub[0].cancel();
+                if(rightSub[0]!=null)
+                    rightSub[0].cancel();
                 super.cancel();
             }
         };
@@ -102,7 +106,8 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
 
             if (leftQ.size()==0 || stopRequests[0]) {
                 completing.set(true);
-                rightSub[0].cancel();
+                if(rightSub[0]!=null)
+                    rightSub[0].cancel();
                 onComplete.run();
 
             }
@@ -142,8 +147,8 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             drain(leftQ,rightQ,onNext);
 
             if (rightQ.size()==0 || stopRequests[0]) {
-
-                leftSub[0].cancel();
+                if(leftSub[0]!=null)
+                 leftSub[0].cancel();
                 onComplete.run();
 
             }
@@ -155,17 +160,110 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
         return sub;
     }
 
-    private void drain(OneToOneConcurrentArrayQueue<T1> leftQ, OneToOneConcurrentArrayQueue<T2> rightQ, Consumer<? super R> onNext) {
+    private void drain(Queue<T1> leftQ, OneToOneConcurrentArrayQueue<T2> rightQ, Consumer<? super R> onNext) {
         while(leftQ.size()>0 && rightQ.size()>0){
             onNext.accept(fn.apply(leftQ.poll(), rightQ.poll()));
         }
     }
 
-
+    static class VolatileBoolean{
+        volatile boolean value = false;
+    }
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        subscribe(onNext,onError,onCompleteDs).request(Long.MAX_VALUE);
+        LinkedBlockingDeque<T1> leftQ = new LinkedBlockingDeque<>();
+        OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
+        StreamSubscription  rightSub[] = {null};
+        VolatileBoolean leftComplete = new VolatileBoolean();
+        VolatileBoolean rightComplete =new VolatileBoolean();
+        left.subscribeAll(e->{
+
+
+            try {
+
+                if (rightQ.size() > 0) {
+                    onNext.accept(fn.apply((T1) e, rightQ.poll()));
+                    if(!rightComplete.value){
+
+                        rightSub[0].request(1);
+
+
+                    }
+
+                    if(rightComplete.value && rightQ.size()==0){
+
+                        onCompleteDs.run();
+
+                    }
+                } else {
+                    leftQ.offer((T1) e);
+
+
+                }
+            } catch (Throwable t) {
+                onError.accept(t);
+            }
+
+        },onError,()->{
+
+            drain(leftQ,rightQ,onNext);
+
+
+
+            if (leftQ.size()==0 || rightComplete.value) {
+
+                if(rightSub[0]!=null)
+                    rightSub[0].cancel();
+                onCompleteDs.run();
+
+            }
+            leftComplete.value=true;
+
+
+
+        });
+        rightSub[0] = right.subscribe(e->{
+
+            try {
+                if (leftQ.size() > 0) {
+
+                    onNext.accept(fn.apply(leftQ.poll(), (T2) e));
+                    if(!rightComplete.value){
+
+                        rightSub[0].request(1);
+
+
+                    }
+
+                    if(leftComplete.value && leftQ.size()==0){
+                        rightSub[0].cancel();
+                        onCompleteDs.run();
+
+                    }
+                } else {
+                    rightQ.offer((T2) e);
+                }
+            }catch(Throwable t){
+                onError.accept(t);
+            }
+
+        },onError,()->{
+
+
+            drain(leftQ,rightQ,onNext);
+
+            if (rightQ.size()==0 || leftComplete.value) {
+
+                onCompleteDs.run();
+
+            }
+            rightComplete.value=true;
+
+
+        });
+        rightSub[0].request(1l);
 
     }
+
 }

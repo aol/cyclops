@@ -76,6 +76,8 @@ public class LimitLastOperator<T,R> extends BaseOperator<T,T> {
                 ,onError,()->{
                     for(T next : buffer)
                         onNext.accept(next);
+
+                    onCompleteDs.run();
                 });
     }
 }

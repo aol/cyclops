@@ -673,6 +673,9 @@ public class Queue<T> implements Adapter<T> {
         this.continuationStrategy.addContinuation(c);
     }
 
+    public void setContinuations(Queue<T> queue){
+        queue.continuationStrategy = this.continuationStrategy;
+    }
     @Override
     public <R> R visit(final Function<? super Queue<T>, ? extends R> caseQueue, final Function<? super Topic<T>, ? extends R> caseTopic) {
         return caseQueue.apply(this);

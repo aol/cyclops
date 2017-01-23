@@ -1,5 +1,6 @@
 package com.aol.cyclops2.internal.stream;
 
+import com.aol.cyclops2.internal.stream.spliterators.ClosingSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.Traversable;
 import com.aol.cyclops2.types.futurestream.Continuation;
@@ -7,6 +8,7 @@ import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.Streams;
 import cyclops.async.*;
+import cyclops.async.Queue;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
@@ -17,6 +19,7 @@ import cyclops.stream.Spouts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
+import lombok.val;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -98,6 +101,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                 }
                 return Continuation.empty();
             });
+            queue.addContinuation(cont);
 
 
             return queue.stream().iterator();
@@ -123,8 +127,25 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public final Optional<T> findFirst() {
         final AtomicReference<T> result = new AtomicReference<T>(null);
-        final AtomicBoolean available = new AtomicBoolean(false);
         final AtomicReference<Throwable> error = new AtomicReference<>(null);
+        final AtomicBoolean available = new AtomicBoolean(false);
+        if(async==Type.NO_BACKPRESSURE){
+            source.subscribeAll(e->{
+                result.set(e);
+                throw new Queue.ClosedQueueException();
+            },t->{
+                error.set(t);
+            },()->available.set(true));
+            while(!available.get()){
+
+            }
+            if(error.get()!=null && (! (error.get() instanceof Queue.ClosedQueueException)))
+                throw ExceptionSoftener.throwSoftenedException(error.get());
+
+
+            return Optional.ofNullable(result.get());
+        }
+
 
             Subscription sub[] = {null};
             //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
@@ -302,7 +323,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         if(async==Type.NO_BACKPRESSURE){
            // System.out.println("Setting up queue..");
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
+                                                         .build();
 
             AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
@@ -769,18 +790,21 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
-            Topic<T> topic = new Topic<>(queue);
 
+            Topic<T> topic = new Topic<>(queue);
             AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
                 if(wip.compareAndSet(false,true)) {
-                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                    //queue::close
+                    this.source.subscribeAll(topic::offer, i -> topic.close(),()->{
+                        topic.close();
+                    } );
                 }
                 return Continuation.empty();
             });
-
-            queue.addContinuation(cont);
-            return Tuple.tuple(topic.stream(),topic.stream());
+            val res = Tuple.tuple(topic.stream(),topic.stream());
+            topic.addContinuation(cont);
+            return res;
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
@@ -801,13 +825,16 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
                 if(wip.compareAndSet(false,true)) {
-                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                    //queue::close
+                    this.source.subscribeAll(topic::offer, i -> topic.close(),()->{
+                        topic.close();
+                    } );
                 }
                 return Continuation.empty();
             });
-
-            queue.addContinuation(cont);
-            return Tuple.tuple(topic.stream(),topic.stream());
+            val res = Tuple.tuple(topic.stream(),topic.stream());
+            topic.addContinuation(cont);
+            return res;
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
@@ -830,13 +857,16 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
                 if(wip.compareAndSet(false,true)) {
-                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                    //queue::close
+                    this.source.subscribeAll(topic::offer, i -> topic.close(),()->{
+                        topic.close();
+                    } );
                 }
                 return Continuation.empty();
             });
-
-            queue.addContinuation(cont);
-            return Tuple.tuple(topic.stream(),topic.stream(),topic.stream());
+            val res = Tuple.tuple(topic.stream(),topic.stream(),topic.stream());
+            topic.addContinuation(cont);
+            return res;
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
@@ -855,17 +885,21 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
+
             Topic<T> topic = new Topic<>(queue);
             AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
                 if(wip.compareAndSet(false,true)) {
-                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                    //queue::close
+                    this.source.subscribeAll(topic::offer, i -> topic.close(),()->{
+                        topic.close();
+                    } );
                 }
                 return Continuation.empty();
             });
-
-            queue.addContinuation(cont);
-            return Tuple.tuple(topic.stream(),topic.stream(),topic.stream());
+            val res = Tuple.tuple(topic.stream(),topic.stream(),topic.stream());
+            topic.addContinuation(cont);
+            return res;
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
@@ -885,17 +919,21 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
+
             Topic<T> topic = new Topic<>(queue);
             AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
                 if(wip.compareAndSet(false,true)) {
-                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                    //queue::close
+                    this.source.subscribeAll(topic::offer, i -> topic.close(),()->{
+                        topic.close();
+                    } );
                 }
                 return Continuation.empty();
             });
-
-            queue.addContinuation(cont);
-            return Tuple.tuple(topic.stream(),topic.stream(),topic.stream(),topic.stream());
+            val res = Tuple.tuple(topic.stream(),topic.stream(),topic.stream(),topic.stream());
+            topic.addContinuation(cont);
+            return res;
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
@@ -918,13 +956,16 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
                 if(wip.compareAndSet(false,true)) {
-                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                    //queue::close
+                    this.source.subscribeAll(topic::offer, i -> topic.close(),()->{
+                        topic.close();
+                    } );
                 }
                 return Continuation.empty();
             });
-
-            queue.addContinuation(cont);
-            return Tuple.tuple(topic.stream(),topic.stream(),topic.stream(),topic.stream());
+            val res = Tuple.tuple(topic.stream(),topic.stream(),topic.stream(),topic.stream());
+            topic.addContinuation(cont);
+            return res;
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);

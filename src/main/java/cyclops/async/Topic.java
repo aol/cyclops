@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.futurestream.Continuation;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
 import org.pcollections.PVector;
@@ -129,7 +130,7 @@ public class Topic<T> implements Adapter<T> {
         if (index >= this.distributor.getSubscribers()
                                      .size()) {
 
-            this.distributor.addQueue(new Queue());
+            this.distributor.addQueue(factory.build());
 
         }
         return this.distributor.getSubscribers()
@@ -175,6 +176,10 @@ public class Topic<T> implements Adapter<T> {
         fromStream(Stream.of(data));
         return true;
 
+    }
+
+    public void addContinuation(Continuation cont) {
+        distributor.subscribers.forEach(q->q.addContinuation(cont));
     }
 
     static class DistributingCollection<T> extends ArrayList<T> {

@@ -11,6 +11,7 @@ import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import reactor.core.publisher.Flux;
 
 import java.io.Serializable;
 import java.util.*;
@@ -35,6 +36,19 @@ public class AsyncExtensionOperatorsTest {
 			t.start();
 		});
 	}
+
+	@Test
+    public void queueTest(){
+	    cyclops.async.Queue<Integer> q = new cyclops.async.Queue<>();
+	    q.add(1);
+	    q.add(2);
+	    q.add(3);
+	    q.stream().limit(3).forEach(System.out::println);
+	    q.add(4);
+	    q.add(5);
+        q.stream().limit(2).forEach(System.out::println);
+
+    }
 	@Test
 	public void flatMapStreamFilterSimple(){
 		assertThat(of(1,null).flatMap(i->of(i).filter(Objects::nonNull))
@@ -348,6 +362,7 @@ public class AsyncExtensionOperatorsTest {
 	}
 	@Test
 	public void splitBy(){
+
 		assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
 		assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v2.toList(),equalTo(Arrays.asList(4,5,6)));
 	}
