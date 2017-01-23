@@ -308,18 +308,11 @@ public  class CoreReactiveSeqTest {
 
 
         assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9)
-                .fanOut(s1->s1.peek(System.out::println).filter(i->i%3==0).map(i->i),
-                        s2->s2.filter(i->i%3==1).map(i->i),
-                        s3->s3.filter(i->i%3==2).map(i->i))
-                .toListX(),equalTo(ListX.of(6, 100, 400, 2000,12, 400, 700, 18, 700)));
-
-        /**
-        assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9)
                 .fanOut(s1->s1.peek(System.out::println).filter(i->i%3==0).map(i->i*2),
                         s2->s2.filter(i->i%3==1).map(i->i*100),
                         s3->s3.filter(i->i%3==2).map(i->i*1000))
                 .toListX(),equalTo(ListX.of(6, 100, 400, 2000,12, 400, 700, 18, 700)));
-         **/
+
     }
     @Test
     public void fanOut(){
