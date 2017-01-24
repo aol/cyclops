@@ -2,6 +2,7 @@ package cyclops.stream;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
+import com.aol.cyclops2.internal.stream.ReactiveStreamX.Type;
 import com.aol.cyclops2.internal.stream.spliterators.IteratePredicateSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.UnfoldSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
@@ -96,10 +97,10 @@ public interface Spouts {
         return reactive.reactiveStream();
     }
     static <T> ReactiveSeq<T> reactiveStream(Operator<T> s){
-        return new ReactiveStreamX<>(s).withAsync(ReactiveStreamX.Type.BACKPRESSURE);
+        return new ReactiveStreamX<>(s).withAsync(Type.BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> asyncStream(Operator<T> s){
-        return new ReactiveStreamX<>(s).withAsync(ReactiveStreamX.Type.NO_BACKPRESSURE);
+        return new ReactiveStreamX<>(s).withAsync(Type.NO_BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> syncStream(Operator<T> s){
         return new ReactiveStreamX<>(s);
@@ -155,7 +156,7 @@ public interface Spouts {
 
     }
     static <T> ReactiveSeq<T> from(Publisher<T> pub){
-        return new ReactiveStreamX<T>(new PublisherToOperator<T>(pub),ReactiveStreamX.Type.BACKPRESSURE);
+        return new ReactiveStreamX<T>(new PublisherToOperator<T>(pub), Type.BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> merge(Publisher<? extends Publisher<T>> publisher){
         return mergeLatest((Publisher[])Spouts.from(publisher).toArray());
@@ -170,14 +171,14 @@ public interface Spouts {
                 op[i] = new PublisherToOperator<T>(array[i]);
             }
         }
-        return new ReactiveStreamX<T>(new ArrayMergingOperator<T>(op), ReactiveStreamX.Type.BACKPRESSURE);
+        return new ReactiveStreamX<T>(new ArrayMergingOperator<T>(op), Type.BACKPRESSURE);
     }
 
     static <T1,T2,R> ReactiveSeq<R> combineLatest(Publisher<? super T1> p1, Publisher<? super T2> p2,BiFunction<? super T1, ? super T2, ? extends R> fn){
         Operator<? super T1> op1 = p1 instanceof  ReactiveStreamX ? ((ReactiveStreamX<T1>)p1).getSource() :  new PublisherToOperator<T1>(p1);
         Operator<? super T2> op2 = p2 instanceof  ReactiveStreamX ? ((ReactiveStreamX<T2>)p2).getSource() :  new PublisherToOperator<T2>(p2);
 
-        return new ReactiveStreamX<R>(new ZippingLatestOperator<T1,T2,R>(op1,op2,fn), ReactiveStreamX.Type.BACKPRESSURE);
+        return new ReactiveStreamX<R>(new ZippingLatestOperator<T1,T2,R>(op1,op2,fn), Type.BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> mergeLatest(Publisher<? extends Publisher<T>> publisher){
         return mergeLatest((Publisher[])ReactiveSeq.fromPublisher(publisher).toArray(s->new Publisher[s]));
@@ -192,7 +193,7 @@ public interface Spouts {
                 op[i] = new PublisherToOperator<T>(array[i]);
             }
         }
-        return new ReactiveStreamX<T>(new MergeLatestOperator<T>(op), ReactiveStreamX.Type.BACKPRESSURE);
+        return new ReactiveStreamX<T>(new MergeLatestOperator<T>(op), Type.BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> amb(ListX<? extends Publisher<? extends T>> list){
         return amb(list.toArray(new ReactiveSeq[0]));
@@ -393,16 +394,24 @@ public interface Spouts {
         Operator<T>[] operators = new Operator[streams.length];
         int index = 0;
 
+        Type async = Type.SYNC;
         for(Stream<T> next : (Stream<T>[])streams){
             if(next instanceof ReactiveStreamX){
-                operators[index] = ((ReactiveStreamX)next).getSource();
+                ReactiveStreamX rsx = ((ReactiveStreamX) next);
+                operators[index] = rsx.getSource();
+                if(rsx.getType()== Type.BACKPRESSURE){
+                    async = Type.BACKPRESSURE;
+                }
+                if(async== Type.SYNC && rsx.getType()== Type.NO_BACKPRESSURE){
+                    async = Type.NO_BACKPRESSURE;
+                }
             }else{
                 operators[index] = new SpliteratorToOperator<T>(next.spliterator());
             }
             index++;
         }
 
-        return new ReactiveStreamX<>(new ArrayConcatonatingOperator<T>(operators));
+        return new ReactiveStreamX<>(new ArrayConcatonatingOperator<T>(operators)).withAsync(async);
     }
 
     static class Instances {

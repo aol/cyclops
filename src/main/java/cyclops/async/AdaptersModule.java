@@ -68,6 +68,8 @@ public interface AdaptersModule {
 
     }
 
+
+
     static class SingleContinuation implements ContinuationStrategy {
         private final Queue<?> queue;
         private volatile Continuation continuation = null;
@@ -86,7 +88,6 @@ public interface AdaptersModule {
         public void handleContinuation() {
 
             continuation = continuation.proceed();
-
         }
 
     }

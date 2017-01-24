@@ -406,6 +406,7 @@ public class BaseSequentialTest {
 
 	    @Test
 	    public void testCycle() {
+
 	        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle().limit(6).toList());
 	        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle().limit(6).toList());
 	    }
@@ -422,6 +423,7 @@ public class BaseSequentialTest {
 		@Test
 		public void testDuplicate(){
 			 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+
 			 assertTrue(copies.v1.anyMatch(i->i==2));
 			 assertTrue(copies.v2.anyMatch(i->i==2));
 		}
@@ -602,6 +604,9 @@ public class BaseSequentialTest {
 	}
 	@Test
 	public void splitAtInvestigate() {
+
+
+
 		System.out.println("0" + of(1, 2, 3).splitAt(0).v2.toListX());
 
 		assertThat(of(1, 2, 3).splitAt(0).v2.toListX(), equalTo(ListX.of(1,2, 3)));

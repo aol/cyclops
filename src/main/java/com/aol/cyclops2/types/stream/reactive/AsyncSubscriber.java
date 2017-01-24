@@ -2,6 +2,7 @@ package com.aol.cyclops2.types.stream.reactive;
 
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
+import cyclops.async.AdaptersModule;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import lombok.AllArgsConstructor;
@@ -115,9 +116,10 @@ public class AsyncSubscriber<T> implements Subscriber<T> {
     @Override
     public void onNext(final T t) {
 
-        val cons = getAction().getAction();
-        if(cons!=null) 
-              cons.accept(t);
+
+            val cons = getAction().getAction();
+            if (cons != null)
+                cons.accept(t);
 
         
     }
