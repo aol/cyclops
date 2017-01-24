@@ -412,10 +412,10 @@ public class Queue<T> implements Adapter<T> {
             return currentData != null;
         }
 
-        @Override
+       /** @Override
         public Throwable fillInStackTrace() {
             return this;
-        }
+        }**/
 
     }
 

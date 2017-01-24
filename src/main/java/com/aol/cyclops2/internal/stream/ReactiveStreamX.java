@@ -13,6 +13,8 @@ import cyclops.async.*;
 import cyclops.async.Queue;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
+import cyclops.control.Maybe;
+import cyclops.control.either.Either;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -131,6 +133,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     static final Object UNSET = new Object();
+    @Override
+    public Maybe<T> findOne(){
+        return Maybe.fromPublisher(this);
+    }
+    @Override
+    public Either<Throwable,T> findFirstOrError(){
+        return Either.fromPublisher(this);
+    }
     @Override
     public final Optional<T> findFirst() {
         final AtomicReference<T> result = new AtomicReference<T>(null);
@@ -327,6 +337,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public Stream<T> unwrapStream() {
+        System.out.println("Unwrapping " + async);
         if(async==Type.NO_BACKPRESSURE){
            // System.out.println("Setting up queue..");
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
@@ -334,13 +345,15 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
             AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
+
                 if(wip.compareAndSet(false,true)) {
+                    System.out.println("Subscribing!");
                     this.source.subscribeAll(queue::offer, i ->{
                         queue.close();
                         System.out.println("Closing due to error");
                         i.printStackTrace();
 
-                    } , ()->{System.out.println("Closing "); queue.close();});
+                    } , ()->{System.out.println("Closing on close!"); queue.close();});
                 }
                 return Continuation.empty();
             });
@@ -428,7 +441,23 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void subscribe(final Subscriber<? super T> sub) {
-        sub.onSubscribe(source.subscribe(sub::onNext,sub::onError,sub::onComplete));
+        if(async==Type.NO_BACKPRESSURE){
+            //if this Stream is not backpressure-aware demand requests / cancel requests are ignored.
+            sub.onSubscribe(new Subscription() {
+                @Override
+                public void request(long n) {
+
+                }
+
+                @Override
+                public void cancel() {
+
+                }
+            });
+            source.subscribeAll(sub::onNext, sub::onError, sub::onComplete);
+        }else {
+            sub.onSubscribe(source.subscribe(sub::onNext, sub::onError, sub::onComplete));
+        }
     }
 
 
@@ -635,7 +664,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public void forEachOrdered(final Consumer<? super T> consumer) {
         AtomicBoolean complete = new AtomicBoolean(false);
-        source.subscribe(consumer, this.defaultErrorHandler,()->complete.set(true));
+        source.subscribeAll(consumer, this.defaultErrorHandler,()->complete.set(true));
         while(!complete.get()){
             LockSupport.parkNanos(1l);
         }
@@ -695,7 +724,11 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         Publisher<T>[] pubs = new Publisher[publishers.length+1];
         pubs[0]=this;
         System.arraycopy(publishers,0,pubs,1,publishers.length);
-        return Spouts.mergeLatest(pubs);
+        ReactiveStreamX<T> merged =(ReactiveStreamX<T>) Spouts.mergeLatest(pubs);
+        if(async==Type.SYNC || async ==Type.BACKPRESSURE)
+         return merged.withAsync(Type.BACKPRESSURE);
+        else
+            return merged.withAsync(Type.NO_BACKPRESSURE);
     }
     @Override
     public ReactiveSeq<T> mergeP(final Publisher<T>... publishers){
@@ -703,7 +736,11 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         pubs[0]=this;
         System.arraycopy(publishers,0,pubs,1,publishers.length);
 
-        return Spouts.mergeLatest(pubs);
+        ReactiveStreamX<T> merged =(ReactiveStreamX<T>) Spouts.mergeLatest(pubs);
+        if(async==Type.SYNC || async ==Type.BACKPRESSURE)
+            return merged.withAsync(Type.BACKPRESSURE);
+        else
+            return merged.withAsync(Type.NO_BACKPRESSURE);
     }
     @Override
    public Topic<T> broadcast(){

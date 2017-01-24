@@ -313,6 +313,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
      */
     public static <T> Future<T> fromPublisher(final Publisher<T> pub) {
         Future<T> result = future();
+
         pub.subscribe(new Subscriber<T>() {
             @Override
             public void onSubscribe(Subscription s) {
@@ -331,7 +332,9 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
 
             @Override
             public void onComplete() {
-
+                if(!result.isDone())  {
+                    result.complete(null);
+                }
             }
         });
         return result;

@@ -299,12 +299,6 @@ public  class CoreReactiveSeqTest {
     }
     @Test
     public void triplicateFanOut(){
-       /** val triple = ReactiveSeq.of(1,2,3,4,5,6,7,8,9).triplicate();
-
-        triple.v1.printOut();
-        triple.v2.printOut();
-        triple.v3.printOut();
-**/
 
 
         assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9)

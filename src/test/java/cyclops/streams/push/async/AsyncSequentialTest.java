@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -34,6 +35,26 @@ public class AsyncSequentialTest extends BaseSequentialTest {
             });
             t.start();
         });
+    }
+    @Test
+    public void spoutsCollect(){
+        Integer[] array = new Integer[1000];
+        for(int i=0;i<array.length;i++) {
+            array[i]=i;
+        }
+        for(int i=0;i<1000;i++) {
+            List<Integer> list = of(array).collect(Collectors.toList());
+            System.out.println(list);
+        }
+    }
+    @Test
+    public void mergePTest(){
+        for(int i=0;i<10_000;i++) {
+            ListX<Integer> list = of(3, 6, 9).mergeP(of(2, 4, 8), of(1, 5, 7)).toListX();
+
+            assertThat("List is " + list,list, hasItems(1, 2, 3, 4, 5, 6, 7, 8, 9));
+            assertThat("List is " + list,list.size(), Matchers.equalTo(9));
+        }
     }
     @Test
     public void prependPlay(){

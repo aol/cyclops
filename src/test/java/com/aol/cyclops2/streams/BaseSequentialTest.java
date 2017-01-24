@@ -10,12 +10,17 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.*;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.Semigroups;
+import cyclops.async.QueueFactories;
+import cyclops.async.Topic;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
+import cyclops.control.either.Either;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
 import org.hamcrest.Matchers;
@@ -30,68 +35,234 @@ import reactor.core.publisher.Flux;
 
 public class BaseSequentialTest {
 
-	protected <U> ReactiveSeq<U> of(U... array){
-			  return ReactiveSeq.of(array);
-	}
-	
-		
-		ReactiveSeq<Integer> empty;
-		ReactiveSeq<Integer> nonEmpty;
+    protected <U> ReactiveSeq<U> of(U... array) {
+        return ReactiveSeq.of(array);
+    }
 
-		@Before
-		public void setup(){
-			empty = of();
-			nonEmpty = of(1);
-		}
-		
-	Integer value2() {
-		return 5;
-	}
-	@Test
-	public void flatMapI(){
-		assertThat(of(1,2,3)
-				.flatMapI(i-> ReactiveSeq.of(10,20,30*i))
-				.toList(),equalTo(ListX.of(10,20,30,10,20,60,10,20,90)));
-	}
 
-	@Test
-	public void flatMapStreamFilter(){
-		assertThat(of(1,2,3,null).flatMap(i->ReactiveSeq.of(i).filter(Objects::nonNull))
-						.collect(Collectors.toList()),
-				Matchers.equalTo(Arrays.asList(1,2,3)));
-	}
-	@Test
-	public void flatMapIStream(){
-		assertThat(of(1,2,3,null).flatMapI(i->ReactiveSeq.of(i).filter(Objects::nonNull))
-						.collect(Collectors.toList()),
-				Matchers.equalTo(Arrays.asList(1,2,3)));
-	}
-	@Test
-	public void flatMapIMaybe(){
-		assertThat(of(1,2,3,null).flatMapI(Maybe::ofNullable)
-						.collect(Collectors.toList()),
-				Matchers.equalTo(Arrays.asList(1,2,3)));
-	}
-	@Test
-	public void flatMapStream(){
-		assertThat(of(1,2,3,null).flatMap(Stream::of)
-						.collect(Collectors.toList()),
-				Matchers.equalTo(Arrays.asList(1,2,3,null)));
-	}
-	@Test
-	public void flatMap(){
-		assertThat(of(1,2,3)
-				.flatMap(i-> Stream.of(10,20,30*i))
-				.toList(),equalTo(ListX.of(10,20,30,10,20,60,10,20,90)));
-	}
-	@Test
-	public void flatMapSimple(){
-		assertThat(of(1)
-				.flatMap(i-> Stream.of(10,20))
-				.toList(),equalTo(ListX.of(10,20)));
-	}
+    ReactiveSeq<Integer> empty;
+    ReactiveSeq<Integer> nonEmpty;
 
-	@Test
+    @Before
+    public void setup() {
+        empty = of();
+        nonEmpty = of(1);
+    }
+
+    Integer value2() {
+        return 5;
+    }
+
+
+    @Test
+    public void publishToAndMerge(){
+        cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+                .build();
+
+        Thread t=  new Thread( ()-> {
+
+            while(true) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("Closing!");
+                queue.close();
+
+            }
+        });
+        t.start();
+        assertThat(of(1,2,3)
+                .publishTo(queue)
+                .peek(System.out::println)
+                .merge(queue)
+                .toListX(), Matchers.equalTo(ListX.of(1,1,2,2,3,3)));
+    }
+
+    @Test
+    public void parallelFanOut(){
+        assertThat(of(1,2,3,4)
+                .parallelFanOut(ForkJoinPool.commonPool(), s1->s1.filter(i->i%2==0).map(i->i*2),
+                        s2->s2.filter(i->i%2!=0).map(i->i*100))
+                .toListX(), Matchers.equalTo(ListX.of(4,100,8,300)));
+
+        assertThat(of(1,2,3,4)
+                .parallelFanOutZipIn(ForkJoinPool.commonPool(), s1->s1.filter(i->i%2==0).map(i->i*2),
+                        s2->s2.filter(i->i%2!=0).map(i->i*100),(a,b)->a+b)
+                .toListX(), Matchers.equalTo(ListX.of(104,308)));
+    }
+    @Test
+    public void mergePTest(){
+        for(int i=0;i<1_000;i++) {
+            ListX<Integer> list = of(3, 6, 9).mergeP(of(2, 4, 8), of(1, 5, 7)).toListX();
+            assertThat(list, hasItems(1, 2, 3, 4, 5, 6, 7, 8, 9));
+            assertThat(list.size(), Matchers.equalTo(9));
+        }
+    }
+    @Test
+    public void triplicateFanOut(){
+
+        for (int k = 0; k < 1_000; k++) {
+            assertThat(of(1, 2, 3, 4, 5, 6, 7, 8, 9)
+                    .fanOut(s1 -> s1.peek(System.out::println).filter(i -> i % 3 == 0).map(i -> i * 2),
+                            s2 -> s2.filter(i -> i % 3 == 1).map(i -> i * 100),
+                            s3 -> s3.filter(i -> i % 3 == 2).map(i -> i * 1000))
+                    .toListX(), Matchers.equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+        }
+
+    }
+    @Test
+    public void fanOut(){
+        for (int k = 0; k < 1_000; k++) {
+            assertThat(of(1, 2, 3, 4)
+                    .fanOut(s1 -> s1.filter(i -> i % 2 == 0).map(i -> i * 2),
+                            s2 -> s2.filter(i -> i % 2 != 0).map(i -> i * 100))
+                    .toListX(), Matchers.equalTo(ListX.of(4, 100, 8, 300)));
+            assertThat(of(1, 2, 3, 4, 5, 6, 7, 8, 9)
+                    .fanOut(s1 -> s1.filter(i -> i % 3 == 0).map(i -> i * 2),
+                            s2 -> s2.filter(i -> i % 3 == 1).map(i -> i * 100),
+                            s3 -> s3.filter(i -> i % 3 == 2).map(i -> i * 1000))
+                    .toListX(), Matchers.equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+            assertThat(of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+                    .fanOut(s1 -> s1.filter(i -> i % 4 == 0).map(i -> i * 2),
+                            s2 -> s2.filter(i -> i % 4 == 1).map(i -> i * 100),
+                            s3 -> s3.filter(i -> i % 4 == 2).map(i -> i * 1000),
+                            s4 -> s4.filter(i -> i % 4 == 3).map(i -> i * 10000))
+                    .toListX(), Matchers.equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
+        }
+    }
+    @Test
+    public void parallelFanOut2(){
+        for (int k = 0; k < 1_000; k++) {
+            assertThat(of(1, 2, 3, 4)
+                    .parallelFanOut(ForkJoinPool.commonPool(), s1 -> s1.filter(i -> i % 2 == 0).map(i -> i * 2),
+                            s2 -> s2.filter(i -> i % 2 != 0).map(i -> i * 100))
+                    .toListX(), Matchers.equalTo(ListX.of(4, 100, 8, 300)));
+            assertThat(of(1, 2, 3, 4, 5, 6, 7, 8, 9)
+                    .parallelFanOut(ForkJoinPool.commonPool(), s1 -> s1.filter(i -> i % 3 == 0).map(i -> i * 2),
+                            s2 -> s2.filter(i -> i % 3 == 1).map(i -> i * 100),
+                            s3 -> s3.filter(i -> i % 3 == 2).map(i -> i * 1000))
+                    .toListX(), Matchers.equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+            assertThat(of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+                    .parallelFanOut(ForkJoinPool.commonPool(), s1 -> s1.filter(i -> i % 4 == 0).map(i -> i * 2),
+                            s2 -> s2.filter(i -> i % 4 == 1).map(i -> i * 100),
+                            s3 -> s3.filter(i -> i % 4 == 2).map(i -> i * 1000),
+                            s4 -> s4.filter(i -> i % 4 == 3).map(i -> i * 10000))
+                    .toListX(), Matchers.equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
+        }
+    }
+    @Test
+    public void broadcastTest(){
+        Topic<Integer> topic = of(1,2,3)
+                .broadcast();
+
+
+        ReactiveSeq<Integer> stream1 = topic.stream();
+        ReactiveSeq<Integer> stream2 = topic.stream();
+        assertThat(stream1.toListX(), Matchers.equalTo(ListX.of(1,2,3)));
+        assertThat(stream2.stream().toListX(), Matchers.equalTo(ListX.of(1,2,3)));
+
+    }
+
+
+
+    @Test
+    public void ambTest(){
+        assertThat(of(1,2,3).ambWith(Flux.just(10,20,30)).toListX(), Matchers.equalTo(ListX.of(10,20,30)));
+    }
+
+    @Test
+    public void flatMapI() {
+        for(int k=0;k<1_000;k++) {
+            assertThat(of(1, 2, 3)
+                    .flatMapI(i -> of(10, 20, 30 * i))
+                    .toList(), equalTo(ListX.of(10, 20, 30, 10, 20, 60, 10, 20, 90)));
+        }
+    }
+
+    @Test
+    public void flatMapStreamFilter() {
+        assertThat(of(1, 2, 3, null).flatMap(i -> ReactiveSeq.of(i).filter(Objects::nonNull))
+                        .collect(Collectors.toList()),
+                Matchers.equalTo(Arrays.asList(1, 2, 3)));
+    }
+
+    @Test
+    public void flatMapIStream() {
+        assertThat(of(1, 2, 3, null).flatMapI(i -> ReactiveSeq.of(i).filter(Objects::nonNull))
+                        .collect(Collectors.toList()),
+                Matchers.equalTo(Arrays.asList(1, 2, 3)));
+    }
+
+    @Test
+    public void flatMapIMaybe() {
+        assertThat(of(1, 2, 3, null).flatMapI(Maybe::ofNullable)
+                        .collect(Collectors.toList()),
+                Matchers.equalTo(Arrays.asList(1, 2, 3)));
+    }
+
+    @Test
+    public void flatMapStream() {
+        for (int i = 0; i < 1_000; i++) {
+            assertThat(of(1, 2, 3, null).flatMap(Stream::of)
+                            .collect(Collectors.toList()),
+                    Matchers.equalTo(Arrays.asList(1, 2, 3, null)));
+        }
+    }
+
+    @Test
+    public void flatMap() {
+        assertThat(of(1, 2, 3)
+                .flatMap(i -> Stream.of(10, 20, 30 * i))
+                .toList(), equalTo(ListX.of(10, 20, 30, 10, 20, 60, 10, 20, 90)));
+    }
+
+    @Test
+    public void flatMapSimple() {
+        assertThat(of(1)
+                .flatMap(i -> Stream.of(10, 20))
+                .toList(), equalTo(ListX.of(10, 20)));
+    }
+
+    @Test
+    public void combine() {
+        assertThat(of(1,2,3,4,5,6,7,8)
+                .combine((a, b)->a<5,Semigroups.intSum)
+                .findOne(), Matchers.equalTo(Maybe.of(6)));
+    }
+    @Test
+    public void combineOneFirstOrError() {
+        assertThat(of(1)
+                .combine((a, b)->a<5,Semigroups.intSum)
+                .findFirstOrError(), Matchers.equalTo(Either.right(1)));
+    }
+    @Test
+    public void combineOne() {
+        assertThat(of(1)
+                .combine((a, b)->a<5,Semigroups.intSum)
+                .findOne(), Matchers.equalTo(Maybe.of(1)));
+    }
+    @Test
+    public void combineTwo() {
+        assertThat(of(1,2)
+                .combine((a, b)->a<5,Semigroups.intSum)
+                .findOne(), Matchers.equalTo(Maybe.of(3)));
+    }
+    @Test
+    public void combineEmpty() {
+        assertThat(this.<Integer>of()
+                .combine((a, b)->a<5,Semigroups.intSum)
+                .findOne(), Matchers.equalTo(Maybe.none()));
+    }
+    @Test
+    public void combineTerminate() {
+        assertThat(of(1,2,3,4,5,6,7,8)
+                .combine((a, b)->a<5,Semigroups.intSum)
+                .findFirst(), Matchers.equalTo(Optional.of(6)));
+    }
+    @Test
     public void dropRight(){
         assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
     }

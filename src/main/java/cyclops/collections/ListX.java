@@ -1568,6 +1568,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<T>)MutableCollectionX.super.plusLoop(supplier);
     }
 
+
     /**
      * Narrow a covariant List
      * 

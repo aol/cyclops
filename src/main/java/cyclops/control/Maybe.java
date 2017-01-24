@@ -111,7 +111,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
 
     static <T> Maybe<T> fromFuture(Future<T> future){
-        Future<Maybe<T>> maybeF = future.map(Maybe::just)
+        Future<Maybe<T>> maybeF = future.map(Maybe::ofNullable)
                 .recover(t -> Maybe.<T>none());
         Eval<Maybe<T>> evalF = Eval.fromFuture(maybeF);
         return fromLazy(evalF);

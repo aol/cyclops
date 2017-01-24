@@ -7,6 +7,7 @@ import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import com.aol.cyclops2.internal.stream.spliterators.push.ValueEmittingSpliterator;
 import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
+import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.*;
 import cyclops.async.Queue;
 import cyclops.async.QueueFactories;
@@ -15,6 +16,9 @@ import cyclops.collections.ListX;
 import com.aol.cyclops2.internal.stream.publisher.PublisherIterable;
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.collections.immutable.PVectorX;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
+import cyclops.control.either.Either;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.monads.Witness;
@@ -115,6 +119,20 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
    public  <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
         return ReactiveSeq.fromSpliterator(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(createSeq(copy()),fn));
 
+    }
+
+    @Override
+    public Either<Throwable,T> findFirstOrError(){
+        return Either.fromLazy(Eval.later(()->{
+            ValueSubscriber<T> valueSubscriber = ValueSubscriber.subscriber();
+            subscribe(valueSubscriber);
+            return Either.fromXor(valueSubscriber.toXor());
+        }));
+    }
+
+    @Override
+    public Maybe<T> findOne(){
+        return Maybe.fromLazy(Eval.later(()->Maybe.fromOptional(findFirst())));
     }
     
     public  <A,R> ReactiveSeq<R> collectSeq(Collector<? super T,A,R> c){

@@ -93,7 +93,7 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
                     }
                     ,onError,()->{
 
-                        if(completed.incrementAndGet()== subs.size()){
+                        if(completed.incrementAndGet()== operators.length){
                             System.out.println("Running on complete");
                             onComplete.run();
                             sub.cancel();

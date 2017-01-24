@@ -33,8 +33,10 @@ import cyclops.*;
 import cyclops.async.*;
 import cyclops.async.Queue;
 import cyclops.collections.immutable.PVectorX;
+import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
+import cyclops.control.either.Either;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
@@ -82,6 +84,15 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                           ConfigurableStream<U, FastFuture<U>>,
                                           FutureStreamSynchronousPublisher<U> {
 
+    @Override
+    default Maybe<U> findOne(){
+        return stream().findOne();
+    }
+
+    @Override
+    default Either<Throwable, U> findFirstOrError(){
+        return stream().findFirstOrError();
+    }
 
     @Override
     default <R> FutureStream<R> parallel(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R>> fn) {

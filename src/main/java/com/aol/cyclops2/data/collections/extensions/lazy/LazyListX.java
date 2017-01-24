@@ -54,6 +54,11 @@ public class LazyListX<T> extends AbstractLazyMutableCollection<T,List<T>> imple
     }
 
     @Override
+    public String toString() {
+        return get().toString();
+    }
+
+    @Override
     public <T1> Collector<T1, ?, List<T1>> getCollector() {
         return (Collector)super.getCollectorInternal();
     }
@@ -118,8 +123,10 @@ public class LazyListX<T> extends AbstractLazyMutableCollection<T,List<T>> imple
       return from(list);
     }
 
-
-
+    @Override
+    public Iterator<T> iterator() {
+        return get().iterator();
+    }
 
     @Override
     public <X> LazyListX<X> fromStream(Stream<X> stream) {

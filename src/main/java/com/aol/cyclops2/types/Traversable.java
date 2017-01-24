@@ -85,7 +85,8 @@ public interface Traversable<T> extends Publisher<T>,
      *  //ListX(3,4) 
      * }</pre>
      * 
-     * @param predicate Test to see if two neighbours should be joined
+     * @param predicate Test to see if two neighbours should be joined. The first parameter to the bi-predicate is the currently
+     *                  accumulated result and the second is the next element
      * @param op Reducer to combine neighbours
      * @return Combined / Partially Reduced Traversable
      */

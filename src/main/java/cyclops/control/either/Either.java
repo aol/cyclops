@@ -7,6 +7,7 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.Semigroups;
 import cyclops.Streams;
+import cyclops.async.Future;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.control.*;
@@ -122,9 +123,19 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
         return xor.visit(Either::left, Either::right);
     }
 
+    static <LT,RT> Either<LT,RT> fromLazy(Eval<Either<LT,RT>> lazy){
+        return new Either.Lazy<>(lazy);
+    }
 
+    static <T> Either<Throwable,T> fromFuture(Future<T> future){
+        Future<Either<Throwable,T>> eitherF = future.<Either<Throwable,T>>map(v->
+            v==null ? Either.left(new NoSuchElementException()) :  Either.right(v)
 
+        ).recover(t -> Either.left(t));
+        Eval<Either<Throwable,T>> evalF = Eval.fromFuture(eitherF);
+        return fromLazy(evalF);
 
+    }
 
     /**
      *  Turn a collection of Eithers into a single Either with Lists of values.
@@ -344,9 +355,7 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
      * @return Either constructed from the supplied Publisher
      */
     public static <T> Either<Throwable, T> fromPublisher(final Publisher<T> pub) {
-        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
-        pub.subscribe(sub);
-        return Either.rightEval(sub.toEvalLater());
+        return fromFuture(Future.fromPublisher(pub));
     }
 
     /**

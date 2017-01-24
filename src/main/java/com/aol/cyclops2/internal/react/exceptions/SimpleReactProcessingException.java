@@ -28,10 +28,11 @@ public class SimpleReactProcessingException extends RuntimeException {
         super(cause);
 
     }
-
+/**
     @Override
     public Throwable fillInStackTrace() {
         return this;
     }
+    **/
 
 }

@@ -55,6 +55,11 @@ public class AsyncExtensionOperatorsTest {
 						.collect(Collectors.toList()),
 				Matchers.equalTo(Arrays.asList(1)));
 	}
+
+	@Test
+    public void forEachOrdered(){
+	    Spouts.of(1,2,3).forEachOrdered(System.out::println);
+    }
     @Test
     public void combine(){
         assertThat(of(1,1,2,3)

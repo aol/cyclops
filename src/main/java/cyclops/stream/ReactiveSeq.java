@@ -26,7 +26,9 @@ import com.sun.tools.internal.ws.api.TJavaGeneratorExtension;
 import cyclops.async.Future;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.control.Xor;
+import cyclops.control.either.Either;
 import cyclops.monads.AnyM;
 import cyclops.async.*;
 import cyclops.control.Trampoline;
@@ -1988,6 +1990,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     HeadAndTail<T> headAndTail();
 
+
     /**
      * @return First matching element in sequential order
      * 
@@ -2005,6 +2008,26 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     Optional<T> findFirst();
 
+    /**
+     * Lazy / reactive analogue of findFirst / findAny from JDK
+     * For push based reactive-streams (created via Spouts.XXX) data will be pushed to the returned Maybe on arrival.
+     * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Maybe is first accessed.
+     *
+     * @return
+     */
+    Maybe<T> findOne();
+
+    /**
+     * Lazy / reactive look up of first value , capturing the first error, if one occurs. If no values are
+     * present a NoSuchElementException is returned.
+     *
+     * For push based reactive-streams (created via Spouts.XXX) data will be pushed to the returned Either on arrival.
+     * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Either is first accessed.
+
+     *
+     * @return
+     */
+    Either<Throwable,T> findFirstOrError();
     /**
      * @return first matching element, but order is not guaranteed
      * 
@@ -4741,18 +4764,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         queue.addContinuation(cont);
         return topic;
     }
-    default Xor<Throwable,T> firstOrError(){
-        Optional<T> opt = this.findFirst();
-        try {
-            if (opt.isPresent()) {
-                return Xor.primary(opt.get());
-            } else {
-                return Xor.secondary(new NoSuchElementException());
-            }
-        }catch(Throwable t){
-            return Xor.secondary(t);
-        }
-    }
+
     default ReactiveSeq<T> ambWith(Publisher<T> racer){
         return Spouts.amb(this,racer);
     }
