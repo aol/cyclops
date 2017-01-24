@@ -431,12 +431,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void forEach(final Consumer<? super T> action) {
-        if(async==Type.BACKPRESSURE){
-            this.source.subscribe(action, this.defaultErrorHandler, () -> {
-            }).request(Long.MAX_VALUE);
-        }else {
-            this.source.subscribeAll(action, this.defaultErrorHandler, () -> {});
+        AtomicBoolean complete = new AtomicBoolean(false);
+        source.subscribeAll(action, this.defaultErrorHandler,()->complete.set(true));
+        while(!complete.get()){
+            LockSupport.parkNanos(1l);
         }
+
 
     }
     @Override
@@ -704,11 +704,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void forEachOrdered(final Consumer<? super T> consumer) {
-        AtomicBoolean complete = new AtomicBoolean(false);
-        source.subscribeAll(consumer, this.defaultErrorHandler,()->complete.set(true));
-        while(!complete.get()){
-            LockSupport.parkNanos(1l);
-        }
+       forEach(consumer);
 
     }
 

@@ -1779,7 +1779,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> skip(long num);
 
     /**
-     * Performs an action for each element of this reactiveStream.
+     * Performs an action for each element of this Stream.
+     *
+     * This method overrides the JDK {@link java.util.stream.Stream#forEach(Consumer)}  and maintains it's blocking
+     * semantics. Other forEach overloads in ReactiveSeq are non-blocking for asynchronously executing Streams.
+     *
      * <p>
      * <p>This is a <a href="package-summary.html#StreamOps">terminal
      * operation</a>.

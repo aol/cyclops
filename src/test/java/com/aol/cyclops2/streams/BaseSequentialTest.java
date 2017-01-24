@@ -37,6 +37,8 @@ import reactor.core.publisher.Flux;
 
 public class BaseSequentialTest {
 
+    public static final int ITERATIONS = 3;
+
     protected <U> ReactiveSeq<U> of(U... array) {
         return ReactiveSeq.of(array);
     }
@@ -73,7 +75,8 @@ public class BaseSequentialTest {
 
     @Test
     public void publishToAndMerge(){
-        for(int k=0;k<10;k++) {
+        for(int k = 0; k< ITERATIONS; k++) {
+            System.out.println("Publish to and merge iteration "+k);
             cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
@@ -81,7 +84,7 @@ public class BaseSequentialTest {
 
                 while (true) {
                     try {
-                        Thread.sleep(1500);
+                        Thread.sleep(10);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -104,12 +107,14 @@ public class BaseSequentialTest {
             assertThat(list, hasItems(1, 2, 3));
             assertThat(list.size(), equalTo(6));
             assertThat(list.toSet(), equalTo(SetX.of(1, 2, 3)));
+            t=null;
+            System.gc();
         }
 
     }
     @Test
     public void publishTest(){
-        for(int k=0;k<10;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
@@ -133,11 +138,13 @@ public class BaseSequentialTest {
                     .publishTo(queue)
                     .forEach(System.out::println);
             assertThat(queue.stream().collect(Collectors.toList()), equalTo(ListX.of(1, 2, 3)));
+            t=null;
+            System.gc();
         }
     }
     @Test
     public void mergeAdapterTest(){
-        for(int k=0;k<10;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
@@ -165,11 +172,13 @@ public class BaseSequentialTest {
 
             assertThat(this.<Integer>of().peek(i -> System.out.println("publishing " + i))
                     .merge(queue).collect(Collectors.toList()), equalTo(ListX.of(1, 2, 3)));
+            t=null;
+            System.gc();
         }
     }
     @Test
     public void mergeAdapterTest1(){
-        for(int k=0;k<10;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             System.out.println("Test iteration " +k);
             cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
@@ -195,6 +204,9 @@ public class BaseSequentialTest {
             t.start();
             assertThat(this.<Integer>of(10).peek(i -> System.out.println("publishing " + i))
                     .merge(queue).collect(Collectors.toList()), hasItems(10,1, 2, 3));
+
+            t=null;
+            System.gc();
         }
     }
     @Test
@@ -231,7 +243,7 @@ public class BaseSequentialTest {
     }
     @Test
     public void fanOut(){
-        for (int k = 0; k < 1_000; k++) {
+        for (int k = 0; k < ITERATIONS; k++) {
             assertThat(of(1, 2, 3, 4)
                     .fanOut(s1 -> s1.filter(i -> i % 2 == 0).map(i -> i * 2),
                             s2 -> s2.filter(i -> i % 2 != 0).map(i -> i * 100))
@@ -251,7 +263,7 @@ public class BaseSequentialTest {
     }
     @Test
     public void parallelFanOut2(){
-        for (int k = 0; k < 1_000; k++) {
+        for (int k = 0; k < ITERATIONS; k++) {
             assertThat(of(1, 2, 3, 4)
                     .parallelFanOut(ForkJoinPool.commonPool(), s1 -> s1.filter(i -> i % 2 == 0).map(i -> i * 2),
                             s2 -> s2.filter(i -> i % 2 != 0).map(i -> i * 100))
@@ -286,7 +298,7 @@ public class BaseSequentialTest {
 
     @Test
     public void ambTest(){
-        assertThat(of(1,2,3).ambWith(Flux.just(10,20,30)).toListX(), Matchers.equalTo(ListX.of(10,20,30)));
+        assertThat(of(1,2,3).ambWith(Flux.just(10,20,30)).toListX(), isOneOf(ListX.of(10,20,30),ListX.of(1,2,3)));
     }
 
     @Test
@@ -321,7 +333,7 @@ public class BaseSequentialTest {
 
     @Test
     public void flatMapStream() {
-        for (int i = 0; i < 1_000; i++) {
+        for (int i = 0; i < ITERATIONS; i++) {
             assertThat(of(1, 2, 3, null).flatMap(Stream::of)
                             .collect(Collectors.toList()),
                     Matchers.equalTo(Arrays.asList(1, 2, 3, null)));
@@ -376,7 +388,7 @@ public class BaseSequentialTest {
     public void combineTerminate() {
         assertThat(of(1,2,3,4,5,6,7,8)
                 .combine((a, b)->a<5,Semigroups.intSum)
-                .findFirst(), Matchers.equalTo(Optional.of(6)));
+                .findFirst(), Matchers.equalTo(Optional.of(7)));
     }
     @Test
     public void dropRight(){
