@@ -23,7 +23,7 @@ public class CapturingOperator<T> implements Operator<T> {
     Consumer<? super Throwable> error;
     @Getter
     Runnable onComplete;
-    final Subscription s;
+    Subscription s;
     private AtomicBoolean initialized = new AtomicBoolean(false);
 
     public CapturingOperator(Subscription s){
@@ -62,6 +62,10 @@ public class CapturingOperator<T> implements Operator<T> {
 
             }
         };
+    }
+
+    public void setSubscription(Subscription s){
+        this.s =s;
     }
 
     StreamSubscription subscription = new StreamSubscription(){

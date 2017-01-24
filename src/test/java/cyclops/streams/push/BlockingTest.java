@@ -122,12 +122,7 @@ public class BlockingTest {
         ReactiveSeq.of(1,2,3).subscribe(sub);
         sub.reactiveStream().forEach(System.out::println);
     }
-    @Test(expected = IllegalStateException.class)
-    public void initError(){
-        ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
-        sub.reactiveStream().forEach(System.out::println);
 
-    }
     @Test
     public void init(){
         ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();

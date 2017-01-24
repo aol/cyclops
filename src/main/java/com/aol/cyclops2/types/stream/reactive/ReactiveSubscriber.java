@@ -40,8 +40,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     private volatile CapturingOperator<T> action=  null;
    
 
-    public ReactiveSubscriber() {
-    }
+
 
 
 
@@ -69,11 +68,11 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
      */
     public ReactiveSeq<T> reactiveStream(){
         streamCreated = true;
-        if(subscription==null){
+     /**   if(subscription==null){
             if(streamCreated)
                 throw new IllegalStateException("Stream has been created before a Subscription has been passed to this Subscriber. Subscribe with this Subscriber first, then extract the Stream.");
 
-        }
+        }**/
         ReactiveSeq<T> result = Spouts.reactiveStream(getAction());
         if(error!=null)
             throw ExceptionSoftener.throwSoftenedException(error);
@@ -87,10 +86,13 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     @Override
     public void onSubscribe(final Subscription s) {
         Objects.requireNonNull(s);
-        if(streamCreated)
-              throw new IllegalStateException("Subscription passed after downstream Stream created. Subscribe with this Subscriber first, then extract the Stream");
+      //  if(streamCreated)
+        //      throw new IllegalStateException("Subscription passed after downstream Stream created. Subscribe with this Subscriber first, then extract the Stream");
 
         this.subscription = s;
+        if(action!=null){
+            action.setSubscription(s);
+        }
 
 
     }
