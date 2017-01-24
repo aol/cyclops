@@ -64,10 +64,7 @@ public class PublisherToOperator<T> implements Operator<T> {
                     System.out.println("PublisherOp " + t);
                    onNext.accept(t);
                     sub.requested.decrementAndGet();
-                   if(sub.isActive()) {
-                       sArray[0].request(1l);
 
-                   }
                 }
 
                 @Override

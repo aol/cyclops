@@ -4594,7 +4594,26 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         });
     }
     default ReactiveSeq<T> merge(Adapter<T>... adapters){
-        return mergeP(ReactiveSeq.of(adapters).map(a->a.stream()).toArray(n->new Publisher[n]));
+        Publisher<T>[] publishers = ReactiveSeq.of(adapters).map(a->a.stream()).toArray(n->new Publisher[n]);
+
+        final Counter c = new Counter();
+        c.active.set(publishers.length + 1);
+        final QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(QueueFactories.boundedQueue(5_000), c, publishers.length);
+
+        final Supplier<Continuation> sp = () -> {
+            subscribe(init);
+            for (final Publisher next : publishers) {
+                next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, publishers.length));
+            }
+
+            init.close();
+
+            return Continuation.empty();
+        };
+        final Continuation continuation = new Continuation(
+                sp);
+        init.addContinuation(continuation);
+        return ReactiveSeq.fromStream(init.jdkStream());
     }
     default <R1,R2,R3> ReactiveSeq<R3> fanOutZipIn(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R1>> path1,
                                                     Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R2>> path2,

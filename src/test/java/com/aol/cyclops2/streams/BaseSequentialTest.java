@@ -129,9 +129,9 @@ public class BaseSequentialTest {
 
             Thread t = new Thread(() -> {
 
-                while (true) {
+
                     try {
-                        Thread.sleep(10);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -139,12 +139,13 @@ public class BaseSequentialTest {
                     System.out.println("Closing! " + queue.size());
                     queue.close();
 
-                }
+
             });
             t.start();
 
-            AtomicBoolean complete = new AtomicBoolean(false);
 
+            AtomicBoolean complete = new AtomicBoolean(false);
+            AtomicBoolean start = new AtomicBoolean(false);
 
             ListX<Integer> list = of(1, 2, 3)
                     .publishTo(queue)
@@ -154,7 +155,7 @@ public class BaseSequentialTest {
             assertThat(list, hasItems(1, 2, 3));
             assertThat(list.size(), equalTo(6));
             assertThat(list.toSet(), equalTo(SetX.of(1, 2, 3)));
-            t=null;
+
             System.gc();
         }
 
@@ -167,7 +168,7 @@ public class BaseSequentialTest {
 
             Thread t = new Thread(() -> {
 
-                while (true) {
+
                     try {
                         System.out.println("Sleeping!");
                         Thread.sleep(10);
@@ -178,7 +179,7 @@ public class BaseSequentialTest {
                     System.out.println("Closing! " + queue.size());
                     queue.close();
 
-                }
+
             });
             t.start();
             of(1, 2, 3).peek(i -> System.out.println("publishing " + i))
@@ -197,7 +198,7 @@ public class BaseSequentialTest {
 
             Thread t = new Thread(() -> {
 
-                while (true) {
+
 
                     queue.add(1);
                     queue.add(2);
@@ -212,7 +213,7 @@ public class BaseSequentialTest {
                     System.out.println("Closing! " + queue.size());
                     queue.close();
 
-                }
+
             });
             t.start();
 
@@ -232,7 +233,7 @@ public class BaseSequentialTest {
 
             Thread t = new Thread(() -> {
 
-                while (true) {
+
 
                     queue.add(1);
                     queue.add(2);
@@ -246,7 +247,7 @@ public class BaseSequentialTest {
                     //   System.out.println("Closing! " + queue.size());
                     queue.close();
 
-                }
+
             });
             t.start();
             assertThat(this.<Integer>of(10).peek(i -> System.out.println("publishing " + i))
@@ -435,7 +436,7 @@ public class BaseSequentialTest {
     public void combineTerminate() {
         assertThat(of(1,2,3,4,5,6,7,8)
                 .combine((a, b)->a<5,Semigroups.intSum)
-                .findFirst(), Matchers.equalTo(Optional.of(7)));
+                .findFirst(), Matchers.equalTo(Optional.of(6)));
     }
     @Test
     public void dropRight(){
@@ -580,7 +581,7 @@ public class BaseSequentialTest {
 		
 		@Test
 		public void batchBySize(){
-			System.out.println(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()));
+			System.out.println("Grouped " + of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()));
 			assertThat(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()).size(),is(2));
 		}
 		

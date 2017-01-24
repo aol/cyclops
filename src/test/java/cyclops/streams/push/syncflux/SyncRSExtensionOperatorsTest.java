@@ -31,7 +31,7 @@ public class SyncRSExtensionOperatorsTest {
 	}
 	@Test
 	public void flatMapStreamFilterSimple(){
-		assertThat(of(1,null).flatMap(i->of(i).filter(Objects::nonNull))
+		assertThat(of(1).flatMap(i->of(i).filter(Objects::nonNull))
 						.collect(Collectors.toList()),
 				Matchers.equalTo(Arrays.asList(1)));
 	}
@@ -398,13 +398,13 @@ public class SyncRSExtensionOperatorsTest {
 
 		
 
-		assertThat(of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),containsInAnyOrder(1, 2, 3));
+		assertThat(of(1, "a", 2, "b", 3, "c").ofType(Integer.class).toList(),containsInAnyOrder(1, 2, 3));
 
-		assertThat(of(1, "a", 2, "b", 3, null).ofType(Integer.class).toList(),not(containsInAnyOrder("a", "b",null)));
+		assertThat(of(1, "a", 2, "b", 3,"c").ofType(Integer.class).toList(),not(containsInAnyOrder("a", "b","c")));
 
-		assertThat(of(1, "a", 2, "b", 3, null)
+		assertThat(of(1, "a", 2, "b", 3, "c")
 
-				.ofType(Serializable.class).toList(),containsInAnyOrder(1, "a", 2, "b", 3));
+				.ofType(Serializable.class).toList(),containsInAnyOrder(1, "a", 2, "b", 3,"c"));
 
 	}
 
@@ -425,7 +425,7 @@ public class SyncRSExtensionOperatorsTest {
 	}
 	@Test
 	public void flatMapMaybe(){
-		assertThat(of(1,2,3,null).flatMapI(Maybe::ofNullable)
+		assertThat(of(1,2,3).flatMapI(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

@@ -2,6 +2,7 @@ package cyclops.streams.push;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
+import cyclops.async.QueueFactories;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
@@ -38,4 +40,6 @@ public class PushSequentialTest extends BaseSequentialTest {
         assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
         assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
     }
+
+
 }

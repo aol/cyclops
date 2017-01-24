@@ -33,6 +33,7 @@ public class AsyncRSExtensionOperatorsTest {
 
 
     protected <U> ReactiveSeq<U> of(U... array){
+
         return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(array)));
 
     }
@@ -63,8 +64,10 @@ public class AsyncRSExtensionOperatorsTest {
     public void permuations3() {
     	System.out.println(of(1, 2, 3).permutations().map(s->s.toList()).toList());
         assertThat(of(1, 2, 3).permutations().map(s->s.toList()).toList(),
-        		equalTo(of(of(1, 2, 3),
-        		of(1, 3, 2), of(2, 1, 3), of(2, 3, 1), of(3, 1, 2), of(3, 2, 1)).map(s->s.toList()).toList()));
+        		equalTo(ReactiveSeq.of(ReactiveSeq.of(1, 2, 3),
+                        ReactiveSeq.of(1, 3, 2),
+                        ReactiveSeq.of(2, 1, 3),
+                        ReactiveSeq.of(2, 3, 1), ReactiveSeq.of(3, 1, 2), ReactiveSeq.of(3, 2, 1)).map(s->s.toList()).toList()));
     }
     
     @Test

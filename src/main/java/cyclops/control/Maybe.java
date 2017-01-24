@@ -30,6 +30,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -112,11 +114,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
 
     static <T> Maybe<T> fromFuture(Future<T> future){
-        Future<Maybe<T>> maybeF = future.map(Maybe::ofNullable)
-                .recover(t -> Maybe.<T>none());
-        Eval<Maybe<T>> evalF = Eval.fromFuture(maybeF);
-        return fromLazy(evalF);
-
+        return fromLazy(Eval.fromFuture(future.recover(e->null)).map(Maybe::ofNullable));
     }
     public static <T,R> Function<? super T, ? extends Maybe<R>> arrow(Function<?  super T, ? extends R> fn){
         return in-> Maybe.ofNullable(fn.apply(in));
@@ -1071,6 +1069,39 @@ public interface Maybe<T> extends To<Maybe<T>>,
             }
             return none.get();
 
+        }
+        @Override
+        public final void subscribe(final Subscriber<? super T> sub) {
+            lazy.subscribe(new Subscriber<Maybe<T>>() {
+                boolean onCompleteSent = false;
+                @Override
+                public void onSubscribe(Subscription s) {
+                    sub.onSubscribe(s);
+                }
+
+                @Override
+                public void onNext(Maybe<T> ts) {
+                    if(ts.isPresent()){
+                        sub.onNext(ts.get());
+                    }else if(!onCompleteSent){
+                        sub.onComplete();
+                        onCompleteSent =true;
+                    }
+                }
+
+                @Override
+                public void onError(Throwable t) {
+
+                }
+
+                @Override
+                public void onComplete() {
+                    if(!onCompleteSent){
+                        sub.onComplete();
+                        onCompleteSent =true;
+                    }
+                }
+            });
         }
 
         @Override

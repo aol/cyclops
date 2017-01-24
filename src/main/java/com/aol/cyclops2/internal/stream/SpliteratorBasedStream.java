@@ -1,10 +1,7 @@
 package com.aol.cyclops2.internal.stream;
 
 
-import com.aol.cyclops2.internal.stream.spliterators.push.CollectingSinkSpliterator;
-import com.aol.cyclops2.internal.stream.spliterators.push.FoldingSinkSpliterator;
-import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
-import com.aol.cyclops2.internal.stream.spliterators.push.ValueEmittingSpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
@@ -577,19 +574,19 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
                     .build();
 
 
-
-
+            Spliterator<T> copy = copy();
 
             Continuation[] contRef ={null};
-
+            Signal<T> signal = new Signal<T>(null, queue);
             AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
 
                 if(wip.compareAndSet(false,true)) {
-                    if(!stream.tryAdvance(queue::offer));{
-                        queue.close();
+                    if(!copy.tryAdvance(signal::set)){
+                        signal.close();
                         return Continuation.empty();
                     }
+                    wip.set(false);
                 }
                 return contRef[0];
             });
@@ -597,7 +594,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
             contRef[0]= cont;
 
             queue.addContinuation(cont);
-            Signal<T> signal = new Signal<T>(null, queue);
+
             return signal.getDiscrete().stream();
 
 

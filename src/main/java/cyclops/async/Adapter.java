@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.futurestream.Continuation;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Xor;
@@ -18,7 +19,7 @@ import com.aol.cyclops2.react.async.subscription.Continueable;
  * @param <T> Data type
  */
 public interface Adapter<T> {
-
+    public void addContinuation(Continuation cont);
     /**
      * @return A structural Pattern Matcher for this Adapter that allows matching on  Queue / Topic types
      */
