@@ -2,6 +2,7 @@ package cyclops.async;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -203,6 +204,7 @@ public class Topic<T> implements Adapter<T> {
 
         @Override
         public boolean add(final T e) {
+            System.out.println("Offering "+ e +  " to " + subscribers.size() + " " + System.identityHashCode(this));
             subscribers.forEach(it -> it.offer(e));
             return true;
         }

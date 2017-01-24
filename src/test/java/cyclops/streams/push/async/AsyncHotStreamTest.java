@@ -190,7 +190,7 @@ public class AsyncHotStreamTest {
 		latch.await();
 		assertTrue(value!=null);
 	}
-	@Test
+	@Test @Ignore
 	public void hotStreamConnect() throws InterruptedException{
 		
 		

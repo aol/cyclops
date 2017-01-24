@@ -67,12 +67,11 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
+        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 2);
 
-        Tuple2<Iterable<T>, Iterable<T>> copy = Streams.toBufferingDuplicator(() -> {
-            System.out.println("New iterator..");
-            return Spliterators.iterator(copy());
-        });
-        return copy.map((a,b)->Tuple.tuple(createSeq(new IteratableSpliterator<>(a)),createSeq(new IteratableSpliterator<>(b))));
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
+                createSeq(new IteratableSpliterator<>(copy.get(1))));
+
 
     }
     @Override

@@ -916,7 +916,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
-            Topic<T> topic = new Topic<>(queue,QueueFactories.<T>unboundedNonBlockingQueue());
+            Topic<T> topic = new Topic<>(queue);
             AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
                 if(wip.compareAndSet(false,true)) {
@@ -1112,7 +1112,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return new Tuple2(
                 Tuple2.v1.toOptional()
-                        .flatMap(l -> l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty()),
+                        .flatMap(l -> {
+                            return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
+                        }),
                 Tuple2.v2);
     }
 

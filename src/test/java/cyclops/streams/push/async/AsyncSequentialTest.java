@@ -2,6 +2,7 @@ package cyclops.streams.push.async;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
 import cyclops.CyclopsCollectors;
+import cyclops.async.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.async.Topic;
 import cyclops.collections.ListX;
@@ -11,6 +12,7 @@ import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
 import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -26,6 +28,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by johnmcclean on 14/01/2017.
@@ -208,11 +211,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
     }
 
-    @Test @Ignore //limitation of async ReactiveSeq type
-    public void duplicateDuplicate(){
-        System.out.println(of(1,2,3).duplicate()
-                .v1.duplicate().v1.duplicate().v1.toListX());
-    }
+
     @Test
     public void testSplitAtHead() {
 
@@ -227,9 +226,9 @@ public class AsyncSequentialTest extends BaseSequentialTest {
 
         assertEquals(Optional.of(1), of(1, 2, 3).splitAtHead().v1);
         assertEquals(Optional.of(2), of(1, 2, 3).splitAtHead().v2.splitAtHead().v1);
-     //   assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
+        assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
         assertEquals(asList(2, 3), of(1, 2, 3).splitAtHead().v2.toList());
-     //   assertEquals(asList(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toList());
+         assertEquals(asList(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toList());
         assertEquals(asList(), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v2.toList());
     }
 

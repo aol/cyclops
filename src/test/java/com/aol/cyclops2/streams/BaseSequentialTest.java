@@ -28,6 +28,7 @@ import cyclops.stream.Streamable;
 import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -56,6 +57,51 @@ public class BaseSequentialTest {
     Integer value2() {
         return 5;
     }
+
+    @Test
+    public void duplicateDuplicate(){
+        for(int k=0;k<ITERATIONS;k++) {
+            assertThat(of(1, 2, 3).duplicate()
+                    .v1.duplicate().v1.duplicate().v1.toListX(), equalTo(ListX.of(1, 2, 3)));
+        }
+
+    }
+    @Test
+    public void duplicateDuplicateDuplicate(){
+        for(int k=0;k<ITERATIONS;k++) {
+            assertThat(of(1, 2, 3).duplicate()
+                    .v1.duplicate().v1.duplicate().v1.duplicate().v1.toListX(), equalTo(ListX.of(1, 2, 3)));
+        }
+
+    }
+    @Test
+    public void skipDuplicateSkip() {
+        assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
+        assertThat(of(1, 2, 3).duplicate().v2.skip(1).duplicate().v2.skip(1).toListX(), equalTo(ListX.of(3)));
+    }
+    @Test
+    public void skipLimitDuplicateLimitSkip() {
+        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup = of(1, 2, 3).triplicate();
+        Optional<Integer> head1 = dup.v1.limit(1).toOptional().flatMap(l -> {
+            return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
+        });
+        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup2 = dup.v2.skip(1).triplicate();
+        Optional<Integer> head2 = dup2.v1.limit(1).toOptional().flatMap(l -> {
+            return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
+        });
+        assertThat(dup2.v2.skip(1).toListX(),equalTo(ListX.of(3)));
+
+        assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
+    }
+
+
+    @Test
+    public void splitThenSplit(){
+        assertThat(of(1,2,3).toOptional(),equalTo(Optional.of(ListX.of(1,2,3))));
+        // System.out.println(of(1, 2, 3).splitAtHead().v2.toListX());
+        System.out.println("split " + of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toListX());
+        assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
+    }
     @Test
     public void changesEmpty(){
         assertThat(of().changes()
@@ -63,6 +109,7 @@ public class BaseSequentialTest {
 
 
     }
+
 
     @Test
     public void changes(){
@@ -466,6 +513,38 @@ public class BaseSequentialTest {
         assertTrue(of(1).toStreamable().size()>0);
         
         
+    }
+    @Test
+    public void optionalConvert(){
+        for(int i=0;i<10;i++){
+            assertThat(of(1,2,3).toOptional(),equalTo(Optional.of(ListX.of(1,2,3))));
+        }
+    }
+    @Test
+    public void presentConvert2(){
+
+        assertTrue(of(1,2).toOptional().isPresent());
+        Optional<ListX<Integer>> opt = of(1, 2).toOptional();
+        assertThat(opt,equalTo(Optional.of(ListX.of(1,2))));
+
+        assertTrue(of(1,2).toListX().size()==2);
+        assertTrue(of(1,2).toDequeX().size()==2);
+        assertTrue(of(1,2).toPStackX().size()==2);
+        assertTrue(of(1,2).toQueueX().size()==2);
+        assertTrue(of(1,2).toPVectorX().size()==2);
+        assertTrue(of(1,2).toPQueueX().size()==2);
+        assertTrue(of(1,2).toSetX().size()==2);
+        assertTrue(of(1,2).toSortedSetX().size()==2);
+        assertTrue(of(1,2).toPOrderedSetX().size()==2);
+        assertTrue(of(1,2).toPBagX().size()==2);
+        assertTrue(of(1,2).toPMapX(t->t,t->t).size()==2);
+        assertTrue(of(1,2).toMapX(t->t,t->t).size()==2);
+
+        assertTrue(of(1,2).toSet().size()==2);
+        assertTrue(of(1,2).toList().size()==2);
+        assertTrue(of(1,2).toStreamable().size()==2);
+
+
     }
 
         
