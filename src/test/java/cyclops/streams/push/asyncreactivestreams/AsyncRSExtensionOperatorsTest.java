@@ -14,7 +14,10 @@ import cyclops.stream.Streamable;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
+import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.WorkQueueProcessor;
+import reactor.core.subscriber.Subscribers;
 
 import java.io.Serializable;
 import java.util.*;
@@ -27,23 +30,12 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public class AsyncRSExtensionOperatorsTest {
-	protected <U> ReactiveSeq<U> of(U... array){
-
-		return Spouts.reactive(s->{
-            Future blocker = Future.future();
-            Thread t = new Thread(()-> {
 
 
+    protected <U> ReactiveSeq<U> of(U... array){
+        return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(array)));
 
-				Flux.just(array).subscribe(s);
-
-			});
-
-			t.start();
-			blocker.get();
-
-		});
-	}
+    }
 	@Test
 	public void flatMapStreamFilterSimple(){
 		assertThat(of(1,null).flatMap(i->of(i).filter(Objects::nonNull))
@@ -440,7 +432,7 @@ public class AsyncRSExtensionOperatorsTest {
 	}
 	@Test
 	public void flatMapMaybe(){
-		assertThat(of(1,2,3,null).flatMapI(Maybe::ofNullable)
+		assertThat(of(1,2,3).flatMapI(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

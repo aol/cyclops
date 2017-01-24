@@ -1,4 +1,4 @@
-package cyclops.streams.push.syncflux;
+package cyclops.streams.push.asyncreactivestreams;
 
 import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.collections.ListX;
@@ -19,10 +19,9 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class SyncBatchingTest {
+public class AsyncRSBatchingTest {
 	protected <U> ReactiveSeq<U> of(U... array){
-
-		return Spouts.from(Flux.just(array));
+		return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(array)));
 	}
 	@Test
 	public void batchUntil(){

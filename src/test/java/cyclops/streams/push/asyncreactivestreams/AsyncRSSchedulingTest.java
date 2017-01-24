@@ -1,4 +1,4 @@
-package cyclops.streams.push.syncflux;
+package cyclops.streams.push.asyncreactivestreams;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -14,11 +14,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class SyncSchedulingTest {
+public class AsyncRSSchedulingTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Spouts.from(Flux.just(array));
+		return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(array)));
 	}
 	ScheduledExecutorService ex =Executors.newScheduledThreadPool(1);
 	AtomicInteger count = new AtomicInteger(0);

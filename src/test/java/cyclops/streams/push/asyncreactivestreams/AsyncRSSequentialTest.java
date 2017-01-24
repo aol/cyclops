@@ -1,4 +1,4 @@
-package cyclops.streams.push.syncflux;
+package cyclops.streams.push.asyncreactivestreams;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
 import cyclops.async.Topic;
@@ -25,11 +25,13 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by johnmcclean on 14/01/2017.
  */
-public class SyncSequentialTest extends BaseSequentialTest {
+public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Override
     protected <U> ReactiveSeq<U> of(U... array){
 
-        return Spouts.from(Flux.just(array));
+        return Spouts.from(Flux.interval(50)
+                               .doOnNext(i->System.out.println("flux " +i))
+                                .take(1).flatMap(i->Flux.just(array)));
     }
 
     @Test
@@ -179,6 +181,7 @@ public class SyncSequentialTest extends BaseSequentialTest {
     }
     @Test
     public void splitLimit(){
+
         ReactiveSeq<Integer> stream = of(1);
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = stream.duplicate();
         assertThat(stream.limit(1).toList(),equalTo(ListX.of(1)));

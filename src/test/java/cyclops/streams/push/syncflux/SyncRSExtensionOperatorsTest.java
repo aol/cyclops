@@ -27,15 +27,7 @@ import static org.junit.Assert.*;
 public class SyncRSExtensionOperatorsTest {
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Spouts.reactive(s->{
-
-
-
-				Flux.just(array).subscribe(s);
-
-
-
-		});
+		return Spouts.from(Flux.just(array));
 	}
 	@Test
 	public void flatMapStreamFilterSimple(){

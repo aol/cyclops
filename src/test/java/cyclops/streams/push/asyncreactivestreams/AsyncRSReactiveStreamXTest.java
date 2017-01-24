@@ -1,4 +1,4 @@
-package cyclops.streams.push.syncflux;
+package cyclops.streams.push.asyncreactivestreams;
 
 import cyclops.Streams;
 import cyclops.async.LazyReact;
@@ -13,7 +13,6 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.matchers.Null;
 import reactor.core.publisher.Flux;
 
 import java.util.*;
@@ -33,7 +32,7 @@ import static org.junit.Assert.*;
 
 
 //see BaseSequentialSeqTest for in order tests
-public  class SyncReactiveStreamXTest {
+public  class AsyncRSReactiveStreamXTest {
     public static Executor ex =  Executors.newFixedThreadPool(10);
     public static final LazyReact r = new LazyReact(10,10);
 	
@@ -48,7 +47,7 @@ public  class SyncReactiveStreamXTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Spouts.from(Flux.just(array));
+		return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(array)));
 	}
 	
 	

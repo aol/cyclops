@@ -364,7 +364,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
         }
     //    return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).spliterator(),false);
-       return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,false).spliterator(),false);
+       return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).spliterator(),false);
     }
 
     @Override

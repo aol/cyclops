@@ -10,14 +10,7 @@ public class AsyncRSCollectableTest extends CollectableTest {
 
     public <T> Collectable<T> of(T... values){
 
-        return Spouts.<T>reactive(s->{
-
-            Thread t = new Thread(()-> {
-                Flux.just(values).subscribe(s);
-
-            });
-            t.start();
-        }).collectable();
+        return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(values))).collectable();
     }
 
 }

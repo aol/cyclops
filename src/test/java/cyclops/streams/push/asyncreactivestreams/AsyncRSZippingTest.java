@@ -1,4 +1,4 @@
-package cyclops.streams.push.syncflux;
+package cyclops.streams.push.asyncreactivestreams;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
 
-public class SyncZippingTest {
+public class AsyncRSZippingTest {
 	ReactiveSeq<Integer> empty;
 	ReactiveSeq<Integer> nonEmpty;
 
@@ -31,7 +31,7 @@ public class SyncZippingTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Spouts.from(Flux.just(array));
+		return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(array)));
 	}
 	@Test
 	public void zipInOrderNoLimit(){
@@ -58,7 +58,7 @@ public class SyncZippingTest {
 	}
 	@Test
 	public void zipUnevenRight(){
-		for(int i=0;i<100;i++) {
+		for(int i=0;i<20;i++) {
 			System.out.println(i);
 			assertEquals(asList("a"), of("a").toList());
 			assertEquals(asList(tuple("a", 0L)), of("a").zip(of(0L, 1L, 2L)).toList());
@@ -75,7 +75,7 @@ public class SyncZippingTest {
 	}
 	@Test
 	public void zipUnevenLeft(){
-		for(int i=0;i<100;i++) {
+		for(int i=0;i<20;i++) {
 			System.out.println(i);
 			assertEquals(asList(tuple("a", 0L)), of("a", "b").zip(of(0L)).toList());
 			assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), of("a", "b", "c").zip(of(0L, 1L)).toList());
@@ -162,7 +162,7 @@ public class SyncZippingTest {
 	@Test
 	public void zip2of(){
 
-	    for(int i=0;i<1000;i++) {
+	    for(int i=0;i<10;i++) {
 	        System.out.println("i is " + i);
             List<Tuple2<Integer, Integer>> list = of(1, 2, 3, 4, 5, 6)
                     .zip(of(100, 200, 300, 400))

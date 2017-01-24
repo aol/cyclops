@@ -1,4 +1,4 @@
-package cyclops.streams.push.syncflux;
+package cyclops.streams.push.asyncreactivestreams;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.stream.ReactiveSeq;
@@ -23,7 +23,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
 
 
-public class SyncRetryTest {
+public class AsyncRSRetryTest {
 
 	
 	@Mock
@@ -41,7 +41,7 @@ public class SyncRetryTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Spouts.from(Flux.just(array));
+		return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(array)));
 	}
 
 	@Test

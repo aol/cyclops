@@ -1,4 +1,4 @@
-package cyclops.streams.push.syncflux;
+package cyclops.streams.push.asyncreactivestreams;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -15,10 +15,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
-public class SyncJDKStreamTest {
+public class AsyncRSJDKStreamTest {
 	protected <U> ReactiveSeq<U> of(U... array){
-
-		return Spouts.from(Flux.just(array));
+		return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(array)));
 	}
 	@Test
 	public void testAnyMatch(){

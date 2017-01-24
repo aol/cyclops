@@ -9,11 +9,7 @@ public class SyncRSCollectableTest extends CollectableTest {
 
 
     public <T> Collectable<T> of(T... values){
-
-        return Spouts.<T>reactive(s->{
-             Flux.just(values).subscribe(s);
-
-        }).collectable();
+        return Spouts.from(Flux.just(values)).collectable();
     }
 
 }

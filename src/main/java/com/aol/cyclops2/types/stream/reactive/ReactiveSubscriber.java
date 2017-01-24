@@ -6,11 +6,13 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
+import com.aol.cyclops2.internal.stream.spliterators.push.PublisherToOperator;
 import com.aol.cyclops2.internal.stream.spliterators.push.StreamSubscription;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.box.LazyImmutable;
 import cyclops.stream.Spouts;
 import lombok.Getter;
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -68,17 +70,17 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
      */
     public ReactiveSeq<T> reactiveStream(){
         streamCreated = true;
-     /**   if(subscription==null){
-            if(streamCreated)
-                throw new IllegalStateException("Stream has been created before a Subscription has been passed to this Subscriber. Subscribe with this Subscriber first, then extract the Stream.");
 
-        }**/
+
         ReactiveSeq<T> result = Spouts.reactiveStream(getAction());
         if(error!=null)
             throw ExceptionSoftener.throwSoftenedException(error);
         if(buffer.size()>0){
             return Spouts.concat(Spouts.fromIterable(buffer),result);
         }
+
+
+
         return result;
     }
 
@@ -88,6 +90,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
         Objects.requireNonNull(s);
       //  if(streamCreated)
         //      throw new IllegalStateException("Subscription passed after downstream Stream created. Subscribe with this Subscriber first, then extract the Stream");
+
 
         this.subscription = s;
         if(action!=null){
@@ -99,7 +102,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
 
     ArrayList<T> buffer = new ArrayList<>();
     volatile Throwable error =null;
-
+    volatile boolean complete=false;
     @Override
     public void onNext(final T t) {
         Objects.requireNonNull(t);
@@ -131,8 +134,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     @Override
     public void onComplete() {
 
-        if(this.subscription==null)
-            return;
+
 
         val run = getAction().getOnComplete();
 
