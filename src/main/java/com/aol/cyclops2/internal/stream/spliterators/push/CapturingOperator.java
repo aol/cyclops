@@ -99,6 +99,7 @@ public class CapturingOperator<T> implements Operator<T> {
         this.onComplete = onComplete;
         this.initialized.set(true);
         onInit.run();
+        subscription.request(Long.MAX_VALUE);
     }
 
     public boolean isInitialized() {

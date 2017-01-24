@@ -211,7 +211,50 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
     }
 
+    @Test
+    public void duplicateDuplicate(){
+        for(int k=0;k<ITERATIONS;k++) {
+            assertThat(of(1, 2, 3).duplicate()
+                    .v1.duplicate().v1.duplicate().v1.toListX(), equalTo(ListX.of(1, 2, 3)));
+        }
 
+    }
+    @Test
+    public void duplicateDuplicateDuplicate(){
+        for(int k=0;k<ITERATIONS;k++) {
+            assertThat(of(1, 2, 3).duplicate()
+                    .v1.duplicate().v1.duplicate().v1.duplicate().v1.toListX(), equalTo(ListX.of(1, 2, 3)));
+        }
+
+    }
+    @Test
+    public void skipDuplicateSkip() {
+        assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
+        assertThat(of(1, 2, 3).duplicate().v2.skip(1).duplicate().v2.skip(1).toListX(), equalTo(ListX.of(3)));
+    }
+    @Test
+    public void skipLimitDuplicateLimitSkip() {
+        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup = of(1, 2, 3).triplicate();
+        Optional<Integer> head1 = dup.v1.limit(1).toOptional().flatMap(l -> {
+            return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
+        });
+        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup2 = dup.v2.skip(1).triplicate();
+        Optional<Integer> head2 = dup2.v1.limit(1).toOptional().flatMap(l -> {
+            return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
+        });
+       assertThat(dup2.v2.skip(1).toListX(),equalTo(ListX.of(2,3)));
+
+        assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
+    }
+
+
+    @Test
+    public void splitThenSplit(){
+        assertThat(of(1,2,3).toOptional(),equalTo(Optional.of(ListX.of(1,2,3))));
+       // System.out.println(of(1, 2, 3).splitAtHead().v2.toListX());
+        System.out.println("split " + of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toListX());
+        assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
+    }
     @Test
     public void testSplitAtHead() {
 

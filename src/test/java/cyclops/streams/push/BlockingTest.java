@@ -25,7 +25,7 @@ public class BlockingTest {
     @Test
     public void blockingOrNot(){
 
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<10;k++) {
             AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
 
             System.out.println("Starting!");
