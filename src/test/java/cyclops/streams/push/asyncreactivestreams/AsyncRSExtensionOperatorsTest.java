@@ -1,8 +1,10 @@
 package cyclops.streams.push.asyncreactivestreams;
 
 
+import cyclops.CompletableFutures;
 import cyclops.Semigroups;
 import cyclops.Streams;
+import cyclops.async.Future;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
 import cyclops.monads.AnyM;
@@ -11,6 +13,7 @@ import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 
 import java.io.Serializable;
@@ -27,10 +30,17 @@ public class AsyncRSExtensionOperatorsTest {
 	protected <U> ReactiveSeq<U> of(U... array){
 
 		return Spouts.reactive(s->{
-			Thread t = new Thread(()-> {
+            Future blocker = Future.future();
+            Thread t = new Thread(()-> {
+
+
+                blocker.complete(true);
 				Flux.just(array).subscribe(s);
+
 			});
+
 			t.start();
+			blocker.get();
 
 		});
 	}

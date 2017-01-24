@@ -1,5 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.box.Mutable;
 import cyclops.box.MutableBoolean;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ import java.util.function.LongConsumer;
  * Created by johnmcclean on 12/01/2017.
  */
 @AllArgsConstructor
-public class ZippingOperator<T1,T2,R> implements Operator<R> {
+public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
 
     Operator<? super T1> left;
@@ -172,7 +173,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        LinkedBlockingDeque<T1> leftQ = new LinkedBlockingDeque<>();
+        OneToOneConcurrentArrayQueue<T1> leftQ = new OneToOneConcurrentArrayQueue<T1>(1024);
         OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
         StreamSubscription  rightSub[] = {null};
         VolatileBoolean leftComplete = new VolatileBoolean();
@@ -183,10 +184,12 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             try {
 
                 if (rightQ.size() > 0) {
-                    onNext.accept(fn.apply((T1) e, rightQ.poll()));
-                    if(!rightComplete.value){
 
-                        rightSub[0].request(1);
+                    onNext.accept(print(fn.apply((T1) e, rightQ.poll())));
+                    if(!rightComplete.value){
+                        if(rightSub[0]!=null)
+                            rightSub[0].request(1);
+
 
 
                     }
@@ -216,7 +219,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
                 if(rightSub[0]!=null)
                     rightSub[0].cancel();
                 onCompleteDs.run();
-
+                System.out.println("ON complete "+ leftQ.size() + " " + rightComplete.value);
             }
             leftComplete.value=true;
 
@@ -228,10 +231,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             try {
                 if (leftQ.size() > 0) {
 
-                    onNext.accept(fn.apply(leftQ.poll(), (T2) e));
+                    onNext.accept(print(fn.apply(leftQ.poll(), (T2) e)));
                     if(!rightComplete.value){
-
-                        rightSub[0].request(1);
+                        if(rightSub[0]!=null)
+                            rightSub[0].request(1);
 
 
                     }
@@ -256,7 +259,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R> {
             if (rightQ.size()==0 || leftComplete.value) {
 
                 onCompleteDs.run();
-
+                System.out.println("ON complete "+rightQ.size() + " " + leftComplete.value + " leftQ " + leftQ.size());
             }
             rightComplete.value=true;
 

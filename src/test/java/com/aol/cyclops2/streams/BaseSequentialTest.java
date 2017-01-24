@@ -26,6 +26,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;
+import reactor.core.publisher.Flux;
+
 public class BaseSequentialTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
@@ -655,6 +657,7 @@ public class BaseSequentialTest {
 
 			@Test
             public void splitAtHeadImpl(){
+
                 final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
 
 

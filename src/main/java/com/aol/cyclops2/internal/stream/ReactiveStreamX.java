@@ -335,7 +335,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(()->{
                 if(wip.compareAndSet(false,true)) {
-                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                    this.source.subscribeAll(queue::offer, i ->{
+                        queue.close();
+                        System.out.println("Closing due to error");
+                        i.printStackTrace();
+
+                    } , ()->{System.out.println("Closing "); queue.close();});
                 }
                 return Continuation.empty();
             });

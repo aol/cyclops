@@ -66,12 +66,15 @@ public class AsyncZippingTest {
 	}
 	@Test
 	public void zipUnevenRight(){
-		assertEquals(asList("a"), of("a").toList());
-		assertEquals(asList(tuple("a", 0L)), of("a").zip(of(0L,1L,2L)).toList());
-		assertEquals(asList(tuple("a", 0L),tuple("b",1L)), of("a","b").zip(of(0L,1L,2L,3L)).toList());
-		assertEquals(asList(tuple("a", 0L),tuple("b",1L)), of("a","b").zip(of(0L,1L,2L,3L,4L)).toList());
-		assertEquals(asList(tuple("a", 0L),tuple("b",1L)), of("a","b").zip(of(0L,1L,2L,3L,4L,5L)).toList());
-		assertEquals(asList(tuple( 0L,"a"),tuple(1L,"b")), of(0L,1L).zip(of("a","b","c","d")).toList());
+		for(int i=0;i<100;i++) {
+			System.out.println(i);
+			assertEquals(asList("a"), of("a").toList());
+			assertEquals(asList(tuple("a", 0L)), of("a").zip(of(0L, 1L, 2L)).toList());
+			assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), of("a", "b").zip(of(0L, 1L, 2L, 3L)).toList());
+			assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), of("a", "b").zip(of(0L, 1L, 2L, 3L, 4L)).toList());
+			assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), of("a", "b").zip(of(0L, 1L, 2L, 3L, 4L, 5L)).toList());
+			assertEquals(asList(tuple(0L, "a"), tuple(1L, "b")), of(0L, 1L).zip(of("a", "b", "c", "d")).toList());
+		}
 	}
 
 	@Test
@@ -80,12 +83,13 @@ public class AsyncZippingTest {
 	}
 	@Test
 	public void zipUnevenLeft(){
-
-		assertEquals(asList(tuple("a", 0L)), of("a","b").zip(of(0L)).toList());
-		assertEquals(asList(tuple("a", 0L),tuple("b",1L)), of("a","b","c").zip(of(0L,1L)).toList());
-		assertEquals(asList(tuple("a", 0L),tuple("b",1L)), of("a","b","c").zip(of(0L,1L)).collect(Collectors.toList()));
-		assertEquals(asList(tuple("a", 0L),tuple("b",1L)), of("a","b","c","d").zip(of(0L,1L)).toList());
-
+		for(int i=0;i<100;i++) {
+			System.out.println(i);
+			assertEquals(asList(tuple("a", 0L)), of("a", "b").zip(of(0L)).toList());
+			assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), of("a", "b", "c").zip(of(0L, 1L)).toList());
+			assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), of("a", "b", "c").zip(of(0L, 1L)).collect(Collectors.toList()));
+			assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), of("a", "b", "c", "d").zip(of(0L, 1L)).toList());
+		}
 	}
 
 	@Test
@@ -165,21 +169,25 @@ public class AsyncZippingTest {
 	
 	@Test
 	public void zip2of(){
-		
-		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
-											.zip(of(100,200,300,400))
-											.peek(it -> System.out.println(it))
-											.collect(Collectors.toList());
-				
-	
-		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
-		assertThat(right,hasItem(100));
-		assertThat(right,hasItem(200));
-		assertThat(right,hasItem(300));
-		assertThat(right,hasItem(400));
-		
-		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
-		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+
+	    for(int i=0;i<1000;i++) {
+	        System.out.println("i is " + i);
+            List<Tuple2<Integer, Integer>> list = of(1, 2, 3, 4, 5, 6)
+                    .zip(of(100, 200, 300, 400))
+                    .peek(it -> System.out.println("Peeking " + it))
+                    .collect(Collectors.toList());
+
+
+            List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+            System.out.println("Right is " + right + " list is " +  list);
+            assertThat(right, hasItem(100));
+            assertThat(right, hasItem(200));
+            assertThat(right, hasItem(300));
+            assertThat(right, hasItem(400));
+
+            List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+            assertThat(Arrays.asList(1, 2, 3, 4, 5, 6), hasItem(left.get(0)));
+        }
 
 	}
 	@Test
