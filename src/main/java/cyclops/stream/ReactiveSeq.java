@@ -13,6 +13,7 @@ import java.util.stream.*;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
+import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingIntArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingRangeIntSpliterator;
@@ -63,6 +64,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Fn4;
 import cyclops.function.Fn3;
 import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 /**
  * A powerful extended, sequential Stream type.
@@ -4737,20 +4739,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-    default Signal<T> changes(){
+     * @return A Stream that contains only changes in the values in the current Stream, useful for converting a Continuous sequence into one with discrete steps
+     */
+    ReactiveSeq<T> changes();
 
-        cyclops.async.Queue<T> discrete = QueueFactories.<T>unboundedNonBlockingQueue()
-                .build()
-                .withTimeout(1);
-
-        discrete.addContinuation(contRef);
-
-        Signal<T> signal = new Signal<T>(null,discrete);
-        publishTo(signal).forEach(e->{},e->{},()->signal.close());
-        return signal;
-
-    }
-     **/
     default Topic<T> broadcast(){
         cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                                                     .build()

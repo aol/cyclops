@@ -1,11 +1,13 @@
 package com.aol.cyclops2.types.stream.reactive;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.push.StreamSubscription;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.box.LazyImmutable;
 import cyclops.stream.Spouts;
 import lombok.Getter;
@@ -72,7 +74,13 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
                 throw new IllegalStateException("Stream has been created before a Subscription has been passed to this Subscriber. Subscribe with this Subscriber first, then extract the Stream.");
 
         }
-        return Spouts.reactiveStream(getAction());
+        ReactiveSeq<T> result = Spouts.reactiveStream(getAction());
+        if(error!=null)
+            throw ExceptionSoftener.throwSoftenedException(error);
+        if(buffer.size()>0){
+            return Spouts.concat(Spouts.fromIterable(buffer),result);
+        }
+        return result;
     }
 
 
@@ -84,11 +92,19 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
 
         this.subscription = s;
 
+
     }
+
+    ArrayList<T> buffer = new ArrayList<>();
+    volatile Throwable error =null;
 
     @Override
     public void onNext(final T t) {
         Objects.requireNonNull(t);
+        if(subscription==null){
+            buffer.add(t);
+            return;
+        }
 
         val cons = getAction().getAction();
         if(cons!=null) 
@@ -100,6 +116,9 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     @Override
     public void onError(final Throwable t) {
         Objects.requireNonNull(t);
+        if(subscription==null)
+            error= t;
+
         val cons = getAction().getError();
         if(cons!=null) 
               cons.accept(t);
@@ -110,6 +129,8 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     @Override
     public void onComplete() {
 
+        if(this.subscription==null)
+            return;
 
         val run = getAction().getOnComplete();
 

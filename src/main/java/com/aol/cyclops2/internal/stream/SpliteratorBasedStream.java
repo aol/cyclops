@@ -12,6 +12,7 @@ import cyclops.*;
 import cyclops.async.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.async.QueueFactory;
+import cyclops.async.Signal;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.internal.stream.publisher.PublisherIterable;
 import com.aol.cyclops2.internal.stream.spliterators.*;
@@ -37,6 +38,7 @@ import org.reactivestreams.Subscription;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -574,7 +576,37 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     }
 
+    public ReactiveSeq<T> changes(){
 
+            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                    .build();
+
+
+
+
+
+            Continuation[] contRef ={null};
+
+            AtomicBoolean wip = new AtomicBoolean(false);
+            Continuation cont = new Continuation(()->{
+
+                if(wip.compareAndSet(false,true)) {
+                    if(!stream.tryAdvance(queue::offer));{
+                        queue.close();
+                        return Continuation.empty();
+                    }
+                }
+                return contRef[0];
+            });
+
+            contRef[0]= cont;
+
+            queue.addContinuation(cont);
+            Signal<T> signal = new Signal<T>(null, queue);
+            return signal.getDiscrete().stream();
+
+
+    }
 
 
     @Override

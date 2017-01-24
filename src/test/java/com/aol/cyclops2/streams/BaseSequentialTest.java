@@ -54,6 +54,21 @@ public class BaseSequentialTest {
     Integer value2() {
         return 5;
     }
+    @Test
+    public void changesEmpty(){
+        assertThat(of().changes()
+                .toListX(),equalTo(ListX.of()));
+
+
+    }
+
+    @Test
+    public void changes(){
+        assertThat(of(1,1,1,2,2,2,3,3,3,4,4,4,4,5,6).changes()
+                .toListX(),equalTo(ListX.of(1,2,3,4,5,6)));
+
+
+    }
 
 
     @Test
@@ -103,7 +118,7 @@ public class BaseSequentialTest {
                 while (true) {
                     try {
                         System.out.println("Sleeping!");
-                        Thread.sleep(500);
+                        Thread.sleep(10);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -135,7 +150,7 @@ public class BaseSequentialTest {
                     queue.add(3);
                     try {
                         System.out.println("Sleeping!");
-                        Thread.sleep(500);
+                        Thread.sleep(10);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -154,7 +169,8 @@ public class BaseSequentialTest {
     }
     @Test
     public void mergeAdapterTest1(){
-        for(int k=0;k<20;k++) {
+        for(int k=0;k<10;k++) {
+            System.out.println("Test iteration " +k);
             cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
@@ -167,7 +183,7 @@ public class BaseSequentialTest {
                     queue.add(3);
                     try {
                         //    System.out.println("Sleeping!");
-                        Thread.sleep(500);
+                        Thread.sleep(10);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -204,7 +220,7 @@ public class BaseSequentialTest {
     @Test
     public void triplicateFanOut(){
 
-        for (int k = 0; k < 1_000; k++) {
+        for (int k = 0; k < 10; k++) {
             assertThat(of(1, 2, 3, 4, 5, 6, 7, 8, 9)
                     .fanOut(s1 -> s1.peek(System.out::println).filter(i -> i % 3 == 0).map(i -> i * 2),
                             s2 -> s2.filter(i -> i % 3 == 1).map(i -> i * 100),

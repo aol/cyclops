@@ -386,7 +386,48 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     }
 
+    public ReactiveSeq<T> changes(){
+        if(async==Type.NO_BACKPRESSURE) {
+            cyclops.async.Queue<T> discrete = QueueFactories.<T>unboundedNonBlockingQueue()
+                    .build()
+                    .withTimeout(1);
 
+
+
+            Signal<T> signal = new Signal<T>(null, discrete);
+            publishTo(signal).forEach(e -> {
+            }, e -> {
+            }, () -> signal.close());
+
+            return signal.getDiscrete().stream();
+        }else{
+            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                    .build();
+            Subscription sub = source.subscribe(queue::offer, i ->{
+                queue.close();
+
+
+            } , ()->{queue.close();});
+
+            Continuation[] contRef ={null};
+
+            AtomicBoolean wip = new AtomicBoolean(false);
+            Continuation cont = new Continuation(()->{
+
+                if(wip.compareAndSet(false,true)) {
+                    sub.request(1l);
+                }
+                return contRef[0];
+            });
+
+            contRef[0]= cont;
+
+            queue.addContinuation(cont);
+            Signal<T> signal = new Signal<T>(null, queue);
+            return signal.getDiscrete().stream();
+        }
+
+    }
 
     @Override
     public void forEach(final Consumer<? super T> action) {

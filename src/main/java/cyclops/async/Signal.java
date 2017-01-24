@@ -97,8 +97,8 @@ public class Signal<T> {
      * 
      */
     public void close() {
-
-        continuous.close();
+        if(continuous!=null)
+          continuous.close();
         discrete.close();
     }
 

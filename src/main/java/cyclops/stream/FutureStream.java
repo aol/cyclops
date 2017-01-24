@@ -83,6 +83,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                             LazyToQueue<U>,
                                           ConfigurableStream<U, FastFuture<U>>,
                                           FutureStreamSynchronousPublisher<U> {
+    @Override
+    default ReactiveSeq<U> changes(){
+        return fromStream(stream().changes());
+    }
 
     @Override
     default Maybe<U> findOne(){

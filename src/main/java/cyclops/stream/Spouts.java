@@ -229,13 +229,15 @@ public interface Spouts {
 
                 @Override
                 public void onNext(T t) {
+
                     if (won) {
                         sub.onNext(t);
-                    } else if (first.compareAndSet(0, index)) {
+                    } else if (first.compareAndSet(0, index+1)) {
                         winner[0] = subs[index];
                         sub.onNext(t);
                         won = true;
                     }
+                    System.out.println("Next AMB " + t + " WON " + won +  " first " + first.get() + "  index " + index);
 
                 }
 
