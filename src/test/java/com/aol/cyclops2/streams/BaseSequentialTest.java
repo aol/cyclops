@@ -80,7 +80,66 @@ public class BaseSequentialTest {
                 .merge(queue)
                 .toListX(), Matchers.equalTo(ListX.of(1,1,2,2,3,3)));
     }
+    @Test
+    public void publishTest(){
+        for(int k=0;k<10;k++) {
+            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+                    .build();
 
+            Thread t = new Thread(() -> {
+
+                while (true) {
+                    try {
+                        System.out.println("Sleeping!");
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("Waking!");
+                    System.out.println("Closing! " + queue.size());
+                    queue.close();
+
+                }
+            });
+            t.start();
+            of(1, 2, 3).peek(i -> System.out.println("publishing " + i))
+                    .publishTo(queue)
+                    .forEach(System.out::println);
+            assertThat(queue.stream().collect(Collectors.toList()), equalTo(ListX.of(1, 2, 3)));
+        }
+    }
+    @Test
+    public void mergeAdapterTest(){
+        for(int k=0;k<10;k++) {
+            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+                    .build();
+
+            Thread t = new Thread(() -> {
+
+                while (true) {
+
+                    queue.add(1);
+                    queue.add(2);
+                    queue.add(3);
+                    try {
+                        System.out.println("Sleeping!");
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("Waking!");
+                    System.out.println("Closing! " + queue.size());
+                    queue.close();
+
+                }
+            });
+            t.start();
+
+
+            assertThat(this.<Integer>of().peek(i -> System.out.println("publishing " + i))
+                    .merge(queue).collect(Collectors.toList()), equalTo(ListX.of(1, 2, 3)));
+        }
+    }
     @Test
     public void parallelFanOut(){
         assertThat(of(1,2,3,4)

@@ -744,6 +744,35 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
    public Topic<T> broadcast(){
+        if(async==Type.NO_BACKPRESSURE){
+            cyclops.async.Queue<T> queue = QueueFactories.<T>boundedNonBlockingQueue(1000)
+                    .build()
+                    .withTimeout(1);
+
+            Topic<T> topic = new Topic<>(queue,QueueFactories.<T>boundedNonBlockingQueue(1000));
+            AtomicBoolean wip = new AtomicBoolean(false);
+
+            Continuation contRef[] = {null};
+            Continuation cont =
+                    new Continuation(()->{
+
+                        if(wip.compareAndSet(false,true)){
+                            try {
+                                source.subscribeAll(topic::offer,e->topic.close(),()->topic.close());
+                            }finally {
+                                wip.set(false);
+                            }
+
+                        }
+
+
+                        return Continuation.empty();
+                    });
+
+            contRef[0] =cont;
+            queue.addContinuation(cont);
+            return topic;
+        }
         cyclops.async.Queue<T> queue = QueueFactories.<T>boundedNonBlockingQueue(1000)
                 .build()
                 .withTimeout(1);

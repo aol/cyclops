@@ -81,6 +81,7 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
             subs.add(operators[current].subscribe(e-> {
                         try {
                             onNext.accept(e);
+                            System.out.println("Merging! " + e);
                             sub.requested.decrementAndGet();
                         } catch (Throwable t) {
 

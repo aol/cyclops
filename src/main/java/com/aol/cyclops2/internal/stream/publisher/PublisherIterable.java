@@ -134,6 +134,7 @@ public final class PublisherIterable<T>  implements Publisher<T> {
             error(s, e);
             return;
         }
+
         if (!b) {
            complete(s);
             return;

@@ -2,6 +2,8 @@ package cyclops.streams.push.async;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
 import cyclops.CyclopsCollectors;
+import cyclops.async.QueueFactories;
+import cyclops.async.Topic;
 import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -11,6 +13,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -37,19 +40,61 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         });
     }
     @Test
-    public void spoutsCollect(){
-        Integer[] array = new Integer[1000];
-        for(int i=0;i<array.length;i++) {
-            array[i]=i;
-        }
-        for(int i=0;i<1000;i++) {
-            List<Integer> list = of(array).collect(Collectors.toList());
-            System.out.println(list);
+    public void mergeAdapterTest1(){
+        for(int k=0;k<10;k++) {
+            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+                    .build();
+
+            Thread t = new Thread(() -> {
+
+                while (true) {
+
+                    queue.add(1);
+                    queue.add(2);
+                    queue.add(3);
+                    try {
+                        System.out.println("Sleeping!");
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("Waking!");
+                    System.out.println("Closing! " + queue.size());
+                    queue.close();
+
+                }
+            });
+            t.start();
+            assertThat(this.<Integer>of(10).peek(i -> System.out.println("publishing " + i))
+                    .merge(queue).collect(Collectors.toList()), equalTo(ListX.of(1, 2, 3)));
         }
     }
     @Test
+    public void spoutsCollect(){
+        Integer[] array = new Integer[100];
+        for(int i=0;i<array.length;i++) {
+            array[i]=i;
+        }
+        for(int i=0;i<100;i++) {
+            List<Integer> list = of(array).collect(Collectors.toList());
+            assertThat(list.size(),equalTo(array.length));
+        }
+    }
+    @Test
+    public void broadcastTest(){
+        Topic<Integer> topic = of(1,2,3)
+                .broadcast();
+
+
+        ReactiveSeq<Integer> stream1 = topic.stream();
+        ReactiveSeq<Integer> stream2 = topic.stream();
+        assertThat(stream1.toListX(), Matchers.equalTo(ListX.of(1,2,3)));
+        assertThat(stream2.stream().toListX(), Matchers.equalTo(ListX.of(1,2,3)));
+
+    }
+    @Test
     public void mergePTest(){
-        for(int i=0;i<10_000;i++) {
+        for(int i=0;i<1_000;i++) {
             ListX<Integer> list = of(3, 6, 9).mergeP(of(2, 4, 8), of(1, 5, 7)).toListX();
 
             assertThat("List is " + list,list, hasItems(1, 2, 3, 4, 5, 6, 7, 8, 9));
@@ -71,6 +116,47 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         });
 
     }
+
+    @Test
+    public void publishToAndMerge(){
+        cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+                .build();
+
+        Thread t=  new Thread( ()-> {
+
+            while(true) {
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("Closing! " + queue.size() + " " + queue.get());
+              //  queue.close();
+
+            }
+        });
+        t.start();
+
+        AtomicBoolean  complete = new AtomicBoolean(false);
+        of(1,2,3)
+                .publishTo(queue)
+                .peek(System.out::println)
+                .merge(queue)
+                .forEach(e->System.out.println("Result " + e),e->{},()->complete.set(true));
+        while(!complete.get()){
+
+        }
+
+        /**
+        assertThat(of(1,2,3)
+                .publishTo(queue)
+                .peek(System.out::println)
+                .merge(queue)
+                .toListX(), Matchers.equalTo(ListX.of(1,1,2,2,3,3)));
+                **/
+    }
+
     @Test
     public void testCycleAsync() {
       //  of(1, 2).collectAll(CyclopsCollectors.toListX())

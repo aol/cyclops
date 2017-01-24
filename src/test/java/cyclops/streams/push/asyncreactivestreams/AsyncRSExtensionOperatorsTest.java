@@ -34,7 +34,7 @@ public class AsyncRSExtensionOperatorsTest {
             Thread t = new Thread(()-> {
 
 
-                blocker.complete(true);
+
 				Flux.just(array).subscribe(s);
 
 			});

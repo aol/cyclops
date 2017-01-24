@@ -4576,7 +4576,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<T> publishTo(Adapter<T>... adapters){
         return peek(e->{
             for(Adapter<T> next:  adapters){
-                next.offer(e);
+                System.out.println("Offering " + e + " "  + next.offer(e));
             }
         });
     }
