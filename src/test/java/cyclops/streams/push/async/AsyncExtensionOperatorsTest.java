@@ -10,6 +10,8 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
 import org.hamcrest.Matchers;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
@@ -141,8 +143,17 @@ public class AsyncExtensionOperatorsTest {
 		
 
 	}
+
+	@Test
+    public void duplicateFindOne(){
+        Tuple2<Integer, Long> v2 = of(1).duplicate().v1.zipWithIndex().findOne().get();
+        assertThat(v2,equalTo(Tuple.tuple(1,0l)));
+    }
 	@Test
 	public void elementAt0(){
+
+
+
 		assertThat(of(1).elementAt(0).v1,equalTo(1));
 	}
 	@Test

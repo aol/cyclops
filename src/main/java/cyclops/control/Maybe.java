@@ -31,6 +31,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -1206,8 +1207,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
         @Override
         public T get() {
-            return Optional.<T> ofNullable(null)
-                           .get();
+            throw new NoSuchElementException("No value present");
         }
 
         @Override

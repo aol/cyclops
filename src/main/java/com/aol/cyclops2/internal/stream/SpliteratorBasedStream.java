@@ -344,19 +344,14 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     @Override
     public final Optional<T> findFirst() {
+        Object[] result = {null};
 
-       try {
-
-           //use forEachRemaining as it is the fast path for many operators
-           copy().forEachRemaining(e -> {
-                throw new Queue.ClosedQueueException(Arrays.asList(e));
-
+        copy().tryAdvance(e->{
+               result[0]=e;
            });
-       }catch(Queue.ClosedQueueException t){
-           return Optional.of((T)t.getCurrentData().get(0));
-       }
 
-       return Optional.empty();
+
+        return Optional.ofNullable((T)result[0]);
     }
 
 
