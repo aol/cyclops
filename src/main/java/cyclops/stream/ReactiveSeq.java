@@ -4580,6 +4580,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             }
         });
     }
+    default ReactiveSeq<T> publishTo(Signal<T>... signals){
+        return peek(e->{
+            for(Signal<T> next:  signals){
+                System.out.println("Offering " + e + " "  + next.set(e));
+            }
+        });
+    }
     default ReactiveSeq<T> merge(Adapter<T>... adapters){
         return mergeP(ReactiveSeq.of(adapters).map(a->a.stream()).toArray(n->new Publisher[n]));
     }
@@ -4728,6 +4735,22 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return res1.zip4(res2,res3,res4,zipFn);
 
     }
+
+    /**
+    default Signal<T> changes(){
+
+        cyclops.async.Queue<T> discrete = QueueFactories.<T>unboundedNonBlockingQueue()
+                .build()
+                .withTimeout(1);
+
+        discrete.addContinuation(contRef);
+
+        Signal<T> signal = new Signal<T>(null,discrete);
+        publishTo(signal).forEach(e->{},e->{},()->signal.close());
+        return signal;
+
+    }
+     **/
     default Topic<T> broadcast(){
         cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                                                     .build()

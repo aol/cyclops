@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,6 +20,7 @@ import cyclops.Semigroups;
 import cyclops.async.QueueFactories;
 import cyclops.async.Topic;
 import cyclops.collections.ListX;
+import cyclops.collections.SetX;
 import cyclops.control.Maybe;
 import cyclops.control.either.Either;
 import cyclops.stream.Spouts;
@@ -56,29 +58,39 @@ public class BaseSequentialTest {
 
     @Test
     public void publishToAndMerge(){
-        cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
-                .build();
+        for(int k=0;k<10;k++) {
+            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+                    .build();
 
-        Thread t=  new Thread( ()-> {
+            Thread t = new Thread(() -> {
 
-            while(true) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                while (true) {
+                    try {
+                        Thread.sleep(1500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println("Closing! " + queue.size());
+                    queue.close();
+
                 }
+            });
+            t.start();
 
-                System.out.println("Closing!");
-                queue.close();
+            AtomicBoolean complete = new AtomicBoolean(false);
 
-            }
-        });
-        t.start();
-        assertThat(of(1,2,3)
-                .publishTo(queue)
-                .peek(System.out::println)
-                .merge(queue)
-                .toListX(), Matchers.equalTo(ListX.of(1,1,2,2,3,3)));
+
+            ListX<Integer> list = of(1, 2, 3)
+                    .publishTo(queue)
+                    .peek(System.out::println)
+                    .merge(queue)
+                    .toListX();
+            assertThat(list, hasItems(1, 2, 3));
+            assertThat(list.size(), equalTo(6));
+            assertThat(list.toSet(), equalTo(SetX.of(1, 2, 3)));
+        }
+
     }
     @Test
     public void publishTest(){
@@ -138,6 +150,35 @@ public class BaseSequentialTest {
 
             assertThat(this.<Integer>of().peek(i -> System.out.println("publishing " + i))
                     .merge(queue).collect(Collectors.toList()), equalTo(ListX.of(1, 2, 3)));
+        }
+    }
+    @Test
+    public void mergeAdapterTest1(){
+        for(int k=0;k<20;k++) {
+            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+                    .build();
+
+            Thread t = new Thread(() -> {
+
+                while (true) {
+
+                    queue.add(1);
+                    queue.add(2);
+                    queue.add(3);
+                    try {
+                        //    System.out.println("Sleeping!");
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //   System.out.println("Closing! " + queue.size());
+                    queue.close();
+
+                }
+            });
+            t.start();
+            assertThat(this.<Integer>of(10).peek(i -> System.out.println("publishing " + i))
+                    .merge(queue).collect(Collectors.toList()), hasItems(10,1, 2, 3));
         }
     }
     @Test

@@ -74,7 +74,8 @@ public class Signal<T> {
      * @return newValue
      */
     public T set(final T newValue) {
-        continuous.offer(newValue);
+        if(continuous!=null)
+         continuous.offer(newValue);
 
         setDiscreteIfDiff(newValue);
         return newValue;

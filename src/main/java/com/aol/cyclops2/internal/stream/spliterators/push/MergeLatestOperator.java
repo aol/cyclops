@@ -47,7 +47,7 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
 
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
-
+                System.out.println("n is "+ n);
                 for(long k=0;k<Math.max(n,subs.size());k++) {
                     if(!isActive())
                         break;
@@ -56,6 +56,7 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
                             index.set(0);
 
                         }
+                        System.out.println("Requesting 1 from " +  subs.get(toUse));
                         subs.get(toUse).request(1l);
 
 
@@ -66,6 +67,7 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
             };
             @Override
             public void request(long n) {
+                System.out.println("Request!! n is "+ n);
                 super.singleActiveRequest(n,work);
 
             }
@@ -109,7 +111,39 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
 
     @Override
     public void subscribeAll(Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        subscribe(onNext,onError,onCompleteDs).request(Long.MAX_VALUE);
-       //subscribe(0,onNext,onError,onCompleteDs);
+        List<StreamSubscription> subs = new ArrayList<>(operators.length);
+        AtomicInteger completed = new AtomicInteger(0);
+        AtomicInteger index = new AtomicInteger(0);
+
+
+
+
+        for(int i=0;i<operators.length;i++){
+            int current = i;
+            operators[current].subscribeAll(e-> {
+                        try {
+                            onNext.accept(e);
+                            System.out.println("Merging! " + e);
+
+                        } catch (Throwable t) {
+
+                            onError.accept(t);
+                        }finally{
+
+                        }
+                    }
+                    ,onError,()->{
+
+                        if(completed.incrementAndGet()== operators.length){
+                            System.out.println("Running on complete");
+                            onCompleteDs.run();
+
+                        }
+                        System.out.println("Complete " + completed.get());
+
+                    });
+        }
+
+
     }
 }

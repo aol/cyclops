@@ -5,6 +5,7 @@ import cyclops.CyclopsCollectors;
 import cyclops.async.QueueFactories;
 import cyclops.async.Topic;
 import cyclops.collections.ListX;
+import cyclops.collections.SetX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.hamcrest.Matchers;
@@ -39,36 +40,19 @@ public class AsyncSequentialTest extends BaseSequentialTest {
             t.start();
         });
     }
+/**
     @Test
-    public void mergeAdapterTest1(){
-        for(int k=0;k<10;k++) {
-            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
-                    .build();
+    public void changes(){
 
-            Thread t = new Thread(() -> {
+        of(1,1,1,2,2,2,3,3,3,4,4,4,4,5,6).changes()
+                                         .getDiscrete()
+                                         .stream()
+                                         .forEach(System.out::println);
 
-                while (true) {
 
-                    queue.add(1);
-                    queue.add(2);
-                    queue.add(3);
-                    try {
-                        System.out.println("Sleeping!");
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println("Waking!");
-                    System.out.println("Closing! " + queue.size());
-                    queue.close();
 
-                }
-            });
-            t.start();
-            assertThat(this.<Integer>of(10).peek(i -> System.out.println("publishing " + i))
-                    .merge(queue).collect(Collectors.toList()), equalTo(ListX.of(1, 2, 3)));
-        }
     }
+ **/
     @Test
     public void spoutsCollect(){
         Integer[] array = new Integer[100];
@@ -117,45 +101,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
 
     }
 
-    @Test
-    public void publishToAndMerge(){
-        cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
-                .build();
 
-        Thread t=  new Thread( ()-> {
-
-            while(true) {
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                System.out.println("Closing! " + queue.size() + " " + queue.get());
-              //  queue.close();
-
-            }
-        });
-        t.start();
-
-        AtomicBoolean  complete = new AtomicBoolean(false);
-        of(1,2,3)
-                .publishTo(queue)
-                .peek(System.out::println)
-                .merge(queue)
-                .forEach(e->System.out.println("Result " + e),e->{},()->complete.set(true));
-        while(!complete.get()){
-
-        }
-
-        /**
-        assertThat(of(1,2,3)
-                .publishTo(queue)
-                .peek(System.out::println)
-                .merge(queue)
-                .toListX(), Matchers.equalTo(ListX.of(1,1,2,2,3,3)));
-                **/
-    }
 
     @Test
     public void testCycleAsync() {

@@ -61,6 +61,7 @@ public class PublisherToOperator<T> implements Operator<T> {
 
                 @Override
                 public void onNext(T t) {
+                    System.out.println("PublisherOp " + t);
                    onNext.accept(t);
                    if(sub.isActive()) {
                        sArray[0].request(1l);
