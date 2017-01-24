@@ -4,15 +4,18 @@ import cyclops.Streams;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
+import cyclops.control.Try;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -196,15 +199,19 @@ public  class AsyncReactiveStreamXTest {
     }
 	@Test
 	public void testCycleLong() {
+
+
 		assertEquals(asList(1, 2, 1, 2, 1, 2), Streams.oneShotStream(Stream.of(1, 2)).cycle(3).toListX());
 		assertEquals(asList(1, 2, 3, 1, 2, 3), Streams.oneShotStream(Stream.of(1, 2,3)).cycle(2).toListX());
 	}
 	@Test
 	public void onEmptySwitchEmpty(){
-		assertThat(of()
-						.onEmptySwitch(()->of(1,2,3))
-						.toList(),
-				equalTo(Arrays.asList(1,2,3)));
+	    for(int i=0;i<1000;i++) {
+            assertThat(of()
+                            .onEmptySwitch(() -> of(1, 2, 3))
+                            .toList(),
+                    equalTo(Arrays.asList(1, 2, 3)));
+        }
 
 	}
 	private int sleep(Integer i) {
@@ -222,8 +229,8 @@ public  class AsyncReactiveStreamXTest {
 				.skip(1000,TimeUnit.MILLISECONDS)
 				.toList();
 
-
-		assertThat(result,equalTo(Arrays.asList(4,5,6)));
+        assertThat(result.size(), Matchers.isOneOf(3,4));
+		assertThat(result,hasItems(4,5,6));
 	}
 	@Test
 	public void limitTime(){

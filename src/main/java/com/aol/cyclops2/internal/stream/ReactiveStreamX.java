@@ -632,7 +632,15 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 **/
 
 
+    @Override
+    public void forEachOrdered(final Consumer<? super T> consumer) {
+        AtomicBoolean complete = new AtomicBoolean(false);
+        source.subscribe(consumer, this.defaultErrorHandler,()->complete.set(true));
+        while(!complete.get()){
+            LockSupport.parkNanos(1l);
+        }
 
+    }
 
     @Override
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer) {

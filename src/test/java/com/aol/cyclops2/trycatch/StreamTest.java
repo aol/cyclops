@@ -9,10 +9,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
+import cyclops.Streams;
 import org.junit.Test;
 
 import cyclops.control.Try;
@@ -32,7 +36,8 @@ public class StreamTest {
 	}
 	@Test
 	public void testTryWithResources(){
-		
+
+
 		assertThat(Try.catchExceptions(FileNotFoundException.class,IOException.class)
 				   .init(()->new BufferedReader(new FileReader("file.txt")))
 				   .tryWithResources(this::read).toFailedOptional().get(),instanceOf((Class)FileNotFoundException.class));

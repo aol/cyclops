@@ -112,7 +112,7 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
 
         source.subscribeAll(e-> {
                     try {
-                        mapper.apply(e).forEach(onNext);
+                        mapper.apply(e).forEachOrdered(onNext);
 
                     } catch (Throwable t) {
 

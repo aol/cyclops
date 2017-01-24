@@ -471,7 +471,7 @@ public class AsyncExtensionOperatorsTest {
 
 
 	}
-	@Test(expected=ClassCastException.class)
+	@Test//(expected=ClassCastException.class)
 	public void cast(){
 		of(1,2,3).cast(String.class).collect(Collectors.toList());
 	}
