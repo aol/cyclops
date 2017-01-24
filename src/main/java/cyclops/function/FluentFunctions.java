@@ -464,7 +464,8 @@ public class FluentFunctions {
                     } catch (final Throwable e) {
                         exception = e;
                     }
-                    ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep.get()));
+                    ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep.get()))
+                            .run();
 
                     sleep.mutate(s -> s * 2);
                 }
