@@ -69,10 +69,6 @@ public class MaybeTest implements Printable {
 
         System.out.println("Blocking?");
 
-        while(true){
-
-        }
-
     }
     
     @Test

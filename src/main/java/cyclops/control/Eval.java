@@ -712,8 +712,7 @@ public interface Eval<T> extends    To<Eval<T>>,
 
             @Override
             public String toString() {
-                return "lazy!";
-               // return mkString();
+                 return mkString();
             }
 
         }
@@ -974,8 +973,8 @@ public interface Eval<T> extends    To<Eval<T>>,
 
             @Override
             public String toString() {
-                return "lazy!";
-              //  return mkString();
+
+               return mkString();
             }
 
 

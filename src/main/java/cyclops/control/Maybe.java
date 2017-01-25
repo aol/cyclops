@@ -1053,8 +1053,6 @@ public interface Maybe<T> extends To<Maybe<T>>,
         @Override
         public <R> Maybe<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
             return Maybe.fromLazy(lazy.map(m->m.flatMap(mapper)));
-        //    return lazy(Eval.later( () -> resolve().flatMap(mapper)));
-            
 
         }
 
@@ -1125,14 +1123,12 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
         @Override
         public String toString() {
-            /**
+
             Maybe<T> maybe = lazy.get();
             while (maybe instanceof Lazy) {
                 maybe = ((Lazy<T>) maybe).lazy.get();
             }
             return maybe.mkString();
-             **/
-            return "lazy!";
         }
 
         @Override
@@ -1208,17 +1204,22 @@ public interface Maybe<T> extends To<Maybe<T>>,
         }
 
         @Override
-        public <R> Lazy<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-            final Maybe<R> m = Maybe.super.flatMapI(mapper);
+        public <R> Maybe<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+            Eval<? extends Maybe<? extends R>> res = lazy.map(m -> m.flatMapI(mapper));
+            Eval<Maybe<R>> narrowed = (Eval)res;
+            return Maybe.<R>fromLazy(narrowed);
+         /**   final Maybe<R> m = Maybe.super.flatMapI(mapper);
             return new Lazy(
                             Eval.later(() -> m.get()));
+          **/
         }
 
         @Override
-        public <R> Lazy<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-            final Maybe<R> m = (Lazy<R>) Maybe.super.flatMapP(mapper);
+        public <R> Maybe<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+            return Maybe.fromLazy(lazy.map(m->m.flatMapP(mapper)));
+          /**  final Maybe<R> m = (Lazy<R>) Maybe.super.flatMapP(mapper);
             return new Lazy(
-                            Eval.later(() -> m.get()));
+                            Eval.later(() -> m.get()));**/
         }
 
     }
