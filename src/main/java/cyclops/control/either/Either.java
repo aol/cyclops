@@ -22,6 +22,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -128,13 +130,7 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
     }
 
     static <T> Either<Throwable,T> fromFuture(Future<T> future){
-        Future<Either<Throwable,T>> eitherF = future.<Either<Throwable,T>>map(v->
-            v==null ? Either.left(new NoSuchElementException()) :  Either.right(v)
-
-        ).recover(t -> Either.left(t));
-        Eval<Either<Throwable,T>> evalF = Eval.fromFuture(eitherF);
-        return fromLazy(evalF);
-
+        return fromLazy(Eval.<Either<Throwable,T>>fromFuture(future.map(e->Either.<Throwable,T>right(e)).recover(t->Either.<Throwable,T>left(t))));
     }
 
     /**
@@ -1083,6 +1079,40 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
            
             return lazy(Eval.later( () -> resolve().flatMap(mapper)));
          
+        }
+        @Override
+        public final void subscribe(final Subscriber<? super PT> sub) {
+            lazy.subscribe(new Subscriber<Either<ST, PT>>() {
+                boolean onCompleteSent = false;
+                @Override
+                public void onSubscribe(Subscription s) {
+                    sub.onSubscribe(s);
+                }
+
+                @Override
+                public void onNext(Either<ST, PT> pts) {
+                    if(pts.isRight()){ //if we create a LazyThrowable type
+                                        // we could safely propagate an error if pts was a left
+                        sub.onNext(pts.get());
+                    }else if(!onCompleteSent){
+                        sub.onComplete();
+                        onCompleteSent =true;
+                    }
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    sub.onError(t);
+                }
+
+                @Override
+                public void onComplete() {
+                    if(!onCompleteSent){
+                        sub.onComplete();
+                        onCompleteSent =true;
+                    }
+                }
+            });
         }
 
         @Override

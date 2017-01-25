@@ -1046,12 +1046,14 @@ public interface Maybe<T> extends To<Maybe<T>>,
         
        
         public Maybe<T> resolve() {
+
           return lazy.get()
                        .visit(Maybe::just,Maybe::none);
         }
         @Override
         public <R> Maybe<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-            return lazy(Eval.later( () -> resolve().flatMap(mapper)));
+            return Maybe.fromLazy(lazy.map(m->m.flatMap(mapper)));
+        //    return lazy(Eval.later( () -> resolve().flatMap(mapper)));
             
 
         }
@@ -1091,7 +1093,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
                 @Override
                 public void onError(Throwable t) {
-
+                    sub.onError(t);
                 }
 
                 @Override
@@ -1123,11 +1125,14 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
         @Override
         public String toString() {
+            /**
             Maybe<T> maybe = lazy.get();
             while (maybe instanceof Lazy) {
                 maybe = ((Lazy<T>) maybe).lazy.get();
             }
             return maybe.mkString();
+             **/
+            return "lazy!";
         }
 
         @Override

@@ -11,10 +11,12 @@ import cyclops.async.Future;
 import cyclops.control.*;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
@@ -51,7 +53,7 @@ public class MaybeTest implements Printable {
         Future<Integer> future = Future.future();
         Thread t=  new Thread(()->{
             try {
-                Thread.sleep(1000l);
+                Thread.sleep(1500l);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -59,11 +61,17 @@ public class MaybeTest implements Printable {
         });
         t.start();
 
-        Maybe.fromFuture(future)
-              .map(i->i*2)
-              .forEach(System.out::println);
+        Spouts.from(Maybe.fromFuture(future)
+              .map(i->i*2))
+                .peek(System.out::println)
+                .map(i->i*100)
+                .forEach(System.out::println);
 
+        System.out.println("Blocking?");
 
+        while(true){
+
+        }
 
     }
     

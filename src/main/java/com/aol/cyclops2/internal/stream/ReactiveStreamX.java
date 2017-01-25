@@ -434,11 +434,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void forEach(final Consumer<? super T> action) {
-        AtomicBoolean complete = new AtomicBoolean(false);
-        source.subscribeAll(action, this.defaultErrorHandler,()->complete.set(true));
-        while(!complete.get()){
-            LockSupport.parkNanos(1l);
-        }
+        Future<Boolean> complete = Future.future();
+        source.subscribeAll(action, this.defaultErrorHandler,()-> complete.complete(true));
+        complete.get();
 
 
     }
