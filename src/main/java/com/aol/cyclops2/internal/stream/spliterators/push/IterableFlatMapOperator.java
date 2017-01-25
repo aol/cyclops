@@ -1,6 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import java.util.Spliterator;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.LongConsumer;
@@ -26,18 +27,19 @@ public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         StreamSubscription[] s = {null} ;
-        boolean[] completeRecieved = {false};
+
+        AtomicInteger status = new AtomicInteger(0); //1st bit for completing, 2 bit for inner active, 100 for complete
+
         Runnable[] thunk= {()->{
-            if(completeRecieved[0]){
-                onComplete.run();
-            }else{
-                s[0].request(1);
-            }
+
+            s[0].request(1);
+
         }};
 
 
         StreamSubscription res = new StreamSubscription(){
             LongConsumer work = n-> {
+                System.out.println("New demand! Requesting on thread " + Thread.currentThread().getId() + " demand "  + this.requested.get());
                 thunk[0].run();
             };
             @Override
@@ -57,29 +59,68 @@ public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
         };
         s[0] = source.subscribe(e-> {
                     try {
+
                         Spliterator<? extends R> split = mapper.apply(e).spliterator();
 
+                        int statusLocal =-1;
+                        do {
+                            statusLocal = status.get();
+
+
+                        }while(!status.compareAndSet(statusLocal,statusLocal | (1 << 1))); //set inner active
+
+                        AtomicInteger advancing = new AtomicInteger(0);
                         thunk[0] = () -> {
 
                             boolean canAdvance = false;
-                            while (res.isActive()) {
-                                try {
-                                    canAdvance = split.tryAdvance(onNext);
-                                }catch(Throwable t){
-                                    onError.accept(t);
-                                }
-                                if(canAdvance)
-                                    res.requested.decrementAndGet();
-                                else {
-                                    if(completeRecieved[0])
-                                        onComplete.run();
-                                    break;
-                                }
 
+                            if (!advancing.compareAndSet(0, 1)) {
 
+                                return;
                             }
-                            if(!canAdvance && res.isActive())
+                            try {
+                                while (res.isActive()) {
+                                    try {
+
+                                        canAdvance = split.tryAdvance(onNext);
+
+                                    } catch (Throwable t) {
+                                        onError.accept(t);
+                                    }
+
+                                    if (canAdvance) {
+                                        res.requested.decrementAndGet();
+
+                                    } else {
+
+                                        int thunkStatusLocal = -1;
+                                        do {
+                                            thunkStatusLocal = status.get();
+
+
+                                        }
+                                        while (!status.compareAndSet(thunkStatusLocal, thunkStatusLocal & ~(1 << 1))); //unset inner active
+
+                                        if (status.compareAndSet(1, 100)) {
+                                            onComplete.run();
+                                            return;
+                                        }
+                                        break;
+                                    }
+
+
+
+
+                                }
+                            }finally{
+                                advancing.set(0);
+                            }
+                            if(!canAdvance && res.isActive() && !(status.get()>=100)) {
+
+
                                 s[0].request(1);
+                            }
+
 
 
                         };
@@ -99,14 +140,25 @@ public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
                         s[0].request(1);
                     }
                 },()->{
-                    completeRecieved[0]=true;
-                    thunk[0].run();
+
+
+
+                    int statusLocal = -1;
+                    do {
+                        statusLocal = status.get();
+
+
+                    }while(!status.compareAndSet(statusLocal,statusLocal | (1 << 0)));
+
+                    if(status.compareAndSet(1,100)){
+
+                        onComplete.run();
+                    }
 
                 });
 
         return res;
     }
-
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {

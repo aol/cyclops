@@ -63,7 +63,7 @@ public class PublisherToOperator<T> implements Operator<T> {
                 public void onNext(T t) {
                     System.out.println("PublisherOp " + t);
                    onNext.accept(t);
-                    sub.requested.decrementAndGet();
+                   sub.requested.decrementAndGet();
 
                 }
 
