@@ -8,6 +8,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
@@ -18,7 +19,7 @@ public class AsyncRSScanningTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(1))));
+		return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
 	}
 	@Test

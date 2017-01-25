@@ -7,6 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 
 public class AsyncRSCollectableTest extends CollectableTest {
 
@@ -14,7 +15,7 @@ public class AsyncRSCollectableTest extends CollectableTest {
     public <T> Collectable<T> of(T... values){
 
         return Spouts.from(Flux.just(values)
-                .subscribeOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(1))))
+                .subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())))
                 .collectable();
     }
 

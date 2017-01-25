@@ -16,6 +16,7 @@ import reactor.core.scheduler.Schedulers;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -31,7 +32,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Override
     protected <U> ReactiveSeq<U> of(U... array){
 
-        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(1))));
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
     }
 

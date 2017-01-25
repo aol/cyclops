@@ -13,6 +13,7 @@ import reactor.core.scheduler.Schedulers;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,7 @@ public class AsyncRSZippingTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(1))));
+		return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
 	}
 	@Test
