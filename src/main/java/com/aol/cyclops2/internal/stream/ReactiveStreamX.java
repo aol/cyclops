@@ -483,6 +483,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void subscribe(final Subscriber<? super T> sub) {
+        sub.onSubscribe(source.subscribe(sub::onNext, sub::onError, sub::onComplete));
+        /*
         if(async==Type.NO_BACKPRESSURE){
             //if this Stream is not backpressure-aware demand requests / cancel requests are ignored.
             sub.onSubscribe(new Subscription() {
@@ -497,9 +499,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                 }
             });
             source.subscribeAll(sub::onNext, sub::onError, sub::onComplete);
+
         }else {
-            sub.onSubscribe(source.subscribe(sub::onNext, sub::onError, sub::onComplete));
-        }
+
+        //}**/
     }
 
 

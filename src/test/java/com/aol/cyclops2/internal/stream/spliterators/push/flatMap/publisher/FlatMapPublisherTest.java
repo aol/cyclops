@@ -199,15 +199,14 @@ public class FlatMapPublisherTest {
     public void flatMapPAsyncRS3(){
         for(int k=0;k<100;k++) {
             SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
-            Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsyncRS())
-                    .subscribe(sub);
+            Flux<Integer> flux = Flux.from(Spouts.of(1, 2, 3).peek(System.out::println)
+                    .flatMapP(i -> nextAsyncRS()));
             /**Iterator<Integer> it = sub.iterator();
 
             while(it.hasNext()){
                 System.out.println("it " + it.next());
             }**/
-            List<Integer> res = sub.stream().collect(Collectors.toList());
+            List<Integer> res = flux.collect(Collectors.toList()).block();
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1, 2));

@@ -57,8 +57,10 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                 System.out.println("New demand! Requesting on thread " + Thread.currentThread().getId() + " demand "  + this.requested.get());
 
                 if((status.get() &2)==0){ //inner not active
+                    System.out.println("Outer request to parent");
                     s[0].request(1);
                 }else{
+                    System.out.println("Outer request to inner");
                     activeSub.get().request(1);
                 }
             };
@@ -87,9 +89,12 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                         Subscription sLocal = op.subscribe(el->{
                             onNext.accept(el);
                             res.requested.decrementAndGet();
-                            if(res.isActive())
+                            if(res.isActive()) {
+                                System.out.println("Inner requesting more!");
                                 activeSub.get().request(1);
+                            }
                         },onError,()->{
+                            System.out.println("Inner complete!");
                             int thunkStatusLocal = -1;
                             do {
                                 thunkStatusLocal = status.get();
@@ -143,7 +148,7 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                     }while(!status.compareAndSet(statusLocal,statusLocal | (1 << 0)));
 
                     if(status.compareAndSet(1,100)){
-
+                        System.out.println("Outer complete!");
                         onComplete.run();
                     }
 
@@ -184,6 +189,7 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                                 onError.accept(errors.poll());
                         }
                     }
+                    System.out.println("Completing!! " + queued.size() + "  " + active.get());
                     onCompleteDs.run();
                 });
     }
@@ -232,7 +238,7 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
 
                 this.sub=new AtomicReference<>(s);
                 active.incrementAndGet();
-                s.request(1l);
+                s.request(Long.MAX_VALUE);
 
             }
 
@@ -241,7 +247,7 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                 //Optimization check if this is the
                 //main thread and if so just call onNext
                 data.offer((R)nilsafe(r));
-                sub.get().request(1l);
+               // sub.get().request(1l);
 
             }
 
@@ -250,7 +256,7 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                 //Optimization check if this is the
                 //main thread and if so just call onError
                 errors.offer(t);
-                sub.get().request(1l);
+             //   sub.get().request(1l);
             }
 
             @Override
