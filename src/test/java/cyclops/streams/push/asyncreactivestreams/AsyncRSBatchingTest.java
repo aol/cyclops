@@ -7,9 +7,11 @@ import cyclops.stream.Spouts;
 import lombok.Value;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -20,9 +22,11 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class AsyncRSBatchingTest {
+
 	protected <U> ReactiveSeq<U> of(U... array){
-		return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(array)));
+	    return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(1))));
 	}
+
 	@Test
 	public void batchUntil(){
 		assertThat(of(1,2,3,4,5,6)

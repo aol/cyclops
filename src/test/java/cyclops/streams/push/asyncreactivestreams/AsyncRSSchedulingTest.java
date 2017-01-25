@@ -4,6 +4,7 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.Arrays;
 import java.util.concurrent.Executors;
@@ -17,8 +18,8 @@ import static org.junit.Assert.assertThat;
 public class AsyncRSSchedulingTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
+		return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(1))));
 
-		return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(array)));
 	}
 	ScheduledExecutorService ex =Executors.newScheduledThreadPool(1);
 	AtomicInteger count = new AtomicInteger(0);

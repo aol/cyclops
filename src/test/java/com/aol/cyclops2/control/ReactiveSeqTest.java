@@ -432,8 +432,9 @@ public class ReactiveSeqTest {
     public void testReplay(){
         Flux<Integer> f1 = Flux.range(0,100);
         Flux<Integer> f2 = f1.map(i->i*2);
-        System.out.println(f1.count().get());
-        System.out.println(f2.count().get());
+
+        System.out.println(f1.count().block());
+        System.out.println(f2.count().block());
 
         ReactiveSeq<String> stream = ReactiveSeq.of("hello","world");
         ReactiveSeq<String> stream1 = stream.map(str->"hello world " + str);

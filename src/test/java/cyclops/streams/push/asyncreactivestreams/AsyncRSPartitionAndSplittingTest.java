@@ -4,8 +4,10 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.Optional;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 import static java.util.Arrays.asList;
@@ -14,7 +16,8 @@ import static org.junit.Assert.*;
 
 public class AsyncRSPartitionAndSplittingTest {
 	protected <U> ReactiveSeq<U> of(U... array){
-		return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(array)));
+		return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(1))));
+
 	}
 	@Test
 	public void testSplitBy() {

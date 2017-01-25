@@ -31,8 +31,9 @@ public class EvalTest {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                s.onNext(1);
-                s.onComplete();
+
+                s.next(1);
+                s.complete();
             }).start();
         }));
         react.map(i->i*2)

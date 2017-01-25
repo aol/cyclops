@@ -264,7 +264,7 @@ public class SyncSequentialTest extends BaseSequentialTest {
         Optional<Integer> head2 = dup2.v1.limit(1).toOptional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
-       assertThat(dup2.v2.skip(1).toListX(),equalTo(ListX.of(2,3)));
+       assertThat(dup2.v2.skip(1).toListX(),equalTo(ListX.of(3)));
 
         assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
     }

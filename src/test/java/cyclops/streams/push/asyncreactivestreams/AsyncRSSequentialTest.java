@@ -11,9 +11,11 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -29,9 +31,8 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Override
     protected <U> ReactiveSeq<U> of(U... array){
 
-        return Spouts.from(Flux.interval(50)
-                               .doOnNext(i->System.out.println("flux " +i))
-                                .take(1).flatMap(i->Flux.just(array)));
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(1))));
+
     }
 
     @Test

@@ -434,6 +434,17 @@ public class AsyncExtensionOperatorsTest {
 				  				.collect(Collectors.toList());
 		assertThat(Arrays.asList(2,6),equalTo(list));
 	}
+    @Test
+    public void flatMap(){
+        for(int i=0;i<1000;i++){
+            System.out.println("Iteration " + i);
+            assertThat(of(1)
+                            .flatMap(in -> of(1, 2, 3))
+                            .toList(),
+                    equalTo(Arrays.asList(1, 2, 3)));
+        }
+
+    }
 	@Test
 	public void headAndTailTest(){
 		Stream<String> s = Stream.of("hello","world");

@@ -74,7 +74,7 @@ public class PublisherToOperator<T> implements Operator<T> {
 
                 @Override
                 public void onComplete() {
-                    System.out.println("On compelte!");
+                    System.out.println("Publisher On compelte!");
                     onComplete.run();
                     closed = true;
                 }

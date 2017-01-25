@@ -1,4 +1,4 @@
-package com.aol.cyclops2.internal.stream.spliterators.push.flatMap.publisher;
+package com.aol.cyclops2.internal.stream.spliterators.push.flatMap.stream;
 
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
@@ -17,14 +17,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static cyclops.stream.Spouts.of;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -32,55 +32,67 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 
 /**
- * Created by johnmcclean on 19/01/2017.
+ * Created by johnmcclean on 25/01/2017.
  */
-public class FlatMapPublisherTest {
+public class FlatMapTest {
 
     protected <U> ReactiveSeq<U> flux(U... array){
 
-        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(1))));
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
 
     }
     @Test
+    public void flatMapFlux(){
+        for(int i=0;i<10000;i++){
+            System.out.println("************Iteration " + i);
+            Assert.assertThat(flux(1)
+                            .flatMap(in -> flux(1, 2, 3))
+                            .toList(),
+                    Matchers.equalTo(Arrays.asList(1, 2, 3)));
+        }
+
+    }
+
+    @Test
     public void flatMapList(){
         for(int i=0;i<1000;i++){
-            System.out.println("Iteration " + i);
+            System.out.println("************Iteration " + i);
             Assert.assertThat(flux(1)
-                            .flatMapP(in -> of(1, 2, 3))
+                            .flatMap(in -> of(1, 2, 3))
                             .toList(),
                     Matchers.equalTo(Arrays.asList(1, 2, 3)));
         }
 
     }
     @Test
-    public void flatMapPublisher() throws InterruptedException{
+    public void flatMapS() throws InterruptedException{
         //of(1,2,3)
         //		.flatMapP(i->Maybe.of(i)).printOut();
 
         Assert.assertThat(of(1,2,3)
-                .flatMapP(i-> Maybe.of(i))
+                .flatMap(i-> Maybe.of(i).toStream())
                 .toListX(), Matchers.equalTo(Arrays.asList(1,2,3)));
 
 
     }
     @Test
-    public void flatMapP(){
+    public void flatMap(){
         assertThat(Spouts.of(1,2,3)
-                .flatMapP(i->Spouts.of(i))
+                .flatMap(i->Spouts.of(i))
                 .toList(),equalTo(ListX.of(1,2,3)));
     }
     @Test
-    public void flatMapP2(){
+    public void flatMap2(){
         assertThat(Spouts.of(1,2,3)
-                .flatMapP(i->Spouts.of(1,i))
+                .flatMap(i->Spouts.of(1,i))
                 .toList(),equalTo(ListX.of(1,1,1,2,1,3)));
     }
     @Test
-    public void flatMapPAsync2(){
+    public void flatMapAsync2(){
         for(int k=0;k<100;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
-                    .flatMapP(i -> nextAsync())
+                    .flatMap(i -> nextAsync())
                     .toList();
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
@@ -102,7 +114,7 @@ public class FlatMapPublisherTest {
     public void flatMapPAsync3(){
         for(int k=0;k<10;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
-                    .flatMapP(i -> nextAsyncRS())
+                    .flatMap(i -> nextAsyncRS())
                     .toList();
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
@@ -124,13 +136,13 @@ public class FlatMapPublisherTest {
     AtomicInteger count;
     AtomicBoolean complete;
     @Test
-    public void flatMapPAsyncRS(){
+    public void flatMapAsyncRS(){
         for(int k=0;k<1000;k++) {
             complete = new AtomicBoolean(false);
             count = new AtomicInteger(0);
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsyncRS())
+                    .flatMap(i -> nextAsyncRS())
                     .subscribe(new Subscriber<Integer>() {
                         @Override
                         public void onSubscribe(Subscription s) {
@@ -165,13 +177,13 @@ public class FlatMapPublisherTest {
     }
 
     @Test
-    public void flatMapPAsyncRS2(){
+    public void flatMapAsyncRS2(){
         for(int k=0;k<1000;k++) {
             System.out.println("********0---------------------K " + k);
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsyncRS())
-                  //  .flatMapP(i->Spouts.of(1,2))
+                    .flatMap(i -> nextAsyncRS())
+                    //  .flatMapP(i->Spouts.of(1,2))
                     .subscribe(sub);
 
             List<Integer> res = sub.reactiveStream().collect(Collectors.toList());
@@ -196,17 +208,13 @@ public class FlatMapPublisherTest {
 
     }
     @Test
-    public void flatMapPAsyncRS3(){
+    public void flatMapAsyncRS3(){
         for(int k=0;k<100;k++) {
             SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsyncRS())
+                    .flatMap(i -> nextAsyncRS())
                     .subscribe(sub);
-            /**Iterator<Integer> it = sub.iterator();
 
-            while(it.hasNext()){
-                System.out.println("it " + it.next());
-            }**/
             List<Integer> res = sub.stream().collect(Collectors.toList());
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
@@ -227,7 +235,7 @@ public class FlatMapPublisherTest {
 
     }
     AtomicInteger start= new AtomicInteger(0);
-    private Publisher<Integer> nextAsyncRS() {
+    private Stream<Integer> nextAsyncRS() {
         ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
         AtomicLong req = new AtomicLong(0);
         int id = start.incrementAndGet();
@@ -236,7 +244,7 @@ public class FlatMapPublisherTest {
             @Override
             public void request(long n) {
 
-               req.addAndGet(n);
+                req.addAndGet(n);
 
             }
 
@@ -260,14 +268,14 @@ public class FlatMapPublisherTest {
             sub.onComplete();
 
 
-           // Flux.just(1,2).subscribe(sub);
+            // Flux.just(1,2).subscribe(sub);
 
 
         }).start();
 
         return sub.reactiveStream();
     }
-    private Publisher<Integer> nextAsync() {
+    private Stream<Integer> nextAsync() {
         AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
         new Thread(()->{
 

@@ -14,12 +14,14 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Supplier;
@@ -46,8 +48,8 @@ public  class AsyncRSReactiveStreamXTest {
 	}
 
 	protected <U> ReactiveSeq<U> of(U... array){
+		return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(1))));
 
-		return Spouts.from(Flux.interval(50).take(1).flatMap(i->Flux.just(array)));
 	}
 	
 	
@@ -196,7 +198,8 @@ public  class AsyncRSReactiveStreamXTest {
 	}
 	@Test
 	public void onEmptySwitchEmpty(){
-	    for(int i=0;i<1000;i++) {
+	   for(int i=0;i<1000;i++){
+	       System.out.println("Iteration " + i);
             assertThat(of()
                             .onEmptySwitch(() -> of(1, 2, 3))
                             .toList(),
@@ -204,6 +207,41 @@ public  class AsyncRSReactiveStreamXTest {
         }
 
 	}
+    @Test
+    public void flatMap(){
+        for(int i=0;i<1000;i++){
+            System.out.println("Iteration " + i);
+            assertThat(of(1)
+                            .flatMap(in -> of(1, 2, 3))
+                            .toList(),
+                    equalTo(Arrays.asList(1, 2, 3)));
+        }
+
+    }
+    @Test
+    public void flatMapForEach(){
+        for(int i=0;i<1000;i++){
+            AtomicInteger count = new AtomicInteger(0);
+            System.out.println("Iteration " + i);
+            of(1)
+                    .flatMap(in -> of(1, 2, 3))
+                    .forEach(e->count.incrementAndGet());
+            assertThat(count.get(),
+                    equalTo(3));
+        }
+
+    }
+    @Test
+    public void onEmptySwitchGet(){
+        for(int i=0;i<1000;i++){
+            System.out.println("Iteration " + i);
+            assertThat(of()
+                            .onEmptyGet(() -> 1)
+                            .toList(),
+                    equalTo(Arrays.asList(1)));
+        }
+
+    }
 	private int sleep(Integer i) {
 		try {
 			Thread.currentThread().sleep(i);
