@@ -11,22 +11,22 @@ import org.reactivestreams.Subscription;
 
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.LongConsumer;
 
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class PublisherFlatMapOperatorWIP<T,R> extends BaseOperator<T,R> implements Printable {
+public class PublisherFlatMapOperatorBak<T,R> extends BaseOperator<T,R> implements Printable {
 
 
     int maxCapacity=256;
     final Function<? super T, ? extends Publisher<? extends R>> mapper;;
 
-    public PublisherFlatMapOperatorWIP(Operator<T> source, Function<? super T, ? extends Publisher<? extends R>> mapper){
+    public PublisherFlatMapOperatorBak(Operator<T> source, Function<? super T, ? extends Publisher<? extends R>> mapper){
         super(source);
         this.mapper = mapper;
 
@@ -37,50 +37,38 @@ public class PublisherFlatMapOperatorWIP<T,R> extends BaseOperator<T,R> implemen
 
     AtomicInteger active = new AtomicInteger(0);
 
+    AtomicInteger parentRequests = new AtomicInteger(0);
+    AtomicInteger innerRequests = new AtomicInteger(0);
 
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
 
-        final AtomicBoolean activePush= new AtomicBoolean(false);
-        final AtomicBoolean working = new AtomicBoolean(false);
-        final AtomicReference<Subscription> activeSub = new AtomicReference<>(null);
-        final StreamSubscription[] s = {null};
+        AtomicReference<Subscription> activeSub = new AtomicReference<>(null);
+        StreamSubscription[] s = {null} ;
 
         AtomicInteger status = new AtomicInteger(0); //1st bit for completing, 2 bit for inner active, 100 for complete
 
-        final AtomicInteger demanded = new AtomicInteger(0);
-        StreamSubscription res = new StreamSubscription() {
 
+
+        StreamSubscription res = new StreamSubscription(){
+            LongConsumer work = n-> {
+                System.out.println("New demand! Requesting on thread " + Thread.currentThread().getId() + " demand "  + this.requested.get());
+
+                System.out.println("Active test = " + ( (status.get() & (1L << 1))==0) +  " status " + status.get());
+                if((status.get() & (1L << 1)) == 0){ //inner not active
+                    System.out.println("Outer request to parent " + parentRequests.incrementAndGet() + " status " + status.get());
+                    s[0].request(1);
+                }else{
+                    System.out.println("Outer request to inner " + innerRequests.incrementAndGet() + " status " + status.get());
+                    activeSub.get().request(1);
+                }
+            };
             @Override
             public void request(long n) {
-                if (n <= 0)
-                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
-                super.request(n);
+                if(n<=0)
+                    onError.accept(new IllegalArgumentException( "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
 
-                if(activeSub.get()==null) {
-
-                    s[0].request(1l);
-                }
-                else {
-
-                    Subscription sub = activeSub.get();
-
-                    if(requested.get()>0 && working.compareAndSet(false,true)) {
-                        System.out.println("Request attempting demand signal..");
-
-                        if(activeSub.compareAndSet(sub,sub)){
-                            System.out.println("Request: Inner Signal demand for 1. inner requests " + demanded.incrementAndGet()
-                                    + "  current demand " + requested.get() + " working? " + working.get() +  " sub " + activeSub.get());
-                            sub.request(1l);
-                        }
-
-
-
-                    }
-
-                }
-
-
+                this.singleActiveRequest(n,work);
 
             }
 
@@ -90,96 +78,66 @@ public class PublisherFlatMapOperatorWIP<T,R> extends BaseOperator<T,R> implemen
                 super.cancel();
             }
         };
-
-        final AtomicInteger pushed = new AtomicInteger(0);
-        s[0] = source.subscribe(e -> {
-            System.out.println("E is" + e);
+        AtomicReference<Publisher> queued = new AtomicReference(null);
+        s[0] = source.subscribe(e-> {
                     try {
-                        Publisher<? extends R> next = mapper.apply(e);
-                        int statusLocal =-1;
-                        do {
-                            statusLocal = status.get();
 
 
-                        }while(!status.compareAndSet(statusLocal,statusLocal | (1 << 1))); //set inner active
-                        next.subscribe(new Subscriber<R>() {
-
-                            @Override
-                            public void onSubscribe(Subscription s) {
-
-
-                                active.incrementAndGet();
-                                activeSub.set(s);
-                                working.set(false);
-                                if(res.isActive()) {
-
-                                    if(working.compareAndSet(false,true)) {
-                                        System.out.println("On Subscribe: Inner signal demand for 1. inner requests "
-                                                + demanded.incrementAndGet() + "working? " + working.get() + " current demand" +
-                                                res.requested.get()
-                                                +   " sub " + activeSub.get() );
-                                        s.request(1l);
-                                    }
-
-                                }
-
+                        Publisher<? extends R> split = mapper.apply(e);
+                        System.out.println("Registering next publisher for " +e);
+                        PublisherToOperator<R> op = new PublisherToOperator<>((Publisher<R>)split);
+                        Subscription sLocal = op.subscribe(el->{
+                            System.out.println("Pushing " + el + "  demand " + res.requested.get()  + " status " + status.get());
+                            onNext.accept(el);
+                            res.requested.decrementAndGet();
+                            if(res.isActive()) {
+                                System.out.println("Inner requesting more! " + innerRequests.incrementAndGet());
+                                activeSub.get().request(1);
                             }
+                        },onError,()->{
+                            Runnable after =()->{};
+                            System.out.println("Inner complete!");
+                            if (status.compareAndSet(3, 100)) { //inner active and complete
+                                onComplete.run();
+                                return;
+                            }else if(res.isActive()){
+                            //    after =()-> {
+                                    System.out.println("Inner demand to parent " + parentRequests.incrementAndGet() + " status " + status.get());
 
-                            @Override
-                            public void onNext(R r) {
+                                    s[0].request(1l); //may push syncrhonously in which case status should be two
 
-                                System.out.println("ON next " + r +  " " + activePush.get());
-                                while(!activePush.compareAndSet(false,true)) {
-                                }
-                                System.out.println("Active Push! " + res.isActive());
-                                System.out.println("Pushing " + r + " demand " + res.requested.get() + " " + Thread.currentThread().getId());
-                                onNext.accept(r);
 
-                                res.requested.decrementAndGet();
-                                System.out.println("DECREMENTING********************** " + res.requested.get());
-                                working.set(false);
-                                System.out.println("Ending active push " + activePush.get() + "  pushed so far " + pushed.incrementAndGet() +  " demand " + res.requested.get());
-                                activePush.set(false);
-
-                                if(res.isActive() && working.compareAndSet(false,true)){
-                                    System.out.println("On Next : Inner signal demand for 1 inner requests " + demanded.incrementAndGet() +  " sub " + activeSub.get());
-                                    activeSub.get().request(1l);
-
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                onError.accept(t);
-                                onComplete();
-                                /**
-                                res.requested.decrementAndGet();
-                                working.set(false);
-                                if(res.isActive() && working.compareAndSet(false,true)){
-                                    System.out.println("On Error : Inner signal demand for 1 inner requests " + demanded.incrementAndGet() +  " sub " + activeSub.get());
-                                    activeSub.get().request(1l);
-
-                                } **/
-                            }
-
-                            @Override
-                            public void onComplete() {
+                            }else {
 
                                 int thunkStatusLocal = -1;
                                 do {
                                     thunkStatusLocal = status.get();
-
+                                    System.out.println("Setting status INNER " + (thunkStatusLocal & ~(1 << 1)));
 
                                 }
                                 while (!status.compareAndSet(thunkStatusLocal, thunkStatusLocal & ~(1 << 1))); //unset inner active
-
-                                if (status.compareAndSet(1, 100)) {
-                                    onComplete.run();
-                                    return;
-                                }
                             }
+
+                          //  after.run();
+
                         });
 
+
+                        int statusLocal =-1;
+                        do {
+                            statusLocal = status.get();
+
+                            System.out.println("Status local  is"  + statusLocal);
+                            System.out.println("Setting status active to " + (statusLocal | (1 << 1)));
+
+                        }while(!status.compareAndSet(statusLocal,statusLocal | (1 << 1))); //set inner active
+                        if(res.isActive()){
+                            System.out.println("On register demand to inner " + innerRequests.incrementAndGet()  + " status " + status.get());
+                            sLocal.request(1l);
+                        }
+
+                        System.out.println("Switching sub!");
+                        activeSub.set(sLocal); //set after active
 
 
 
@@ -188,23 +146,22 @@ public class PublisherFlatMapOperatorWIP<T,R> extends BaseOperator<T,R> implemen
                         onError.accept(t);
                     }
                 }
-                , t -> {
+                ,t->{
                     onError.accept(t);
-                    System.out.println("ON ERROR!!!!! DECREMENTING!");
                     res.requested.decrementAndGet();
-                    if (res.isActive()) {
+                    if(res.isActive()){
                         s[0].request(1);
                     }
-                }, ()->{
+                },()->{
                     int statusLocal = -1;
                     do {
                         statusLocal = status.get();
-
+                        System.out.println("Setting status OUTER " + (statusLocal | (1 << 0)));
 
                     }while(!status.compareAndSet(statusLocal,statusLocal | (1 << 0)));
 
                     if(status.compareAndSet(1,100)){
-
+                        System.out.println("Outer complete!");
                         onComplete.run();
                     }
 
@@ -245,6 +202,7 @@ public class PublisherFlatMapOperatorWIP<T,R> extends BaseOperator<T,R> implemen
                                 onError.accept(errors.poll());
                         }
                     }
+                    System.out.println("Completing!! " + queued.size() + "  " + active.get());
                     onCompleteDs.run();
                 });
     }
@@ -293,7 +251,7 @@ public class PublisherFlatMapOperatorWIP<T,R> extends BaseOperator<T,R> implemen
 
                 this.sub=new AtomicReference<>(s);
                 active.incrementAndGet();
-                s.request(1l);
+                s.request(Long.MAX_VALUE);
 
             }
 
@@ -302,7 +260,7 @@ public class PublisherFlatMapOperatorWIP<T,R> extends BaseOperator<T,R> implemen
                 //Optimization check if this is the
                 //main thread and if so just call onNext
                 data.offer((R)nilsafe(r));
-                sub.get().request(1l);
+               // sub.get().request(1l);
 
             }
 
@@ -311,7 +269,7 @@ public class PublisherFlatMapOperatorWIP<T,R> extends BaseOperator<T,R> implemen
                 //Optimization check if this is the
                 //main thread and if so just call onError
                 errors.offer(t);
-                sub.get().request(1l);
+             //   sub.get().request(1l);
             }
 
             @Override

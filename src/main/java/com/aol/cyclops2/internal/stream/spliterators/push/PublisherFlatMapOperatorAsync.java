@@ -2,8 +2,6 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Queue;
-import cyclops.box.Mutable;
-import cyclops.stream.ReactiveSeq;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
@@ -11,12 +9,13 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.*;
+import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.LongConsumer;
@@ -24,13 +23,13 @@ import java.util.function.LongConsumer;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements Printable {
+public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implements Printable {
 
 
     int maxCapacity=256;
     final Function<? super T, ? extends Publisher<? extends R>> mapper;;
 
-    public PublisherFlatMapOperator(Operator<T> source, Function<? super T, ? extends Publisher<? extends R>> mapper){
+    public PublisherFlatMapOperatorAsync(Operator<T> source, Function<? super T, ? extends Publisher<? extends R>> mapper){
         super(source);
         this.mapper = mapper;
 
@@ -41,6 +40,12 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
 
     AtomicInteger active = new AtomicInteger(0);
 
+    AtomicInteger parentRequests = new AtomicInteger(0);
+    AtomicInteger innerRequests = new AtomicInteger(0);
+
+    static class sourceRequest{
+
+    }
 
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
@@ -48,20 +53,34 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
         AtomicReference<Subscription> activeSub = new AtomicReference<>(null);
         StreamSubscription[] s = {null} ;
 
-        AtomicInteger status = new AtomicInteger(0); //1st bit for completing, 2 bit for inner active, 100 for complete
+        final AtomicInteger status = new AtomicInteger(0); //1st bit for completing, 2 bit for inner active, 100 for complete
 
-
+        final AtomicBoolean init = new AtomicBoolean(false);
+        final AtomicBoolean activeRequest = new AtomicBoolean(false);
 
         StreamSubscription res = new StreamSubscription(){
             LongConsumer work = n-> {
+
                 System.out.println("New demand! Requesting on thread " + Thread.currentThread().getId() + " demand "  + this.requested.get());
 
-                if((status.get() &2)==0){ //inner not active
-                    System.out.println("Outer request to parent");
+                System.out.println("Active test = " + ( (status.get() & (1L << 1))==0) +  " status " + status.get());
+                if (!init.get()) {
+                    init.set(true);
                     s[0].request(1);
                 }else{
-                    System.out.println("Outer request to inner");
-                    activeSub.get().request(1);
+                    System.out.println("Signalling to active sub " + activeSub.get() + " " + status.get());
+                    while(activeSub.get()==null){
+                        if(status.get()>=100 || requested.get()==0){
+                            return;
+                        }
+                        LockSupport.parkNanos(1l);
+                    }
+                    if(status.get()>=100 || requested.get()==0){
+                        return;
+                    }
+                    singleActiveInnerRequest(activeSub,activeRequest,this);
+                    //  System.out.println("Outer request to inner " + innerRequests.incrementAndGet() + " status " + status.get() + " demand " + requested.get());
+                     // activeSub.get().request(1);
                 }
             };
             @Override
@@ -79,38 +98,61 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                 super.cancel();
             }
         };
+
+
         s[0] = source.subscribe(e-> {
                     try {
 
                         Publisher<? extends R> split = mapper.apply(e);
-
-
+                        System.out.println("Registering next publisher for " +e  + " thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
                         PublisherToOperator<R> op = new PublisherToOperator<>((Publisher<R>)split);
                         Subscription sLocal = op.subscribe(el->{
+
+                            System.out.println("!!!!!!!!!Pushing " + el + "  demand " + res.requested.get()  + " status " + status.get() + " thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+
                             onNext.accept(el);
                             res.requested.decrementAndGet();
-                            if(res.isActive()) {
-                                System.out.println("Inner requesting more!");
-                                activeSub.get().request(1);
-                            }
+                            System.out.println("******************Setting active to false ON "+ activeRequest.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+                            activeRequest.set(false);
+                            System.out.println("Reset demand " + el + "  demand " + res.requested.get()  + " status " + status.get() + " thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+
+
+                            System.out.println("Set active request to false "+  activeRequest.get() + " attempting demand ");
+                            singleActiveInnerRequest(activeSub, activeRequest, res);
+
                         },onError,()->{
-                            System.out.println("Inner complete!");
-                            int thunkStatusLocal = -1;
-                            do {
-                                thunkStatusLocal = status.get();
+                            activeRequest.set(true);
+
+                            System.out.println("Inner complete   thread " + Thread.currentThread().getId() + " demand "  + res.requested.get() + " active " + activeRequest.get());
+                            activeSub.set(null);
+                            System.out.println("Active sub is  " + activeSub.get());
 
 
-                            }
-                            while (!status.compareAndSet(thunkStatusLocal, thunkStatusLocal & ~(1 << 1))); //unset inner active
 
-                            if (status.compareAndSet(1, 100)) {
+
+                                int thunkStatusLocal = -1;
+                                do {
+                                    thunkStatusLocal = status.get();
+                                    System.out.println("Setting status INNER " + (thunkStatusLocal & ~(1 << 1)));
+
+                                }
+                                while (!status.compareAndSet(thunkStatusLocal, thunkStatusLocal & ~(1 << 1))); //unset inner active
+                            if (status.compareAndSet(1, 100)) { //inner active and complete
                                 onComplete.run();
                                 return;
-                            }else{
-                                if(res.isActive()){
-                                    s[0].request(1l);
-                                }
                             }
+                            System.out.println("Inner demand to parent " + parentRequests.incrementAndGet() + " status " + status.get());
+
+                            s[0].request(1l);
+                            //always request more from the parent until outer complete
+                            System.out.println("****************Setting active to false IC "+ activeRequest.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+
+                            activeRequest.set(false);
+                             System.out.println("Checking demand in Inner on complete! " +  activeRequest.get() + " " + res.requested.get());
+                            singleActiveInnerRequest(activeSub, activeRequest, res);
+
+                          //  after.run();
+
                         });
 
 
@@ -118,14 +160,21 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                         do {
                             statusLocal = status.get();
 
+                            System.out.println("Status local  is"  + statusLocal);
+                            System.out.println("Setting status active to " + (statusLocal | (1 << 1)));
 
                         }while(!status.compareAndSet(statusLocal,statusLocal | (1 << 1))); //set inner active
-                        if(res.isActive()){
-                            sLocal.request(1l);
-                        }
 
-                        activeSub.set(sLocal); //set after active
 
+
+                        System.out.println("On register demand to inner " + innerRequests.incrementAndGet() + " status " + status.get());
+                        System.out.println("Switching sub! " + activeRequest.get());
+
+                        activeSub.set(sLocal);//set after active
+
+
+                        System.out.println("Checking demand in main onnext " + activeRequest.get() + " demand is " + res.requested.get());
+                        singleActiveInnerRequest(activeSub, activeRequest, res);
 
 
                     } catch (Throwable t) {
@@ -143,7 +192,7 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                     int statusLocal = -1;
                     do {
                         statusLocal = status.get();
-
+                        System.out.println("Setting status OUTER " + (statusLocal | (1 << 0)));
 
                     }while(!status.compareAndSet(statusLocal,statusLocal | (1 << 0)));
 
@@ -155,6 +204,24 @@ public class PublisherFlatMapOperator<T,R> extends BaseOperator<T,R> implements 
                 });
 
         return res;
+    }
+
+    private void singleActiveInnerRequest(AtomicReference<Subscription> activeSub, AtomicBoolean activeRequest, StreamSubscription res) {
+        System.out.println("Request " + activeRequest.get() + " " + res.requested.get());
+        if(res.isActive() && activeRequest.compareAndSet(false,true)) {
+            System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
+                    + Thread.currentThread().getId()
+                    + " ************************* " + System.identityHashCode(activeSub.get()));
+            if(activeSub.get()!=null)
+                activeSub.get().request(1l);
+            else{
+                System.out.println("Active Sub is null - falling back");
+                activeRequest.set(false);
+            }
+        }else{
+
+            System.out.println("Failed to signal demand " + activeRequest.get() + " active " + res.isActive());
+        }
     }
 
     @Override

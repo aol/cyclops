@@ -9,6 +9,7 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -20,6 +21,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -38,10 +40,22 @@ public class FlatMapPublisherTest {
 
     protected <U> ReactiveSeq<U> flux(U... array){
 
-        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(1))));
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
 
     }
+    @Test
+    public void flatMapFlux(){
+        for(int i=0;i<10000;i++){
+            System.out.println("************Iteration " + i);
+            Assert.assertThat(flux(1)
+                            .flatMapP(in -> flux(1, 2, 3))
+                            .toList(),
+                    Matchers.equalTo(Arrays.asList(1, 2, 3)));
+        }
+
+    }
+
     @Test
     public void flatMapList(){
         for(int i=0;i<1000;i++){
@@ -77,11 +91,66 @@ public class FlatMapPublisherTest {
                 .toList(),equalTo(ListX.of(1,1,1,2,1,3)));
     }
     @Test
+    public void mergePAsync2(){
+        for(int k=0;k<1000;k++) {
+            System.out.println("****************************NEXT ITERATION "+ k);
+            List<Integer> res =  Spouts.of(1)
+                    .mergeP(nextAsync(),nextAsync(),nextAsync()).skip(1)
+                    .toList();
+            System.out.println("Result is " + res);
+            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res, hasItems(1,2));
+            int one = 0;
+            int two = 0;
+            for(Integer next : res){
+                if(next==1){
+                    one++;
+                }
+                if(next==2){
+                    two++;
+                }
+            }
+            assertThat(one,equalTo(3));
+            assertThat(two,equalTo(3));
+        }
+    }
+    @Test
     public void flatMapPAsync2(){
-        for(int k=0;k<100;k++) {
-            List<Integer> res = Spouts.of(1, 2, 3)
+        for(int k=0;k<5000;k++) {
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            List<Integer> res =  Spouts.of(1, 2, 3)
                     .flatMapP(i -> nextAsync())
                     .toList();
+            System.out.println("Result is " + res);
+            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res, hasItems(1,2));
+            int one = 0;
+            int two = 0;
+            for(Integer next : res){
+                if(next==1){
+                    one++;
+                }
+                if(next==2){
+                    two++;
+                }
+            }
+            assertThat(one,equalTo(3));
+            assertThat(two,equalTo(3));
+        }
+    }
+    @Test
+    public void flatMapPAsyncFlux(){
+        for(int k=0;k<1000;k++) {
+            System.out.println("****************************NEXT ITERATION "+ k);
+            List<Integer> res =  Spouts.from(Flux.just(1, 2, 3)
+                    .flatMap(i -> nextAsync())
+            ).toList();
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
@@ -162,6 +231,15 @@ public class FlatMapPublisherTest {
             assertThat(count.get(), equalTo(6));
         }
 
+    }
+    @Test
+    public void and(){
+        System.out.println(2& (1L << 1));
+        System.out.println("Not set " + (1& (1L << 1)));
+        System.out.println("3 test " + (3& (1L << 1)));
+        System.out.println("3 test " + ((3& (1L << 1))==0));
+        System.out.println("Not set " + (5& (1L << 1)));
+        System.out.println("Not set " + (0& (1L << 1)));
     }
 
     @Test
@@ -267,6 +345,8 @@ public class FlatMapPublisherTest {
         return sub.reactiveStream();
     }
     private Publisher<Integer> nextAsync() {
+        return flux(1,2);
+        /**
         AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
         new Thread(()->{
 
@@ -282,5 +362,6 @@ public class FlatMapPublisherTest {
             sub.onComplete();
         }).start();
         return sub.stream();
+         **/
     }
 }

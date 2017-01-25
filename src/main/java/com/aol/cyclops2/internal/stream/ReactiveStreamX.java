@@ -1,10 +1,8 @@
 package com.aol.cyclops2.internal.stream;
 
-import com.aol.cyclops2.internal.stream.spliterators.ClosingSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.Traversable;
 import com.aol.cyclops2.types.futurestream.Continuation;
-import com.aol.cyclops2.types.stream.CyclopsCollectable;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.CyclopsCollectors;
@@ -40,7 +38,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -315,10 +312,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
 
-        ReactiveStreamX<R> res = createSeq(new PublisherFlatMapOperator<>(source, fn));
+        ReactiveStreamX<R> res = createSeq(new PublisherFlatMapOperatorAsync<>(source, fn));
         if(this.async == Type.SYNC){
             //flatMapP could recieve a asyncrhonous Streams so we force onto the async path
-            return res.withAsync(Type.NO_BACKPRESSURE);
+            return res.withAsync(Type.BACKPRESSURE);
         }
         return res;
     }
@@ -483,8 +480,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void subscribe(final Subscriber<? super T> sub) {
-        sub.onSubscribe(source.subscribe(sub::onNext, sub::onError, sub::onComplete));
-        /*
+
         if(async==Type.NO_BACKPRESSURE){
             //if this Stream is not backpressure-aware demand requests / cancel requests are ignored.
             sub.onSubscribe(new Subscription() {
@@ -499,10 +495,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                 }
             });
             source.subscribeAll(sub::onNext, sub::onError, sub::onComplete);
-
         }else {
-
-        //}**/
+            sub.onSubscribe(source.subscribe(sub::onNext, sub::onError, sub::onComplete));
+        }
     }
 
 
