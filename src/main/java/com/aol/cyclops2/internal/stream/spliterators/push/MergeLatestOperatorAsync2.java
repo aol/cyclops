@@ -121,7 +121,7 @@ public class MergeLatestOperatorAsync2<IN> implements Operator<IN> {
                  sub.requested.decrementAndGet();
                  onNext.accept(in);
                  wip.set(false);
-             },demandFinder));
+             },onError,demandFinder));
         }
 
 

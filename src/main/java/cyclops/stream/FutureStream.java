@@ -3120,6 +3120,12 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                 .flatMapP(fn));
     }
 
+    @Override
+    default <R> FutureStream<R> flatMapP(final int maxConcurrency,final Function<? super U, ? extends Publisher<? extends R>> fn) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .flatMapP(maxConcurrency,fn));
+    }
+
     /*
      * @see cyclops2.reactiveStream.ReactiveSeq#flatMapStream(java.util.function.Function)
      */

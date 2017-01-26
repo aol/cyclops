@@ -39,7 +39,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
 
     }
 
-    AtomicInteger active = new AtomicInteger(0);
+
 
     AtomicInteger parentRequests = new AtomicInteger(0);
     AtomicInteger innerRequests = new AtomicInteger(0);
@@ -233,6 +233,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
         ManyToOneConcurrentArrayQueue<R> data = new ManyToOneConcurrentArrayQueue<R>(256);
         ManyToOneConcurrentArrayQueue<Throwable> errors = new ManyToOneConcurrentArrayQueue<>(256);
         AtomicReference<PVector<Subscription>> activeSubs = new AtomicReference<>(TreePVector.empty());
+        AtomicInteger active = new AtomicInteger(0);
         source.subscribeAll(e-> {
                     try {
 
@@ -240,7 +241,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                         queued.add(next);
                         StreamSubscription sub = new StreamSubscription();
                         sub.request(maxCapacity);
-                        drainAndLaunch(sub,onNext, queued, data, errors);
+                        drainAndLaunch(active,sub,onNext, queued, data, errors);
 
                     } catch (Throwable t) {
 
@@ -271,10 +272,10 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
         return (T)o;
     }
 
-    private void drainAndLaunch(StreamSubscription maxCapacity,Consumer<? super R> onNext, Deque<Publisher<? extends R>> queued, ManyToOneConcurrentArrayQueue<R> data, ManyToOneConcurrentArrayQueue<Throwable> errors) {
+    private void drainAndLaunch(AtomicInteger active, StreamSubscription maxCapacity,Consumer<? super R> onNext, Deque<Publisher<? extends R>> queued, ManyToOneConcurrentArrayQueue<R> data, ManyToOneConcurrentArrayQueue<Throwable> errors) {
 
         while(queued.size()>0 && active.get()<10) {
-            subscribe(queued, data, errors);
+            subscribe(active,queued, data, errors);
             Object next = data.poll();
             if(next!=null)
                 onNext.accept(print(nilsafe(next)));
@@ -286,7 +287,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
 
     }
 
-    private void subscribe(Deque<Publisher<? extends R>> queued,
+    private void subscribe(AtomicInteger active,Deque<Publisher<? extends R>> queued,
                            ManyToOneConcurrentArrayQueue<R> data,
                            ManyToOneConcurrentArrayQueue<Throwable> errors){
 
@@ -334,7 +335,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
 
 
                 if(queued.size()>0){
-                    subscribe(queued,data,errors);
+                    subscribe(active,queued,data,errors);
                 }
                 active.decrementAndGet();
             }

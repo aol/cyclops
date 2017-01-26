@@ -23,14 +23,16 @@ public class Merger<T> implements Subscriber<T> {
     volatile boolean complete = false;
     volatile Throwable error;
     private final  StreamSubscription sub;
+    private final Consumer<? super Throwable> errorAction;
 
     private AtomicLong requested = new AtomicLong(0);
     private AtomicLong produced =  new AtomicLong(0);
     private final Consumer<? super T> action;
-    public Merger(Operator<T> operator,Consumer<? super T> action,LongConsumer onFail) {
+    public Merger(Operator<T> operator,Consumer<? super T> action,final Consumer<? super Throwable> error,LongConsumer onFail) {
        sub = operator.subscribe(this::onNext,this::onError,this::onComplete);
        this.action = action;
        this.onFail = onFail;
+       this.errorAction = error;
     }
 
     public void request(long next){
@@ -53,6 +55,10 @@ public class Merger<T> implements Subscriber<T> {
 
         AtomicLong drained = new AtomicLong(0);
         System.out.println("Drain loop starting..");
+        if(error!=null){
+            errorAction.accept(error);
+            error=null;
+        }
         int times = 0;
         do{
             times++;
@@ -62,6 +68,7 @@ public class Merger<T> implements Subscriber<T> {
                 action.accept(n);
             });
         }while(produced.get()+drained.get()<requested.get() && !complete && times<3);
+
         System.out.println("Drain loop complete.. " + drained.get());
     }
     @Override
