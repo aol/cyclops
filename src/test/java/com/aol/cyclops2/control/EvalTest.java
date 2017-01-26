@@ -2,11 +2,13 @@ package com.aol.cyclops2.control;
 
 import cyclops.async.Future;
 import cyclops.control.Eval;
+import cyclops.control.Eval.CompletableEval;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -20,6 +22,20 @@ public class EvalTest {
                                     .map(this::process);
         
         
+    }
+
+    @Test
+    public void completableTest(){
+        CompletableEval<Integer,Integer> completable = Eval.eval();
+        Eval<Integer> mapped = completable.map(i->i*2)
+                                          .flatMap(i->Eval.later(()->i+1));
+
+        completable.complete(5);
+        System.out.println(mapped.getClass());
+        mapped.printOut();
+        assertThat(mapped.get(),equalTo(11));
+
+
     }
 
     @Test

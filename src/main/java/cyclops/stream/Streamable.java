@@ -568,7 +568,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
                                                                   .reactiveSeq()));
     }
     /**
-     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      *
      * <pre>
      * {@code
@@ -2289,7 +2289,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
 
     /**
      * Gets the element at index, and returns a Tuple containing the element (it must be present)
-     * and a lazy copy of the Sequence for further processing.
+     * and a maybe copy of the Sequence for further processing.
      * 
      * <pre>
      * {@code 

@@ -271,7 +271,7 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
         return (POrderedSetX)PersistentCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     /**
-     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 

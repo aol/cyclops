@@ -17,6 +17,7 @@ import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -111,7 +112,7 @@ import java.util.stream.Stream;
  * @param <LT> Left type
  * @param <RT> Right type
  */
-public interface Either<LT, RT> extends Xor<LT, RT>, Completable<RT> {
+public interface Either<LT, RT> extends Xor<LT, RT>{
 
     static <LT1,RT> Either<LT1,RT> fromMonadicValue(MonadicValue<RT> mv2){
         if(mv2 instanceof Either){
@@ -121,9 +122,196 @@ public interface Either<LT, RT> extends Xor<LT, RT>, Completable<RT> {
 
     }
 
-    static <RT> Either<Throwable,RT> either(){
-        return Either.<RT>fromFuture(Future.<RT>future());
+    /**
+     * Create a reactive CompletableEither
+     *
+     * <pre>
+     *  {@code
+     *      ___Example 1___
+     *
+     *      CompletableEither<Integer,Integer> completable = Either.either();
+            Either<Throwable,Integer> mapped = completable.map(i->i*2)
+                                                          .flatMap(i->Eval.later(()->i+1));
+
+            completable.complete(5);
+
+            mapped.printOut();
+            //11
+
+            ___Example 2___
+
+            CompletableEither<Integer,Integer> completable = Either.either();
+            Either<Throwable,Integer> mapped = completable.map(i->i*2)
+                                                          .flatMap(i->Eval.later(()->i+1));
+
+
+            completable.complete(null);
+
+            //Either:Left[NoSuchElementException]
+
+            ___Example 3___
+
+            CompletableEither<Integer,Integer> completable = Either.either();
+            Either<Throwable,Integer> mapped = completable.map(i->i*2)
+                                                          .flatMap(i->Eval.later(()->i+1));
+
+            completable.complete(new IllegalStateException());
+
+            //Either:Left[IllegalStateElementException]
+     *     }
+     * </pre>
+     *
+     * @param <RT>
+     * @return
+     */
+    static <RT> CompletableEither<RT,RT> either(){
+        Completable.CompletablePublisher<RT> c = new Completable.CompletablePublisher<RT>();
+        return new Either.CompletableEither<RT, RT>(c,fromFuture(Future.fromPublisher(c)));
     }
+
+    @AllArgsConstructor
+
+    static class CompletableEither<ORG,RT> implements Either<Throwable,RT>, Completable<ORG> {
+
+        public final Completable.CompletablePublisher<ORG> complete;
+        public final Either<Throwable,RT> either;
+
+        @Override
+        public boolean isFailed() {
+            return complete.isFailed();
+        }
+
+        @Override
+        public boolean isDone() {
+            return complete.isDone();
+        }
+
+        @Override
+        public boolean complete(ORG done) {
+            return complete.complete(done);
+        }
+
+        @Override
+        public boolean completeExceptionally(java.lang.Throwable error) {
+            return complete.completeExceptionally(error);
+        }
+
+        @Override
+        public Either<Throwable, RT> filter(Predicate<? super RT> test) {
+            return either.filter(test);
+        }
+
+        @Override
+        public <R> Either<Throwable, R> map(Function<? super RT, ? extends R> fn) {
+            return either.map(fn);
+        }
+
+        @Override
+        public Either<Throwable, RT> peek(Consumer<? super RT> action) {
+            return either.peek(action);
+        }
+
+        @Override
+        public Either<RT, Throwable> swap() {
+            return either.swap();
+        }
+
+        @Override
+        public Ior<java.lang.Throwable, RT> toIor() {
+            return either.toIor();
+        }
+
+        @Override
+        public RT get() {
+            return either.get();
+        }
+
+        @Override
+        public Value<java.lang.Throwable> secondaryValue() {
+            return either.secondaryValue();
+        }
+
+        @Override
+        public java.lang.Throwable secondaryGet() {
+            return either.secondaryGet();
+        }
+
+        @Override
+        public Optional<java.lang.Throwable> secondaryToOptional() {
+            return either.secondaryToOptional();
+        }
+
+        @Override
+        public ReactiveSeq<java.lang.Throwable> secondaryToStream() {
+            return either.secondaryToStream();
+        }
+
+        @Override
+        public <RT1> Either<Throwable, RT1> flatMap(Function<? super RT, ? extends MonadicValue<? extends RT1>> mapper) {
+            return either.flatMap(mapper);
+        }
+
+        @Override
+        public boolean isRight() {
+            return either.isRight();
+        }
+
+        @Override
+        public boolean isLeft() {
+            return either.isLeft();
+        }
+
+        @Override
+        public <T2, R> Either<Throwable, R> combine(Value<? extends T2> app, BiFunction<? super RT, ? super T2, ? extends R> fn) {
+            return either.combine(app,fn);
+        }
+
+        @Override
+        public void peek(Consumer<? super Throwable> stAction, Consumer<? super RT> ptAction) {
+            either.peek(stAction,ptAction);
+        }
+
+        @Override
+        public Either<Throwable, RT> secondaryToPrimayFlatMap(Function<? super Throwable, ? extends Xor<Throwable, RT>> fn) {
+            return either.secondaryToPrimayFlatMap(fn);
+        }
+
+        @Override
+        public <LT1> Either<LT1, RT> secondaryFlatMap(Function<? super Throwable, ? extends Xor<LT1, RT>> mapper) {
+            return either.secondaryFlatMap(mapper);
+        }
+
+        @Override
+        public <R> R visit(Function<? super java.lang.Throwable, ? extends R> secondary, Function<? super RT, ? extends R> primary) {
+            return either.visit(secondary,primary);
+        }
+
+        @Override
+        public Either<java.lang.Throwable, RT> secondaryPeek(Consumer<? super Throwable> action) {
+            return either.secondaryPeek(action);
+        }
+
+        @Override
+        public <R> Either<R, RT> secondaryMap(Function<? super Throwable, ? extends R> fn) {
+            return either.secondaryMap(fn);
+        }
+
+        @Override
+        public Either<Throwable, RT> secondaryToPrimayMap(Function<? super Throwable, ? extends RT> fn) {
+            return either.secondaryToPrimayMap(fn);
+        }
+
+        @Override
+        public int hashCode() {
+            return either.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return either.equals(obj);
+        }
+    }
+
     static <ST,PT> Either<ST,PT> fromXor(Xor<ST,PT> xor){
         return xor.visit(Either::left, Either::right);
     }
@@ -133,7 +321,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>, Completable<RT> {
     }
 
     static <T> Either<Throwable,T> fromFuture(Future<T> future){
-        return fromLazy(Eval.<Either<Throwable,T>>fromFuture(future.map(e->Either.<Throwable,T>right(e)).recover(t->Either.<Throwable,T>left(t))));
+        return fromLazy(Eval.<Either<Throwable,T>>fromFuture(
+                        future.map(e->e!=null? Either.<Throwable,T>right(e) : Either.<Throwable,T>left(new NoSuchElementException()))
+                            .recover(t->Either.<Throwable,T>left(t.getCause()))));
     }
 
     /**
@@ -1059,18 +1249,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>, Completable<RT> {
                               lazy);
         }
 
-        public boolean isFailed(){
-            return lazy.isDone();
-        }
-        public boolean isDone(){
-            return lazy.isDone();
-        }
-        public boolean complete(PT complete){
-            return lazy.complete(Either.right(complete));
-        }
-        public boolean completeExceptionally(Throwable error){
-            return lazy.completeExceptionally(error);
-        }
+
        
         public Either<ST, PT> resolve() {
           return lazy.get()

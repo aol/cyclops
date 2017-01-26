@@ -641,7 +641,7 @@ public interface ListX<T> extends To<ListX<T>>,
     ListX<T> withCollector(Collector<T, ?, List<T>> collector);
 
     /**
-     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 

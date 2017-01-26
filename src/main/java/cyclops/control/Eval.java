@@ -20,6 +20,8 @@ import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
+import lombok.AllArgsConstructor;
+import lombok.experimental.Delegate;
 import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -69,7 +71,6 @@ import java.util.stream.Stream;
  */
 public interface Eval<T> extends    To<Eval<T>>,
                                     MonadicValue<T>,
-                                    Completable<T>,
                                     Higher<Eval.µ ,T> {
 
 
@@ -107,8 +108,74 @@ public interface Eval<T> extends    To<Eval<T>>,
         return fromFuture(Future.fromPublisher(pub));
     }
 
-    static <T> Eval<T> eval(){
-        return fromFuture(Future.future());
+    /**
+     * Create a reactive CompletableEval
+     *
+     * <pre>
+     *     {@code
+     *      CompletableEval<Integer,Integer> completable = Eval.eval();
+            Eval<Integer> mapped = completable.map(i->i*2)
+                                              .flatMap(i->Eval.later(()->i+1));
+
+            completable.complete(5);
+
+            mapped.printOut();
+            //11
+     *     }
+     * </pre>
+     *
+     * @param <T> Data input type to the Eval
+     * @return A reactive CompletableEval
+     */
+    static <T> CompletableEval<T,T> eval(){
+        Completable.CompletablePublisher<T> c = new Completable.CompletablePublisher<T>();
+        return new CompletableEval<T, T>(c,fromFuture(Future.fromPublisher(c)));
+
+    }
+    @AllArgsConstructor
+    static class CompletableEval<ORG,T2> implements Eval<T2>, Completable<ORG>{
+        public final Completable.CompletablePublisher<ORG> complete;
+        public final Eval<T2> lazy;
+
+        @Override
+        public boolean isFailed() {
+            return complete.isFailed();
+        }
+
+        @Override
+        public boolean isDone() {
+            return complete.isDone();
+        }
+
+        @Override
+        public boolean complete(ORG complete) {
+            return this.complete.complete(complete);
+        }
+
+        @Override
+        public boolean completeExceptionally(Throwable error) {
+            return complete.completeExceptionally(error);
+        }
+
+        @Override
+        public <T> Eval<T> unit(T unit) {
+            return lazy.unit(unit);
+        }
+
+        @Override
+        public <R> Eval<R> map(Function<? super T2, ? extends R> mapper) {
+            return lazy.map(mapper);
+        }
+
+        @Override
+        public <R> Eval<R> flatMap(Function<? super T2, ? extends MonadicValue<? extends R>> mapper) {
+            return lazy.flatMap(mapper);
+        }
+
+        @Override
+        public T2 get() {
+            return lazy.get();
+        }
     }
 
     public static <T> Eval<T> coeval(final Future<Eval<T>> pub) {
@@ -154,13 +221,13 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     /**
      * Lazily create an Eval from the specified Supplier. Supplier#get will only be called once. Return values of Eval operations will also
-     * be cached (later indicates lazy and caching - characteristics can be changed using flatMap).
+     * be cached (later indicates maybe and caching - characteristics can be changed using flatMap).
      * 
      * <pre>
      * {@code
      *   Eval<Integer> e = Eval.later(()->10)
      *                         .map(i->i*2);
-     *   //Eval[20] - lazy so will not be executed until the value is accessed
+     *   //Eval[20] - maybe so will not be executed until the value is accessed
      * }</pre>
      * 
      * 
@@ -179,7 +246,7 @@ public interface Eval<T> extends    To<Eval<T>>,
      * {@code
      *   Eval<Integer> e = Eval.always(()->10)
      *                         .map(i->i*2);
-     *   //Eval[20] - lazy so will not be executed until the value is accessed
+     *   //Eval[20] - maybe so will not be executed until the value is accessed
      * }</pre>
      * 
      * 
@@ -794,22 +861,12 @@ public interface Eval<T> extends    To<Eval<T>>,
 
            final Future<Eval<T>> input;
 
+
             FutureAlways( Future<Eval<T>> input) {
 
                 this.input=  input;
             }
-            public boolean isFailed(){
-                return input.isDone();
-            }
-            public boolean isDone(){
-                return input.isDone();
-            }
-            public boolean complete(T complete){
-                return input.complete(Eval.now(complete));
-            }
-            public boolean completeExceptionally(Throwable error){
-                return input.completeExceptionally(error);
-            }
+
 
 
             public void forEach(Consumer<? super T> cons){

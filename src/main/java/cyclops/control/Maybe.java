@@ -10,7 +10,6 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
 import cyclops.higherkindedtypes.OptionalKind;
 import cyclops.monads.Witness;
-import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.function.Curry;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -24,6 +23,7 @@ import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.Delegate;
 import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Totally lazy more powerful general Option(al) type. Maybe is lazy like a Java
+ * Totally maybe more powerful general Option(al) type. Maybe is maybe like a Java
  * 8 Stream that represents 0 or 1 values rather than eager like a Java 8
  * Optional. map / peek/ filter and flatMap build the execution chaing, but are
  * not executed until the value inside the Maybe is required.
@@ -100,7 +100,6 @@ import java.util.stream.Stream;
  */
 public interface Maybe<T> extends To<Maybe<T>>,
                                   MonadicValue<T>,
-                                  Completable<T>,
                                   Higher<Maybe.µ,T> {
 
     public static class µ {
@@ -113,9 +112,107 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
 
+    /**
+     * Create a reactive CompletableMaybe
+     * <pre>
+     *     {@code
+     *     CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
+           Maybe<Integer> mapped = completable.map(i->i*2)
+                                              .flatMap(i->Eval.later(()->i+1));
 
-    static <T> Maybe<T> maybe(){
-        return fromFuture(Future.future());
+            completable.complete(5);
+            mapped.printOut();
+            //11
+
+            CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
+            Maybe<Integer> mapped = completable.map(i->i*2)
+                                                .flatMap(i->Eval.later(()->i+1));
+
+            completable.complete(null);
+            mapped.printOut();
+            //
+            //Maybe:None
+
+     *     }
+     * </pre>
+     *
+     * @param <T> Data input type to the Maybe
+     * @return A reactive CompletableMaybe
+     */
+    static <T> CompletableMaybe<T,T> maybe(){
+        Completable.CompletablePublisher<T> c = new Completable.CompletablePublisher<T>();
+        return new Maybe.CompletableMaybe<T, T>(c,fromFuture(Future.fromPublisher(c)));
+    }
+    @AllArgsConstructor
+    static class CompletableMaybe<ORG,T2> implements Maybe<T2>, Completable<ORG> {
+
+        public final Completable.CompletablePublisher<ORG> complete;
+        public final Maybe<T2> maybe;
+
+        @Override
+        public T2 get() {
+            return maybe.get();
+        }
+
+        @Override
+        public boolean isPresent() {
+            return maybe.isPresent();
+        }
+
+        @Override
+        public Maybe<T2> recover(Supplier<T2> value) {
+            return maybe.recover(value);
+        }
+
+        @Override
+        public Maybe<T2> recover(T2 value) {
+            return maybe.recover(value);
+        }
+
+        @Override
+        public Maybe<T2> recoverWith(Supplier<? extends Maybe<T2>> fn) {
+            return maybe.recoverWith(fn);
+        }
+
+        @Override
+        public <R> Maybe<R> map(Function<? super T2, ? extends R> mapper) {
+            return maybe.map(mapper);
+        }
+
+        @Override
+        public <R> Maybe<R> flatMap(Function<? super T2, ? extends MonadicValue<? extends R>> mapper) {
+            return maybe.flatMap(mapper);
+        }
+
+        @Override
+        public <R> R visit(Function<? super T2, ? extends R> some, Supplier<? extends R> none) {
+            return maybe.visit(some,none);
+        }
+
+        @Override
+        public Maybe<T2> filter(Predicate<? super T2> fn) {
+            return maybe.filter(fn);
+        }
+
+        @Override
+        public boolean isFailed() {
+            return complete.isFailed();
+        }
+
+        @Override
+        public boolean isDone() {
+            return complete.isDone();
+        }
+
+        @Override
+        public boolean complete(ORG done) {
+            return complete.complete(done);
+        }
+
+        @Override
+        public boolean completeExceptionally(Throwable error) {
+            return complete.completeExceptionally(error);
+        }
     }
     static <T> Maybe<T> fromFuture(Future<T> future){
         return fromLazy(Eval.fromFuture(future.recover(e->null)).map(Maybe::ofNullable));
@@ -1047,19 +1144,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
             return new Lazy<>(
                               lazy);
         }
-        public boolean isFailed(){
-            return lazy.isDone();
-        }
-        public boolean isDone(){
-            return lazy.isDone();
-        }
-        public boolean complete(T complete){
-            return lazy.complete(Maybe.ofNullable(complete));
-        }
-        public boolean completeExceptionally(Throwable error){
-            return lazy.completeExceptionally(error);
-        }
-        
+
        
         public Maybe<T> resolve() {
 

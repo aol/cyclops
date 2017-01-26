@@ -9,6 +9,7 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Future;
 import cyclops.control.*;
+import cyclops.control.Maybe.CompletableMaybe;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -46,7 +47,32 @@ public class MaybeTest implements Printable {
         none = Maybe.none();
 
     }
+    @Test
+    public void completableTest(){
+        CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
+        Maybe<Integer> mapped = completable.map(i->i*2)
+                                          .flatMap(i->Eval.later(()->i+1));
 
+        completable.complete(5);
+        System.out.println(mapped.getClass());
+        mapped.printOut();
+        assertThat(mapped.get(),equalTo(11));
+
+
+    }
+    @Test
+    public void completableNoneTest(){
+        CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
+        Maybe<Integer> mapped = completable.map(i->i*2)
+                                           .flatMap(i->Eval.later(()->i+1));
+
+        completable.complete(null);
+
+        mapped.printOut();
+        assertThat(mapped.isPresent(),equalTo(false));
+
+
+    }
     @Test
     public void reactive(){
 

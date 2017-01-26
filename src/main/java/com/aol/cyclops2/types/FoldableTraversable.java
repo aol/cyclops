@@ -55,7 +55,7 @@ public interface FoldableTraversable<T> extends Fn1<Long,T>,
     }
 
     /**
-     * Perform a lazy caching fold (results are memoized)
+     * Perform a maybe caching fold (results are memoized)
      *  <pre>
      *  {@code
      *    Eval<Integer> sum =  ListX.of(1,2,3)
@@ -109,7 +109,7 @@ public interface FoldableTraversable<T> extends Fn1<Long,T>,
     }
     /**
      * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
-     * whenStream may be more efficient (as it is guaranteed to be lazy).
+     * whenStream may be more efficient (as it is guaranteed to be maybe).
      *
      * <pre>
      * {@code

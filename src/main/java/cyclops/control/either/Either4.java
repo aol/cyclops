@@ -3,6 +3,7 @@ package cyclops.control.either;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import cyclops.async.Future;
 import cyclops.collections.ListX;
 import cyclops.control.*;
 import cyclops.function.*;
@@ -42,13 +43,12 @@ import java.util.stream.Stream;
  * @param <RT> Right type (operations are performed on this type if present)
  */
 public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
-        Filters<RT>,
+                                                    Filters<RT>,
                                                    BiFunctor<LT3, RT>, 
                                                    To<Either4<LT1, LT2,LT3, RT>>,
                                                    MonadicValue<RT>,
-                                                   Supplier<RT>
-                                                    {
-    
+                                                   Supplier<RT>{
+
     /**
      * Static method useful as a method reference for fluent consumption of any value type stored in this Either 
      * (will capture the lowest common type)
@@ -98,7 +98,17 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     }
 
 
-  
+     static <LT2,LT3,RT> Either4<Throwable,LT2,LT3,RT> either4(){
+         return Either4.<LT2,LT3,RT>fromFuture(Future.<RT>future());
+      }
+
+      static <LT1,LT2,LT3,RT> Either4<LT1,LT2,LT3,RT> fromLazy(Eval<Either4<LT1,LT2,LT3,RT>> lazy){
+               return new Either4.Lazy<>(lazy);
+     }
+
+     static <LT2,LT3,RT> Either4<Throwable,LT2,LT3,RT> fromFuture(Future<RT> future){
+         return fromLazy(Eval.<Either4<Throwable,LT2,LT3,RT>>fromFuture(future.map(e->Either4.<Throwable,LT2,LT3,RT>right(e)).recover(t->Either4.<Throwable,LT2,LT3,RT>left1(t))));
+     }
 
     /**
      *  Turn a collection of Either3 into a single Either with Lists of values.
@@ -768,15 +778,16 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return new Lazy<>(lazy);
         }
 
+
         @Override
         public <R> Either4<ST, M,M2, R> map(final Function<? super PT, ? extends R> mapper) {
-            return lazy(Eval.later(() -> resolve().map(mapper)));
+            return flatMap(t -> Either4.right(mapper.apply(t)));
         }
 
         @Override
         public <RT1> Either4<ST, M,M2, RT1> flatMap(
                 final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
-            return lazy(Eval.later(() -> resolve().flatMap(mapper)));
+            return Either4.fromLazy(lazy.map(m->m.flatMap(mapper)));
         }
 
         @Override

@@ -1,4 +1,4 @@
-package com.aol.cyclops2.sum.types;
+package cyclops.control.either;
 
 import cyclops.Monoids;
 import cyclops.Reducers;
@@ -10,7 +10,6 @@ import cyclops.collections.ListX;
 import cyclops.collections.immutable.PSetX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.control.*;
-import cyclops.control.either.Either;
 import cyclops.control.either.Either.CompletableEither;
 import cyclops.function.Monoid;
 import cyclops.stream.Spouts;
@@ -34,9 +33,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class EitherTest {
+public class CompletableEitherTest {
 
-
+    public static <RT> CompletableEither<RT,RT> right(RT value){
+        CompletableEither<RT,RT> completable = Either.either();
+        completable.complete(value);
+        return completable;
+    }
     @Test
     public void completableTest(){
         CompletableEither<Integer,Integer> completable = Either.either();
@@ -78,57 +81,16 @@ public class EitherTest {
     }
 
 
-    @Test
-    public void reactive(){
-        Future<Integer> result = Future.future();
-        Future<Integer> future = Future.future();
-        Thread t=  new Thread(()->{
-            try {
-                Thread.sleep(1500l);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            future.complete(10);
-        });
-        t.start();
-
-        Spouts.from(Either.fromFuture(future)
-                .map(i->i*2))
-                .peek(System.out::println)
-                .map(i->i*100)
-                .subscribeAll(e->result.complete(e));
-
-        assertFalse(result.isDone());
-        System.out.println("Blocking?");
-        assertThat("Result is " + result.get(),result.get(),equalTo(2000));
-
-    }
 
 
-    @Test
-    public void testTraverseLeft1() {
-        ListX<Either<Integer,String>> list = ListX.of(just,none,Either.<String,Integer>right(1)).map(Either::swap);
-        Either<ListX<Integer>,ListX<String>> xors   = Either.traverseRight(list,s->"hello:"+s);
-        assertThat(xors,equalTo(Either.right(ListX.of("hello:none"))));
-    }
-    @Test
-    public void testSequenceLeft1() {
-        ListX<Either<Integer,String>> list = ListX.of(just,none,Either.<String,Integer>right(1)).map(Either::swap);
-        Either<ListX<Integer>,ListX<String>> xors   = Either.sequenceRight(list);
-        assertThat(xors,equalTo(Either.right(ListX.of("none"))));
-    }
-    @Test
-    public void testAccumulate() {
-        Either<ListX<String>,Integer> iors = Either.accumulate(Monoids.intSum,ListX.of(none,just,Either.right(10)));
-        assertThat(iors,equalTo(Either.right(20)));
-    }
+
     
     boolean lazy = true;
     @Test
     public void lazyTest() {
-        Either.right(10)
-             .flatMap(i -> { lazy=false; return  Either.right(15);})
-             .map(i -> { lazy=false; return  Either.right(15);})
+        CompletableEitherTest.right(10)
+             .flatMap(i -> { lazy=false; return  CompletableEitherTest.right(15);})
+             .map(i -> { lazy=false; return  CompletableEitherTest.right(15);})
              .map(i -> Maybe.of(20));
              
         
@@ -137,90 +99,68 @@ public class EitherTest {
     }
     @Test
     public void mapFlatMapTest(){
-        assertThat(Either.right(10)
+        assertThat(CompletableEitherTest.right(10)
                .map(i->i*2)
-               .flatMap(i->Either.right(i*4))
+               .flatMap(i->CompletableEitherTest.right(i*4))
                .get(),equalTo(80));
     }
     @Test
     public void odd() {
-        System.out.println(even(Either.right(200000)).get());
+        System.out.println(even(CompletableEitherTest.right(200000)).get());
     }
 
-    public Either<String,String> odd(Either<String,Integer> n) {
+    public Either<Throwable,String> odd(Either<Throwable,Integer> n) {
 
-        return n.flatMap(x -> even(Either.right(x - 1)));
+        return n.flatMap(x -> even(CompletableEitherTest.right(x - 1)));
     }
 
-    public Either<String,String> even(Either<String,Integer> n) {
+    public Either<Throwable,String> even(Either<Throwable,Integer> n) {
         return n.flatMap(x -> {
-            return x <= 0 ? Either.right("done") : odd(Either.right(x - 1));
+            return x <= 0 ? CompletableEitherTest.right("done") : odd(CompletableEitherTest.right(x - 1));
         });
     }
-    Either<String,Integer> just;
-    Either<String,Integer> none;
+    Either<Throwable,Integer> just;
+    Either<Throwable,Integer> none;
     @Before
     public void setUp() throws Exception {
-        just = Either.right(10);
-        none = Either.left("none");
+        just = CompletableEitherTest.right(10);
+        none = Either.left(new NoSuchElementException("none"));
     }
 
     @Test
     public void testZip(){
-        assertThat(Either.right(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(CompletableEitherTest.right(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
  //pending https://github.com/aol/cyclops-react/issues/380
-        //       assertThat(Either.right(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
-        assertThat(Either.right(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Either.right(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Either.right(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(Either.right(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(Either.right(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
+        //       assertThat(CompletableEitherTest.right(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
+        assertThat(CompletableEitherTest.right(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(CompletableEitherTest.right(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(CompletableEitherTest.right(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(CompletableEitherTest.right(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(CompletableEitherTest.right(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
     }
    
-    @Test
-    public void testSequenceSecondary() {
-        Xor<ListX<Integer>,ListX<String>> xors =Xor.sequenceSecondary(ListX.of(just,none,Either.right(1)));
-        assertThat(xors,equalTo(Either.right(ListX.of("none"))));
-    }
 
-    @Test
-    public void testAccumulateSecondary2() {
-        Xor<?,PSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Either.right(1)),Reducers.<String>toPSetX());
-        assertThat(xors,equalTo(Either.right(PSetX.of("none"))));
-    }
 
-    @Test
-    public void testAccumulateSecondarySemigroup() {
-        Xor<?,String> xors = Xor.accumulateSecondary(ListX.of(just,none,Either.left("1")),i->""+i,Monoids.stringConcat);
-        assertThat(xors,equalTo(Either.right("none1")));
-    }
+
     @Test
     public void testAccumulateSecondarySemigroupIntSum() {
         Ior<?,Integer> iors = Ior.accumulateSecondary(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)));
         assertThat(iors,equalTo(Ior.primary(3)));
     }
 
-    @Test
-    public void nest(){
-       assertThat(just.nest().map(m->m.get()),equalTo(just));
-       assertThat(none.nest().map(m->m.get()),equalTo(none));
-    }
-    @Test
-    public void coFlatMap(){
-        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Either.right(50)));
-    }
+
+
     @Test
     public void combine(){
        
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
         assertThat(just.combineEager(add,none),equalTo(Either.right(10)));
-        assertThat(none.combineEager(add,just),equalTo(Either.right(0))); 
-        assertThat(none.combineEager(add,none),equalTo(Either.right(0))); 
-        assertThat(just.combineEager(add,Either.right(10)),equalTo(Either.right(20)));
+        assertThat(none.combineEager(add,just),equalTo(Either.right(0)));
+        assertThat(none.combineEager(add,none),equalTo(Either.right(0)));
+        assertThat(just.combineEager(add,CompletableEitherTest.right(10)),equalTo(Either.right(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-        Either<String,Integer> nil = Either.right(null);
-        Either<String,Integer> ten = Either.right(10);
+        Either<Throwable,Integer> nil = Either.right(null);
+        Either<Throwable,Integer> ten = Either.right(10);
         //pending https://github.com/aol/cyclops-react/issues/380
       //  assertThat(just.combineEager(firstNonNull,nil),equalTo(just));
      //   assertThat(just.combineEager(firstNonNull,nil.map(i->null)),equalTo(just));
@@ -259,40 +199,19 @@ public class EitherTest {
 
     
 
-    @Test
-    public void testSequence() {
-        Xor<ListX<String>,ListX<Integer>> maybes =Xor.sequencePrimary(ListX.of(just,none,Either.right(1)));
-        assertThat(maybes,equalTo(Either.right(ListX.of(10,1))));
-    }
+
 
     @Test @Ignore  //pending https://github.com/aol/cyclops-react/issues/390
     public void hashCodeTest(){
        
         System.out.println(new Integer(10).hashCode());
         System.out.println("Xor " + Xor.primary(10).hashCode());
-        assertThat(Xor.primary(10).hashCode(),equalTo(Either.right(10).hashCode()));
-    }
-    @Test
-    public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-        Xor<?,PSetX<Integer>> maybes =Xor.accumulatePrimary(ListX.of(just,none,Either.right(1)),Reducers.toPSetX());
-        assertThat(maybes,equalTo(Either.right(PSetX.of(10,1))));
+        assertThat(Xor.primary(10).hashCode(),equalTo(CompletableEitherTest.right(10).hashCode()));
     }
 
-    @Test
-    public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-        Xor<?,String> maybes = Xor.accumulatePrimary(ListX.of(just,none,Either.right(1)),i->""+i,Monoids.stringConcat);
-        assertThat(maybes,equalTo(Either.right("101")));
-    }
-    @Test
-    public void testAccumulateJust() {
-        Xor<?,Integer> maybes =Xor.accumulatePrimary(Monoids.intSum,ListX.of(just,none,Either.right(1)));
-        assertThat(maybes,equalTo(Either.right(11)));
-    }
-    @Test
-    public void testAccumulateSecondary() {
-        Xor<?,String> maybes =Xor.accumulateSecondary(Monoids.stringConcat,ListX.of(just,none,Either.left("hello")));
-        assertThat(maybes,equalTo(Either.right("nonehello")));
-    }
+
+
+
 
     @Test
     public void testUnitT() {
@@ -311,13 +230,13 @@ public class EitherTest {
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
         assertThat(just.map(i->i+5),equalTo(Either.right(15)));
-        assertThat(none.map(i->i+5),equalTo(Either.left("none")));
+
     }
 
     @Test
     public void testFlatMap() {
-        assertThat(just.flatMap(i->Either.right(i+5)),equalTo(Either.right(15)));
-        assertThat(none.flatMap(i->Either.right(i+5)),equalTo(Either.left("none")));
+        assertThat(just.flatMap(i->CompletableEitherTest.right(i+5)),equalTo(Either.right(15)));
+
     }
 
     @Test
@@ -396,9 +315,9 @@ public class EitherTest {
     }
     @Test
     public void testToIorNone(){
-        Ior<String,Integer> ior = none.toIor();
+        Ior<Throwable,Integer> ior = none.toIor();
         assertTrue(ior.isSecondary());
-        assertThat(ior,equalTo(Ior.secondary("none")));
+
         
     }
 
@@ -409,13 +328,7 @@ public class EitherTest {
     }
     
 
-    @Test
-    public void testToIorSecondaryNone(){
-        Ior<Integer,String> ior = none.toIor().swap();
-        assertTrue(ior.isPrimary());
-        assertThat(ior,equalTo(Ior.primary("none")));
-        
-    }
+
     @Test
     public void testToEvalNow() {
         assertThat(just.toEvalNow(),equalTo(Eval.now(10)));
@@ -451,8 +364,8 @@ public class EitherTest {
 
       @Test
     public void testMkString() {
-        assertThat(just.mkString(),equalTo("Either.right[10]"));
-        assertThat(none.mkString(),equalTo("Either.left[none]"));
+        assertThat(just.mkString(),equalTo("CompletableEither[10]"));
+        assertThat(none.mkString(),equalTo("Either.left[java.util.NoSuchElementException: none]"));
     }
 
     @Test
@@ -691,17 +604,14 @@ public class EitherTest {
 
     @Test
     public void equalsTest(){
-        assertTrue(just.equals(Either.right(10)
+        assertTrue(just.equals(CompletableEitherTest.right(10)
                                      .map(i->i)));
         assertThat(just,equalTo(Either.left(10)
-                                      .secondaryFlatMap(i->Either.right(i))));
+                                      .secondaryFlatMap(i->CompletableEitherTest.right(i))));
         assertThat(Either.left(10)
-                        .flatMap(i->Either.right(i)),equalTo(Either.left(10)));
+                        .flatMap(i->CompletableEitherTest.right(i)),equalTo(Either.left(10)));
     }
 
-    @Test
-    public void testUnitT1() {
-        assertThat(none.unit(10),equalTo(just));
-    }
+
 
 }

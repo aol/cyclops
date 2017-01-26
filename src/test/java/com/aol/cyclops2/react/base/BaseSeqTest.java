@@ -728,7 +728,7 @@ public abstract class BaseSeqTest {
 	        
 	           
 	    }
-	    //tests converted from lazy-seq suite
+	    //tests converted from maybe-seq suite
 	    @Test
 		public void flattenEmpty() throws Exception {
 				assertTrue(this.<Integer>of().flatMap(i -> asList(i, -i).stream()).block().isEmpty());

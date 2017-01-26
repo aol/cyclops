@@ -27,8 +27,8 @@ import java.util.function.Supplier;
  * <pre>
  * {@code
  * public static <T> Supplier<T> memoiseSupplier(Supplier<T> s){
-		LazyImmutable<T> lazy = LazyImmutable.def();
-		return () -> lazy.computeIfAbsent(s);
+		LazyImmutable<T> maybe = LazyImmutable.def();
+		return () -> maybe.computeIfAbsent(s);
 	}
  * }</pre>
  * 

@@ -415,7 +415,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
         return this;
     }
     /**
-     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 

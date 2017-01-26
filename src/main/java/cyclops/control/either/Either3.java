@@ -38,8 +38,7 @@ import java.util.stream.Stream;
 public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
                                                 BiFunctor<LT2, RT>,
                                                 To<Either3<LT1, LT2, RT>>,
-                                                Supplier<RT>,
-                                                Completable<RT> {
+                                                Supplier<RT>{
     
     static <LT1,LT2,RT> Either3<LT1,LT2,RT> fromMonadicValue(MonadicValue<RT> mv3){
         if(mv3 instanceof Either3){
@@ -725,18 +724,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
             return new Lazy<>(
                               lazy);
         }
-        public boolean isFailed(){
-            return lazy.isDone();
-        }
-        public boolean isDone(){
-            return lazy.isDone();
-        }
-        public boolean complete(PT complete){
-            return lazy.complete(Either3.right(complete));
-        }
-        public boolean completeExceptionally(Throwable error){
-            return lazy.completeExceptionally(error);
-        }
+
         @Override
         public <R> Either3<ST, M, R> map(final Function<? super PT, ? extends R> mapper) {
 

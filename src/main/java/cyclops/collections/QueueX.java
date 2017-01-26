@@ -308,7 +308,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
   
     /**
-     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 

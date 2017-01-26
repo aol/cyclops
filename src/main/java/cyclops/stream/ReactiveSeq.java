@@ -702,7 +702,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return ReactiveSeq.fromSpliterator(new FillSpliterator<T>(t));
     }
     /**
-     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 
@@ -3167,7 +3167,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Gets the element at index, and returns a Tuple containing the element (it
-     * must be present) and a lazy copy of the Sequence for further processing.
+     * must be present) and a maybe copy of the Sequence for further processing.
      * 
      * <pre>
      * {@code 
