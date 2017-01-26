@@ -144,7 +144,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public final Optional<T> findFirst() {
 
 
-        Future result = Future.future();
+        Future<T> result = Future.future();
 
         if(async==Type.NO_BACKPRESSURE){
             source.subscribeAll(e->{
@@ -157,11 +157,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     result.complete(null);
                 }
             });
-            if(result.isFailed()){
-                result.get();
-            }
-
-            return result.toOptional();
+            T value = result.get();
+            return Optional.ofNullable(value);
         }
 
             Subscription sub[] = {null};
@@ -184,11 +181,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                 }
             });
         sub[0].request(1l);
-        if(result.isFailed()){
-            result.get();
-        }
 
-        return result.toOptional();
+        T value = result.get();
+        return Optional.ofNullable(value);
     }
 
 

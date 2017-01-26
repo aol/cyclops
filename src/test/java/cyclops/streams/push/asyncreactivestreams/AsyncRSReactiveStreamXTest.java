@@ -199,7 +199,7 @@ public  class AsyncRSReactiveStreamXTest {
 	}
 	@Test
 	public void onEmptySwitchEmpty(){
-	   for(int i=0;i<1000;i++){
+	   for(int i=0;i<10;i++){
 	       System.out.println("Iteration " + i);
             assertThat(of()
                             .onEmptySwitch(() -> of(1, 2, 3))

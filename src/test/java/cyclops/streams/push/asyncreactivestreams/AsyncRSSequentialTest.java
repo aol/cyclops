@@ -62,6 +62,12 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Test
     public void mergePTest(){
         for(int i=0;i<100;i++) {
+            System.out.println("*********************ITERATION " + i);
+            System.out.println("*********************ITERATION " + i);
+            System.out.println("*********************ITERATION " + i);
+            System.out.println("*********************ITERATION " + i);
+            System.out.println("*********************ITERATION " + i);
+            System.out.println("*********************ITERATION " + i + "********************");
             ListX<Integer> list = of(3, 6, 9).mergeP(of(2, 4, 8), of(1, 5, 7)).toListX();
 
             assertThat("List is " + list,list, hasItems(1, 2, 3, 4, 5, 6, 7, 8, 9));
