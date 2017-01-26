@@ -1,6 +1,7 @@
 package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.*;
 import cyclops.Monoids;
 import cyclops.box.Mutable;
 import cyclops.control.*;
@@ -11,10 +12,6 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.react.Status;
 import com.aol.cyclops2.react.collectors.lazy.Blocker;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.To;
-import com.aol.cyclops2.types.Value;
-import com.aol.cyclops2.types.Zippable;
 import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
@@ -66,7 +63,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Slf4j
-public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.µ,T> {
+public class Future<T> implements To<Future<T>>,MonadicValue<T>, Completable<T>,Higher<Future.µ,T> {
 
     public static class µ {
     }
@@ -875,8 +872,8 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.�
      * 
      * @param value Value to set this Future to
      */
-    public void complete(T value){
-        future.complete(value);
+    public boolean complete(T value){
+        return future.complete(value);
     }
 
     /**

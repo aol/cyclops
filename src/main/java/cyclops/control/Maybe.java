@@ -100,6 +100,7 @@ import java.util.stream.Stream;
  */
 public interface Maybe<T> extends To<Maybe<T>>,
                                   MonadicValue<T>,
+                                  Completable<T>,
                                   Higher<Maybe.µ,T> {
 
     public static class µ {
@@ -113,6 +114,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
 
 
+    static <T> Maybe<T> maybe(){
+        return fromFuture(Future.future());
+    }
     static <T> Maybe<T> fromFuture(Future<T> future){
         return fromLazy(Eval.fromFuture(future.recover(e->null)).map(Maybe::ofNullable));
     }
@@ -1042,6 +1046,18 @@ public interface Maybe<T> extends To<Maybe<T>>,
         private static <T> Lazy<T> lazy(Eval<Maybe<T>> lazy) {
             return new Lazy<>(
                               lazy);
+        }
+        public boolean isFailed(){
+            return lazy.isDone();
+        }
+        public boolean isDone(){
+            return lazy.isDone();
+        }
+        public boolean complete(T complete){
+            return lazy.complete(Maybe.ofNullable(complete));
+        }
+        public boolean completeExceptionally(Throwable error){
+            return lazy.completeExceptionally(error);
         }
         
        

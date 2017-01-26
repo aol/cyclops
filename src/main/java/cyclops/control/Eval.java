@@ -2,10 +2,7 @@ package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.To;
-import com.aol.cyclops2.types.Value;
-import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.async.Future;
 import cyclops.box.Mutable;
@@ -72,6 +69,7 @@ import java.util.stream.Stream;
  */
 public interface Eval<T> extends    To<Eval<T>>,
                                     MonadicValue<T>,
+                                    Completable<T>,
                                     Higher<Eval.µ ,T> {
 
 
@@ -108,6 +106,11 @@ public interface Eval<T> extends    To<Eval<T>>,
     public static <T> Eval<T> fromPublisher(final Publisher<T> pub) {
         return fromFuture(Future.fromPublisher(pub));
     }
+
+    static <T> Eval<T> eval(){
+        return fromFuture(Future.future());
+    }
+
     public static <T> Eval<T> coeval(final Future<Eval<T>> pub) {
         return new Module.FutureAlways<T>(pub);
     }
@@ -794,6 +797,18 @@ public interface Eval<T> extends    To<Eval<T>>,
             FutureAlways( Future<Eval<T>> input) {
 
                 this.input=  input;
+            }
+            public boolean isFailed(){
+                return input.isDone();
+            }
+            public boolean isDone(){
+                return input.isDone();
+            }
+            public boolean complete(T complete){
+                return input.complete(Eval.now(complete));
+            }
+            public boolean completeExceptionally(Throwable error){
+                return input.completeExceptionally(error);
             }
 
 

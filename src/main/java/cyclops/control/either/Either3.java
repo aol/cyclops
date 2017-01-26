@@ -35,8 +35,11 @@ import java.util.stream.Stream;
  * @param <LT2> Left2 type
  * @param <RT> Right type (operations are performed on this type if present)
  */
-public interface Either3<LT1, LT2, RT>
-                extends MonadicValue<RT>, BiFunctor<LT2, RT>, To<Either3<LT1, LT2, RT>>, Supplier<RT> {
+public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
+                                                BiFunctor<LT2, RT>,
+                                                To<Either3<LT1, LT2, RT>>,
+                                                Supplier<RT>,
+                                                Completable<RT> {
     
     static <LT1,LT2,RT> Either3<LT1,LT2,RT> fromMonadicValue(MonadicValue<RT> mv3){
         if(mv3 instanceof Either3){
@@ -46,7 +49,17 @@ public interface Either3<LT1, LT2, RT>
 
     }
 
+    static <LT2,RT> Either3<Throwable,LT2,RT> either3(){
+        return Either3.<LT2,RT>fromFuture(Future.<RT>future());
+    }
 
+    static <LT1,LT2,RT> Either3<LT1,LT2,RT> fromLazy(Eval<Either3<LT1,LT2,RT>> lazy){
+        return new Either3.Lazy<>(lazy);
+    }
+
+    static <LT2,RT> Either3<Throwable,LT2,RT> fromFuture(Future<RT> future){
+        return fromLazy(Eval.<Either3<Throwable,LT2,RT>>fromFuture(future.map(e->Either3.<Throwable,LT2,RT>right(e)).recover(t->Either3.<Throwable,LT2,RT>left1(t))));
+    }
     /**
      *  Turn a collection of Either3 into a single Either with Lists of values.
      *  
@@ -712,11 +725,22 @@ public interface Either3<LT1, LT2, RT>
             return new Lazy<>(
                               lazy);
         }
-
+        public boolean isFailed(){
+            return lazy.isDone();
+        }
+        public boolean isDone(){
+            return lazy.isDone();
+        }
+        public boolean complete(PT complete){
+            return lazy.complete(Either3.right(complete));
+        }
+        public boolean completeExceptionally(Throwable error){
+            return lazy.completeExceptionally(error);
+        }
         @Override
         public <R> Either3<ST, M, R> map(final Function<? super PT, ? extends R> mapper) {
 
-            return lazy(Eval.later(() -> resolve().map(mapper)));
+            return flatMap(t -> Either3.right(mapper.apply(t)));
 
         }
 
@@ -724,7 +748,7 @@ public interface Either3<LT1, LT2, RT>
         public <RT1> Either3<ST, M, RT1> flatMap(
                 final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
 
-            return lazy(Eval.later(() -> resolve().flatMap(mapper)));
+            return Either3.fromLazy(lazy.map(m->m.flatMap(mapper)));
       
 
         }
