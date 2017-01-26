@@ -1,26 +1,28 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import cyclops.async.Queue;
+import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
 
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class MergeLatestOperator<IN> implements Operator<IN> {
+public class MergeLatestOperatorAsync<IN> implements Operator<IN> {
 
 
     private final Operator<IN>[] operators;
 
 
-    public MergeLatestOperator(Operator<IN>[] sources){
+    public MergeLatestOperatorAsync(Operator<IN>[] sources){
         this.operators=sources;
 
 
@@ -37,17 +39,26 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
         }
         return (T)o;
     }
+    AtomicBoolean wip = new AtomicBoolean(false);
 
     @Override
     public StreamSubscription subscribe(Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        ManyToOneConcurrentArrayQueue<IN> data = new ManyToOneConcurrentArrayQueue<IN>(256);
+        ManyToManyConcurrentArrayQueue<IN> data = new ManyToManyConcurrentArrayQueue<IN>(256);
         List<StreamSubscription> subs = new ArrayList<>(operators.length);
         AtomicInteger completed = new AtomicInteger(0);
         AtomicInteger index = new AtomicInteger(0);
+        Consumer[] drainQ = {b->{}};
         StreamSubscription sub = new StreamSubscription(){
+            {
+                Consumer<Boolean> c = this::drainQueue;
+                drainQ[0] =c;
+            }
+            AtomicLong sent = new AtomicLong(0);
+            AtomicLong rN = new AtomicLong(0);
             LongConsumer work = n->{
                 System.out.println("*****!!!!!!!!!!!!!***************    n is "+ n + " looping " + Math.min(n,subs.size()));
-                long sent = 0;
+              //  long sent = 0;
+
                 for(long k=0;k<n;k++) {
                     System.out.println("K is " +k);
                     if(!isActive())
@@ -68,12 +79,13 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
                         k--;
 
                     IN fromQ = nilsafeOut(data.poll());
+                    System.out.println("From Q "  + fromQ +  " " + data.size());
                     if(fromQ!=null){
                         onNext.accept(fromQ);
                         requested.decrementAndGet();
-                        sent++;
+                        sent.incrementAndGet();
                     }
-                    if(completed.get()==subs.size() && data.size()==0){
+                    if(completed.get()==subs.size() && data.isEmpty()){
                         onComplete.run();
                         return;
                     }
@@ -81,24 +93,60 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
 
 
                 }
-                while(isActive() && sent<n && !(completed.get()==subs.size() && data.size()==0)){
-                    IN fromQ = nilsafeOut(data.poll());
-                    if(fromQ!=null){
-                        onNext.accept(fromQ);
-                        requested.decrementAndGet();
-                        sent++;
-                    }
-                    System.out.println("Sent is " + sent);
-                }
-                if(completed.get()==subs.size()&& data.size()==0){
-                    onComplete.run();
-
-                }
-                System.out.println("End request.. sent " + sent + "  " + completed.get() + " " + data.size());
+                System.out.println("Main drainQ");
+                drainQueue(true);
 
             };
+
+            private void drainQueue(boolean wait) {
+                wait=true;
+                BooleanSupplier b = wait ? ()-> sent.get() < rN.get() && !(completed.get()==subs.size() && data.isEmpty()) : ()->!data.isEmpty();
+                System.out.println("Drain Queue " + Thread.currentThread().getId());
+                boolean loop = false;
+               do{
+                    if (wip.compareAndSet(false, true)) {
+                        loop= false;
+                        try {
+                            System.out.println("Active drain queue " + +Thread.currentThread().getId());
+                            System.out.println(" Sent " + sent + " demanded " + rN.get() + " data present?" + !data.isEmpty() + " active " + isActive() + " " + b.getAsBoolean());
+                            while (isOpen && b.getAsBoolean()) {
+                                // System.out.println("Data " + data.size() + " demand " + requested.get());
+
+                                    IN fromQ = nilsafeOut(data.poll());
+                                    if (fromQ != null) {
+                                        System.out.println("sending " + fromQ);
+                                        onNext.accept(fromQ);
+                                        requested.decrementAndGet();
+                                        sent.incrementAndGet();
+                                        System.out.println("Sent! " + data.isEmpty());
+                                    }
+
+
+                                //System.out.println("loop ");
+                                //System.out.println("Sent is " + sent);
+                            }
+                            if (completed.get() == subs.size() && data.isEmpty()) {
+                                onComplete.run();
+
+                            }
+                            System.out.println("End Drain Q.. sent " + sent.get() + " " + completed.get() + " " + data.isEmpty() + " Thread " + Thread.currentThread().getId());
+                        } finally {
+                            wip.set(false);
+                        }
+
+                    } else {
+                        if (wait) {
+                            loop = true;
+                        }
+                    }
+                }while(loop);
+
+            }
+
+
             @Override
             public void request(long n) {
+                rN.accumulateAndGet(n,(a,b)->a+b);
                 System.out.println("Request!! n is "+ n);
                 super.singleActiveRequest(n,work);
 
@@ -114,12 +162,13 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
             int current = i;
             subs.add(operators[current].subscribe(e-> {
                         try {
+                            IN in = (IN)nilsafeIn(e);
+                            System.out.println("Queueing! " + in + " on " + current  + "  demand " + sub.requested.get());
+                            data.offer(in);
 
-                            data.offer((IN)nilsafeIn(e));
 
-                            System.out.println("Queueing! " + e + " on " + current  + "  demand " + sub.requested.get());
-
-
+                            System.out.println("On next drainQ ");
+                            drainQ[0].accept(false);
 
                             System.out.println("decrement demand " + sub.requested.get());
                         } catch (Throwable t) {
@@ -133,6 +182,8 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
                     ,onError,()->{
 
                         completed.incrementAndGet();
+                        System.out.println("On complete - drainQ");
+                        drainQ[0].accept(false);
                         System.out.println("Completed so far " + completed.get());
 
                     }));

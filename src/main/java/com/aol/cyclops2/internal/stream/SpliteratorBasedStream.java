@@ -75,45 +75,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     @Override
     public Iterator<T> iterator(){
         return Spliterators.iterator(copy());
-        /**
-        //Iterator for push streams
-        Spliterator<T> split = copy();
-        class QueueingIterator implements Iterator<T>,Consumer<T>{
 
-            boolean available;
-            ArrayDeque<T> qd = new ArrayDeque<>();
-            @Override
-            public void accept(T t) {
-               
-
-                qd.offer(t);
-
-                available = true;
-                    
-                
-            }
-
-            @Override
-            public boolean hasNext() {
-                if(!available)
-                    split.tryAdvance(this);
-                return available;
-            }
-
-            @Override
-            public T next() {
-                if (!available && !hasNext())
-                    throw new NoSuchElementException();
-                else {
-                    available = qd.size()-1>0;
-                    return qd.pop();
-
-                }
-            }
-            
-        }
-        return new QueueingIterator();
-            **/
     }
    public  <R> ReactiveSeq<R> coflatMap(Function<? super ReactiveSeq<T>, ? extends R> fn){
         return ReactiveSeq.fromSpliterator(new LazySingleSpliterator<T,ReactiveSeq<T>,R>(createSeq(copy()),fn));

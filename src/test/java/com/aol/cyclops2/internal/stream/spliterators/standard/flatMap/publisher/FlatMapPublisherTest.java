@@ -266,6 +266,8 @@ public class FlatMapPublisherTest {
         return sub.reactiveStream();
     }
     private Publisher<Integer> nextAsync() {
+        return flux(1,2);
+        /**
         AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
         new Thread(()->{
 
@@ -281,5 +283,6 @@ public class FlatMapPublisherTest {
             sub.onComplete();
         }).start();
         return sub.stream();
+         **/
     }
 }

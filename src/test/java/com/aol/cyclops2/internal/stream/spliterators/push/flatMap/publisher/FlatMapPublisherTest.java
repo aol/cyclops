@@ -94,8 +94,10 @@ public class FlatMapPublisherTest {
     public void mergePAsync2(){
         for(int k=0;k<1000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
-            List<Integer> res =  Spouts.of(1)
-                    .mergeP(nextAsync(),nextAsync(),nextAsync()).skip(1)
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k+ "**************************");
+            List<Integer> res =  Spouts.mergeLatest(nextAsync(),nextAsync(),nextAsync())
                     .toList();
             System.out.println("Result is " + res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
