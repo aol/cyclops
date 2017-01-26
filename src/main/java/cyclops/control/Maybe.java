@@ -213,6 +213,16 @@ public interface Maybe<T> extends To<Maybe<T>>,
         public boolean completeExceptionally(Throwable error) {
             return complete.completeExceptionally(error);
         }
+
+        @Override
+        public int hashCode() {
+            return maybe.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return maybe.equals(obj);
+        }
     }
     static <T> Maybe<T> fromFuture(Future<T> future){
         return fromLazy(Eval.fromFuture(future.recover(e->null)).map(Maybe::ofNullable));
