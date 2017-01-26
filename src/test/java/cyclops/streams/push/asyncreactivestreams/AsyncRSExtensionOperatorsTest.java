@@ -258,6 +258,9 @@ public class AsyncRSExtensionOperatorsTest {
     public void testLimitLast1(){
         assertThat(of(1,2,3,4,5)
                 .limitLast(1)
+                .findFirst().get(),equalTo(5));
+        assertThat(of(1,2,3,4,5)
+                .limitLast(1)
                 .collect(Collectors.toList()),equalTo(Arrays.asList(5)));
     }
     @Test

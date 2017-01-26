@@ -398,7 +398,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
      * @return
      */
     public <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return flatMapP(mapper, 10_000);
+        return flatMapP(256,mapper);
     }
 
     /**
@@ -410,7 +410,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
      * @param mapper
      * @return
      */
-    public <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper, final int maxConcurrency) {
+    public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return flatMapP(mapper, maxConcurrency, QueueFactories.boundedQueue(5_000));
     }
 

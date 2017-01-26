@@ -79,8 +79,13 @@ public class GroupedWhileOperator<T,C extends Collection<? super T>,R> extends B
                         upstream[0].request(1);
                 },()->{
 
-                    if(next[0].size()>0)
-                      onNext.accept(finalizer.apply((C)next[0]));
+                    if(next[0].size()>0) {
+                        try {
+                            onNext.accept(finalizer.apply((C) next[0]));
+                        } catch(Throwable t){
+                            onError.accept(t);
+                        }
+                    }
                     sub.cancel();
                     onComplete.run();
                 });
@@ -104,8 +109,13 @@ public class GroupedWhileOperator<T,C extends Collection<? super T>,R> extends B
                     }
                 }
                 ,onError,()->{
-                    if(next[0].size()>0)
-                        onNext.accept(finalizer.apply((C)next[0]));
+                    if(next[0].size()>0) {
+                        try {
+                            onNext.accept(finalizer.apply((C) next[0]));
+                        } catch(Throwable t){
+                            onError.accept(t);
+                        }
+                    }
                     onCompleteDs.run();
                 });
     }

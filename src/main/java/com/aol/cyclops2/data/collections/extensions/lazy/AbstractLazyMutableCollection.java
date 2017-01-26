@@ -7,6 +7,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.Getter;
+import org.reactivestreams.Subscriber;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -48,11 +49,9 @@ public abstract class AbstractLazyMutableCollection<T, C extends Collection<T>> 
 
                     ReactiveSeq<T> toUse = seq.get();
                     if(toUse!=null){//dbl check - as we may pass null check on on thread and set updating false on another
-                        System.out.println("Materializing : Class is " + toUse.getClass());
+
                         list = toUse.collect(collectorInternal);
-                        System.out.println("Materialized : List is " + list);
-                        System.out.println("Materialized : List2 is " + list);
-                        System.out.println("Materialized : List3 is " + list);
+
                         seq.set(null);
                     }
                 }catch(Throwable t){
@@ -68,13 +67,15 @@ public abstract class AbstractLazyMutableCollection<T, C extends Collection<T>> 
             if(error.get()!=null) //if updating thread failed, throw error
                 throw ExceptionSoftener.throwSoftenedException(error.get());
 
-            System.out.println("Materialized list" + list + " seq was not null " + seq.get());
+
             return list;
         }
-        System.out.println("List already materialized " + list);
+
         return list;
 
     }
+
+
 
     @Override
     public Iterator<T> iterator() {

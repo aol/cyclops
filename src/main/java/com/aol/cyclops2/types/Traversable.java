@@ -28,7 +28,7 @@ public interface Traversable<T> extends Publisher<T>,
                                         OnEmpty<T>,
                                         Zippable<T>,
                                         IterableFilterable<T>,
-        FilterableTransformable<T>,
+                                        FilterableTransformable<T>,
                                         TransformerTraversable<T>,
                                         Sequential<T>{
 

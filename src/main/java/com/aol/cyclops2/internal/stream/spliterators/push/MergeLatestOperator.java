@@ -48,7 +48,7 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
             LongConsumer work = n->{
                 System.out.println("*****!!!!!!!!!!!!!***************    n is "+ n + " looping " + Math.min(n,subs.size()));
                 long sent = 0;
-                for(long k=0;k<n;k++) {
+                for(long k=0;k<requested.get();k++) {
                     System.out.println("K is " +k);
                     if(!isActive())
                         break;
@@ -81,14 +81,14 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
 
 
                 }
-                while(isActive() && sent<n && !(completed.get()==subs.size() && data.size()==0)){
+                while(isActive() && !(completed.get()==subs.size() && data.size()==0)){
                     IN fromQ = nilsafeOut(data.poll());
                     if(fromQ!=null){
                         onNext.accept(fromQ);
                         requested.decrementAndGet();
                         sent++;
                     }
-                    System.out.println("Sent is " + sent);
+                    System.out.println("Sent is " + sent + " data " + data.size());
                 }
                 if(completed.get()==subs.size()&& data.size()==0){
                     onComplete.run();

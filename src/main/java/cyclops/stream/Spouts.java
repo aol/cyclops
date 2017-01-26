@@ -191,7 +191,7 @@ public interface Spouts {
                 op[i] = new PublisherToOperator<T>(array[i]);
             }
         }
-        return new ReactiveStreamX<T>(new MergeLatestOperator<T>(op), Type.BACKPRESSURE);
+        return new ReactiveStreamX<T>(new MergeLatestOperatorAsync2<T>(op), Type.BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> amb(ListX<? extends Publisher<? extends T>> list){
         return amb(list.toArray(new ReactiveSeq[0]));

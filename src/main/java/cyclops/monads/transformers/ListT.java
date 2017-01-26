@@ -33,6 +33,7 @@ import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
 import com.aol.cyclops2.types.stream.CyclopsCollectable;
+import org.reactivestreams.Publisher;
 
 /**
  * Monad Transformer for Java Lists nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)

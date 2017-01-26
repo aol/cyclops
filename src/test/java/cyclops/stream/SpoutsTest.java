@@ -22,6 +22,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -275,8 +277,16 @@ public class SpoutsTest {
        Spouts.mergeLatest(Spouts.of(1,2,3),Spouts.of(5,6,7)).printOut();
        Spouts.mergeLatest(Spouts.of(10,20,30),nextAsyncRS()).printOut();
 
-
-
+    }
+    @Test
+    public void testCollector(){
+        Collector<Integer, ?, List<Integer>> list = Collectors.toList();
+        List<Integer> res= null;
+        res =Stream.of(1,2,3)
+                    .map(i->i+2)
+                    .collect(list);
+        System.out.println("res " + res);
+     //   Stream.of(1,2,3).collect((Supplier)list.supplier(),list.accumulator(),list.combiner());
     }
     @Test
     public void ambSemigroupTest(){

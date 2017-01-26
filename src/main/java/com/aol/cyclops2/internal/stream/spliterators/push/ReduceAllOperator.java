@@ -65,8 +65,12 @@ public class ReduceAllOperator<T,A,R> extends BaseOperator<T,T> {
                     if(sub.isActive())
                      upstream[0].request(1);
                 },()->{
+                    try {
+                        onNext.accept((T) current[0]);
+                    }catch (Throwable t) {
 
-                    onNext.accept((T)current[0]);
+                        onError.accept(t);
+                    }
                     onComplete.run();
                 });
         return sub;
@@ -85,7 +89,12 @@ public class ReduceAllOperator<T,A,R> extends BaseOperator<T,T> {
                     }
                 }
                 ,onError,()->{
-                    onNext.accept((T)current[0]);
+                    try {
+                        onNext.accept((T) current[0]);
+                    } catch (Throwable t) {
+
+                        onError.accept(t);
+                    }
                     onCompleteDs.run();
                 });
     }

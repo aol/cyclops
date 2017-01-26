@@ -10,6 +10,7 @@ import cyclops.Streams;
 import cyclops.async.*;
 import cyclops.async.Queue;
 import cyclops.collections.ListX;
+import cyclops.collections.SetX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Maybe;
 import cyclops.control.either.Either;
@@ -38,6 +39,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -66,12 +68,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     public ReactiveStreamX(Operator<T> source){
         this.source = source;
-        this.defaultErrorHandler = e->{ throw ExceptionSoftener.throwSoftenedException(e);};
+        this.defaultErrorHandler = e->{ if(!(e instanceof Queue.ClosedQueueException)) throw ExceptionSoftener.throwSoftenedException(e);};
         this.async = Type.SYNC;
     }
     public ReactiveStreamX(Operator<T> source,Type async){
         this.source = source;
-        this.defaultErrorHandler = e->{ throw ExceptionSoftener.throwSoftenedException(e);};
+        this.defaultErrorHandler = e->{ if(!(e instanceof Queue.ClosedQueueException)) throw ExceptionSoftener.throwSoftenedException(e);};
         this.async = async;
     }
     @Override
@@ -140,48 +142,43 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public final Optional<T> findFirst() {
-        final AtomicReference<T> result = new AtomicReference<T>(null);
-        final AtomicReference<Throwable> error = new AtomicReference<>(null);
-        final AtomicBoolean available = new AtomicBoolean(false);
+        Future result = Future.future();
+
         if(async==Type.NO_BACKPRESSURE){
             source.subscribeAll(e->{
-                result.set(e);
+                result.complete(e);
                 throw new Queue.ClosedQueueException();
             },t->{
-                error.set(t);
-            },()->available.set(true));
-            while(!available.get()){
+                result.completeExceptionally(t);
+            },()->{
+                if(!result.isDone()) {
+                    result.complete(null);
+                }
+            });
 
-            }
-            if(error.get()!=null && (! (error.get() instanceof Queue.ClosedQueueException)))
-                throw ExceptionSoftener.throwSoftenedException(error.get());
 
-
-            return Optional.ofNullable(result.get());
+            return result.toOptional();
         }
-
 
             Subscription sub[] = {null};
             //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
             sub[0] = source.subscribe(e -> {
-                    result.set(e);
+                    result.complete(e);
                     sub[0].cancel();
-                    available.set(true);
+
 
             },e->{
-                error.set(e);
+                result.completeExceptionally(e);
                 sub[0].cancel();
-                available.set(true);
-            },()->available.set(true));
+
+            },()->{
+                if(!result.isDone()) {
+                    result.complete(null);
+                }
+            });
         sub[0].request(1l);
-        while(!available.get()){
 
-        }
-        if(error.get()!=null)
-            throw ExceptionSoftener.throwSoftenedException(error.get());
-
-
-        return Optional.ofNullable(result.get());
+        return result.toOptional();
     }
 
 
@@ -319,6 +316,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
         return res;
     }
+    @Override
+    public final <R> ReactiveSeq<R> flatMapP(int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> fn) {
+        ReactiveSeq<R> seq = (ReactiveSeq<R>)map(fn).grouped(maxConcurrency)
+                     .flatMapP(l -> Spouts.mergeLatest(l));
+        return seq;
+    }
 
 
     @Override
@@ -431,9 +434,11 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void forEach(final Consumer<? super T> action) {
-        Future<Boolean> complete = Future.future();
-        source.subscribeAll(action, this.defaultErrorHandler,()-> complete.complete(true));
-        complete.get();
+      //  Future<Boolean> complete = Future.future();
+        source.subscribeAll(action, this.defaultErrorHandler,()->{});
+
+      //  source.subscribeAll(action, this.defaultErrorHandler,()-> complete.complete(true));
+       // complete.get();
 
 
     }
@@ -703,7 +708,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void forEachOrdered(final Consumer<? super T> consumer) {
-       forEach(consumer);
+        Future<Boolean> complete = Future.future();
+        source.subscribeAll(consumer, this.defaultErrorHandler,()-> complete.complete(true));
+        complete.get();
 
     }
 
@@ -908,6 +915,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
     }
+
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
@@ -1180,8 +1188,107 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     }
 
-    
-    
+    @Override
+    public  <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
+        Future<U> future= Future.future();
+        Object[] current = {identity};
+        forEach(e-> current[0]=(U)accumulator.apply((U)current[0],e),this.defaultErrorHandler,()->future.complete((U)current[0]));
+        return combiner.apply(identity,future.get());
+    }
+    @Override
+    public T reduce(T identity, BinaryOperator<T> accumulator){
+        return  this.reduceAll(identity,accumulator).firstValue();
+    }
+    @Override
+    public final <R, A> R collect(final Collector<? super T, A, R> collector) {
 
-    
+        return collectAll(collector).firstValue();
+
+
+    }
+
+    @Override
+    public  <R> R collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator, final BiConsumer<R, R> combiner) {
+
+        Future<R> future= Future.future();
+        R container = supplier.get();
+        forEach(e-> accumulator.accept(container,e),this.defaultErrorHandler,()->future.complete(container));
+        return future.get();
+    }
+
+    @Override
+    public Optional<T> reduce(BinaryOperator<T> accumulator) {
+        Future<T> future= Future.future();
+        Object[] current = {null};
+        forEach(e-> current[0] = current[0] !=null ? accumulator.apply((T)current[0],e) : e,this.defaultErrorHandler,()->future.complete((T)current[0]));
+        return future.toOptional();
+
+    }
+
+    @Override
+    public final boolean allMatch(final Predicate<? super T> c) {
+        Future<Boolean> result = Future.future();
+
+            ReactiveStreamX<T> filtered = (ReactiveStreamX<T>)filter(c.negate());
+            filtered.source.subscribeAll(e->{
+                result.complete(false);
+                throw new Queue.ClosedQueueException();
+            },t->{
+                result.completeExceptionally(t);
+            },()->{
+                if(!result.isDone()) {
+                    result.complete(true);
+                }
+            });
+
+
+            return result.get();
+
+    }
+
+    @Override
+    public final boolean anyMatch(final Predicate<? super T> c) {
+        Future<Boolean> result = Future.future();
+        ReactiveStreamX<T> filtered = (ReactiveStreamX<T>)filter(c);
+        if(async==Type.NO_BACKPRESSURE){
+            filtered.source.subscribeAll(e->{
+                result.complete(true);
+                throw new Queue.ClosedQueueException();
+            },t->{
+
+                result.completeExceptionally(t);
+            },()->{
+                if(!result.isDone()) {
+                    result.complete(false);
+                }
+            });
+
+
+            return result.get();
+        }
+
+        Subscription sub[] = {null};
+        //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
+        sub[0] = filtered.source.subscribe(e -> {
+            result.complete(true);
+            sub[0].cancel();
+
+
+        },e->{
+            result.completeExceptionally(e);
+            sub[0].cancel();
+
+        },()->{
+            if(!result.isDone()) {
+                result.complete(false);
+            }
+        });
+        sub[0].request(1l);
+
+        return result.get();
+    }
+
+
+
+
 }

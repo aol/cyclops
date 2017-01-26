@@ -75,8 +75,14 @@ public class GroupedStatefullyOperator<T,C extends Collection<? super T>,R> exte
                     if(sub.isActive())
                         upstream[0].request(1);
                 },()->{
-                    if(next[0].size()>0)
-                     onNext.accept(finalizer.apply((C)next[0]));
+                    if(next[0].size()>0) {
+                        try {
+                            onNext.accept(finalizer.apply((C) next[0]));
+                        } catch(Throwable t){
+                            onError.accept(t);
+                        }
+                        sub.requested.decrementAndGet();
+                    }
                     sub.cancel();
                     onComplete.run();
                 });
@@ -100,8 +106,13 @@ public class GroupedStatefullyOperator<T,C extends Collection<? super T>,R> exte
                     }
                 }
                 ,onError,()->{
-                    if(next[0].size()>0)
-                        onNext.accept(finalizer.apply((C)next[0]));
+                    if(next[0].size()>0) {
+                        try {
+                            onNext.accept(finalizer.apply((C) next[0]));
+                        } catch(Throwable t){
+                            onError.accept(t);
+                        }
+                    }
                     onCompleteDs.run();
                 });
     }

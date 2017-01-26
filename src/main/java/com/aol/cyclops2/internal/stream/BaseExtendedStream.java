@@ -41,12 +41,12 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return Streams.endsWith(this, iterable);
     }
     @Override
-    public final boolean allMatch(final Predicate<? super T> c) {
+    public boolean allMatch(final Predicate<? super T> c) {
         return unwrapStream().allMatch(c);
     }
 
     @Override
-    public final boolean anyMatch(final Predicate<? super T> c) {
+    public boolean anyMatch(final Predicate<? super T> c) {
         return unwrapStream().anyMatch(c);
     }
 
@@ -57,7 +57,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final boolean noneMatch(final Predicate<? super T> c) {
-        return unwrapStream().allMatch(c.negate());
+        return allMatch(c.negate());
     }
 
     @Override
@@ -112,19 +112,19 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final <R> R mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
-        return reducer.reduce(unwrapStream().map(mapper));
+        return reducer.reduce(map(mapper));
     }
 
     @Override
-    public final <R, A> R collect(final Collector<? super T, A, R> collector) {
-        System.out.println("In collect!");
+    public <R, A> R collect(final Collector<? super T, A, R> collector) {
+
         return unwrapStream().collect(collector);
 
 
     }
 
     @Override
-    public final <R> R collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator, final BiConsumer<R, R> combiner) {
+    public <R> R collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator, final BiConsumer<R, R> combiner) {
         return unwrapStream().collect(supplier, accumulator, combiner);
     }
 
@@ -134,7 +134,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return reducer.reduce(this);
     }
     @Override
-    public final <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
+    public <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
         return unwrapStream().reduce(identity, accumulator, combiner);
     }
 

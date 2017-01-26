@@ -1996,7 +1996,7 @@ public class Streams {
     public final static <T> boolean endsWith(final Stream<T> stream, final Iterable<T> iterable) {
         Tuple2<Integer,Iterator<T>> sizeAndIterator = findSize(iterable);
 
-        final LinkedList<T> list = new LinkedList<>();
+        final Deque<T> list = new ArrayDeque<T>(sizeAndIterator.v1);
         stream.forEach(v -> {
             list.add(v);
             if (list.size() > sizeAndIterator.v1)

@@ -19,6 +19,7 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.LongConsumer;
+import java.util.stream.Stream;
 
 /**
  * Created by johnmcclean on 12/01/2017.
@@ -208,12 +209,14 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
 
     private void singleActiveInnerRequest(AtomicReference<Subscription> activeSub, AtomicBoolean activeRequest, StreamSubscription res) {
         System.out.println("Request " + activeRequest.get() + " " + res.requested.get());
+        Subscription a = activeSub.get();
         if(res.isActive() && activeRequest.compareAndSet(false,true)) {
+
             System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
                     + Thread.currentThread().getId()
-                    + " ************************* " + System.identityHashCode(activeSub.get()));
-            if(activeSub.get()!=null)
-                activeSub.get().request(1l);
+                    + " ************************* " + System.identityHashCode(a));
+            if(a!=null)
+                a.request(1l);
             else{
                 System.out.println("Active Sub is null - falling back");
                 activeRequest.set(false);

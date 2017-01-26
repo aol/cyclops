@@ -67,7 +67,11 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
                      upstream[0].request(1);
                 },()->{
                     A nextA = (A)next[0];
-                    onNext.accept(collector.finisher().apply(nextA));
+                    try {
+                        onNext.accept(collector.finisher().apply(nextA));
+                    }catch(Throwable t){
+                        onError.accept(t);
+                    }
                     onComplete.run();
                 });
         return sub;
@@ -88,7 +92,11 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
                 }
                 ,onError,()->{
                     A nextA = (A)next[0];
-                    onNext.accept(collector.finisher().apply(nextA));
+                    try {
+                        onNext.accept(collector.finisher().apply(nextA));
+                    }catch(Throwable t){
+                        onError.accept(t);
+                    }
                     onCompleteDs.run();
                 });
     }

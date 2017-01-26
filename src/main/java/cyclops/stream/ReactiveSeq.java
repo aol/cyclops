@@ -2555,6 +2555,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     <R> ReactiveSeq<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
+    <R> ReactiveSeq<R> flatMapP(int maxConcurrency,Function<? super T, ? extends Publisher<? extends R>> fn);
     /**
      * flatMap operation
      * 

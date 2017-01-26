@@ -91,6 +91,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
                     }
                 } else {
+                    System.out.println("Left offering " + e);
                     leftQ.offer((T1) e);
 
 
@@ -98,6 +99,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
             } catch (Throwable t) {
                 onError.accept(t);
             }
+            drain(leftQ,rightQ,onNext);
 
         },onError,()->{
 
@@ -136,11 +138,13 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
                     }
                 } else {
+                        System.out.println("Right offering " + e);
                         rightQ.offer((T2) e);
                 }
             }catch(Throwable t){
                 onError.accept(t);
             }
+            drain(leftQ,rightQ,onNext);
 
         },onError,()->{
 

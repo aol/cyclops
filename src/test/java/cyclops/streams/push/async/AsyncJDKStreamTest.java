@@ -47,6 +47,10 @@ public class AsyncJDKStreamTest {
 		assertThat(of(1,2,3,4,5).anyMatch(it-> it.equals(8)),equalTo(false));
 	}
 	@Test
+	public void testAnyMatchGrouping(){
+		assertThat(of(1,2,3,4,5).grouped(2).flatMap(s->s.stream()).anyMatch(it-> it.equals(1)),equalTo(true));
+	}
+	@Test
 	public void testAllMatchFalse(){
 		assertThat(of(1,2,3,4,5).allMatch(it-> it<0 && it >6),equalTo(false));
 	}

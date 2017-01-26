@@ -91,8 +91,32 @@ public class FlatMapPublisherTest {
                 .toList(),equalTo(ListX.of(1,1,1,2,1,3)));
     }
     @Test
+    public void asyncFlatMap(){
+        ListX<Integer> res = Spouts.of(1,2,3)
+                                    .map(i->nextAsync())
+                                    .grouped(3)
+                                    .flatMapP(l->Spouts.mergeLatest(l))
+                                    .toListX();
+
+
+        assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+        assertThat(res, hasItems(1,2));
+        int one = 0;
+        int two = 0;
+        for(Integer next : res){
+            if(next==1){
+                one++;
+            }
+            if(next==2){
+                two++;
+            }
+        }
+        assertThat(one,equalTo(3));
+        assertThat(two,equalTo(3));
+    }
+    @Test
     public void mergePAsync2(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<4000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -118,7 +142,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapPAsync2(){
-        for(int k=0;k<5000;k++) {
+        for(int k=0;k<500000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -146,6 +170,21 @@ public class FlatMapPublisherTest {
             assertThat(two,equalTo(3));
         }
     }
+
+    @Test
+    public void fluxSanityCheck() {
+        Flux.just(1, 2, 3).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool()))
+                .flatMap(i -> flux(i, 1, 2, 3))
+                .subscribe(System.out::println);
+        // .subscribe(System.out::println);
+/**
+ Spouts.of(1,2,3)
+ .flatMap(i->flux(i,1,2,3))
+ .forEach(System.out::println);
+ **/
+
+    }
+
     @Test
     public void flatMapPAsyncFlux(){
         for(int k=0;k<1000;k++) {

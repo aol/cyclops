@@ -19,9 +19,13 @@ public class StreamSubscription implements Subscription {
         return isOpen && requested.get()>0;
     }
 
-    public void singleActiveRequest(long n, LongConsumer work){
-        if(this.requestInternal(n))
-               work.accept(n);
+    public boolean singleActiveRequest(long n, LongConsumer work){
+        if(this.requestInternal(n)) {
+            work.accept(n);
+            return true;
+        }
+        System.out.println("Another process running..");
+        return false;
     }
 
 

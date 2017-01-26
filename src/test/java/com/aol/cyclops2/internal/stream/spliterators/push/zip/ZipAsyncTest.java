@@ -6,20 +6,53 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Assert;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 
 /**
  * Created by johnmcclean on 20/01/2017.
  */
 public class ZipAsyncTest {
+
+    protected <U> ReactiveSeq<U> flux(U... array){
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+
+    }
+    @Test
+    public void zip2of(){
+
+        for(int i=0;i<100;i++) {
+            List<Tuple2<Integer, Integer>> list = flux(1, 2, 3, 4, 5, 6)
+                    .zip(flux(100, 200, 300, 400).stream())
+                    .toListX();
+
+            System.out.println(list);
+
+            List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+            Assert.assertThat(right, hasItem(100));
+            Assert.assertThat(right, hasItem(200));
+            Assert.assertThat(right, hasItem(300));
+            Assert.assertThat(right, hasItem(400));
+
+            List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+            System.out.println(left);
+            Assert.assertThat(Arrays.asList(1, 2, 3, 4, 5, 6), hasItem(left.get(0)));
+        }
+
+    }
     @Test
     public void asyncZipSimple(){
         /**
