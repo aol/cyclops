@@ -391,7 +391,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
-     * method to subscribe asynchronously also. A default limit of 10k active publishers is enforced, along with a default limit of 5k queued values before
+     * method to subscribeAll asynchronously also. A default limit of 10k active publishers is enforced, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param mapper
@@ -404,7 +404,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
-     * method to subscribe asynchronously also. Active publishers are limited by the maxConcurrency parameter, along with a default limit of 5k queued values before
+     * method to subscribeAll asynchronously also. Active publishers are limited by the maxConcurrency parameter, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param mapper

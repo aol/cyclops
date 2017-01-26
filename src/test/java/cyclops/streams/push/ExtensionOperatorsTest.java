@@ -3,6 +3,7 @@ package cyclops.streams.push;
 
 import cyclops.Semigroups;
 import cyclops.Streams;
+import cyclops.async.Future;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
 import cyclops.monads.AnyM;
@@ -239,9 +240,34 @@ public class ExtensionOperatorsTest {
 	}
 	@Test
 	public void testLimitLast1(){
+	    ReactiveSeq.of(1,2,3).forEach(2,System.out::println);
+	    System.out.println("Hello world!");
+        Future result = Future.future();
+
+        Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).subscribe(e -> {
+            System.out.println("Value recieved " + e);
+            result.complete(e);
+          //  sub[0].cancel();
+
+
+        },e->{
+            result.completeExceptionally(e);
+          //  sub[0].cancel();
+
+        },()->{
+            if(!result.isDone()) {
+                result.complete(null);
+            }
+        }).request(1l);
+
+        assertThat(result.get(),equalTo(ListX.of(5)));
+        System.out.println(Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).findFirst());
+
+
 		assertThat(Spouts.of(1,2,3,4,5)
 				.limitLast(1)
 				.collect(Collectors.toList()),equalTo(Arrays.asList(5)));
+
 	}
 	@Test
 	public void testLimitLastEmpty(){

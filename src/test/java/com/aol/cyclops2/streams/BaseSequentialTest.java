@@ -280,7 +280,11 @@ public class BaseSequentialTest {
     @Test
     public void triplicateFanOut(){
 
-        for (int k = 0; k < 10; k++) {
+        for (int k = 0; k < 1000; k++) {
+            System.out.println("******************Triplicate & merge.. " + k);
+            System.out.println("******************Triplicate & merge.. " + k);
+            System.out.println("******************Triplicate & merge.. " + k);
+            System.out.println("******************Triplicate & merge.. " + k);
             assertThat(of(1, 2, 3, 4, 5, 6, 7, 8, 9)
                     .fanOut(s1 -> s1.peek(System.out::println).filter(i -> i % 3 == 0).map(i -> i * 2),
                             s2 -> s2.filter(i -> i % 3 == 1).map(i -> i * 100),

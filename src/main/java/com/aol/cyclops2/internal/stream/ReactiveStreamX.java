@@ -142,6 +142,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public final Optional<T> findFirst() {
+
+
         Future result = Future.future();
 
         if(async==Type.NO_BACKPRESSURE){
@@ -155,7 +157,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     result.complete(null);
                 }
             });
-
+            if(result.isFailed()){
+                result.get();
+            }
 
             return result.toOptional();
         }
@@ -163,6 +167,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             Subscription sub[] = {null};
             //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
             sub[0] = source.subscribe(e -> {
+                System.out.println("Value recieved " + e);
                     result.complete(e);
                     sub[0].cancel();
 
@@ -177,6 +182,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                 }
             });
         sub[0].request(1l);
+        if(result.isFailed()){
+            result.get();
+        }
 
         return result.toOptional();
     }
@@ -433,12 +441,18 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public void forEach(final Consumer<? super T> action) {
-      //  Future<Boolean> complete = Future.future();
+    public void subscribeAll(final Consumer<? super T> action) {
         source.subscribeAll(action, this.defaultErrorHandler,()->{});
 
-      //  source.subscribeAll(action, this.defaultErrorHandler,()-> complete.complete(true));
-       // complete.get();
+    }
+
+    @Override
+    public void forEach(final Consumer<? super T> action) {
+        Future<Boolean> complete = Future.future();
+      //  source.subscribeAll(action, this.defaultErrorHandler,()->{});
+
+        source.subscribeAll(action, this.defaultErrorHandler,()-> complete.complete(true));
+        complete.get();
 
 
     }
@@ -687,23 +701,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         };
         return createSeq(new RecoverOperator<>( source,fn.compose(accept)));
     }
-/**
-    @Override
-    public <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path1,
-                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path2){
-
-        Operator<T> multi= new MultiCastOperator<>(source);
-        ReactiveSeq<T> seq1 = createSeq(multi);
-        ReactiveSeq<T> seq2 = createSeq(multi);
-
-        ReactiveSeq<R> res1 = (ReactiveSeq<R>)path1.apply(seq1);
-        ReactiveSeq<R> res2 = (ReactiveSeq<R>)path1.apply(seq2);
-
-
-        return res1.mergeP(ListX.of(res2));
-
-    }
-**/
 
 
     @Override
@@ -714,6 +711,26 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     }
 
+    @Override
+    public <X extends Throwable> Subscription subscribe(final Consumer<? super T> consumer) {
+        StreamSubscription sub = source.subscribe(consumer, this.defaultErrorHandler, ()->{});
+        return sub;
+    }
+
+    @Override
+    public <X extends Throwable> Subscription subscribe(final Consumer<? super T> consumer,
+                                                      final Consumer<? super Throwable> consumerError) {
+
+        StreamSubscription sub = source.subscribe(consumer, consumerError, ()->{});
+        return sub;
+    }
+
+    @Override
+    public <X extends Throwable> Subscription subscribe(final Consumer<? super T> consumer,
+                                                      final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
+        StreamSubscription sub = source.subscribe(consumer, consumerError, onComplete);
+        return sub;
+    }
     @Override
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer) {
         StreamSubscription sub = source.subscribe(consumer, this.defaultErrorHandler, ()->{});

@@ -3,6 +3,7 @@ package cyclops.control.either;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import cyclops.async.Future;
 import cyclops.collections.ListX;
 import cyclops.control.*;
 import cyclops.function.*;

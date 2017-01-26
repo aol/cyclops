@@ -176,7 +176,7 @@ public class FlatMapPublisherTest {
         Flux.just(1, 2, 3).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool()))
                 .flatMap(i -> flux(i, 1, 2, 3))
                 .subscribe(System.out::println);
-        // .subscribe(System.out::println);
+        // .subscribeAll(System.out::println);
 /**
  Spouts.of(1,2,3)
  .flatMap(i->flux(i,1,2,3))
@@ -378,7 +378,7 @@ public class FlatMapPublisherTest {
             sub.onComplete();
 
 
-           // Flux.just(1,2).subscribe(sub);
+           // Flux.just(1,2).subscribeAll(sub);
 
 
         }).start();

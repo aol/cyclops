@@ -1,5 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import static com.oracle.jrockit.jfr.FlightRecorder.isActive;
@@ -22,13 +23,14 @@ public class LimitLastOneOperator<T,R> extends BaseOperator<T,T> {
         Object UNSET = new Object();
         Object[] last = {UNSET};
         StreamSubscription upstream[] = {null};
-        Runnable[] thunk = {()->{}};
+
+
         StreamSubscription result = new StreamSubscription(){
             @Override
             public void request(long n) {
                 super.request(n);
                 upstream[0].request(n );
-                thunk[0].run();
+
 
             }
 
@@ -43,13 +45,15 @@ public class LimitLastOneOperator<T,R> extends BaseOperator<T,T> {
                     upstream[0].request(1l);
                 }
                 ,onError,()->{
-                    thunk[0] = ()-> {
-                        if (result.isActive() && last[0] != UNSET) {
-                            onNext.accept((T) last[0]);
-                        }
+
+                    if (result.isActive() && last[0] != UNSET) {
+
+                        onNext.accept((T) last[0]);
+
+
                         onComplete.run();
-                    };
-                    thunk[0].run();
+                    }
+
                 });
         return result;
     }

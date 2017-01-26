@@ -16,7 +16,6 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
@@ -50,7 +49,10 @@ public class MaybeTest implements Printable {
 
     @Test
     public void reactive(){
+
+        Future<Integer> result = Future.future();
         Future<Integer> future = Future.future();
+
         Thread t=  new Thread(()->{
             try {
                 Thread.sleep(1500l);
@@ -65,9 +67,12 @@ public class MaybeTest implements Printable {
               .map(i->i*2))
                 .peek(System.out::println)
                 .map(i->i*100)
-                .forEach(System.out::println);
+                .subscribeAll(e->result.complete(e));
 
+
+        assertFalse(result.isDone());
         System.out.println("Blocking?");
+        assertThat(result.get(),equalTo(2000));
 
     }
     

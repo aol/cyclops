@@ -106,6 +106,6 @@ public class ArrayMergingOperator<IN> implements Operator<IN> {
     @Override
     public void subscribeAll(Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         subscribe(onNext,onError,onCompleteDs).request(Long.MAX_VALUE);
-       //subscribe(0,onNext,onError,onCompleteDs);
+       //subscribeAll(0,onNext,onError,onCompleteDs);
     }
 }

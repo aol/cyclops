@@ -45,9 +45,12 @@ public class Merger<T> implements Subscriber<T> {
             System.out.println("Signalling demand!! " + next + " "
                     + " Merger " + System.identityHashCode(this) + " "
                     + complete + " unused " + (requested.get()-produced.get())
-            + " thread " + Thread.currentThread().getId());
-            sub.request(next);
+                    + " produced " + produced.get() + " requested " + requested.get()
+                    + " thread " + Thread.currentThread().getId());
+
             requested.accumulateAndGet(next, (a, b) -> a + b);
+            sub.request(next);
+
         }
 
     }
@@ -108,6 +111,7 @@ public class Merger<T> implements Subscriber<T> {
        // drain();
 
         Long unusedDemand = unusedDemand();
+        //System.out.println("On complete for Merger "+ System.identityHashCode(this) + " unused demand " + unusedDemand);
         if(unusedDemand>0) {
             System.out.println("Returning unused demand.. " + unusedDemand);
             onFail.accept(unusedDemand);

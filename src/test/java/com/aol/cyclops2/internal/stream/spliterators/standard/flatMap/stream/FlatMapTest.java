@@ -266,7 +266,7 @@ public class FlatMapTest {
             sub.onComplete();
 
 
-            // Flux.just(1,2).subscribe(sub);
+            // Flux.just(1,2).subscribeAll(sub);
 
 
         }).start();

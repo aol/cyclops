@@ -1063,8 +1063,8 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
         }
         @Override
         public <R> Either<ST, R> map(final Function<? super PT, ? extends R> mapper) {
-          
-            return lazy(Eval.later( () -> resolve().map(mapper)));
+            return flatMap(t -> Either.right(mapper.apply(t)));
+
          
         }
         
@@ -1076,8 +1076,8 @@ public interface Either<ST, PT> extends Xor<ST,PT> {
         public <RT1> Either<ST, RT1> flatMap(
                 final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
 
-           
-            return lazy(Eval.later( () -> resolve().flatMap(mapper)));
+
+            return Either.fromLazy(lazy.map(m->m.flatMap(mapper)));
          
         }
         @Override

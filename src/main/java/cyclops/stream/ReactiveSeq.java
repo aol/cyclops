@@ -13,22 +13,17 @@ import java.util.stream.*;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
-import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingIntArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingRangeIntSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingLongArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingRangeLongSpliterator;
-import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
-import com.aol.cyclops2.internal.stream.spliterators.push.SpliteratorToOperator;
 import com.aol.cyclops2.types.stream.reactive.*;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
-import com.sun.tools.internal.ws.api.TJavaGeneratorExtension;
 import cyclops.async.Future;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.control.Xor;
 import cyclops.control.either.Either;
 import cyclops.monads.AnyM;
 import cyclops.async.*;
@@ -47,7 +42,6 @@ import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
-import lombok.experimental.var;
 import lombok.val;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
@@ -64,7 +58,6 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Fn4;
 import cyclops.function.Fn3;
 import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 
 /**
  * A powerful extended, sequential Stream type.
@@ -129,7 +122,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *     {@code
      *      ReactiveSeq<Integer> input = ReactiveSeq.iterable(subscriber->{
      *                                                          Flux.just(1,2,3)
-     *                                                              .subscribe(subscriber);
+     *                                                              .subscribeAll(subscriber);
      *                                                      });
      *      }
      * </pre>
@@ -1781,6 +1774,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Performs an action for each element of this Stream.
      *
+     * For potentially non-blocking analogs see {@link ReactiveSeq#subscribeAll(Consumer)}   and forEach overloads
+     * such as {@link ReactiveSeq#forEach(Consumer, Consumer)} and {@link ReactiveSeq#forEach(Consumer, Consumer,Runnable)}
+     *
      * This method overrides the JDK {@link java.util.stream.Stream#forEach(Consumer)}  and maintains it's blocking
      * semantics. Other forEach overloads in ReactiveSeq are non-blocking for asynchronously executing Streams.
      *
@@ -1802,6 +1798,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     void forEach(Consumer<? super T> action);
 
+    /**
+     * A potentially non-blocking analog of {@link ReactiveSeq#forEach}.
+     * For push based reactive Stream types (created via Spouts or FutureStream)
+     *
+     * @param action a <a href="package-summary.html#NonInterference">
+     *               non-interfering</a> action to perform on the elements
+     */
+    default void subscribeAll(final Consumer<? super T> action){
+        forEach(action);
+    }
     /**
      * 
      * SkipWhile drops elements from the Stream while the predicate holds, once
@@ -4542,7 +4548,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#mergePublisher(Collection, QueueFactory)}
-     * method to subscribe asynchronously also. Max concurrency is determined by the publishers collection size, along with a default limit of 5k queued values before
+     * method to subscribeAll asynchronously also. Max concurrency is determined by the publishers collection size, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param publishers Publishers to merge

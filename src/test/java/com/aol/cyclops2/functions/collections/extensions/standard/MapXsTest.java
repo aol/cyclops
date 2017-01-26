@@ -20,6 +20,7 @@ public class MapXsTest {
 
     @Test
     public void toListX(){
+        MapX.empty().forEach(1l,System.out::println);
         MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
         ListX<String> strs = maps.toListX(t->""+t.v1+t.v2);
         assertThat(strs,equalTo(ListX.of("a1","b2")));

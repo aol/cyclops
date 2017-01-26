@@ -3114,6 +3114,17 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .flatMapI(fn));
     }
+    /**
+     * A potentially non-blocking analog of {@link ReactiveSeq#forEach}.
+     * For push based reactive Stream types (created via Spouts of FutureStream}
+     *
+     * @param action a <a href="package-summary.html#NonInterference">
+     *               non-interfering</a> action to perform on the elements
+     */
+    @Override
+    default void subscribeAll(final Consumer<? super U> action){
+            peek(action).run();
+    }
     @Override
     default <R> FutureStream<R> flatMapP(final Function<? super U, ? extends Publisher<? extends R>> fn) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
