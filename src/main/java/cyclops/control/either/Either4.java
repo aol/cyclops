@@ -107,7 +107,9 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      }
 
      static <LT2,LT3,RT> Either4<Throwable,LT2,LT3,RT> fromFuture(Future<RT> future){
-         return fromLazy(Eval.<Either4<Throwable,LT2,LT3,RT>>fromFuture(future.map(e->Either4.<Throwable,LT2,LT3,RT>right(e)).recover(t->Either4.<Throwable,LT2,LT3,RT>left1(t))));
+         return fromLazy(Eval.<Either4<Throwable,LT2,LT3,RT>>fromFuture(
+                 future.map(e->e!=null?Either4.<Throwable,LT2,LT3,RT>right(e):Either4.<Throwable,LT2,LT3,RT>left1(new NoSuchElementException()))
+                         .recover(t->Either4.<Throwable,LT2,LT3,RT>left1(t.getCause()))));
      }
 
     /**

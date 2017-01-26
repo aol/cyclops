@@ -1289,7 +1289,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
             while (maybe instanceof Lazy) {
                 maybe = ((Lazy<T>) maybe).lazy.get();
             }
-            return Objects.hashCode(maybe.get());
+
+            return maybe.hashCode();
         }
 
         /*

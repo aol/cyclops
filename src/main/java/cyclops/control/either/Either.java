@@ -170,7 +170,6 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     }
 
     @AllArgsConstructor
-
     static class CompletableEither<ORG,RT> implements Either<Throwable,RT>, Completable<ORG> {
 
         public final Completable.CompletablePublisher<ORG> complete;
