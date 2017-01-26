@@ -34,7 +34,7 @@ public class ZipAsyncTest {
     @Test
     public void zip2of(){
 
-        for(int i=0;i<100;i++) {
+        for(int i=0;i<5000;i++) {
             List<Tuple2<Integer, Integer>> list = flux(1, 2, 3, 4, 5, 6)
                     .zip(flux(100, 200, 300, 400).stream())
                     .toListX();

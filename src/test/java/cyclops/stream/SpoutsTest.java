@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.isOneOf;
 import static org.junit.Assert.*;
 
 /**
@@ -131,8 +132,10 @@ public class SpoutsTest {
     }
     @Test
     public void ambMonoid(){
-        assertThat(Monoids.<Integer>ambReactiveSeq().reduce(Stream.of((Spouts.of(1,2,3)),Spouts.of(100,200,300))).toListX(),equalTo(ListX.of(1,2,3)));
+        for(int i=0;i<1000;i++) {
+            assertThat(Monoids.<Integer>ambReactiveSeq().reduce(Stream.of((Spouts.of(1, 2, 3)), Spouts.of(100, 200, 300))).toListX(), isOneOf(ListX.of(100, 200, 300), ListX.of(1, 2, 3)));
 
+        }
 
         //    assertThat(Monoids.<Integer>amb()
        //         .apply(nextAsync(),Spouts.of(100,200,300)).toListX(),equalTo(ListX.of(100,200,300)));
@@ -143,9 +146,7 @@ public class SpoutsTest {
     @Test
     public void nextAsyncToListX(){
         nextAsync().toListX().printOut();
-        while(true){
 
-        }
     }
     @Test
     public void publishToAndMerge(){
@@ -253,7 +254,7 @@ public class SpoutsTest {
 
     @Test
     public void ambTest(){
-        assertThat(Spouts.of(1,2,3).ambWith(Flux.just(10,20,30)).toListX(), Matchers.equalTo(ListX.of(10,20,30)));
+        assertThat(Spouts.of(1,2,3).ambWith(Flux.just(10,20,30)).toListX(), Matchers.isOneOf(ListX.of(1,2,3),ListX.of(10,20,30)));
     }
 
 

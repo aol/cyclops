@@ -2,10 +2,7 @@ package com.aol.cyclops2.streams;
 
 import static cyclops.stream.ReactiveSeq.of;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -305,7 +302,7 @@ public  class CoreReactiveSeqTest {
                 .fanOut(s1->s1.peek(System.out::println).filter(i->i%3==0).map(i->i*2),
                         s2->s2.filter(i->i%3==1).map(i->i*100),
                         s3->s3.filter(i->i%3==2).map(i->i*1000))
-                .toListX(),equalTo(ListX.of(6, 100, 400, 2000,12, 400, 700, 18, 700)));
+                .toListX(),equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
 
     }
     @Test
@@ -386,7 +383,9 @@ public  class CoreReactiveSeqTest {
 
     @Test
 	public void ambTest(){
-		assertThat(ReactiveSeq.of(1,2,3).ambWith(Flux.just(10,20,30)).toListX(),equalTo(ListX.of(10,20,30)));
+        for(int i=0;i<10;i++) {
+            assertThat(ReactiveSeq.of(1, 2, 3).ambWith(Flux.just(10, 20, 30)).toListX(), isOneOf(ListX.of(1, 2, 3), ListX.of(10, 20, 30)));
+        }
 	}
 	
 
