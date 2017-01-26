@@ -169,12 +169,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             sub[0] = source.subscribe(e -> {
                 System.out.println("Value recieved " + e);
                     result.complete(e);
+                  if(sub[0]!=null)
                     sub[0].cancel();
 
 
             },e->{
                 result.completeExceptionally(e);
-                sub[0].cancel();
+                if(sub[0]!=null)
+                 sub[0].cancel();
 
             },()->{
                 if(!result.isDone()) {
