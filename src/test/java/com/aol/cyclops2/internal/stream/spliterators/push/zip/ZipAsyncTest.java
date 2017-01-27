@@ -34,7 +34,66 @@ public class ZipAsyncTest {
     @Test
     public void zip2of(){
 
-        for(int i=0;i<5000;i++) {
+        for(int i=0;i<50000;i++) {
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i+"***********************");
+            List<Tuple2<Integer, Integer>> list = flux(1, 2, 3, 4, 5, 6)
+                    .zip(flux(100, 200, 300, 400).stream()).collect(Collectors.toList());
+                    //.toListX();
+
+            System.out.println(list);
+
+            List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+            Assert.assertThat(right, hasItem(100));
+            Assert.assertThat(right, hasItem(200));
+            Assert.assertThat(right, hasItem(300));
+            Assert.assertThat(right, hasItem(400));
+
+            List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+            System.out.println(left);
+            Assert.assertThat(Arrays.asList(1, 2, 3, 4, 5, 6), hasItem(left.get(0)));
+        }
+
+    }
+    @Test
+    public void zip2InvertedOf(){
+
+        for(int i=0;i<50000;i++) {
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i+"***********************");
+            List<Tuple2<Integer, Integer>> list = flux(100, 200, 300, 400)
+                    .zip(flux(1, 2, 3, 4, 5, 6).stream()).collect(Collectors.toList());
+            //.toListX();
+
+            System.out.println(list);
+
+            List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+            Assert.assertThat(right, hasItem(1));
+            Assert.assertThat(right, hasItem(2));
+            Assert.assertThat(right, hasItem(3));
+            Assert.assertThat(right, hasItem(4));
+
+            List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+            System.out.println(left);
+            Assert.assertThat(Arrays.asList(100, 200, 300, 400), hasItem(left.get(0)));
+        }
+
+    }
+    @Test
+    public void zip2ofLazyListX(){
+
+        for(int i=0;i<50000;i++) {
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i+"***********************");
             List<Tuple2<Integer, Integer>> list = flux(1, 2, 3, 4, 5, 6)
                     .zip(flux(100, 200, 300, 400).stream())
                     .toListX();

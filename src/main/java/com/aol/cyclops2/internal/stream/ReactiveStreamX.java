@@ -164,7 +164,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             Subscription sub[] = {null};
             //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
             sub[0] = source.subscribe(e -> {
-                System.out.println("Value recieved " + e);
+                System.out.println("Value recieved ");
                     result.complete(e);
                   if(sub[0]!=null)
                     sub[0].cancel();

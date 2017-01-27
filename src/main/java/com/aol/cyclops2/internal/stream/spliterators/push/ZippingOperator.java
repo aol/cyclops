@@ -4,6 +4,7 @@ import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.box.Mutable;
 import cyclops.box.MutableBoolean;
 import lombok.AllArgsConstructor;
+import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
 import java.util.Queue;
@@ -29,6 +30,13 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
     Operator<? super T2> right;
     private final BiFunction<? super T1, ? super T2, ? extends R> fn;
 
+    /*
+        1. create separate Zipper class
+        2. Only one thread can push at a time
+        3. Always push to a Queue and use an Atomic ref to protect access to draining
+
+        2. Merge status into single atomic integer
+     */
 
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
@@ -36,21 +44,29 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
         OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
         StreamSubscription  leftSub[] = {null};
         StreamSubscription  rightSub[] = {null};
-        boolean[] stopRequests = {false};
+        AtomicBoolean leftComplete = new AtomicBoolean(false); //left & right compelte can be merged into single integer
+        AtomicBoolean rightComplete = new AtomicBoolean(false);
         AtomicBoolean completing = new AtomicBoolean(false);
+        AtomicInteger status = new AtomicInteger(0); //1st bit for left, 2 bit for right pushing
+        AtomicBoolean wip = new AtomicBoolean(false);
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
                 if(n==Long.MAX_VALUE){
-                    while(leftSub[0].isOpen && rightSub[0].isOpen && !stopRequests[0]){
+                    while(leftSub[0].isOpen && rightSub[0].isOpen && isOpen){
                         leftSub[0].request(1);
                         rightSub[0].request(1);
                     }
 
                     return;
                 }
-                requested.accumulateAndGet(Math.min(n,256),(a,n2)->a-n2);
+
+                System.out.println("DEMAND ADDED " + requested.get() + " n is " + n + " Thread "+ Thread.currentThread().getId());
                 leftSub[0].request(Math.min(n,256));
                 rightSub[0].request(Math.min(n,256));
+
+
+
+                System.out.println("End request cycle..");
             };
             @Override
             public void request(long n) {
@@ -58,6 +74,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                     onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                     return;
                 }
+                System.out.println("Request recieved.. " + n + " Requested is " + requested.get()  + " Thread "+ Thread.currentThread().getId());
                 this.singleActiveRequest(n,work);
 
             }
@@ -76,45 +93,62 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
             try {
 
-                if (rightQ.size() > 0) {
-                    onNext.accept(fn.apply((T1) e, rightQ.poll()));
-                    if(sub.isActive() && !stopRequests[0]){
-                        leftSub[0].request(1);
-                        rightSub[0].request(1);
-                        sub.requested.decrementAndGet();
+                if (!rightQ.isEmpty() ) {
+                    R value = fn.apply((T1) e, rightQ.poll());
+                    System.out.println("LEFT Pushing " + value + "  Thread " + Thread.currentThread().getId() + " demenad "+  sub.requested.get());
+                    sub.requested.decrementAndGet();
+                    onNext.accept(value);
 
-                    }
 
-                    if(stopRequests[0] && rightQ.size()==0){
-                        leftSub[0].cancel();
-                        onComplete.run();
-
-                    }
                 } else {
                     System.out.println("Left offering " + e);
-                    leftQ.offer((T1) e);
+                    if(status.compareAndSet(0,1) && rightQ.isEmpty()) {
+
+                        leftQ.offer((T1) e);
+                        System.out.println("Left offered " + leftQ.size());
+
+                        status.set(0);
+                    }else{
+                        status.compareAndSet(1,0);
+                        System.out.println("Left awaiting ");
+                        while(rightQ.isEmpty()){ // VALUE IS COMING
+                            LockSupport.parkNanos(0);
+                        }
+                        R value = fn.apply((T1) e, rightQ.poll());
+                        System.out.println("LEFT Pushing " + value + "  Thread " + Thread.currentThread().getId() + " demenad "+  sub.requested.get());
+                        sub.requested.decrementAndGet();
+                        onNext.accept(value);
+                    }
 
 
                 }
             } catch (Throwable t) {
                 onError.accept(t);
             }
-            drain(leftQ,rightQ,onNext);
 
-        },onError,()->{
-
-            drain(leftQ,rightQ,onNext);
-
-
-
-            if (leftQ.size()==0 || stopRequests[0]) {
-                completing.set(true);
-                if(rightSub[0]!=null)
-                    rightSub[0].cancel();
-                onComplete.run();
+            if( (rightComplete.get() && rightQ.isEmpty()) || (leftComplete.get() && leftQ.isEmpty())){
+                leftSub[0].cancel();
+                handleComplete(completing,onComplete);
 
             }
-            stopRequests[0]=true;
+
+
+        },onError,()->{
+            leftComplete.set(true);
+            System.out.println("LEFT COMPLETE.. " + rightComplete.get());
+
+            System.out.println("LEFT QUEUE " + leftQ.isEmpty() + " size " + leftQ.size()  + " RIGHT COMPLETE " + rightComplete.get());
+
+
+            if (leftQ.isEmpty() || rightComplete.get()) {
+                System.out.println("Running complete! LEFT SIDE");
+
+                if(rightSub[0]!=null)
+                    rightSub[0].cancel();
+                handleComplete(completing,onComplete);
+
+            }
+
 
 
 
@@ -122,42 +156,61 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
         rightSub[0] = right.subscribe(e->{
 
             try {
-                if (leftQ.size() > 0) {
+                if (!leftQ.isEmpty()) {
+                    R value =fn.apply(leftQ.poll(), (T2) e);
+                    System.out.println("RIGHT Pushing " + value + "  Thread " + Thread.currentThread().getId() + " demenad "+  sub.requested.get());
+                    sub.requested.decrementAndGet();
+                    onNext.accept(value);
 
-                    onNext.accept(fn.apply(leftQ.poll(), (T2) e));
-                    if(sub.isActive() &&!stopRequests[0]){
-                        leftSub[0].request(1);
-                        rightSub[0].request(1);
-                        sub.requested.decrementAndGet();
 
-                    }
 
-                    if(stopRequests[0] && leftQ.size()==0){
-                        rightSub[0].cancel();
-                        onComplete.run();
-
-                    }
                 } else {
+
                         System.out.println("Right offering " + e);
+                    if(status.compareAndSet(0,2) && leftQ.isEmpty()) {
+
                         rightQ.offer((T2) e);
+                        System.out.println("Right offered " + rightQ.size());
+
+                        status.set(0);
+                    }else {
+
+                        System.out.println("Right awaiting awaiting " +  leftQ.isEmpty() + " status " + status.get());
+                        status.compareAndSet(2,0);
+                        while (leftQ.isEmpty()) { // VALUE IS COMING
+                            LockSupport.parkNanos(0);
+                        }
+                        R value = fn.apply(leftQ.poll(), (T2) e);
+                        System.out.println("RIGHT Pushing " + value + "  Thread " + Thread.currentThread().getId() + " demenad " + sub.requested.get());
+                        sub.requested.decrementAndGet();
+                        onNext.accept(value);
+                    }
+
                 }
             }catch(Throwable t){
                 onError.accept(t);
             }
-            drain(leftQ,rightQ,onNext);
+
+            if( (leftComplete.get() && leftQ.isEmpty()) || (rightComplete.get() && rightQ.isEmpty())){
+                rightSub[0].cancel();
+                handleComplete(completing,onComplete);
+
+            }
 
         },onError,()->{
 
+            rightComplete.set(true);
+            System.out.println("RIGHT COMPLETE..");
 
-            drain(leftQ,rightQ,onNext);
-
-            if (rightQ.size()==0 || stopRequests[0]) {
+            System.out.println("RIGHT QUEUE " + rightQ.isEmpty() + " size " + rightQ.size()  + " LEFT COMPLETE " + leftComplete.get());
+            if (rightQ.isEmpty() || leftComplete.get()) {
+                System.out.println("Running complete! RIGHT SIDE");
                 if(leftSub[0]!=null)
                  leftSub[0].cancel();
-                onComplete.run();
+                handleComplete(completing,onComplete);
 
             }
-            stopRequests[0]=true;
+
 
 
         });
@@ -165,11 +218,14 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
         return sub;
     }
 
-    private void drain(Queue<T1> leftQ, OneToOneConcurrentArrayQueue<T2> rightQ, Consumer<? super R> onNext) {
-        while(leftQ.size()>0 && rightQ.size()>0){
-            onNext.accept(fn.apply(leftQ.poll(), rightQ.poll()));
+    private void handleComplete(AtomicBoolean completeSent,Runnable onComplete){
+        if(completeSent.compareAndSet(false,true)){
+            System.out.println("RUNNING ONCOMPLETE! " + Thread.currentThread().getId());
+            onComplete.run();
         }
     }
+
+
 
     static class VolatileBoolean{
         volatile boolean value = false;
@@ -214,7 +270,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
         },onError,()->{
 
-            drain(leftQ,rightQ,onNext);
+            drainAll(leftQ,rightQ,onNext);
 
 
 
@@ -258,7 +314,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
         },onError,()->{
 
 
-            drain(leftQ,rightQ,onNext);
+            drainAll(leftQ,rightQ,onNext);
 
             if (rightQ.size()==0 || leftComplete.value) {
 
@@ -271,6 +327,14 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
         });
         rightSub[0].request(1l);
 
+    }
+    private void drainAll(Queue<T1> leftQ, OneToOneConcurrentArrayQueue<T2> rightQ, Consumer<? super R> onNext) {
+        while(leftQ.size()>0 && rightQ.size()>0){
+
+
+            onNext.accept(fn.apply(leftQ.poll(), rightQ.poll()));
+
+        }
     }
 
 }
