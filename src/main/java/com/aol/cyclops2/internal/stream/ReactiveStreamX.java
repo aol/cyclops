@@ -358,7 +358,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
 
-        ReactiveStreamX<R> res = createSeq(new PublisherFlatMapOperatorAsync<>(source, fn));
+        ReactiveStreamX<R> res = createSeq(new PublisherFlatMapOperatorAsyncMulti<>(source, fn));
         if(this.async == Type.SYNC){
             //flatMapP could recieve a asyncrhonous Streams so we force onto the async path
             return res.withAsync(Type.BACKPRESSURE);

@@ -2,6 +2,7 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Queue;
+import lombok.AllArgsConstructor;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
@@ -40,11 +41,125 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
 
 
 
-    AtomicInteger parentRequests = new AtomicInteger(0);
+
     AtomicInteger innerRequests = new AtomicInteger(0);
 
-    static class sourceRequest{
+    @AllArgsConstructor
+    static class InnerPublisher<R>{
+        volatile long nextRequest= 0;
+        volatile long recieved =0;
+        volatile long requested =0;
 
+        final AtomicReference<Subscription> activeSub;
+        final AtomicInteger status;// = new AtomicInteger(0); //1st bit for completing, 2 bit for inner active, 100 for complete
+
+        final AtomicBoolean init;
+        final AtomicBoolean activeRequest;
+        final StreamSubscription res;
+        final Consumer<? super R> onNext;
+        final Consumer<? super Throwable> onError;
+        final Runnable onComplete;
+        final AtomicInteger parentRequests = new AtomicInteger(0);
+        final Subscription[] parent;
+
+        public void onNext(R el){
+
+
+                System.out.println("!!!!!!!!!Pushing " + el + "  demand " + res.requested.get()  + " status " + status.get() + " thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+
+                onNext.accept(el);
+                recieved++;
+                //res.requested.decrementAndGet();
+                System.out.println("******************Setting active to false ON "+ activeRequest.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+                activeRequest.set(false);
+                System.out.println("Reset demand " + el + "  demand " + res.requested.get()  + " status " + status.get() + " thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+
+
+                System.out.println("Set active request to false "+  activeRequest.get() + " attempting demand ");
+                singleActiveInnerRequest(activeSub, activeRequest, res);
+
+
+        }
+        public void onComplete(){
+
+                activeRequest.set(true);
+
+                System.out.println("Inner complete   thread " + Thread.currentThread().getId() + " demand "  + res.requested.get() + " active " + activeRequest.get());
+                activeSub.set(null);
+                System.out.println("Active sub is  " + activeSub.get());
+
+
+
+
+                int thunkStatusLocal = -1;
+                do {
+                    thunkStatusLocal = status.get();
+                    System.out.println("Setting status INNER " + (thunkStatusLocal & ~(1 << 1)));
+
+                }
+                while (!status.compareAndSet(thunkStatusLocal, thunkStatusLocal & ~(1 << 1))); //unset inner active
+                if (status.compareAndSet(1, 100)) { //inner active and complete
+                    onComplete.run();
+                    return;
+                }
+                System.out.println("Inner demand to parent " + parentRequests.incrementAndGet() + " status " + status.get());
+
+                parent[0].request(1l);
+                //always request more from the parent until outer complete
+                System.out.println("****************Setting active to false IC "+ activeRequest.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+                System.out.println("Awaiting next subscription " + activeSub.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+                if(activeSub.get()==null){ //check for new subscription or completeness
+                    if (status.compareAndSet(1, 100)) { //inner active and complete
+                        System.out.println("Complete while awaiting next sub"+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+                        onComplete.run();
+                        return;
+                    }
+                }
+                nextRequest = requested-recieved;
+                System.out.println("Got next subscription " + activeSub.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+                activeRequest.set(false);
+                System.out.println("Checking demand in Inner on complete! " +  activeRequest.get() + " " + res.requested.get());
+                singleActiveInnerRequest(activeSub, activeRequest, res);
+
+                //  after.run();
+
+
+        }
+        private void singleActiveInnerRequest(AtomicReference<Subscription> activeSub, AtomicBoolean activeRequest,  StreamSubscription res) {
+            System.out.println("Request " + activeRequest.get() + " " + res.requested.get());
+            Subscription a = activeSub.get();
+            if(res.isOpen && activeRequest.compareAndSet(false,true)) {
+
+                System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
+                        + Thread.currentThread().getId()
+                        + " ************************* " + System.identityHashCode(a));
+                if(a!=null) { //track inner requests and deliveries to increase this from 1
+                    long requestsLocal = res.requested.get();
+
+                    if(requestsLocal==Long.MAX_VALUE){
+                        a.request(Long.MAX_VALUE);
+                    }else {
+                        res.requested.accumulateAndGet(requestsLocal, (a1, b1) -> a1 - b1);
+                        requested += requestsLocal;
+                        //int requestsLocal  = Math.max(res.requested.get(),2500)
+                        //res.decrement(requests);
+                        //switch to isActive
+                        //requests += requestsLocal
+                        //recieved ++ on every record
+                        //in oncomplete pass requests - recieved to next sub - set var that is used until 0
+                        a.request(requestsLocal+nextRequest);
+                        nextRequest=0;
+                    }
+                }
+                else{
+                    System.out.println("Active Sub is null - falling back");
+                    activeRequest.set(false);
+                }
+            }else{
+
+                System.out.println("Failed to signal demand " + activeRequest.get() + " active " + res.isActive());
+            }
+        }
     }
 
     @Override
@@ -57,7 +172,7 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
 
         final AtomicBoolean init = new AtomicBoolean(false);
         final AtomicBoolean activeRequest = new AtomicBoolean(false);
-        final AtomicLong sent = new AtomicLong(0);
+        final InnerPublisher innerPublisherRef[]={null};
         StreamSubscription res = new StreamSubscription(){
             LongConsumer work = n-> {
 
@@ -78,7 +193,8 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
                     if(status.get()>=100 || requested.get()==0){
                         return;
                     }
-                    singleActiveInnerRequest(activeSub,activeRequest,this);
+                    long reqs = requested.get();
+                    innerPublisherRef[0].singleActiveInnerRequest(activeSub,activeRequest,this);
                     //  System.out.println("Outer request to inner " + innerRequests.incrementAndGet() + " status " + status.get() + " demand " + requested.get());
                      // activeSub.get().request(1);
                 }
@@ -99,69 +215,15 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
             }
         };
 
-
+        final InnerPublisher innerPublisher = new InnerPublisher(0,0,0,activeSub,status,init,activeRequest,res,onNext,onError,onComplete,s);
+        innerPublisherRef[0] = innerPublisher;
         s[0] = source.subscribe(e-> {
                     try {
 
                         Publisher<? extends R> split = mapper.apply(e);
                         System.out.println("Registering next publisher for " +e  + " thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
                         PublisherToOperator<R> op = new PublisherToOperator<>((Publisher<R>)split);
-                        Subscription sLocal = op.subscribe(el->{
-
-                            System.out.println("!!!!!!!!!Pushing " + el + "  demand " + res.requested.get()  + " status " + status.get() + " thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
-
-                            onNext.accept(el);
-                            res.requested.decrementAndGet();
-                            System.out.println("******************Setting active to false ON "+ activeRequest.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
-                            activeRequest.set(false);
-                            System.out.println("Reset demand " + el + "  demand " + res.requested.get()  + " status " + status.get() + " thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
-
-
-                            System.out.println("Set active request to false "+  activeRequest.get() + " attempting demand ");
-                            singleActiveInnerRequest(activeSub, activeRequest, res);
-
-                        },onError,()->{
-                            activeRequest.set(true);
-
-                            System.out.println("Inner complete   thread " + Thread.currentThread().getId() + " demand "  + res.requested.get() + " active " + activeRequest.get());
-                            activeSub.set(null);
-                            System.out.println("Active sub is  " + activeSub.get());
-
-
-
-
-                                int thunkStatusLocal = -1;
-                                do {
-                                    thunkStatusLocal = status.get();
-                                    System.out.println("Setting status INNER " + (thunkStatusLocal & ~(1 << 1)));
-
-                                }
-                                while (!status.compareAndSet(thunkStatusLocal, thunkStatusLocal & ~(1 << 1))); //unset inner active
-                            if (status.compareAndSet(1, 100)) { //inner active and complete
-                                onComplete.run();
-                                return;
-                            }
-                            System.out.println("Inner demand to parent " + parentRequests.incrementAndGet() + " status " + status.get());
-
-                            s[0].request(1l);
-                            //always request more from the parent until outer complete
-                            System.out.println("****************Setting active to false IC "+ activeRequest.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
-                            System.out.println("Awaiting next subscription " + activeSub.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
-                            if(activeSub.get()==null){ //check for new subscription or completeness
-                                if (status.compareAndSet(1, 100)) { //inner active and complete
-                                    System.out.println("Complete while awaiting next sub"+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
-                                    onComplete.run();
-                                    return;
-                                }
-                            }
-                            System.out.println("Got next subscription " + activeSub.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
-                            activeRequest.set(false);
-                             System.out.println("Checking demand in Inner on complete! " +  activeRequest.get() + " " + res.requested.get());
-                            singleActiveInnerRequest(activeSub, activeRequest, res);
-
-                          //  after.run();
-
-                        });
+                        Subscription sLocal = op.subscribe(innerPublisher::onNext,onError,innerPublisher::onComplete);
 
 
                         int statusLocal =-1;
@@ -182,7 +244,7 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
 
 
                         System.out.println("Checking demand in main onnext " + activeRequest.get() + " demand is " + res.requested.get());
-                        singleActiveInnerRequest(activeSub, activeRequest, res);
+                        innerPublisher.singleActiveInnerRequest(activeSub, activeRequest, res);
                         System.out.println("Demand signalled on thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
 
                     } catch (Throwable t) {
@@ -193,7 +255,7 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
                 ,t->{
                     onError.accept(t);
                     res.requested.decrementAndGet();
-                    if(res.isActive()){
+                    if(res.isOpen){
                         s[0].request(1);
                     }
                 },()->{
@@ -215,25 +277,7 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
         return res;
     }
 
-    private void singleActiveInnerRequest(AtomicReference<Subscription> activeSub, AtomicBoolean activeRequest, StreamSubscription res) {
-        System.out.println("Request " + activeRequest.get() + " " + res.requested.get());
-        Subscription a = activeSub.get();
-        if(res.isActive() && activeRequest.compareAndSet(false,true)) {
 
-            System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
-                    + Thread.currentThread().getId()
-                    + " ************************* " + System.identityHashCode(a));
-            if(a!=null) //track inner requests and deliveries to increase this from 1
-                a.request(1l);
-            else{
-                System.out.println("Active Sub is null - falling back");
-                activeRequest.set(false);
-            }
-        }else{
-
-            System.out.println("Failed to signal demand " + activeRequest.get() + " active " + res.isActive());
-        }
-    }
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
