@@ -117,40 +117,19 @@ public class FlatMapPublisherTest {
         assertThat(one,equalTo(3));
         assertThat(two,equalTo(3));
     }
+
     @Test
-    public void mergePAsync2(){
-        for(int k=0;k<40000;k++) {
+    public void concurrentFlatMapP1(){
+        for(int k=0;k<5000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
-            System.out.println("****************************NEXT ITERATION "+ k+ "**************************");
-            List<Integer> res =  Spouts.mergeLatest(nextAsync(),nextAsync(),nextAsync())
-                    .toList();
-            System.out.println("Result is " + res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
-            assertThat(res, hasItems(1,2));
-            int one = 0;
-            int two = 0;
-            for(Integer next : res){
-                if(next==1){
-                    one++;
-                }
-                if(next==2){
-                    two++;
-                }
-            }
-            assertThat(one,equalTo(3));
-            assertThat(two,equalTo(3));
-        }
-    }
-    @Test
-    public void mergePAsyncSynchronous2(){
-        for(int k=0;k<4000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
-            System.out.println("****************************NEXT ITERATION "+ k+ "**************************");
-            List<Integer> res =  ReactiveSeq.fromPublisher(Spouts.mergeLatest(nextAsync(),nextAsync(),nextAsync()))
+            System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            List<Integer> res =  Spouts.of(1,2,3)
+                    .flatMapP(1,i -> nextAsync())
                     .toList();
             System.out.println("Result is " + res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
