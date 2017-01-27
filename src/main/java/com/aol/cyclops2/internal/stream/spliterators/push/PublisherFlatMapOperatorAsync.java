@@ -198,6 +198,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                         s[0].request(1);
                     }
                 },()->{
+                    System.out.println("OUTER COMPLETE!!");
                     int statusLocal = -1;
                     do {
                         statusLocal = status.get();

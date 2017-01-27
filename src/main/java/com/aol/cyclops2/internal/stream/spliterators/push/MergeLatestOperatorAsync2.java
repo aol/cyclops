@@ -1,14 +1,18 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.async.Queue;
+
 import cyclops.collections.ListX;
+import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+import org.agrona.concurrent.QueuedPipe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
@@ -30,11 +34,11 @@ public class MergeLatestOperatorAsync2<IN> implements Operator<IN> {
 
     private Object nilsafeIn(Object o){
         if(o==null)
-            return Queue.NILL;
+            return cyclops.async.Queue.NILL;
         return o;
     }
     private <T> T nilsafeOut(Object o){
-        if(Queue.NILL==o){
+        if(cyclops.async.Queue.NILL==o){
             return null;
         }
         return (T)o;
@@ -42,7 +46,7 @@ public class MergeLatestOperatorAsync2<IN> implements Operator<IN> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-
+        final QueuedPipe<IN> queue = new ManyToManyConcurrentArrayQueue<IN>(1024);
         ListX<Merger<IN>> mergers = ListX.empty();
         AtomicLong sent = new AtomicLong(0);
         AtomicInteger index = new AtomicInteger(0);
@@ -76,6 +80,21 @@ public class MergeLatestOperatorAsync2<IN> implements Operator<IN> {
                 super.cancel();
             }
         };
+        Runnable completionHandler = ()->{
+            mergers.forEach(m -> m.drain());
+            if (mergers.allMatch(m -> m.isComplete())) {
+                mergers.forEach(m -> m.drain());
+                System.out.println("Completing on main completion handler!");
+                while(!wip.compareAndSet(false,true)){
+                    LockSupport.parkNanos(0l);//wait for drain
+                }
+                onComplete.run();
+                return;
+            }
+            //mergers.forEach(m->requested.accumulateAndGet(m.returnDemand(),(a,b)->a+b));
+            System.out.println("Not completed ? " + mergers.filter(m -> !m.isComplete()).count());
+            mergers.filter(m -> !m.isComplete()).forEach(m->System.out.println("Not complete " +System.identityHashCode( m)));
+        };
         LongConsumer demandFinder = n-> {
             for (long k = 0; k < Math.min(n, mergers.size()); k++) {
                 System.out.println("K is " + k);
@@ -96,32 +115,22 @@ public class MergeLatestOperatorAsync2<IN> implements Operator<IN> {
                 } else
                     k--;
 
-                mergers.forEach(m -> m.drain());
-                if (mergers.allMatch(m -> m.isComplete())) {
-                    mergers.forEach(m -> m.drain());
-                    onComplete.run();
+                if(mergers.allMatch(m -> m.isComplete())) {
                     return;
                 }
-                //mergers.forEach(m->requested.accumulateAndGet(m.returnDemand(),(a,b)->a+b));
-                System.out.println("Not completed ? " + mergers.filter(m -> !m.isComplete()).count());
+
+
             }
         };
         demandFinderRef[0]=demandFinder;
 
         for(int i=0;i<operators.length;i++){
             int current = i;
-             mergers.add(new Merger<IN>(operators[current],in->{
-                 System.out.println("WIP is " + wip.get());
-                 while (wip.compareAndSet(false, true)) {
-
-                     LockSupport.parkNanos(0l);
-                 }
-                 System.out.println("GOT WIP is " + wip.get());
-                 System.out.println("Pushing " + in + "  demand " + sub.requested.get() + " Thread " + Thread.currentThread().getId());
+             mergers.add(new Merger<IN>(wip,queue,operators[current],in->{
                  sub.requested.decrementAndGet();
                  onNext.accept(in);
-                 wip.set(false);
-             },onError,demandFinder));
+
+             },onError,demandFinder,completionHandler));
         }
 
 

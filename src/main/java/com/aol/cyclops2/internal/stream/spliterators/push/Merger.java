@@ -4,12 +4,16 @@ import cyclops.control.either.Either5;
 import lombok.Getter;
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
+import org.agrona.concurrent.QueuedPipe;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
 
@@ -19,24 +23,32 @@ import java.util.function.LongConsumer;
 @Getter
 public class Merger<T> implements Subscriber<T> {
     private final LongConsumer onFail;
-    ManyToManyConcurrentArrayQueue<T> queue = new ManyToManyConcurrentArrayQueue<T>(256);
+    final QueuedPipe<T>  queue;
     volatile boolean complete = false;
     volatile Throwable error;
     private final  StreamSubscription sub;
     private final Consumer<? super Throwable> errorAction;
 
-    private AtomicLong requested = new AtomicLong(0);
-    private AtomicLong produced =  new AtomicLong(0);
+    private final AtomicLong requested = new AtomicLong(0);
+    private final AtomicLong produced =  new AtomicLong(0);
+    private final Runnable completionHandler;
     private final Consumer<? super T> action;
-    public Merger(Operator<T> operator,Consumer<? super T> action,final Consumer<? super Throwable> error,LongConsumer onFail) {
+    private final AtomicBoolean wip;
+    public Merger(AtomicBoolean wip,QueuedPipe<T> queue,Operator<T> operator,Consumer<? super T> action,final Consumer<? super Throwable> error,
+                  LongConsumer onFail,Runnable completionHandler) {
+        this.wip = wip;
+        this.queue =queue;
        sub = operator.subscribe(this::onNext,this::onError,this::onComplete);
        this.action = action;
        this.onFail = onFail;
        this.errorAction = error;
+       this.completionHandler = completionHandler;
     }
 
+    final AtomicBoolean requestingOrCompleting = new AtomicBoolean();
+
     public void request(long next){
-        System.out.println("Merger request.. " + next);
+        System.out.println("Merger request.. " + next + " merger "+ System.identityHashCode(this));
         if(next==Long.MAX_VALUE){
             sub.request(next);
             requested.set(next);
@@ -48,31 +60,62 @@ public class Merger<T> implements Subscriber<T> {
                     + " produced " + produced.get() + " requested " + requested.get()
                     + " thread " + Thread.currentThread().getId());
 
-            requested.accumulateAndGet(next, (a, b) -> a + b);
-            sub.request(next);
+            long toRequest = 0;
+            if(requestingOrCompleting.compareAndSet(false,true)) {
+                System.out.println("Requesting " + next + " "
+                        + " Merger " + System.identityHashCode(this) + " "
+                        + complete + " unused " + (requested.get()-produced.get())
+                        + " produced " + produced.get() + " requested " + requested.get()
+                        + " thread " + Thread.currentThread().getId());
+
+                requested.accumulateAndGet(next, (a, b) -> a + b);
+                toRequest= next;
+               // sub.request(next);
+                requestingOrCompleting.set(false);
+
+                System.out.println("Finished Requesting " + next + " "
+                        + " Merger " + System.identityHashCode(this) + " "
+                        + complete + " unused " + (requested.get()-produced.get())
+                        + " produced " + produced.get() + " requested " + requested.get()
+                        + " thread " + Thread.currentThread().getId());
+
+            }
+            if(toRequest>0)
+               sub.request(toRequest);
 
         }
 
     }
     public void drain(){
+        while(!queue.isEmpty()) {
+            System.out.println("WIP is " + wip.get());
+            if (!wip.compareAndSet(false, true)) {
 
-        AtomicLong drained = new AtomicLong(0);
-        System.out.println("Drain loop starting..");
-        if(error!=null){
-            errorAction.accept(error);
-            error=null;
+                return;
+            }
+            System.out.println("GOT WIP is " + wip.get());
+//            System.out.println("Pushing " + in + "  demand " + sub.requested.get() + " Thread " + Thread.currentThread().getId());
+
+            AtomicLong drained = new AtomicLong(0);
+            System.out.println("Drain loop starting..");
+            if (error != null) {
+                errorAction.accept(error);
+                error = null;
+            }
+            int times = 0;
+      //      do {
+                times++;
+                queue.drain(n -> {
+                    System.out.println("Draining... " + n + " Merger " + System.identityHashCode(this));
+                    drained.incrementAndGet();
+                    action.accept(n);
+                });
+        //    } while (produced.get() + drained.get() < requested.get() && !complete && times < 3);
+
+            System.out.println("Drain loop complete.. " + drained.get());
+
+            wip.set(false);
         }
-        int times = 0;
-        do{
-            times++;
-            queue.drain(n -> {
-                System.out.println("Draining... " + n + " Merger " + System.identityHashCode(this));
-                drained.incrementAndGet();
-                action.accept(n);
-            });
-        }while(produced.get()+drained.get()<requested.get() && !complete && times<3);
-
-        System.out.println("Drain loop complete.. " + drained.get());
     }
     @Override
     public void onSubscribe(Subscription s) {
@@ -82,8 +125,8 @@ public class Merger<T> implements Subscriber<T> {
     @Override
     public void onNext(T t) {
         System.out.println("In merger on next " +  t);
-        queue.offer(t);
         produced.incrementAndGet();
+        queue.offer(t);
         drain();
     }
 
@@ -93,28 +136,40 @@ public class Merger<T> implements Subscriber<T> {
         error = t;
         t.printStackTrace();
         drain();
-       // onFail.accept(1l);
+
     }
 
     public Long unusedDemand(){
-        if(!complete)
-            return 0l;
+
         drain();
         return requested.get()-produced.get();
 
     }
     @Override
     public void onComplete() {
+        drain();
 
-        System.out.println("On complete for Merger "+ System.identityHashCode(this));
-        complete = true;
+
+        System.out.println("On complete for Merger "+ System.identityHashCode(this)  + " thread " + Thread.currentThread().getId() + " reqOrComplete?" + requestingOrCompleting.get());
+
+        while(!requestingOrCompleting.compareAndSet(false,true)) {
+            //update to number of requested elements coming - demand to return
+        }
+        System.out.println("Processing on complete "+ System.identityHashCode(this)  + " thread " + Thread.currentThread().getId());
+
        // drain();
 
         Long unusedDemand = unusedDemand();
+        System.out.println("Unused demand "+ unusedDemand + " merger " + System.identityHashCode(this)
+                + " thread " + Thread.currentThread().getId()
+                +" queue " + queue.isEmpty() );
         //System.out.println("On complete for Merger "+ System.identityHashCode(this) + " unused demand " + unusedDemand);
         if(unusedDemand>0) {
             System.out.println("Returning unused demand.. " + unusedDemand);
             onFail.accept(unusedDemand);
         }
+        complete = true;
+        completionHandler.run();
+
     }
 }
