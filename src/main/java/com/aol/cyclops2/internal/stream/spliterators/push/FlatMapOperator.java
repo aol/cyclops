@@ -32,9 +32,10 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
 
         AtomicInteger status = new AtomicInteger(0); //1st bit for completing, 2 bit for inner active, 100 for complete
 
-        Runnable[] thunk= {()->{
+        BooleanSupplier[] thunk= {()->{
 
             s[0].request(1);
+            return true;
 
         }};
 
@@ -42,7 +43,12 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
         StreamSubscription res = new StreamSubscription(){
             LongConsumer work = n-> {
                 System.out.println("New demand! Requesting on thread " + Thread.currentThread().getId() + " demand "  + this.requested.get());
-                thunk[0].run();
+                thunk[0].getAsBoolean();
+                /**
+                while(!thunk[0].getAsBoolean()){
+                    LockSupport.parkNanos(0l);
+                }
+                 **/
             };
             @Override
             public void request(long n) {
@@ -73,60 +79,64 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
 
                         AtomicInteger advancing = new AtomicInteger(0);
                         thunk[0] = () -> {
+                            while (res.isActive()) { //outer loop to capture missed demand
+                                boolean canAdvance = false;
 
-                            boolean canAdvance = false;
-
-                            if (!advancing.compareAndSet(0, 1)) {
-
-                                return;
-                            }
-                            try {
-                                while (res.isActive()) {
-                                    try {
-
-                                         canAdvance = split.tryAdvance(onNext);
-
-                                    } catch (Throwable t) {
-                                        onError.accept(t);
-                                    }
-
-                                    if (canAdvance) {
-                                        res.requested.decrementAndGet();
-
-                                    } else {
-
-                                        int thunkStatusLocal = -1;
-                                        do {
-                                            thunkStatusLocal = status.get();
-
-
-                                        }
-                                        while (!status.compareAndSet(thunkStatusLocal, thunkStatusLocal & ~(1 << 1))); //unset inner active
-
-                                        if (status.compareAndSet(1, 100)) {
-                                            onComplete.run();
-                                            return;
-                                        }
-                                        break;
-                                    }
-
-
-
-
+                                if (!advancing.compareAndSet(0, 1)) {
+                                    System.out.println("Another thread advancing - retreating.. " + Thread.currentThread().getId());
+                                    return false;
                                 }
-                            }finally{
-                                advancing.set(0);
+                                try {
+                                    while (res.isActive()) {
+                                        try {
+                                            System.out.println("Try advance ? " + " " + e + " demand " + res.requested.get()
+                                                    + " thread " + Thread.currentThread().getId());
+                                            canAdvance = split.tryAdvance(onNext);
+                                            System.out.println("Pushed ? " + canAdvance + " " + e + " demand " + res.requested.get()
+                                                    + " thread " + Thread.currentThread().getId());
+                                        } catch (Throwable t) {
+                                            onError.accept(t);
+                                        }
+
+                                        if (canAdvance) {
+                                            res.requested.decrementAndGet();
+
+                                        } else {
+
+                                            int thunkStatusLocal = -1;
+                                            do {
+                                                thunkStatusLocal = status.get();
+
+
+                                            }
+                                            while (!status.compareAndSet(thunkStatusLocal, thunkStatusLocal & ~(1 << 1))); //unset inner active
+
+                                            if (status.compareAndSet(1, 100)) {
+                                                System.out.println("Completing in thunk!  demand " + res.requested.get() + " thread " + Thread.currentThread().getId());
+                                                onComplete.run();
+                                                return true;
+                                            }
+                                            break;
+                                        }
+
+
+                                    }
+                                } finally {
+                                    advancing.set(0);
+                                }
+                                if (!canAdvance && res.isActive() && !(status.get() >= 100)) {
+
+                                    System.out.println("Requesting from parent! " + canAdvance);
+                                    s[0].request(1);
+                                    return true;
+                                }else if(!canAdvance){
+                                    return true;
+                                }
                             }
-                            if(!canAdvance && res.isActive() && !(status.get()>=100)) {
-
-
-                                s[0].request(1);
-                            }
-
-
+                            return true;
 
                          };
-                        thunk[0].run();
+                        thunk[0].getAsBoolean();
 
 
 
@@ -150,7 +160,7 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
                    }while(!status.compareAndSet(statusLocal,statusLocal | (1 << 0)));
 
                    if(status.compareAndSet(1,100)){
-
+                        System.out.println("Completing in onComplete  demand " + res.requested.get()  + " thread " + Thread.currentThread().getId());
                        onComplete.run();
                    }
 

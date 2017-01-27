@@ -222,7 +222,15 @@ public  class AsyncRSReactiveStreamXTest {
 	@Test
 	public void flatMapSynchronous(){
 		for(int i=0;i<1000000;i++){
-			System.out.println("Iteration " + i);
+			System.out.println("***************************Iteration " + i);
+            System.out.println("***************************Iteration " + i);
+            System.out.println("***************************Iteration " + i);
+            System.out.println("***************************Iteration " + i);
+            System.out.println("***************************Iteration " + i);
+            System.out.println("***************************Iteration " + i);
+            System.out.println("***************************Iteration " + i);
+            System.out.println("***************************Iteration " + i);
+
 			assertThat(ReactiveSeq.fromPublisher(of(1)
 							.flatMap(in -> of(1, 2, 3)))
 							.toList(),
@@ -230,6 +238,17 @@ public  class AsyncRSReactiveStreamXTest {
 		}
 
 	}
+    @Test
+    public void flatMapPSynchronous(){
+        for(int i=0;i<1000000;i++){
+            System.out.println("Iteration " + i);
+            assertThat(ReactiveSeq.fromPublisher(of(1)
+                            .flatMapP(in -> of(1, 2, 3)))
+                            .toList(),
+                    equalTo(Arrays.asList(1, 2, 3)));
+        }
+
+    }
     @Test
     public void flatMapForEach(){
         for(int i=0;i<1000;i++){
