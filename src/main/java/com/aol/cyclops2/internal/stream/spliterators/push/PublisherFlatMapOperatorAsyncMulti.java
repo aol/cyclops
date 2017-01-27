@@ -147,7 +147,9 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
                         //requests += requestsLocal
                         //recieved ++ on every record
                         //in oncomplete pass requests - recieved to next sub - set var that is used until 0
-                        a.request(requestsLocal+nextRequest);
+                        long toAdd = requestsLocal+nextRequest;
+                        if(toAdd>0)
+                             a.request(toAdd);
                         nextRequest=0;
                     }
                 }

@@ -224,7 +224,9 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
             System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
                     + Thread.currentThread().getId()
                     + " ************************* " + System.identityHashCode(a));
-            if(a!=null) //track inner requests and deliveries to increase this from 1
+            if(a!=null) //track inner requests
+                        // and deliveries to increase this from 1
+
                 a.request(1l);
             else{
                 System.out.println("Active Sub is null - falling back");

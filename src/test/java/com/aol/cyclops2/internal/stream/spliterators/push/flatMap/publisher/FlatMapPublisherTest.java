@@ -39,7 +39,7 @@ import static org.hamcrest.Matchers.hasItems;
  */
 public class FlatMapPublisherTest {
 
-    Executor ex= Executors.newFixedThreadPool(10);
+    Executor ex= Executors.newFixedThreadPool(20);
 
     protected <U> ReactiveSeq<U> flux(U... array){
 
@@ -120,7 +120,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void concurrentFlatMapP1(){
-        for(int k=0;k<5000;k++) {
+        for(int k=0;k<500;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -281,7 +281,7 @@ public class FlatMapPublisherTest {
     public void flatMapPAsync3(){
         for(int k=0;k<10;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
-                    .flatMapP(i -> nextAsyncRS())
+                    .flatMapP(i -> nextAsync())
                     .toList();
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
@@ -305,11 +305,19 @@ public class FlatMapPublisherTest {
     @Test
     public void flatMapPAsyncRS(){
         for(int k=0;k<1000;k++) {
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
             complete = new AtomicBoolean(false);
             count = new AtomicInteger(0);
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsyncRS())
+                    .flatMapP(i -> nextAsync())
                     .subscribe(new Subscriber<Integer>() {
                         @Override
                         public void onSubscribe(Subscription s) {
@@ -358,7 +366,7 @@ public class FlatMapPublisherTest {
             System.out.println("********0---------------------K " + k);
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsyncRS())
+                    .flatMapP(i -> nextAsync())
                   //  .flatMapP(i->Spouts.of(1,2))
                     .subscribe(sub);
 
@@ -388,7 +396,7 @@ public class FlatMapPublisherTest {
         for(int k=0;k<100;k++) {
             SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
             Flux<Integer> flux = Flux.from(Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsyncRS()));
+                    .flatMapP(i -> nextAsync()));
             /**Iterator<Integer> it = sub.iterator();
 
             while(it.hasNext()){
@@ -414,64 +422,9 @@ public class FlatMapPublisherTest {
 
     }
     AtomicInteger start= new AtomicInteger(0);
-    private Publisher<Integer> nextAsyncRS() {
-        ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
-        AtomicLong req = new AtomicLong(0);
-        int id = start.incrementAndGet();
-        sub.onSubscribe(new Subscription() {
 
-            @Override
-            public void request(long n) {
-
-               req.addAndGet(n);
-
-            }
-
-            @Override
-            public void cancel() {
-
-            }
-            public String toString(){
-                return "subscription " + id;
-            }
-        });
-        new Thread(()->{
-            int sent=0;
-            while(sent<2){
-                if(req.get()>0){
-                    sub.onNext( ++sent);
-
-                    req.decrementAndGet();
-                }
-            }
-            sub.onComplete();
-
-
-           // Flux.just(1,2).subscribeAll(sub);
-
-
-        }).start();
-
-        return sub.reactiveStream();
-    }
     private Publisher<Integer> nextAsync() {
         return flux(1,2);
-        /**
-        AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
-        new Thread(()->{
 
-            sub.awaitInitialization();
-            try {
-                //not a reactive-stream so we don't know with certainty when demand signalled
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            sub.onNext(1);
-            sub.onNext(2);
-            sub.onComplete();
-        }).start();
-        return sub.stream();
-         **/
     }
 }
