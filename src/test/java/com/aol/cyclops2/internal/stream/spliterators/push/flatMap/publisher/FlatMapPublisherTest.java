@@ -20,6 +20,7 @@ import reactor.core.scheduler.Schedulers;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,9 +39,11 @@ import static org.hamcrest.Matchers.hasItems;
  */
 public class FlatMapPublisherTest {
 
+    Executor ex= Executors.newFixedThreadPool(10);
+
     protected <U> ReactiveSeq<U> flux(U... array){
 
-        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ex))).peek(s->System.out.println("next value " + s));
 
 
     }
@@ -173,7 +176,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapPAsync2(){
-        for(int k=0;k<500000;k++) {
+        for(int k=0;k<5000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);

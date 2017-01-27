@@ -147,12 +147,15 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                             s[0].request(1l);
                             //always request more from the parent until outer complete
                             System.out.println("****************Setting active to false IC "+ activeRequest.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+                            System.out.println("Awaiting next subscription " + activeSub.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
                             while(activeSub.get()==null){ //check for new subscription or completeness
                                 if (status.compareAndSet(1, 100)) { //inner active and complete
+                                    System.out.println("Complete while awaiting next sub"+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
                                     onComplete.run();
                                     return;
                                 }
                             }
+                            System.out.println("Got next subscription " + activeSub.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
                             activeRequest.set(false);
                              System.out.println("Checking demand in Inner on complete! " +  activeRequest.get() + " " + res.requested.get());
                             singleActiveInnerRequest(activeSub, activeRequest, res);
@@ -166,7 +169,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                         do {
                             statusLocal = status.get();
 
-                            System.out.println("Status local  is"  + statusLocal);
+                            System.out.println("Status local  is "  + statusLocal);
                             System.out.println("Setting status active to " + (statusLocal | (1 << 1)));
 
                         }while(!status.compareAndSet(statusLocal,statusLocal | (1 << 1))); //set inner active
@@ -181,7 +184,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
 
                         System.out.println("Checking demand in main onnext " + activeRequest.get() + " demand is " + res.requested.get());
                         singleActiveInnerRequest(activeSub, activeRequest, res);
-
+                        System.out.println("Demand signalled on thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
 
                     } catch (Throwable t) {
 
