@@ -13,6 +13,7 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
@@ -56,7 +57,7 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
 
         final AtomicBoolean init = new AtomicBoolean(false);
         final AtomicBoolean activeRequest = new AtomicBoolean(false);
-
+        final AtomicLong sent = new AtomicLong(0);
         StreamSubscription res = new StreamSubscription(){
             LongConsumer work = n-> {
 

@@ -106,13 +106,17 @@ public class MergeLatestOperatorAsync3<IN> implements Operator<IN> {
             mergers.forEach(m -> m.drain());
             if (mergers.allMatch(m -> m.isComplete())) {
                 sub.cancel();
-
+                System.out.println("**********************Draining on the main completion handler! " + queue.size() + " Thread " + Thread.currentThread().getId());
                 mergers.forEach(m -> m.drain());
-                System.out.println("Completing on main completion handler!");
+                System.out.println("Completing on main completion handler! " + queue.size());
                 while(!wip.compareAndSet(false,true)){
                     LockSupport.parkNanos(0l);//wait for drain
                 }
+                queue.drain(n -> {
+                    System.out.println("Draining on complete! " + n + " Merger " + System.identityHashCode(this));
 
+                    onNext.accept(n);
+                });
                 System.out.println(" QUEUE SIZE " + queue.size() + " is empty ?" + queue.isEmpty());
                 onComplete.run();
                 calls.incrementAndGet();
