@@ -60,7 +60,8 @@ public class ZipAsyncTest {
     }
     @Test
     public void zip2InvertedOf(){
-
+        Spouts.of(1,2,3)
+                    .toListX();
         for(int i=0;i<50000;i++) {
             System.out.println("*************Iteration " + i);
             System.out.println("*************Iteration " + i);
