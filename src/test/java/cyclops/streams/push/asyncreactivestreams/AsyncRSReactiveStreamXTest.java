@@ -210,7 +210,7 @@ public  class AsyncRSReactiveStreamXTest {
 	}
     @Test
     public void flatMap(){
-        for(int i=0;i<1000000;i++){
+        for(int i=0;i<10000;i++){
             System.out.println("Iteration " + i);
             assertThat(of(1)
                             .flatMap(in -> of(1, 2, 3))

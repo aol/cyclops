@@ -150,7 +150,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void concurrentFlatMapP(){
-        for(int k=0;k<50000;k++) {
+        for(int k=0;k<500;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);

@@ -2344,16 +2344,16 @@ public class Streams {
 
 
     public static final <A> ListX<Iterable<A>> toBufferingCopier(final Iterable<A> it, final int copies) {
-        LazyImmutable<ListX<Iterator<A>>> iterators = LazyImmutable.def();
+
         return  ListX.range(0,copies)
                 .zipWithIndex()
-                .map(t->()->iterators.computeIfAbsent(() -> toBufferingCopier(it.iterator(),copies)).get(t.v2).get());
+                .map(t->()-> toBufferingCopier(it.iterator(),copies).get(t.v2).get());
     }
     public static final <A> ListX<Iterable<A>> toBufferingCopier(final Iterable<A> it, final int copies,Supplier<Deque<A>> bufferSupplier) {
-        LazyImmutable<ListX<Iterator<A>>> iterators = LazyImmutable.def();
+
         return  ListX.range(0,copies)
                 .zipWithIndex()
-                .map(t->()->iterators.computeIfAbsent(() -> toBufferingCopier(it.iterator(),copies,bufferSupplier)).get(t.v2).get());
+                .map(t->() ->  toBufferingCopier(it.iterator(),copies,bufferSupplier).get(t.v2).get());
     }
 
     public static final <A> ListX<Iterator<A>> toBufferingCopier(final Iterator<A> iterator, final int copies) {

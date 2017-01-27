@@ -1256,12 +1256,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public T reduce(T identity, BinaryOperator<T> accumulator){
-        return  this.reduceAll(identity,accumulator).firstValue();
+        return  findFirstCallAll((ReactiveStreamX<T>)reduceAll(identity,accumulator)).get();
     }
     @Override
     public final <R, A> R collect(final Collector<? super T, A, R> collector) {
 
-        return collectAll(collector).firstValue();
+        return findFirstCallAll((ReactiveStreamX<R>)collectAll(collector)).get();
 
 
     }

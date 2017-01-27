@@ -121,7 +121,7 @@ public class AsyncPrimedHotStreamTest {
 		assertThat(list,equalTo(Arrays.asList(0,1)));
 		
 	}
-	@Test
+	@Test @Ignore
 	public void hotStreamCaptureLong() throws InterruptedException{
 
 		List<Long> list = rangeLong(0,Long.MAX_VALUE)
@@ -134,7 +134,7 @@ public class AsyncPrimedHotStreamTest {
 		assertThat(list,equalTo(Arrays.asList(0l,1l)));
 
 	}
-	@Test
+	@Test @Ignore
 	public void hotStreamCaptureReversed() throws InterruptedException{
 
 
