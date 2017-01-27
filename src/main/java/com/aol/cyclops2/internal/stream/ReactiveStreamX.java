@@ -1223,7 +1223,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         ReactiveStreamX<Tuple2<T, U>> res = createSeq(new ZippingOperator<>(source, right, Tuple::tuple));
         if(this.async == Type.SYNC){
             //zip could recieve an asyncrhonous Stream so we force onto the async path
-            return res.withAsync(Type.NO_BACKPRESSURE);
+            return res.withAsync(Type.BACKPRESSURE);
         }
         return res;
 

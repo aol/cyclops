@@ -31,43 +31,11 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
     Operator<? super T2> right;
     private final BiFunction<? super T1, ? super T2, ? extends R> fn;
 
-    /**
-    static class LeftZipper<T1,T2>{
 
-        final OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
-        AtomicBoolean leftComplete = new AtomicBoolean(false);
-        AtomicBoolean rightComplete = new AtomicBoolean(false);
-        long activeCount;
-
-        public void onNext(Consumer<? super T1> next){
-
-        }
-
-        public void onComplete(){
-            leftComplete.set(true);
-
-            System.out.println("LEFT COMPLETE.. " + rightComplete.get());
-
-            System.out.println("LEFT QUEUE " + leftQ.isEmpty() + " size " + leftQ.size()  + " RIGHT COMPLETE " + rightComplete.get());
-
-
-            if (activeCount==0 || rightComplete.get()) {
-                System.out.println("Running complete! LEFT SIDE " + + leftQ.size() + " RightQ " + rightQ.size() + " thread " + Thread.currentThread().getId());
-
-                if(rightSub[0]!=null)
-                    rightSub[0].cancel();
-                handleComplete(completing,onComplete);
-
-            }
-        }
-
-    }
-     **/
 
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        //ConcurrentLinkedQueue<T1> leftQ = new ConcurrentLinkedQueue<>();
-        //ConcurrentLinkedQueue<T2> rightQ = new ConcurrentLinkedQueue<>();
+
         OneToOneConcurrentArrayQueue<T1> leftQ = new OneToOneConcurrentArrayQueue<T1>(1024);
         OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
         StreamSubscription  leftSub[] = {null};
@@ -119,7 +87,8 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
             }
         };
         leftSub[0]  = left.subscribe(e->{
-
+            if(!sub.isOpen)
+                return;
 
             try {
 
@@ -166,7 +135,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
             }
 
 
-        },onError,()->{
+        },e->{
+            onError.accept(e);
+            leftSub[0].request(1l);
+        },()->{
             leftComplete.set(true);
 
             System.out.println("LEFT COMPLETE.. " + rightComplete.get());
@@ -188,7 +160,8 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
         });
         rightSub[0] = right.subscribe(e->{
-
+            if(!sub.isOpen)
+                return;
             try {
                 if (!leftQ.isEmpty()) {
                     R value =fn.apply(leftQ.poll(), (T2) e);
@@ -235,7 +208,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
             }
 
-        },onError,()->{
+        },e->{
+            onError.accept(e);
+            rightSub[0].request(1l);
+        },()->{
 
             rightComplete.set(true);
             System.out.println("RIGHT COMPLETE..");
@@ -349,7 +325,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                 onError.accept(t);
             }
 
-        },onError,()->{
+        },e->{
+            onError.accept(e);
+            rightSub[0].request(1l);
+        },()->{
 
 
             drainAll(leftQ,rightQ,onNext);

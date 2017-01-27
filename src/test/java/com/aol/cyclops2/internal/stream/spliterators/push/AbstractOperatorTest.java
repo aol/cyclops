@@ -19,7 +19,7 @@ public abstract class AbstractOperatorTest {
     Operator<Integer> one;
     Operator<Integer> three;
     Operator<Integer> twoAndError;
-    Operator<Integer> threeErrors;
+    protected Operator<Integer> threeErrors;
 
     @Before
     public void setup(){

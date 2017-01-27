@@ -1,6 +1,13 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.zip;
 
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
+import org.junit.Test;
+import org.reactivestreams.Subscription;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by johnmcclean on 17/01/2017.
@@ -24,6 +31,16 @@ public class ZipOperatorTest extends AbstractOperatorTest {
     }
     public Operator<Integer> createThreeErrors(){
         return new ZippingOperator<Integer,Integer,Integer>(new ArrayOfValuesOperator<>(10,11,12),Fixtures.threeErrorsSource,(a,b)->a+b);
+
+    }
+
+    @Test
+    public void subscribeThreeErrors() throws Exception {
+        Subscription sub = threeErrors.subscribe(values::add,errors::add,()->onComplete =true);
+        sub.request(1l);
+        assertThat(values.size(),equalTo(0));
+        assertThat(errors.size(),equalTo(3));
+        assertTrue(onComplete);
 
     }
 

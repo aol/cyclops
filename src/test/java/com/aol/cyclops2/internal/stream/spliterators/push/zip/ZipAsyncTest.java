@@ -1,6 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.zip;
 
+import com.aol.cyclops2.internal.stream.spliterators.push.Fixtures;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
+import cyclops.async.Future;
 import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -29,6 +31,21 @@ public class ZipAsyncTest {
 
     protected <U> ReactiveSeq<U> flux(U... array){
         return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+
+    }
+    @Test
+    public void exactElements1(){
+        assertThat(Spouts.iterate(0l, i->i+1l).zip(Spouts.iterate(0l,i->i+1l))
+                .limit(1l).map(t->t.v1).count(),equalTo(1l));
+        assertThat(Spouts.of(1).zip(Spouts.of(1))
+                        .map(t->t.v1).count(),equalTo(1l));
+    }
+    @Test
+    public void zipErrors(){
+        Future future = Future.future();
+        Spouts.of(1,2,3).zipP(Spouts.reactiveStream(Fixtures.threeErrorsSource))
+                .forEach(System.out::println,System.out::println,()->future.complete(1));
+        future.get();
 
     }
     @Test
