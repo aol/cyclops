@@ -40,10 +40,20 @@ public  class CoreReactiveStreamXTest {
 		empty = of();
 		nonEmpty = of(1);
 	}
-	
-	
-	
-	
+
+
+
+	@Test
+	public void flatMap(){
+		for(int i=0;i<1000000;i++){
+			System.out.println("Iteration " + i);
+			assertThat(of(1)
+							.flatMap(in -> of(1, 2, 3))
+							.toList(),
+					equalTo(Arrays.asList(1, 2, 3)));
+		}
+
+	}
 
     @Test
     public void flatMapPublisher() throws InterruptedException{

@@ -66,10 +66,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        ConcurrentLinkedQueue<T1> leftQ = new ConcurrentLinkedQueue<>();
-        ConcurrentLinkedQueue<T2> rightQ = new ConcurrentLinkedQueue<>();
-       // OneToOneConcurrentArrayQueue<T1> leftQ = new OneToOneConcurrentArrayQueue<T1>(1024);
-        //OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
+        //ConcurrentLinkedQueue<T1> leftQ = new ConcurrentLinkedQueue<>();
+        //ConcurrentLinkedQueue<T2> rightQ = new ConcurrentLinkedQueue<>();
+        OneToOneConcurrentArrayQueue<T1> leftQ = new OneToOneConcurrentArrayQueue<T1>(1024);
+        OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
         StreamSubscription  leftSub[] = {null};
         StreamSubscription  rightSub[] = {null};
         AtomicBoolean leftComplete = new AtomicBoolean(false); //left & right compelte can be merged into single integer

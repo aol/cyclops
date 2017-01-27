@@ -183,19 +183,19 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     @Override
     public final Set<T> toSet() {
-        return unwrapStream().collect(Collectors.toSet());
+        return collect(Collectors.toSet());
     }
 
     @Override
     public final List<T> toList() {
 
-        return unwrapStream().collect(Collectors.toList());
+        return collect(Collectors.toList());
     }
 
     @Override
     public final <C extends Collection<T>> C toCollection(final Supplier<C> collectionFactory) {
 
-        return unwrapStream().collect(Collectors.toCollection(collectionFactory));
+        return collect(Collectors.toCollection(collectionFactory));
     }
 
     @Override
