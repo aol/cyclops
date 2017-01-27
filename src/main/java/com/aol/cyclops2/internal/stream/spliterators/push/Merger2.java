@@ -1,28 +1,22 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.control.either.Either5;
 import lombok.Getter;
-import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
-import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 import org.agrona.concurrent.QueuedPipe;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.atomic.LongAdder;
-import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
+import java.util.function.LongFunction;
 
 /**
  * Created by johnmcclean on 26/01/2017.
  */
 @Getter
-public class Merger<T> implements Subscriber<T> {
-    private final LongConsumer onFail;
+public class Merger2<T> implements Subscriber<T> {
+    private final LongFunction onFail;
     final QueuedPipe<T>  queue;
     volatile boolean complete = false;
     volatile Throwable error;
@@ -34,8 +28,8 @@ public class Merger<T> implements Subscriber<T> {
     private final Runnable completionHandler;
     private final Consumer<? super T> action;
     private final AtomicBoolean wip;
-    public Merger(AtomicBoolean wip,QueuedPipe<T> queue,Operator<T> operator,Consumer<? super T> action,final Consumer<? super Throwable> error,
-                  LongConsumer onFail,Runnable completionHandler) {
+    public Merger2(AtomicBoolean wip, QueuedPipe<T> queue, Operator<T> operator, Consumer<? super T> action, final Consumer<? super Throwable> error,
+                   LongFunction onFail, Runnable completionHandler) {
         this.wip = wip;
         this.queue =queue;
        sub = operator.subscribe(this::onNext,this::onError,this::onComplete);
@@ -166,7 +160,7 @@ public class Merger<T> implements Subscriber<T> {
         //System.out.println("On complete for Merger "+ System.identityHashCode(this) + " unused demand " + unusedDemand);
         if(unusedDemand>0) {
             System.out.println("Returning unused demand.. " + unusedDemand);
-            onFail.accept(unusedDemand);
+            onFail.apply(unusedDemand);
         }
         complete = true;
         completionHandler.run();

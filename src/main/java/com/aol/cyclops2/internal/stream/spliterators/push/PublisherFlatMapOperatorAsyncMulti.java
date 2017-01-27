@@ -14,23 +14,21 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.LongConsumer;
-import java.util.stream.Stream;
 
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implements Printable {
+public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> implements Printable {
 
 
     int maxCapacity=256;
     final Function<? super T, ? extends Publisher<? extends R>> mapper;;
 
-    public PublisherFlatMapOperatorAsync(Operator<T> source, Function<? super T, ? extends Publisher<? extends R>> mapper){
+    public PublisherFlatMapOperatorAsyncMulti(Operator<T> source, Function<? super T, ? extends Publisher<? extends R>> mapper){
         super(source);
         this.mapper = mapper;
 

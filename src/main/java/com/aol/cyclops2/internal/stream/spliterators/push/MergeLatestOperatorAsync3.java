@@ -3,30 +3,28 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import cyclops.collections.ListX;
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
-import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.agrona.concurrent.QueuedPipe;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
+import java.util.function.LongFunction;
 
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class MergeLatestOperatorAsync2<IN> implements Operator<IN> {
+public class MergeLatestOperatorAsync3<IN> implements Operator<IN> {
 
 
     private final Operator<IN>[] operators;
 
 
-    public MergeLatestOperatorAsync2(Operator<IN>[] sources){
+    public MergeLatestOperatorAsync3(Operator<IN>[] sources){
         this.operators=sources;
 
 
@@ -47,23 +45,25 @@ public class MergeLatestOperatorAsync2<IN> implements Operator<IN> {
     @Override
     public StreamSubscription subscribe(Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         final QueuedPipe<IN> queue = new ManyToManyConcurrentArrayQueue<IN>(1024);
-        ListX<Merger<IN>> mergers = ListX.empty();
-        AtomicLong sent = new AtomicLong(0);
+        ListX<Merger2<IN>> mergers = ListX.empty();
+
+        AtomicInteger calls = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
         AtomicInteger index = new AtomicInteger(0);
         AtomicBoolean wip = new AtomicBoolean(false);
-        LongConsumer demandFinderRef[] ={null};
+        LongFunction demandFinderRef[] ={null};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n1->{
                 System.out.println("*****!!!!!!!!!!!!!***************    n is "+ n1 + " looping " + Math.min(n1,mergers.size()));
 
 
 
-                demandFinderRef[0].accept(n1);
 
-                /*
+
+                /**
                   rework to calculate demand so if requests come in when executing we also account for that demand
-
-                for(;;) {
+                **/
+                while(isOpen) {
                     long currentRequest = n1;
                     long total = requested.get();
 
@@ -71,17 +71,17 @@ public class MergeLatestOperatorAsync2<IN> implements Operator<IN> {
 
                     if (delivered == currentRequest) {
                         currentRequest = requested.accumulateAndGet(delivered, (a, b) -> a - b);
-                        System.out.println("Delivered  " + delivered + " remaining " + currentRequest);
+                        System.out.println("Delivered  " + delivered + " remaining " + currentRequest + " requested " + requested.get());
                         if (currentRequest == 0) {
                             System.out.println("End request..  requested "+  requested.get());
                             return;
                         }
                     }
-                }*/
+                }
 
 
 
-                System.out.println("End request.. sent " + sent.get() +  " requested " + requested.get());
+
 
             };
             @Override
@@ -100,57 +100,76 @@ public class MergeLatestOperatorAsync2<IN> implements Operator<IN> {
             }
         };
         Runnable completionHandler = ()->{
+            calls.incrementAndGet();
+            if(complete.get())
+                return;
             mergers.forEach(m -> m.drain());
             if (mergers.allMatch(m -> m.isComplete())) {
+                sub.cancel();
+
                 mergers.forEach(m -> m.drain());
                 System.out.println("Completing on main completion handler!");
                 while(!wip.compareAndSet(false,true)){
                     LockSupport.parkNanos(0l);//wait for drain
                 }
+
                 System.out.println(" QUEUE SIZE " + queue.size() + " is empty ?" + queue.isEmpty());
                 onComplete.run();
+                calls.incrementAndGet();
+                complete.set(true);
                 return;
             }
             //mergers.forEach(m->requested.accumulateAndGet(m.returnDemand(),(a,b)->a+b));
             System.out.println("Not completed ? " + mergers.filter(m -> !m.isComplete()).count());
             mergers.filter(m -> !m.isComplete()).forEach(m->System.out.println("Not complete " +System.identityHashCode( m)));
         };
-        LongConsumer demandFinder = n-> {
+        LongFunction demandFinder = n-> {
+            long sent = 0;
             for (long k = 0; k < Math.min(n, mergers.size()); k++) {
-                System.out.println("K is " + k);
-                if (!sub.isActive())
-                    break;
+                System.out.println("K is " + k + "  n is " + n + " looping for " + Math.min(n, mergers.size())
+                        + " index is " + index + " mergers " + mergers.size()
+                        + " open "+  sub.isOpen + " calls " + calls.get());
+                if (!sub.isOpen)
+                    return sent;
                 int toUse = index.incrementAndGet() - 1;
                 if (toUse + 1 >= mergers.size()) {
                     index.set(0);
 
                 }
 
-                if (sub.isActive() && !mergers.get(toUse).isComplete()) {
+                System.out.println("open ? " + sub.isOpen + "  complete " + mergers.get(toUse).isComplete() + " pred " + (sub.isOpen && !mergers.get(toUse).isComplete()));
+                if (sub.isOpen && !mergers.get(toUse).isComplete()) {
+                    System.out.println("Sub is open and merger not complete");
                     long activeMergers = mergers.filterNot(m->m.isComplete()).size();
                     if(activeMergers>0){
                         long size = n==Long.MAX_VALUE ? Long.MAX_VALUE : Math.max(1,n/activeMergers);
                         System.out.println("!!!!Booked  Merger " + System.identityHashCode(mergers.get(toUse)) + "  demand " + sub.requested.get() + " " +size);
+                        sent++;
                         mergers.get(toUse).request(size);
-                        sent.incrementAndGet();
+
                     }
 
-                } else
+                } else {
+                    System.out.println("decrementing k");
                     k--;
-
+                }
+                mergers.filter(m -> !m.isComplete()).forEach(m->System.out.println("Not complete " +System.identityHashCode( m)));
                 if(mergers.allMatch(m -> m.isComplete())) {
-                    return;
+                    System.out.println("All complete " +  sub.requested.get() + " sent " + sent + " " + complete.get() + " calls to completion handler " + calls.get());
+
+                    return sent;
                 }
 
 
             }
+            return sent;
         };
         demandFinderRef[0]=demandFinder;
 
         for(int i=0;i<operators.length;i++){
             int current = i;
-             mergers.add(new Merger<IN>(wip,queue,operators[current],in->{
-                 sub.requested.decrementAndGet();
+             mergers.add(new Merger2<IN>(wip,queue,operators[current],in->{
+               //  sub.requested.decrementAndGet();
                  onNext.accept(in);
 
              },onError,demandFinder,completionHandler));

@@ -185,6 +185,50 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         T value = result.get();
         return Optional.ofNullable(value);
     }
+    public final static<T> Optional<T> findFirstCallAll(ReactiveStreamX<T> stream) {
+
+
+        Future<T> result = Future.future();
+
+        if(stream.async==Type.NO_BACKPRESSURE){
+            stream.source.subscribeAll(e->{
+                result.complete(e);
+                throw new Queue.ClosedQueueException();
+            },t->{
+                result.completeExceptionally(t);
+            },()->{
+                if(!result.isDone()) {
+                    result.complete(null);
+                }
+            });
+            T value = result.get();
+            return Optional.ofNullable(value);
+        }
+
+        Subscription sub[] = {null};
+        //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
+        sub[0] = stream.source.subscribe(e -> {
+            System.out.println("Value recieved ");
+            result.complete(e);
+            if(sub[0]!=null)
+                sub[0].cancel();
+
+
+        },e->{
+            result.completeExceptionally(e);
+            if(sub[0]!=null)
+                sub[0].cancel();
+
+        },()->{
+            if(!result.isDone()) {
+                result.complete(null);
+            }
+        });
+        sub[0].request(Long.MAX_VALUE);
+
+        T value = result.get();
+        return Optional.ofNullable(value);
+    }
 
 
 
@@ -323,9 +367,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public final <R> ReactiveSeq<R> flatMapP(int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> fn) {
-        ReactiveSeq<R> seq = (ReactiveSeq<R>)map(fn).grouped(maxConcurrency)
-                     .flatMapP(l -> Spouts.mergeLatest(l));
+        ReactiveSeq<R> seq = map(fn).grouped(maxConcurrency)
+                                                    .flatMapP(l -> Spouts.mergeLatestList(l));
         return seq;
+
     }
 
 

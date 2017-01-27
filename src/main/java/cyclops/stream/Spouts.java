@@ -178,6 +178,9 @@ public interface Spouts {
 
         return new ReactiveStreamX<R>(new ZippingLatestOperator<T1,T2,R>(op1,op2,fn), Type.BACKPRESSURE);
     }
+    static <T> ReactiveSeq<T> mergeLatestList(ListX<? extends Publisher<? extends T>> publisher){
+        return mergeLatest((Publisher[])ReactiveSeq.fromPublisher(publisher).toArray(s->new Publisher[s]));
+    }
     static <T> ReactiveSeq<T> mergeLatest(Publisher<? extends Publisher<T>> publisher){
         return mergeLatest((Publisher[])ReactiveSeq.fromPublisher(publisher).toArray(s->new Publisher[s]));
     }
@@ -191,7 +194,7 @@ public interface Spouts {
                 op[i] = new PublisherToOperator<T>(array[i]);
             }
         }
-        return new ReactiveStreamX<T>(new MergeLatestOperatorAsync2<T>(op), Type.BACKPRESSURE);
+        return new ReactiveStreamX<T>(new MergeLatestOperatorAsync3<T>(op), Type.BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> amb(ListX<? extends Publisher<? extends T>> list){
         return amb(list.toArray(new ReactiveSeq[0]));

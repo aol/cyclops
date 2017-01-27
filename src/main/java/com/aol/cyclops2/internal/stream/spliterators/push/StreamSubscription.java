@@ -1,6 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import com.aol.cyclops2.internal.stream.publisher.PublisherIterable;
+import cyclops.Semigroups;
+import cyclops.function.Semigroup;
 import org.reactivestreams.Subscription;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -18,11 +20,13 @@ public class StreamSubscription implements Subscription {
     public boolean isActive(){
         return isOpen && requested.get()>0;
     }
-
+    protected final AtomicLong additional = new AtomicLong(0);
     public boolean singleActiveRequest(long n, LongConsumer work){
         if(this.requestInternal(n)) {
             work.accept(n);
             return true;
+        }else{
+            additional.accumulateAndGet(n, (a,b)->a+b);
         }
         System.out.println("Another process running..");
         return false;

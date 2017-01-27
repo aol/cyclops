@@ -181,7 +181,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapPAsync2(){
-        for(int k=0;k<5000;k++) {
+        for(int k=0;k<50000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -211,7 +211,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapPAsync2Synchronous(){
-        for(int k=0;k<5000;k++) {
+        for(int k=0;k<50000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
