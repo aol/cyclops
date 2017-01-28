@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -39,6 +40,25 @@ public class ZipAsyncTest {
                 .limit(1l).map(t->t.v1).count(),equalTo(1l));
         assertThat(Spouts.of(1).zip(Spouts.of(1))
                         .map(t->t.v1).count(),equalTo(1l));
+    }
+    @Test
+    public void exactElements500(){
+        assertThat(Spouts.iterate(0l, i->i+1l).zip(Spouts.iterate(0l,i->i+1l))
+                .limit(500l).map(t->t.v1).count(),equalTo(500l));
+
+    }
+    @Test
+    public void exactElements1000(){
+        AtomicLong count = new AtomicLong(0);
+        Future future = Future.future();
+        Spouts.iterate(0l, i->i+1l).zip(Spouts.iterate(0l,i->i+1l))
+                                                    .limit(500l)
+                                                    .map(t->t.v1)
+                                                    .forEach(1000,n->count.incrementAndGet(),
+                e->{},()->future.complete(1));
+        future.get();
+        assertThat(count.get(),equalTo(500l));
+
     }
     @Test
     public void zipErrors(){

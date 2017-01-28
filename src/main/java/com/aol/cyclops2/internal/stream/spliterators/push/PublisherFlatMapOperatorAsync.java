@@ -113,7 +113,9 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                         PublisherToOperator<R> op = new PublisherToOperator<>((Publisher<R>)split);
                         Subscription sLocal = op.subscribe(el->{
 
-                            System.out.println("!!!!!!!!!Pushing " + el + "  demand " + res.requested.get()  + " status " + status.get() + " thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+                            System.out.println("!!!!!!!!!Pushing " + el +
+                                     " sub " + activeSub.get() +
+                                    "  demand " + res.requested.get()  + " status " + status.get() + " thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
 
                             res.requested.decrementAndGet();
                             onNext.accept(el);
@@ -129,7 +131,9 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                         },onError,()->{
                             activeRequest.set(true);
 
-                            System.out.println("Inner complete   thread " + Thread.currentThread().getId() + " demand "  + res.requested.get() + " active " + activeRequest.get());
+                            System.out.println("Inner complete  " + " sub " + activeSub.get() +
+                                        " thread "
+                                                + Thread.currentThread().getId() + " demand "  + res.requested.get() + " active " + activeRequest.get());
                             activeSub.set(null);
                             System.out.println("Active sub is  " + activeSub.get());
 
@@ -225,13 +229,21 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
     }
 
     private void singleActiveInnerRequest(AtomicReference<Subscription> activeSub, AtomicBoolean activeRequest, StreamSubscription res) {
-        System.out.println("Request " + activeRequest.get() + " " + res.requested.get());
+        System.out.println("Request " + activeRequest.get() + " " + res.requested.get() +  " " + activeSub.get());
+        if(res.requested.get()==0){
+            System.out.println("No demand returning.. " + Thread.currentThread().getId());
+            return;
+        }
         Subscription a = activeSub.get();
-        if(res.isActive() && activeRequest.compareAndSet(false,true)) {
-
+        if(activeRequest.compareAndSet(false,true) && res.isActive()) {
+            if(res.requested.get()==0){
+                System.out.println("No demand!! in signal demand! " + activeSub.get());
+                activeRequest.set(false);
+                 return;
+            }
             System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
                     + Thread.currentThread().getId()
-                    + " ************************* " + System.identityHashCode(a));
+                    + " ************************* " + System.identityHashCode(a) +  " " + a + " " + activeSub.get());
             if(a!=null) //track inner requests
                         // and deliveries to increase this from 1
 
@@ -242,7 +254,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
             }
         }else{
 
-            System.out.println("Failed to signal demand " + activeRequest.get() + " active " + res.isActive());
+            System.out.println("Failed to signal demand " + activeRequest.get() + " active " + res.isActive() + " thread " +  + Thread.currentThread().getId());
         }
     }
 

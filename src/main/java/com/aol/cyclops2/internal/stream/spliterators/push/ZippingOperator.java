@@ -47,7 +47,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
         AtomicBoolean completing = new AtomicBoolean(false);
         AtomicInteger status = new AtomicInteger(0); //1st bit for left, 2 bit for right pushing
 
-        StreamSubscription sub = new StreamSubscription(){
+        StreamSubscription sub   = new StreamSubscription(){
             LongConsumer work = n->{
                 if(n==Long.MAX_VALUE){
                     while(leftSub[0].isOpen && rightSub[0].isOpen && isOpen){
@@ -59,9 +59,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                 }
 
                 System.out.println("DEMAND ADDED " + requested.get() + " n is " + n + " Thread "+ Thread.currentThread().getId());
-                leftSub[0].request(Math.min(n,256));
-                rightSub[0].request(Math.min(n,256));
-
+               // leftSub[0].request(Math.min(n,256));
+               // rightSub[0].request(Math.min(n,256));
+                leftSub[0].request(1);
+                rightSub[0].request(1);
 
 
                 System.out.println("End request cycle..");
@@ -98,6 +99,13 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                     sub.requested.decrementAndGet();
                     onNext.accept(value);
                     rightActive.decrementAndGet();
+                    if(sub.isActive()){
+                        leftSub[0].request(1);
+                        rightSub[0].request(1);
+                    }
+                    /**
+                     * request more / next!
+                     */
 
 
                 } else {
@@ -169,7 +177,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                     sub.requested.decrementAndGet();
                     onNext.accept(value);
                     leftActive.decrementAndGet();
-
+                    if(sub.isActive()){
+                        leftSub[0].request(1l);
+                        rightSub[0].request(1);
+                    }
 
 
                 } else {

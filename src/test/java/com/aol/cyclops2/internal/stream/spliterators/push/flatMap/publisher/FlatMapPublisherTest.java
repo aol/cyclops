@@ -17,6 +17,7 @@ import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -226,9 +227,46 @@ public class FlatMapPublisherTest {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            List<Integer> res =  ReactiveSeq.fromPublisher(Spouts.of(1, 2, 3)
-                    .flatMapP(i -> nextAsync()))
-                    .toList();
+            final SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
+            Flux.just(1, 2, 3)
+                    .flatMap(i -> nextAsync()).subscribe(sub);
+
+            List<Integer> res =  sub.stream().toList();
+            System.out.println("Result is " + res);
+            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res, hasItems(1,2));
+            int one = 0;
+            int two = 0;
+            for(Integer next : res){
+                if(next==1){
+                    one++;
+                }
+                if(next==2){
+                    two++;
+                }
+            }
+            assertThat(one,equalTo(3));
+            assertThat(two,equalTo(3));
+        }
+    }
+    @Test
+    public void flatMapPAsync2Iterator(){
+        for(int k=0;k<50000;k++) {
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            List<Integer> res = new ArrayList<>();
+            Iterator<Integer> it = Spouts.of(1, 2, 3)
+                    .flatMapP(i -> nextAsync()).iterator();
+            while(it.hasNext()){
+                res.add(it.next());
+            }
+
+
             System.out.println("Result is " + res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));

@@ -84,7 +84,9 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
 
                 activeRequest.set(true);
 
-                System.out.println("Inner complete   thread " + Thread.currentThread().getId() + " demand "  + res.requested.get() + " active " + activeRequest.get());
+                System.out.println("Inner complete   thread " + Thread.currentThread().getId() + " demand "
+                                + res.requested.get() + " active " + activeRequest.get()+
+                               " current sub " + activeSub.get());
                 activeSub.set(null);
                 System.out.println("Active sub is  " + activeSub.get());
 
@@ -98,21 +100,26 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
 
                 }
                 while (!status.compareAndSet(thunkStatusLocal, thunkStatusLocal & ~(1 << 1))); //unset inner active
-                if (status.compareAndSet(1, 100)) { //inner active and complete
+
+                if (activeSub.get()==null && status.compareAndSet(1, 100)) { //inner active and complete
                     onComplete.run();
                     return;
                 }
+
                 System.out.println("Inner demand to parent " + parentRequests.incrementAndGet() + " status " + status.get());
 
                 parent[0].request(1l);
                 //always request more from the parent until outer complete
                 System.out.println("****************Setting active to false IC "+ activeRequest.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
                 System.out.println("Awaiting next subscription " + activeSub.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
-                if(activeSub.get()==null){ //check for new subscription or completeness
+                if (activeSub.get() == null) { //check for new subscription or completeness
+
                     if (status.compareAndSet(1, 100)) { //inner active and complete
-                        System.out.println("Complete while awaiting next sub"+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
-                        onComplete.run();
-                        return;
+                        System.out.println("Complete while awaiting next sub" + " T " + Thread.currentThread().getId() + " demand " + res.requested.get());
+                        if (activeSub.get() == null) {//if a new sub aswell as complete, process it first
+                            onComplete.run();
+                            return;
+                        }
                     }
                 }
                 nextRequest = requested-recieved;
@@ -138,6 +145,7 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
 
                     if(requestsLocal==Long.MAX_VALUE){
                         a.request(Long.MAX_VALUE);
+                        System.out.println("Demand sent to " + a + " size " + Long.MAX_VALUE);
                     }else {
                         res.requested.accumulateAndGet(requestsLocal, (a1, b1) -> a1 - b1);
                         requested += requestsLocal;
@@ -151,7 +159,9 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
                         if(toAdd>0)
                              a.request(toAdd);
                         nextRequest=0;
+                        System.out.println("Demand sent to " + a + " size " + toAdd);
                     }
+
                 }
                 else{
                     System.out.println("Active Sub is null - falling back");
@@ -186,7 +196,7 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
                     s[0].request(1);
                 }else{
                     System.out.println("Signalling to active sub " + activeSub.get() + " " + status.get());
-                    while(activeSub.get()==null){
+                    if(activeSub.get()==null){
                         if(status.get()>=100 || requested.get()==0){
                             return;
                         }
@@ -245,7 +255,7 @@ public class PublisherFlatMapOperatorAsyncMulti<T,R> extends BaseOperator<T,R> i
                         activeSub.set(sLocal);//set after active
 
 
-                        System.out.println("Checking demand in main onnext " + activeRequest.get() + " demand is " + res.requested.get());
+                        System.out.println("Checking demand in main onnext " + activeRequest.get() + " demand is " + res.requested.get() + " switched to " + activeSub.get());
                         innerPublisher.singleActiveInnerRequest(activeSub, activeRequest, res);
                         System.out.println("Demand signalled on thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
 

@@ -101,6 +101,7 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
                     defaultErrorHandler.accept(t);
                 }
                 T result = (T)value.get();
+                System.out.println("NEXT VALUE " + result);
                 value.set(UNSET);
                 return result;
             }
