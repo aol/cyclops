@@ -3450,7 +3450,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static <T> ReactiveSeq<T> fromPublisher(final Publisher<? extends T> publisher) {
         Objects.requireNonNull(publisher);
-        if(publisher instanceof ReactiveSeq){
+       if(publisher instanceof ReactiveSeq){
             return (ReactiveSeq)publisher;
         }
         final SeqSubscriber<T> sub = SeqSubscriber.subscriber();

@@ -48,6 +48,8 @@ public class Merger<T> implements Subscriber<T> {
     final AtomicBoolean requestingOrCompleting = new AtomicBoolean();
 
     public void request(long next){
+        if(!sub.isOpen)
+            return;
         System.out.println("Merger request.. " + next + " merger "+ System.identityHashCode(this));
         if(next==Long.MAX_VALUE){
             System.out.println("Requesting ALL!");
@@ -122,6 +124,8 @@ public class Merger<T> implements Subscriber<T> {
 
     @Override
     public void onNext(T t) {
+        if(!sub.isOpen)
+            return;
         System.out.println("In merger on next " +  t);
         produced.incrementAndGet();
         while(!queue.offer(t)){
@@ -132,6 +136,8 @@ public class Merger<T> implements Subscriber<T> {
 
     @Override
     public void onError(Throwable t) {
+        if(!sub.isOpen)
+            return;
         System.out.println("On error for Merger "+ System.identityHashCode(this));
         error = t;
         t.printStackTrace();

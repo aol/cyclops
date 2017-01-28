@@ -57,7 +57,8 @@ public class MergeLatestOperatorAsync3<IN> implements Operator<IN> {
                 System.out.println("*****!!!!!!!!!!!!!***************    n is "+ n1 + " looping " + Math.min(n1,mergers.size()));
 
 
-
+                if(!isOpen)
+                    return;
 
 
                 /**
@@ -86,6 +87,10 @@ public class MergeLatestOperatorAsync3<IN> implements Operator<IN> {
             };
             @Override
             public void request(long n) {
+                if(n<=0) {
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
                 System.out.println("Request!! n is "+ n);
                 super.singleActiveRequest(n,work);
 
@@ -129,6 +134,8 @@ public class MergeLatestOperatorAsync3<IN> implements Operator<IN> {
         };
         LongFunction demandFinder = n-> {
             long sent = 0;
+            if(!sub.isOpen)
+                return 0;
             for (long k = 0; k < Math.min(n, mergers.size()); k++) {
                 System.out.println("K is " + k + "  n is " + n + " looping for " + Math.min(n, mergers.size())
                         + " index is " + index + " mergers " + mergers.size()

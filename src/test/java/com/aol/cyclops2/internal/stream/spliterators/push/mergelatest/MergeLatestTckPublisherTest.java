@@ -1,4 +1,4 @@
-package com.aol.cyclops2.internal.stream.spliterators.push.flatMap.publisher;
+package com.aol.cyclops2.internal.stream.spliterators.push.mergelatest;
 
 
 import cyclops.stream.Spouts;
@@ -8,16 +8,16 @@ import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
 @Test
-public class PublisherFlatMapTckPublisherTest extends PublisherVerification<Long>{
+public class MergeLatestTckPublisherTest extends PublisherVerification<Long>{
 
-	public PublisherFlatMapTckPublisherTest(){
+	public MergeLatestTckPublisherTest(){
 		  super(new TestEnvironment(300L));
 	}
 	
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return Spouts.iterate(0l, i->i+1l).flatMapP(i->Spouts.of(i)).limit(elements);
+		return Spouts.mergeLatest(Spouts.iterate(0l, i->i+1l)).limit(elements);
 		
 	}
 

@@ -70,7 +70,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                     s[0].request(1);
                 }else{
                     System.out.println("Signalling to active sub " + activeSub.get() + " " + status.get());
-                    while(activeSub.get()==null){
+                    if(activeSub.get()==null){
                         if(status.get()>=100 || requested.get()==0){
                             return;
                         }
@@ -80,9 +80,13 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                         return;
                     }
                     singleActiveInnerRequest(activeSub,activeRequest,this);
+                   /** if(activeSub==null){
+                        s[0].request(1l);
+                    }**/
                     //  System.out.println("Outer request to inner " + innerRequests.incrementAndGet() + " status " + status.get() + " demand " + requested.get());
-                     // activeSub.get().request(1);
+
                 }
+                System.out.println("Exiting..");
             };
             @Override
             public void request(long n) {
@@ -111,8 +115,9 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
 
                             System.out.println("!!!!!!!!!Pushing " + el + "  demand " + res.requested.get()  + " status " + status.get() + " thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
 
-                            onNext.accept(el);
                             res.requested.decrementAndGet();
+                            onNext.accept(el);
+
                             System.out.println("******************Setting active to false ON "+ activeRequest.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
                             activeRequest.set(false);
                             System.out.println("Reset demand " + el + "  demand " + res.requested.get()  + " status " + status.get() + " thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());

@@ -44,11 +44,7 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
             LongConsumer work = n-> {
                 System.out.println("New demand! Requesting on thread " + Thread.currentThread().getId() + " demand "  + this.requested.get());
                 thunk[0].getAsBoolean();
-                /**
-                while(!thunk[0].getAsBoolean()){
-                    LockSupport.parkNanos(0l);
-                }
-                 **/
+
             };
             @Override
             public void request(long n) {

@@ -20,13 +20,11 @@ public class StreamSubscription implements Subscription {
     public boolean isActive(){
         return isOpen && requested.get()>0;
     }
-    protected final AtomicLong additional = new AtomicLong(0);
+
     public boolean singleActiveRequest(long n, LongConsumer work){
         if(this.requestInternal(n)) {
             work.accept(n);
             return true;
-        }else{
-            additional.accumulateAndGet(n, (a,b)->a+b);
         }
         System.out.println("Another process running..");
         return false;

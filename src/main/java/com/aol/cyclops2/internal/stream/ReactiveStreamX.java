@@ -366,6 +366,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
         return res;
     }
+
     @Override
     public final <R> ReactiveSeq<R> flatMapP(int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> fn) {
         ReactiveSeq<R> seq = map(fn).grouped(maxConcurrency)

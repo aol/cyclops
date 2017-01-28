@@ -51,6 +51,8 @@ public class FlatMapPublisherTest {
     public void flatMapFlux(){
         for(int i=0;i<10000;i++){
             System.out.println("************Iteration " + i);
+            System.out.println("************Iteration " + i);
+            System.out.println("************Iteration " + i);
             Assert.assertThat(flux(1)
                             .flatMapP(in -> flux(1, 2, 3))
                             .toList(),
@@ -211,7 +213,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapPAsync2Synchronous(){
-        for(int k=0;k<50000;k++) {
+        for(int k=0;k<5000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -299,9 +301,9 @@ public class FlatMapPublisherTest {
             assertThat(two,equalTo(3));
         }
     }
-    Subscription subs;
-    AtomicInteger count;
-    AtomicBoolean complete;
+    volatile Subscription subs;
+    volatile AtomicInteger count;
+    volatile AtomicBoolean complete;
     @Test
     public void flatMapPAsyncRS(){
         for(int k=0;k<1000;k++) {
