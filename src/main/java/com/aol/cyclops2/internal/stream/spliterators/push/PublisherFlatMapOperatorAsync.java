@@ -79,7 +79,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                     if(status.get()>=100 || requested.get()==0){
                         return;
                     }
-                    singleActiveInnerRequest(activeSub,activeRequest,this);
+                    singleActiveInnerRequest2(activeSub,activeRequest,this, onComplete,status);
                    /** if(activeSub==null){
                         s[0].request(1l);
                     }**/
@@ -126,7 +126,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
 
 
                             System.out.println("Set active request to false "+  activeRequest.get() + " attempting demand ");
-                            singleActiveInnerRequest(activeSub, activeRequest, res);
+                            singleActiveInnerRequestOnNextChild(activeSub, activeRequest, res, onComplete,status);
 
                         },onError,()->{
                             activeRequest.set(true);
@@ -170,7 +170,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                             System.out.println("Got next subscription " + activeSub.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
                             activeRequest.set(false);
                              System.out.println("Checking demand in Inner on complete! " +  activeRequest.get() + " " + res.requested.get());
-                            singleActiveInnerRequest(activeSub, activeRequest, res);
+                            singleActiveInnerRequestNoLoop(activeSub, activeRequest, res,onComplete,status);
 
                           //  after.run();
 
@@ -195,7 +195,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
 
 
                         System.out.println("Checking demand in main onnext " + activeRequest.get() + " demand is " + res.requested.get());
-                        singleActiveInnerRequest(activeSub, activeRequest, res);
+                        singleActiveInnerRequestUpdate(sLocal, activeRequest, res,onComplete,status);
                         System.out.println("Demand signalled on thread " + Thread.currentThread().getId() + " demand "  + res.requested.get());
 
                     } catch (Throwable t) {
@@ -228,30 +228,159 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
         return res;
     }
 
-    private void singleActiveInnerRequest(AtomicReference<Subscription> activeSub, AtomicBoolean activeRequest, StreamSubscription res) {
+    //request -> ActiveSub may be null or change
+    private void singleActiveInnerRequest2(AtomicReference<Subscription> activeSub, AtomicBoolean activeRequest,
+                                          StreamSubscription res, Runnable onComplete,AtomicInteger status) {
         System.out.println("Request " + activeRequest.get() + " " + res.requested.get() +  " " + activeSub.get());
+        if(res.requested.get()==0){
+            System.out.println("No demand returning.. " + Thread.currentThread().getId());
+            return;
+        }
+
+        if(activeRequest.compareAndSet(false,true) && res.isActive()) {
+            Subscription a;// = activeSub.get();
+            do {
+                a = activeSub.get();
+                if (res.requested.get() == 0) {
+                    System.out.println("No demand!! in signal demand! " + activeSub.get());
+                    activeRequest.set(false);
+                    return;
+                }
+                System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
+                        + Thread.currentThread().getId()
+                        + " ************************* " + System.identityHashCode(a) + " " + a + " " + activeSub.get());
+                if (a != null) //track inner requests
+                    // and deliveries to increase this from 1
+
+                    a.request(1l);
+                else { //if a is null another thread has completed and we are in the main request thread
+                    //we should loop around doing an CAS on ActiveSub so that demand is set on the correct one.
+                    System.out.println("Active Sub is null - looping..");
+                    if (status.compareAndSet(1, 100)) { //inner active and complete
+                        System.out.println("Complete while awaiting next sub"+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+                        if(activeSub.get()==null) {//if a new sub aswell as complete, process it first
+                            onComplete.run();
+                            return;
+                        }
+                    }
+                }
+            }while(a==null || !activeSub.compareAndSet(a,a));
+        }else{
+
+            System.out.println("Failed to signal demand " + activeRequest.get() + " active " + res.isActive() + " thread " +  + Thread.currentThread().getId());
+        }
+    }
+    //onNext child -> demand may be gone or taken, active sub can't change
+    private void singleActiveInnerRequestOnNextChild(AtomicReference<Subscription> activeSub, AtomicBoolean activeRequest,
+                                           StreamSubscription res, Runnable onComplete,AtomicInteger status) {
+        System.out.println("Request On Next Child " + activeRequest.get() + " " + res.requested.get() +  " " + activeSub.get());
+        if(res.requested.get()==0){
+            System.out.println("No demand returning.. " + Thread.currentThread().getId());
+            return;
+        }
+
+        if(activeRequest.compareAndSet(false,true) && res.isActive()) {
+            Subscription a;// = activeSub.get();
+
+                a = activeSub.get();
+                if (res.requested.get() == 0) {
+                    System.out.println("No demand!! in signal demand! " + activeSub.get());
+                    activeRequest.set(false);
+                    return;
+                }
+                System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
+                        + Thread.currentThread().getId()
+                        + " ************************* " + System.identityHashCode(a) + " " + a + " " + activeSub.get());
+                if (a != null) //track inner requests
+                    // and deliveries to increase this from 1
+
+                    a.request(1l);
+                else { //if a is null another thread has completed and we are in the main request thread
+                    //we should loop around doing an CAS on ActiveSub so that demand is set on the correct one.
+                    System.out.println("Active Sub is null - looping..");
+                    if (status.compareAndSet(1, 100)) { //inner active and complete
+                        System.out.println("Complete while awaiting next sub"+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+                        if(activeSub.get()==null) {//if a new sub aswell as complete, process it first
+                            onComplete.run();
+                            return;
+                        }
+                    }
+                }
+
+        }else{
+
+            System.out.println("Failed to signal demand " + activeRequest.get() + " active " + res.isActive() + " thread " +  + Thread.currentThread().getId());
+        }
+    }
+    //onNextParent -> pass in exact active sub
+    private void singleActiveInnerRequestUpdate(Subscription a, AtomicBoolean activeRequest,
+                                          StreamSubscription res, Runnable onComplete,AtomicInteger status) {
+        System.out.println("Request On Next Parent " + activeRequest.get() + " " + res.requested.get() +  " " + a);
+        if(res.requested.get()==0){
+            System.out.println("No demand returning.. " + Thread.currentThread().getId());
+            return;
+        }
+        while(res.isActive()) {
+            while(!activeRequest.compareAndSet(false, true)) {
+
+
+
+                System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
+                        + Thread.currentThread().getId()
+                        + " ************************* " + System.identityHashCode(a) + " " + a );
+                //track inner requests
+                // and deliveries to increase this from 1
+
+                a.request(1l);
+                return;
+
+
+            }
+
+
+
+        }
+        activeRequest.set(false); //not active
+        System.out.println("Failed to signal demand " + activeRequest.get() + " active " + res.isActive() + " thread " + +Thread.currentThread().getId());
+
+    }
+    //INNER Complete -> activeSub may not be set
+    private void singleActiveInnerRequestNoLoop(AtomicReference<Subscription> activeSub, AtomicBoolean activeRequest,
+                                          StreamSubscription res, Runnable onComplete,AtomicInteger status) {
+        System.out.println("Request Inner Complete" + activeRequest.get() + " " + res.requested.get() +  " " + activeSub.get());
         if(res.requested.get()==0){
             System.out.println("No demand returning.. " + Thread.currentThread().getId());
             return;
         }
         Subscription a = activeSub.get();
         if(activeRequest.compareAndSet(false,true) && res.isActive()) {
-            if(res.requested.get()==0){
-                System.out.println("No demand!! in signal demand! " + activeSub.get());
-                activeRequest.set(false);
-                 return;
-            }
-            System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
-                    + Thread.currentThread().getId()
-                    + " ************************* " + System.identityHashCode(a) +  " " + a + " " + activeSub.get());
-            if(a!=null) //track inner requests
-                        // and deliveries to increase this from 1
 
-                a.request(1l);
-            else{
-                System.out.println("Active Sub is null - falling back");
-                activeRequest.set(false);
-            }
+
+                if (res.requested.get() == 0 || a==null) {
+                    System.out.println("No demand!! in signal demand! " + activeSub.get());
+                    activeRequest.set(false);
+                    return;
+                }
+                System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
+                        + Thread.currentThread().getId()
+                        + " ************************* " + System.identityHashCode(a) + " " + a + " " + activeSub.get());
+                if (a != null) //track inner requests
+                    // and deliveries to increase this from 1
+
+                    a.request(1l);
+                else { //if a is null another thread has completed and we are in the main request thread
+                    //we should loop around doing an CAS on ActiveSub so that demand is set on the correct one.
+                    System.out.println("Active Sub is null - looping..");
+                    if (status.compareAndSet(1, 100)) { //inner active and complete
+                        System.out.println("Complete while awaiting next sub"+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
+                        if(activeSub.get()==null) {//if a new sub aswell as complete, process it first
+                            onComplete.run();
+                            return;
+                        }
+                    }
+                }
+
+
         }else{
 
             System.out.println("Failed to signal demand " + activeRequest.get() + " active " + res.isActive() + " thread " +  + Thread.currentThread().getId());
