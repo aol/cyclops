@@ -131,7 +131,7 @@ public class FlatMapPublisherTest {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             List<Integer> res =  Spouts.of(1,2,3)
-                    .flatMapP(1,i -> nextAsync())
+                    .flatMapP(2,i -> nextAsync())
                     .toList();
             System.out.println("Result is " + res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
@@ -183,7 +183,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapPAsync2(){
-        for(int k=0;k<50000;k++) {
+        for(int k=0;k<500;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);

@@ -4,6 +4,7 @@ import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.Traversable;
 import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.HotStream;
+import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.CyclopsCollectors;
 import cyclops.Streams;
@@ -32,6 +33,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -357,22 +359,52 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
-
-        ReactiveStreamX<R> res = createSeq(new PublisherFlatMapOperatorAsync<>(source, fn));
+        return flatMapP(256,fn);
+        /**
+        ReactiveStreamX<R> res = createSeq(new PublisherFlatMapOperatorSync<>(source, fn));
         //ReactiveStreamX<R> res = createSeq(new PublisherFlatMapOperatorAsync<>(source, fn));
         if(this.async == Type.SYNC){
             //flatMapP could recieve a asyncrhonous Streams so we force onto the async path
             return res.withAsync(Type.BACKPRESSURE);
         }
+
         return res;
+         **/
     }
 
     @Override
     public final <R> ReactiveSeq<R> flatMapP(int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return flatMapP(fn, maxConcurrency, QueueFactories.boundedQueue(5_000));
+        /**
         ReactiveSeq<R> seq = map(fn).grouped(maxConcurrency)
                                      .flatMapP(l -> Spouts.mergeLatestList(l));
         return seq;
+**/
+    }
+    public <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper, final int maxConcurrency,
+                                       final QueueFactory<R> factory) {
+        final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
+        final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
 
+        final ReactiveSeq<T> stream = stream();
+        Subscription sub = stream.map(mapper)
+                .subscribe(p -> {
+                    c.active.incrementAndGet();
+                    p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));
+
+                } , defaultErrorHandler , () -> {
+                    init.close();
+                });
+
+        final Continuation[] continuation ={null};
+        continuation[0]=new Continuation(() -> {
+
+            sub.request(1);
+
+            return continuation[0];
+        });
+        init.addContinuation(continuation[0]);
+        return createSeq(new IterableSourceOperator<>(ReactiveSeq.fromStream(init.jdkStream())));
     }
 
 

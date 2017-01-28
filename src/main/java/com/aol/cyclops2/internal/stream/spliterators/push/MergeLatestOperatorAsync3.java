@@ -135,7 +135,7 @@ public class MergeLatestOperatorAsync3<IN> implements Operator<IN> {
         LongFunction demandFinder = n-> {
             long sent = 0;
             if(!sub.isOpen)
-                return 0;
+                return 0l;
             for (long k = 0; k < Math.min(n, mergers.size()); k++) {
                 System.out.println("K is " + k + "  n is " + n + " looping for " + Math.min(n, mergers.size())
                         + " index is " + index + " mergers " + mergers.size()
