@@ -288,7 +288,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                     activeRequest.set(false);
                     return;
                 }
-                System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
+                System.out.println("Signalling demand ON NEXT CHILD! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
                         + Thread.currentThread().getId()
                         + " ************************* " + System.identityHashCode(a) + " " + a + " " + activeSub.get());
                 if (a != null) //track inner requests
@@ -325,7 +325,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
 
 
 
-                System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
+                System.out.println("Signalling demand! ON NEXT PARENT " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
                         + Thread.currentThread().getId()
                         + " ************************* " + System.identityHashCode(a) + " " + a );
                 //track inner requests
@@ -347,7 +347,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
     //INNER Complete -> activeSub may not be set
     private void singleActiveInnerRequestNoLoop(AtomicReference<Subscription> activeSub, AtomicBoolean activeRequest,
                                           StreamSubscription res, Runnable onComplete,AtomicInteger status) {
-        System.out.println("Request Inner Complete" + activeRequest.get() + " " + res.requested.get() +  " " + activeSub.get());
+        System.out.println("Request Inner Complete " + activeRequest.get() + " " + res.requested.get() +  " " + activeSub.get());
         if(res.requested.get()==0){
             System.out.println("No demand returning.. " + Thread.currentThread().getId());
             return;
@@ -361,7 +361,7 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                     activeRequest.set(false);
                     return;
                 }
-                System.out.println("Signalling demand! " + activeRequest.get() + " demand " + res.requested.get() + " Thread "
+                System.out.println("Signalling demand! INNER COMPLETE" + activeRequest.get() + " demand " + res.requested.get() + " Thread "
                         + Thread.currentThread().getId()
                         + " ************************* " + System.identityHashCode(a) + " " + a + " " + activeSub.get());
                 if (a != null) //track inner requests

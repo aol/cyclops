@@ -36,7 +36,7 @@ public class SpliteratorToOperator<T> implements Operator<T> {
 
 
                         } catch (Throwable t) {
-                            t.printStackTrace();
+
                             onError.accept(t);
                         }
                     }

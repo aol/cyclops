@@ -1,8 +1,11 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.flatMap.publisher;
 
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
+import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
+import cyclops.async.QueueFactories;
+import cyclops.async.wait.DirectWaitStrategy;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
@@ -44,13 +47,16 @@ public class FlatMapPublisherTest {
 
     protected <U> ReactiveSeq<U> flux(U... array){
 
-        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ex))).peek(s->System.out.println("next value " + s));
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ex)))
+                     .peek(s->System.out.println("!!FLUX!! next value " + s + " on thread " + Thread.currentThread().getId()));
 
 
     }
+
     @Test
     public void flatMapFlux(){
-        for(int i=0;i<10000;i++){
+        flux(1, 2, 3).subscribe(System.out::println).request(Long.MAX_VALUE);
+       for(int i=0;i<10000;i++){
             System.out.println("************Iteration " + i);
             System.out.println("************Iteration " + i);
             System.out.println("************Iteration " + i);
@@ -58,6 +64,31 @@ public class FlatMapPublisherTest {
                             .flatMapP(in -> flux(1, 2, 3))
                             .toList(),
                     Matchers.equalTo(Arrays.asList(1, 2, 3)));
+        }
+
+    }
+    @Test
+    public void fluxPushToQueue(){
+        final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
+        final QueueBasedSubscriber<Integer> init = QueueBasedSubscriber.subscriber(QueueFactories.unboundedNonBlockingQueue(new DirectWaitStrategy<>()), c,2);
+        flux(10, 20, 30).subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, 2));
+
+        init.jdkStream().forEach(System.out::println);
+
+    }
+    @Test
+    public void flatMapFluxMaxCon(){
+
+        for(int i=0;i<10000;i++){
+            System.out.println("************Iteration " + i);
+            System.out.println("************Iteration " + i);
+            System.out.println("************Iteration " + i);
+
+
+            Assert.assertThat(flux(1)
+                            .flatMapP(2,in -> flux(10, 20, 30))
+                            .toList(),
+                    Matchers.equalTo(Arrays.asList(10, 20, 30)));
         }
 
     }

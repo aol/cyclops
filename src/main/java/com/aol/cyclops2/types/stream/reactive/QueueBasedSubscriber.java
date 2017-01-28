@@ -185,6 +185,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
             LockSupport.parkNanos(100l); 
         }
+        System.out.println("Adding subscription " +  subscription);
         counter.subscription.plus(subscription);
 
         System.out.println("Requesting 1");
@@ -199,8 +200,9 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     public void onNext(final T t) {
 
         Objects.requireNonNull(t);
-        System.out.println("Next " + t);
+        System.out.println("Next " + t + " Thread " + Thread.currentThread().getId());
         queue.add(t);
+        System.out.println("Queue size " + queue.size());
         counter.added++;
 
     }
@@ -225,7 +227,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
         public AtomicLong active = new AtomicLong(
                                                   0);
         volatile boolean completable = false;
-        final QueueX<Subscription> subscription = QueueX.fromIterable(Collectors.toCollection(() -> new ConcurrentLinkedQueue<Subscription>()),
+        public final QueueX<Subscription> subscription = QueueX.fromIterable(Collectors.toCollection(() -> new ConcurrentLinkedQueue<Subscription>()),
                                                                       Arrays.<Subscription> asList());
         volatile boolean closed = false;
         volatile int added = 0;

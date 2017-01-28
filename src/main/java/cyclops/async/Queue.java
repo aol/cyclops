@@ -345,8 +345,11 @@ public class Queue<T> implements Adapter<T> {
                         throw new QueueTimeoutException();
                 }
 
-                else
+                else {
                     data = ensureClear(consumerWait.take(() -> queue.take()));
+                    if (data == null)
+                        throw new QueueTimeoutException();
+                }
             } else {
                 data = ensureClear(consumerWait.take(() -> queue.poll(timeout, timeUnit)));
                 if (data == null)

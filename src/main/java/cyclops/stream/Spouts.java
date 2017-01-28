@@ -21,6 +21,7 @@ import org.reactivestreams.Subscription;
 
 import java.util.Optional;
 import java.util.Spliterator;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -72,6 +73,28 @@ public interface Spouts {
                 LockSupport.parkNanos(1l);
             }
             sub.accept(s);
+        });
+    }
+
+    /**
+     * Create a push based Stream with <b>no backpressure</b> fromm the provided Stream.
+     * The provided Stream will be executed on the provided executor and pushed to the returned Stream
+     *
+     * @param seq Stream to execute and push to a new non-backpressure aware Stream
+     * @param exec
+     * @param <T>
+     * @return
+     */
+    static <T> ReactiveSeq<T> observeOn(Stream<T> seq, Executor exec){
+        Subscriber[] subscriber = {null};
+
+        ReactiveSeq.fromStream(seq).foldFuture(t->{
+            Subscriber<T> local = subscriber[0];
+            t.forEach(local::onNext,local::onError,local::onComplete);
+            return null;
+        },exec);
+        return async(s->{
+            subscriber[0]=s;
         });
     }
 
