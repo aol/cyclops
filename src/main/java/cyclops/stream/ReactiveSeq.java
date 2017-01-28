@@ -2559,7 +2559,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     <R> ReactiveSeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
 
-
+    <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory,Function<? super T, ? extends Publisher<? extends R>> mapper);
     <R> ReactiveSeq<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
     <R> ReactiveSeq<R> flatMapP(int maxConcurrency,Function<? super T, ? extends Publisher<? extends R>> fn);
     /**

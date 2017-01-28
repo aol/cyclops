@@ -379,15 +379,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         return createSeq(new IterableFlatMappingSpliterator<>(get(),fn), Optional.empty());
 
     }
-    /**
-    @Override
-    public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
-        if(this.stream instanceof FunctionSpliterator){
-            FunctionSpliterator f = (FunctionSpliterator)stream;
-            return createSeq(PublisherFlatMappingSpliterator.compose(f,fn),reversible);
-        }
-        return createSeq(new PublisherFlatMappingSpliterator<>(get(),fn), Optional.empty());
-   }**/
+
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
@@ -411,7 +403,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
      * @return
      */
     public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return flatMapP(mapper, maxConcurrency, QueueFactories.boundedQueue(5_000));
+        return flatMapP(maxConcurrency, QueueFactories.boundedQueue(5_000),mapper);
     }
 
     /**
@@ -421,8 +413,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
      *
      *
      */
-    public <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper, final int maxConcurrency,
-                                                final QueueFactory<R> factory) {
+    public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency,
+                                       final QueueFactory<R> factory,final Function<? super T, ? extends Publisher<? extends R>> mapper) {
         final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
         final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
 

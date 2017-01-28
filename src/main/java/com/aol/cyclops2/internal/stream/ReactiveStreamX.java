@@ -378,11 +378,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     .flatMapP(l -> Spouts.mergeLatestList(l));
 
         }
-        return flatMapP(fn, maxConcurrency, QueueFactories.unboundedNonBlockingQueue(new DirectWaitStrategy<>()));
+        return flatMapP(maxConcurrency, QueueFactories.unboundedNonBlockingQueue(new DirectWaitStrategy<>()),fn);
 
     }
-    public <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper, final int maxConcurrency,
-                                       final QueueFactory<R> factory) {
+    public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory,Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
         final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
         final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
@@ -394,7 +393,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));
 
                 } , defaultErrorHandler , () -> {
-                    System.out.println("On complete! closing queue!");
                     init.close();
                 });
 
@@ -418,28 +416,19 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
                         while(r>0) {
                             long finalR = r==Long.MAX_VALUE ? r :r / c.subscription.size() ;
-                            System.out.println("Adding demand "+ finalR);
-                            System.out.println("Subs " + c.subscription.size());
-                          //  c.subscription.forEach(System.out::println);
-                           // c.subscription.forEach(cs->cs.request(Math.max(1,finalR)));
+
 
                             while(e<r) {
                                 try {
                                     R value = init.getQueue().get();
-                                          //  .poll(100l, TimeUnit.NANOSECONDS);
-                                    //if(value!=null)
-                                    {
-                                        System.out.println("Pushing to downstream " + value);
-                                        s.onNext(value);
-                                        e++;
-                                    }
+                                    s.onNext(value);
+
                                 } catch (Queue.QueueTimeoutException t) {
 
                                 } catch (Queue.ClosedQueueException t){
                                     s.onComplete();
                                     return;
                                 }catch( Exception t){
-                                    t.printStackTrace();
                                     s.onComplete();
                                     return;
                                 }

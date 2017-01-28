@@ -168,7 +168,7 @@ public class MergeLatestTest {
     }
     @Test
     public void mergePAsync2(){
-        for(int k=0;k<40000;k++) {
+        for(int k=0;k<4000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);

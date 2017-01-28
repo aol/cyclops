@@ -83,6 +83,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                             LazyToQueue<U>,
                                           ConfigurableStream<U, FastFuture<U>>,
                                           FutureStreamSynchronousPublisher<U> {
+
     @Override
     default ReactiveSeq<U> changes(){
         return fromStream(stream().changes());
@@ -3136,6 +3137,12 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(ReactiveSeq.oneShotStream(stream())
                 .flatMapP(maxConcurrency,fn));
     }
+    @Override
+    default <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory,Function<? super U, ? extends Publisher<? extends R>> mapper){
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .flatMapP(maxConcurrency,factory,mapper));
+    }
+
 
     /*
      * @see cyclops2.reactiveStream.ReactiveSeq#flatMapStream(java.util.function.Function)

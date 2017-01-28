@@ -55,7 +55,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
      *  {@code
      *      ___Example 1___
      *
-     *      CompletableEither<Integer,Integer> completable = Either.either3();
+     *      CompletableEither<Integer,Integer> completable = Either3.either3();
             Either3<Throwable,String,Integer> mapped = completable.map(i->i*2)
                                                                   .flatMap(i->Eval.later(()->i+1));
 
@@ -77,7 +77,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
 
             ___Example 3___
 
-            CompletableEither<Integer,Integer> completable = Either.either();
+            CompletableEither<Integer,Integer> completable = Either3.either3();
             Either3<Throwable,String,Integer> mapped = completable.map(i->i*2)
                                                                  .flatMap(i->Eval.later(()->i+1));
 
