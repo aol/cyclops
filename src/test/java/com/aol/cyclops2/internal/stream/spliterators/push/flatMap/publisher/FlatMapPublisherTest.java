@@ -121,6 +121,11 @@ public class FlatMapPublisherTest {
     }
 
     @Test
+    public void flatMapPSanity(){
+       Spouts.of(1,2,3).flatMapP(3,i->Spouts.of(10,20,30,40,50,60,70,80,90)).printOut();
+    }
+
+    @Test
     public void concurrentFlatMapP1(){
         for(int k=0;k<500;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -213,7 +218,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapPAsync2Synchronous(){
-        for(int k=0;k<5000;k++) {
+        for(int k=0;k<50000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);

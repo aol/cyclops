@@ -359,9 +359,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return flatMapP(256,fn);
-        /**
-        ReactiveStreamX<R> res = createSeq(new PublisherFlatMapOperatorSync<>(source, fn));
+      //  return flatMapP(256,fn);
+
+        ReactiveStreamX<R> res = createSeq(new PublisherFlatMapOperatorAsync<>(source, fn));
         //ReactiveStreamX<R> res = createSeq(new PublisherFlatMapOperatorAsync<>(source, fn));
         if(this.async == Type.SYNC){
             //flatMapP could recieve a asyncrhonous Streams so we force onto the async path
@@ -369,7 +369,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
         return res;
-         **/
+
     }
 
     @Override
@@ -404,6 +404,25 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             return continuation[0];
         });
         init.addContinuation(continuation[0]);
+
+        Spouts.from(new Publisher<R>(){
+
+            @Override
+            public void subscribe(Subscriber<? super R> s) {
+                s.onSubscribe(new Subscription() {
+                    @Override
+                    public void request(long n) {
+                        sub.request(n);
+                    }
+
+                    @Override
+                    public void cancel() {
+                        sub.cancel();
+                    }
+                });
+
+            }
+        });
         return createSeq(new IterableSourceOperator<>(ReactiveSeq.fromStream(init.jdkStream())));
     }
 

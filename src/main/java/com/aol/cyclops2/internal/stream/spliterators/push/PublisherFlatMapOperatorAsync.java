@@ -153,11 +153,14 @@ public class PublisherFlatMapOperatorAsync<T,R> extends BaseOperator<T,R> implem
                             //always request more from the parent until outer complete
                             System.out.println("****************Setting active to false IC "+ activeRequest.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
                             System.out.println("Awaiting next subscription " + activeSub.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
-                            if(activeSub.get()==null){ //check for new subscription or completeness
+                           if(activeSub.get()==null){ //check for new subscription or completeness
+
                                 if (status.compareAndSet(1, 100)) { //inner active and complete
                                     System.out.println("Complete while awaiting next sub"+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
-                                    onComplete.run();
-                                    return;
+                                    if(activeSub.get()==null) {//if a new sub aswell as complete, process it first
+                                        onComplete.run();
+                                        return;
+                                    }
                                 }
                             }
                             System.out.println("Got next subscription " + activeSub.get()+ " T " + Thread.currentThread().getId() + " demand "  + res.requested.get());
