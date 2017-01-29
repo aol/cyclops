@@ -544,18 +544,8 @@ public class ReactiveSeqTest {
         stream.toList();
         assertFalse(active.get());
     }
-    @Test
-    public void blockToListAddOne(){
-        ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
-        ReactiveSeq<String> stream = pushable.reactiveStream();
-        new Thread(()->{
-            pushable.onNext("hello");
-            active.set(false);
-            pushable.onComplete();
-        }).run();
-        assertThat(stream.toList().size(),equalTo(1));
-        assertFalse(active.get());
-    }
+
+
     
     @Test
     public void limitLast(){

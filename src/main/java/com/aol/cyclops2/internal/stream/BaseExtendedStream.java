@@ -404,11 +404,17 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         final long timeNanos = t.toNanos(time);
 
         Supplier<Predicate<? super T>> lazy = ()-> {
-            final long[] last = {0};
+            final long[] last = {-1};
 
             return a-> {
+                System.out.println("A is  " +a);
+                if(last[0]==-1) {
+                    System.out.println("Allowing "+ a);
+                    last[0] = System.nanoTime();
+                    return true;
+                }
                 long elapsedNanos  =  (System.nanoTime() - last[0]);
-
+                System.out.println(System.nanoTime() + " " + elapsedNanos + " " + last[0] + " " + timeNanos + " " + (elapsedNanos >= timeNanos));
                 T nextValue = null;
                 if (elapsedNanos >= timeNanos) {
 

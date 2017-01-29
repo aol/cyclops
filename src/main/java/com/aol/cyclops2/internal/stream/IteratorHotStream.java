@@ -54,7 +54,6 @@ public class IteratorHotStream<T> {
                 if (it.hasNext()) {
                     try {
                         final T next = it.next();
-
                         final int local = connected;
 
                         for (int i = 0; i < local; i++) {

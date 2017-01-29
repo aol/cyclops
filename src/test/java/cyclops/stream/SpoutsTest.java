@@ -130,8 +130,10 @@ public class SpoutsTest {
         assertThat(Spouts.deferredS(()-> ReactiveSeq.of(1,2,3))
                 .collect(Collectors.toList()),equalTo(ListX.of(1,2,3)));
     }
+
     @Test
     public void ambMonoid(){
+
         for(int i=0;i<1000;i++) {
             assertThat(Monoids.<Integer>ambReactiveSeq().reduce(Stream.of((Spouts.of(1, 2, 3)), Spouts.of(100, 200, 300))).toListX(), isOneOf(ListX.of(100, 200, 300), ListX.of(1, 2, 3)));
 
@@ -190,7 +192,7 @@ public class SpoutsTest {
         assertThat(Spouts.of(1,2,3,4)
                 .fanOut(s1->s1.filter(i->i%2==0).map(i->i*2),
                         s2->s2.filter(i->i%2!=0).map(i->i*100))
-                .toListX(), Matchers.equalTo(ListX.of(4, 8, 100, 300)));
+                .toListX(), Matchers.equalTo(ListX.of(4, 100, 8, 300)));
     }
 
     @Test
@@ -199,18 +201,18 @@ public class SpoutsTest {
         assertThat(Spouts.of(1,2,3,4)
                 .fanOut(s1->s1.filter(i->i%2==0).map(i->i*2),
                         s2->s2.filter(i->i%2!=0).map(i->i*100))
-                .toListX(), Matchers.equalTo(ListX.of(4, 8, 100, 300)));
+                .toListX(), Matchers.equalTo(ListX.of(4, 100, 8, 300)));
         assertThat(Spouts.of(1,2,3,4,5,6,7,8,9)
                 .fanOut(s1->s1.filter(i->i%3==0).map(i->i*2),
                         s2->s2.filter(i->i%3==1).map(i->i*100),
                         s3->s3.filter(i->i%3==2).map(i->i*1000))
-                .toListX(), Matchers.equalTo(ListX.of(6, 12, 18, 100, 400, 700, 2000, 5000, 8000)));
+                .toListX(), Matchers.equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
         assertThat(Spouts.of(1,2,3,4,5,6,7,8,9,10,11,12)
                 .fanOut(s1->s1.filter(i->i%4==0).map(i->i*2),
                         s2->s2.filter(i->i%4==1).map(i->i*100),
                         s3->s3.filter(i->i%4==2).map(i->i*1000),
                         s4->s4.filter(i->i%4==3).map(i->i*10000))
-                .toListX(), Matchers.equalTo(ListX.of(8, 16, 24, 100, 500, 900, 2000, 6000, 10000, 30000, 70000, 110000)));
+                .toListX(), Matchers.equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
     }
     @Test
     public void iteratePred(){

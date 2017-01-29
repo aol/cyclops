@@ -79,7 +79,7 @@ public class FlatMapPublisherTest {
     @Test
     public void flatMapFluxMaxCon(){
 
-        for(int i=0;i<10000;i++){
+        for(int i=0;i<1000;i++){
             System.out.println("************Iteration " + i);
             System.out.println("************Iteration " + i);
             System.out.println("************Iteration " + i);

@@ -60,7 +60,7 @@ public class FutureTest {
     public void sub(){
         Future<Integer> f = Future.future();
 
-        Spouts.from(f).forEach(System.out::println);
+        Spouts.from(f).subscribe(System.out::println);
 
         f.complete(10);
     }

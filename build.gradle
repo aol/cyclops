@@ -111,6 +111,9 @@ jmh {
 
 task testNG(type: Test) {
     useTestNG {}
+	testLogging {
+		events "started","passed", "skipped", "failed"//, "standardOut", "standardError"
+	}
     reports.html.destination = file("$buildDir/reports/test")
 }
 
@@ -129,7 +132,7 @@ test {
     
         dependsOn testNG
      //   dependsOn testSuite
-        forkEvery = 5
+        forkEvery = 1
         
         testLogging {
             events "started","passed", "skipped", "failed"//, "standardOut", "standardError"
