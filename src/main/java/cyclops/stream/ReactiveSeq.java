@@ -782,8 +782,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                     try {
                         if (!local.hasNext()) {
                             queue.close();
+                            System.out.println("Closing.. ");
                             return Continuation.empty();
                         } else {
+                            System.out.println("Offering.. ");
                             queue.offer(local.next());
                         }
                     }catch(Throwable t){
@@ -4640,8 +4642,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayList<T>(100));
         Tuple2<? extends Stream<R1>, ? extends Stream<R2>> d2 = d.map1(path1).map2(path2);
 
-        ReactiveSeq<R1> res1 = parallel(fj, path1);
-        ReactiveSeq<R2> res2 = parallel(fj, path2);
+        ReactiveSeq<R1> res1 = d.v1.parallel(fj, path1);
+        ReactiveSeq<R2> res2 = d.v2.parallel(fj, path2);
         return res1.zip(res2,zipFn);
 
     }
@@ -4661,8 +4663,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayList<T>(100));
         Tuple2<? extends Stream<R>, ? extends Stream<R>> d2 = d.map1(path1).map2(path2);
 
-        ReactiveSeq<R> res1 = parallel(fj, path1);
-        ReactiveSeq<R> res2 = parallel(fj, path2);
+        ReactiveSeq<R> res1 = d.v1.parallel(fj, path1);
+        ReactiveSeq<R> res2 = d.v2.parallel(fj, path2);
         return res1.mergeP(res2);
 
 
@@ -4685,9 +4687,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3);
 
-        ReactiveSeq<R> res1 = parallel(fj, path1);
-        ReactiveSeq<R> res2 = parallel(fj, path2);
-        ReactiveSeq<R> res3 = parallel(fj, path3);
+        ReactiveSeq<R> res1 = d.v1.parallel(fj, path1);
+        ReactiveSeq<R> res2 = d.v2.parallel(fj, path2);
+        ReactiveSeq<R> res3 = d.v3.parallel(fj, path3);
         return res1.mergeP(res2,res3);
 
 
@@ -4700,9 +4702,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3);
-        ReactiveSeq<R1> res1 = parallel(fj, path1);
-        ReactiveSeq<R2> res2 = parallel(fj, path2);
-        ReactiveSeq<R3> res3 = parallel(fj, path3);
+        ReactiveSeq<R1> res1 = d.v1.parallel(fj, path1);
+        ReactiveSeq<R2> res2 = d.v2.parallel(fj, path2);
+        ReactiveSeq<R3> res3 = d.v3.parallel(fj, path3);
         return res1.zip3(res2,res3,zipFn);
 
     }
@@ -4735,10 +4737,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         val d = quadruplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
-        ReactiveSeq<R> res1 = parallel(fj, path1);
-        ReactiveSeq<R> res2 = parallel(fj, path2);
-        ReactiveSeq<R> res3 = parallel(fj, path3);
-        ReactiveSeq<R> res4 = parallel(fj, path4);
+        ReactiveSeq<R> res1 = d.v1.parallel(fj, path1);
+        ReactiveSeq<R> res2 = d.v2.parallel(fj, path2);
+        ReactiveSeq<R> res3 = d.v3.parallel(fj, path3);
+        ReactiveSeq<R> res4 = d.v4.parallel(fj, path4);
         return res1.mergeP(res2,res3,res4);
 
     }
@@ -4763,10 +4765,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         val d = quadruplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
-        ReactiveSeq<R1> res1 = parallel(fj, path1);
-        ReactiveSeq<R2> res2 = parallel(fj, path2);
-        ReactiveSeq<R3> res3 = parallel(fj, path3);
-        ReactiveSeq<R4> res4 = parallel(fj, path4);
+        ReactiveSeq<R1> res1 = d.v1.parallel(fj, path1);
+        ReactiveSeq<R2> res2 = d.v2.parallel(fj, path2);
+        ReactiveSeq<R3> res3 = d.v3.parallel(fj, path3);
+        ReactiveSeq<R4> res4 = d.v4.parallel(fj, path4);
         return res1.zip4(res2,res3,res4,zipFn);
 
     }

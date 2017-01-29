@@ -7,7 +7,7 @@ import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
-@Test
+//@Test
 public class PublisherFlatMap2TckPublisherTest extends PublisherVerification<Long>{
 
 	public PublisherFlatMap2TckPublisherTest(){
@@ -30,6 +30,7 @@ public class PublisherFlatMap2TckPublisherTest extends PublisherVerification<Lon
 	public void optional_spec111_maySupportMultiSubscribe() throws Throwable {
 
 	}
+
 	
 
 }

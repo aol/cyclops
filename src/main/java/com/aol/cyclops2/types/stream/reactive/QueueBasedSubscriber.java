@@ -266,7 +266,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
         counter.completable = true;
         if (queue != null && counter.active.get() == 0) {
             counter.closed = true;
-
+            System.out.println("Closing!");
             queue.addContinuation(new Continuation(
                                                    () -> {
                                                        throw new ClosedQueueException();
