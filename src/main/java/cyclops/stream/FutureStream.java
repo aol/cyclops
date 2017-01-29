@@ -289,24 +289,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().parallelFanOutZipIn(fj,path1, path2, path3,path4,zipFn));
     }
 
-    @Override
-    default Topic<U> broadcast() {
-        return new Topic<U>(toQueue(),this.getQueueFactory());
-    }
 
 
-
-    @Override
-    default FutureStream<U> ambWith(Publisher<U> racer) {
-        return fromStream(Spouts.amb(this,racer));
-    }
-
-    @Override
-    default FutureStream<U> ambWith(Publisher<U>[] racers) {
-        ListX<Publisher<U>> list = ListX.of(racers);
-        list.add(0, this);
-        return fromStream(Spouts.amb(list));
-    }
 
     default LazyReact builder(int maxActiveTasks, Executor exec){
         return new LazyReact(maxActiveTasks,exec);

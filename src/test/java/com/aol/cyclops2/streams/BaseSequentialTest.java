@@ -23,6 +23,7 @@ import cyclops.collections.ListX;
 import cyclops.collections.SetX;
 import cyclops.control.Maybe;
 import cyclops.control.either.Either;
+import cyclops.stream.FutureStream;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
 import org.hamcrest.Matchers;
