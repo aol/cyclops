@@ -13,6 +13,7 @@ import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -249,7 +250,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
      * @return PBagX
      */
     public static <T> PBagX<T> fromPublisher(final Publisher<? extends T> publisher) {
-        return ReactiveSeq.fromPublisher((Publisher<T>) publisher)
+        return Spouts.from((Publisher<T>) publisher)
                           .toPBagX();
     }
 

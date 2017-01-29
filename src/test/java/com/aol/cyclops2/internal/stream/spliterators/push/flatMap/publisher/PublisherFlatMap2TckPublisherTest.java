@@ -26,6 +26,10 @@ public class PublisherFlatMap2TckPublisherTest extends PublisherVerification<Lon
 		return null; //not possible to subscribeAll to failed Stream
 		
 	}
+	@Override @Test
+	public void optional_spec111_maySupportMultiSubscribe() throws Throwable {
+
+	}
 	
 
 }

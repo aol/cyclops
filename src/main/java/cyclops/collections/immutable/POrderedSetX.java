@@ -13,6 +13,7 @@ import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -173,7 +174,7 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
      * @return POrderedSetX
      */
     public static <T> POrderedSetX<T> fromPublisher(final Publisher<? extends T> publisher) {
-        return ReactiveSeq.fromPublisher((Publisher<T>) publisher)
+        return Spouts.from((Publisher<T>) publisher)
                           .toPOrderedSetX();
     }
 

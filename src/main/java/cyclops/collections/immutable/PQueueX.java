@@ -14,6 +14,7 @@ import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
@@ -196,7 +197,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
      * @return PQueueX
      */
     public static <T> PQueueX<T> fromPublisher(final Publisher<? extends T> publisher) {
-        return ReactiveSeq.fromPublisher((Publisher<T>) publisher)
+        return Spouts.from((Publisher<T>) publisher)
                           .toPQueueX();
     }
 

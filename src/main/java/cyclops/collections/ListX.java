@@ -17,6 +17,7 @@ import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.ListT;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
@@ -602,7 +603,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @return ListX
      */
     public static <T> ListX<T> fromPublisher(final Publisher<? extends T> publisher) {
-        return ReactiveSeq.fromPublisher((Publisher<T>) publisher)
+        return Spouts.from((Publisher<T>) publisher)
                           .toListX();
     }
 

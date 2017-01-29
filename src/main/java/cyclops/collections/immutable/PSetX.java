@@ -13,6 +13,7 @@ import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -160,7 +161,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
      * @return PSetX
      */
     public static <T> PSetX<T> fromPublisher(final Publisher<? extends T> publisher) {
-        return ReactiveSeq.fromPublisher((Publisher<T>) publisher)
+        return Spouts.from((Publisher<T>) publisher)
                           .toPSetX();
     }
 

@@ -17,6 +17,7 @@ import com.aol.cyclops2.types.To;
 import cyclops.monads.WitnessType;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
@@ -221,7 +222,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
      * @return PStackX
      */
     public static <T> PStackX<T> fromPublisher(final Publisher<? extends T> publisher) {
-        return ReactiveSeq.fromPublisher((Publisher<T>) publisher)
+        return Spouts.from((Publisher<T>) publisher)
                           .toPStackX();
     }
 
