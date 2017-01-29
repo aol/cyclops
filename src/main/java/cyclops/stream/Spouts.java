@@ -177,8 +177,8 @@ public interface Spouts {
         return new ReactiveStreamX<>(new GenerateOperator<T>(s));
 
     }
-    static <T> ReactiveSeq<T> from(Publisher<T> pub){
-        return new ReactiveStreamX<T>(new PublisherToOperator<T>(pub), Type.BACKPRESSURE);
+    static <T> ReactiveSeq<T> from(Publisher<? extends T> pub){
+        return new ReactiveStreamX<T>(new PublisherToOperator<T>((Publisher<T>)pub), Type.BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> merge(Publisher<? extends Publisher<T>> publisher){
         return mergeLatest((Publisher[])Spouts.from(publisher).toArray());

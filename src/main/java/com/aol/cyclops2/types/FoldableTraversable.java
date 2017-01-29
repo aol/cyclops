@@ -163,17 +163,20 @@ public interface FoldableTraversable<T> extends Fn1<Long,T>,
     }
     @Override
     default <X extends Throwable> Subscription subscribe(Consumer<? super T> consumer){
-        return stream().subscribe(consumer);
+        Subscription result = this.subscribe(consumer,e->e.printStackTrace(),()->{});
+        return result;
     }
 
     @Override
     default <X extends Throwable> Subscription subscribe(Consumer<? super T> consumer, Consumer<? super Throwable> consumerError){
-        return stream().subscribe(consumer,consumerError);
+        Subscription result = this.subscribe(consumer,consumerError,()->{});
+        return result;
     }
 
     @Override
     default <X extends Throwable> Subscription subscribe(Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
-        return stream().subscribe(consumer,consumerError,onComplete);
+        Subscription result = this.subscribe(consumer,consumerError,onComplete);
+        return result;
     }
     @Override
     default <X extends Throwable> Subscription forEach(long numberOfElements, Consumer<? super T> consumer){

@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import static cyclops.stream.Spouts.concat;
 import static cyclops.stream.Spouts.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,7 +38,7 @@ public class FlatMapPublisherTest {
     Executor exec = Executors.newFixedThreadPool(10);
     protected <U> ReactiveSeq<U> flux(U... array){
 
-        return ReactiveSeq.fromPublisher(Flux.just(array).subscribeOn(Schedulers.fromExecutor(exec)));
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(exec)));
 
 
     }
@@ -123,8 +124,25 @@ public class FlatMapPublisherTest {
     AtomicInteger count;
     AtomicBoolean complete;
     @Test
+    public void flatMapPSanity(){
+        complete = new AtomicBoolean(false);
+        count = new AtomicInteger(0);
+        ReactiveSeq.of(1, 2, 3).peek(System.out::println)
+                .flatMapP(i -> nextAsync())
+                .forEach(r->System.out.println("Next res " + r + " count " + count.incrementAndGet()),
+                        e->{},()->complete.set(true));//.request(Long.MAX_VALUE);
+
+        while(!complete.get()){
+
+        }
+        System.out.println("Count " + count);
+        System.out.println("Size " + Spouts.of(1, 2, 3).peek(System.out::println)
+                .flatMapP(i -> nextAsync())
+                .toList().size());
+    }
+    @Test
     public void flatMapPAsyncRS(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<1;k++) {
             complete = new AtomicBoolean(false);
             count = new AtomicInteger(0);
             //SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();

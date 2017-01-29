@@ -3454,10 +3454,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Objects.requireNonNull(publisher);
        if(publisher instanceof ReactiveSeq){
             return (ReactiveSeq)publisher;
-        }
+        }/**
         final SeqSubscriber<T> sub = SeqSubscriber.subscriber();
         publisher.subscribe(sub);
         return sub.stream();
+         **/
+        return Spouts.from(publisher);
     }
 
     /**
