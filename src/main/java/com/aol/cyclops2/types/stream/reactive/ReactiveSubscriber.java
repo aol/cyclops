@@ -48,8 +48,10 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
 
     volatile boolean streamCreated=  false;
     CapturingOperator<T> getAction(){
-        if(action==null)
+        if(action==null && subscription!=null)
              action = new CapturingOperator<T>(subscription);
+        else if(action==null)
+            action = new CapturingOperator<T>();
         return action;
     }
 
@@ -73,6 +75,8 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
 
 
         ReactiveSeq<T> result = Spouts.reactiveStream(getAction());
+        if(complete)
+            return ReactiveSeq.fromIterable(buffer);
         if(error!=null)
             throw ExceptionSoftener.throwSoftenedException(error);
         if(buffer.size()>0){
@@ -88,8 +92,8 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     @Override
     public void onSubscribe(final Subscription s) {
         Objects.requireNonNull(s);
-      //  if(streamCreated)
-        //      throw new IllegalStateException("Subscription passed after downstream Stream created. Subscribe with this Subscriber first, then extract the Stream");
+        if(streamCreated)
+              throw new IllegalStateException("Subscription passed after downstream Stream created. Subscribe with this Subscriber first, then extract the Stream");
 
 
         this.subscription = s;
@@ -135,11 +139,13 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     public void onComplete() {
 
 
-
+        complete=true;
         val run = getAction().getOnComplete();
 
         if(run!=null)
             run.run();
+        else
+            getAction().complete();
 
     }
     public boolean isInitialized() {

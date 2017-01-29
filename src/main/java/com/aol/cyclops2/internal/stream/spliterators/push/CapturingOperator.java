@@ -24,6 +24,7 @@ public class CapturingOperator<T> implements Operator<T> {
     @Getter
     Runnable onComplete;
     Subscription s;
+    volatile boolean complete;
     private AtomicBoolean initialized = new AtomicBoolean(false);
 
     public CapturingOperator(Subscription s){
@@ -54,7 +55,8 @@ public class CapturingOperator<T> implements Operator<T> {
         this.s=new Subscription() {
             @Override
             public void request(long n) {
-
+                if(complete)
+                    onComplete.run();
             }
 
             @Override
@@ -71,6 +73,8 @@ public class CapturingOperator<T> implements Operator<T> {
     StreamSubscription subscription = new StreamSubscription(){
         @Override
         public void request(long n) {
+            if(complete)
+                onComplete.run();
              s.request(n);
         }
 
@@ -80,10 +84,6 @@ public class CapturingOperator<T> implements Operator<T> {
             super.cancel();
         }
     };
-
-
-
-
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
@@ -108,5 +108,9 @@ public class CapturingOperator<T> implements Operator<T> {
 
     public boolean isInitialized() {
         return initialized.get();
+    }
+
+    public void complete() {
+        complete = true;
     }
 }
