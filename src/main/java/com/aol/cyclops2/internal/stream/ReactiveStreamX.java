@@ -627,7 +627,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void subscribe(final Subscriber<? super T> sub) {
-
+/**
         if(async==Type.NO_BACKPRESSURE){
             //if this Stream is not backpressure-aware demand requests / cancel requests are ignored.
             sub.onSubscribe(new Subscription() {
@@ -645,6 +645,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }else {
             sub.onSubscribe(source.subscribe(sub::onNext, sub::onError, sub::onComplete));
         }
+ **/    //force all Stream types on reactive-streams path
+        sub.onSubscribe(source.subscribe(sub::onNext, sub::onError, sub::onComplete));
     }
 
 

@@ -39,6 +39,8 @@ public class IterateOperator<T> implements Operator<T> {
                     requested.decrementAndGet();
 
                 }
+                if(!isOpen)
+                    onComplete.run();
 
 
             };
@@ -66,6 +68,7 @@ public class IterateOperator<T> implements Operator<T> {
                     }
                 }
                 requested.set(0);
+                onComplete.run();
             }
 
             @Override

@@ -40,66 +40,91 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        ManyToOneConcurrentArrayQueue<IN> data = new ManyToOneConcurrentArrayQueue<IN>(256);
+        ManyToOneConcurrentArrayQueue<IN> data = new ManyToOneConcurrentArrayQueue<IN>(1024 * operators.length);
         List<StreamSubscription> subs = new ArrayList<>(operators.length);
         AtomicInteger completed = new AtomicInteger(0);
         AtomicInteger index = new AtomicInteger(0);
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
-                System.out.println("*****!!!!!!!!!!!!!***************    n is "+ n + " looping " + Math.min(n,subs.size()));
-                long sent = 0;
-                for(long k=0;k<requested.get();k++) {
-                    System.out.println("K is " +k);
-                    if(!isActive())
-                        break;
-                    int toUse = index.incrementAndGet() - 1;
-                    if (toUse+1 >= subs.size()) {
-                        index.set(0);
+                while(requested.get()>0)
+                {
+                    if (completed.get() == subs.size() && data.size() == 0) {
+                        System.out.println("Completing.. " + data.size());
 
-                    }
-
-                    if(isActive() && subs.get(toUse).isOpen) {
-
-                        System.out.println("Booked " + subs.get(toUse) + "  demand " + requested.get());
-                        subs.get(toUse).request(1l);
-
-                    }
-                    else
-                        k--;
-
-                    IN fromQ = nilsafeOut(data.poll());
-                    if(fromQ!=null){
-                        onNext.accept(fromQ);
-                        requested.decrementAndGet();
-                        sent++;
-                    }
-                    if(completed.get()==subs.size() && data.size()==0){
+                        System.out.println("Completing.. " + data.size() );
                         onComplete.run();
                         return;
                     }
+                    System.out.println("*****!!!!!!!!!!!!!***************    n is " + n + " looping " + Math.min(n, subs.size()));
+                    long sent = 0;
+                    long reqCycle = requested.get();
+                    for (long k = 0; k < reqCycle; k++) {
+                        System.out.println("K is " + k);
+                        if (!isOpen)
+                            return;
+                        int toUse = index.incrementAndGet() - 1;
+                        if (toUse + 1 >= subs.size()) {
+                            index.set(0);
+
+                        }
+
+                        if (subs.get(toUse).isOpen) {
+
+                            System.out.println("Booked " + subs.get(toUse) + "  demand " + requested.get());
+                            subs.get(toUse).request(1l);
+
+                        } else
+                            k--;
+
+                        IN fromQ = nilsafeOut(data.poll());
+                        if (fromQ != null) {
+
+                            onNext.accept(fromQ);
+                            requested.decrementAndGet();
+                            sent++;
+                        }
+                        if (completed.get() == subs.size() && data.size() == 0) {
+                            System.out.println("Completing.. " + data.size() +  " sent " + sent);
+
+                            System.out.println("Completing.. " + data.size() +  " sent " + sent);
+                            onComplete.run();
+                            return;
+                        }
 
 
 
-                }
-                while(isActive() && !(completed.get()==subs.size() && data.size()==0)){
-                    IN fromQ = nilsafeOut(data.poll());
-                    if(fromQ!=null){
-                        onNext.accept(fromQ);
-                        requested.decrementAndGet();
-                        sent++;
                     }
-                    System.out.println("Sent is " + sent + " data " + data.size());
-                }
-                if(completed.get()==subs.size()&& data.size()==0){
-                    onComplete.run();
 
+                    while (sent < reqCycle && isOpen && !(completed.get() == subs.size() && data.size() == 0)) {
+
+                        IN fromQ = nilsafeOut(data.poll());
+                        if (fromQ != null) {
+                            onNext.accept(fromQ);
+                            requested.decrementAndGet();
+                            sent++;
+                        }
+                        System.out.println("Sent is " + sent + " data "
+                                + data.size() + " isOpen " + isOpen
+                                + " completed ? " + (completed.get() == subs.size())
+                                + " data " + data.size());
+                    }
+                    if (completed.get() == subs.size() && data.size() == 0) {
+                        System.out.println("Completing.. " + data.size() +  " sent " + sent);
+                        onComplete.run();
+                        return;
+
+                    }
+                    System.out.println("End request.. sent " + sent + "  " + completed.get() + " " + data.size());
                 }
-                System.out.println("End request.. sent " + sent + "  " + completed.get() + " " + data.size());
+
 
             };
             @Override
             public void request(long n) {
-                System.out.println("Request!! n is "+ n);
+                if(n<=0) {
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
                 super.singleActiveRequest(n,work);
 
             }
@@ -115,7 +140,9 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
             subs.add(operators[current].subscribe(e-> {
                         try {
 
-                            data.offer((IN)nilsafeIn(e));
+                            while(!data.offer((IN)nilsafeIn(e))){
+
+                            }
 
                             System.out.println("Queueing! " + e + " on " + current  + "  demand " + sub.requested.get());
 

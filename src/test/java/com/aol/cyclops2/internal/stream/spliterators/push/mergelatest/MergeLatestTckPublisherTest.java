@@ -17,7 +17,7 @@ public class MergeLatestTckPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return Spouts.mergeLatest(Spouts.iterate(0l, i->i+1l)).limit(elements);
+		return Spouts.mergeLatest(Spouts.iterate(0l, i->i+1l).limit(elements));
 		
 	}
 
@@ -25,6 +25,14 @@ public class MergeLatestTckPublisherTest extends PublisherVerification<Long>{
 	public Publisher<Long> createFailedPublisher() {
 		return null; //not possible to subscribeAll to failed Stream
 		
+	}
+    @Override @Test
+    public void required_spec102_maySignalLessThanRequestedAndTerminateSubscription() throws Throwable {
+	    super.required_spec102_maySignalLessThanRequestedAndTerminateSubscription();
+    }
+	@Test
+	public void required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements() throws Throwable {
+		super.required_spec101_subscriptionRequestMustResultInTheCorrectNumberOfProducedElements();
 	}
 
 	@Test
