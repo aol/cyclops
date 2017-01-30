@@ -98,6 +98,7 @@ public interface Spouts {
         });
     }
 
+
     /**
      *   The recommended way to connect a Spout to a Publisher is via Spouts#from
      *   Create an Subscriber for Observable style asynchronous push based Streams,

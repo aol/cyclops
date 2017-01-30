@@ -34,34 +34,34 @@ public class MergeLatestTest {
 
     @Test
     public void mergeLongStreamSimple(){
-        int size1 = 150000;
+        int size1 = 1500;
      //   long count = range(size1).count().block();
         long count = Spouts.mergeLatest(range(size1)).count();
         assertThat(count,equalTo((long)size1));
     }
     @Test
     public void mergeLongStreamSimple2(){
-        int size1 = 100000;
-        int size2 = 50000;
+        int size1 = 1000;
+        int size2 = 500;
         //   long count = range(size1).count().block();
         long count = Spouts.mergeLatest(range(size1),range(size2)).count();
         assertThat(count,equalTo((long)(size1+size2)));
     }
     @Test
     public void mergeStreamSimple3(){
-        int size1 = 1000;
-        int size2 = 5000;
-        int size3 = 6000;
+        int size1 = 100;
+        int size2 = 500;
+        int size3 = 600;
         //   long count = range(size1).count().block();
         long count = Spouts.mergeLatest(range(size1),range(size2),range(size3)).count();
         assertThat(count,equalTo((long)(size1+size2+size3)));
     }
     @Test
     public void mergeStreamCount(){
-        for(int i=0;i<100;i++) {
-            int size1 = 1000;
-            int size2 = 5000;
-            int size3 = 6000;
+        for(int i=0;i<10;i++) {
+            int size1 = 100;
+            int size2 = 500;
+            int size3 = 600;
             //   long count = range(size1).count().block();
             long count = Spouts.range(0, 12000).count();
             assertThat(count, equalTo((long) (size1 + size2 + size3)));
@@ -69,9 +69,9 @@ public class MergeLatestTest {
     }
     @Test
     public void mergeLong(){
-        int size1 = 100000;
-        int size2 = 40000;
-        int size3= 10000;
+        int size1 = 10000;
+        int size2 = 4000;
+        int size3= 1000;
         long size = Spouts.mergeLatest(range(size1),range(size2),range(size3)).count();
 
        assertThat(size,equalTo((long)size1+size2+size3));

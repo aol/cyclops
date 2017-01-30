@@ -138,7 +138,7 @@ public  class CoreReactiveSeqTest {
     }
     @Test
     public void duplicatePropertiesTest(){
-        for(int i=0;i<1000;i++) {
+        for(int i=0;i<100;i++) {
             Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> tuples = ReactiveSeq.range(0,i).duplicate();
 
             Tuple2<Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
@@ -165,7 +165,7 @@ public  class CoreReactiveSeqTest {
     }
     @Test
     public void bufferingCopierTest(){
-        for(int i=0;i<1000;i++) {
+        for(int i=0;i<10;i++) {
             for(int k=1;k<5;k++) {
                 System.out.println (" Length : " + i + " - copies " + k);
                 ListX<Iterable<Integer>> list = Streams.toBufferingCopier(ListX.range(0, i), k);

@@ -240,7 +240,7 @@ public class FlatMapPublisherTest {
             assertThat(two,equalTo(3));
         }
     }
-    @Test
+    @Test @Ignore
     public void flatMapPAsync2Synchronous(){
         for(int k=0;k<5000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
