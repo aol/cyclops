@@ -1,5 +1,6 @@
 package com.aol.cyclops2.internal.stream;
 
+import com.aol.cyclops2.internal.stream.spliterators.IteratableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.Traversable;
 import com.aol.cyclops2.types.futurestream.Continuation;
@@ -1067,7 +1068,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
         if(async==Type.NO_BACKPRESSURE){
-
+/**
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Topic<T> topic = new Topic<>(queue);
@@ -1085,7 +1086,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             topic.addContinuation(cont);
             return res;
 
-
+         Topic<T> topic = broadcast();
+            return Tuple.tuple(topic.stream(),topic.stream());
+ **/
+            ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 2);
+            return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0))),
+                    createSeq(new IterableSourceOperator<>(copy.get(1))));
 
         }
         Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
