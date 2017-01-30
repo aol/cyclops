@@ -38,6 +38,7 @@ import lombok.AccessLevel;
  * @param <T> Subscriber type
  */
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
+@Deprecated
 public class SeqSubscriber<T> implements Subscriber<T>, Supplier<T>, ConvertableSequence<T> {
 
     private final Object UNSET = new Object();

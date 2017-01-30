@@ -43,7 +43,20 @@ public class LimitWhileOperator<T,R> extends BaseOperator<T,T> {
 
     @Override
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+         source.subscribeAll(e-> {
+                    try {
+                        if(predicate.test(e))
+                            onNext.accept(e);
+                        else{
 
-        subscribe(onNext,onError,onCompleteDs).request(Long.MAX_VALUE);
+                            onCompleteDs.run();
+                        }
+                    } catch (Throwable t) {
+
+                        onError.accept(t);
+                    }
+                }
+                ,onError,onCompleteDs);
+
     }
 }

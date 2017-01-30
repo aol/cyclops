@@ -50,13 +50,13 @@ public  class AsyncReactiveStreamXTest {
 	protected <U> ReactiveSeq<U> of(U... array){
 
 		return Spouts.async(s->{
-			Thread t = new Thread(()-> {
+		    ex.execute(()-> {
 				for (U next : array) {
 					s.onNext(next);
 				}
 				s.onComplete();
 			});
-			t.start();
+
 		});
 	}
 	
@@ -234,13 +234,16 @@ public  class AsyncReactiveStreamXTest {
 	}
 	@Test
 	public void limitTime(){
-		List<Integer> result = of(1,2,3,4,5,6)
-				.peek(i->sleep(i*100))
-				.limit(1000, TimeUnit.MILLISECONDS)
-				.toList();
+
+		    System.out.println("Next iteration...");
+            List<Integer> result = of(1, 2, 3, 4, 5, 6)
+                    .peek(i -> sleep(i * 100))
+                    .limit(1000, TimeUnit.MILLISECONDS)
+                    .toList();
 
 
-		assertThat(result,equalTo(Arrays.asList(1,2,3)));
+            assertThat(result, equalTo(Arrays.asList(1, 2, 3)));
+
 	}
     @Test
 	public void skipUntil(){

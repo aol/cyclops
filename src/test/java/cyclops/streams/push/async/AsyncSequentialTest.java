@@ -20,12 +20,15 @@ import reactor.core.publisher.Flux;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
+import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -34,17 +37,18 @@ import static org.junit.Assert.assertTrue;
  * Created by johnmcclean on 14/01/2017.
  */
 public class AsyncSequentialTest extends BaseSequentialTest {
+    Executor exec = Executors.newFixedThreadPool(10);
     @Override
     protected <U> ReactiveSeq<U> of(U... array){
 
         return Spouts.async(s->{
-            Thread t = new Thread(()-> {
+            exec.execute(()-> {
                 for (U next : array) {
                     s.onNext(next);
                 }
                 s.onComplete();
             });
-            t.start();
+
         });
     }
 
@@ -273,6 +277,22 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         assertEquals(asList(2, 3), of(1, 2, 3).splitAtHead().v2.toList());
          assertEquals(asList(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toList());
         assertEquals(asList(), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v2.toList());
+    }
+    @Test
+    public void testZipWithIndex() {
+
+        assertEquals(asList(), of().zipWithIndex().toList());
+        assertEquals(asList(tuple("a", 0L)), of("a").zip(of(0L)).toList());
+      }
+
+    @Test
+    public void zipWithIndex2(){
+        assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
+        assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L)), of("a", "b").zipWithIndex().toList());
+
+        assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L), new Tuple2("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
+
+
     }
 
 }

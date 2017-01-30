@@ -34,6 +34,7 @@ public class LimitWhileTimeOperator<T,R> extends BaseOperator<T,T> {
                         if(System.nanoTime()-start < toRun)
                             onNext.accept(e);
                         else{
+
                             sub[0].cancel();
                             onComplete.run();
                         }
