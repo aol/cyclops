@@ -79,7 +79,7 @@ public class MergeLatestTest {
 
     @Test
     public void mapGroupMerge3(){
-        for(int k=0;k<10000;k++) {
+        for(int k=0;k<1000;k++) {
             List<Integer> res = Spouts.of(1,2,3)
                                       .map(i -> nextAsync()).grouped(3)
                                       .map(l -> Spouts.mergeLatest(l))
@@ -105,7 +105,7 @@ public class MergeLatestTest {
     }
     @Test
     public void mapGroupMerge3FlatMapPForEach(){
-        for(int k=0;k<10000;k++) {
+        for(int k=0;k<1000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -120,7 +120,7 @@ public class MergeLatestTest {
     }
     @Test
     public void mapGroupMerge3FlatMapP(){
-        for(int k=0;k<10000;k++) {
+        for(int k=0;k<1000;k++) {
             List<Integer> res = Spouts.of(1,2,3)
                                       .map(i -> nextAsync())
                                       .grouped(3)

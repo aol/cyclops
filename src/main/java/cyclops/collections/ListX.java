@@ -7,6 +7,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
+import com.aol.cyclops2.types.Unit;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Trampoline;
