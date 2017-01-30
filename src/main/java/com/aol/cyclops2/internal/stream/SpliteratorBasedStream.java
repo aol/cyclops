@@ -806,7 +806,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
 
-  
+
     @Override
     public String format() {
         return Seq.seq(this.copy())

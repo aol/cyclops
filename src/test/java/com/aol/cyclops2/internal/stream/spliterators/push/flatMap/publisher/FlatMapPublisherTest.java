@@ -67,15 +67,7 @@ public class FlatMapPublisherTest {
         }
 
     }
-    @Test
-    public void fluxPushToQueue(){
-        final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
-        final QueueBasedSubscriber<Integer> init = QueueBasedSubscriber.subscriber(QueueFactories.unboundedNonBlockingQueue(new DirectWaitStrategy<>()), c,2);
-        flux(10, 20, 30).subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, 2));
-
-        init.jdkStream().forEach(System.out::println);
-
-    }
+    
     @Test
     public void flatMapFluxMaxCon(){
 
