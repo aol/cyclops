@@ -289,6 +289,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     public void zipWithIndex2(){
         System.out.println("First..");
         assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
+
         System.out.println("Second..");
         assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L)), of("a", "b").zipWithIndex().toList());
         System.out.println("Third..");

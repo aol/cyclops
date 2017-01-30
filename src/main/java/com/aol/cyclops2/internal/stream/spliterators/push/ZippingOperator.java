@@ -272,7 +272,8 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
          left.subscribeAll(e->{
 
-
+             if(completing.get())
+                 return;
             try {
 
                 if (!rightQ.isEmpty() ) {
@@ -317,7 +318,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
             }
 
             if( (rightComplete.get() && rightQ.isEmpty()) || (leftComplete.get() && leftQ.isEmpty())){
-
+                rightSub[0].cancel();
                 handleComplete(completing,onCompleteDs);
 
             }
@@ -325,6 +326,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
         },e->{
             onError.accept(e);
+
 
         },()->{
             leftComplete.set(true);
@@ -348,7 +350,8 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
         });
         rightSub[0] = right.subscribe(e->{
-
+            if(completing.get())
+                return;
             try {
                 if (!leftQ.isEmpty()) {
                     R value =fn.apply(leftQ.poll(), (T2) e);
@@ -357,7 +360,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                     onNext.accept(value);
                     leftActive.decrementAndGet();
                     System.out.println("Right sub is " + e);
-                    rightSub[0].request(1);
+                   // rightSub[0].request(1);
 
 
                 } else {
@@ -390,6 +393,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                 onError.accept(t);
             }
 
+            System.out.println("Left complete ?" + leftComplete.get() +  " left q ? " + leftQ.isEmpty());
             if( (leftComplete.get() && leftQ.isEmpty()) || (rightComplete.get() && rightQ.isEmpty())){
                 rightSub[0].cancel();
                 handleComplete(completing,onCompleteDs);
@@ -398,7 +402,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
         },e->{
             onError.accept(e);
-            rightSub[0].request(1l);
+            //rightSub[0].request(1l);
         },()->{
 
             rightComplete.set(true);
@@ -407,7 +411,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
             System.out.println("RIGHT QUEUE " + rightQ.isEmpty() + " size " + rightActive.get()  + " LEFT COMPLETE " + leftComplete.get());
             if (rightActive.get()==0 || leftComplete.get()) {
                 System.out.println("Running complete! RIGHT SIDE " + rightQ.size());
-
+                rightSub[0].cancel();
                 handleComplete(completing,onCompleteDs);
 
             }
@@ -416,7 +420,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
         });
 
-        rightSub[0].request(1);
+        rightSub[0].request(Long.MAX_VALUE);
 
     }
     private void drainAll(Queue<T1> leftQ, OneToOneConcurrentArrayQueue<T2> rightQ, Consumer<? super R> onNext) {
