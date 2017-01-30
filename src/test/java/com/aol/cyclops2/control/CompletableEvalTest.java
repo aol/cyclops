@@ -326,8 +326,8 @@ public class CompletableEvalTest {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("Always[10]"));
-		assertThat(none.mkString(),equalTo("Always[]"));
+		assertThat(just.mkString(),equalTo("CompletableEval[10]"));
+		assertThat(none.mkString(),equalTo("CompletableEval[]"));
 	}
 	LazyReact react = new LazyReact();
 

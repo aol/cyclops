@@ -1,11 +1,13 @@
 package com.aol.cyclops2.control;
 
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
+import cyclops.Semigroups;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.collections.immutable.PBagX;
 import cyclops.control.Eval;
+import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Ignore;
@@ -587,6 +589,38 @@ public class ReactiveSeqTest {
                 .flatMap(s-> IntStream.range(0,s).boxed())
                 .forEach(System.out::println);
         pushable.onNext("world");
+    }
+
+
+    @Test
+    public void combineNoOrder(){
+        assertThat(ReactiveSeq.of(1,2,3)
+                .combine((a, b)->a.equals(b), Semigroups.intSum)
+                .toListX(),equalTo(ListX.of(1,2,3)));
+
+    }
+    @Test
+    public void anyMIteration(){
+        Iterator<Integer> it = AnyM.fromStream(ReactiveSeq.of(1,2,3))
+                                  .combine((a, b)->a.equals(b), Semigroups.intSum)
+                                    .iterator();
+        List<Integer> list = new ArrayList<>();
+        while(it.hasNext()){
+            list.add(it.next());
+        }
+
+        assertThat(list,equalTo(ListX.of(1,2,3)));
+    }
+    @Test
+    public void combineNoOrderAnyM(){
+
+
+
+
+        assertThat(AnyM.fromStream(ReactiveSeq.of(1,2,3))
+                        .combine((a, b)->a.equals(b), Semigroups.intSum)
+                        .toListX(),equalTo(ListX.of(1,2,3)));
+
     }
     @Test @Ignore
     public void testIterator(){

@@ -1190,7 +1190,7 @@ public class Streams {
                     } else {
                         final T result = current;
                         current = (T) UNSET;
-                        return ReactiveSeq.of(result, next);
+                        return ReactiveSeq.of(result, next).peek(System.out::println);
                     }
                 }
                 if (it.hasNext())

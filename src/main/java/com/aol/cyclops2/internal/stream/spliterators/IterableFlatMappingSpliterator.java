@@ -39,11 +39,13 @@ public class IterableFlatMappingSpliterator<T,R> extends Spliterators.AbstractSp
     Iterator<R> active;
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
+        boolean pushed = false;
         for(;;) {
             if (active != null){
                 if(active.hasNext()) {
 
                     action.accept(active.next());
+                    pushed=true;
                     if (active.hasNext())
                         return true;
                     else
@@ -63,6 +65,9 @@ public class IterableFlatMappingSpliterator<T,R> extends Spliterators.AbstractSp
             });
             if(!advance && active==null)
                 return false;
+            else if(pushed && advance){
+                return true;
+            }
         }
     }
 

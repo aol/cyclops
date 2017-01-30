@@ -83,29 +83,6 @@ public class PublisherFlatMapOperatorSync<T,R> extends BaseOperator<T,R> impleme
                         Publisher<? extends R> next = mapper.apply(e);
                         ReactiveSeq<R> seq = ReactiveSeq.fromPublisher(next);
                         Spliterator<R> split = seq.spliterator();
-                        Subscription[] sc = {null};
-                        next.subscribe(new Subscriber<R>() {
-                            @Override
-                            public void onSubscribe(Subscription s) {
-                              sc[0]=s;
-                            }
-
-                            @Override
-                            public void onNext(R r) {
-
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-
-                            }
-
-                            @Override
-                            public void onComplete() {
-
-                            }
-                        });
-
 
                         int statusLocal =-1;
                         do {

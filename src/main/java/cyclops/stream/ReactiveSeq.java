@@ -3475,8 +3475,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return (ReactiveSeq<T>)iterable;
             //return ReactiveSeq.fromSpliterator(iterable.spliterator());
         }
+
         //we can't just use the Iterable's Spliteratable as it might not be repeatable / copyable.
-        return Streams.reactiveSeq(new IteratableSpliterator<T>(iterable), Optional.empty());
+        return Streams.reactiveSeq(new IteratableSpliterator<T>(iterable), Optional.empty())
+                    .peek(e->System.out.println("element for " + e));
 
 
     }

@@ -1,5 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators;
 
+import com.aol.cyclops2.types.mixins.Printable;
+
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -9,7 +11,7 @@ import java.util.function.Consumer;
  * Created by johnmcclean on 22/12/2016.
  */
 
-public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T>{
+public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T>, Printable {
 
     private final Iterable<T> source;
 
@@ -38,7 +40,8 @@ public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T
         if(active==null)
             active=source.iterator();
         if (active.hasNext()) {
-            action.accept(active.next());
+            System.out.println("Pushing next value");
+            action.accept(print(active.next()));
             return true;
         }
 
