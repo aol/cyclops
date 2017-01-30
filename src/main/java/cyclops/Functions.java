@@ -12,6 +12,8 @@ import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.monad.Monad;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -24,7 +26,8 @@ import java.util.function.Function;
  *          {@link cyclops.function.CurryConsumer}
  *          {@link cyclops.function.PartialApplicator}
  *          {@link cyclops.function.Memoize}
- *          {@link Fn1}
+ *          {@link cyclops.function.FluentFunctions}
+ *          {@link Fn1}F
  *          {@link Fn2}
  *          {@link Fn3}
  *          {@link Fn4}

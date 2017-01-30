@@ -20,8 +20,8 @@ import static org.hamcrest.Matchers.hasItems;
  * Created by johnmcclean on 27/01/2017.
  */
 public class MergeLatestTest {
-    Executor ex= Executors.newFixedThreadPool(10);
-
+    Executor ex= Executors.newFixedThreadPool(20);
+    final  static int ITERATIONS = 10;
     protected <U> ReactiveSeq<U> flux(U... array){
 
         return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ex))).peek(s->System.out.println("next value " + s));
@@ -79,7 +79,7 @@ public class MergeLatestTest {
 
     @Test
     public void mapGroupMerge3(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             List<Integer> res = Spouts.of(1,2,3)
                                       .map(i -> nextAsync()).grouped(3)
                                       .map(l -> Spouts.mergeLatest(l))
@@ -105,7 +105,7 @@ public class MergeLatestTest {
     }
     @Test
     public void mapGroupMerge3FlatMapPForEach(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -120,7 +120,7 @@ public class MergeLatestTest {
     }
     @Test
     public void mapGroupMerge3FlatMapP(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             List<Integer> res = Spouts.of(1,2,3)
                                       .map(i -> nextAsync())
                                       .grouped(3)
@@ -147,7 +147,7 @@ public class MergeLatestTest {
     }
     @Test
     public void mapGroupMerge(){
-        for(int k=0;k<10000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             assertThat(Spouts.of(1)
                     .map(i -> nextAsync()).grouped(1)
                     .map(l -> Spouts.mergeLatest(l))
@@ -156,19 +156,19 @@ public class MergeLatestTest {
     }
     @Test
     public void mergeSimple(){
-        for(int i=0;i<10000;i++) {
+        for(int i=0;i<ITERATIONS;i++) {
             assertThat(Spouts.mergeLatest(nextAsync()).toList(), equalTo(ListX.of(1, 2)));
         }
     }
     @Test
     public void mergeSimpleList(){
-        for(int i=0;i<10000;i++) {
+        for(int i=0;i<ITERATIONS;i++) {
             assertThat(Spouts.mergeLatest(ListX.of(nextAsync())).toList(), equalTo(ListX.of(1, 2)));
         }
     }
     @Test
     public void mergePAsync2(){
-        for(int k=0;k<4000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -194,7 +194,7 @@ public class MergeLatestTest {
     }
     @Test
     public void mergePAsyncSynchronous2(){
-        for(int k=0;k<40000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);

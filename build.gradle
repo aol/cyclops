@@ -130,7 +130,7 @@ task testSuite(type: Test) {
 test {
         reports.html.destination = file("$buildDir/reports/test")
     
-        dependsOn testNG
+    //    dependsOn testNG
      //   dependsOn testSuite
         forkEvery = 1
         

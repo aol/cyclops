@@ -144,10 +144,12 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().retry(fn,retries,delay,timeUnit));
     }
 
+
     @Override
     default FutureStream<ReactiveSeq<U>> combinations(final int size) {
-        return fromStream(stream().combinations());
+        return fromStream(stream().combinations(size));
     }
+
 
     @Override
     default FutureStream<U> removeAllS(final Stream<? extends U> stream) {
