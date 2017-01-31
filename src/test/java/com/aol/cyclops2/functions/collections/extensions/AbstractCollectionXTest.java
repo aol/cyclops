@@ -179,7 +179,7 @@ public abstract class AbstractCollectionXTest {
         AtomicBoolean onComplete = new AtomicBoolean(false);
         Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
         assertThat(onComplete.get(),equalTo(false));
-        s.request(3l);
+        s.request(4l);
         assertThat(onComplete.get(),equalTo(true));
 
         assertThat(result.size(),equalTo(3));

@@ -14,6 +14,9 @@ import cyclops.function.Curry;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.monads.AnyM;
+import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.FutureT;
+import cyclops.monads.transformers.MaybeT;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
@@ -101,6 +104,10 @@ import java.util.stream.Stream;
 public interface Maybe<T> extends To<Maybe<T>>,
                                   MonadicValue<T>,
                                   Higher<Maybe.µ,T> {
+
+    default <W extends WitnessType<W>> MaybeT<W, T> liftM(W witness) {
+        return MaybeT.of(witness.adapter().unit(this));
+    }
 
     public static class µ {
     }
