@@ -1082,10 +1082,10 @@ public class BaseSequentialTest {
         assertEquals(asList(1, 2,3), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i % 3 == 0).toList());
         assertEquals(asList(1, 2,3), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i == 3).toList());
         assertEquals(asList(1, 2, 3,4), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i == 4).toList());
-        assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntilClosed(i -> true).toList());
+        assertEquals(asList(1), of(1, 2, 3, 4, 5).limitUntilClosed(i -> true).toList());
 
 
-        assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntilClosed(i -> true).toList());
+        assertEquals(asList(1), of(1, 2, 3, 4, 5).limitUntilClosed(i -> true).toList());
     }
     @Test
     public void testLimitUntilWithNulls() {

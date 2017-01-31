@@ -3,6 +3,7 @@ package cyclops.streams.push.asyncreactivestreams;
 import com.aol.cyclops2.streams.BaseSequentialTest;
 import cyclops.async.Topic;
 import cyclops.collections.ListX;
+import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
@@ -13,11 +14,14 @@ import org.junit.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -35,7 +39,38 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
         return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
     }
+    @Test
+    public void testLimitUntilWithNulls() {
 
+
+        assertThat(of(1, 2, 3, 4, 5).limitUntil(i -> false).toList(), equalTo(asList(1, 2,3, 4, 5)));
+    }
+    @Test
+    public void flatMapStreamFilter() {
+        assertThat(of(1, 2, 3).flatMap(i -> ReactiveSeq.of(i).filter(Objects::nonNull))
+                        .collect(Collectors.toList()),
+                Matchers.equalTo(Arrays.asList(1, 2, 3)));
+    }
+    @Test
+    public void flatMapStream() {
+        for (int i = 0; i < ITERATIONS; i++) {
+            assertThat(of(1, 2, 3).flatMap(Stream::of)
+                            .collect(Collectors.toList()),
+                    Matchers.equalTo(Arrays.asList(1, 2, 3)));
+        }
+    }
+    @Test
+    public void flatMapIMaybe() {
+        assertThat(of(1, 2, 3).flatMapI(Maybe::ofNullable)
+                        .collect(Collectors.toList()),
+                Matchers.equalTo(Arrays.asList(1, 2, 3)));
+    }
+    @Test
+    public void flatMapIStream() {
+        assertThat(of(1, 2, 3).flatMapI(i -> ReactiveSeq.of(i).filter(Objects::nonNull))
+                        .collect(Collectors.toList()),
+                Matchers.equalTo(Arrays.asList(1, 2, 3)));
+    }
     @Test
     public void spoutsCollect(){
         Integer[] array = new Integer[100];
