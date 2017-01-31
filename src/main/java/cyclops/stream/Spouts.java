@@ -7,6 +7,7 @@ import com.aol.cyclops2.internal.stream.spliterators.UnfoldSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
+import cyclops.async.Future;
 import cyclops.collections.ListX;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.Pure;
@@ -100,21 +101,24 @@ public interface Spouts {
         });
     }
     static <T> ReactiveSeq<T> publishOn(Stream<T> seq, Executor exec){
-        AtomicReference<Subscriber<T>> subscriber = new AtomicReference<>(null);
-        AtomicReference<Subscription> sub = new AtomicReference<>(null);
+        Future<Subscriber<T>> subscriber = Future.future();
+        Future<Subscription> sub = Future.future();
         ReactiveSeq.fromStream(seq).foldFuture(t->{
-            while(subscriber.get()==null){
-                LockSupport.parkNanos(0l);
-            }
+            System.out.println("Awaiting subscriber..");
             Subscriber<T> local = subscriber.get();
-            sub.set(t.subscribe(local::onNext,local::onError,local::onComplete));
+            System.out.println("Setting subscription..");
+            sub.complete(t.subscribe(local::onNext,local::onError,local::onComplete));
+            System.out.println("Done!");
             return null;
         },exec);
         return new ReactiveStreamX<T>(new PublisherToOperator<T>(new Publisher<T>() {
             @Override
             public void subscribe(Subscriber<? super T> s) {
-                subscriber.set((Subscriber<T>)s);
+                System.out.println("Setting subscriber..");
+                subscriber.complete((Subscriber<T>)s);
+                System.out.println("Awaiting subscription..");
                 s.onSubscribe(sub.get());
+                System.out.println("Subscribed..");
 
             }
         }));

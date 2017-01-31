@@ -35,6 +35,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;
+import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 
 public class BaseSequentialTest {
@@ -59,6 +60,120 @@ public class BaseSequentialTest {
         return 5;
     }
 
+    @Test
+    public void subscribeEmpty(){
+        List result = new ArrayList<>();
+        Subscription s= of().subscribe(i->result.add(i));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+
+    }
+    @Test
+    public void subscribe(){
+        List<Integer> result = new ArrayList<>();
+        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(1));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(2));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+    }
+    @Test
+    public void subscribe3(){
+        List<Integer> result = new ArrayList<>();
+        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        s.request(3l);
+        assertThat(result.size(), Matchers.equalTo(1));
+        assertThat(result.size(), Matchers.equalTo(2));
+        assertThat(result.size(), Matchers.equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+    }
+    @Test
+    public void subscribeErrorEmpty(){
+        List result = new ArrayList<>();
+        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace());
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+
+    }
+    @Test
+    public void subscribeError(){
+        List<Integer> result = new ArrayList<>();
+        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(1));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(2));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+    }
+    @Test
+    public void subscribe3Error(){
+        List<Integer> result = new ArrayList<>();
+        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        s.request(3l);
+        assertThat(result.size(), Matchers.equalTo(1));
+        assertThat(result.size(), Matchers.equalTo(2));
+        assertThat(result.size(), Matchers.equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+    }
+    @Test
+    public void subscribeErrorEmptyOnComplete(){
+        List result = new ArrayList<>();
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        s.request(1l);
+        assertThat(onComplete.get(), Matchers.equalTo(true));
+        assertThat(result.size(), Matchers.equalTo(0));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+
+    }
+    @Test
+    public void subscribeErrorOnComplete(){
+        List<Integer> result = new ArrayList<>();
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+
+        assertThat(onComplete.get(), Matchers.equalTo(false));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(1));
+        assertThat(onComplete.get(), Matchers.equalTo(false));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(2));
+        assertThat(onComplete.get(), Matchers.equalTo(false));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+        assertThat(onComplete.get(), Matchers.equalTo(true));
+    }
+    @Test
+    public void subscribe3ErrorOnComplete(){
+        List<Integer> result = new ArrayList<>();
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        assertThat(onComplete.get(), Matchers.equalTo(false));
+        s.request(3l);
+        assertThat(onComplete.get(), Matchers.equalTo(true));
+        assertThat(result.size(), Matchers.equalTo(1));
+        assertThat(result.size(), Matchers.equalTo(2));
+        assertThat(result.size(), Matchers.equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+        assertThat(onComplete.get(), Matchers.equalTo(true));
+    }
     @Test
     public void duplicateDuplicate() {
         for (int k = 0; k < ITERATIONS; k++) {

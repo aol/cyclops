@@ -13,6 +13,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -38,6 +39,7 @@ import cyclops.function.Monoid;
 import cyclops.async.LazyReact;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
+import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 
 
@@ -63,9 +65,25 @@ public  class CoreReactiveSeqTest {
         }).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
     }
     @Test
-    public void iterable(){
-        assertThat(Spouts.publishOn(Stream.of(1,2),Executors.newFixedThreadPool(1)).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
+    public void subscribeErrorOnComplete(){
+        List<Integer> result = new ArrayList<>();
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        Subscription s= of(1,2,3).subscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
+
+        assertThat(onComplete.get(),equalTo(false));
+        s.request(1l);
+        assertThat(result.size(),equalTo(1));
+        assertThat(onComplete.get(),equalTo(false));
+        s.request(1l);
+        assertThat(result.size(),equalTo(2));
+        assertThat(onComplete.get(),equalTo(false));
+        s.request(1l);
+        assertThat(result.size(),equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+        s.request(1l);
+        assertThat(onComplete.get(),equalTo(true));
     }
+
 	@Test
     public void publishToAndMerge(){
 	    cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)

@@ -71,7 +71,7 @@ public class ZipAsyncTest {
     @Test
     public void zip2of(){
 
-        for(int i=0;i<50000;i++) {
+        for(int i=0;i<500;i++) {
             System.out.println("*************Iteration " + i);
             System.out.println("*************Iteration " + i);
             System.out.println("*************Iteration " + i);
@@ -99,7 +99,7 @@ public class ZipAsyncTest {
     public void zip2InvertedOf(){
         Spouts.of(1,2,3)
                     .toListX();
-        for(int i=0;i<50000;i++) {
+        for(int i=0;i<500;i++) {
             System.out.println("*************Iteration " + i);
             System.out.println("*************Iteration " + i);
             System.out.println("*************Iteration " + i);
@@ -126,7 +126,7 @@ public class ZipAsyncTest {
     @Test
     public void zip2ofLazyListX(){
 
-        for(int i=0;i<50000;i++) {
+        for(int i=0;i<500;i++) {
             System.out.println("*************Iteration " + i);
             System.out.println("*************Iteration " + i);
             System.out.println("*************Iteration " + i);

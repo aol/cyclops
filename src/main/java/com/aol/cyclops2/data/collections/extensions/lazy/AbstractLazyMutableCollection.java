@@ -8,6 +8,7 @@ import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -189,4 +191,5 @@ public abstract class AbstractLazyMutableCollection<T, C extends Collection<T>> 
     public String toString() {
         return get().toString();
     }
+
 }

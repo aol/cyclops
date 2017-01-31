@@ -9,6 +9,7 @@ import cyclops.async.QueueFactories;
 import cyclops.async.Topic;
 import cyclops.collections.ListX;
 
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -36,7 +37,10 @@ import static org.junit.Assert.*;
  * Created by johnmcclean on 20/01/2017.
  */
 public class SpoutsTest {
-
+    @Test
+    public void publishOn(){
+        assertThat(Spouts.publishOn(Stream.of(1,2),Executors.newFixedThreadPool(1)).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
+    }
     @Test
     public void iteratorTest(){
         for(int x=100;x<10000;x=x+1000) {
