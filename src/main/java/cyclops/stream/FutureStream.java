@@ -83,6 +83,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                             LazyToQueue<U>,
                                           ConfigurableStream<U, FastFuture<U>>,
                                           FutureStreamSynchronousPublisher<U> {
+    @Override
+    default ListX<ReactiveSeq<U>> multicast(int num) {
+        return stream().multicast(num);
+    }
 
     @Override
     default ReactiveSeq<U> changes(){
@@ -100,7 +104,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default <R> FutureStream<R> parallel(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R>> fn) {
+    default <R> FutureStream<R> parallel(ForkJoinPool fj, Function<? super Stream<? super U>, ? extends Stream<? extends R>> fn) {
         return fromStream(stream().parallel(fj,fn));
     }
 
@@ -232,64 +236,92 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default <R1, R2, R3> FutureStream<R3> fanOutZipIn(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R1>> path1, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R2>> path2, BiFunction<? super R1, ? super R2, ? extends R3> zipFn) {
+    default <R1, R2, R3> FutureStream<R3> fanOutZipIn(Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R1>> path1,
+                                                      Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R2>> path2,
+                                                      BiFunction<? super R1, ? super R2, ? extends R3> zipFn) {
         return fromStream(stream().fanOutZipIn(path1,path2,zipFn));
     }
 
     @Override
-    default <R1, R2, R3> FutureStream<R3> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R1>> path1, Function<? super Stream<U>, ? extends Stream<R2>> path2, BiFunction<? super R1, ? super R2, ? extends R3> zipFn) {
+    default <R1, R2, R3> FutureStream<R3> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<? super U>, ? extends Stream<? extends R1>> path1,
+                                                              Function<? super Stream<? super U>, ? extends Stream<? extends R2>> path2,
+                                                              BiFunction<? super R1, ? super R2, ? extends R3> zipFn) {
         return fromStream(stream().parallelFanOutZipIn(fj,path1,path2,zipFn));
     }
 
     @Override
-    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path1, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path2) {
+    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R>> path1,
+                                                Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R>> path2) {
         return fromStream(stream().fanOut(path1,path2));
     }
 
     @Override
-    default <R> FutureStream<R> parallelFanOut(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R>> path1, Function<? super Stream<U>, ? extends Stream<R>> path2) {
+    default <R> FutureStream<R> parallelFanOut(ForkJoinPool fj, Function<? super Stream<? super U>, ? extends Stream<? extends R>> path1,
+                                               Function<? super Stream<? super U>, ? extends Stream<? extends R>> path2) {
         return fromStream(stream().parallelFanOut(fj,path1,path2));
     }
 
     @Override
-    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path1,
-                                       Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path2,
-                                       Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path3) {
+    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R>> path1,
+                                       Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R>> path2,
+                                       Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R>> path3) {
         return fromStream(stream().fanOut(path1,path2,path3));
     }
 
     @Override
-    default <R> FutureStream<R> parallelFanOut(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R>> path1, Function<? super Stream<U>, ? extends Stream<R>> path2, Function<? super Stream<U>, ? extends Stream<R>> path3) {
+    default <R> FutureStream<R> parallelFanOut(ForkJoinPool fj, Function<? super Stream<? super U>, ? extends Stream<? extends R>> path1,
+                                               Function<? super Stream<? super U>, ? extends Stream<? extends R>> path2,
+                                               Function<? super Stream<? super U>, ? extends Stream<? extends R>> path3) {
         return fromStream(stream().parallelFanOut(fj,path1, path2, path3));
     }
 
     @Override
-    default <R1, R2, R3, R4> FutureStream<R4> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R1>> path1, Function<? super Stream<U>, ? extends Stream<R2>> path2, Function<? super Stream<U>, ? extends Stream<R3>> path3, Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn) {
+    default <R1, R2, R3, R4> FutureStream<R4> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<? super U>, ? extends Stream<? extends R1>> path1,
+                                                                  Function<? super Stream<? super U>, ? extends Stream<? extends R2>> path2,
+                                                                  Function<? super Stream<? super U>, ? extends Stream<? extends R3>> path3,
+                                                                  Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn) {
         return fromStream(stream().parallelFanOutZipIn(fj,path1, path2, path3,zipFn));
     }
 
     @Override
-    default <R1, R2, R3, R4> FutureStream<R4> fanOutZipIn(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R1>> path1, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R2>> path2, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R3>> path3, Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn) {
+    default <R1, R2, R3, R4> FutureStream<R4> fanOutZipIn(Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R1>> path1,
+                                                          Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R2>> path2,
+                                                          Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R3>> path3,
+                                                          Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn) {
         return fromStream(stream().fanOutZipIn(path1, path2, path3,zipFn));
     }
 
     @Override
-    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path1, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path2, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path3, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path4) {
+    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R>> path1,
+                                       Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R>> path2,
+                                       Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R>> path3,
+                                       Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R>> path4) {
         return fromStream(stream().fanOut(path1, path2, path3,path4));
     }
 
     @Override
-    default <R> FutureStream<R> parallelFanOut(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R>> path1, Function<? super Stream<U>, ? extends Stream<R>> path2, Function<? super Stream<U>, ? extends Stream<R>> path3, Function<? super Stream<U>, ? extends Stream<R>> path4) {
+    default <R> FutureStream<R> parallelFanOut(ForkJoinPool fj, Function<? super Stream<? super U>, ? extends Stream<? extends R>> path1,
+                                               Function<? super Stream<? super U>, ? extends Stream<? extends R>> path2,
+                                               Function<? super Stream<? super U>, ? extends Stream<? extends R>> path3,
+                                               Function<? super Stream<? super U>, ? extends Stream<? extends R>> path4) {
         return fromStream(stream().parallelFanOut(fj,path1, path2, path3,path4));
     }
 
     @Override
-    default <R1, R2, R3, R4, R5> FutureStream<R5> fanOutZipIn(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R1>> path1, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R2>> path2, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R3>> path3, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R4>> path4, Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn) {
+    default <R1, R2, R3, R4, R5> FutureStream<R5> fanOutZipIn(Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R1>> path1,
+                                                              Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R2>> path2,
+                                                              Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R3>> path3,
+                                                              Function<? super ReactiveSeq<? super U>, ? extends ReactiveSeq<? extends R4>> path4,
+                                                              Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn) {
         return fromStream(stream().fanOutZipIn(path1, path2, path3,path4,zipFn));
     }
 
     @Override
-    default <R1, R2, R3, R4, R5> FutureStream<R5> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<R1>> path1, Function<? super Stream<U>, ? extends Stream<R2>> path2, Function<? super Stream<U>, ? extends Stream<R3>> path3, Function<? super Stream<U>, ? extends Stream<R4>> path4, Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn) {
+    default <R1, R2, R3, R4, R5> FutureStream<R5> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<? super U>, ? extends Stream<? extends R1>> path1,
+                                                                      Function<? super Stream<? super U>, ? extends Stream<? extends R2>> path2,
+                                                                      Function<? super Stream<? super U>, ? extends Stream<? extends R3>> path3,
+                                                                      Function<? super Stream<? super U>, ? extends Stream<? extends R4>> path4,
+                                                                      Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn) {
         return fromStream(stream().parallelFanOutZipIn(fj,path1, path2, path3,path4,zipFn));
     }
 
@@ -955,7 +987,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return LazyToQueue.super.toQueue();
     }
     @Override
-    default <R> FutureStream<R> parallel(Function<? super Stream<U>,? extends Stream<R>> fn){
+    default <R> FutureStream<R> parallel(Function<? super Stream<? super U>,? extends Stream<? extends R>> fn){
         return fromStream(ReactiveSeq.super.parallel(fn));
 
     }

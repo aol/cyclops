@@ -4623,8 +4623,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return res1.zip(res2,zipFn);
 
     }
-    default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path1,
-                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path2){
+    default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R>> path1,
+                                      Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R>> path2){
         ListX<ReactiveSeq<T>> list = multicast(2);
         Publisher<R> pub = (Publisher<R>)path2.apply(list.get(1));
         ReactiveSeq<R> seq = (ReactiveSeq<R>)path1.apply(list.get(0));
