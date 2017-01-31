@@ -501,27 +501,6 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
 
-    @Override //TODO can be replaced by a dedicated Spliterator that keeps an index
-    public  ReactiveSeq<T> insertAt(final int pos, final T... values) {
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> s = this.splitAt(pos);
-        return ReactiveSeq.concat(s.v1,ReactiveSeq.of(values),s.v2);
-
-    }
-
-    @Override //TODO can be replaced by a dedicated Spliterator that keeps an index
-    public ReactiveSeq<T> deleteBetween(final int start, final int end) {
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> s = duplicate();
-        return ReactiveSeq.concat(s.v1.limit(start),s.v2.skip(end));
-    }
-
-    @Override //TODO can be replaced by a dedicated Spliterator that keeps an index
-    public ReactiveSeq<T> insertAtS(final int pos, final Stream<T> stream) {
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> s = this.splitAt(pos);
-        return ReactiveSeq.concat(s.v1,ReactiveSeq.fromStream(
-                stream),s.v2);
-
-    }
-
     public ReactiveSeq<T> changes(){
 
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()

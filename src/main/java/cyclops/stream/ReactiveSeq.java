@@ -2794,7 +2794,26 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to insert
      * @return Stream with new data inserted
      */
-    ReactiveSeq<T> insertAt(int pos, T... values);
+    default ReactiveSeq<T> insertAt(int pos, T... values){
+        if(pos==0){
+            return prepend(values);
+        }
+        long check =  new Long(pos);
+        boolean added[] = {false};
+
+        return  zipWithIndex().flatMap(t-> {
+                    if (t.v2 < check && !added[0])
+                        return ReactiveSeq.of(t.v1);
+                    if (!added[0]) {
+                        added[0] = true;
+                        return ReactiveSeq.concat(ReactiveSeq.of(values),ReactiveSeq.of(t.v1));
+                    }
+                    return Stream.of(t.v1);
+                }
+        );
+
+
+    }
 
     /**
      * Delete elements between given indexes in a Stream
@@ -2812,7 +2831,21 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            index
      * @return Stream with elements removed
      */
-    ReactiveSeq<T> deleteBetween(int start, int end);
+    default ReactiveSeq<T> deleteBetween(int start, int end){
+        long check =  new Long(start);
+        long endCheck = new Long(end);
+
+        return  zipWithIndex().flatMap(t-> {
+                    if (t.v2 < check)
+                        return ReactiveSeq.of(t.v1);
+                    if (t.v2 < endCheck) {
+
+                        return ReactiveSeq.of();
+                    }
+                    return ReactiveSeq.of(t.v1);
+                }
+        );
+    }
 
     /**
      * Insert a Stream into the middle of this reactiveStream at the specified position
@@ -2831,7 +2864,24 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to insert
      * @return newly conjoined ReactiveSeq
      */
-    ReactiveSeq<T> insertAtS(int pos, Stream<T> stream);
+    default ReactiveSeq<T> insertAtS(int pos, Stream<T> stream){
+        if(pos==0){
+            return prependS(stream);
+        }
+        long check =  new Long(pos);
+        boolean added[] = {false};
+
+        return  zipWithIndex().flatMap(t-> {
+                    if (t.v2 < check && !added[0])
+                        return ReactiveSeq.of(t.v1);
+                    if (!added[0]) {
+                        added[0] = true;
+                        return ReactiveSeq.concat(stream,ReactiveSeq.of(t.v1));
+                    }
+                    return Stream.of(t.v1);
+                }
+        );
+    }
 
 
 

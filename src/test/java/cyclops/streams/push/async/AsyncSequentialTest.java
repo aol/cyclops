@@ -16,8 +16,10 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -350,6 +352,76 @@ public class AsyncSequentialTest extends BaseSequentialTest {
                     .toListX(), Matchers.hasItems(6, 100, 2000, 12, 400, 5000, 18, 700, 8000));
 
         }
+    }
+
+    @Test
+    public void subscribeEmpty(){
+        List result = new ArrayList<>();
+        Subscription s= of().subscribe(i->result.add(i));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+
+    }
+    @Test
+    public void subscribe() throws InterruptedException {
+        List<Integer> result = new ArrayList<>();
+        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        s.request(1l);
+        Thread.sleep(100);
+        assertThat(result.size(), Matchers.equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+    }
+    @Test
+    public void subscribe3() throws InterruptedException {
+        List<Integer> result = new ArrayList<>();
+        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        s.request(3l);
+        Thread.sleep(100);
+        assertThat(result.size(), Matchers.equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+    }
+    @Test
+    public void subscribeErrorEmpty(){
+        List result = new ArrayList<>();
+        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace());
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+
+    }
+    @Test
+    public void subscribeError() throws InterruptedException {
+        List<Integer> result = new ArrayList<>();
+        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        s.request(1l);
+
+        Thread.sleep(100);
+
+        assertThat(result.size(), Matchers.equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+    }
+
+
+    @Test
+    public void subscribeErrorOnComplete(){
+        List<Integer> result = new ArrayList<>();
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+
+        assertThat(onComplete.get(), Matchers.equalTo(false));
+        s.request(1l);
+
+        assertThat(result.size(), Matchers.equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+        s.request(1l);
+        assertThat(onComplete.get(), Matchers.equalTo(true));
     }
 
 }

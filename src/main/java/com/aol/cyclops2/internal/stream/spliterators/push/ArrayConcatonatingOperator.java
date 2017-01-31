@@ -3,8 +3,10 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 import cyclops.collections.DequeX;
 import cyclops.collections.ListX;
 import cyclops.collections.QueueX;
+import org.reactivestreams.Subscription;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -50,32 +52,21 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
         QueueX<StreamSubscription> subs = QueueX.empty();
         int index[] = {0};
         boolean[] finished = {false};
-        StreamSubscription[] active = {null};
-        BooleanSupplier[] ensureOpenRef = {null};
-        StreamSubscription sub = new StreamSubscription() {
-            {
-                ensureOpenRef[0] =this::ensureOpen;
-            }
-            boolean ensureOpen(){
-                if(!isOpen)
-                    return false;
-                while(!active[0].isOpen ){
-                    if(subs.size()==0)
-                        return false;
-                    active[0] = subs.poll();
+        AtomicReference<StreamSubscription> active = new AtomicReference<>(null);
 
-                }
-                return active[0].isOpen;
-            }
+        StreamSubscription sub = new StreamSubscription() {
+
             @Override
             public void request(long n) {
+                System.out.println("Requesting " + n);
+                if (n <= 0)
+                    onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                System.out.println("R 1" +  active.get());
+                active.get().request(1);
+                super.request(n);
 
-                if (ensureOpen()) {
-                    if(n<=0)
-                        onError.accept(new IllegalArgumentException( "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
-                    super.request(n);
-                    active[0].request(1);
-                }
+
+
 
 
 
@@ -87,50 +78,59 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
             }
         };
 
-        for(Operator<IN> next : operators){
-            subs.add(next.subscribe(e-> {
 
-                        try {
-                            onNext.accept(e);
-                        } catch (Throwable t) {
 
-                            onError.accept(t);
-                        }finally{
+        subscribeNext(finished,sub,active,index,onNext,onError,onComplete);
 
-                            handleSubCompletion(ensureOpenRef[0],sub.requested.decrementAndGet(),onComplete, subs, finished, active, sub);
-                        }
-                    }
-                    ,t->{
-                        onError.accept(t);
-                        handleSubCompletion(ensureOpenRef[0],sub.requested.decrementAndGet(),onComplete, subs, finished, active, sub);
-                    },()->{
 
-                        active[0].cancel();
-                        handleSubCompletion(ensureOpenRef[0],sub.requested.get(),onComplete, subs, finished, active, sub);
-                    }));
-        }
-        if(subs.size()>0)
-            active[0]= subs.poll();
 
         return sub;
     }
 
-    private void handleSubCompletion(BooleanSupplier ensureOpen,long remaining, Runnable onComplete, QueueX<StreamSubscription> subs, boolean[] finished, StreamSubscription[] active, StreamSubscription sub) {
-        if(sub.isOpen) {
-            System.out.println("Remaining is " + remaining);
-            if(remaining>0 && ensureOpen.getAsBoolean()){
-
-                active[0].request(1l);
-            }
-
-        }
-        if(subs.size()==0 && !ensureOpen.getAsBoolean()){
+    public void subscribeNext(boolean[] finished, StreamSubscription sub,AtomicReference<StreamSubscription> active,int[] index,Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete){
+        if(index[0]==operators.size()){
             if(!finished[0]) {
                 finished[0] = true;
                 onComplete.run();
             }
         }
+        active.set(operators.get(index[0]).subscribe(e-> {
+                    try {
+                        System.out.println("on next " +e);
+                        onNext.accept(e);
+                        sub.requested.decrementAndGet();
+                        if(sub.isActive()){
+
+                            active.get().request(1l);
+                        }
+                    } catch (Throwable t) {
+                        onError.accept(t);
+                    }
+                }
+                ,t->{
+                    t.printStackTrace();
+                    onError.accept(t);
+                    active.get().request(1l);
+
+                },()->{
+
+                    if(index[0]==operators.size()){
+                        if(!finished[0]) {
+                            finished[0] = true;
+                            onComplete.run();
+                        }
+                    }
+                    index[0]++;
+                    subscribeNext(finished,sub,active,index,onNext,onError,onComplete);
+                    System.out.println("demenad " + sub.requested.get() + " " + active.get());
+                    if(sub.requested.get()>0)
+                        active.get().request(1l);
+
+
+                }));
     }
+
+
 
     @Override
     public void subscribeAll(Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {

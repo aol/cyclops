@@ -73,7 +73,7 @@ public class BaseSequentialTest {
 
     }
     @Test
-    public void subscribe(){
+    public void subscribe() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         Subscription s= of(1,2,3).subscribe(i->result.add(i));
         s.request(1l);
@@ -85,12 +85,11 @@ public class BaseSequentialTest {
         assertThat(result,hasItems(1,2,3));
     }
     @Test
-    public void subscribe3(){
+    public void subscribe3() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         Subscription s= of(1,2,3).subscribe(i->result.add(i));
         s.request(3l);
-        assertThat(result.size(), Matchers.equalTo(1));
-        assertThat(result.size(), Matchers.equalTo(2));
+
         assertThat(result.size(), Matchers.equalTo(3));
         assertThat(result,hasItems(1,2,3));
     }
@@ -107,7 +106,7 @@ public class BaseSequentialTest {
 
     }
     @Test
-    public void subscribeError(){
+    public void subscribeError() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
         s.request(1l);
@@ -123,8 +122,7 @@ public class BaseSequentialTest {
         List<Integer> result = new ArrayList<>();
         Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
         s.request(3l);
-        assertThat(result.size(), Matchers.equalTo(1));
-        assertThat(result.size(), Matchers.equalTo(2));
+
         assertThat(result.size(), Matchers.equalTo(3));
         assertThat(result,hasItems(1,2,3));
     }
@@ -158,6 +156,7 @@ public class BaseSequentialTest {
         s.request(1l);
         assertThat(result.size(), Matchers.equalTo(3));
         assertThat(result,hasItems(1,2,3));
+        s.request(1l);
         assertThat(onComplete.get(), Matchers.equalTo(true));
     }
     @Test
@@ -166,12 +165,12 @@ public class BaseSequentialTest {
         AtomicBoolean onComplete = new AtomicBoolean(false);
         Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
         assertThat(onComplete.get(), Matchers.equalTo(false));
-        s.request(3l);
+        s.request(4l);
         assertThat(onComplete.get(), Matchers.equalTo(true));
-        assertThat(result.size(), Matchers.equalTo(1));
-        assertThat(result.size(), Matchers.equalTo(2));
+
         assertThat(result.size(), Matchers.equalTo(3));
         assertThat(result,hasItems(1,2,3));
+
         assertThat(onComplete.get(), Matchers.equalTo(true));
     }
     @Test
@@ -782,6 +781,21 @@ public class BaseSequentialTest {
 
         assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
     }
+    @Test
+    public void insertAtEmpty() {
+        List<String> result = of().insertAt(0, 100, 200, 300)
+                .map(it -> it + "!!").collect(Collectors.toList());
+
+        assertThat(result, equalTo(Arrays.asList( "100!!", "200!!", "300!!")));
+    }
+
+    @Test
+    public void insertAtOutOfRangeEmpty() {
+        List<String> result = of().insertAt(1, 100, 200, 300)
+                .map(it -> it + "!!").collect(Collectors.toList());
+
+        assertThat(result, equalTo(Arrays.asList()));
+    }
 
     @Test
     public void insertAtStream() {
@@ -789,6 +803,22 @@ public class BaseSequentialTest {
                 .map(it -> it + "!!").collect(Collectors.toList());
 
         assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
+    }
+
+    @Test
+    public void insertAtStreamEmpty() {
+        List<String> result = of().insertAtS(0, Stream.of(100, 200, 300))
+                .map(it -> it + "!!").collect(Collectors.toList());
+
+        assertThat(result, equalTo(Arrays.asList( "100!!", "200!!", "300!!")));
+    }
+
+    @Test
+    public void insertAtStreamOutOfRangeEmpty() {
+        List<String> result = of().insertAtS(1, Stream.of(100, 200, 300))
+                .map(it -> it + "!!").collect(Collectors.toList());
+
+        assertThat(result, equalTo(Arrays.asList()));
     }
 
     @Test

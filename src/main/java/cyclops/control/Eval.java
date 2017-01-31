@@ -12,6 +12,9 @@ import cyclops.collections.immutable.PVectorX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
+import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.EvalT;
+import cyclops.monads.transformers.MaybeT;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
@@ -75,6 +78,10 @@ public interface Eval<T> extends    To<Eval<T>>,
 
 
     public static class µ {
+    }
+
+    default <W extends WitnessType<W>> EvalT<W, T> liftM(W witness) {
+        return EvalT.of(witness.adapter().unit(this));
     }
 
     default AnyM<Witness.eval,T> anyM(){
