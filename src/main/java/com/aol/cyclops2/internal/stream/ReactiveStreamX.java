@@ -1061,7 +1061,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                                     .peek(e->System.out.println("Collected " + e))
                                     .map(s -> s.stream().cycle(Long.MAX_VALUE))
                                     .flatMap(i->i);
-        return createSeq(new IterableSourceOperator<T>(cycling));
+        return createSeq(new IterableSourceOperator<T>(cycling),Type.SYNC);
 
 
     }

@@ -48,7 +48,33 @@ public class LimitWhileClosedOperator<T,R> extends BaseOperator<T,T> {
 
     @Override
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+        boolean[] complete = {false};
+        boolean closed[] = {false};
+        StreamSubscription sub[] = {null};
+        source.subscribeAll(e-> {
+                    try {
+                        onNext.accept(e);
+                        if(closed[0] && !complete[0]){
 
-        subscribe(onNext,onError,onCompleteDs).request(Long.MAX_VALUE);
+                            onCompleteDs.run();
+                            complete[0]=true;
+                        }
+                        if(!predicate.test(e)){
+                            closed[0]=true;
+                        }
+
+
+                    } catch (Throwable t) {
+
+                        onError.accept(t);
+                    }
+                }
+                ,onError,()->{
+                    if(!complete[0]) {
+                        complete[0] = true;
+                        onCompleteDs.run();
+                    }
+                });
+
     }
 }

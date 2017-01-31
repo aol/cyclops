@@ -142,8 +142,8 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         //       t.v2.printOut();
 
 
-//        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
-   //     System.out.println("Second!");
+        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+        System.out.println("Second!");
         assertThat(t.v2.cycle().limit(1).toList(),equalTo(ListX.of(1)));
 
     }

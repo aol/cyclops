@@ -1063,6 +1063,7 @@ public class BaseSequentialTest {
         assertEquals(asList(1, 2, 3, 4, 5), s.get().limitWhile(i -> true).toList());
     }
 
+
     @Test
     public void testLimitUntil() {
         assertEquals(asList(1, 2, 3, 4, 5), of(1, 2, 3, 4, 5).limitUntil(i -> false).toList());
@@ -1075,6 +1076,17 @@ public class BaseSequentialTest {
         assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntil(i -> true).toList());
     }
 
+    @Test
+    public void testLimitUntilClosed() {
+        assertEquals(asList(1, 2, 3, 4, 5), of(1, 2, 3, 4, 5).limitUntilClosed(i -> false).toList());
+        assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i % 3 == 0).toList());
+        assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i == 3).toList());
+        assertEquals(asList(1, 2, 3), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i == 4).toList());
+        assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntilClosed(i -> true).toList());
+
+
+        assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntilClosed(i -> true).toList());
+    }
     @Test
     public void testLimitUntilWithNulls() {
 
