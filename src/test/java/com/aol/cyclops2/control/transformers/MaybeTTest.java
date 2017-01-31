@@ -193,8 +193,8 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("FutureT[Optional[Future[10]]]"));
-		assertThat(none.mkString(),equalTo("FutureT[Optional.empty]"));
+		assertThat(just.mkString(),equalTo("MaybeT[Optional[Maybe[10]]]"));
+		assertThat(none.mkString(),equalTo("MaybeT[Optional.empty]"));
 	}
 
 

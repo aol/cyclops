@@ -101,10 +101,10 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
      */
     @Override
     public MaybeT<W,T> peek(final Consumer<? super T> peek) {
-        return of(run.peek(Maybe -> Maybe.map(a -> {
-            peek.accept(a);
-            return a;
-        })));
+        return map(e->{
+            peek.accept(e);
+            return e;
+        });
     }
 
     /**
