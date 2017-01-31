@@ -415,7 +415,7 @@ public class BaseSequentialTest {
                     .fanOut(s1 -> s1.peek(System.out::println).filter(i -> i % 3 == 0).map(i -> i * 2),
                             s2 -> s2.filter(i -> i % 3 == 1).map(i -> i * 100),
                             s3 -> s3.filter(i -> i % 3 == 2).map(i -> i * 1000))
-                    .toListX(), Matchers.equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+                    .toListX(), Matchers.hasItems(6, 100, 2000, 12, 400, 5000, 18, 700, 8000));
         }
 
     }

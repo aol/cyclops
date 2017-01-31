@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,13 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     }
 
 
+    @Test @Ignore
+    public void triplicate(){
+        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> tpl = of(1, 2, 3).triplicate(()->null);
+        tpl.v1.forEach(System.out::println);
+        tpl.v2.forEach(System.out::println);
+        tpl.v3.forEach(System.out::println);
+    }
     @Test
     public void spoutsCollect(){
         Integer[] array = new Integer[100];
@@ -330,6 +338,18 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L), new Tuple2("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
 
 
+    }
+    @Test
+    public void triplicateParallelFanOut2() {
+        for (int k = 0; k < 100; k++) {
+
+            assertThat(of(1, 2, 3, 4, 5, 6, 7, 8, 9)
+                    .parallelFanOut(ForkJoinPool.commonPool(), s1 -> s1.filter(i -> i % 3 == 0).map(i -> i * 2),
+                            s2 -> s2.filter(i -> i % 3 == 1).map(i -> i * 100),
+                            s3 -> s3.filter(i -> i % 3 == 2).map(i -> i * 1000))
+                    .toListX(), Matchers.hasItems(6, 100, 2000, 12, 400, 5000, 18, 700, 8000));
+
+        }
     }
 
 }

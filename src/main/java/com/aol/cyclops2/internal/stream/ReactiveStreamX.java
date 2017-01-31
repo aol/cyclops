@@ -1106,32 +1106,55 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate(Supplier<Deque<T>> bufferFactory) {
-        if(this.async==Type.NO_BACKPRESSURE){
-            ConcurrentLinkedQueue<Subscriber> subs = new ConcurrentLinkedQueue<>();
-            
-            val res = Tuple.tuple(Spouts.async(s1->{
-                subs.add(s1);
-                if(subs.size()==3) {
-                    this.forEach(e -> subs.forEach(s -> s.onNext(e)), ex -> subs.forEach(s -> s.onError(ex)), () -> subs.forEach(s -> s.onComplete()));
-                }
-            }),Spouts.async(s2->{
-                subs.add(s2);
-                if(subs.size()==3) {
-                    this.forEach(e -> subs.forEach(s -> s.onNext(e)), ex -> subs.forEach(s -> s.onError(ex)), () -> subs.forEach(s -> s.onComplete()));
-                }
-            }),Spouts.async(s3->{
-                subs.add(s3);
-                if(subs.size()==3) {
-                    this.forEach(e -> subs.forEach(s -> s.onNext(e)), ex -> subs.forEach(s -> s.onError(ex)), () -> subs.forEach(s -> s.onComplete()));
-                }
-            }));
 
-        }
+
         ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 3,bufferFactory);
         return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)),Type.SYNC),
                 createSeq(new IterableSourceOperator<>(copy.get(1)),Type.SYNC),createSeq(new IterableSourceOperator<>(copy.get(2)),Type.SYNC));
 
     }
+
+    public ListX<ReactiveSeq<T>> multicast(int num){
+        if(this.async==Type.NO_BACKPRESSURE){
+            ConcurrentLinkedQueue<Subscriber> subs = new ConcurrentLinkedQueue<>();
+            ListX<ReactiveSeq<T>> result = ListX.empty();
+            for(int i=0;i<num;i++) {
+                ReactiveSeq<T> seq = Spouts.<T>async(s1 -> {
+                    subs.add(s1);
+                    if (subs.size() == num) {
+                        this.forEach(e -> subs.forEach(s -> s.onNext(e)), ex -> subs.forEach(s -> s.onError(ex)), () -> subs.forEach(s -> s.onComplete()));
+                    }
+                });
+                result.add(seq);
+            }
+            return result;
+
+        }
+        if(this.async==Type.BACKPRESSURE){
+            ConcurrentLinkedQueue<Subscriber> subs = new ConcurrentLinkedQueue<>();
+            ListX<ReactiveSeq<T>> result = ListX.empty();
+            Subscription sub =subscribe(e -> subs.forEach(s -> s.onNext(e)), ex -> subs.forEach(s -> s.onError(ex)), () -> subs.forEach(s -> s.onComplete()));
+            for(int i=0;i<num;i++) {
+                ReactiveSeq<T> seq = new ReactiveStreamX<T>(new PublisherToOperator<T>(new Publisher<T>() {
+                    @Override
+                    public void subscribe(Subscriber<? super T> s) {
+
+                        subs.add(s);
+                        s.onSubscribe(sub);
+
+
+                    }
+                }));
+
+                result.add(seq);
+            }
+            return result;
+
+        }
+        return Streams.toBufferingCopier(() -> iterator(),num,()->new ArrayDeque<T>(100))
+                                .map(ReactiveSeq::fromIterable);
+    }
+
 
     @Override
     @SuppressWarnings("unchecked")

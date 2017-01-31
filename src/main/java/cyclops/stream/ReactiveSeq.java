@@ -21,6 +21,7 @@ import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOpera
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.Streams;
 import cyclops.async.*;
+import cyclops.async.Future;
 import cyclops.async.Queue;
 import cyclops.collections.ListX;
 import cyclops.collections.MapX;
@@ -51,10 +52,7 @@ import org.reactivestreams.Subscriber;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -709,11 +707,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     public <T> ReactiveSeq<T> unit(T unit);
 
-    default <R> ReactiveSeq<R> parallel(Function<? super Stream<T>,? extends Stream<R>> fn){
+    default <R> ReactiveSeq<R> parallel(Function<? super Stream<? super T>,? extends Stream<? extends R>> fn){
         Queue<R> queue = QueueFactories.<R>unboundedNonBlockingQueue()
                                                                   .build();
 
-        ReactiveSeq<? extends Iterator<R>> stream = ReactiveSeq.generate(() -> foldParallel(fn))
+        ReactiveSeq<? extends Iterator<? extends R>> stream = ReactiveSeq.generate(() -> foldParallel(fn))
                                                             .take(1)
                                                             .map(s->s.iterator());
         Iterator[] it = {null};
@@ -745,11 +743,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     }
-    default <R> ReactiveSeq<R> parallel(ForkJoinPool fj,Function<? super Stream<T>,? extends Stream<R>> fn){
+    default <R> ReactiveSeq<R> parallel(ForkJoinPool fj,Function<? super Stream<? super T>,? extends Stream<? extends R>> fn){
         Queue<R> queue = QueueFactories.<R>unboundedNonBlockingQueue()
                 .build();
 
-        ReactiveSeq<? extends Iterator<R>> stream = ReactiveSeq.generate(() -> foldParallel(fj,fn))
+        ReactiveSeq<? extends Iterator<? extends R>> stream = ReactiveSeq.generate(() -> foldParallel(fj,fn))
                 .take(1)
                 .map(s->s.iterator());
         Iterator[] it = {null};
@@ -4522,6 +4520,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return mergeP(QueueFactories.boundedQueue(5_000),publishers);
     }
 
+
     /**
      * A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously.
@@ -4586,20 +4585,38 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         init.addContinuation(continuation);
         return ReactiveSeq.fromStream(init.jdkStream());
     }
-    default <R1,R2,R3> ReactiveSeq<R3> fanOutZipIn(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R1>> path1,
-                                                    Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R2>> path2,
-                                                     BiFunction<? super R1, ? super R2, ? extends R3> zipFn){
-        val d = duplicate(()->new ArrayDeque<T>(100));
-        val res = d.map1(path1).map2(path2);
 
-        return res.v1.zipS(res.v2,zipFn);
+    /**
+     * Broadcast the contents of this Stream to multiple downstream Streams (determined by supplier parameter).
+     * For pull based Streams this Stream will be buffered.
+     * For push based Streams elements are broadcast downstream on receipt, the produced downstream Streams remain asynchonous
+     *
+     * This contrasts with
+     *  {@link ReactiveSeq#duplicate}
+     *  {@link ReactiveSeq#triplate}
+     *  {@link ReactiveSeq#quadruplicate()}
+     * Which buffer all Stream types and produce a synchronous downstream stream.
+     *
+     *
+     * @param num Number of downstream Streams to multicast to
+     * @return List of Streams that recieve data from this Stream
+     */
+    default ListX<ReactiveSeq<T>> multicast(int num){
+        return Streams.toBufferingCopier(() -> iterator(),num,()->new ArrayDeque<T>(100))
+                .map(ReactiveSeq::fromIterable);
+    }
+    default <R1,R2,R3> ReactiveSeq<R3> fanOutZipIn(Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R1>> path1,
+                                                    Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R2>> path2,
+                                                     BiFunction<? super R1, ? super R2, ? extends R3> zipFn){
+        ListX<ReactiveSeq<T>> list = multicast(2);
+        return path1.apply(list.get(0)).zip(path2.apply(list.get(1)),zipFn);
 
     }
-    default <R1,R2,R3> ReactiveSeq<R3> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<T>, ? extends Stream<R1>> path1,
-                                                   Function<? super Stream<T>, ? extends Stream<R2>> path2,
+    default <R1,R2,R3> ReactiveSeq<R3> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<? super T>, ? extends Stream<? extends R1>> path1,
+                                                   Function<? super Stream<? super T>, ? extends Stream<? extends R2>> path2,
                                                    BiFunction<? super R1, ? super R2, ? extends R3> zipFn){
         Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayDeque<T>(100));
-        Tuple2<? extends Stream<R1>, ? extends Stream<R2>> d2 = d.map1(path1).map2(path2);
+        Tuple2<? extends Stream<? extends R1>, ? extends Stream<? extends R2>> d2 = d.map1(path1).map2(path2);
 
         ReactiveSeq<R1> res1 = d.v1.parallel(fj, path1);
         ReactiveSeq<R2> res2 = d.v2.parallel(fj, path2);
@@ -4608,19 +4625,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path1,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path2){
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayDeque<T>(100));
-        Tuple2<ReactiveSeq<? extends R>, ReactiveSeq<T>>  d2 = d.map1(path1);
-        Tuple2<ReactiveSeq<R>, ? extends ReactiveSeq<R>> d3 = (Tuple2)d2.map2(path2);
-
-        return d3.v1.mergeP(d3.v2);
+        ListX<ReactiveSeq<T>> list = multicast(2);
+        Publisher<R> pub = (Publisher<R>)path2.apply(list.get(1));
+        ReactiveSeq<R> seq = (ReactiveSeq<R>)path1.apply(list.get(0));
+        return  seq.mergeP(pub);
 
     }
 
-    default <R> ReactiveSeq<R> parallelFanOut(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<R>> path1,
-                                      Function<? super Stream<T>, ? extends Stream<R>> path2){
+    default <R> ReactiveSeq<R> parallelFanOut(ForkJoinPool fj,Function<? super Stream<? super T>, ? extends Stream<? extends R>> path1,
+                                      Function<? super Stream<? super T>, ? extends Stream<? extends R>> path2){
 
         Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayDeque<T>(100));
-        Tuple2<? extends Stream<R>, ? extends Stream<R>> d2 = d.map1(path1).map2(path2);
+        Tuple2<? extends Stream<? extends R>, ? extends Stream<? extends R>> d2 = d.map1(path1).map2(path2);
 
         ReactiveSeq<R> res1 = d.v1.parallel(fj, path1);
         ReactiveSeq<R> res2 = d.v2.parallel(fj, path2);
@@ -4629,19 +4645,24 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     }
-    default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path1,
-                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path2,
-                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path3){
+    default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R>> path1,
+                                      Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R>> path2,
+                                      Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R>> path3){
 
-        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
-        val res = d.map1(path1).map2(path2).map3(path3);
 
-        return res.v1.mergeP(res.v2,res.v3);
+        ListX<ReactiveSeq<T>> list = multicast(3);
+        Publisher<R> pub2 = (Publisher<R>)path2.apply(list.get(1));
+        Publisher<R> pub3 = (Publisher<R>)path3.apply(list.get(2));
+        ReactiveSeq<R> seq = (ReactiveSeq<R>)path1.apply(list.get(0));
+        return  seq.mergeP(pub2,pub3);
+
+
 
     }
-    default <R> ReactiveSeq<R> parallelFanOut(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<R>> path1,
-                                              Function<? super Stream<T>, ? extends Stream<R>> path2,
-                                              Function<? super Stream<T>, ? extends Stream<R>> path3){
+    default <R> ReactiveSeq<R> parallelFanOut(ForkJoinPool fj,Function<? super Stream<? super T>, ? extends Stream<? extends R>> path1,
+                                              Function<? super Stream<? super T>, ? extends Stream<? extends R>> path2,
+                                              Function<? super Stream<? super T>, ? extends Stream<? extends R>> path3){
+
 
         Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3);
@@ -4654,9 +4675,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     }
-    default <R1,R2,R3,R4> ReactiveSeq<R4> parallelFanOutZipIn(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<R1>> path1,
-                                                      Function<? super Stream<T>, ? extends Stream<R2>> path2,
-                                                      Function<? super Stream<T>, ? extends Stream<R3>> path3,
+    default <R1,R2,R3,R4> ReactiveSeq<R4> parallelFanOutZipIn(ForkJoinPool fj,Function<? super Stream<? super T>, ? extends Stream<? extends R1>> path1,
+                                                      Function<? super Stream<? super T>, ? extends Stream<? extends R2>> path2,
+                                                      Function<? super Stream<? super T>, ? extends Stream<? extends R3>> path3,
                                                       Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn){
 
         Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
@@ -4667,32 +4688,32 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return res1.zip3(res2,res3,zipFn);
 
     }
-    default <R1,R2,R3,R4> ReactiveSeq<R4> fanOutZipIn(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R1>> path1,
-                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R2>> path2,
-                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R3>> path3,
+    default <R1,R2,R3,R4> ReactiveSeq<R4> fanOutZipIn(Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R1>> path1,
+                                      Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R2>> path2,
+                                      Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R3>> path3,
                                             Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn){
 
-        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
-        val res = d.map1(path1).map2(path2).map3(path3);
-
-        return res.v1.zip3(res.v2,res.v3,zipFn);
+        ListX<ReactiveSeq<T>> list = multicast(3);
+        return path1.apply(list.get(0)).zip3(path2.apply(list.get(1)),path3.apply(list.get(2)),zipFn);
 
     }
-    default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path1,
-                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path2,
-                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path3,
-                                      Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R>> path4){
+    default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R>> path1,
+                                      Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R>> path2,
+                                      Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R>> path3,
+                                      Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R>> path4){
 
-        val d = quadruplicate(()->new ArrayDeque<T>(100));
-        val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
-
-        return res.v1.mergeP(res.v2,res.v3,res.v4);
+        ListX<ReactiveSeq<T>> list = multicast(4);
+        Publisher<R> pub2 = (Publisher<R>)path2.apply(list.get(1));
+        Publisher<R> pub3 = (Publisher<R>)path3.apply(list.get(2));
+        Publisher<R> pub4 = (Publisher<R>)path4.apply(list.get(3));
+        ReactiveSeq<R> seq = (ReactiveSeq<R>)path1.apply(list.get(0));
+        return  seq.mergeP(pub2,pub3,pub4);
 
     }
-    default <R> ReactiveSeq<R> parallelFanOut(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<R>> path1,
-                                      Function<? super Stream<T>, ? extends Stream<R>> path2,
-                                      Function<? super Stream<T>, ? extends Stream<R>> path3,
-                                      Function<? super Stream<T>, ? extends Stream<R>> path4){
+    default <R> ReactiveSeq<R> parallelFanOut(ForkJoinPool fj,Function<? super Stream<? super T>, ? extends Stream<? extends R>> path1,
+                                      Function<? super Stream<? super T>, ? extends Stream<? extends R>> path2,
+                                      Function<? super Stream<?  super T>, ? extends Stream<? extends R>> path3,
+                                      Function<? super Stream<? super T>, ? extends Stream<? extends R>> path4){
 
         val d = quadruplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
@@ -4704,22 +4725,21 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     }
 
-    default <R1,R2,R3,R4,R5> ReactiveSeq<R5> fanOutZipIn(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R1>> path1,
-                                                    Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R2>> path2,
-                                                    Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R3>> path3,
-                                                    Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<R4>> path4,
+    default <R1,R2,R3,R4,R5> ReactiveSeq<R5> fanOutZipIn(Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R1>> path1,
+                                                    Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R2>> path2,
+                                                    Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R3>> path3,
+                                                    Function<? super ReactiveSeq<? super T>, ? extends ReactiveSeq<? extends R4>> path4,
                                                     Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn){
 
-        val d = quadruplicate(()->new ArrayDeque<T>(100));
-        val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
 
-        return res.v1.zip4(res.v2,res.v3,res.v4,zipFn);
+        ListX<ReactiveSeq<T>> list = multicast(4);
+        return path1.apply(list.get(0)).zip4(path2.apply(list.get(1)),path3.apply(list.get(2)),path4.apply(list.get(3)),zipFn);
 
     }
-    default <R1,R2,R3,R4,R5> ReactiveSeq<R5> parallelFanOutZipIn(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<R1>> path1,
-                                                         Function<? super Stream<T>, ? extends Stream<R2>> path2,
-                                                         Function<? super Stream<T>, ? extends Stream<R3>> path3,
-                                                         Function<? super Stream<T>, ? extends Stream<R4>> path4,
+    default <R1,R2,R3,R4,R5> ReactiveSeq<R5> parallelFanOutZipIn(ForkJoinPool fj,Function<? super Stream<? super T>, ? extends Stream<? extends R1>> path1,
+                                                         Function<? super Stream<? super T>, ? extends Stream<? extends R2>> path2,
+                                                         Function<? super Stream<? super T>, ? extends Stream<? extends R3>> path3,
+                                                         Function<? super Stream<? super T>, ? extends Stream<? extends R4>> path4,
                                                          Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn){
 
         val d = quadruplicate(()->new ArrayDeque<T>(100));

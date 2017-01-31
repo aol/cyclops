@@ -252,7 +252,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path1, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path2, Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<R>> path3) {
+    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path1,
+                                       Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path2,
+                                       Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path3) {
         return fromStream(stream().fanOut(path1,path2,path3));
     }
 

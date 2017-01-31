@@ -114,11 +114,10 @@ public interface Spouts {
         return new ReactiveStreamX<T>(new PublisherToOperator<T>(new Publisher<T>() {
             @Override
             public void subscribe(Subscriber<? super T> s) {
-                System.out.println("Setting subscriber..");
+
                 subscriber.complete((Subscriber<T>)s);
-                System.out.println("Awaiting subscription..");
                 s.onSubscribe(sub.get());
-                System.out.println("Subscribed..");
+
 
             }
         }));
