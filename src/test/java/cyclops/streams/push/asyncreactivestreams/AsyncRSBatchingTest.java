@@ -157,7 +157,8 @@ public class AsyncRSBatchingTest {
 
 		return "Status saved:" + s.getId();
 	}
-	
+
+
 	@Test
 	public void batchBySize() {
 

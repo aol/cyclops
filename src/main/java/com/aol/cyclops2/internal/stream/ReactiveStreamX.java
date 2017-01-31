@@ -575,16 +575,21 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public void subscribeAll(final Consumer<? super T> action) {
-        source.subscribeAll(action, this.defaultErrorHandler,()->{});
+        if(async==Type.NO_BACKPRESSURE)
+            source.subscribeAll(action, this.defaultErrorHandler,()->{});
+        else
+            source.subscribe(action, this.defaultErrorHandler,()->{}).request(Long.MAX_VALUE);
 
     }
 
     @Override
     public void forEach(final Consumer<? super T> action) {
         Future<Boolean> complete = Future.future();
-      //  source.subscribeAll(action, this.defaultErrorHandler,()->{});
-
-        source.subscribeAll(action, this.defaultErrorHandler,()-> complete.complete(true));
+        if(async==Type.NO_BACKPRESSURE) {
+            source.subscribeAll(action, this.defaultErrorHandler, () -> complete.complete(true));
+        }else{
+            source.subscribe(action, this.defaultErrorHandler, () -> complete.complete(true)).request(Long.MAX_VALUE);
+        }
         complete.get();
 
 
@@ -851,7 +856,11 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public void forEachOrdered(final Consumer<? super T> consumer) {
         Future<Boolean> complete = Future.future();
-        source.subscribeAll(consumer, this.defaultErrorHandler,()-> complete.complete(true));
+        if(async==Type.NO_BACKPRESSURE) {
+            source.subscribeAll(consumer, this.defaultErrorHandler, () -> complete.complete(true));
+        }else{
+            source.subscribe(consumer, this.defaultErrorHandler, () -> complete.complete(true)).request(Long.MAX_VALUE);
+        }
         complete.get();
 
     }
@@ -902,7 +911,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
-        if(async==Type.BACKPRESSURE){
+        if(async!=Type.NO_BACKPRESSURE){
             this.source.subscribe(consumerElement, consumerError, () -> {
             }).request(Long.MAX_VALUE);
         }else {
@@ -916,7 +925,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
                                               final Runnable onComplete) {
-        if(async==Type.BACKPRESSURE){
+        if(async!=Type.NO_BACKPRESSURE){
             this.source.subscribe(consumerElement, consumerError, onComplete).request(Long.MAX_VALUE);
         }else {
             source.subscribeAll(consumerElement, consumerError, onComplete);
@@ -1302,19 +1311,31 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public final boolean allMatch(final Predicate<? super T> c) {
         Future<Boolean> result = Future.future();
-
-            ReactiveStreamX<T> filtered = (ReactiveStreamX<T>)filter(c.negate());
-            filtered.source.subscribeAll(e->{
+        if(async==Type.NO_BACKPRESSURE) {
+            ReactiveStreamX<T> filtered = (ReactiveStreamX<T>) filter(c.negate());
+            filtered.source.subscribeAll(e -> {
                 result.complete(false);
                 throw new Queue.ClosedQueueException();
-            },t->{
+            }, t -> {
                 result.completeExceptionally(t);
-            },()->{
-                if(!result.isDone()) {
+            }, () -> {
+                if (!result.isDone()) {
                     result.complete(true);
                 }
             });
-
+        }else{
+            ReactiveStreamX<T> filtered = (ReactiveStreamX<T>) filter(c.negate());
+            filtered.source.subscribe(e -> {
+                result.complete(false);
+                
+            }, t -> {
+                result.completeExceptionally(t);
+            }, () -> {
+                if (!result.isDone()) {
+                    result.complete(true);
+                }
+            }).request(1l);
+        }
 
             return result.get();
 

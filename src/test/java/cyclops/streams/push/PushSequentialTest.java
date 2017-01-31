@@ -40,6 +40,13 @@ public class PushSequentialTest extends BaseSequentialTest {
         assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
         assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
     }
+    @Test
+    public void iterate(){
+        Spouts.iterate(1,i->i+1)
+                .limit(10).forEach(System.out::println);
+    }
+
 
 
 }
+
