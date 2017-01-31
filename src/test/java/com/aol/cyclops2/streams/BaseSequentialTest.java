@@ -426,18 +426,18 @@ public class BaseSequentialTest {
             assertThat(of(1, 2, 3, 4)
                     .fanOut(s1 -> s1.filter(i -> i % 2 == 0).map(i -> i * 2),
                             s2 -> s2.filter(i -> i % 2 != 0).map(i -> i * 100))
-                    .toListX(), Matchers.equalTo(ListX.of(4, 100, 8, 300)));
+                    .toListX(), Matchers.hasItems(4, 100, 8, 300));
             assertThat(of(1, 2, 3, 4, 5, 6, 7, 8, 9)
                     .fanOut(s1 -> s1.filter(i -> i % 3 == 0).map(i -> i * 2),
                             s2 -> s2.filter(i -> i % 3 == 1).map(i -> i * 100),
                             s3 -> s3.filter(i -> i % 3 == 2).map(i -> i * 1000))
-                    .toListX(), Matchers.equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+                    .toListX(), Matchers.hasItems(6, 100, 2000, 12, 400, 5000, 18, 700, 8000));
             assertThat(of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
                     .fanOut(s1 -> s1.filter(i -> i % 4 == 0).map(i -> i * 2),
                             s2 -> s2.filter(i -> i % 4 == 1).map(i -> i * 100),
                             s3 -> s3.filter(i -> i % 4 == 2).map(i -> i * 1000),
                             s4 -> s4.filter(i -> i % 4 == 3).map(i -> i * 10000))
-                    .toListX(), Matchers.equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
+                    .toListX(), Matchers.hasItems(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000));
         }
     }
 
@@ -1079,9 +1079,9 @@ public class BaseSequentialTest {
     @Test
     public void testLimitUntilClosed() {
         assertEquals(asList(1, 2, 3, 4, 5), of(1, 2, 3, 4, 5).limitUntilClosed(i -> false).toList());
-        assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i % 3 == 0).toList());
-        assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i == 3).toList());
-        assertEquals(asList(1, 2, 3), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i == 4).toList());
+        assertEquals(asList(1, 2,3), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i % 3 == 0).toList());
+        assertEquals(asList(1, 2,3), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i == 3).toList());
+        assertEquals(asList(1, 2, 3,4), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i == 4).toList());
         assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntilClosed(i -> true).toList());
 
 

@@ -46,7 +46,7 @@ public class LimitWhileOperator<T,R> extends BaseOperator<T,T> {
         boolean[] complete = {false};
          source.subscribeAll(e-> {
                     try {
-                        if(predicate.test(e))
+                        if(!complete[0] && predicate.test(e))
                             onNext.accept(e);
                         else{
                             if(!complete[0]) {
