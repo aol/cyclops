@@ -102,7 +102,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public Iterator<T> iterator() {
         if(async==Type.NO_BACKPRESSURE){
-// ConcurrentLinkedQueue<T> queue = new ConcurrentLinkedQueue<T>();
+
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
 
@@ -111,7 +111,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
             Continuation cont = new Continuation(()->{
                 if(wip.compareAndSet(false,true)) {
-                    this.source.subscribeAll(queue::offer, i -> queue.close(), queue::close);
+                    this.source.subscribeAll(queue::offer,
+                            i -> { System.out.println("Closing QUEUE!!"); queue.close();},
+                            ()->{System.out.println("ON complete - Closing queue!!"); queue.close();});
                 }
                 return Continuation.empty();
             });
@@ -1104,6 +1106,27 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate(Supplier<Deque<T>> bufferFactory) {
+        if(this.async==Type.NO_BACKPRESSURE){
+            ConcurrentLinkedQueue<Subscriber> subs = new ConcurrentLinkedQueue<>();
+            
+            val res = Tuple.tuple(Spouts.async(s1->{
+                subs.add(s1);
+                if(subs.size()==3) {
+                    this.forEach(e -> subs.forEach(s -> s.onNext(e)), ex -> subs.forEach(s -> s.onError(ex)), () -> subs.forEach(s -> s.onComplete()));
+                }
+            }),Spouts.async(s2->{
+                subs.add(s2);
+                if(subs.size()==3) {
+                    this.forEach(e -> subs.forEach(s -> s.onNext(e)), ex -> subs.forEach(s -> s.onError(ex)), () -> subs.forEach(s -> s.onComplete()));
+                }
+            }),Spouts.async(s3->{
+                subs.add(s3);
+                if(subs.size()==3) {
+                    this.forEach(e -> subs.forEach(s -> s.onNext(e)), ex -> subs.forEach(s -> s.onError(ex)), () -> subs.forEach(s -> s.onComplete()));
+                }
+            }));
+
+        }
         ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 3,bufferFactory);
         return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)),Type.SYNC),
                 createSeq(new IterableSourceOperator<>(copy.get(1)),Type.SYNC),createSeq(new IterableSourceOperator<>(copy.get(2)),Type.SYNC));
