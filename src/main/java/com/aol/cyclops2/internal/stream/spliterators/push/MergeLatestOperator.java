@@ -175,16 +175,22 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
         List<StreamSubscription> subs = new ArrayList<>(operators.length);
         AtomicInteger completed = new AtomicInteger(0);
         AtomicInteger index = new AtomicInteger(0);
-
-
+        ManyToOneConcurrentArrayQueue<IN> data = new ManyToOneConcurrentArrayQueue<IN>(1024 * operators.length);
+        AtomicBoolean wip= new AtomicBoolean(false);
 
 
         for(int i=0;i<operators.length;i++){
             int current = i;
             operators[current].subscribeAll(e-> {
                         try {
-                            onNext.accept(e);
-                            System.out.println("Merging! " + e);
+                            if(wip.compareAndSet(false,true)) {
+                                onNext.accept(e);
+                                System.out.println("Merging! " + e);
+                                data.drain(x->onNext.accept(x));
+                                wip.set(false);
+                            }else{
+                                data.offer(e);
+                            }
 
                         } catch (Throwable t) {
 
@@ -197,6 +203,7 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
 
                         if(completed.incrementAndGet()== operators.length){
                             System.out.println("Running on complete");
+                            data.drain(x->onNext.accept(x));
                             onCompleteDs.run();
 
                         }

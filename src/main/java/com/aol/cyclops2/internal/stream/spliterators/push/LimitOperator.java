@@ -57,6 +57,32 @@ public class LimitOperator<T,R> extends BaseOperator<T,T> {
     @Override
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
 
-        subscribe(onNext,onError,onCompleteDs).request(Long.MAX_VALUE);
+        long[] count = {0};
+        StreamSubscription sub[] = {null};
+
+        boolean completed[] = {false};
+        source.subscribeAll(e-> {
+
+                    try {
+                        System.out.println("e is " +e);
+                        if(count[0]++<limit)
+                            onNext.accept(e);
+                        else{
+
+                            if(!completed[0]) {
+                                completed[0]=true;
+                                onCompleteDs.run();
+                            }
+                        }
+                    } catch (Throwable t) {
+                        onError.accept(t);
+                    }
+                }
+                ,onError,()->{
+                    if(!completed[0]) {
+                        completed[0]=true;
+                        onCompleteDs.run();
+                    }
+                });
     }
 }

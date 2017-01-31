@@ -44,6 +44,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
 
         return Spouts.async(s->{
             exec.execute(()-> {
+
                 for (U next : array) {
                     s.onNext(next);
                 }
@@ -79,12 +80,15 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     }
     @Test
     public void mergePTest(){
-        for(int i=0;i<100;i++) {
+        //System.out.println(of(3, 6, 9).mergeP(of(2, 4, 8), of(1, 5, 7)).toListX());
+
+        for(int i=0;i<1000;i++) {
             ListX<Integer> list = of(3, 6, 9).mergeP(of(2, 4, 8), of(1, 5, 7)).toListX();
 
             assertThat("List is " + list,list, hasItems(1, 2, 3, 4, 5, 6, 7, 8, 9));
             assertThat("List is " + list,list.size(), Matchers.equalTo(9));
         }
+
     }
     @Test
     public void prependPlay(){
@@ -138,8 +142,8 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         //       t.v2.printOut();
 
 
-        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
-        System.out.println("Second!");
+//        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+   //     System.out.println("Second!");
         assertThat(t.v2.cycle().limit(1).toList(),equalTo(ListX.of(1)));
 
     }

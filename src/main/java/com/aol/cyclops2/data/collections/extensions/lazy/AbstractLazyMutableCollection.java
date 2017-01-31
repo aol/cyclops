@@ -46,7 +46,7 @@ public abstract class AbstractLazyMutableCollection<T, C extends Collection<T>> 
     public C get() {
         if (seq.get() != null) {
             if(updating.compareAndSet(false, true)) { //check if can materialize
-                System.out.println("Updating..");
+
                 try{
 
                     ReactiveSeq<T> toUse = seq.get();
