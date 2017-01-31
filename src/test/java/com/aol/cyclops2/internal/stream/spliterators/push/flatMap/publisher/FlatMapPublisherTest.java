@@ -3,7 +3,6 @@ package com.aol.cyclops2.internal.stream.spliterators.push.flatMap.publisher;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
 import cyclops.async.QueueFactories;
 import cyclops.async.wait.DirectWaitStrategy;
 import cyclops.collections.ListX;
@@ -240,7 +239,7 @@ public class FlatMapPublisherTest {
             assertThat(two,equalTo(3));
         }
     }
-    @Test @Ignore
+    @Test
     public void flatMapPAsync2Synchronous(){
         for(int k=0;k<5000;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -250,11 +249,9 @@ public class FlatMapPublisherTest {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            final SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
-            Flux.just(1, 2, 3)
-                    .flatMap(i -> nextAsync()).subscribe(sub);
 
-            List<Integer> res =  sub.stream().toList();
+            List<Integer> res =   Spouts.from(Flux.just(1, 2, 3)
+                    .flatMap(i -> nextAsync())).toList();
             System.out.println("Result is " + res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
@@ -462,7 +459,7 @@ public class FlatMapPublisherTest {
     @Test
     public void flatMapPAsyncRS3(){
         for(int k=0;k<100;k++) {
-            SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
+
             Flux<Integer> flux = Flux.from(Spouts.of(1, 2, 3).peek(System.out::println)
                     .flatMapP(i -> nextAsync()));
             /**Iterator<Integer> it = sub.iterator();

@@ -15,16 +15,19 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
+import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
+import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.stream.FutureStream;
+import cyclops.stream.Spouts;
 import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.ListX;
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
+
 
 import lombok.val;
 import reactor.core.publisher.Flux;
@@ -335,13 +338,17 @@ public class PipesTest {
 	
 	@Test
 	public void subscribeTo(){
-	    SeqSubscriber subscriber = SeqSubscriber.subscriber();
-		Queue queue = new Queue();
-		pipes.register("hello", queue);
+
+
+        QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
+        c.active.incrementAndGet();
+        QueueBasedSubscriber<String> subscriber = QueueBasedSubscriber.subscriber(c,2);
+		//Queue queue = new Queue();
+		pipes.register("hello", subscriber.getQueue());
 		pipes.subscribeTo("hello",subscriber,ForkJoinPool.commonPool());
-		queue.offer("world");
-		queue.close();
-		assertThat(subscriber.stream().findAny().get(),equalTo("world"));
+		subscriber.getQueue().offer("world");
+        subscriber.getQueue().close();
+		assertThat(subscriber.jdkStream().findAny().get(),equalTo("world"));
 	}
 	@Test
 	public void publishTo() throws InterruptedException{
@@ -354,12 +361,7 @@ public class PipesTest {
 		queue.close();
 		assertThat(queue.stream().toList(),equalTo(Arrays.asList(1,2,3,4)));
 	}
-	@Test
-	public void seqSubscriberTest(){
-	    SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
-        ReactiveSeq.of(1,2,3).subscribe(sub);
-        assertThat(sub.toListX(),equalTo(ListX.of(1,2,3)));
-	}
+
 	@Test
     public void publishToSync() throws InterruptedException{
 	    Pipes<String,Integer> pipes = Pipes.of();

@@ -64,9 +64,7 @@ public  class CoreReactiveSeqTest {
     }
     @Test
     public void iterable(){
-        assertThat(ReactiveSeq.iterable(sub->{
-            Flux.just(1,2).subscribe(sub);
-        }).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
+        assertThat(Spouts.publishOn(Stream.of(1,2),Executors.newFixedThreadPool(1)).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
     }
 	@Test
     public void publishToAndMerge(){

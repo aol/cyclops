@@ -1,6 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators;
 
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
+import cyclops.stream.Spouts;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
@@ -36,9 +36,8 @@ public class PublisherFlatMappingSpliterator<T,R> extends Spliterators.AbstractS
 
 
             Publisher<R> flatten = (Publisher<R>)mapper.apply(t);
-            SeqSubscriber<R> sub = SeqSubscriber.subscriber(); //use sequential reactiveSubscriber for iterable sequences, in future switch to pushsubscriber where appropriate
-            flatten.subscribe(sub);
-            sub.spliterator().forEachRemaining(action);
+            Spouts.from(flatten).forEach(action);
+
 
         });
 
@@ -60,9 +59,8 @@ public class PublisherFlatMappingSpliterator<T,R> extends Spliterators.AbstractS
             boolean advance = source.tryAdvance(t -> {
                 if (active == null || !active.hasNext()) {
                     Publisher<R> flatten = (Publisher<R>)mapper.apply(t);
-                    SeqSubscriber<R> sub = SeqSubscriber.subscriber();
-                    flatten.subscribe(sub);
-                    active = (Iterator<R>)sub.iterator();
+
+                    active =  Spouts.from(flatten).iterator();
                 }
 
 

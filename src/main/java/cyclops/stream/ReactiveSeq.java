@@ -1,42 +1,40 @@
 package cyclops.stream;
 
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.*;
-import java.util.stream.*;
-
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
+import com.aol.cyclops2.internal.stream.ReactiveSeqFutureOpterationsImpl;
+import com.aol.cyclops2.internal.stream.spliterators.*;
 import com.aol.cyclops2.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingIntArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingRangeIntSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingLongArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingRangeLongSpliterator;
-import com.aol.cyclops2.types.stream.reactive.*;
+import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.aol.cyclops2.types.futurestream.Continuation;
+import com.aol.cyclops2.types.stream.*;
+import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
-import cyclops.async.Future;
+import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
+import com.aol.cyclops2.util.ExceptionSoftener;
+import cyclops.Streams;
+import cyclops.async.*;
+import cyclops.async.Queue;
+import cyclops.collections.ListX;
+import cyclops.collections.MapX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.control.either.Either;
-import cyclops.monads.AnyM;
-import cyclops.async.*;
 import cyclops.control.Trampoline;
-import com.aol.cyclops2.internal.stream.ReactiveSeqFutureOpterationsImpl;
-import com.aol.cyclops2.internal.stream.spliterators.*;
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.futurestream.Continuation;
-import com.aol.cyclops2.types.stream.*;
-import cyclops.*;
-import cyclops.async.Queue;
+import cyclops.control.either.Either;
+import cyclops.function.Fn3;
+import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
@@ -48,16 +46,20 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
-
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
-import cyclops.collections.MapX;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
-import cyclops.monads.Witness;
-import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.function.Fn4;
-import cyclops.function.Fn3;
 import org.reactivestreams.Subscriber;
+
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.*;
+import java.util.stream.*;
 
 /**
  * A powerful extended, sequential Stream type.
@@ -113,29 +115,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
 
-    /**
-     * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
-     * reactive-streams susbscription may be used to iterate over incoming data.
-     * Passing more data that demand signalled will result in data loss
-     *
-     * <pre>
-     *     {@code
-     *      ReactiveSeq<Integer> input = ReactiveSeq.iterable(subscriber->{
-     *                                                          Flux.just(1,2,3)
-     *                                                              .subscribeAll(subscriber);
-     *                                                      });
-     *      }
-     * </pre>
-     *
-     * @param sub
-     * @param <T>
-     * @return
-     */
-    static <T> ReactiveSeq<T> iterable(Consumer<? super Subscriber<T>> sub){
-        SeqSubscriber<T> s = SeqSubscriber.subscriber();
-        sub.accept(s);
-        return s.stream();
-    }
+
     /**
      * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
      * reactive-streams susbscription can be used to determine demand (or ignored and data passed
@@ -943,7 +923,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return duplicated reactiveStream
      */
     Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate();
-    Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate(Supplier<List<T>> bufferFactory);
+    Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate(Supplier<Deque<T>> bufferFactory);
 
     /**
      * Triplicates a Stream Buffers intermediate values, leaders may change
@@ -3246,28 +3226,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         return Eval.later(()->fn.apply(this));
     }
-    /**
-     * Create a reactiveSubscriber that can listen to Reactive Streams (simple-react,
-     * RxJava AkkaStreams, Kontraktor, QuadarStreams etc)
-     * 
-     * <pre>
-     * {@code
-     *     SeqSubscriber<Integer> sub = ReactiveSeq.reactiveSubscriber();
-     * 		ReactiveSeq.of(1,2,3).subscribeAll(sub);
-     * 		sub.reactiveStream().forEach(System.out::println);
-     * 		
-     * 		  1 
-     * 		  2
-     * 		  3
-     * }
-     * 
-     * </pre>
-     * 
-     * @return A reactive-streams Subscriber
-     */
-    public static <T> SeqSubscriber<T> subscriber() {
-        return SeqSubscriber.subscriber();
-    }
+
 
     public static <T> ReactiveSeq<T> empty() {
         return fromStream(Stream.empty());
@@ -3454,11 +3413,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Objects.requireNonNull(publisher);
        if(publisher instanceof ReactiveSeq){
             return (ReactiveSeq)publisher;
-        }/**
-        final SeqSubscriber<T> sub = SeqSubscriber.subscriber();
-        publisher.subscribe(sub);
-        return sub.stream();
-         **/
+        }
         return Spouts.from(publisher);
     }
 
@@ -4634,7 +4589,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R1,R2,R3> ReactiveSeq<R3> fanOutZipIn(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R1>> path1,
                                                     Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R2>> path2,
                                                      BiFunction<? super R1, ? super R2, ? extends R3> zipFn){
-        val d = duplicate(()->new ArrayList<T>(100));
+        val d = duplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2);
 
         return res.v1.zipS(res.v2,zipFn);
@@ -4643,7 +4598,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R1,R2,R3> ReactiveSeq<R3> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<T>, ? extends Stream<R1>> path1,
                                                    Function<? super Stream<T>, ? extends Stream<R2>> path2,
                                                    BiFunction<? super R1, ? super R2, ? extends R3> zipFn){
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayList<T>(100));
+        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayDeque<T>(100));
         Tuple2<? extends Stream<R1>, ? extends Stream<R2>> d2 = d.map1(path1).map2(path2);
 
         ReactiveSeq<R1> res1 = d.v1.parallel(fj, path1);
@@ -4653,7 +4608,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path1,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path2){
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayList<T>(100));
+        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayDeque<T>(100));
         Tuple2<ReactiveSeq<? extends R>, ReactiveSeq<T>>  d2 = d.map1(path1);
         Tuple2<ReactiveSeq<R>, ? extends ReactiveSeq<R>> d3 = (Tuple2)d2.map2(path2);
 
@@ -4664,7 +4619,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R> ReactiveSeq<R> parallelFanOut(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<R>> path1,
                                       Function<? super Stream<T>, ? extends Stream<R>> path2){
 
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayList<T>(100));
+        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayDeque<T>(100));
         Tuple2<? extends Stream<R>, ? extends Stream<R>> d2 = d.map1(path1).map2(path2);
 
         ReactiveSeq<R> res1 = d.v1.parallel(fj, path1);

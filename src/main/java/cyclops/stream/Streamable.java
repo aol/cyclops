@@ -1,31 +1,22 @@
 package cyclops.stream;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-import java.util.stream.*;
-
-import cyclops.Streams;
-import cyclops.collections.immutable.PVectorX;
-import cyclops.monads.AnyM;
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.internal.stream.SeqUtils;
+import com.aol.cyclops2.internal.stream.StreamableImpl;
 import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.stream.CyclopsCollectable;
+import com.aol.cyclops2.types.stream.HotStream;
+import com.aol.cyclops2.types.stream.ToStream;
+import cyclops.Streams;
+import cyclops.collections.ListX;
+import cyclops.collections.MapX;
+import cyclops.collections.immutable.PVectorX;
+import cyclops.function.Monoid;
+import cyclops.function.Reducer;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import lombok.AllArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
@@ -35,21 +26,11 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import cyclops.function.Monoid;
-import cyclops.function.Reducer;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
-import cyclops.collections.MapX;
-import com.aol.cyclops2.internal.stream.SeqUtils;
-import com.aol.cyclops2.internal.stream.StreamableImpl;
-import cyclops.monads.Witness;
-import com.aol.cyclops2.types.stream.ConvertableSequence;
-import com.aol.cyclops2.types.stream.CyclopsCollectable;
-import com.aol.cyclops2.types.stream.HotStream;
-import com.aol.cyclops2.types.stream.ToStream;
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
-
-import lombok.AllArgsConstructor;
+import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+import java.util.function.*;
+import java.util.stream.*;
 
 /**
  * Represents something that can generate a Stream, repeatedly
@@ -320,9 +301,8 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      */
     public static <T> Streamable<T> fromPublisher(final Publisher<? extends T> publisher) {
         Objects.requireNonNull(publisher);
-        final SeqSubscriber<T> sub = SeqSubscriber.subscriber();
-        publisher.subscribe(sub);
-        return fromStream(sub.stream());
+
+        return fromStream(Spouts.from(publisher));
     }
 
     public static <T> Streamable<T> fromIterator(final Iterator<T> it) {

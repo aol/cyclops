@@ -1,11 +1,12 @@
 package cyclops.streams.push;
 
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
+
 import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
 import cyclops.collections.*;
 import cyclops.collections.immutable.*;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -19,17 +20,14 @@ public class ReactiveStreamsTest {
 
     @Test
     public void subscribeToEmpty(){
-        SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
-        ReactiveSeq.<Integer>empty().subscribe(sub);
-        
-        sub.forEach(System.out::println);
+
+        Spouts.from(ReactiveSeq.<Integer>empty()).forEach(System.out::println);
         
     }
     @Test
     public void subscribeToFlux(){
-        SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
-        Flux.just(1,2,3).subscribe(sub);
-        assertThat(sub.stream().toList(),equalTo(
+
+        assertThat(Spouts.from(Flux.just(1,2,3)).toList(),equalTo(
                 Arrays.asList(1,2,3)));
     }
     @Test
@@ -104,37 +102,36 @@ public class ReactiveStreamsTest {
     }
 	@Test
 	public void publishAndSubscribe(){
-		SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
-		ReactiveSeq.of(1,2,3).subscribe(sub);
-		assertThat(sub.stream().toList(),equalTo(
+
+		assertThat(Spouts.from(ReactiveSeq.of(1,2,3)).toList(),equalTo(
 				Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void publishAndSubscribeEmpty(){
-		SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
-		ReactiveSeq.<Integer>of().subscribe(sub);
-		assertThat(sub.stream().toList(),equalTo(
+
+
+		assertThat(Spouts.from(ReactiveSeq.of()).toList(),equalTo(
 				Arrays.asList()));
 	}
 	@Test
     public void subscribeToFluxIterator(){
-        SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
-        Flux.just(1,2,3).subscribe(sub);
-        assertThat(ReactiveSeq.fromIterator(sub.iterator()).toList(),equalTo(
+
+
+        assertThat(ReactiveSeq.fromIterator(Spouts.from(Flux.just(1,2,3)).iterator()).toList(),equalTo(
                 Arrays.asList(1,2,3)));
     }
     @Test
     public void publishAndSubscribeIterator(){
-        SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
-        ReactiveSeq.of(1,2,3).subscribe(sub);
-        assertThat(ReactiveSeq.fromIterator(sub.iterator()).toList(),equalTo(
+
+
+        assertThat(ReactiveSeq.fromIterator(Spouts.from(ReactiveSeq.of(1,2,3)).iterator()).toList(),equalTo(
                 Arrays.asList(1,2,3)));
     }
     @Test
     public void publishAndSubscribeEmptyIterator(){
-        SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
-        ReactiveSeq.<Integer>of().subscribe(sub);
-        assertThat(ReactiveSeq.fromIterator(sub.iterator()).toList(),equalTo(
+
+
+        assertThat(ReactiveSeq.fromIterator(Spouts.from(ReactiveSeq.of()).iterator()).toList(),equalTo(
                 Arrays.asList()));
     }
 }

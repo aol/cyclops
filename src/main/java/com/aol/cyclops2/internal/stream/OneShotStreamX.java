@@ -51,7 +51,7 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
                 .map2(s -> createSeq(s, reversible.map(r -> r.copy())));
     }
     @Override
-    public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate(Supplier<List<T>> bufferFactory) {
+    public final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate(Supplier<Deque<T>> bufferFactory) {
         final Tuple2<Stream<T>, Stream<T>> tuple = Streams.duplicate(unwrapStream(),bufferFactory);
         return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy())))
                 .map2(s -> createSeq(s, reversible.map(r -> r.copy())));

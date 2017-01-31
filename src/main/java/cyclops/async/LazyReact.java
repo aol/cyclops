@@ -20,6 +20,7 @@ import java.util.stream.StreamSupport;
 
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops2.internal.react.FutureStreamImpl;
@@ -29,7 +30,6 @@ import com.aol.cyclops2.react.RetryBuilder;
 import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.react.async.subscription.Subscription;
 import com.aol.cyclops2.react.collectors.lazy.MaxActive;
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
 import cyclops.function.Cacheable;
 import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 import com.nurkiewicz.asyncretry.RetryExecutor;
@@ -413,9 +413,8 @@ public class LazyReact implements ReactBuilder {
      */
     public <T> FutureStream<T> fromPublisher(final Publisher<? extends T> publisher) {
         Objects.requireNonNull(publisher);
-        final SeqSubscriber<T> sub = SeqSubscriber.subscriber();
-        publisher.subscribe(sub);
-        return sub.toFutureStream(this);
+        Publisher<T> narrowed = (Publisher<T>)publisher;
+        return Spouts.from(narrowed).toFutureStream(this);
     }
 
     /* 

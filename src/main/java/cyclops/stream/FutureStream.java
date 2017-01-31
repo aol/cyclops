@@ -2895,7 +2895,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see #duplicate(Stream)
      */
     @Override
-    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicate(Supplier<List<U>> bufferFactory) {
+    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicate(Supplier<Deque<U>> bufferFactory) {
         return Streams.duplicate(stream(),bufferFactory)
                 .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream);
     }

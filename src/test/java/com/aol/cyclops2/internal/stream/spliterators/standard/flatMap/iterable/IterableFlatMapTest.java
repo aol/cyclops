@@ -2,7 +2,6 @@ package com.aol.cyclops2.internal.stream.spliterators.standard.flatMap.iterable;
 
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
@@ -207,12 +206,11 @@ public class IterableFlatMapTest {
     @Test
     public void flatMapAsyncRS3(){
         for(int k=0;k<100;k++) {
-            SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
-            Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapI(i -> nextAsyncRS())
-                    .subscribe(sub);
 
-            List<Integer> res = sub.stream().collect(Collectors.toList());
+
+
+            List<Integer> res =  Spouts.from(Spouts.of(1, 2, 3).peek(System.out::println)
+                    .flatMapI(i -> nextAsyncRS())).collect(Collectors.toList());
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1, 2));

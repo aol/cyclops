@@ -1067,203 +1067,66 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
-        if(async==Type.NO_BACKPRESSURE){
-/**
-            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
-            Topic<T> topic = new Topic<>(queue);
-            AtomicBoolean wip = new AtomicBoolean(false);
-            Continuation cont = new Continuation(()->{
-                if(wip.compareAndSet(false,true)) {
-                    //queue::close
-                    this.source.subscribeAll(topic::offer, i -> topic.close(),()->{
-                        topic.close();
-                    } );
-                }
-                return Continuation.empty();
-            });
-            val res = Tuple.tuple(topic.stream(),topic.stream());
-            topic.addContinuation(cont);
-            return res;
 
-         Topic<T> topic = broadcast();
-            return Tuple.tuple(topic.stream(),topic.stream());
- **/
+
             ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 2);
             return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0))),
                     createSeq(new IterableSourceOperator<>(copy.get(1))));
 
-        }
-        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
-        Tuple2<Iterable<T>, Iterable<T>> copy = Streams.toBufferingDuplicator(sourceIt);
-        Tuple2<Operator<T>, Operator<T>> operators = copy.map((a,b)->
-            Tuple.tuple(new IterableSourceOperator<T>(a),new IterableSourceOperator<T>(b))
-        );
-        return operators.map((a,b)->Tuple.tuple(createSeq(a),createSeq(b)));
+
 
     }
     @Override
-    public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate(Supplier<List<T>> bufferFactory) {
-        if(async==Type.NO_BACKPRESSURE){
-
-            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
-            Topic<T> topic = new Topic<>(queue,QueueFactories.<T>unboundedNonBlockingQueue());
-            AtomicBoolean wip = new AtomicBoolean(false);
-            Continuation cont = new Continuation(()->{
-                if(wip.compareAndSet(false,true)) {
-                    //queue::close
-                    this.source.subscribeAll(topic::offer, i -> topic.close(),()->{
-                        topic.close();
-                    } );
-                }
-                return Continuation.empty();
-            });
-            val res = Tuple.tuple(topic.stream(),topic.stream());
-            topic.addContinuation(cont);
-            return res;
+    public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate(Supplier<Deque<T>> bufferFactory) {
 
 
-        }
-        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
-        Tuple2<Iterable<T>, Iterable<T>> copy = Streams.toBufferingDuplicator(sourceIt,bufferFactory);
-        Tuple2<Operator<T>, Operator<T>> operators = copy.map((a,b)->
-                Tuple.tuple(new IterableSourceOperator<T>(a),new IterableSourceOperator<T>(b))
-        );
-        return operators.map((a,b)->Tuple.tuple(createSeq(a),createSeq(b)));
+            ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 2,bufferFactory);
+            return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0))),
+                    createSeq(new IterableSourceOperator<>(copy.get(1))));
+
 
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate() {
-        if(async==Type.NO_BACKPRESSURE){
 
-            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
-            Topic<T> topic = new Topic<>(queue);
-            AtomicBoolean wip = new AtomicBoolean(false);
-            Continuation cont = new Continuation(()->{
-                if(wip.compareAndSet(false,true)) {
-                    //queue::close
-                    this.source.subscribeAll(topic::offer, i -> topic.close(),()->{
-                        topic.close();
-                    } );
-                }
-                return Continuation.empty();
-            });
-            val res = Tuple.tuple(topic.stream(),topic.stream(),topic.stream());
-            topic.addContinuation(cont);
-            return res;
 
-        }
-        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
-        ListX<IterableSourceOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 3)
-                                         .map(it->new IterableSourceOperator<>(it));
+            ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 3);
+            return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0))),
+                    createSeq(new IterableSourceOperator<>(copy.get(1))),createSeq(new IterableSourceOperator<>(copy.get(1))));
 
-        return Tuple.tuple(createSeq(copy.get(0)),
-                createSeq(copy.get(1)),
-                createSeq(copy.get(2)));
+
 
     }
     @Override
     @SuppressWarnings("unchecked")
     public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate(Supplier<Deque<T>> bufferFactory) {
-        if(async==Type.NO_BACKPRESSURE){
-
-            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
-
-            Topic<T> topic = new Topic<>(queue);
-            AtomicBoolean wip = new AtomicBoolean(false);
-            Continuation cont = new Continuation(()->{
-                if(wip.compareAndSet(false,true)) {
-                    //queue::close
-                    this.source.subscribeAll(topic::offer, i -> topic.close(),()->{
-                        topic.close();
-                    } );
-                }
-                return Continuation.empty();
-            });
-            val res = Tuple.tuple(topic.stream(),topic.stream(),topic.stream());
-            topic.addContinuation(cont);
-            return res;
-
-        }
-        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
-        ListX<IterableSourceOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 3,bufferFactory)
-                .map(it->new IterableSourceOperator<>(it));
-
-        return Tuple.tuple(createSeq(copy.get(0)),
-                createSeq(copy.get(1)),
-                createSeq(copy.get(2)));
+        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 3,bufferFactory);
+        return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0))),
+                createSeq(new IterableSourceOperator<>(copy.get(1))),createSeq(new IterableSourceOperator<>(copy.get(2))));
 
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate() {
-        if(async==Type.NO_BACKPRESSURE){
+        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 4);
+        return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0))),
+                createSeq(new IterableSourceOperator<>(copy.get(1))),
+                createSeq(new IterableSourceOperator<>(copy.get(2))),
+                        createSeq(new IterableSourceOperator<>(copy.get(3))));
 
-            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
 
-            Topic<T> topic = new Topic<>(queue);
-            AtomicBoolean wip = new AtomicBoolean(false);
-            Continuation cont = new Continuation(()->{
-                if(wip.compareAndSet(false,true)) {
-                    //queue::close
-                    this.source.subscribeAll(topic::offer, i -> topic.close(),()->{
-                        topic.close();
-                    } );
-                }
-                return Continuation.empty();
-            });
-            val res = Tuple.tuple(topic.stream(),topic.stream(),topic.stream(),topic.stream());
-            topic.addContinuation(cont);
-            return res;
-
-        }
-        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
-        ListX<IterableSourceOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 4)
-                .map(it->new IterableSourceOperator<>(it));
-
-        return Tuple.tuple(createSeq(copy.get(0)),
-                            createSeq(copy.get(1)),
-                            createSeq(copy.get(2)),
-                            createSeq(copy.get(3)));
     }
     @Override
     @SuppressWarnings("unchecked")
     public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate(Supplier<Deque<T>> bufferFactory) {
-        if(async==Type.NO_BACKPRESSURE){
-
-            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
-            Topic<T> topic = new Topic<>(queue);
-            AtomicBoolean wip = new AtomicBoolean(false);
-            Continuation cont = new Continuation(()->{
-                if(wip.compareAndSet(false,true)) {
-                    //queue::close
-                    this.source.subscribeAll(topic::offer, i -> topic.close(),()->{
-                        topic.close();
-                    } );
-                }
-                return Continuation.empty();
-            });
-            val res = Tuple.tuple(topic.stream(),topic.stream(),topic.stream(),topic.stream());
-            topic.addContinuation(cont);
-            return res;
-
-        }
-        Iterable<T> sourceIt = new OperatorToIterable<T,T>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE);
-        ListX<IterableSourceOperator<T>> copy = Streams.toBufferingCopier(sourceIt, 4,bufferFactory)
-                .map(it->new IterableSourceOperator<>(it));
-
-        return Tuple.tuple(createSeq(copy.get(0)),
-                createSeq(copy.get(1)),
-                createSeq(copy.get(2)),
-                createSeq(copy.get(3)));
+        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 4,bufferFactory);
+        return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0))),
+                createSeq(new IterableSourceOperator<>(copy.get(1))),
+                createSeq(new IterableSourceOperator<>(copy.get(2))),
+                        createSeq(new IterableSourceOperator<>(copy.get(3))));
     }
 
     @Override

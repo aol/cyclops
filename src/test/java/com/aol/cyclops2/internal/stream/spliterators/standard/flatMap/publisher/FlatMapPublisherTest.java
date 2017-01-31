@@ -2,7 +2,6 @@ package com.aol.cyclops2.internal.stream.spliterators.standard.flatMap.publisher
 
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
@@ -185,13 +184,12 @@ public class FlatMapPublisherTest {
     public void flatMapPAsyncRS2(){
         for(int k=0;k<1000;k++) {
             System.out.println("********0---------------------K " + k);
-            SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
-            ReactiveSeq.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsync())
-                  //  .flatMapP(i->Spouts.of(1,2))
-                    .subscribe(sub);
 
-            List<Integer> res = sub.stream().collect(Collectors.toList());
+
+
+
+            List<Integer> res = ReactiveSeq.of(1, 2, 3).peek(System.out::println)
+                    .flatMapP(i -> nextAsync()).collect(Collectors.toList());
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
 
@@ -215,16 +213,9 @@ public class FlatMapPublisherTest {
     @Test
     public void flatMapPAsyncRS3(){
         for(int k=0;k<100;k++) {
-            SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
-            ReactiveSeq.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsync())
-                    .subscribe(sub);
-            /**Iterator<Integer> it = sub.iterator();
 
-            while(it.hasNext()){
-                System.out.println("it " + it.next());
-            }**/
-            List<Integer> res = sub.stream().collect(Collectors.toList());
+            List<Integer> res = Spouts.from(ReactiveSeq.of(1, 2, 3).peek(System.out::println)
+                    .flatMapP(i -> nextAsync())).collect(Collectors.toList());
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1, 2));

@@ -25,6 +25,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -96,6 +98,26 @@ public interface Spouts {
         return async(s->{
             subscriber[0]=s;
         });
+    }
+    static <T> ReactiveSeq<T> publishOn(Stream<T> seq, Executor exec){
+        AtomicReference<Subscriber<T>> subscriber = new AtomicReference<>(null);
+        AtomicReference<Subscription> sub = new AtomicReference<>(null);
+        ReactiveSeq.fromStream(seq).foldFuture(t->{
+            while(subscriber.get()==null){
+                LockSupport.parkNanos(0l);
+            }
+            Subscriber<T> local = subscriber.get();
+            sub.set(t.subscribe(local::onNext,local::onError,local::onComplete));
+            return null;
+        },exec);
+        return new ReactiveStreamX<T>(new PublisherToOperator<T>(new Publisher<T>() {
+            @Override
+            public void subscribe(Subscriber<? super T> s) {
+                subscriber.set((Subscriber<T>)s);
+                s.onSubscribe(sub.get());
+
+            }
+        }));
     }
 
 

@@ -13,6 +13,7 @@ import cyclops.stream.Streamable;
 import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -236,8 +237,23 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
         assertThat(of(1, 2, 3).duplicate().v2.skip(1).duplicate().v2.skip(1).toListX(), equalTo(ListX.of(3)));
     }
+
     @Test
     public void skipLimitDuplicateLimitSkip() {
+        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = of(1, 2, 3).duplicate();
+        Optional<Integer> head1 = dup.v1.limit(1).toOptional().flatMap(l -> {
+            return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
+        });
+        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup2 = dup.v2.skip(1).duplicate();
+        Optional<Integer> head2 = dup2.v1.limit(1).toOptional().flatMap(l -> {
+            return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
+        });
+        assertThat(dup2.v2.skip(1).toListX(),equalTo(ListX.of(3)));
+
+        assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
+    }
+    @Test
+    public void skipLimitTriplicateLimitSkip() {
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup = of(1, 2, 3).triplicate();
         Optional<Integer> head1 = dup.v1.limit(1).toOptional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
@@ -246,7 +262,21 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         Optional<Integer> head2 = dup2.v1.limit(1).toOptional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
-       assertThat(dup2.v2.skip(1).toListX(),equalTo(ListX.of(2,3)));
+        assertThat(dup2.v2.skip(1).toListX(),equalTo(ListX.of(3)));
+
+        assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
+    }
+    @Test
+    public void skipLimitQuadruplicateLimitSkip() {
+        Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup = of(1, 2, 3).quadruplicate();
+        Optional<Integer> head1 = dup.v1.limit(1).toOptional().flatMap(l -> {
+            return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
+        });
+        Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup2 = dup.v2.skip(1).quadruplicate();
+        Optional<Integer> head2 = dup2.v1.limit(1).toOptional().flatMap(l -> {
+            return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
+        });
+        assertThat(dup2.v2.skip(1).toListX(),equalTo(ListX.of(3)));
 
         assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
     }

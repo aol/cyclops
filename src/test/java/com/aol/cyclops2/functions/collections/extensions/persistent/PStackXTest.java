@@ -1,22 +1,22 @@
 package com.aol.cyclops2.functions.collections.extensions.persistent;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops2.functions.collections.extensions.CollectionXTestsWithNulls;
+import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.PVectorX;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
+import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Test;
 
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-import org.jooq.lambda.tuple.Tuple2;
-import org.junit.Test;
-
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.immutable.PSetX;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.immutable.PVectorX;
-import com.aol.cyclops2.functions.collections.extensions.CollectionXTestsWithNulls;
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class PStackXTest extends CollectionXTestsWithNulls{
 
@@ -53,14 +53,13 @@ public class PStackXTest extends CollectionXTestsWithNulls{
 	@Test
 	public void pVectorX(){
 	    
-	    SeqSubscriber<String> subscriber = SeqSubscriber.subscriber();
+
+
+		ReactiveSeq<String> seq = Spouts.from(PVectorX.of(1, 2, 3, 4)
+				.plus(5)
+				.map(i -> "connect to Akka, RxJava and more with reactive-streams" + i));
 	    
-	    PVectorX.of(1,2,3,4)
-	            .plus(5)
-	            .map(i->"connect to Akka, RxJava and more with reactive-streams"+i)
-	            .subscribe(subscriber);
-	    
-	   PSetX<String> setX =  subscriber.toFutureStream()
+	   PSetX<String> setX =  seq.toFutureStream()
 	                                   .map(data->"fan out across threads with futureStreams" + data)
 	                                   .toPSetX();
 	    

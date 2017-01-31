@@ -780,7 +780,7 @@ public class Streams {
      *
      * @return duplicated reactiveStream
      */
-    public final static <T> Tuple2<Stream<T>, Stream<T>> duplicate(final Stream<T> stream,Supplier<List<T>> bufferFactory) {
+    public final static <T> Tuple2<Stream<T>, Stream<T>> duplicate(final Stream<T> stream,Supplier<Deque<T>> bufferFactory) {
 
         final Tuple2<Iterator<T>, Iterator<T>> Tuple2 = Streams.toBufferingDuplicator(stream.iterator(),bufferFactory);
         return new Tuple2(
@@ -2307,7 +2307,7 @@ public class Streams {
                                          .get()));
     }
 
-    public static final <A> Tuple2<Iterable<A>, Iterable<A>> toBufferingDuplicator(final Iterable<A> it,Supplier<List<A>> bufferFactory) {
+    public static final <A> Tuple2<Iterable<A>, Iterable<A>> toBufferingDuplicator(final Iterable<A> it,Supplier<Deque<A>> bufferFactory) {
         return Tuple.tuple(()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE,bufferFactory).v1,
                 ()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE,bufferFactory).v2);
     }
@@ -2328,13 +2328,13 @@ public class Streams {
                           new DuplicatingIterator(
                                                   bufferFrom, bufferTo, iterator, pos, 0));
     }
-    public static final <A> Tuple2<Iterator<A>, Iterator<A>> toBufferingDuplicator(final Iterator<A> iterator, Supplier<List<A>> bufferFactory) {
+    public static final <A> Tuple2<Iterator<A>, Iterator<A>> toBufferingDuplicator(final Iterator<A> iterator, Supplier<Deque<A>> bufferFactory) {
         return toBufferingDuplicator(iterator, Long.MAX_VALUE,bufferFactory);
     }
 
-    public static final <A> Tuple2<Iterator<A>, Iterator<A>> toBufferingDuplicator(final Iterator<A> iterator, final long pos,Supplier<List<A>> bufferFactory) {
-        final List<A> bufferTo = bufferFactory.get();
-        final List<A> bufferFrom = bufferFactory.get();
+    public static final <A> Tuple2<Iterator<A>, Iterator<A>> toBufferingDuplicator(final Iterator<A> iterator, final long pos,Supplier<Deque<A>> bufferFactory) {
+        final Deque<A> bufferTo = bufferFactory.get();
+        final Deque<A> bufferFrom = bufferFactory.get();
         return new Tuple2(
                 new DuplicatingIterator(
                         bufferTo, bufferFrom, iterator, Long.MAX_VALUE, 0),
@@ -2388,8 +2388,8 @@ public class Streams {
     @AllArgsConstructor
     static class DuplicatingIterator<T> implements Iterator<T> {
 
-        List<T> bufferTo;
-        List<T> bufferFrom;
+        Deque<T> bufferTo;
+        Deque<T> bufferFrom;
         Iterator<T> it;
         long otherLimit = Long.MAX_VALUE;
         long counter = 0;
@@ -2405,7 +2405,7 @@ public class Streams {
         public T next() {
             try {
                 if (bufferFrom.size() > 0)
-                    return bufferFrom.remove(0);
+                    return bufferFrom.poll();
                 else {
                     final T next = it.next();
                     if (counter < otherLimit)
