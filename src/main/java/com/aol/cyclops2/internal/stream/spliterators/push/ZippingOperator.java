@@ -49,18 +49,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
         StreamSubscription sub   = new StreamSubscription(){
             LongConsumer work = n->{
-                if(n==Long.MAX_VALUE){
-                    if(leftSub[0].isOpen && rightSub[0].isOpen && isOpen){
-                        leftSub[0].request(Long.MAX_VALUE);
-                        rightSub[0].request(Long.MAX_VALUE);
-                    }
 
-                    return;
-                }
 
                 System.out.println("DEMAND ADDED " + requested.get() + " n is " + n + " Thread "+ Thread.currentThread().getId());
-               // leftSub[0].request(Math.min(n,256));
-               // rightSub[0].request(Math.min(n,256));
+
                 leftSub[0].request(1);
                 rightSub[0].request(1);
 
@@ -131,6 +123,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                         System.out.println("LEFT Pushing " + value + "  Thread " + Thread.currentThread().getId() + " demenad "+  sub.requested.get());
                         sub.requested.decrementAndGet();
                         onNext.accept(value);
+                        if(sub.isActive()){
+                            leftSub[0].request(1);
+                            rightSub[0].request(1);
+                        }
                         rightActive.decrementAndGet();
                     }
 
@@ -182,6 +178,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                     onNext.accept(value);
                     leftActive.decrementAndGet();
                     if(sub.isActive()){
+                        System.out.println("Requesting more!!");
                         leftSub[0].request(1l);
                         rightSub[0].request(1);
                     }
@@ -213,6 +210,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                         System.out.println("RIGHT Pushing " + value + "  Thread " + Thread.currentThread().getId() + " demenad " + sub.requested.get());
                         sub.requested.decrementAndGet();
                         onNext.accept(value);
+                        if(sub.isActive()){
+                            leftSub[0].request(1);
+                            rightSub[0].request(1);
+                        }
                         leftActive.decrementAndGet();
                     }
 
