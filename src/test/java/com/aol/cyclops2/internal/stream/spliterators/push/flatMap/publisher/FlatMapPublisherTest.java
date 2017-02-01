@@ -42,7 +42,7 @@ import static org.hamcrest.Matchers.hasItems;
  */
 public class FlatMapPublisherTest {
 
-    Executor ex= Executors.newFixedThreadPool(20);
+    static Executor ex= Executors.newFixedThreadPool(20);
 
     protected <U> ReactiveSeq<U> flux(U... array){
 

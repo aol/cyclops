@@ -3,16 +3,17 @@ package com.aol.cyclops2.internal.stream;
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import cyclops.Streams;
+import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
+import lombok.val;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
-import java.util.Deque;
-import java.util.List;
-import java.util.Optional;
-import java.util.Spliterator;
+import java.util.*;
+import java.util.concurrent.ForkJoinPool;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -96,8 +97,11 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
                 .map3(s -> createSeq(s, reversible.map(r -> r.copy())))
                 .map4(s -> createSeq(s, reversible.map(r -> r.copy())));
     }
-
-
+    @Override
+    public ListX<ReactiveSeq<T>> multicast(int num){
+        return Streams.toBufferingCopier(iterator(),num,()->new ArrayDeque<T>(100))
+                .map(ReactiveSeq::fromIterator);
+    }
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public final Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
@@ -157,6 +161,7 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
     <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible) {
         return new OneShotStreamX<X>(stream,reversible);
     }
+    /**
 
     @Override @SafeVarargs
     public  final ReactiveSeq<T> insertAt(final int pos, final T... values) {
@@ -175,6 +180,7 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
         return createSeq(Streams.insertStreamAt(this, pos, stream), Optional.empty());
 
     }
+    **/
     Spliterator<T> get() {
         return stream;
     }

@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 
 public class FutureTest {
 
-    Executor ex = Executors.newFixedThreadPool(5);
+    static Executor ex = Executors.newFixedThreadPool(5);
     Future<Integer> just;
     Future<Integer> none;
     NoSuchElementException exception = new NoSuchElementException();

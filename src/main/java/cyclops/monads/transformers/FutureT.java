@@ -27,10 +27,10 @@ import cyclops.function.Fn4;
 import cyclops.function.Fn3;
 
 /**
-* Monad Transformer for Future's nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
+* Monad Transformer for Future's nested within another monadic type
 
  * 
- * FutureWT allows the deeply wrapped Future to be manipulating within it's nested /contained context
+ * FutureT allows the deeply wrapped Future to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
  *

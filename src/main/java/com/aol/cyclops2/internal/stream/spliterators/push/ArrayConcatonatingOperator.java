@@ -29,23 +29,7 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
 
     }
 
-    private void subscribe(int index, boolean[] completed,Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs){
 
-        operators.get(index).subscribeAll(e-> {
-                    try {
-                        onNext.accept(e);
-                    } catch (Throwable t) {
-
-                        onError.accept(t);
-                    }
-                }
-                ,onError,()->{
-                        if(index<operators.size()-1)
-                          subscribe(index+1,completed,onNext,onError,onCompleteDs);
-                        if(!completed[0])
-                            onCompleteDs.run();
-                });
-    }
 
     @Override
     public StreamSubscription subscribe(Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
@@ -54,6 +38,7 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
         boolean[] finished = {false};
         AtomicReference<StreamSubscription> active = new AtomicReference<>(null);
 
+        Concat[] ref = {null};
         StreamSubscription sub = new StreamSubscription() {
 
             @Override
@@ -62,11 +47,8 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
                 if (n <= 0)
                     onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                 System.out.println("R 1" +  active.get());
-                active.get().request(1);
-                super.request(n);
-
-
-
+                //need to process new requests in a loop / prevent nested calls
+                ref[0].request(n);
 
 
 
@@ -74,61 +56,23 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
 
             @Override
             public void cancel() {
+                ref[0].cancel();
                 super.cancel();
             }
         };
 
+        Concat c = new Concat(sub,operators,onNext,onError,onComplete);
+        ref[0]=c;
 
 
-        subscribeNext(finished,sub,active,index,onNext,onError,onComplete);
+
 
 
 
         return sub;
     }
 
-    public void subscribeNext(boolean[] finished, StreamSubscription sub,AtomicReference<StreamSubscription> active,int[] index,Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete){
-        if(index[0]==operators.size()){
-            if(!finished[0]) {
-                finished[0] = true;
-                onComplete.run();
-            }
-        }
-        active.set(operators.get(index[0]).subscribe(e-> {
-                    try {
-                        System.out.println("on next " +e);
-                        onNext.accept(e);
-                        sub.requested.decrementAndGet();
-                        if(sub.isActive()){
 
-                            active.get().request(1l);
-                        }
-                    } catch (Throwable t) {
-                        onError.accept(t);
-                    }
-                }
-                ,t->{
-                    t.printStackTrace();
-                    onError.accept(t);
-                    active.get().request(1l);
-
-                },()->{
-
-                    if(index[0]==operators.size()){
-                        if(!finished[0]) {
-                            finished[0] = true;
-                            onComplete.run();
-                        }
-                    }
-                    index[0]++;
-                    subscribeNext(finished,sub,active,index,onNext,onError,onComplete);
-                    System.out.println("demenad " + sub.requested.get() + " " + active.get());
-                    if(sub.requested.get()>0)
-                        active.get().request(1l);
-
-
-                }));
-    }
 
 
 

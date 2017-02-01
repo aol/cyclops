@@ -20,10 +20,10 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
-* Monad Transformer for Eval's nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
+* Monad Transformer for Eval's
 
  * 
- * EvalWT allows the deeply wrapped Eval to be manipulating within it's nested /contained context
+ * EvalT allows the deeply wrapped Eval to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
  *

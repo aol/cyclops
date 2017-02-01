@@ -37,6 +37,22 @@ import static org.junit.Assert.*;
  * Created by johnmcclean on 20/01/2017.
  */
 public class SpoutsTest {
+
+
+    @Test
+    public void fluxConcat(){
+        Iterator<Integer> it = Spouts.from(Flux.concat(Flux.just(1, 2, 3), Flux.just(10, 20, 30))).iterator();
+        while(it.hasNext()){
+            System.out.println("next " + it.next());
+        }
+    }
+    @Test
+    public void fluxMerge(){
+        Iterator<Integer> it = Spouts.from(Flux.merge(Flux.just(1, 2, 3), Flux.just(10, 20, 30))).iterator();
+        while(it.hasNext()){
+            System.out.println("next " + it.next());
+        }
+    }
     @Test
     public void publishOn(){
         assertThat(Spouts.publishOn(Stream.of(1,2),Executors.newFixedThreadPool(1)).toList(), CoreMatchers.equalTo(ListX.of(1,2)));

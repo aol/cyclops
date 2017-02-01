@@ -21,10 +21,10 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
-* Monad Transformer for Maybe's nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
+* Monad Transformer for Maybe's
 
  * 
- * MaybeWT allows the deeply wrapped Maybe to be manipulating within it's nested /contained context
+ * MaybeT allows the deeply wrapped Maybe to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
  *

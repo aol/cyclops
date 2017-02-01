@@ -121,6 +121,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                         status.compareAndSet(1,0);
                         System.out.println("Left awaiting ");
                         while(rightQ.isEmpty()){ // VALUE IS COMING
+                            if(rightComplete.get() && rightQ.isEmpty()){
+                                handleComplete(completing,onComplete);
+                                return;
+                            }
                             LockSupport.parkNanos(0);
                         }
                         R value = fn.apply((T1) e, rightQ.poll());
@@ -199,6 +203,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                         System.out.println("Right awaiting awaiting " +  leftQ.isEmpty() + " status " + status.get());
                         status.compareAndSet(2,0);
                         while (leftQ.isEmpty()) { // VALUE IS COMING
+                            if(leftComplete.get() && leftQ.isEmpty()){
+                                handleComplete(completing,onComplete);
+                                return;
+                            }
                             LockSupport.parkNanos(0);
                         }
                         R value = fn.apply(leftQ.poll(), (T2) e);
@@ -301,6 +309,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                         System.out.println("Right awaiting awaiting " +  leftQ.isEmpty() + " status " + status.get());
                         status.compareAndSet(2,0);
                         while (leftQ.isEmpty()) { // VALUE IS COMING
+                            if(leftComplete.get() && leftQ.isEmpty()){
+                                handleComplete(completing,onCompleteDs);
+                                return;
+                            }
                             LockSupport.parkNanos(0);
                         }
                         R value = fn.apply(leftQ.poll(), (T2) e);
@@ -373,6 +385,10 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                         status.compareAndSet(1,0);
                         System.out.println("Left awaiting ");
                         while(rightQ.isEmpty()){ // VALUE IS COMING
+                            if(rightComplete.get() && rightQ.isEmpty()){
+                                handleComplete(completing,onCompleteDs);
+                                return;
+                            }
                             LockSupport.parkNanos(0);
                         }
                         R value = fn.apply((T1) e, rightQ.poll());

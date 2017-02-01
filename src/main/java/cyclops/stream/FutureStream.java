@@ -292,7 +292,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path1,
+    default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path1,
                                        Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path2,
                                        Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path3,
                                        Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path4) {
@@ -3215,8 +3215,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<U> prepend(final U... values) {
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .prepend(values));
+        return fromStream(stream().prepend(values));
     }
 
     /*
@@ -3224,8 +3223,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<U> insertAt(final int pos, final U... values) {
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .insertAt(pos, values));
+        return fromStream(stream().insertAt(pos, values));
     }
 
     /*
@@ -3233,8 +3231,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<U> deleteBetween(final int start, final int end) {
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .deleteBetween(start, end));
+        return fromStream(stream().deleteBetween(start, end));
     }
 
     /*

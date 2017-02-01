@@ -701,7 +701,7 @@ public class MaybeTest implements Printable {
         assertThat(cf.join(), equalTo(10));
     }
 
-    Executor exec = Executors.newFixedThreadPool(1);
+    static Executor exec = Executors.newFixedThreadPool(1);
 
     @Test
     public void testToCompletableFutureAsyncExecutor() {

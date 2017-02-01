@@ -256,7 +256,7 @@ public  class CoreReactiveSeqTest {
     }
     @Test
     public void triplicatePropertiesTest(){
-        for(int i=0;i<1000;i++) {
+        for(int i=0;i<100;i++) {
             Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> tuples = ReactiveSeq.range(0,i).triplicate();
 
             Tuple3<Iterator<Integer>, Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())

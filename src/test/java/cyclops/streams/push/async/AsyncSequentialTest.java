@@ -41,7 +41,7 @@ import static org.junit.Assert.assertTrue;
  * Created by johnmcclean on 14/01/2017.
  */
 public class AsyncSequentialTest extends BaseSequentialTest {
-    Executor exec = Executors.newFixedThreadPool(10);
+    static Executor exec = Executors.newFixedThreadPool(10);
     @Override
     protected <U> ReactiveSeq<U> of(U... array){
 
@@ -71,7 +71,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         for(int i=0;i<array.length;i++) {
             array[i]=i;
         }
-        for(int i=0;i<100;i++) {
+        for(int i=0;i<10;i++) {
             List<Integer> list = of(array).collect(Collectors.toList());
             assertThat(list.size(),equalTo(array.length));
         }
@@ -92,7 +92,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     public void mergePTest(){
         //System.out.println(of(3, 6, 9).mergeP(of(2, 4, 8), of(1, 5, 7)).toListX());
 
-        for(int i=0;i<1000;i++) {
+        for(int i=0;i<100;i++) {
             ListX<Integer> list = of(3, 6, 9).mergeP(of(2, 4, 8), of(1, 5, 7)).toListX();
 
             assertThat("List is " + list,list, hasItems(1, 2, 3, 4, 5, 6, 7, 8, 9));
