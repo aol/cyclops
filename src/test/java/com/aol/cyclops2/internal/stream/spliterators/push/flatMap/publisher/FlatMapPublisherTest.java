@@ -220,8 +220,8 @@ public class FlatMapPublisherTest {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             List<Integer> res =  Spouts.of(1, 2, 3)
-                    .flatMapP(i -> nextAsync())
-                    .toList();
+                                       .flatMapP(i -> nextAsync())
+                                        .toList();
             System.out.println("Result is " + res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
@@ -429,13 +429,10 @@ public class FlatMapPublisherTest {
     public void flatMapPAsyncRS2(){
         for(int k=0;k<1000;k++) {
             System.out.println("********0---------------------K " + k);
-            ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
-            Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsync())
-                  //  .flatMapP(i->Spouts.of(1,2))
-                    .subscribe(sub);
 
-            List<Integer> res = sub.reactiveStream().collect(Collectors.toList());
+
+            List<Integer> res = Spouts.from(Spouts.of(1, 2, 3).peek(System.out::println)
+                    .flatMapP(i -> nextAsync())).collect(Collectors.toList());
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
 

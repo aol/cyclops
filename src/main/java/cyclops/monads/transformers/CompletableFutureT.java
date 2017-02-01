@@ -269,7 +269,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      */
     @Override
     public String toString() {
-        return String.format("FutureT[%s]", run.unwrap().toString());
+        return String.format("CompletableFutureT[%s]", run.unwrap().toString());
     }
 
     

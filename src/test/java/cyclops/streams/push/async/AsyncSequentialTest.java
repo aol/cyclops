@@ -382,7 +382,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     }
     @Test
     public void triplicateParallelFanOut2() {
-        for (int k = 0; k < 100; k++) {
+        for (int k = 0; k < 10; k++) {
 
             assertThat(of(1, 2, 3, 4, 5, 6, 7, 8, 9)
                     .parallelFanOut(ForkJoinPool.commonPool(), s1 -> s1.filter(i -> i % 3 == 0).map(i -> i * 2),

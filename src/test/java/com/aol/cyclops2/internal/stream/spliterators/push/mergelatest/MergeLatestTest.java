@@ -49,24 +49,16 @@ public class MergeLatestTest {
     }
     @Test
     public void mergeStreamSimple3(){
-        int size1 = 100;
-        int size2 = 500;
-        int size3 = 600;
-        //   long count = range(size1).count().block();
-        long count = Spouts.mergeLatest(range(size1),range(size2),range(size3)).count();
-        assertThat(count,equalTo((long)(size1+size2+size3)));
-    }
-    @Test
-    public void mergeStreamCount(){
         for(int i=0;i<10;i++) {
             int size1 = 100;
             int size2 = 500;
             int size3 = 600;
             //   long count = range(size1).count().block();
-            long count = Spouts.range(0, 12000).count();
+            long count = Spouts.mergeLatest(range(size1), range(size2), range(size3)).count();
             assertThat(count, equalTo((long) (size1 + size2 + size3)));
         }
     }
+
     @Test
     public void mergeLong(){
         int size1 = 10000;

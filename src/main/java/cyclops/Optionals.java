@@ -14,6 +14,9 @@ import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.higherkindedtypes.OptionalKind;
+import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.MaybeT;
+import cyclops.monads.transformers.OptionalT;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -40,6 +43,9 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class Optionals {
+   public static <T,W extends WitnessType<W>> OptionalT<W, T> liftM(Optional<T> opt, W witness) {
+        return OptionalT.of(witness.adapter().unit(opt));
+    }
 
     /**
      * Perform a For Comprehension over a Optional, accepting 3 generating function.
