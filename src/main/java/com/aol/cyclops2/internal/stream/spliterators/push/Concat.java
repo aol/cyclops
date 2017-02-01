@@ -4,6 +4,7 @@ import cyclops.collections.ListX;
 import cyclops.collections.QueueX;
 import org.reactivestreams.Subscription;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -42,6 +43,7 @@ public class Concat<IN> {
         next.set(null);
     }
 
+    final AtomicLong queued = new AtomicLong(0);
     public void request(long n) {
         if(!sub.isOpen){
             return;
@@ -49,22 +51,31 @@ public class Concat<IN> {
         if (processAll) {
             return;
         }
-        //if processAll the demand is self-sustaining, passed on in onComplete
-        if(n==Long.MAX_VALUE || sub.requested.get()==Long.MAX_VALUE) {
-            processAll = true;
-            active.get().request(Long.MAX_VALUE);
-            if(next.get()!=null)
-                next.get().request(Long.MAX_VALUE);
-            return;
-        }
-        //request to currently active
-        requested.accumulateAndGet(n,(a,b)->a+b);
-        active.get().request(n);
+        if(queued.compareAndSet(0,n)) {
+            long requesting = n;
+            do {
 
-        //transfer demand if changed over
-        if (next.get()!=null && status.compareAndSet(0, 1)) {
-            addMissingRequests();
-            status.set(0);
+                //if processAll the demand is self-sustaining, passed on in onComplete
+                if (n == Long.MAX_VALUE || sub.requested.get() == Long.MAX_VALUE) {
+                    processAll = true;
+                    active.get().request(Long.MAX_VALUE);
+                    if (next.get() != null)
+                        next.get().request(Long.MAX_VALUE);
+                    return;
+                }
+                //request to currently active
+                requested.accumulateAndGet(n, (a, b) -> a + b);
+                active.get().request(n);
+
+                //transfer demand if changed over
+                if (next.get() != null && status.compareAndSet(0, 1)) {
+                    addMissingRequests();
+                    status.set(0);
+                }
+                requesting = queued.accumulateAndGet(requesting,(a,b)->a-b);
+            }while(requesting!=0);
+        }else{
+            queued.accumulateAndGet(n,(a,b)->a+b);
         }
 
 
@@ -82,11 +93,12 @@ public class Concat<IN> {
             long toRequest = 0;
             nextLocal = next.get();
             do {
+
                 reqs = requested.getAndSet(0);
                 prod = produced.getAndSet(0);
+                toRequest = toRequest + (reqs - prod);
 
-                if (reqs - prod > 0) {
-                    toRequest += toRequest + (reqs - prod);
+                if (toRequest> 0) {
                     nextLocal.request(toRequest);
                 }
             } while (reqs - prod > 0);
@@ -104,13 +116,14 @@ public class Concat<IN> {
     }
 
     public void onNext(IN e){
+            produced.incrementAndGet();
             if(!sub.isOpen){
                 return;
             }
 
             try {
                 System.out.println("on next " +e);
-                produced.incrementAndGet();
+
                 onNext.accept(e);
 
 

@@ -44,11 +44,16 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
             @Override
             public void request(long n) {
                 System.out.println("Requesting " + n);
-                if (n <= 0)
+                if (n <= 0) {
                     onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                    return;
+                }
+
                 System.out.println("R 1" +  active.get());
-                //need to process new requests in a loop / prevent nested calls
+
                 ref[0].request(n);
+
+
 
 
 
