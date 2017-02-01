@@ -43,7 +43,9 @@ public class Concat<IN> {
     }
 
     public void request(long n) {
-
+        if(!sub.isOpen){
+            return;
+        }
         if (processAll) {
             return;
         }
@@ -72,27 +74,39 @@ public class Concat<IN> {
     //transfer demand from previous to next
     public void addMissingRequests(){
 
-            long prod = 0;
-            long reqs = 0;
+        long prod = 0;
+        long reqs = 0;
+
+        Subscription nextLocal;
+        do {
+            long toRequest = 0;
+            nextLocal = next.get();
             do {
                 reqs = requested.getAndSet(0);
                 prod = produced.getAndSet(0);
 
-                if (reqs - prod > 0){
-                    next.get().request(reqs-prod);
+                if (reqs - prod > 0) {
+                    toRequest += toRequest + (reqs - prod);
+                    nextLocal.request(toRequest);
                 }
-            }while(reqs-prod>0);
-            active.set(next.get());
-            next.set(null);
+            } while (reqs - prod > 0);
+            requested.accumulateAndGet(toRequest,(a,b)->a+b);
+        }while(!next.compareAndSet(nextLocal,nextLocal));
+        active.set(next.get());
+        next.set(null);
 
     }
     public void onError(Throwable t){
         t.printStackTrace();
+        produced.incrementAndGet();
         onError.accept(t);
 
     }
 
     public void onNext(IN e){
+            if(!sub.isOpen){
+                return;
+            }
 
             try {
                 System.out.println("on next " +e);
@@ -116,6 +130,7 @@ public class Concat<IN> {
             }
         }
         index++; //next index
+        int localIndex = index;
         if(subscribeNext()) //next subscription
             return;
         System.out.println("demand " + sub.requested.get() + " " + active);
@@ -130,6 +145,7 @@ public class Concat<IN> {
                 addMissingRequests();
                 status.set(0);
             }
+
 
 
         }

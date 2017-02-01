@@ -58,6 +58,7 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
             public void cancel() {
                 ref[0].cancel();
                 super.cancel();
+
             }
         };
 
