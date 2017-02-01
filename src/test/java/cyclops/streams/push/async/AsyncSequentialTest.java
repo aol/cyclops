@@ -56,7 +56,46 @@ public class AsyncSequentialTest extends BaseSequentialTest {
 
         });
     }
+    @Test
+    public void subscribe3ErrorOnComplete() throws InterruptedException {
+        List<Integer> result = new ArrayList<>();
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
 
+        assertThat(onComplete.get(), Matchers.equalTo(false));
+        s.request(4l);
+        Thread.sleep(100);
+        assertThat(onComplete.get(), Matchers.equalTo(true));
+
+        assertThat(result.size(), Matchers.equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+
+        assertThat(onComplete.get(), Matchers.equalTo(true));
+    }
+    @Test
+    public void subscribeErrorEmptyOnComplete() throws InterruptedException {
+        List result = new ArrayList<>();
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Thread.sleep(100);
+        s.request(1l);
+        assertThat(onComplete.get(), Matchers.equalTo(true));
+        assertThat(result.size(), Matchers.equalTo(0));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+        s.request(1l);
+        assertThat(result.size(), Matchers.equalTo(0));
+
+    }
+    @Test
+    public void subscribe3Error() throws InterruptedException {
+        List<Integer> result = new ArrayList<>();
+        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        s.request(3l);
+        Thread.sleep(100);
+        assertThat(result.size(), Matchers.equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+    }
 
     @Test @Ignore
     public void triplicate(){
@@ -410,14 +449,14 @@ public class AsyncSequentialTest extends BaseSequentialTest {
 
 
     @Test
-    public void subscribeErrorOnComplete(){
+    public void subscribeErrorOnComplete() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
         Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
 
         assertThat(onComplete.get(), Matchers.equalTo(false));
         s.request(1l);
-
+        Thread.sleep(100);
         assertThat(result.size(), Matchers.equalTo(3));
         assertThat(result,hasItems(1,2,3));
         s.request(1l);

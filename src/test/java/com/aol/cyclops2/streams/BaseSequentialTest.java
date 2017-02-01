@@ -118,7 +118,7 @@ public class BaseSequentialTest {
         assertThat(result,hasItems(1,2,3));
     }
     @Test
-    public void subscribe3Error(){
+    public void subscribe3Error() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
         s.request(3l);
@@ -127,7 +127,7 @@ public class BaseSequentialTest {
         assertThat(result,hasItems(1,2,3));
     }
     @Test
-    public void subscribeErrorEmptyOnComplete(){
+    public void subscribeErrorEmptyOnComplete() throws InterruptedException {
         List result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
         Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
@@ -141,7 +141,7 @@ public class BaseSequentialTest {
 
     }
     @Test
-    public void subscribeErrorOnComplete(){
+    public void subscribeErrorOnComplete() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
         Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
@@ -160,7 +160,7 @@ public class BaseSequentialTest {
         assertThat(onComplete.get(), Matchers.equalTo(true));
     }
     @Test
-    public void subscribe3ErrorOnComplete(){
+    public void subscribe3ErrorOnComplete() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
         Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));

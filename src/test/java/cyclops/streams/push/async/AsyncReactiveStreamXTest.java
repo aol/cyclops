@@ -286,7 +286,7 @@ public  class AsyncReactiveStreamXTest {
 		System.out.println(error.get());
 		assertTrue(error.get() instanceof ClassCastException);
 	}
-	@Test//(expected=ClassCastException.class)
+	@Test(expected=ClassCastException.class)
 	public void castList(){
 
 		of(1,2,3).cast(String.class).toList();
@@ -399,7 +399,7 @@ public  class AsyncReactiveStreamXTest {
 		 assertTrue(copies.v3.limit(3).toList().size()==3);
 		 assertTrue(copies.v4.limit(3).toList().size()==3);
 	}
-	    @Test//(expected=ClassCastException.class)
+	    @Test(expected=ClassCastException.class)
 	    public void testCastException() {
 	    	of(1, "a", 2, "b", 3, null)
 	    			.peek(it ->System.out.println(it))
