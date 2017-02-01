@@ -237,8 +237,8 @@ public  class AsyncReactiveStreamXTest {
 
 		    System.out.println("Next iteration...");
             List<Integer> result = of(1, 2, 3, 4, 5, 6)
-                    .peek(i -> sleep(i * 100))
-                    .limit(1000, TimeUnit.MILLISECONDS)
+                    .peek(i -> sleep(i*10))
+                    .limit(100, TimeUnit.MILLISECONDS)
                     .toList();
 
 

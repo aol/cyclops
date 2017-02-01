@@ -193,8 +193,7 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("CompletableFutureT[Optional[java.util.concurrent.CompletableFuture@270421f5[Completed normally]]]"));
-		assertThat(none.mkString(),equalTo("CompletableFutureT[Optional.empty]"));
+			assertThat(none.mkString(),equalTo("CompletableFutureT[Optional.empty]"));
 	}
 
 

@@ -239,23 +239,24 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     @Override
     public void onComplete() {
 
-        System.out.println("On Complete!");
+        System.out.println("On Complete! " + counter.active.get() + " queue " + queue.size() );
         counter.active.decrementAndGet();
         counter.subscription.minus(subscription);
         if (queue != null && counter.active.get() == 0) {
 
             if (counter.completable) {
-
+                System.out.println("Completable closing..");
                 counter.closed = true;
                 queue.addContinuation(new Continuation(
                                                        () -> {
                                                            final List current = new ArrayList();
                                                            while (queue.size() > 0)
                                                                current.add(queue.get());
+                                                           System.out.println("Adding final elements.. " + current);
                                                            throw new ClosedQueueException(
                                                                                           current);
                                                        }));
-                queue.close();
+           //     queue.close();
             }
 
         }
@@ -264,6 +265,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
     public void close() {
         counter.completable = true;
+
         if (queue != null && counter.active.get() == 0) {
             counter.closed = true;
             System.out.println("Closing!");
@@ -273,6 +275,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
                                                    }));
             queue.close();
         }
+
 
     }
 

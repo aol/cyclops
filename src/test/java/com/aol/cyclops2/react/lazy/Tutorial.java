@@ -372,10 +372,10 @@ public class Tutorial {
 	@Test
 	public void skipUntil() {
 		SimpleReactStream<Boolean> stoppingStream = SimpleReact
-				.sequentialCommonBuilder().ofAsync(() -> 1000).then(this::sleep)
+				.sequentialCommonBuilder().ofAsync(() -> 10).then(this::sleep)
 				.peek(System.out::println);
 		System.out.println(SimpleReact.sequentialCommonBuilder()
-				.from(IntStream.range(0, 1000000))
+				.from(IntStream.range(0, 10000))
 				// .peek(System.out::println)
 				.skipUntil(stoppingStream).peek(System.out::println)
 				.toList()

@@ -418,23 +418,27 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
         final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
 
-        final ReactiveSeq<T> stream = stream();
-        final Supplier<Continuation> sp = () -> {
+        Continuation[] ref = {null};
+        final Continuation continuation  = new Continuation(() -> {
 
-            stream.map(mapper)
-                    .forEach(p -> {
-                        c.active.incrementAndGet();
-                        p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));
+                if(!stream.tryAdvance(e-> {
+                    Publisher<R> p = (Publisher<R>)mapper.apply(e);
+                    c.active.incrementAndGet();
+                    p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));})) {
+                    //must wait until active publishers have complete!!
+                    init.close();
+                    return Continuation.empty();
+                }else{
+                    return ref[0];
+                }
 
-                    } , i -> {
-                    } , () -> {
-                        init.close();
-                    });
 
-            return Continuation.empty();
-        };
-        final Continuation continuation = new Continuation(
-                sp);
+
+
+
+        });
+        ref[0]= continuation;
+
         init.addContinuation(continuation);
         return ReactiveSeq.fromStream(init.jdkStream());
     }

@@ -454,6 +454,100 @@ public class FlatMapPublisherTest {
 
     }
     @Test
+    public void flatMapPAsyncRS2Conc(){
+        for(int k=0;k<1000;k++) {
+            System.out.println("********0---------------------K " + k);
+
+
+
+
+            List<Integer> res = of(1, 2, 3)
+                    .peek(System.out::println)
+                    .flatMapP(2,i -> nextAsync())
+                    .collect(Collectors.toList());
+            System.out.println(res);
+            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+
+            assertThat(res, hasItems(1, 2));
+            int one = 0;
+            int two = 0;
+            for (Integer next : res) {
+                if (next == 1) {
+                    one++;
+                }
+                if (next == 2) {
+                    two++;
+                }
+            }
+            assertThat(one, equalTo(3));
+            assertThat(two, equalTo(3));
+
+        }
+
+    }
+    @Test
+    public void arrayConcat(){
+        for(int k=0;k<1000;k++) {
+            System.out.println("********0---------------------K " + k);
+
+
+
+
+            List<Integer> res = Spouts.concat(nextAsync(),nextAsync(),nextAsync())
+                    .collect(Collectors.toList());
+            System.out.println(res);
+            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+
+            assertThat(res, hasItems(1, 2));
+            int one = 0;
+            int two = 0;
+            for (Integer next : res) {
+                if (next == 1) {
+                    one++;
+                }
+                if (next == 2) {
+                    two++;
+                }
+            }
+            assertThat(one, equalTo(3));
+            assertThat(two, equalTo(3));
+
+        }
+
+    }
+
+    @Test
+    public void arrayConcatIt(){
+        for(int k=0;k<1000;k++) {
+            System.out.println("********0---------------------K " + k);
+
+
+            List<Integer> res = new ArrayList();
+            Iterator<Integer> it = Spouts.concat(nextAsync(),nextAsync(),nextAsync()).iterator();
+            while(it.hasNext()){
+                res.add(it.next());
+            }
+            System.out.println(res);
+            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+
+            assertThat(res, hasItems(1, 2));
+            int one = 0;
+            int two = 0;
+            for (Integer next : res) {
+                if (next == 1) {
+                    one++;
+                }
+                if (next == 2) {
+                    two++;
+                }
+            }
+            assertThat(one, equalTo(3));
+            assertThat(two, equalTo(3));
+
+        }
+
+    }
+    @Test
     public void flatMapPAsyncRS3(){
         for(int k=0;k<100;k++) {
 
@@ -485,7 +579,7 @@ public class FlatMapPublisherTest {
     }
     AtomicInteger start= new AtomicInteger(0);
 
-    private Publisher<Integer> nextAsync() {
+    private ReactiveSeq<Integer> nextAsync() {
         return flux(1,2);
 
     }

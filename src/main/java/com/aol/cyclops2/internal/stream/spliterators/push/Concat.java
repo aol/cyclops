@@ -59,8 +59,11 @@ public class Concat<IN> {
                 if (n == Long.MAX_VALUE || sub.requested.get() == Long.MAX_VALUE) {
                     processAll = true;
                     active.get().request(Long.MAX_VALUE);
-                    if (next.get() != null)
-                        next.get().request(Long.MAX_VALUE);
+                    Subscription nextLocal = next.get();
+                    if(nextLocal!=null) {
+                        nextLocal.request(Long.MAX_VALUE);
+
+                    }
                     return;
                 }
                 //request to currently active
@@ -122,7 +125,7 @@ public class Concat<IN> {
             }
 
             try {
-                System.out.println("on next " +e);
+                System.out.println("on next " +e + " reqs " + requested.get() + " prod " + produced.get());
 
                 onNext.accept(e);
 
