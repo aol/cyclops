@@ -50,9 +50,9 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
         StreamSubscription sub   = new StreamSubscription(){
             LongConsumer work = n->{
                 if(n==Long.MAX_VALUE){
-                    while(leftSub[0].isOpen && rightSub[0].isOpen && isOpen){
-                        leftSub[0].request(1);
-                        rightSub[0].request(1);
+                    if(leftSub[0].isOpen && rightSub[0].isOpen && isOpen){
+                        leftSub[0].request(Long.MAX_VALUE);
+                        rightSub[0].request(Long.MAX_VALUE);
                     }
 
                     return;
@@ -203,7 +203,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                         System.out.println("Right awaiting awaiting " +  leftQ.isEmpty() + " status " + status.get());
                         status.compareAndSet(2,0);
                         while (leftQ.isEmpty()) { // VALUE IS COMING
-                            if(leftComplete.get() && leftQ.isEmpty()){
+                           if(leftComplete.get() && leftQ.isEmpty()){
                                 handleComplete(completing,onComplete);
                                 return;
                             }
