@@ -36,9 +36,7 @@ import static org.junit.Assert.*;
 
 //see BaseSequentialSeqTest for in order tests
 public  class AsyncRSReactiveStreamXTest {
-    public static Executor ex =  Executors.newFixedThreadPool(10);
-    public static final LazyReact r = new LazyReact(10,10);
-	
+ 	int ITERATIONS = 1;
 	ReactiveSeq<Integer> empty;
 	ReactiveSeq<Integer> nonEmpty;
 
@@ -199,7 +197,7 @@ public  class AsyncRSReactiveStreamXTest {
 	}
 	@Test
 	public void onEmptySwitchEmpty(){
-	   for(int i=0;i<10;i++){
+	   for(int i=0;i<ITERATIONS;i++){
 	       System.out.println("Iteration " + i);
             assertThat(of()
                             .onEmptySwitch(() -> of(1, 2, 3))
@@ -210,7 +208,7 @@ public  class AsyncRSReactiveStreamXTest {
 	}
     @Test
     public void flatMap(){
-        for(int i=0;i<10000;i++){
+        for(int i=0;i<ITERATIONS;i++){
             System.out.println("Iteration " + i);
             assertThat(of(1)
                             .flatMap(in -> of(1, 2, 3))
@@ -221,7 +219,7 @@ public  class AsyncRSReactiveStreamXTest {
     }
 	@Test
 	public void flatMapSynchronous(){
-		for(int i=0;i<1000000;i++){
+		for(int i=0;i<ITERATIONS;i++){
 			System.out.println("***************************Iteration " + i);
             System.out.println("***************************Iteration " + i);
             System.out.println("***************************Iteration " + i);
@@ -240,7 +238,7 @@ public  class AsyncRSReactiveStreamXTest {
 	}
     @Test
     public void flatMapPSynchronous(){
-        for(int i=0;i<1000000;i++){
+        for(int i=0;i<ITERATIONS;i++){
             System.out.println("Iteration " + i);
             assertThat(ReactiveSeq.fromPublisher(of(1)
                             .flatMapP(in -> of(1, 2, 3)))
@@ -251,7 +249,7 @@ public  class AsyncRSReactiveStreamXTest {
     }
     @Test
     public void flatMapForEach(){
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<ITERATIONS;i++){
             AtomicInteger count = new AtomicInteger(0);
             System.out.println("Iteration " + i);
             of(1)
@@ -264,7 +262,7 @@ public  class AsyncRSReactiveStreamXTest {
     }
     @Test
     public void onEmptySwitchGet(){
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<ITERATIONS;i++){
             System.out.println("Iteration " + i);
             assertThat(of()
                             .onEmptyGet(() -> 1)
