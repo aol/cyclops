@@ -47,11 +47,13 @@ public  class AsyncReactiveStreamXTest {
 	}
 
 	protected <U> ReactiveSeq<U> of(U... array){
-
+        int[] index = {0};
 		return Spouts.async(s->{
 		    new Thread(()-> {
 				for (U next : array) {
 					s.onNext(next);
+					if(index[0]++>100)
+					    break;
 				}
 				s.onComplete();
 			}).start();
@@ -472,10 +474,6 @@ public  class AsyncReactiveStreamXTest {
 	        
 	      
 	    }
-
-	    
-	   
-	  
 
 	   
 	    @Test

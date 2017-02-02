@@ -36,7 +36,7 @@ import com.aol.cyclops2.types.stream.CyclopsCollectable;
 import org.reactivestreams.Publisher;
 
 /**
- * Monad Transformer for Java Lists nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
+ * Monad Transformer for Java Lists
  * 
  * ListT allows the deeply wrapped List to be manipulating within it's nested /contained context
  * @author johnmcclean

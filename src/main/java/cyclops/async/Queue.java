@@ -390,11 +390,9 @@ public class Queue<T> implements Adapter<T> {
 
     private T ensureNotPoisonPill(final T data) {
         if (data instanceof PoisonPill) {
-            System.out.println("Poison pill!!");
-            this.queue.forEach(System.out::println);
             throw new ClosedQueueException();
         }
-        System.out.println("Returning data " + data);
+
         return data;
     }
 

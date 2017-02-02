@@ -36,6 +36,10 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
+import cyclops.monads.Witness.reactiveSeq;
+import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.ListT;
+import cyclops.monads.transformers.StreamT;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
@@ -2461,7 +2465,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * @return this ReactiveSeq converted to AnyM format
      */
-    public AnyMSeq<Witness.reactiveSeq,T> anyM();
+    public AnyMSeq<reactiveSeq,T> anyM();
 
     /*
      * (non-Javadoc)
@@ -3480,8 +3484,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         }
 
         //we can't just use the Iterable's Spliteratable as it might not be repeatable / copyable.
-        return Streams.reactiveSeq(new IteratableSpliterator<T>(iterable), Optional.empty())
-                    .peek(e->System.out.println("element for " + e));
+        return Streams.reactiveSeq(new IteratableSpliterator<T>(iterable), Optional.empty());
 
 
     }
@@ -3926,6 +3929,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                                .permutations();
         return streamable.reactiveSeq();
     }
+    default StreamT<reactiveSeq,T> permutationsT() {
+        return StreamT.fromReactiveSeq(permutations());
+    }
 
     /**
      * Return a Stream with elements before the provided skip index removed,
@@ -3972,7 +3978,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                                .combinations(size);
         return streamable.reactiveSeq();
     }
-
+    default StreamT<reactiveSeq,T> combinationsT(final int size) {
+        return StreamT.fromReactiveSeq(combinations(size));
+    }
+    default <W extends WitnessType<W>> StreamT<W, T> liftM(W witness) {
+        return StreamT.of(witness.adapter().unit(this));
+    }
     /**
      * <pre>
      * {@code
@@ -3991,6 +4002,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         final Streamable<ReactiveSeq<T>> streamable = Streamable.fromStream(this)
                                                                .combinations();
         return streamable.reactiveSeq();
+    }
+    default StreamT<reactiveSeq,T> combinationsT() {
+        return StreamT.fromReactiveSeq(combinations());
     }
 
     /**

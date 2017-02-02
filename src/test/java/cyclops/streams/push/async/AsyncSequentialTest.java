@@ -44,12 +44,14 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     static Executor exec = Executors.newFixedThreadPool(10);
     @Override
     protected <U> ReactiveSeq<U> of(U... array){
-
+        int[] index = {0};
         return Spouts.async(s->{
             exec.execute(()-> {
 
                 for (U next : array) {
                     s.onNext(next);
+                    if(index[0]++>100)
+                        break;
                 }
                 s.onComplete();
             });
