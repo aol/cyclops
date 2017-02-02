@@ -35,8 +35,7 @@ import static org.junit.Assert.*;
 
 //see BaseSequentialSeqTest for in order tests
 public  class AsyncReactiveStreamXTest {
-    public static Executor ex =  Executors.newFixedThreadPool(10);
-    public static final LazyReact r = new LazyReact(10,10);
+
 	
 	ReactiveSeq<Integer> empty;
 	ReactiveSeq<Integer> nonEmpty;
@@ -50,12 +49,12 @@ public  class AsyncReactiveStreamXTest {
 	protected <U> ReactiveSeq<U> of(U... array){
 
 		return Spouts.async(s->{
-		    ex.execute(()-> {
+		    new Thread(()-> {
 				for (U next : array) {
 					s.onNext(next);
 				}
 				s.onComplete();
-			});
+			}).start();
 
 		});
 	}
@@ -69,7 +68,7 @@ public  class AsyncReactiveStreamXTest {
 
         assertThat(of(1,2,3)
                         .flatMapP(i->Maybe.of(i))
-                        .toListX(),equalTo(Arrays.asList(1,2,3)));
+                        .toListX(),Matchers.hasItems(1,2,3));
         
         
     }

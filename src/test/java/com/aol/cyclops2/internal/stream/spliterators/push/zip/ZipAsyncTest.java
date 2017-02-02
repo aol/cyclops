@@ -151,7 +151,7 @@ public class ZipAsyncTest {
     @Test
     public void zip2ofIterator(){
 
-        for(int i=0;i<500;i++) {
+        for(int i=0;i<5000;i++) {
             System.out.println("*************Iteration " + i);
             System.out.println("*************Iteration " + i);
             System.out.println("*************Iteration " + i);

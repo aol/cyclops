@@ -91,7 +91,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                     sub.requested.decrementAndGet();
                     onNext.accept(value);
                     rightActive.decrementAndGet();
-                    if(sub.isActive()){
+                    if(sub.requested.get()>1){
                         leftSub[0].request(1);
                         rightSub[0].request(1);
                     }
@@ -123,7 +123,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                         System.out.println("LEFT Pushing " + value + "  Thread " + Thread.currentThread().getId() + " demenad "+  sub.requested.get());
                         sub.requested.decrementAndGet();
                         onNext.accept(value);
-                        if(sub.isActive()){
+                        if(sub.requested.get()>1){
                             leftSub[0].request(1);
                             rightSub[0].request(1);
                         }
@@ -177,7 +177,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                     sub.requested.decrementAndGet();
                     onNext.accept(value);
                     leftActive.decrementAndGet();
-                    if(sub.isActive()){
+                    if(sub.requested.get()>1){
                         System.out.println("Requesting more!!");
                         leftSub[0].request(1l);
                         rightSub[0].request(1);
@@ -210,7 +210,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                         System.out.println("RIGHT Pushing " + value + "  Thread " + Thread.currentThread().getId() + " demenad " + sub.requested.get());
                         sub.requested.decrementAndGet();
                         onNext.accept(value);
-                        if(sub.isActive()){
+                        if(sub.requested.get()>1){
                             leftSub[0].request(1);
                             rightSub[0].request(1);
                         }
