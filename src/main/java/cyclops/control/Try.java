@@ -774,7 +774,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             cf.run();
             return Try.success(null);
         } catch (final Throwable t) {
-            t.printStackTrace();
+
             if (classes.length == 0)
                 return Try.failure((X) t);
             val error = Stream.of(classes)
