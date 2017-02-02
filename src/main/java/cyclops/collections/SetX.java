@@ -285,7 +285,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
 
     /**
      * Combine two adjacent elements in a SetX using the supplied BinaryOperator
-     * This is a stateful grouping and reduction operation. The output of a combination may in turn be combined
+     * This is a stateful grouping and reduction operation. The emitted of a combination may in turn be combined
      * with it's neighbor
      * <pre>
      * {@code 

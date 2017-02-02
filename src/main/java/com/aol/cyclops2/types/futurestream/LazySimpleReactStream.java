@@ -395,7 +395,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * 
      * @param fn
      *            Recovery function, the exception is input, and the recovery
-     *            value is output
+     *            value is emitted
      * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */

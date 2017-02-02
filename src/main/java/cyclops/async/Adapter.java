@@ -12,7 +12,7 @@ import com.aol.cyclops2.react.async.subscription.Continueable;
 
 /**
  * 
- * Interface for an Adapter that inputs data from 1 or more input Streams and sends it to 1 or more output Streams
+ * Interface for an Adapter that inputs data from 1 or more input Streams and sends it to 1 or more emitted Streams
  * 
  * @author johnmcclean
  *

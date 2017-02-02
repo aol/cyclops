@@ -42,11 +42,13 @@ import static org.hamcrest.Matchers.hasItems;
  */
 public class FlatMapPublisherTest {
 
-    static Executor ex= Executors.newFixedThreadPool(20);
-
+    static Executor ex[]= {Executors.newFixedThreadPool(1),Executors.newFixedThreadPool(1),Executors.newFixedThreadPool(1)};
+    static int index =0;
     protected <U> ReactiveSeq<U> flux(U... array){
 
-        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ex)))
+        int indexToUse = index%3;
+        index++;
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ex[indexToUse])))
                      .peek(s->System.out.println("!!FLUX!! next value " + s + " on thread " + Thread.currentThread().getId()));
 
 

@@ -608,7 +608,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Expression that determines when each job will run
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of output from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     default HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
         return stream().schedule(cron, ex);
@@ -643,7 +643,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            until the next one starts
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of output from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     default HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
         return stream().scheduleFixedDelay(delay, ex);
@@ -678,7 +678,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Time in millis between job runs
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of output from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     default HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
         return stream().scheduleFixedRate(rate, ex);

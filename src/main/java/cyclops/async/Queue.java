@@ -37,7 +37,7 @@ import lombok.experimental.Wither;
  * Inspired by scalaz-streams async.Queue (functionally similar, but wraps a JDK Queue - wait-free or Blocking)
  * 
  * A Queue that takes data from one or more input Streams and provides them to
- * one or more output Streams
+ * one or more emitted Streams
  * 
  * Interface specifies a BlockingQueue, but non-BlockingQueues (such as ConcurrentLinkedQueue can be used
  * in conjunction with an implementation of the Continuation interface
@@ -51,7 +51,7 @@ import lombok.experimental.Wither;
                                                  .build();
         
         new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
-                                                      .map(d->"produced on " + Thread.currentThread().getId())
+                                                      .map(d->"emitted on " + Thread.currentThread().getId())
                                                       .peek(System.out::println)
                                                       .peek(d->transferQueue.offer(d))
                                                       .run();

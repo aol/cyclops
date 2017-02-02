@@ -178,7 +178,7 @@ public class Javaone {
     }
     
     public String process(String in){
-        return "produced on " + Thread.currentThread().getId();
+        return "emitted on " + Thread.currentThread().getId();
     }
     
     
@@ -189,7 +189,7 @@ public class Javaone {
                                                  .build();
 
         new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
-                                                      .map(d->"produced on " + Thread.currentThread().getId())
+                                                      .map(d->"emitted on " + Thread.currentThread().getId())
                                                       .peek(System.out::println)
                                                       .peek(d->transferQueue.offer(d))
                                                       .run();

@@ -729,7 +729,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
     /**
      * Combine two adjacent elements in a ListX using the supplied BinaryOperator
-     * This is a stateful grouping and reduction operation. The output of a combination may in turn be combined
+     * This is a stateful grouping and reduction operation. The emitted of a combination may in turn be combined
      * with it's neighbor
      * <pre>
      * {@code 

@@ -60,7 +60,7 @@ public class Merger<T> implements Subscriber<T> {
             System.out.println("Signalling demand!! " + next + " "
                     + " Merger " + System.identityHashCode(this) + " "
                     + complete + " unused " + (requested.get()-produced.get())
-                    + " produced " + produced.get() + " requested " + requested.get()
+                    + " emitted " + produced.get() + " requested " + requested.get()
                     + " thread " + Thread.currentThread().getId());
 
             long toRequest = 0;
@@ -68,7 +68,7 @@ public class Merger<T> implements Subscriber<T> {
                 System.out.println("Requesting " + next + " "
                         + " Merger " + System.identityHashCode(this) + " "
                         + complete + " unused " + (requested.get()-produced.get())
-                        + " produced " + produced.get() + " requested " + requested.get()
+                        + " emitted " + produced.get() + " requested " + requested.get()
                         + " thread " + Thread.currentThread().getId());
 
                 requested.accumulateAndGet(next, (a, b) -> a + b);
@@ -79,7 +79,7 @@ public class Merger<T> implements Subscriber<T> {
                 System.out.println("Finished Requesting " + next + " "
                         + " Merger " + System.identityHashCode(this) + " "
                         + complete + " unused " + (requested.get()-produced.get())
-                        + " produced " + produced.get() + " requested " + requested.get()
+                        + " emitted " + produced.get() + " requested " + requested.get()
                         + " thread " + Thread.currentThread().getId());
 
             }

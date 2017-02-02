@@ -203,7 +203,7 @@ public class FluentFunctions {
     }
 
     /**
-     * Convert a statement (e.g. a method or Consumer with no return value) to an Expression. The input is returned as output
+     * Convert a statement (e.g. a method or Consumer with no return value) to an Expression. The input is returned as emitted
      * <pre>
      * {@code 
      * FluentFunctions.expression(System.out::println)
@@ -224,7 +224,7 @@ public class FluentFunctions {
 
     /**
      * Convert a checked statement (e.g. a method or Consumer with no return value that throws a Checked Exception) to a 
-     * fluent expression (FluentFunction).  The input is returned as output
+     * fluent expression (FluentFunction).  The input is returned as emitted
      * <pre>
      * {@code 
      * public void print(String input) throws IOException{
@@ -575,7 +575,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply After advice to this function capturing both the input and the output with the provided BiConsumer
+         * Apply After advice to this function capturing both the input and the emitted with the provided BiConsumer
          * 
          * @param action After advice
          * @return  Function with After advice attached
@@ -590,7 +590,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply around advice to this function, captures input allows output to be controlled by the advice
+         * Apply around advice to this function, captures input allows emitted to be controlled by the advice
          * 
          * @param around Around advice
          * @return Function with Around advice attached

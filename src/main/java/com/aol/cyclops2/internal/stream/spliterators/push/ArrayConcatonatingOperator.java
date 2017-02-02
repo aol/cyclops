@@ -36,21 +36,22 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
         QueueX<StreamSubscription> subs = QueueX.empty();
         int index[] = {0};
         boolean[] finished = {false};
-        AtomicReference<StreamSubscription> active = new AtomicReference<>(null);
+
 
         Concat[] ref = {null};
         StreamSubscription sub = new StreamSubscription() {
 
             @Override
             public void request(long n) {
-                System.out.println("Requesting " + n);
+
                 if (n <= 0) {
                     onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                     return;
                 }
+                System.out.println("Incoming - demand is " + requested.get());
 
-                System.out.println("R 1" +  active.get());
-
+                super.request(n);
+                System.out.println("Requesting new demand !!!!!!!!!!!!!!!!!!!!!! " + n + " demand is now " + requested.get());
                 ref[0].request(n);
 
 

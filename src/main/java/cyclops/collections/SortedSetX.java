@@ -292,7 +292,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
 
     /**
      * Combine two adjacent elements in a SortedSetX using the supplied BinaryOperator
-     * This is a stateful grouping and reduction operation. The output of a combination may in turn be combined
+     * This is a stateful grouping and reduction operation. The emitted of a combination may in turn be combined
      * with it's neighbor
      * <pre>
      * {@code 

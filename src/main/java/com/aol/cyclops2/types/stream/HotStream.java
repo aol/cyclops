@@ -89,7 +89,7 @@ public interface HotStream<T> {
      * Connect to this HotStream using the provided transfer async.Queue.
      * The transfer Queue can be used to apply backpressure to the HotStream if it produces
      * data faster than the connected Stream can consume it {@see cyclops2.async.wait.WaitStrategy}
-     * Convert the output Stream to the required type with the provided function
+     * Convert the emitted Stream to the required type with the provided function
      * 
      * @param queue  Transfer Queue between the Streams
      * @param to Function to convert a ReactiveSeq to desired Stream type

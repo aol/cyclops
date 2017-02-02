@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.Synchronized;
 
 /**
- * A class that can accept input streams and generate output streams where data sent in the Topic is guaranteed to be
+ * A class that can accept input streams and generate emitted streams where data sent in the Topic is guaranteed to be
  * provided to all Topic subsribers
  * 
  * @author johnmcclean

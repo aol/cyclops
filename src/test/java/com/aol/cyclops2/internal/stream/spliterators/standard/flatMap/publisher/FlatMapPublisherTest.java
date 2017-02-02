@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.hasItems;
  * Created by johnmcclean on 19/01/2017.
  */
 public class FlatMapPublisherTest {
-    Executor exec = Executors.newFixedThreadPool(10);
+    Executor exec = Executors.newFixedThreadPool(1);
     protected <U> ReactiveSeq<U> flux(U... array){
 
         return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(exec)));
@@ -181,10 +181,14 @@ public class FlatMapPublisherTest {
     }
 
     @Test
-    public void flatMapPAsyncRS2(){
+    public void flatMapPAsyncRS2() throws InterruptedException {
         for(int k=0;k<1000;k++) {
             System.out.println("********0---------------------K " + k);
-
+            System.out.println("********0---------------------K " + k);
+            System.out.println("********0---------------------K " + k);
+            System.out.println("********0---------------------K " + k);
+            System.out.println("********0---------------------K " + k);
+            System.out.println("********0---------------------K " + k);
 
 
 
@@ -193,6 +197,7 @@ public class FlatMapPublisherTest {
                                             .flatMapP(i -> nextAsync())
                                             .collect(Collectors.toList());
             System.out.println(res);
+            Thread.sleep(10);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
 
             assertThat(res, hasItems(1, 2));

@@ -382,7 +382,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
     /**
      * Combine two adjacent elements in a DequeX using the supplied BinaryOperator
-     * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+     * This is a stateful grouping & reduction operation. The emitted of a combination may in turn be combined
      * with it's neighbor
      * <pre>
      * {@code 

@@ -20,7 +20,7 @@ import cyclops.async.wait.WaitStrategy;
                                                  .build();
         
       new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
-                                                      .map(d->"produced on " + Thread.currentThread().getId())
+                                                      .map(d->"emitted on " + Thread.currentThread().getId())
                                                       .peek(System.out::println)
                                                       .peek(d->transferQueue.offer(d))
                                                       .run();
@@ -50,7 +50,7 @@ public class QueueFactories {
                                                  .build();
         
          new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
-                                                      .map(d->"produced on " + Thread.currentThread().getId())
+                                                      .map(d->"emitted on " + Thread.currentThread().getId())
                                                       .peek(System.out::println)
                                                       .peek(d->transferQueue.offer(d))
                                                       .run();

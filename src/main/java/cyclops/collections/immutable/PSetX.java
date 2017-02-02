@@ -287,7 +287,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
   
     /**
     * Combine two adjacent elements in a PSetX using the supplied BinaryOperator
-    * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+    * This is a stateful grouping & reduction operation. The emitted of a combination may in turn be combined
     * with it's neighbor
     * <pre>
     * {@code 

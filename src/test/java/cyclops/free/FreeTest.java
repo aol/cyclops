@@ -44,9 +44,9 @@ public final class FreeTest {
 
     @Test
     public void interpreter(){
-        String expected = "output A\n" +
+        String expected = "emitted A\n" +
                 "bell \n" +
-                "output B\n" +
+                "emitted B\n" +
                 "done\n";
 
 
@@ -75,7 +75,7 @@ public final class FreeTest {
         return "return " + r + "\n";
     }
     static <R> String handleOutput(CharOutput<Free<CharToy.µ,R>> output){
-        return output.fold((a, next) -> "output " + a + "\n" + showProgram(next));
+        return output.fold((a, next) -> "emitted " + a + "\n" + showProgram(next));
     }
 
     static <R> String handleBell(CharBell<Free<CharToy.µ, R>> bell){

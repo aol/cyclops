@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
@@ -200,7 +201,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     public void onNext(final T t) {
 
         Objects.requireNonNull(t);
-        System.out.println("Next " + t + " Thread " + Thread.currentThread().getId());
+        System.out.println("***********************************Next " + t + " Thread " + Thread.currentThread().getId());
         queue.add(t);
         System.out.println("Queue size " + queue.size());
         counter.added++;
@@ -231,6 +232,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
                                                                       Arrays.<Subscription> asList());
         volatile boolean closed = false;
         volatile int added = 0;
+        final AtomicBoolean closing =new AtomicBoolean(false);
     }
 
     /* (non-Javadoc)
@@ -239,24 +241,27 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     @Override
     public void onComplete() {
 
-        System.out.println("On Complete! " + counter.active.get() + " queue " + queue.size() );
+        System.out.println("On Complete! " + counter.active.get() + " queue " + queue.size()  + counter.active.get());
         counter.active.decrementAndGet();
         counter.subscription.minus(subscription);
+        System.out.println("Removed " + subscription + " active " + counter.active.get());
         if (queue != null && counter.active.get() == 0) {
 
             if (counter.completable) {
                 System.out.println("Completable closing..");
-                counter.closed = true;
-                queue.addContinuation(new Continuation(
-                                                       () -> {
-                                                           final List current = new ArrayList();
-                                                           while (queue.size() > 0)
-                                                               current.add(queue.get());
-                                                           System.out.println("Adding final elements.. " + current);
-                                                           throw new ClosedQueueException(
-                                                                                          current);
-                                                       }));
-           //     queue.close();
+                if(counter.closing.compareAndSet(false,true)) {
+                    counter.closed = true;
+                    queue.addContinuation(new Continuation(
+                            () -> {
+                                final List current = new ArrayList();
+                                while (queue.size() > 0)
+                                    current.add(queue.get());
+                                System.out.println("Adding final elements.. " + current);
+                                throw new ClosedQueueException(
+                                        current);
+                            }));
+                    queue.close();
+                }
             }
 
         }

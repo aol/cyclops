@@ -4,6 +4,7 @@ package com.aol.cyclops2.internal.stream;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
+import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.*;
 import cyclops.async.Queue;
@@ -415,6 +416,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
      */
     public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency,
                                        final QueueFactory<R> factory,final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+
+        /**
         final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
         final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
 
@@ -439,6 +442,29 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         });
         ref[0]= continuation;
 
+        init.addContinuation(continuation);
+        return ReactiveSeq.fromStream(init.jdkStream());
+         **/
+        final Counter c = new Counter();
+        final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
+
+        final ReactiveSeq<T> stream = stream();
+        final Supplier<Continuation> sp = () -> {
+
+            stream.map(mapper)
+                    .forEach(p -> {
+                        c.active.incrementAndGet();
+                        p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));
+
+                    } , i -> {
+                    } , () -> {
+                        init.close();
+                    });
+
+            return Continuation.empty();
+        };
+        final Continuation continuation = new Continuation(
+                sp);
         init.addContinuation(continuation);
         return ReactiveSeq.fromStream(init.jdkStream());
     }

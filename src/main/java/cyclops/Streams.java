@@ -619,7 +619,7 @@ public class Streams {
      * @param stream the reactiveStream to schedule element processing on
      * @param cron Expression that determines when each job will run
      * @param ex ScheduledExecutorService
-     * @return Connectable HotStream of output from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     public static <T> HotStream<T> schedule(final Stream<T> stream, final String cron, final ScheduledExecutorService ex) {
         return new NonPausableHotStream<>(
@@ -655,7 +655,7 @@ public class Streams {
      * @param stream the reactiveStream to schedule element processing on
      * @param delay Between last element completes passing through the Stream until the next one starts
      * @param ex ScheduledExecutorService
-     * @return Connectable HotStream of output from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     public static <T> HotStream<T> scheduleFixedDelay(final Stream<T> stream, final long delay, final ScheduledExecutorService ex) {
         return new NonPausableHotStream<>(
@@ -689,7 +689,7 @@ public class Streams {
      * @param stream the reactiveStream to schedule element processing on
      * @param rate Time in millis between job runs
      * @param ex ScheduledExecutorService
-     * @return Connectable HotStream of output from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     public static <T> HotStream<T> scheduleFixedRate(final Stream<T> stream, final long rate, final ScheduledExecutorService ex) {
         return new NonPausableHotStream<>(

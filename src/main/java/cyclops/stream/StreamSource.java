@@ -243,7 +243,7 @@ public class StreamSource {
      * 
      * }
      * </pre>
-     * @param backPressureAfter Excess number of produced records over consumed (by all connected Streams
+     * @param backPressureAfter Excess number of emitted records over consumed (by all connected Streams
      * after which backPressure will be applied).
      * @return a builder that will use Topics to allow multiple Streams from the same data
      */
@@ -378,7 +378,7 @@ public class StreamSource {
        }
        </pre>
     
-     * @param backPressureAfter Excess number of produced records over consumed (by all connected Streams
+     * @param backPressureAfter Excess number of emitted records over consumed (by all connected Streams
      * after which backPressure will be applied).
      * @return A builder for Pushable Streams
      */

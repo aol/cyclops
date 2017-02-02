@@ -339,7 +339,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
     /**
      * Combine two adjacent elements in a PQueueX using the supplied
      * BinaryOperator This is a stateful grouping & reduction operation. The
-     * output of a combination may in turn be combined with it's neighbor
+     * emitted of a combination may in turn be combined with it's neighbor
      * 
      * <pre>
      * {@code 

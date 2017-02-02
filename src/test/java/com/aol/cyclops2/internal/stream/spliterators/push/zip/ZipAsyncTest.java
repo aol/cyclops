@@ -14,9 +14,7 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -135,6 +133,37 @@ public class ZipAsyncTest {
             List<Tuple2<Integer, Integer>> list = flux(1, 2, 3, 4, 5, 6)
                     .zip(flux(100, 200, 300, 400).stream())
                     .toListX();
+
+            System.out.println(list);
+
+            List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+            Assert.assertThat(right, hasItem(100));
+            Assert.assertThat(right, hasItem(200));
+            Assert.assertThat(right, hasItem(300));
+            Assert.assertThat(right, hasItem(400));
+
+            List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+            System.out.println(left);
+            Assert.assertThat(Arrays.asList(1, 2, 3, 4, 5, 6), hasItem(left.get(0)));
+        }
+
+    }
+    @Test
+    public void zip2ofIterator(){
+
+        for(int i=0;i<500;i++) {
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i);
+            System.out.println("*************Iteration " + i+"***********************");
+            List<Tuple2<Integer, Integer>> list = new ArrayList<>();
+            Iterator<Tuple2<Integer, Integer>> it = flux(1, 2, 3, 4, 5, 6)
+                    .zip(flux(100, 200, 300, 400).stream()).iterator();
+
+            while(it.hasNext()){
+                list.add(it.next());
+            }
 
             System.out.println(list);
 

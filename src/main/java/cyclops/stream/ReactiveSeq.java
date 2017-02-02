@@ -3014,7 +3014,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Return a HotStream that will skip emitting data when the first connecting Stream connects.
      * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
-     *  For a hotStream that starts to output data immediately @see {@link ReactiveSeq#hotStream(Executor)}.
+     *  For a hotStream that starts to emitted data immediately @see {@link ReactiveSeq#hotStream(Executor)}.
      * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
      * <pre>
       * <pre>
@@ -3069,7 +3069,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Return a pausable HotStream that will skip emitting data when the first connecting Stream connects.
      * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
-     *  For a hotStream that starts to output data immediately @see {@link ReactiveSeq#pausableHotStream(Executor)}.
+     *  For a hotStream that starts to emitted data immediately @see {@link ReactiveSeq#pausableHotStream(Executor)}.
      * The generated HotStream is pausable, for a unpausable HotStream @see {@link ReactiveSeq#primedHotStream(Executor)}.
      * <pre>
       * <pre>
@@ -4023,7 +4023,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Expression that determines when each job will run
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of output from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     @Override
     default HotStream<T> schedule(String cron, ScheduledExecutorService ex){
@@ -4062,7 +4062,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            until the next one starts
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of output from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     @Override
     default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex){
@@ -4096,7 +4096,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Time in millis between job runs
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of output from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     @Override
     default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex){
@@ -4642,7 +4642,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Broadcast the contents of this Stream to multiple downstream Streams (determined by supplier parameter).
      * For pull based Streams this Stream will be buffered.
-     * For push based Streams elements are broadcast downstream on receipt, the produced downstream Streams remain asynchonous
+     * For push based Streams elements are broadcast downstream on receipt, the emitted downstream Streams remain asynchonous
      *
      * This contrasts with
      *  {@link ReactiveSeq#duplicate}
