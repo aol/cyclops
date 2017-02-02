@@ -24,8 +24,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import static cyclops.stream.ReactiveSeq.of;
 import static cyclops.stream.Spouts.concat;
-import static cyclops.stream.Spouts.of;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
@@ -35,6 +36,7 @@ import static org.hamcrest.Matchers.hasItems;
  */
 public class FlatMapPublisherTest {
     Executor exec = Executors.newFixedThreadPool(1);
+
     protected <U> ReactiveSeq<U> flux(U... array){
 
         return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(exec)));
@@ -43,12 +45,16 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapList(){
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<100000;i++){
             System.out.println("Iteration " + i);
-            Assert.assertThat(flux(1)
-                            .flatMapP(in -> of(1, 2, 3))
-                            .toList(),
-                    Matchers.equalTo(Arrays.asList(1, 2, 3)));
+            List<Integer> list = flux(1)
+                    .flatMapP(in -> of(1, 2, 3))
+                    .toList();
+            System.out.println("List is " + list);
+            Assert.assertThat(list,
+                    Matchers.hasItems(1, 2, 3));
+            Assert.assertThat(list.size(),
+                    equalTo(3));
         }
 
     }
@@ -126,7 +132,7 @@ public class FlatMapPublisherTest {
     public void flatMapPSanity(){
         complete = new AtomicBoolean(false);
         count = new AtomicInteger(0);
-        ReactiveSeq.of(1, 2, 3).peek(System.out::println)
+        of(1, 2, 3).peek(System.out::println)
                 .flatMapP(i -> nextAsync())
                 .forEach(r->System.out.println("Next res " + r + " count " + count.incrementAndGet()),
                         e->{},()->complete.set(true));//.request(Long.MAX_VALUE);
@@ -192,7 +198,7 @@ public class FlatMapPublisherTest {
 
 
 
-            List<Integer> res = ReactiveSeq.of(1, 2, 3)
+            List<Integer> res = of(1, 2, 3)
                                             .peek(System.out::println)
                                             .flatMapP(2,i -> nextAsync())
                                             .peek(e->System.out.println("e " + e))
@@ -226,7 +232,7 @@ public class FlatMapPublisherTest {
 
 
 
-            List<Integer> res = ReactiveSeq.of(1, 2, 3)
+            List<Integer> res = of(1, 2, 3)
                     .peek(System.out::println)
                     .flatMapP(2,i -> nextAsync())
                     .collect(Collectors.toList());
@@ -255,7 +261,7 @@ public class FlatMapPublisherTest {
     public void flatMapPAsyncRS3(){
         for(int k=0;k<100;k++) {
 
-            List<Integer> res = Spouts.from(ReactiveSeq.of(1, 2, 3).peek(System.out::println)
+            List<Integer> res = Spouts.from(of(1, 2, 3).peek(System.out::println)
                                       .flatMapP(i -> nextAsync()))
                                         .collect(Collectors.toList());
             System.out.println(res);

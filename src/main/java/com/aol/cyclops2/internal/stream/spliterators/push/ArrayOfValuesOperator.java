@@ -2,6 +2,7 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
@@ -23,9 +24,9 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        final int index[] = {0};
 
-        boolean[] completeSent = {false};
+        int[] index ={0};
+        AtomicBoolean completeSent = new AtomicBoolean(false);
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
                 if (n == Long.MAX_VALUE) {
@@ -33,22 +34,40 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
 
                     return;
                 }
+                long reqs = n;
+                int delivered = 0;
+                do{
 
 
-                while (isActive() && index[0]<values.length) {
+                    while (delivered < reqs && index[0] < values.length) {
+                        if (!isOpen)
+                            return;
+                        ((Consumer) onNext).accept(values[index[0]++]);
+                        delivered++;
 
-                    ((Consumer) onNext).accept(values[index[0]++]);
-                    requested.decrementAndGet();
-                }
-
-                if (index[0] >= values.length) {
-                    if(!completeSent[0]) {
-                        completeSent[0]=true;
-                        onComplete.run();
-                        cancel();
                     }
 
-                }
+
+                    if (index[0] >= values.length) {
+                        if (!completeSent.get()) {
+                            completeSent.set(true);
+                            onComplete.run();
+                            cancel();
+                            return;
+                        }
+
+                    }
+                    reqs = requested.get();
+                    if(reqs==delivered) {
+                        reqs = requested.accumulateAndGet(delivered, (a, b) -> a - b);
+                        if(reqs==0)
+                            return;
+                        delivered=0;
+
+                    }
+
+                }while(true);
+
 
             };
             @Override
@@ -60,14 +79,15 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
             }
 
             private void pushAll() {
-                for (; index[0] < values.length; index[0]++) {
+                int local = index[0];
+                for (; local < values.length; local++) {
                     if(!isOpen)
                         break;
-                   ((Consumer) onNext).accept(values[index[0]]);
+                   ((Consumer) onNext).accept(values[local]);
                 }
                 requested.set(0);
-                if(!completeSent[0]) {
-                    completeSent[0]=true;
+                if(!completeSent.get()) {
+                    completeSent.set(true);
                     onComplete.run();
                     cancel();
                 }

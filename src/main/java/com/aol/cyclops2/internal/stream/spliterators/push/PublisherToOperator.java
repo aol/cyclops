@@ -31,9 +31,10 @@ public class PublisherToOperator<T> implements Operator<T> {
 
             @Override
             public void request(long n) {
-                super.request(n);
-                if(sArray[0]!=null)
+
+                if (sArray[0] != null)
                     sArray[0].request(n);
+
 
             }
 
@@ -50,8 +51,9 @@ public class PublisherToOperator<T> implements Operator<T> {
                 @Override
                 public void onSubscribe(Subscription s) {
                     sArray[0] = s;
+
                     if (sub.isActive()) {
-                        s.request(1l);
+                       s.request(1l);
 
                     }else if(!sub.isOpen){
                         s.cancel();
@@ -73,7 +75,6 @@ public class PublisherToOperator<T> implements Operator<T> {
 
                 @Override
                 public void onComplete() {
-                    System.out.println("Publisher On compelte!");
                     onComplete.run();
                     closed = true;
                 }

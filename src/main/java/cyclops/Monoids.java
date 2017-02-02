@@ -255,12 +255,7 @@ public interface Monoids {
     static <T> Monoid<ReactiveSeq<T>> firstNonEmptyReactiveSeq() {
         return Monoid.of(ReactiveSeq.empty(), Semigroups.firstNonEmptyReactiveSeq());
     }
-    static <T> Monoid<ReactiveSeq<T>> mergeReactiveSeq () {
-        return Monoid.of(Spouts.empty(),Semigroups.mergeReactiveSeq());
-    }
-    static <T> Monoid<Publisher<T>> merge() {
-        return Monoid.of(Spouts.empty(),Semigroups.merge());
-    }
+
     static <T> Monoid<ReactiveSeq<T>> mergeLatestReactiveSeq () {
         return Monoid.of(Spouts.empty(),Semigroups.mergeLatestReactiveSeq());
     }

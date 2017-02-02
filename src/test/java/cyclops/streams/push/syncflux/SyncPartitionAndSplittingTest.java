@@ -2,9 +2,11 @@ package cyclops.streams.push.syncflux;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -92,6 +94,20 @@ public class SyncPartitionAndSplittingTest {
 
 		}
 	}
+
+	@Test
+	public void splitThenSplit(){
+
+        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = Spouts.of(1, 2, 3).duplicate();
+        dup.v1.printOut();
+        System.out.println("V2..");
+        dup.v2.printOut();
+
+        assertEquals(Optional.of(2), Spouts.of(1, 2, 3).splitAtHead().v2.splitAtHead().v1);
+        assertEquals(Optional.of(2l), Spouts.rangeLong(1, 3).splitAtHead().v2.splitAtHead().v1);
+        assertEquals(Optional.of(2), Spouts.range(1, 3).splitAtHead().v2.splitAtHead().v1);
+        assertEquals(Optional.of(2), Spouts.fromIterable(Arrays.asList(1, 2, 3)).splitAtHead().v2.splitAtHead().v1);
+    }
 
 	@Test
 	public void testSplitAtHead() {

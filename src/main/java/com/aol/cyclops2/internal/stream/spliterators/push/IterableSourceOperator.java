@@ -1,6 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
 
@@ -22,7 +23,7 @@ public class IterableSourceOperator<T> implements Operator<T> {
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         final Iterator<T> it = values.iterator();
 
-        boolean complete[] ={false};
+        AtomicBoolean completed = new AtomicBoolean(false);;
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
                 if (n == Long.MAX_VALUE) {
@@ -30,18 +31,35 @@ public class IterableSourceOperator<T> implements Operator<T> {
 
                     return;
                 }
+                long reqs = n;
+                long delivered = 0l;
+                do {
 
-                while (isActive() && it.hasNext()) {
+                    while (delivered < reqs && it.hasNext()) {
+                        if(!isOpen)
+                            return;
 
-                    ((Consumer) onNext).accept(it.next());
-                    requested.decrementAndGet();
-                }
+                        ((Consumer) onNext).accept(it.next());
+                        delivered++;
+                    }
 
-                if (!it.hasNext() && !complete[0]) {
-                    onComplete.run();
-                    complete[0]=true;
+                    if (!it.hasNext()) {
+                        if (!completed.get()) {
+                            completed.set(true);
+                            onComplete.run();
+                            cancel();
+                        }
+                        return;
 
-                }
+                    }
+                    reqs = requested.get();
+                    if(reqs==delivered) {
+                        reqs = requested.accumulateAndGet(delivered, (a, b) -> a - b);
+                        if(reqs==0)
+                            return;
+                        delivered=0;
+                    }
+                }while(true);
 
             };
             @Override
@@ -59,7 +77,9 @@ public class IterableSourceOperator<T> implements Operator<T> {
                    ((Consumer) onNext).accept(it.next());
                 }
                 requested.set(0);
+                completed.set(true);
                 onComplete.run();
+                cancel();
             }
 
             @Override

@@ -38,6 +38,46 @@ import static org.junit.Assert.*;
  */
 public class SpoutsTest {
 
+    @Test
+    public void array(){
+        Iterator<Integer> it = Spouts.of(1, 2, 3).iterator();
+        List<Integer> list = new ArrayList<>();
+        while(it.hasNext()){
+            list.add(it.next());
+
+        }
+        assertThat(list,equalTo(ListX.of(1,2,3)));
+    }
+    @Test
+    public void iterable(){
+        Iterator<Integer> it = Spouts.fromIterable(Arrays.asList(1, 2, 3)).iterator();
+        List<Integer> list = new ArrayList<>();
+        while(it.hasNext()){
+            list.add(it.next());
+
+        }
+        assertThat(list,equalTo(ListX.of(1,2,3)));
+    }
+    @Test
+    public void range(){
+        Iterator<Integer> it = Spouts.range(1,4).iterator();
+        List<Integer> list = new ArrayList<>();
+        while(it.hasNext()){
+            list.add(it.next());
+
+        }
+        assertThat(list,equalTo(ListX.of(1,2,3)));
+    }
+    @Test
+    public void rangeLong(){
+        Iterator<Long> it = Spouts.rangeLong(1,4).iterator();
+        List<Long> list = new ArrayList<>();
+        while(it.hasNext()){
+            list.add(it.next());
+
+        }
+        assertThat(list,equalTo(ListX.of(1l,2l,3l)));
+    }
 
     @Test
     public void fluxConcat(){
@@ -288,8 +328,8 @@ public class SpoutsTest {
     }
     @Test
     public void merge(){
-        Spouts.merge(Spouts.of(1,2,3),Spouts.of(5,6,7)).printOut();
-        Spouts.merge(Spouts.of(10,20,30),nextAsyncRS()).printOut();
+        Spouts.mergeLatest(Spouts.of(1,2,3),Spouts.of(5,6,7)).printOut();
+        Spouts.mergeLatest(Spouts.of(10,20,30),nextAsyncRS()).printOut();
 
 
 

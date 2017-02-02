@@ -79,7 +79,7 @@ public class AsyncPartitionAndSplittingTest {
 
 	@Test
 	public void testSplitAt() {
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 10; i++) {
 			Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 			assertEquals(asList(), s.get().splitAt(0).v1.toList());

@@ -3,6 +3,7 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import cyclops.async.Queue;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
 
@@ -25,31 +26,47 @@ public class RangeLongOperator implements Operator<Long> {
     @Override
     public StreamSubscription subscribe(Consumer<? super Long> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         long[] index = {start};
-        boolean completed[] = {false};
+        AtomicBoolean completed = new AtomicBoolean(false);
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
 
                 if(requested.get()==Long.MAX_VALUE) {
                     pushAll();
                 }
-                while (isActive() && index[0] < end) {
-                    try {
+                long reqs = n;
+                long delivered = 0;
+                do {
 
-                        ((Consumer) onNext).accept(index[0]++);
-                        requested.decrementAndGet();
-                    } catch (Throwable t) {
-                        onError.accept(t);
+                    while (delivered < reqs && index[0] < end) {
+                        if (!isOpen)
+                            return;
+                        try {
+
+                            ((Consumer) onNext).accept(index[0]++);
+                            delivered++;
+                        } catch (Throwable t) {
+                            onError.accept(t);
+                        }
+
                     }
+                    if (index[0] >= end) {
+                        if (!completed.get()) {
+                            completed.set(true);
+                            onComplete.run();
+                            cancel();
 
-                }
-                if (index[0] >= end) {
-                    if(!completed[0]) {
-                        completed[0]=true;
-                        onComplete.run();
+                        }
+                        return;
+
                     }
-
-                }
-
+                    reqs = requested.get();
+                    if(reqs==delivered) {
+                        reqs = requested.accumulateAndGet(delivered, (a, b) -> a - b);
+                        if(reqs==0)
+                            return;
+                        delivered=0;
+                    }
+                }while(true);
             };
 
             @Override
@@ -74,9 +91,11 @@ public class RangeLongOperator implements Operator<Long> {
                     }
                 }
                 if(index[0]==end){
-                    if(!completed[0]) {
-                        completed[0]=true;
+                    if (!completed.get()) {
+                        completed.set(true);
                         onComplete.run();
+                        cancel();
+
                     }
 
                 }

@@ -207,18 +207,7 @@ public interface Spouts {
     static <T> ReactiveSeq<T> merge(Publisher<? extends Publisher<T>> publisher){
         return mergeLatest((Publisher[])Spouts.from(publisher).toArray());
     }
-    static <T> ReactiveSeq<T> merge(Publisher<T>... array){
-        Operator<T>[] op = new Operator[array.length];
-        for(int i=0;i<array.length;i++){
-            if(array[i] instanceof ReactiveStreamX){
-                ReactiveStreamX<T> stream = (ReactiveStreamX<T>)array[i];
-                op[i] = stream.getSource();
-            }else{
-                op[i] = new PublisherToOperator<T>(array[i]);
-            }
-        }
-        return new ReactiveStreamX<T>(new ArrayMergingOperator<T>(op), Type.BACKPRESSURE);
-    }
+
 
     static <T1,T2,R> ReactiveSeq<R> combineLatest(Publisher<? super T1> p1, Publisher<? super T2> p2,BiFunction<? super T1, ? super T2, ? extends R> fn){
         Operator<? super T1> op1 = p1 instanceof  ReactiveStreamX ? ((ReactiveStreamX<T1>)p1).getSource() :  new PublisherToOperator<T1>(p1);

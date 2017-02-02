@@ -48,8 +48,7 @@ public class FlatMapPublisherTest {
 
         int indexToUse = index%3;
         index++;
-        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ex[indexToUse])))
-                     .peek(s->System.out.println("!!FLUX!! next value " + s + " on thread " + Thread.currentThread().getId()));
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ex[indexToUse])));
 
 
     }
@@ -89,12 +88,16 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapList(){
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<10000;i++){
             System.out.println("Iteration " + i);
-            Assert.assertThat(flux(1)
-                            .flatMapP(in -> of(1, 2, 3))
-                            .toList(),
-                    Matchers.equalTo(Arrays.asList(1, 2, 3)));
+            List<Integer> list = flux(1)
+                    .flatMapP(in -> of(1, 2, 3))
+                    .toList();
+            System.out.println("List is " + list);
+            Assert.assertThat(list,
+                    Matchers.hasItems(1, 2, 3));
+            Assert.assertThat(list.size(),
+                    equalTo(3));
         }
 
     }
@@ -245,6 +248,18 @@ public class FlatMapPublisherTest {
             assertThat(one,equalTo(3));
             assertThat(two,equalTo(3));
         }
+    }
+
+    @Test
+    public void range(){
+
+
+            List<Integer> res =  Spouts.range(1,500)
+                                       .flatMapP(i -> nextAsync())
+                                        .toList();
+            System.out.println("Result is " + res);
+
+
     }
 
     @Test

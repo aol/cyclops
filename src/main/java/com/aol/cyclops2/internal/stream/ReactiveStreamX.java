@@ -365,12 +365,13 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return flatMapP(256,fn);
+        return flatMapP(2,fn);
     }
 
     @Override
     public final <R> ReactiveSeq<R> flatMapP(int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return flatMapP(maxConcurrency, QueueFactories.boundedNonBlockingQueue(maxConcurrency*4,new DirectWaitStrategy<>()),fn);
+        //QueueFactories.boundedNonBlockingQueue(maxConcurrency*4,new DirectWaitStrategy<>())
+        return flatMapP(maxConcurrency, QueueFactories.unboundedNonBlockingQueue(new DirectWaitStrategy<>()),fn);
 
     }
     public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory,Function<? super T, ? extends Publisher<? extends R>> mapper) {
@@ -398,12 +399,15 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                 {
                     subscriber[0]=s;
                     init.setErrorHandler(s::onError);
-                    sub.request(Long.MAX_VALUE);
+                    sub.request(1);
                 }
                 List[] ancillaryData = {null};
                 s.onSubscribe(new StreamSubscription() {
 
                     LongConsumer work =  r ->{
+                        if(!isOpen)
+                            return;
+                        System.out.println("Thread " + Thread.currentThread().getId());
                         long e = 0L;
 
                         while(r>0) {
@@ -413,34 +417,54 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
                             while(e<r) {
+                                if(!isOpen)
+                                    return;
+                                if(c.active.get()<maxConcurrency){
+                                    System.out.println("Increasing from parent " + c.active.get());
+                                    sub.request(1l);
+                                }
                                 try {
                                     if(ancillaryData[0]!=null){
                                         List<R> local = ancillaryData[0];
                                         if(local.size()==0){
+                                            sub.cancel();
+                                            cancel();
                                             s.onComplete();
                                             return;
                                         }
                                         s.onNext(local.remove(0));
                                         e++;
+                                        if(e>3){
+                                            System.out.println("E anc is " + e);
+                                        }
                                     }else {
                                         R value = init.getQueue().get();
                                         s.onNext(value);
                                         e++;
+                                        if(e>3){
+                                            System.out.println("E is " + e);
+                                        }
                                     }
 
                                 } catch (Queue.QueueTimeoutException t) {
 
                                 } catch (Queue.ClosedQueueException t){
+
                                     if(t.isDataPresent()){
                                         ancillaryData[0]=t.getCurrentData();
                                         List<R> local = ancillaryData[0];
                                         if(local.size()==0){
+                                            sub.cancel();
+                                            cancel();
                                             s.onComplete();
                                             return;
                                         }
                                         s.onNext(local.remove(0));
                                         e++;
                                     }else {
+                                        sub.cancel();
+                                        System.out.println("Queue closed - completing..");
+                                        cancel();
                                         s.onComplete();
                                         return;
                                     }
