@@ -43,7 +43,7 @@ public class Concat<IN> {
 
 
     public void request(long n) {
-        System.out.println("Concat request " + n);
+
         if(!sub.isOpen){
             return;
         }
@@ -63,23 +63,23 @@ public class Concat<IN> {
                 return;
             }
             requested.accumulateAndGet(n,(a,b)->a+b);
-            System.out.println("Requested now " + requested.get());
+
             Subscription local = active.get();
             if (decrementAndCheckActive()) {
                 addMissingRequests();
             }
-            System.out.println("Requesting from " + local);
+
             local.request(n);
 
         }else{
 
             queued.accumulateAndGet(n,(a,b)->a+b);
-            System.out.println("Enqueuing " + queued.get() + " wip is " + wip.get());
+
             if(incrementAndCheckInactive()){
-                System.out.println("Transfer demand..");
+
                 addMissingRequests();
             }
-            System.out.println("WIP is "  + wip.get());
+
         }
 
 

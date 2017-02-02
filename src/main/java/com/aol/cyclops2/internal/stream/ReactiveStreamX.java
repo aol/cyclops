@@ -407,7 +407,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     LongConsumer work =  r ->{
                         if(!isOpen)
                             return;
-                        System.out.println("Thread " + Thread.currentThread().getId());
+
                         long e = 0L;
 
                         while(r>0) {
@@ -420,7 +420,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                                 if(!isOpen)
                                     return;
                                 if(c.active.get()<maxConcurrency){
-                                    System.out.println("Increasing from parent " + c.active.get());
+
                                     sub.request(1l);
                                 }
                                 try {
@@ -434,16 +434,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                                         }
                                         s.onNext(local.remove(0));
                                         e++;
-                                        if(e>3){
-                                            System.out.println("E anc is " + e);
-                                        }
+
                                     }else {
                                         R value = init.getQueue().get();
                                         s.onNext(value);
                                         e++;
-                                        if(e>3){
-                                            System.out.println("E is " + e);
-                                        }
+
                                     }
 
                                 } catch (Queue.QueueTimeoutException t) {
@@ -463,7 +459,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                                         e++;
                                     }else {
                                         sub.cancel();
-                                        System.out.println("Queue closed - completing..");
+
                                         cancel();
                                         s.onComplete();
                                         return;
@@ -1095,7 +1091,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public ReactiveSeq<T> cycle() {
 
         ReactiveSeq<T> cycling =  collectAll(CyclopsCollectors.toListX())
-                                    .peek(e->System.out.println("Collected " + e))
                                     .map(s -> s.stream().cycle(Long.MAX_VALUE))
                                     .flatMap(i->i);
         return createSeq(new IterableSourceOperator<T>(cycling),Type.SYNC);

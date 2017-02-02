@@ -414,8 +414,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
                     return true;
                 }
                 long elapsedNanos  =  (System.nanoTime() - last[0]);
-                System.out.println(System.nanoTime() + " " + elapsedNanos + " " + last[0] + " " + timeNanos + " " + (elapsedNanos >= timeNanos));
-                T nextValue = null;
+                 T nextValue = null;
                 if (elapsedNanos >= timeNanos) {
 
                     last[0] = System.nanoTime();

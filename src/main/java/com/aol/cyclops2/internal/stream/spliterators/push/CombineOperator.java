@@ -117,7 +117,7 @@ public class CombineOperator<T,A,R> extends BaseOperator<T,ReactiveSeq<T>> {
                 }
                 ,onError,()->{
                     if(!completed[0]) {
-                        System.out.println("On complete " + current[0]);
+
                         if (current[0] != UNSET)
                             onNext.accept(Spouts.of((T) current[0]));
                         onCompleteDs.run();

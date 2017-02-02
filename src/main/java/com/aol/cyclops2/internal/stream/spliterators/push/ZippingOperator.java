@@ -85,7 +85,6 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
                 if (!rightQ.isEmpty() ) {
                     R value = fn.apply((T1) e, rightQ.poll());
-                    System.out.println("LEFT Pushing " + value + "  Thread " + Thread.currentThread().getId() + " demenad "+  sub.requested.get());
                     sub.requested.decrementAndGet();
                     onNext.accept(value);
                     rightActive.decrementAndGet();

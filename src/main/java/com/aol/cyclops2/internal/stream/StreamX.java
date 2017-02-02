@@ -44,7 +44,8 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
 
     @Override
     public ReactiveSeq<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
-        return createSeq(new IteratableSpliterator<>(Streams.combineI(this,predicate,op))).flatMapI(i->i).peek(e->System.out.println("After flatMap " +e));
+        return createSeq(new IteratableSpliterator<>(Streams.combineI(this,predicate,op)))
+                .flatMapI(i->i);
     }
 
     @Override

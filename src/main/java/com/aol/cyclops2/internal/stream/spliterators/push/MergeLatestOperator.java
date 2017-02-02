@@ -57,7 +57,6 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
                     long sent = 0;
                     long reqCycle = requested.get();
                     for (long k = 0; k < reqCycle; k++) {
-                        System.out.println("K is " + k);
                         if (!isOpen)
                             return;
                         int toUse = index.incrementAndGet() - 1;
@@ -144,9 +143,7 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
                         }
                     }
                     ,onError,()->{
-
                         completed.incrementAndGet();
-                        System.out.println("Completed so far " + completed.get());
 
                     }));
 

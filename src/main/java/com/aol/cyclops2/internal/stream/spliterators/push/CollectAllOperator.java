@@ -69,7 +69,7 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
                 },()->{
                     A nextA = (A)next[0];
                     try {
-                        System.out.println("Finishing! Collect All!");
+
                         onNext.accept(collector.finisher().apply(nextA));
                     }catch(Throwable t){
                         onError.accept(t);

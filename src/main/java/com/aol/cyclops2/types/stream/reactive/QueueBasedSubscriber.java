@@ -213,12 +213,8 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     public void onNext(final T t) {
 
         Objects.requireNonNull(t);
-      //  System.out.println("***********************************Next " + t + " Thread " + Thread.currentThread().getId());
-        if(++counter.added>3){
-            System.out.println("Adding " +t);
-        }
+        counter.added++;
         queue.add(t);
-      //  System.out.println("Queue size " + queue.size());
 
 
 
@@ -258,10 +254,8 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     public void onComplete() {
 
 
-        System.out.println("On Complete! " + counter.active.get() + " queue " + queue.size()  + counter.active.get());
         counter.active.decrementAndGet();
         counter.subscription.minus(subscription);
-        System.out.println("Removed " + subscription + " active " + counter.active.get());
         if (queue != null && counter.active.get() == 0) {
 
             if (counter.completable) {

@@ -105,7 +105,6 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
                                             while (!status.compareAndSet(thunkStatusLocal, thunkStatusLocal & ~(1 << 1))); //unset inner active
 
                                             if (status.compareAndSet(1, 100)) {
-                                                System.out.println("Completing in thunk!  demand " + res.requested.get() + " thread " + Thread.currentThread().getId());
                                                 onComplete.run();
                                                 return true;
                                             }

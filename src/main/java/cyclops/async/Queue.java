@@ -460,14 +460,8 @@ public class Queue<T> implements Adapter<T> {
      * @param data Data to add
      * @return true if successfully added.
      */
-    volatile int added2 =0;
     public boolean add(final T data) {
-        if(2==((Integer)data).intValue())
-            added2++;
-        if(added2==2){
-            System.out.println("Added too many!! " + Thread.currentThread().getId() + " data is " + data);
-            new RuntimeException().printStackTrace();
-        }
+
         try {
             final boolean result = queue.add((T) nullSafe(data));
             if (result) {
