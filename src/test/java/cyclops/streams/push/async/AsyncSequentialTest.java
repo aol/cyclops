@@ -2,11 +2,14 @@ package cyclops.streams.push.async;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
 import cyclops.CyclopsCollectors;
+import cyclops.Semigroups;
 import cyclops.async.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.async.Topic;
 import cyclops.collections.ListX;
 import cyclops.collections.SetX;
+import cyclops.control.Maybe;
+import cyclops.control.either.Either;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
@@ -41,12 +44,13 @@ import static org.junit.Assert.assertTrue;
  * Created by johnmcclean on 14/01/2017.
  */
 public class AsyncSequentialTest extends BaseSequentialTest {
-    static Executor exec = Executors.newFixedThreadPool(10);
+
     @Override
     protected <U> ReactiveSeq<U> of(U... array){
         int[] index = {0};
         return Spouts.async(s->{
-            exec.execute(()-> {
+
+            new Thread(()-> {
 
                 for (U next : array) {
                     s.onNext(next);
@@ -54,10 +58,15 @@ public class AsyncSequentialTest extends BaseSequentialTest {
                         break;
                 }
                 s.onComplete();
-            });
+            }).start();
 
         });
     }
+    @Test
+    public void testCycle() {
+
+    }
+
     @Test
     public void subscribe3ErrorOnComplete() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
@@ -108,11 +117,11 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     }
     @Test
     public void spoutsCollect(){
-        Integer[] array = new Integer[100];
+        Integer[] array = new Integer[15];
         for(int i=0;i<array.length;i++) {
             array[i]=i;
         }
-        for(int i=0;i<10;i++) {
+        for(int i=0;i<ITERATIONS;i++) {
             List<Integer> list = of(array).collect(Collectors.toList());
             assertThat(list.size(),equalTo(array.length));
         }
@@ -133,7 +142,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     public void mergePTest(){
         //System.out.println(of(3, 6, 9).mergeP(of(2, 4, 8), of(1, 5, 7)).toListX());
 
-        for(int i=0;i<100;i++) {
+        for(int i=0;i<ITERATIONS;i++) {
             ListX<Integer> list = of(3, 6, 9).mergeP(of(2, 4, 8), of(1, 5, 7)).toListX();
 
             assertThat("List is " + list,list, hasItems(1, 2, 3, 4, 5, 6, 7, 8, 9));
@@ -159,18 +168,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
 
 
 
-    @Test
-    public void testCycleAsync() {
-      //  of(1, 2).collectAll(CyclopsCollectors.toListX())
-        //        .flatMapI(i->i.cycle(3)).printOut();
 
-       // of(1, 2).cycle().limit(6).forEach(n->System.out.println("Next " + n));
-
-
-        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle().limit(6).toList());
-        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle().limit(6).toList());
-
-    }
 
     @Test
     public void multicast(){
@@ -185,19 +183,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         assertThat(t.v2.limit(1).toList(),equalTo(ListX.of(1)));
 
     }
-    @Test
-    public void multicastCycle(){
-        final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1,2,3,4,5,6,7,8).duplicate();
 
-//        t.v1.forEach(e->System.out.println("First " + e));
-        //       t.v2.printOut();
-
-
-        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
-        System.out.println("Second!");
-        assertThat(t.v2.cycle().limit(1).toList(),equalTo(ListX.of(1)));
-
-    }
     @Test
     public void duplicateReplay(){
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
@@ -384,7 +370,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     }
     @Test
     public void triplicateParallelFanOut2() {
-        for (int k = 0; k < 10; k++) {
+        for (int k = 0; k < ITERATIONS; k++) {
 
             assertThat(of(1, 2, 3, 4, 5, 6, 7, 8, 9)
                     .parallelFanOut(ForkJoinPool.commonPool(), s1 -> s1.filter(i -> i % 3 == 0).map(i -> i * 2),
@@ -456,13 +442,60 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         AtomicBoolean onComplete = new AtomicBoolean(false);
         Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
 
-        assertThat(onComplete.get(), Matchers.equalTo(false));
+
         s.request(1l);
         Thread.sleep(100);
         assertThat(result.size(), Matchers.equalTo(3));
         assertThat(result,hasItems(1,2,3));
         s.request(1l);
         assertThat(onComplete.get(), Matchers.equalTo(true));
+    }
+
+    @Test
+    public void combine() {
+        assertThat(ofWait(1, 2, 3, 4, 5, 6, 7, 8).combine((a, b) -> a < 5, Semigroups.intSum)
+                .findOne(), Matchers.equalTo(Maybe.of(6)));
+    }
+
+    @Test
+    public void combineOneFirstOrError() {
+        assertThat(ofWait(1)
+                .combine((a, b) -> a < 5, Semigroups.intSum)
+                .findFirstOrError(), Matchers.equalTo(Either.right(1)));
+    }
+    @Test
+    public void combineTwo() {
+        assertThat(ofWait(1, 2)
+                .combine((a, b) -> a < 5, Semigroups.intSum)
+                .findOne(), Matchers.equalTo(Maybe.of(3)));
+    }
+
+    @Test
+    public void combineOne() {
+        assertThat(ofWait(1)
+                .combine((a, b) -> a < 5, Semigroups.intSum)
+                .findOne(), Matchers.equalTo(Maybe.of(1)));
+    }
+
+    protected <U> ReactiveSeq<U> ofWait(U... array){
+        int[] index = {0};
+        return Spouts.async(s->{
+
+            new Thread(()-> {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                for (U next : array) {
+                    s.onNext(next);
+                    if(index[0]++>100)
+                        break;
+                }
+                s.onComplete();
+            }).start();
+
+        });
     }
 
 }

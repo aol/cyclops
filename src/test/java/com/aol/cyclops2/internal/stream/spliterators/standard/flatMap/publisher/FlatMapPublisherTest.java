@@ -67,13 +67,13 @@ public class FlatMapPublisherTest {
     public void flatMapP(){
         assertThat(of(1,2,3)
                 .flatMapP(i->Spouts.of(i))
-                .toList(),equalTo(ListX.of(1,2,3)));
+                .toList(),Matchers.hasItems(1,2,3));
     }
     @Test
     public void flatMapP2(){
         assertThat(of(1,2,3)
                 .flatMapP(i->Spouts.of(1,i))
-                .toList(),equalTo(ListX.of(1,1,1,2,1,3)));
+                .toList(),Matchers.hasItems(1,1,1,2,1,3));
     }
     @Test
     public void flatMapPAsync2(){

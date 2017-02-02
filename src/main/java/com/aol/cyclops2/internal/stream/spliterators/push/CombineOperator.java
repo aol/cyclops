@@ -91,7 +91,9 @@ public class CombineOperator<T,A,R> extends BaseOperator<T,ReactiveSeq<T>> {
     @Override
     public void subscribeAll(Consumer<? super ReactiveSeq<T>> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         final Object[] current = {UNSET};
+        boolean[] completed = {false};
         source.subscribeAll(next-> {
+
                     try {
                         if(current[0]== UNSET){
                             current[0]=next;
@@ -112,9 +114,12 @@ public class CombineOperator<T,A,R> extends BaseOperator<T,ReactiveSeq<T>> {
                     }
                 }
                 ,onError,()->{
-                    if(current[0]!= UNSET)
-                        onNext.accept(Spouts.of((T)current[0]));
-                    onCompleteDs.run();
+                    if(!completed[0]) {
+                        if (current[0] != UNSET)
+                            onNext.accept(Spouts.of((T) current[0]));
+                        onCompleteDs.run();
+                        completed[0]=true;
+                    }
                 });
     }
 }

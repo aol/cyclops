@@ -40,7 +40,7 @@ import reactor.core.publisher.Flux;
 
 public class BaseSequentialTest {
 
-    public static final int ITERATIONS = 3;
+    public static final int ITERATIONS = 1;
 
     protected <U> ReactiveSeq<U> of(U... array) {
         return ReactiveSeq.of(array);
@@ -94,7 +94,7 @@ public class BaseSequentialTest {
         assertThat(result,hasItems(1,2,3));
     }
     @Test
-    public void subscribeErrorEmpty(){
+    public void subscribeErrorEmpty() throws InterruptedException {
         List result = new ArrayList<>();
         Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace());
         s.request(1l);
@@ -395,7 +395,7 @@ public class BaseSequentialTest {
 
     @Test
     public void mergePTest() {
-        for (int i = 0; i < 1_000; i++) {
+        for (int i = 0; i < ITERATIONS; i++) {
             ListX<Integer> list = of(3, 6, 9).mergeP(of(2, 4, 8), of(1, 5, 7)).toListX();
             assertThat(list, hasItems(1, 2, 3, 4, 5, 6, 7, 8, 9));
             assertThat(list.size(), Matchers.equalTo(9));
@@ -405,7 +405,7 @@ public class BaseSequentialTest {
     @Test
     public void triplicateFanOut() {
 
-        for (int k = 0; k < 1000; k++) {
+        for (int k = 0; k < ITERATIONS; k++) {
             System.out.println("******************Triplicate & merge.. " + k);
             System.out.println("******************Triplicate & merge.. " + k);
             System.out.println("******************Triplicate & merge.. " + k);
@@ -483,7 +483,7 @@ public class BaseSequentialTest {
 
     @Test
     public void flatMapI() {
-        for (int k = 0; k < 1_000; k++) {
+        for (int k = 0; k < ITERATIONS; k++) {
             assertThat(of(1, 2, 3)
                     .flatMapI(i -> of(10, 20, 30 * i))
                     .toList(), equalTo(ListX.of(10, 20, 30, 10, 20, 60, 10, 20, 90)));
@@ -745,7 +745,7 @@ public class BaseSequentialTest {
 
     @Test
     public void prepend() {
-        for(int k=0;k<1000;k++){
+        for(int k=0;k<ITERATIONS;k++){
             List<String> result = of(1, 2, 3).prepend(100, 200, 300)
                     .map(it -> it + "!!").collect(Collectors.toList());
 
@@ -755,7 +755,7 @@ public class BaseSequentialTest {
 
     @Test
     public void append() {
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             List<String> result = of(1, 2, 3).append(100, 200, 300)
                     .map(it -> it + "!!").collect(Collectors.toList());
 
@@ -765,7 +765,7 @@ public class BaseSequentialTest {
 
     @Test
     public void concatStreams() {
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             List<String> result = of(1, 2, 3).appendS(of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 
@@ -775,7 +775,7 @@ public class BaseSequentialTest {
 
     @Test
     public void prependStreams() {
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             List<String> result = of(1, 2, 3).prependS(of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 
@@ -785,7 +785,7 @@ public class BaseSequentialTest {
 
     @Test
     public void insertAt() {
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             List<String> result = of(1, 2, 3).insertAt(1, 100, 200, 300)
                     .map(it -> it + "!!").collect(Collectors.toList());
 
@@ -794,7 +794,7 @@ public class BaseSequentialTest {
     }
     @Test
     public void insertAtEmpty() {
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             List<String> result = of().insertAt(0, 100, 200, 300)
                     .map(it -> it + "!!").collect(Collectors.toList());
 
@@ -804,7 +804,7 @@ public class BaseSequentialTest {
 
     @Test
     public void insertAtOutOfRangeEmpty() {
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             List<String> result = of().insertAt(1, 100, 200, 300)
                     .map(it -> it + "!!").collect(Collectors.toList());
 
@@ -814,7 +814,7 @@ public class BaseSequentialTest {
 
     @Test
     public void insertAtStream() {
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             List<String> result = of(1, 2, 3).insertAtS(1, of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 
@@ -824,7 +824,7 @@ public class BaseSequentialTest {
 
     @Test
     public void insertAtStreamEmpty() {
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             List<String> result = of().insertAtS(0, Stream.of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 
@@ -842,7 +842,7 @@ public class BaseSequentialTest {
 
     @Test
     public void deleteBetween() {
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<ITERATIONS;k++) {
             List<String> result = of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4)
                     .map(it -> it + "!!").collect(Collectors.toList());
 
@@ -886,7 +886,7 @@ public class BaseSequentialTest {
     @Test
     public void zipInOrder() {
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < ITERATIONS; i++) {
             List<Tuple2<Integer, Integer>> list = of(1, 2, 3, 4, 5, 6).limit(6)
                     .zip(of(100, 200, 300, 400).limit(4))
                     .collect(Collectors.toList());
@@ -1167,7 +1167,7 @@ public class BaseSequentialTest {
 
     @Test
     public void testSplitAt() {
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < ITERATIONS; i++) {
             Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 
@@ -1175,20 +1175,20 @@ public class BaseSequentialTest {
 
 
         }
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < ITERATIONS; i++) {
             Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 
             assertEquals(asList(1, 2, 3), s.get().splitAt(3).v1.toList());
 
         }
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < ITERATIONS; i++) {
             Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 
             assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(6).v1.toList());
         }
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < ITERATIONS; i++) {
             Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 
