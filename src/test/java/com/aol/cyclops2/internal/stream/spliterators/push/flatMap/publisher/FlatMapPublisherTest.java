@@ -86,6 +86,7 @@ public class FlatMapPublisherTest {
 
     }
 
+
     @Test
     public void flatMapList(){
         for(int i=0;i<1000;i++){
@@ -118,7 +119,7 @@ public class FlatMapPublisherTest {
     public void flatMapP2(){
         assertThat(Spouts.of(1,2,3)
                 .flatMapP(i->Spouts.of(1,i))
-                .toList(),equalTo(ListX.of(1,1,1,2,1,3)));
+                .toList(),Matchers.hasItems(1,1,1,2,1,3));
     }
     @Test
     public void asyncFlatMap(){
@@ -212,6 +213,41 @@ public class FlatMapPublisherTest {
     }
 
     @Test
+    public void concurrentFlatMapPIteration(){
+        for(int k=0;k<500;k++) {
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            List<Integer> res =  new ArrayList<>();
+            Iterator<Integer> it = Spouts.of(1, 2, 3)
+                    .flatMapP(3, i -> nextAsync())
+                    .iterator();
+            while(it.hasNext()){
+                res.add(it.next());
+            }
+            System.out.println("Result is " + res);
+            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res, hasItems(1,2));
+            int one = 0;
+            int two = 0;
+            for(Integer next : res){
+                if(next==1){
+                    one++;
+                }
+                if(next==2){
+                    two++;
+                }
+            }
+            assertThat(one,equalTo(3));
+            assertThat(two,equalTo(3));
+        }
+    }
+
+    @Test
     public void flatMapPAsync2(){
         for(int k=0;k<500;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -283,7 +319,7 @@ public class FlatMapPublisherTest {
             System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             List<Integer> res = new ArrayList<>();
             Iterator<Integer> it = Spouts.of(1, 2, 3)
-                    .flatMapP(i -> nextAsync()).iterator();
+                                         .flatMapP(i -> nextAsync()).iterator();
             while(it.hasNext()){
                 res.add(it.next());
             }

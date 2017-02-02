@@ -194,10 +194,11 @@ public class FlatMapPublisherTest {
 
             List<Integer> res = ReactiveSeq.of(1, 2, 3)
                                             .peek(System.out::println)
-                                            .flatMapP(i -> nextAsync())
+                                            .flatMapP(2,i -> nextAsync())
+                                            .peek(e->System.out.println("e " + e))
                                             .collect(Collectors.toList());
             System.out.println(res);
-            Thread.sleep(10);
+
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
 
             assertThat(res, hasItems(1, 2));
@@ -255,7 +256,8 @@ public class FlatMapPublisherTest {
         for(int k=0;k<100;k++) {
 
             List<Integer> res = Spouts.from(ReactiveSeq.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsync())).collect(Collectors.toList());
+                                      .flatMapP(i -> nextAsync()))
+                                        .collect(Collectors.toList());
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1, 2));

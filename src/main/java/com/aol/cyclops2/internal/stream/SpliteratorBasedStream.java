@@ -404,7 +404,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
      * @return
      */
     public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return flatMapP(maxConcurrency, QueueFactories.boundedQueue(5_000),mapper);
+        return flatMapP(maxConcurrency, QueueFactories.boundedNonBlockingQueue(maxConcurrency*4),mapper);
     }
 
     /**
@@ -417,34 +417,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency,
                                        final QueueFactory<R> factory,final Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
-        /**
-        final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
-        final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
 
-        Continuation[] ref = {null};
-        final Continuation continuation  = new Continuation(() -> {
-
-                if(!stream.tryAdvance(e-> {
-                    Publisher<R> p = (Publisher<R>)mapper.apply(e);
-                    c.active.incrementAndGet();
-                    p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));})) {
-                    //must wait until active publishers have complete!!
-                    init.close();
-                    return Continuation.empty();
-                }else{
-                    return ref[0];
-                }
-
-
-
-
-
-        });
-        ref[0]= continuation;
-
-        init.addContinuation(continuation);
-        return ReactiveSeq.fromStream(init.jdkStream());
-         **/
         final Counter c = new Counter();
         final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
 

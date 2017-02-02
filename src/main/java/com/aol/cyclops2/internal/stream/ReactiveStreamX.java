@@ -365,25 +365,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
-        ReactiveStreamX<R> res = createSeq(new PublisherFlatMapOperatorSync<>(source, fn));
-        if(this.async == Type.SYNC){
-
-            return res.withAsync(Type.BACKPRESSURE);
-        }
-
-        return res;
-
-
+        return flatMapP(256,fn);
     }
 
     @Override
     public final <R> ReactiveSeq<R> flatMapP(int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> fn) {
-        if(this.async == Type.SYNC){
-            return map(fn).grouped(maxConcurrency)
-                    .flatMapP(l -> Spouts.mergeLatestList(l));
-
-        }
-        return flatMapP(maxConcurrency, QueueFactories.unboundedNonBlockingQueue(new DirectWaitStrategy<>()),fn);
+        return flatMapP(maxConcurrency, QueueFactories.boundedNonBlockingQueue(maxConcurrency*4,new DirectWaitStrategy<>()),fn);
 
     }
     public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory,Function<? super T, ? extends Publisher<? extends R>> mapper) {
@@ -413,26 +400,50 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     init.setErrorHandler(s::onError);
                     sub.request(Long.MAX_VALUE);
                 }
-
+                List[] ancillaryData = {null};
                 s.onSubscribe(new StreamSubscription() {
 
                     LongConsumer work =  r ->{
                         long e = 0L;
 
                         while(r>0) {
-                            long finalR = r==Long.MAX_VALUE ? r :r / c.subscription.size() ;
+
+                            int size = c.subscription.size();
+                            long finalR = size==0 ? 0 : r==Long.MAX_VALUE ? r :r / size ;
 
 
                             while(e<r) {
                                 try {
-                                    R value = init.getQueue().get();
-                                    s.onNext(value);
+                                    if(ancillaryData[0]!=null){
+                                        List<R> local = ancillaryData[0];
+                                        if(local.size()==0){
+                                            s.onComplete();
+                                            return;
+                                        }
+                                        s.onNext(local.remove(0));
+                                        e++;
+                                    }else {
+                                        R value = init.getQueue().get();
+                                        s.onNext(value);
+                                        e++;
+                                    }
 
                                 } catch (Queue.QueueTimeoutException t) {
 
                                 } catch (Queue.ClosedQueueException t){
-                                    s.onComplete();
-                                    return;
+                                    if(t.isDataPresent()){
+                                        ancillaryData[0]=t.getCurrentData();
+                                        List<R> local = ancillaryData[0];
+                                        if(local.size()==0){
+                                            s.onComplete();
+                                            return;
+                                        }
+                                        s.onNext(local.remove(0));
+                                        e++;
+                                    }else {
+                                        s.onComplete();
+                                        return;
+                                    }
                                 }catch( Exception t){
                                     s.onComplete();
                                     return;

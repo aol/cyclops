@@ -135,10 +135,15 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
                                   factory) {
             @Override
             public T get() {
-                System.out.println("Requesting " + counter.subscription.size());
-                counter.subscription.forEach(s -> s.request(1));
 
-                return super.get();
+                if(size()<maxConcurrency*3) {
+                    System.out.println("Requesting " + counter.subscription.size() + " thread " + Thread.currentThread().getId());
+                    counter.subscription.forEach(s -> s.request(1));
+                }
+
+                T res = super.get();
+                System.out.println("Next in QS is " + res + " thread " + Thread.currentThread().getId());
+                return res;
             }
         };
 
@@ -248,19 +253,25 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
         if (queue != null && counter.active.get() == 0) {
 
             if (counter.completable) {
-                System.out.println("Completable closing..");
+
                 if(counter.closing.compareAndSet(false,true)) {
                     counter.closed = true;
                     queue.addContinuation(new Continuation(
                             () -> {
                                 final List current = new ArrayList();
-                                while (queue.size() > 0)
-                                    current.add(queue.get());
-                                System.out.println("Adding final elements.. " + current);
+                                while (queue.size() > 0) {
+                                    try {
+                                        System.out.println("Adding to queue");
+                                        current.add(queue.get());
+                                    }catch(ClosedQueueException e){
+                                        break;
+                                    }
+                                }
+                                System.out.println("Drained values " + current);
                                 throw new ClosedQueueException(
                                         current);
                             }));
-                    queue.close();
+                      queue.close();
                 }
             }
 
