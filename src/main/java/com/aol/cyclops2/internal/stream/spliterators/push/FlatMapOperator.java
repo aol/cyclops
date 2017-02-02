@@ -42,7 +42,7 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
 
         StreamSubscription res = new StreamSubscription(){
             LongConsumer work = n-> {
-                System.out.println("New demand! Requesting on thread " + Thread.currentThread().getId() + " demand "  + this.requested.get());
+
                 thunk[0].getAsBoolean();
 
             };
@@ -79,17 +79,14 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
                                 boolean canAdvance = false;
 
                                 if (!advancing.compareAndSet(0, 1)) {
-                                    System.out.println("Another thread advancing - retreating.. " + Thread.currentThread().getId());
+
                                     return false;
                                 }
                                 try {
                                     while (res.isActive()) {
                                         try {
-                                            System.out.println("Try advance ? " + " " + e + " demand " + res.requested.get()
-                                                    + " thread " + Thread.currentThread().getId());
                                             canAdvance = split.tryAdvance(onNext);
-                                            System.out.println("Pushed ? " + canAdvance + " " + e + " demand " + res.requested.get()
-                                                    + " thread " + Thread.currentThread().getId());
+
                                         } catch (Throwable t) {
                                             onError.accept(t);
                                         }
@@ -121,8 +118,6 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
                                     advancing.set(0);
                                 }
                                 if (!canAdvance && res.isActive() && !(status.get() >= 100)) {
-
-                                    System.out.println("Requesting from parent! " + canAdvance);
                                     s[0].request(1);
                                     return true;
                                 }else if(!canAdvance){
@@ -156,7 +151,6 @@ public class FlatMapOperator<T,R> extends BaseOperator<T,R> {
                    }while(!status.compareAndSet(statusLocal,statusLocal | (1 << 0)));
 
                    if(status.compareAndSet(1,100)){
-                        System.out.println("Completing in onComplete  demand " + res.requested.get()  + " thread " + Thread.currentThread().getId());
                        onComplete.run();
                    }
 

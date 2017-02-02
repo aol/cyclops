@@ -985,9 +985,9 @@ public interface Eval<T> extends    To<Eval<T>>,
 
                         }
                         future.mutate(f -> f.peek(e->{
-                                System.out.println("Processing e");
+
                                 e.forEach(v->{
-                                    System.out.println("Sending v!");
+
                                     sub.onNext(v);
                                 });
                         })

@@ -137,12 +137,12 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
             public T get() {
 
                 if(size()<maxConcurrency*3) {
-                    System.out.println("Requesting " + counter.subscription.size() + " thread " + Thread.currentThread().getId());
+
                     counter.subscription.forEach(s -> s.request(1));
                 }
 
                 T res = super.get();
-                System.out.println("Next in QS is " + res + " thread " + Thread.currentThread().getId());
+
                 return res;
             }
         };
@@ -191,10 +191,10 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
             LockSupport.parkNanos(100l); 
         }
-        System.out.println("Adding subscription " +  subscription);
+
         counter.subscription.plus(subscription);
 
-        System.out.println("Requesting 1");
+
         s.request(1);
 
     }
@@ -206,9 +206,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     public void onNext(final T t) {
 
         Objects.requireNonNull(t);
-        System.out.println("***********************************Next " + t + " Thread " + Thread.currentThread().getId());
         queue.add(t);
-        System.out.println("Queue size " + queue.size());
         counter.added++;
 
     }
@@ -246,10 +244,10 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     @Override
     public void onComplete() {
 
-        System.out.println("On Complete! " + counter.active.get() + " queue " + queue.size()  + counter.active.get());
+
         counter.active.decrementAndGet();
         counter.subscription.minus(subscription);
-        System.out.println("Removed " + subscription + " active " + counter.active.get());
+
         if (queue != null && counter.active.get() == 0) {
 
             if (counter.completable) {
@@ -261,13 +259,13 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
                                 final List current = new ArrayList();
                                 while (queue.size() > 0) {
                                     try {
-                                        System.out.println("Adding to queue");
+
                                         current.add(queue.get());
                                     }catch(ClosedQueueException e){
                                         break;
                                     }
                                 }
-                                System.out.println("Drained values " + current);
+
                                 throw new ClosedQueueException(
                                         current);
                             }));
@@ -284,7 +282,6 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
         if (queue != null && counter.active.get() == 0) {
             counter.closed = true;
-            System.out.println("Closing!");
             queue.addContinuation(new Continuation(
                                                    () -> {
                                                        throw new ClosedQueueException();

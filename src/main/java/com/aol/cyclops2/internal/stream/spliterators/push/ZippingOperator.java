@@ -51,13 +51,11 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
             LongConsumer work = n->{
 
 
-                System.out.println("DEMAND ADDED " + requested.get() + " n is " + n + " Thread "+ Thread.currentThread().getId());
-
                 leftSub[0].request(1);
                 rightSub[0].request(1);
 
 
-                System.out.println("End request cycle..");
+
             };
             @Override
             public void request(long n) {
@@ -65,7 +63,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                     onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                     return;
                 }
-                System.out.println("Request recieved.. " + n + " Requested is " + requested.get()  + " Thread "+ Thread.currentThread().getId());
+
                 this.singleActiveRequest(n,work);
 
             }
@@ -101,17 +99,17 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
 
                 } else {
-                    System.out.println("Left offering " + e);
+
                     if(status.compareAndSet(0,1) && rightQ.isEmpty()) {
 
                         leftActive.incrementAndGet();
                         leftQ.offer((T1) e);
-                        System.out.println("Left offered " + leftQ.size() + " active " + leftActive.get());
+
 
                         status.set(0);
                     }else{
                         status.compareAndSet(1,0);
-                        System.out.println("Left awaiting ");
+
                         while(rightQ.isEmpty()){ // VALUE IS COMING
                             if(rightComplete.get() && rightQ.isEmpty()){
                                 handleComplete(completing,onComplete);
@@ -120,7 +118,6 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                             LockSupport.parkNanos(0);
                         }
                         R value = fn.apply((T1) e, rightQ.poll());
-                        System.out.println("LEFT Pushing " + value + "  Thread " + Thread.currentThread().getId() + " demenad "+  sub.requested.get());
                         sub.requested.decrementAndGet();
                         onNext.accept(value);
                         if(sub.requested.get()>1){
@@ -149,14 +146,8 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
         },()->{
             leftComplete.set(true);
 
-            System.out.println("LEFT COMPLETE.. " + rightComplete.get());
-
-            System.out.println("LEFT QUEUE " + leftQ.isEmpty() + " size " + leftActive.get()  + " RIGHT COMPLETE " + rightComplete.get());
-
 
             if (leftActive.get()==0 || rightComplete.get()) {
-                System.out.println("Running complete! LEFT SIDE " + + leftQ.size() + " RightQ " + rightQ.size() + " thread " + Thread.currentThread().getId());
-
                 if(rightSub[0]!=null)
                     rightSub[0].cancel();
                 handleComplete(completing,onComplete);
@@ -173,12 +164,12 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
             try {
                 if (!leftQ.isEmpty()) {
                     R value =fn.apply(leftQ.poll(), (T2) e);
-                    System.out.println("RIGHT Pushing " + value + "  Thread " + Thread.currentThread().getId() + " demenad "+  sub.requested.get());
+
                     sub.requested.decrementAndGet();
                     onNext.accept(value);
                     leftActive.decrementAndGet();
                     if(sub.requested.get()>1){
-                        System.out.println("Requesting more!!");
+
                         leftSub[0].request(1l);
                         rightSub[0].request(1);
                     }
@@ -186,18 +177,17 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
                 } else {
 
-                    System.out.println("Right offering " + e);
+
                     if(status.compareAndSet(0,2) && leftQ.isEmpty()) {
 
                         rightActive.incrementAndGet();
                         rightQ.offer((T2) e);
 
-                        System.out.println("Right offered " + rightQ.size());
+
 
                         status.set(0);
                     }else {
 
-                        System.out.println("Right awaiting awaiting " +  leftQ.isEmpty() + " status " + status.get());
                         status.compareAndSet(2,0);
                         while (leftQ.isEmpty()) { // VALUE IS COMING
                            if(leftComplete.get() && leftQ.isEmpty()){
@@ -207,7 +197,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                             LockSupport.parkNanos(0);
                         }
                         R value = fn.apply(leftQ.poll(), (T2) e);
-                        System.out.println("RIGHT Pushing " + value + "  Thread " + Thread.currentThread().getId() + " demenad " + sub.requested.get());
+
                         sub.requested.decrementAndGet();
                         onNext.accept(value);
                         if(sub.requested.get()>1){
@@ -234,11 +224,8 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
         },()->{
 
             rightComplete.set(true);
-            System.out.println("RIGHT COMPLETE..");
 
-            System.out.println("RIGHT QUEUE " + rightQ.isEmpty() + " size " + rightActive.get()  + " LEFT COMPLETE " + leftComplete.get());
             if (rightActive.get()==0 || leftComplete.get()) {
-                System.out.println("Running complete! RIGHT SIDE " + rightQ.size());
                 if(leftSub[0]!=null)
                     leftSub[0].cancel();
                 handleComplete(completing,onComplete);
@@ -254,7 +241,6 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
     private void handleComplete(AtomicBoolean completeSent,Runnable onComplete){
         if(completeSent.compareAndSet(false,true)){
-            System.out.println("RUNNING ONCOMPLETE! " + Thread.currentThread().getId());
             onComplete.run();
         }
     }
@@ -286,28 +272,26 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
             try {
                 if (!leftQ.isEmpty()) {
                     R value =fn.apply(leftQ.poll(), (T2) e);
-                    System.out.println("RIGHT Pushing " + value + "  Thread " + Thread.currentThread().getId());
+
 
                     onNext.accept(value);
                     leftActive.decrementAndGet();
-                    System.out.println("Right sub is " + e);
-                   // rightSub[0].request(1);
+
 
 
                 } else {
 
-                    System.out.println("Right offering " + e);
+
                     if(status.compareAndSet(0,2) && leftQ.isEmpty()) {
 
                         rightActive.incrementAndGet();
                         rightQ.offer((T2) e);
 
-                        System.out.println("Right offered " + rightQ.size());
+
 
                         status.set(0);
                     }else {
 
-                        System.out.println("Right awaiting awaiting " +  leftQ.isEmpty() + " status " + status.get());
                         status.compareAndSet(2,0);
                         while (leftQ.isEmpty()) { // VALUE IS COMING
                             if(leftComplete.get() && leftQ.isEmpty()){
@@ -317,7 +301,6 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                             LockSupport.parkNanos(0);
                         }
                         R value = fn.apply(leftQ.poll(), (T2) e);
-                        System.out.println("RIGHT Pushing " + value + "  Thread " + Thread.currentThread().getId());
 
                         onNext.accept(value);
                         leftActive.decrementAndGet();
@@ -328,7 +311,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                 onError.accept(t);
             }
 
-            System.out.println("Left complete ?" + leftComplete.get() +  " left q ? " + leftQ.isEmpty());
+
             if( (leftComplete.get() && leftQ.isEmpty()) || (rightComplete.get() && rightQ.isEmpty())){
                 rightSub[0].cancel();
                 handleComplete(completing,onCompleteDs);
@@ -337,15 +320,13 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
         },e->{
             onError.accept(e);
-            //rightSub[0].request(1l);
+
         },()->{
 
             rightComplete.set(true);
-            System.out.println("RIGHT COMPLETE..");
 
-            System.out.println("RIGHT QUEUE " + rightQ.isEmpty() + " size " + rightActive.get()  + " LEFT COMPLETE " + leftComplete.get());
             if (rightActive.get()==0 || leftComplete.get()) {
-                System.out.println("Running complete! RIGHT SIDE " + rightQ.size());
+
                 rightSub[0].cancel();
                 handleComplete(completing,onCompleteDs);
 
@@ -362,7 +343,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
                 if (!rightQ.isEmpty() ) {
                     R value = fn.apply((T1) e, rightQ.poll());
-                    System.out.println("LEFT Pushing " + value + "  Thread " + Thread.currentThread().getId());
+
 
                     onNext.accept(value);
                     rightActive.decrementAndGet();
@@ -374,17 +355,17 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
 
                 } else {
-                    System.out.println("Left offering " + e);
+
                     if(status.compareAndSet(0,1) && rightQ.isEmpty()) {
 
                         leftActive.incrementAndGet();
                         leftQ.offer((T1) e);
-                        System.out.println("Left offered " + leftQ.size() + " active " + leftActive.get());
+
 
                         status.set(0);
                     }else{
                         status.compareAndSet(1,0);
-                        System.out.println("Left awaiting ");
+
                         while(rightQ.isEmpty()){ // VALUE IS COMING
                             if(rightComplete.get() && rightQ.isEmpty()){
                                 handleComplete(completing,onCompleteDs);
@@ -393,8 +374,6 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                             LockSupport.parkNanos(0);
                         }
                         R value = fn.apply((T1) e, rightQ.poll());
-                        System.out.println("LEFT Pushing " + value + "  Thread " + Thread.currentThread().getId());
-
                         onNext.accept(value);
                         rightActive.decrementAndGet();
                     }
@@ -419,14 +398,8 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
         },()->{
             leftComplete.set(true);
 
-            System.out.println("LEFT COMPLETE.. " + rightComplete.get());
-
-            System.out.println("LEFT QUEUE " + leftQ.isEmpty() + " size " + leftActive.get()  + " RIGHT COMPLETE " + rightComplete.get());
-
 
             if (leftActive.get()==0 || rightComplete.get()) {
-                System.out.println("Running complete! LEFT SIDE " + + leftQ.size() + " RightQ " + rightQ.size() + " thread " + Thread.currentThread().getId());
-
                 if(rightSub[0]!=null)
                     rightSub[0].cancel();
                 handleComplete(completing,onCompleteDs);

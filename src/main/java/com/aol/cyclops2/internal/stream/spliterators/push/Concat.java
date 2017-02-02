@@ -93,7 +93,7 @@ public class Concat<IN> {
     //transfer demand from previous to next
     public void addMissingRequests(){
 
-        System.out.println("ADD MISSING REQS Transfering demand");
+
         int missed=1;
         long toRequest=0L;
 
@@ -107,7 +107,7 @@ public class Concat<IN> {
 
             Subscription localActive = active.get();
             long reqs = requested.get() + localQueued;
-            System.out.println("Local queued " + localQueued + " missed " + missedOutput + " reqs " + reqs + " localSub "+ localSub);
+
             if(reqs<0 || toRequest<0) {
                 processAll=true;
                 if(localSub!=null)
@@ -126,7 +126,7 @@ public class Concat<IN> {
             missed = wip.accumulateAndGet(missed,(a,b)->a-b);
 
         }while(missed!=0);
-        System.out.println("************************************************Missing reqs " + toRequest + " " + active.get());
+
         if(toRequest>0)
             active.get().request(toRequest);
 
@@ -156,16 +156,13 @@ public class Concat<IN> {
     }
 
     public void onNext(IN e){
-        System.out.println("On next..");
+
         emitted(1);
         if(!sub.isOpen){
             return;
         }
 
         try {
-            System.out.println("demand before dec " + sub.requested.get() + " t " + Thread.currentThread().getId());
-            System.out.println("demand onnext " + sub.requested.decrementAndGet() + " " + active + " t " + Thread.currentThread().getId());
-            System.out.println("on next " +e + " reqs " + requested.get() + " prod " + produced.get() + " t " + Thread.currentThread().getId());
 
             onNext.accept(e);
 
@@ -178,7 +175,7 @@ public class Concat<IN> {
 
 
     public void onComplete(){
-        System.out.println("On complete!");
+
         //check complete
         if(index==operators.size()){
             if(!finished) {
@@ -215,21 +212,21 @@ public class Concat<IN> {
             return false;
         }
         if (wip.compareAndSet(0, 1)) {
-            System.out.println("Subscribe next is active..");
+
             active.set(local);
 
             long r = requested.get();
 
             if (decrementAndCheckActive()) {
-                System.out.println("Subscribe next transferring demand..");
+
                 this.addMissingRequests();
             }
-            System.out.println("Sub next Wip is " + wip.get() + "  r " + r);
+
             if(r>0)
                 local.request(r);
             return false;
         }
-        System.out.println("Enqueing next sub " + local);
+
         next.set(local);
         if(incrementAndCheckInactive()){
             this.addMissingRequests();

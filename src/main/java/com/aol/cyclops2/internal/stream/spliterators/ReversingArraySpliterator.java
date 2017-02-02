@@ -106,7 +106,6 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
     @Override
     public ReversableSpliterator<T> copy() {
 
-        System.out.println("Copying " + start + " " + max);
         return new ReversingArraySpliterator<T>(
                                                 array, start,max,reverse);
     }

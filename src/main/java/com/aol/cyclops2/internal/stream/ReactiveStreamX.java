@@ -112,8 +112,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             Continuation cont = new Continuation(()->{
                 if(wip.compareAndSet(false,true)) {
                     this.source.subscribeAll(queue::offer,
-                            i -> { System.out.println("Closing QUEUE!!"); queue.close();},
-                            ()->{System.out.println("ON complete - Closing queue!!"); queue.close();});
+                            i ->  queue.close(),
+                            ()->queue.close());
                 }
                 return Continuation.empty();
             });
@@ -172,7 +172,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             Subscription sub[] = {null};
             //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
             sub[0] = source.subscribe(e -> {
-                System.out.println("Value recieved ");
+
                     result.complete(e);
                   if(sub[0]!=null)
                     sub[0].cancel();
@@ -216,7 +216,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         Subscription sub[] = {null};
         //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
         sub[0] = stream.source.subscribe(e -> {
-            System.out.println("Value recieved ");
+
             result.complete(e);
             if(sub[0]!=null)
                 sub[0].cancel();
@@ -489,9 +489,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public Stream<T> unwrapStream() {
-        System.out.println("Unwrapping " + async);
+
         if(async==Type.NO_BACKPRESSURE){
-           // System.out.println("Setting up queue..");
+
             cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                                                          .build();
 
@@ -499,13 +499,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             Continuation cont = new Continuation(()->{
 
                 if(wip.compareAndSet(false,true)) {
-                    System.out.println("Subscribing!");
+
                     this.source.subscribeAll(queue::offer, i ->{
                         queue.close();
-                        System.out.println("Closing due to error");
-                        i.printStackTrace();
 
-                    } , ()->{System.out.println("Closing on close!"); queue.close();});
+
+                    } , ()->queue.close());
                 }
                 return Continuation.empty();
             });
@@ -654,6 +653,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
                 }
             });
+            return;
 
         }
 

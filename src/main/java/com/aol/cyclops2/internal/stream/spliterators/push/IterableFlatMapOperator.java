@@ -39,7 +39,7 @@ public class IterableFlatMapOperator<T,R> extends BaseOperator<T,R> {
 
         StreamSubscription res = new StreamSubscription(){
             LongConsumer work = n-> {
-                System.out.println("New demand! Requesting on thread " + Thread.currentThread().getId() + " demand "  + this.requested.get());
+
                 thunk[0].run();
             };
             @Override

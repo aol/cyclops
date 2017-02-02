@@ -104,11 +104,9 @@ public interface Spouts {
         Future<Subscriber<T>> subscriber = Future.future();
         Future<Subscription> sub = Future.future();
         ReactiveSeq.fromStream(seq).foldFuture(t->{
-            System.out.println("Awaiting subscriber..");
             Subscriber<T> local = subscriber.get();
-            System.out.println("Setting subscription..");
             sub.complete(t.subscribe(local::onNext,local::onError,local::onComplete));
-            System.out.println("Done!");
+
             return null;
         },exec);
         return new ReactiveStreamX<T>(new PublisherToOperator<T>(new Publisher<T>() {
@@ -288,7 +286,6 @@ public interface Spouts {
                         sub.onNext(t);
                         won = true;
                     }
-                    System.out.println("Next AMB " + t + " WON " + won +  " first " + first.get() + "  index " + index);
 
                 }
 

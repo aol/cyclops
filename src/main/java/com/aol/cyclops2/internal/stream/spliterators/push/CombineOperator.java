@@ -88,6 +88,7 @@ public class CombineOperator<T,A,R> extends BaseOperator<T,ReactiveSeq<T>> {
         return sub;
     }
 
+    volatile int test = 0;
     @Override
     public void subscribeAll(Consumer<? super ReactiveSeq<T>> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         final Object[] current = {UNSET};
@@ -103,6 +104,7 @@ public class CombineOperator<T,A,R> extends BaseOperator<T,ReactiveSeq<T>> {
                         } else {
                             final T result = (T)current[0];
                             current[0] = (T) UNSET;
+
                             onNext.accept(Spouts.of(result, next));
                             return;
                         }
@@ -115,6 +117,7 @@ public class CombineOperator<T,A,R> extends BaseOperator<T,ReactiveSeq<T>> {
                 }
                 ,onError,()->{
                     if(!completed[0]) {
+                        System.out.println("On complete " + current[0]);
                         if (current[0] != UNSET)
                             onNext.accept(Spouts.of((T) current[0]));
                         onCompleteDs.run();

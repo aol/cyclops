@@ -49,13 +49,11 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
                 while(requested.get()>0)
                 {
                     if (completed.get() == subs.size() && data.size() == 0) {
-                        System.out.println("Completing.. " + data.size());
 
-                        System.out.println("Completing.. " + data.size() );
                         onComplete.run();
                         return;
                     }
-                    System.out.println("*****!!!!!!!!!!!!!***************    n is " + n + " looping " + Math.min(n, subs.size()));
+
                     long sent = 0;
                     long reqCycle = requested.get();
                     for (long k = 0; k < reqCycle; k++) {
@@ -69,8 +67,6 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
                         }
 
                         if (subs.get(toUse).isOpen) {
-
-                            System.out.println("Booked " + subs.get(toUse) + "  demand " + requested.get());
                             subs.get(toUse).request(1l);
 
                         } else
@@ -84,9 +80,7 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
                             sent++;
                         }
                         if (completed.get() == subs.size() && data.size() == 0) {
-                            System.out.println("Completing.. " + data.size() +  " sent " + sent);
 
-                            System.out.println("Completing.. " + data.size() +  " sent " + sent);
                             onComplete.run();
                             return;
                         }
@@ -103,18 +97,15 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
                             requested.decrementAndGet();
                             sent++;
                         }
-                        System.out.println("Sent is " + sent + " data "
-                                + data.size() + " isOpen " + isOpen
-                                + " completed ? " + (completed.get() == subs.size())
-                                + " data " + data.size());
+
                     }
                     if (completed.get() == subs.size() && data.size() == 0) {
-                        System.out.println("Completing.. " + data.size() +  " sent " + sent);
+
                         onComplete.run();
                         return;
 
                     }
-                    System.out.println("End request.. sent " + sent + "  " + completed.get() + " " + data.size());
+
                 }
 
 
@@ -144,11 +135,6 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
 
                             }
 
-                            System.out.println("Queueing! " + e + " on " + current  + "  demand " + sub.requested.get());
-
-
-
-                            System.out.println("decrement demand " + sub.requested.get());
                         } catch (Throwable t) {
 
                             onError.accept(t);
@@ -185,7 +171,6 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
                         try {
                             if(wip.compareAndSet(false,true)) {
                                 onNext.accept(e);
-                                System.out.println("Merging! " + e);
                                 data.drain(x->onNext.accept(x));
                                 wip.set(false);
                             }else{
@@ -202,12 +187,12 @@ public class MergeLatestOperator<IN> implements Operator<IN> {
                     ,onError,()->{
 
                         if(completed.incrementAndGet()== operators.length){
-                            System.out.println("Running on complete");
+
                             data.drain(x->onNext.accept(x));
                             onCompleteDs.run();
 
                         }
-                        System.out.println("Complete " + completed.get());
+
 
                     });
         }

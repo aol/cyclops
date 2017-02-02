@@ -40,7 +40,6 @@ public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T
         if(active==null)
             active=source.iterator();
         if (active.hasNext()) {
-            System.out.println("Pushing next value");
             action.accept(print(active.next()));
             return true;
         }

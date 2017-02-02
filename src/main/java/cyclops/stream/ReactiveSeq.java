@@ -764,10 +764,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                     try {
                         if (!local.hasNext()) {
                             queue.close();
-                            System.out.println("Closing.. ");
+
                             return Continuation.empty();
                         } else {
-                            System.out.println("Offering.. ");
+
                             queue.offer(local.next());
                         }
                     }catch(Throwable t){
@@ -4619,14 +4619,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<T> publishTo(Adapter<T>... adapters){
         return peek(e->{
             for(Adapter<T> next:  adapters){
-                System.out.println("Offering " + e + " "  + next.offer(e));
+                 next.offer(e);
             }
         });
     }
     default ReactiveSeq<T> publishTo(Signal<T>... signals){
         return peek(e->{
             for(Signal<T> next:  signals){
-                System.out.println("Offering " + e + " "  + next.set(e));
+                  next.set(e);
             }
         });
     }

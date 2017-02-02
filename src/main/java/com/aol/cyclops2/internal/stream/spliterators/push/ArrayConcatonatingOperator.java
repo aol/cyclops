@@ -48,10 +48,10 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
                     onError.accept(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
                     return;
                 }
-                System.out.println("Incoming - demand is " + requested.get());
+
 
                 super.request(n);
-                System.out.println("Requesting new demand !!!!!!!!!!!!!!!!!!!!!! " + n + " demand is now " + requested.get());
+
                 ref[0].request(n);
 
 

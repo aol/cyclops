@@ -52,7 +52,7 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
         upstream[0] = source.subscribe(e-> {
                     try {
                         A nextA = (A)next[0];
-                        System.out.println("Accummulating! " + e);
+
                         collector.accumulator().accept(nextA,e);
 
                         upstream[0].request(1l);
@@ -84,9 +84,7 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
         Object[] next = {collector.supplier().get()};
         source.subscribeAll(e-> {
                     try {
-                        if(e==null){
-                            System.out.println("Collecting null!");
-                        }
+
                         A nextA = (A)next[0];
                         collector.accumulator().accept(nextA,e);
 
@@ -98,7 +96,7 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
                 ,onError,()->{
                     A nextA = (A)next[0];
                     try {
-                        System.out.println("Next is "+ nextA);
+
                         onNext.accept(collector.finisher().apply(nextA));
                     }catch(Throwable t){
                         onError.accept(t);

@@ -407,9 +407,9 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             final long[] last = {-1};
 
             return a-> {
-                System.out.println("A is  " +a);
+
                 if(last[0]==-1) {
-                    System.out.println("Allowing "+ a);
+
                     last[0] = System.nanoTime();
                     return true;
                 }

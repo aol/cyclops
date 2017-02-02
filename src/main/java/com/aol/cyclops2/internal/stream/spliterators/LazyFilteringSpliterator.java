@@ -24,7 +24,7 @@ public class LazyFilteringSpliterator<T> extends Spliterators.AbstractSpliterato
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
         source.forEachRemaining(t->{
-            System.out.println("T is " + t);
+
             if(mapper.test(t))
                 action.accept(t);
         });
@@ -38,7 +38,7 @@ public class LazyFilteringSpliterator<T> extends Spliterators.AbstractSpliterato
         do {
 
             advance = source.tryAdvance(t -> {
-                System.out.println("T is " + t);
+
                 if (mapper.test(t)) {
                     action.accept(t);
                     accepted[0] = true;

@@ -61,7 +61,7 @@ public class IterateOperator<T> implements Operator<T> {
                     if(!isOpen)
                         break;
                     try {
-                        System.out.println("pusing value all path");
+
                         next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
                     }catch(Throwable t){
                         onError.accept(t);

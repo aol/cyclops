@@ -342,7 +342,7 @@ public interface AdaptersModule {
                 } catch (final ClosedQueueException e) {
 
                     if (e.isDataPresent()) {
-                        System.out.println("Data is present " + e.getCurrentData());
+
                         ancillaryData = e.getCurrentData();
                         return tryAncillary(action);
 
