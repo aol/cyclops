@@ -31,16 +31,29 @@ public class IterateOperator<T> implements Operator<T> {
                     pushAll();
                     return;
                 }
+                long reqs = n;
+                long delivered = 0;
+                do {
 
-                while (isActive()) {
-
-                    next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
-
+                    while (delivered < reqs && isOpen) {
+                        next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
+                        delivered++;
+                    }
                     requested.decrementAndGet();
 
-                }
-                if(!isOpen)
-                    onComplete.run();
+                    reqs = requested.get();
+                    if(reqs==delivered) {
+                        reqs = requested.accumulateAndGet(delivered, (a, b) -> a - b);
+                        if(reqs==0) {
+                            if(!isOpen)
+                                onComplete.run();
+                            return;
+                        }
+                        delivered=0;
+                    }
+                }while(true);
+
+
 
 
             };

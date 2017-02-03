@@ -53,6 +53,7 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
                     try {
                         A nextA = (A)next[0];
 
+                        System.out.println("Accepting  " + e + " t " + Thread.currentThread().getId() );
                         collector.accumulator().accept(nextA,e);
 
                         upstream[0].request(1l);

@@ -108,10 +108,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().parallel(fj,fn));
     }
 
-    @Override
-    default <U1, R> FutureStream<R> zipLatest(final Publisher<? extends U1> other, final BiFunction<? super U, ? super U1, ? extends R> zipper) {
-        return fromStream(stream().zipLatest(other,zipper));
-    }
+
 
     @Override
     default FutureStream<U> skipUntilClosed(final Predicate<? super U> p) {

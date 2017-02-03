@@ -23,13 +23,27 @@ public class GenerateOperator<T> implements Operator<T> {
         boolean[] sent = {false};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
-                while (isActive()) {
 
-                    onNext.accept(value.get());
-                    requested.decrementAndGet();
+                long reqs = n;
+                long delivered = 0;
+                do {
+
+                    while (delivered < reqs) {
+                        if (!isOpen)
+                            return;
+                        onNext.accept(value.get());
+                        delivered++;
+                    }
 
 
-                }
+                    reqs = requested.get();
+                    if(reqs==delivered) {
+                        reqs = requested.accumulateAndGet(delivered, (a, b) -> a - b);
+                        if(reqs==0)
+                            return;
+                        delivered=0;
+                    }
+                }while(true);
 
 
             };

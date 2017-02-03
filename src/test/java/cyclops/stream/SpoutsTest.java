@@ -320,12 +320,7 @@ public class SpoutsTest {
     }
 
 
-    @Test
-    public void combineLatest(){
 
-        Spouts.combineLatest(Spouts.of(100,200,300),nextAsyncRS(),(a,b)-> Tuple.tuple(a,b)).printOut();
-
-    }
     @Test
     public void merge(){
         Spouts.mergeLatest(Spouts.of(1,2,3),Spouts.of(5,6,7)).printOut();
