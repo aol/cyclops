@@ -209,12 +209,7 @@ public interface Spouts {
     }
 
 
-    static <T1,T2,R> ReactiveSeq<R> combineLatest(Publisher<? super T1> p1, Publisher<? super T2> p2,BiFunction<? super T1, ? super T2, ? extends R> fn){
-        Operator<? super T1> op1 = p1 instanceof  ReactiveStreamX ? ((ReactiveStreamX<T1>)p1).getSource() :  new PublisherToOperator<T1>(p1);
-        Operator<? super T2> op2 = p2 instanceof  ReactiveStreamX ? ((ReactiveStreamX<T2>)p2).getSource() :  new PublisherToOperator<T2>(p2);
 
-        return new ReactiveStreamX<R>(new ZippingLatestOperator<T1,T2,R>(op1,op2,fn), Type.BACKPRESSURE);
-    }
     static <T> ReactiveSeq<T> mergeLatestList(ListX<? extends Publisher<? extends T>> publisher){
         return mergeLatest((Publisher[])ReactiveSeq.fromPublisher(publisher).toArray(s->new Publisher[s]));
     }

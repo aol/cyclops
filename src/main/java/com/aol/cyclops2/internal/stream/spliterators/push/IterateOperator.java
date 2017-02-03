@@ -23,7 +23,7 @@ public class IterateOperator<T> implements Operator<T> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        Object[] current = {in};
+        Object[] current = {null};
         Consumer next = onNext;
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n-> {
@@ -31,16 +31,31 @@ public class IterateOperator<T> implements Operator<T> {
                     pushAll();
                     return;
                 }
+                long reqs = n;
+                long delivered = 0;
+                do {
 
-                while (isActive()) {
+                    while (delivered < reqs) {
+                        if(!isOpen)
+                            return;
+                        next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
+                        delivered++;
+                    }
 
-                    next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
 
-                    requested.decrementAndGet();
+                    reqs = requested.get();
+                    if(reqs==delivered) {
+                        reqs = requested.accumulateAndGet(delivered, (a, b) -> a - b);
+                        if(reqs==0) {
+                            if(!isOpen)
+                                onComplete.run();
+                            return;
+                        }
+                        delivered=0;
+                    }
+                }while(true);
 
-                }
-                if(!isOpen)
-                    onComplete.run();
+
 
 
             };

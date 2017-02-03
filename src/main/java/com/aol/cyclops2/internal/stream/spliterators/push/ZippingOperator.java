@@ -109,7 +109,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                     }else{
                         status.compareAndSet(1,0);
 
-                        while(rightQ.isEmpty()){ // VALUE IS COMING
+                        while(rightQ.isEmpty()){ // VALUE IS COMING - RIGHT IS ADDING TO Q
                             if(rightComplete.get() && rightQ.isEmpty()){
                                 handleComplete(completing,onComplete);
                                 return;
@@ -188,7 +188,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
                     }else {
 
                         status.compareAndSet(2,0);
-                        while (leftQ.isEmpty()) { // VALUE IS COMING
+                        while (leftQ.isEmpty()) { // VALUE IS COMING  - LEFT IS ADDING TO Q
                            if(leftComplete.get() && leftQ.isEmpty()){
                                 handleComplete(completing,onComplete);
                                 return;
@@ -246,9 +246,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
 
 
 
-    static class VolatileBoolean{
-        volatile boolean value = false;
-    }
+
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {

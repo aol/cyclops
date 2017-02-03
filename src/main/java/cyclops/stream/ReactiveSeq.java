@@ -852,10 +852,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return zipS(ReactiveSeq.fromPublisher(other), zipper);
     }
 
-    default <U, R> ReactiveSeq<R> zipLatest(final Publisher<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return zipP(other, zipper);
-    }
+    
  
 
     @Override

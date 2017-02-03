@@ -39,6 +39,27 @@ import static org.junit.Assert.*;
 public class SpoutsTest {
 
     @Test
+    public void iteratePredicate(){
+        Iterator<Integer> it = Spouts.iterate(1,i->i<4,i->i+1).iterator();
+        List<Integer> list = new ArrayList<>();
+        while(it.hasNext()){
+            list.add(it.next());
+
+        }
+        assertThat(list,equalTo(ListX.of(1,2,3)));
+    }
+    @Test
+    public void iterate(){
+        Spouts.iterate(1,i->i+1).limit(3).printOut();
+        Iterator<Integer> it = Spouts.iterate(1,i->i+1).limit(3).iterator();
+        List<Integer> list = new ArrayList<>();
+        while(it.hasNext()){
+            list.add(it.next());
+
+        }
+        assertThat(list,equalTo(ListX.of(1,2,3)));
+    }
+    @Test
     public void array(){
         Iterator<Integer> it = Spouts.of(1, 2, 3).iterator();
         List<Integer> list = new ArrayList<>();
@@ -183,6 +204,7 @@ public class SpoutsTest {
     @Test
     public void defer() throws Exception {
 
+        Flux.just(1,2,3).publish(f->f);
         assertThat(Spouts.of(1,2,3).flatMap(i->Spouts.of(i)).collect(Collectors.toList())
                         ,equalTo(ListX.of(1,2,3)));
         assertThat(Spouts.deferred(()-> Flux.just(1,2,3))
@@ -320,14 +342,10 @@ public class SpoutsTest {
     }
 
 
-    @Test
-    public void combineLatest(){
 
-        Spouts.combineLatest(Spouts.of(100,200,300),nextAsyncRS(),(a,b)-> Tuple.tuple(a,b)).printOut();
-
-    }
     @Test
     public void merge(){
+
         Spouts.mergeLatest(Spouts.of(1,2,3),Spouts.of(5,6,7)).printOut();
         Spouts.mergeLatest(Spouts.of(10,20,30),nextAsyncRS()).printOut();
 
