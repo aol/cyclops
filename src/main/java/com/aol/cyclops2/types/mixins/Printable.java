@@ -31,7 +31,7 @@ public interface Printable {
      * @return Supplied value
      */
     default <T> T print(final T object) {
-        System.out.println("P"+object);
+        System.out.println(object);
         return object;
     }
 

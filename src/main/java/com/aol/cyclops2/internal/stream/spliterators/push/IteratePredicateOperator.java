@@ -37,7 +37,9 @@ public class IteratePredicateOperator<T> implements Operator<T> {
                 long delivered = 0;
                 do {
 
-                    while (delivered < reqs && isOpen) {
+                    while (delivered < reqs) {
+                        if(!isOpen)
+                            return;
                         current[0] = (current[0] != null ? fn.apply((T) current[0]) : in);
                         if (pred.test((T) current[0])) {
                             next.accept(current[0]);

@@ -133,7 +133,7 @@ test {
     //    dependsOn testNG
      //   dependsOn testSuite
         forkEvery = 1
-		maxParallelForks = Runtime.runtime.availableProcessors()
+		//maxParallelForks = Runtime.runtime.availableProcessors()
         testLogging {
             events "started","passed", "skipped", "failed"//, "standardOut", "standardError"
         }
