@@ -39,7 +39,7 @@ public class IterateOperator<T> implements Operator<T> {
                         next.accept(current[0] = (current[0] != null ? fn.apply((T) current[0]) : in));
                         delivered++;
                     }
-                    requested.decrementAndGet();
+
 
                     reqs = requested.get();
                     if(reqs==delivered) {

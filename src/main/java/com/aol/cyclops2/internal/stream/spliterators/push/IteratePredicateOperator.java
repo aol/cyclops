@@ -33,19 +33,35 @@ public class IteratePredicateOperator<T> implements Operator<T> {
                     pushAll();
                     return;
                 }
+                long reqs = n;
+                long delivered = 0;
+                do {
 
-                while (isActive()) {
-                    current[0] = (current[0] != null ? fn.apply((T) current[0]) : in);
-                    if(pred.test((T)current[0])) {
-                        next.accept(current[0]);
-                        requested.decrementAndGet();
-                    }else{
-                        cancel();
-                        onComplete.run();
-                        return;
+                    while (delivered < reqs && isOpen) {
+                        current[0] = (current[0] != null ? fn.apply((T) current[0]) : in);
+                        if (pred.test((T) current[0])) {
+                            next.accept(current[0]);
+                            delivered++;
+                        } else {
+                            cancel();
+                            onComplete.run();
+                            return;
+                        }
                     }
 
-                }
+                    reqs = requested.get();
+                    if(reqs==delivered) {
+                        reqs = requested.accumulateAndGet(delivered, (a, b) -> a - b);
+                        if(reqs==0) {
+                            if(!isOpen)
+                                onComplete.run();
+                            return;
+                        }
+                        delivered=0;
+                    }
+                }while(true);
+
+
 
 
             };

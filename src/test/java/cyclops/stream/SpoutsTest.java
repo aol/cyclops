@@ -39,6 +39,26 @@ import static org.junit.Assert.*;
 public class SpoutsTest {
 
     @Test
+    public void iteratePredicate(){
+        Iterator<Integer> it = Spouts.iterate(1,i->i<4,i->i+1).iterator();
+        List<Integer> list = new ArrayList<>();
+        while(it.hasNext()){
+            list.add(it.next());
+
+        }
+        assertThat(list,equalTo(ListX.of(1,2,3)));
+    }
+    @Test
+    public void iterate(){
+        Iterator<Integer> it = Spouts.iterate(1,i->i+1).limit(3).iterator();
+        List<Integer> list = new ArrayList<>();
+        while(it.hasNext()){
+            list.add(it.next());
+
+        }
+        assertThat(list,equalTo(ListX.of(1,2,3)));
+    }
+    @Test
     public void array(){
         Iterator<Integer> it = Spouts.of(1, 2, 3).iterator();
         List<Integer> list = new ArrayList<>();
@@ -323,6 +343,7 @@ public class SpoutsTest {
 
     @Test
     public void merge(){
+
         Spouts.mergeLatest(Spouts.of(1,2,3),Spouts.of(5,6,7)).printOut();
         Spouts.mergeLatest(Spouts.of(10,20,30),nextAsyncRS()).printOut();
 
