@@ -85,7 +85,7 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
                         break;
                    ((Consumer) onNext).accept(values[local]);
                 }
-                requested.set(0);
+
                 if(!completeSent.get()) {
                     completeSent.set(true);
                     onComplete.run();

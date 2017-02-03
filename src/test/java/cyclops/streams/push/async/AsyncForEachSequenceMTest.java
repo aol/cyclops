@@ -196,14 +196,15 @@ public class AsyncForEachSequenceMTest {
 	
 	
 	@Test
-	public void forEachWithErrors(){
+	public void forEachWithErrors() throws InterruptedException {
 	
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
 		of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get)
 							.forEach(i->list.add(i),
 								e->error=e);
-		
+
+		Thread.sleep(50);
 		assertThat(list,hasItems(1,2,3));
 		assertThat(list.size(),equalTo(3));
 		

@@ -22,7 +22,6 @@ public class LimitWhileTimeOperator<T,R> extends BaseOperator<T,T> {
 
     }
 
-
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         final  long toRun = t.toNanos(time);
@@ -50,6 +49,24 @@ public class LimitWhileTimeOperator<T,R> extends BaseOperator<T,T> {
     @Override
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
 
-        subscribe(onNext,onError,onCompleteDs).request(Long.MAX_VALUE);
+        final  long toRun = t.toNanos(time);
+        final  long start = System.nanoTime();
+        source.subscribeAll(e-> {
+                    try {
+
+                        if(System.nanoTime()-start < toRun)
+                            onNext.accept(e);
+                        else{
+
+
+                            onCompleteDs.run();
+                        }
+                    } catch (Throwable t) {
+
+                        onError.accept(t);
+                    }
+                }
+                ,onError,onCompleteDs);
+
     }
 }
