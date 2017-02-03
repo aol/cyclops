@@ -68,6 +68,8 @@ public interface AdaptersModule {
 
     }
 
+
+
     static class SingleContinuation implements ContinuationStrategy {
         private final Queue<?> queue;
         private volatile Continuation continuation = null;
@@ -86,7 +88,6 @@ public interface AdaptersModule {
         public void handleContinuation() {
 
             continuation = continuation.proceed();
-
         }
 
     }
@@ -322,10 +323,12 @@ public interface AdaptersModule {
            // System.out.println("For each " + Thread.currentThread().getId());
             Spliterator.super.forEachRemaining(action);
         }
-
+        List<T> ancillaryData = null;
         @Override
         public boolean tryAdvance(final Consumer<? super T> action) {
             Objects.requireNonNull(action);
+            if(ancillaryData!=null)
+                return tryAncillary(action);
             boolean timeoutRetry = false;
 
             do {
@@ -339,8 +342,10 @@ public interface AdaptersModule {
                 } catch (final ClosedQueueException e) {
 
                     if (e.isDataPresent()) {
-                        e.getCurrentData()
-                                .forEach(action);
+
+                        ancillaryData = e.getCurrentData();
+                        return tryAncillary(action);
+
                     }
 
                     closed.set(true);
@@ -359,6 +364,19 @@ public interface AdaptersModule {
            // closed.set(true);
             return false;
 
+        }
+
+        private boolean tryAncillary(Consumer<? super T> action) {
+            if(ancillaryData.size()==0) {
+                closed.set(true);
+                return false;
+            }
+            action.accept(ancillaryData.remove(0));
+            if(ancillaryData.size()>0)
+                return true;
+
+            closed.set(true);
+            return false;
         }
 
         @Override

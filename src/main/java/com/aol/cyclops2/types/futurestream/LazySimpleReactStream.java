@@ -265,7 +265,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     /**
      * Allows aggregate values in a Stream to be flatten into a single Stream.
      * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
-     * into a single flattened stream
+     * into a single flattened reactiveStream
      * 
      * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
      * @return SimpleReactStream
@@ -395,7 +395,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * 
      * @param fn
      *            Recovery function, the exception is input, and the recovery
-     *            value is output
+     *            value is emitted
      * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */

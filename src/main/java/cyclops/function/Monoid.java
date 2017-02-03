@@ -1,6 +1,9 @@
 package cyclops.function;
 
 import cyclops.Semigroups;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
+import org.reactivestreams.Publisher;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -50,6 +53,45 @@ public interface Monoid<T> extends Semigroup<T> {
      */
     default T reduce(final Stream<T> toReduce) {
         return toReduce.reduce(zero(), this);
+    }
+
+    default <A> T foldMap(final Stream<A> toFoldMap, Function<? super A, ? extends T> mapFn){
+        Stream<T> toReduce = toFoldMap.map(mapFn);
+        return toReduce.reduce(zero(),this);
+    }
+    default  T foldLeft(final Stream<T> toFold){
+        return reduce(toFold);
+    }
+    default  T foldRight(final Stream<T> toFold){
+        return ReactiveSeq.fromStream(toFold).foldRight(this);
+    }
+    default T reduceI(final Iterable<T> toReduce) {
+        return ReactiveSeq.fromIterable(toReduce).reduce(zero(), this);
+    }
+
+    default <A> T foldMapI(final Iterable<A> toFoldMap, Function<? super A, ? extends T> mapFn){
+        ReactiveSeq<T> toReduce = ReactiveSeq.fromIterable(toFoldMap).map(mapFn);
+        return toReduce.reduce(zero(),this);
+    }
+    default  T foldLeftI(final Iterable<T> toFold){
+        return reduceI(toFold);
+    }
+    default  T foldRightI(final Iterable<T> toFold){
+        return ReactiveSeq.fromIterable(toFold).foldRight(this);
+    }
+    default T reduceP(final Publisher<T> toReduce) {
+        return Spouts.from(toReduce).reduce(zero(), this);
+    }
+
+    default <A> T foldMapP(final Publisher<A> toFoldMap, Function<? super A, ? extends T> mapFn){
+        ReactiveSeq<T> toReduce = Spouts.from(toFoldMap).map(mapFn);
+        return toReduce.reduce(zero(),this);
+    }
+    default  T foldLeftP(final Publisher<T> toFold){
+        return reduceP(toFold);
+    }
+    default  T foldRightP(final Publisher<T> toFold){
+        return Spouts.from(toFold).foldRight(this);
     }
 
     /**

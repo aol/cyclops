@@ -27,10 +27,10 @@ import cyclops.function.Fn4;
 import cyclops.function.Fn3;
 
 /**
-* Monad Transformer for Future's nested within Sequential or non-scalar data types (e.g. Lists, Streams etc)
+* Monad Transformer for Future's nested within another monadic type
 
  * 
- * FutureWT allows the deeply wrapped Future to be manipulating within it's nested /contained context
+ * FutureT allows the deeply wrapped Future to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
  *
@@ -61,6 +61,10 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     @Override
     public AnyM<W,Future<T>> unwrap() {
         return run;
+    }
+
+    public <R> R unwrapTo(Function<? super AnyM<W,Future<T>>, ? extends R> fn) {
+        return unwrap().to(fn);
     }
 
     private FutureT(final AnyM<W,Future<T>> run) {
@@ -179,8 +183,8 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     	Function<FutureWT<Integer>, FutureWT<Integer>> optTAdd2 = FutureWT.lift(add2);
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
-    	AnyMSeq<Integer> stream = AnyM.fromStream(withNulls);
-    	AnyMSeq<Future<Integer>> streamOpt = stream.map(Future::completedFuture);
+    	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
+    	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
     	List<Integer> results = optTAdd2.apply(FutureWT.of(streamOpt))
     									.unwrap()
     									.<Stream<Future<Integer>>>unwrap()
@@ -214,8 +218,8 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     	BiFunction<FutureWT<Integer>,FutureWT<Integer>,FutureWT<Integer>> optTAdd2 = FutureWT.lift2(add);
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
-    	AnyMSeq<Integer> stream = AnyM.ofMonad(withNulls);
-    	AnyMSeq<Future<Integer>> streamOpt = stream.map(Future::completedFuture);
+    	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
+    	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
     	
     	Future<Future<Integer>> two = Future.completedFuture(Future.completedFuture(2));
     	AnyMSeq<Future<Integer>> future=  AnyM.fromFutureW(two);
@@ -360,7 +364,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.reactiveStream.Stream)
      */
     @Override
     public <U> FutureT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {

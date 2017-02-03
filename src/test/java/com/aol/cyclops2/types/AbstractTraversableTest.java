@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.collections.immutable.PVectorX;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -38,7 +39,7 @@ import cyclops.Semigroups;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.ListX;
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
+
 
 public abstract class AbstractTraversableTest {
     public abstract <T> Traversable<T> of(T...elements);
@@ -47,11 +48,11 @@ public abstract class AbstractTraversableTest {
     @Test
     public void publishAndSubscribe(){
         
-        SeqSubscriber<Integer> sub = ReactiveSeq.subscriber();
+
     
-        of(1,2,3).subscribe(sub);
+
         
-        assertThat(sub.stream().toList(),hasItems(
+        assertThat(Spouts.from(of(1,2,3)).toList(),hasItems(
                 1,2,3));
         
     }

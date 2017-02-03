@@ -33,7 +33,7 @@ public class EagerFutureStreamFunctions {
      * Close all streams except the active one
      * 
      * @param active Stream not to close
-     * @param all  All streams potentially including the active stream
+     * @param all  All streams potentially including the active reactiveStream
      */
     static void closeOthers(final SimpleReactStream active, final List<SimpleReactStream> all) {
         all.stream()

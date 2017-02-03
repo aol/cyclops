@@ -1,5 +1,6 @@
 package cyclops;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
@@ -8,12 +9,16 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.Completable;
 import cyclops.async.Future;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.higherkindedtypes.CompletableFutureKind;
+import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.CompletableFutureT;
+import cyclops.monads.transformers.OptionalT;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -40,6 +45,15 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class CompletableFutures {
 
+    public static <T> CompletableFuture<T> ofResult(T value){
+        CompletableFuture<T> result = new CompletableFuture<T>();
+        result.complete(value);
+        return result;
+    }
+
+    public static <T,W extends WitnessType<W>> CompletableFutureT<W, T> liftM(CompletableFuture<T> opt, W witness) {
+        return CompletableFutureT.of(witness.adapter().unit(opt));
+    }
 
     /**
      * Perform a For Comprehension over a CompletableFuture, accepting 3 generating function.

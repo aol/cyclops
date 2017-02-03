@@ -31,7 +31,7 @@ public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.stream.ConvertableToReactiveSeq#reactiveSeq()
+     * @see com.aol.cyclops2.types.reactiveStream.ConvertableToReactiveSeq#reactiveSeq()
      */
     @Override
     default ReactiveSeq<T> reactiveSeq() {

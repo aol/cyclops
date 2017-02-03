@@ -72,7 +72,7 @@ public interface Value<T> extends Folds<T>,
     }
 
     /* (non-Javadoc)
-     * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
+     * @see org.reactivestreams.Publisher#subscribeAll(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super T> sub) {
@@ -150,7 +150,7 @@ public interface Value<T> extends Folds<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Folds#stream()
+     * @see com.aol.cyclops2.types.Folds#reactiveStream()
      */
     @Override
     default ReactiveSeq<T> stream() {

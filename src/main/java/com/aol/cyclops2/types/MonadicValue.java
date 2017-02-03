@@ -305,7 +305,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
 
     /**
      * Perform a two level nested internal iteration over this MonadicValue and the
-     * supplied stream
+     * supplied reactiveStream
      * 
      * <pre>
      * {@code 
@@ -342,7 +342,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     
 
     /**
-     * Eagerly combine two MonadicValues using the supplied monoid (@see ApplicativeFunctor for type appropraite i.e. lazy / async alternatives)
+     * Eagerly combine two MonadicValues using the supplied monoid (@see ApplicativeFunctor for type appropraite i.e. maybe / async alternatives)
      * 
      * <pre>
      * {@code 

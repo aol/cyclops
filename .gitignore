@@ -6,6 +6,8 @@
 test-output
 test-output-tests
 
+out.txt
+
 ### Eclipse ###
 *.pydevproject
 .metadata

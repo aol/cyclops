@@ -140,9 +140,26 @@ new LazyReact(100,100).generate(()->"data") //100 active tasks, 100 threads
 
 ## cyclops.stream
 
+## cyclops.stream.ReactiveSeq
+
+cyclops defines reactive (push/ event drive) and coreactive (iterative / interactive) Streaming capabilities via the interface ReactiveSeq.
+
+There are 4 concrete implementations for this interface :-
+
+| concrete type | factories | description | characteristics |
+|------|-------------|-------------|-----------------|
+| ReactiveStreamX    | Spouts | Asynchronous push based Streams. Optionally back-pressure aware (via reactive-streams)              | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded                |
+| StreamX    | ReactiveSeq | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Coreactive (pull), Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
+| OneShotStreamX    | Streams | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
+| FutureStream     | LazyReact | Asynchronous and parallel stream             | Lazy, async, parallel, Reactive                 |
+
+
+Interfaces
+
 | type | description | characteristics |
 |------|-------------|-----------------|
-| FutureStream     | Asynchronous and parallel stream             | Lazy, async, parallel                 |
+| FutureStream     | Asynchronous and parallel stream             | Lazy, async, parallel, Reactive                 |
+| Spouts     | Creational factory methods for push based Streams with optional non-blocking back pressure (via reactive-streams).              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
 | ReactiveSeq     | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
 | Streamable     | Capturing and caching replayable Stream type              | Lazy, caching                |
 | StreamSource     | Push data asynchronously into synchronous sequential or parallel Streams (e.g. JDK Stream, ReactiveSeq)              |             |
@@ -165,11 +182,11 @@ new LazyReact(100,100).generate(()->"data") //100 active tasks, 100 threads
 
 | type | description | characteristics |
 |------|-------------|-----------------|
-| Maybe     | Lazy analogue of Optional (Just/None)             |  Lazy, tail recursive,sum type, Higher kinded               |
+| Maybe     | Lazy analogue of Optional (Just/None)             |  Optionally Reactive or Coreactive, Lazy, tail recursive,sum type, Higher kinded               |
 | Try     | Represents a value or an exception. Only specified Exceptions are caught on creation by default.            | Eager, avoids error hiding                 |
 | Ior     | Inclusive Or, maybe one of two values or both            | Eager, sum and product type                 |
 | Xor     | Exclusive Or, maybe one of two values, eager analogue of Either            | Eager, sum type                 |
-| Either     | Lazy Either type maybe one of two values, lazy analogue of Xor            | Lazy, tail recursive, sum type                 |
+| Either     | Lazy Either type maybe one of two values, lazy analogue of Xor            | Optionally Reactive or Coreactive, Lazy, tail recursive, sum type                 |
 | Either3     | Lazy Either type maybe one of three values            | Lazy, tail recursive, sum type                 |
 | Either4     | Lazy Either type maybe one of four values            | Lazy, tail recursive, sum type                 |
 | Either5     | Lazy Either type maybe one of five values            | Lazy, tail recursive, sum type                 |
@@ -178,23 +195,23 @@ new LazyReact(100,100).generate(()->"data") //100 active tasks, 100 threads
 
 | type | description | characteristics |
 |------|-------------|-----------------|
-| ListX     | Functional extensions for working with Lists            | Lazy, mutable, immutable, 3rd party support, Higher kinded                 |
-| DequeX     | Functional extensions for working with Deques            | Lazy, mutable, immutable, 3rd party support, Higher kinded                 |
-| QueueX     | Functional extensions for working with Queues            | Lazy, mutable, immutable, 3rd party support, Higher kinded                 |
-| SetX     | Functional extensions for working with Sets            | Lazy , mutable, immutable, 3rd party support                |
-| SortedSetX     | Functional extensions for working with SortedSets            | Lazy, mutable, immutable                 |
+| ListX     | Functional extensions for working with Lists            | Optionally Reactive or Coreactive, Lazy, mutable, immutable, 3rd party support, Higher kinded                 |
+| DequeX     | Functional extensions for working with Deques            | Optionally Reactive or Coreactive, Lazy, mutable, immutable, 3rd party support, Higher kinded                 |
+| QueueX     | Functional extensions for working with Queues            | Optionally Reactive or Coreactive, Lazy, mutable, immutable, 3rd party support, Higher kinded                 |
+| SetX     | Functional extensions for working with Sets            | Optionally Reactive or Coreactive, Lazy , mutable, immutable, 3rd party support                |
+| SortedSetX     | Functional extensions for working with SortedSets            | Optionally Reactive or Coreactive, Lazy, mutable, immutable                 |
 | MapX     | Functional extensions for working with Maps            | Eager, mutable, immutable                 |
 
 ## cyclops.collections.persistent
 
 | type | description | characteristics |
 |------|-------------|-----------------|
-| PStackX     | Functional extensions for working with persistent Lists            | Lazy, persistent, 3rd party support, Higher kinded                 |
-| PVectorX     | Functional extensions for working with persistent Vectors            | Lazy, persistent, 3rd party support, Higher kinded                 |
-| PSetX     | Functional extensions for working with persistent Sets            | Lazy, persistent, 3rd party support                 |
-| POrderedSetX     | Functional extensions for working with persistent Ordered Sets            | Lazy, persistent, 3rd party support                 |
-| PQueueX     | Functional extensions for working with persistent Queues           | Lazy, persistent, 3rd party support, Higher kinded                 |
-| PBagX     | Functional extensions for working with persistent Bags (set like collections that allow duplicates)          | Lazy, persistent, 3rd party support                 |
+| PStackX     | Functional extensions for working with persistent Lists            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support, Higher kinded                 |
+| PVectorX     | Functional extensions for working with persistent Vectors            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support, Higher kinded                 |
+| PSetX     | Functional extensions for working with persistent Sets            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support                 |
+| POrderedSetX     | Functional extensions for working with persistent Ordered Sets            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support                 |
+| PQueueX     | Functional extensions for working with persistent Queues           | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support, Higher kinded                 |
+| PBagX     | Functional extensions for working with persistent Bags (set like collections that allow duplicates)          | Optionally Reactive or Coreactive,Lazy, persistent, 3rd party support                 |
 | PMapX     | Functional extensions for working with persistent Maps          | Map, persistent, 3rd party support                 |
 
 
@@ -202,7 +219,7 @@ new LazyReact(100,100).generate(()->"data") //100 active tasks, 100 threads
 
 | type | description | characteristics |
 |------|-------------|-----------------|
-| Eval     | Lazy evaluation, optional caching            | Lazy, tail recursive, Higher kinded                 |
+| Eval     | Lazy evaluation, optional caching            | Optionally Reactive or Coreactive, Lazy, tail recursive, Higher kinded                 |
 | Trampoline     | Easy to use trampoline implementations (see also Free using SupplierKind)            | Lazy                |
 | Free     | Higher kinded implementation of the Free monad for Java, facilitates functional interpreters. Free + SupplierKind (higher kinded Fn0) = a more advanced Trampoline implementation.            | Lazy                |
 

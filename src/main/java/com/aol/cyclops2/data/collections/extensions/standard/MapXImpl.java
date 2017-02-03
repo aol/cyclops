@@ -299,6 +299,20 @@ public class MapXImpl<K, V> implements MapX<K, V> {
     public <X extends Throwable> Subscription forEach(long numberOfElements, Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete) {
         return stream().forEach(numberOfElements,consumer,consumerError,onComplete);
     }
+    @Override
+    public <X extends Throwable> Subscription subscribe(Consumer<? super Tuple2<K, V>> consumer) {
+        return stream().subscribe(consumer);
+    }
+
+    @Override
+    public <X extends Throwable> Subscription subscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError) {
+        return stream().subscribe(consumer,consumerError);
+    }
+
+    @Override
+    public <X extends Throwable> Subscription subscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete) {
+        return stream().subscribe(consumer,consumerError,onComplete);
+    }
 
     @Override
     public <X extends Throwable> void forEach(Consumer<? super Tuple2<K, V>> consumerElement, Consumer<? super Throwable> consumerError) {

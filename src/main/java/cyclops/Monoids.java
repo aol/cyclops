@@ -2,7 +2,9 @@ package cyclops;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 import cyclops.async.Future;
+import cyclops.async.SimpleReact;
 import cyclops.collections.*;
 import cyclops.collections.immutable.*;
 import cyclops.control.Ior;
@@ -13,7 +15,9 @@ import cyclops.function.Monoid;
 import cyclops.function.Semigroup;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.Seq;
+import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -248,6 +252,22 @@ public interface Monoids {
     static <T> Monoid<ReactiveSeq<T>> combineReactiveSeq() {
         return Monoid.of(ReactiveSeq.empty(), Semigroups.combineReactiveSeq());
     }
+    static <T> Monoid<ReactiveSeq<T>> firstNonEmptyReactiveSeq() {
+        return Monoid.of(ReactiveSeq.empty(), Semigroups.firstNonEmptyReactiveSeq());
+    }
+
+    static <T> Monoid<ReactiveSeq<T>> mergeLatestReactiveSeq () {
+        return Monoid.of(Spouts.empty(),Semigroups.mergeLatestReactiveSeq());
+    }
+    static <T> Monoid<Publisher<T>> mergeLatest() {
+        return Monoid.of(Spouts.empty(),Semigroups.mergeLatest());
+    }
+    static <T> Monoid<Publisher<T>> amb() {
+        return Monoid.of(Spouts.empty(), Semigroups.amb());
+    }
+    static <T> Monoid<ReactiveSeq<T>> ambReactiveSeq() {
+        return Monoid.of(Spouts.empty(), Semigroups.ambReactiveSeq());
+    }
 
     /**
      * @return Combination of two Seq's : b is appended to a
@@ -293,6 +313,10 @@ public interface Monoids {
      */
     static <T> Monoid<Future<T>> firstCompleteFuture() {
        return Monoid.of(Future.future(), Semigroups.firstCompleteFuture());
+    }
+
+    static <T> Monoid<SimpleReactStream<T>> firstOfSimpleReact() {
+        return Monoid.of(new SimpleReact().of(),Semigroups.firstOfSimpleReact());
     }
     /**
      * @return Combine two Future's by taking the first successful

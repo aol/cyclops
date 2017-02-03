@@ -11,13 +11,13 @@ package cyclops.async;
                                                  .build();
         
         new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
-                                                      .map(d->"produced on " + Thread.currentThread().getId())
+                                                      .map(d->"emitted on " + Thread.currentThread().getId())
                                                       .peek(System.out::println)
                                                       .peek(d->transferQueue.offer(d))
                                                       .run();
         
 
-        transferQueue.stream()
+        transferQueue.reactiveStream()
                   .map(e->"Consumed on " + Thread.currentThread().getId())
                   .futureOperations(Executors.newFixedThreadPool(1))
                   .forEach(System.out::println);

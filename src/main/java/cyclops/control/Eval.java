@@ -2,39 +2,49 @@ package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.To;
-import com.aol.cyclops2.types.Value;
-import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import cyclops.async.Future;
+import cyclops.box.Mutable;
 import cyclops.collections.DequeX;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
+import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.EvalT;
+import cyclops.monads.transformers.MaybeT;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
+import lombok.AllArgsConstructor;
+import lombok.experimental.Delegate;
 import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
- * Represents a computation that can be defered (always), cached (later) or immediate(now).
+ * Represents a computation that can be deferred (always), cached (later) or immediate(now).
  * Supports tail recursion via map / flatMap. 
  * Computations are always Lazy even when performed against a Now instance. 
  * Heavily inspired by Cats Eval @link https://github.com/typelevel/cats/blob/master/core/src/main/scala/cats/Eval.scala
@@ -70,6 +80,10 @@ public interface Eval<T> extends    To<Eval<T>>,
     public static class µ {
     }
 
+    default <W extends WitnessType<W>> EvalT<W, T> liftM(W witness) {
+        return EvalT.of(witness.adapter().unit(this));
+    }
+
     default AnyM<Witness.eval,T> anyM(){
         return AnyM.fromEval(this);
     }
@@ -98,9 +112,84 @@ public interface Eval<T> extends    To<Eval<T>>,
      * @return Eval created from Publisher
      */
     public static <T> Eval<T> fromPublisher(final Publisher<T> pub) {
-        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
-        pub.subscribe(sub);
-        return sub.toEvalLater();
+        return fromFuture(Future.fromPublisher(pub));
+    }
+
+    /**
+     * Create a reactive CompletableEval
+     *
+     * <pre>
+     *     {@code
+     *      CompletableEval<Integer,Integer> completable = Eval.eval();
+            Eval<Integer> mapped = completable.map(i->i*2)
+                                              .flatMap(i->Eval.later(()->i+1));
+
+            completable.complete(5);
+
+            mapped.printOut();
+            //11
+     *     }
+     * </pre>
+     *
+     * @param <T> Data input type to the Eval
+     * @return A reactive CompletableEval
+     */
+    static <T> CompletableEval<T,T> eval(){
+        Completable.CompletablePublisher<T> c = new Completable.CompletablePublisher<T>();
+        return new CompletableEval<T, T>(c,fromFuture(Future.fromPublisher(c)));
+
+    }
+    @AllArgsConstructor
+    static class CompletableEval<ORG,T2> implements Eval<T2>, Completable<ORG>{
+        public final Completable.CompletablePublisher<ORG> complete;
+        public final Eval<T2> lazy;
+
+        @Override
+        public boolean isFailed() {
+            return complete.isFailed();
+        }
+
+        @Override
+        public boolean isDone() {
+            return complete.isDone();
+        }
+
+        @Override
+        public boolean complete(ORG complete) {
+            return this.complete.complete(complete);
+        }
+
+        @Override
+        public boolean completeExceptionally(Throwable error) {
+            return complete.completeExceptionally(error);
+        }
+
+        @Override
+        public <T> Eval<T> unit(T unit) {
+            return lazy.unit(unit);
+        }
+
+        @Override
+        public <R> Eval<R> map(Function<? super T2, ? extends R> mapper) {
+            return lazy.map(mapper);
+        }
+
+        @Override
+        public <R> Eval<R> flatMap(Function<? super T2, ? extends MonadicValue<? extends R>> mapper) {
+            return lazy.flatMap(mapper);
+        }
+
+        @Override
+        public T2 get() {
+            return lazy.get();
+        }
+    }
+
+    public static <T> Eval<T> coeval(final Future<Eval<T>> pub) {
+        return new Module.FutureAlways<T>(pub);
+    }
+    public static <T> Eval<T> fromFuture(final Future<T> pub) {
+        return coeval(pub.map(Eval::now));
     }
 
     /**
@@ -139,13 +228,13 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     /**
      * Lazily create an Eval from the specified Supplier. Supplier#get will only be called once. Return values of Eval operations will also
-     * be cached (later indicates lazy and caching - characteristics can be changed using flatMap).
+     * be cached (later indicates maybe and caching - characteristics can be changed using flatMap).
      * 
      * <pre>
      * {@code
      *   Eval<Integer> e = Eval.later(()->10)
      *                         .map(i->i*2);
-     *   //Eval[20] - lazy so will not be executed until the value is accessed
+     *   //Eval[20] - maybe so will not be executed until the value is accessed
      * }</pre>
      * 
      * 
@@ -164,7 +253,7 @@ public interface Eval<T> extends    To<Eval<T>>,
      * {@code
      *   Eval<Integer> e = Eval.always(()->10)
      *                         .map(i->i*2);
-     *   //Eval[20] - lazy so will not be executed until the value is accessed
+     *   //Eval[20] - maybe so will not be executed until the value is accessed
      * }</pre>
      * 
      * 
@@ -333,7 +422,10 @@ public interface Eval<T> extends    To<Eval<T>>,
      */
     @Override
     default <R> Eval<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return (Eval<R>)MonadicValue.super.flatMapP(mapper);
+        return this.flatMap(a -> {
+            final Publisher<? extends R> publisher = mapper.apply(a);
+            return Eval.fromPublisher(publisher);
+        });
     }
 
 
@@ -469,7 +561,7 @@ public interface Eval<T> extends    To<Eval<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Eval<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -478,7 +570,7 @@ public interface Eval<T> extends    To<Eval<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> Eval<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -629,7 +721,7 @@ public interface Eval<T> extends    To<Eval<T>>,
             return value.toEvalAlways();
         }
 
-        public static class Later<T> extends Rec<T>implements Eval<T> {
+        public static class Later<T> extends Rec<T> implements Eval<T> {
 
             Later(final Function<Object, ? extends T> s) {
                 super(PVectorX.of(Rec.raw(Memoize.memoizeFunction(s))));
@@ -697,7 +789,7 @@ public interface Eval<T> extends    To<Eval<T>>,
 
             @Override
             public String toString() {
-                return mkString();
+                 return mkString();
             }
 
         }
@@ -772,6 +864,202 @@ public interface Eval<T> extends    To<Eval<T>>,
 
         }
 
+        public static class FutureAlways<T> implements Eval<T> {
+
+           final Future<Eval<T>> input;
+
+
+            FutureAlways( Future<Eval<T>> input) {
+
+                this.input=  input;
+            }
+
+
+
+            public void forEach(Consumer<? super T> cons){
+                input.peek(e->e.forEach(cons));
+            }
+            @Override
+            public <R> Eval<R> map(final Function<? super T, ? extends R> mapper) {
+                return new FutureAlways<R>(input.map(e->e.map(mapper)));
+
+            }
+
+            @Override
+            public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
+                return new FutureAlways<R>(input.map(e->e.flatMap(mapper)));
+            }
+
+            @Override
+            public ReactiveSeq<T> reactiveSeq() {
+                return Spouts.from(input).map(Eval::get);
+            }
+
+            @Override
+            public ReactiveSeq<T> reveresedStream() {
+                return Spouts.from(input).map(Eval::get);
+            }
+
+            @Override
+            public ReactiveSeq<T> iterate(UnaryOperator<T> fn) {
+                return Spouts.from(input).map(Eval::get).flatMap(i->Spouts.iterate(i,fn));
+            }
+
+            @Override
+            public ReactiveSeq<T> generate() {
+                return Spouts.from(input).map(Eval::get).flatMap(i->Spouts.generate(()->i));
+            }
+
+            /**
+             * @return This convertable converted to a Future
+             */
+            @Override
+           public Future<T> toFuture() {
+                return input.map(Eval::get);
+            }
+
+            /**
+             * @return This convertable converted to a Future asyncrhonously
+             */
+            @Override
+            public Future<T> toFutureWAsync() {
+
+                return toFuture();
+            }
+
+            /**
+             * This convertable converted to a Future asyncrhonously using the supplied Executor
+             *
+             * @param ex Executor to execute the conversion on
+             * @return  This convertable converted to a Future asyncrhonously
+             */
+            @Override
+            public Future<T> toFutureWAsync(final Executor ex) {
+                return toFuture();
+            }
+
+            /**
+             * @return A CompletableFuture, populated immediately by a call to get
+             */
+            @Override
+            public CompletableFuture<T> toCompletableFuture() {
+                return toFuture().getFuture();
+            }
+
+            /**
+             * @return A CompletableFuture populated asynchronously on the Common ForkJoinPool by calling get
+             */
+            @Override
+            public  CompletableFuture<T> toCompletableFutureAsync() {
+                return toFuture().getFuture();
+            }
+
+            /**
+             * @param exec Executor to asyncrhonously populate the CompletableFuture
+             * @return  A CompletableFuture populated asynchronously on the supplied Executor by calling get
+             */
+            @Override
+            public CompletableFuture<T> toCompletableFutureAsync(final Executor exec) {
+                return toFuture().getFuture();
+            }
+            @Override
+            public final void subscribe(final Subscriber<? super T> sub) {
+                Mutable<Future<Eval<T>>> future = Mutable.of(input);
+                sub.onSubscribe(new Subscription() {
+
+                    AtomicBoolean running = new AtomicBoolean(
+                            true);
+                    AtomicBoolean cancelled = new AtomicBoolean(false);
+
+                    @Override
+                    public void request(final long n) {
+
+                        if (n < 1) {
+                            sub.onError(new IllegalArgumentException(
+                                    "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                        }
+
+                        if (!running.compareAndSet(true, false)) {
+
+                            return;
+
+                        }
+                        future.mutate(f -> f.peek(e->{
+
+                                e.forEach(v->{
+
+                                    sub.onNext(v);
+                                });
+                        })
+                                .recover(t -> {
+                                    sub.onError(t);
+                                    return null;
+                                })
+                                .peek(i -> sub.onComplete()));
+
+
+                    }
+
+
+                    @Override
+                    public void cancel() {
+
+                        cancelled.set(true);
+                        future.get().cancel();
+
+                    }
+
+                });
+
+            }
+            @Override
+            public T get() {
+
+                Eval<T> eval = input.get();
+                return eval.get();
+            }
+
+            @Override
+            public <T> Eval<T> unit(final T unit) {
+                return Eval.always(() -> unit);
+            }
+
+            /* (non-Javadoc)
+             * @see com.aol.cyclops2.value.Value#toEvalAlways()
+             */
+            @Override
+            public Eval<T> toEvalAlways() {
+                return this;
+            }
+
+            /* (non-Javadoc)
+             * @see java.lang.Object#hashCode()
+             */
+            @Override
+            public int hashCode() {
+                return get().hashCode();
+            }
+
+            /* (non-Javadoc)
+             * @see java.lang.Object#equals(java.lang.Object)
+             */
+            @Override
+            public boolean equals(final Object obj) {
+                if (!(obj instanceof Eval))
+                    return false;
+                return Objects.equals(get(), ((Eval) obj).get());
+            }
+
+            @Override
+            public String toString() {
+
+               return mkString();
+            }
+
+
+
+        }
+
         private static class Rec<T> {
             final PVectorX<Function<Object, Object>> fns;
             private final static Object VOID = new Object();
@@ -792,8 +1080,11 @@ public interface Eval<T> extends    To<Eval<T>>,
                 return fns;
             }
 
+            public Object init(){
+                return VOID;
+            }
             T applyRec() {
-                Object input = VOID;
+                Object input = init();
                 for (final Function<Object, Object> n : fns) {
                     final DequeX<Function<Object, Object>> newFns = DequeX.of(n);
                     while (newFns.size() > 0) {

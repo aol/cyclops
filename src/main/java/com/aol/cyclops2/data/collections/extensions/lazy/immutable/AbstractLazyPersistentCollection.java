@@ -33,8 +33,8 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     protected final AtomicReference<ReactiveSeq<T>> seq;
     @Getter(AccessLevel.PROTECTED)
     private final Reducer<C> collectorInternal;
-    AtomicBoolean updating = new AtomicBoolean(false);
-    AtomicReference<Throwable> error = new AtomicReference<>(null);
+    final AtomicBoolean updating = new AtomicBoolean(false);
+    final AtomicReference<Throwable> error = new AtomicReference<>(null);
 
     public AbstractLazyPersistentCollection(C list, ReactiveSeq<T> seq, Reducer<C> collector) {
         this.list = list;

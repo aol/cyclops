@@ -11,7 +11,9 @@ import cyclops.collections.immutable.PSetX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.control.*;
 import cyclops.control.either.Either;
+import cyclops.control.either.Either.CompletableEither;
 import cyclops.function.Monoid;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
@@ -29,11 +31,80 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 
 public class EitherTest {
-    
-    
+
+
+    @Test
+    public void completableTest(){
+        CompletableEither<Integer,Integer> completable = Either.either();
+        Either<Throwable,Integer> mapped = completable.map(i->i*2)
+                                           .flatMap(i->Eval.later(()->i+1));
+
+        completable.complete(5);
+        System.out.println(mapped.getClass());
+        mapped.printOut();
+        assertThat(mapped.get(),equalTo(11));
+
+
+    }
+    @Test
+    public void completableNoneTest(){
+        CompletableEither<Integer,Integer> completable = Either.either();
+        Either<Throwable,Integer> mapped = completable.map(i->i*2)
+                                                      .flatMap(i->Eval.later(()->i+1));
+
+        completable.complete(null);
+
+        mapped.printOut();
+        assertThat(mapped.isPresent(),equalTo(false));
+        assertThat(mapped.secondaryGet(),instanceOf(NoSuchElementException.class));
+
+    }
+    @Test
+    public void completableErrorTest(){
+        CompletableEither<Integer,Integer> completable = Either.either();
+        Either<Throwable,Integer> mapped = completable.map(i->i*2)
+                .flatMap(i->Eval.later(()->i+1));
+
+        completable.completeExceptionally(new IllegalStateException());
+
+        mapped.printOut();
+        assertThat(mapped.isPresent(),equalTo(false));
+        assertThat(mapped.secondaryGet(),instanceOf(IllegalStateException.class));
+
+    }
+
+
+    @Test
+    public void reactive(){
+        Future<Integer> result = Future.future();
+        Future<Integer> future = Future.future();
+        Thread t=  new Thread(()->{
+            try {
+                Thread.sleep(1500l);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            future.complete(10);
+        });
+        t.start();
+
+        Spouts.from(Either.fromFuture(future)
+                .map(i->i*2))
+                .peek(System.out::println)
+                .map(i->i*100)
+                .subscribeAll(e->result.complete(e));
+
+        assertFalse(result.isDone());
+        System.out.println("Blocking?");
+        assertThat("Result is " + result.get(),result.get(),equalTo(2000));
+
+    }
+
+
     @Test
     public void testTraverseLeft1() {
         ListX<Either<Integer,String>> list = ListX.of(just,none,Either.<String,Integer>right(1)).map(Either::swap);

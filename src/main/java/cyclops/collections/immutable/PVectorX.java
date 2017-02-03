@@ -17,6 +17,7 @@ import com.aol.cyclops2.types.To;
 import cyclops.monads.WitnessType;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
@@ -258,7 +259,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
      * @return PVectorX
      */
     public static <T> PVectorX<T> fromPublisher(final Publisher<? extends T> publisher) {
-        return ReactiveSeq.fromPublisher((Publisher<T>) publisher)
+        return Spouts.from((Publisher<T>) publisher)
                           .toPVectorX();
     }
 
@@ -320,7 +321,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
 
     /**
     * Combine two adjacent elements in a PVectorX using the supplied BinaryOperator
-    * This is a stateful grouping & reduction operation. The output of a combination may in turn be combined
+    * This is a stateful grouping & reduction operation. The emitted of a combination may in turn be combined
     * with it's neighbor
     * <pre>
     * {@code 
@@ -428,7 +429,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     
 
     /**
-     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 
@@ -772,7 +773,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> PVectorX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -783,7 +784,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <S, U> PVectorX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -792,7 +793,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <T2, T3, T4> PVectorX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -983,7 +984,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default PVectorX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1019,7 +1020,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default PVectorX<T> retainAllS(final Stream<? extends T> seq) {

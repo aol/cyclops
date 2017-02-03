@@ -56,7 +56,7 @@ public interface Sequential<T> {
      *              .batchBySize(10)
      *              .onePer(1, TimeUnit.MICROSECONDS)
      *              .peek(batch -> System.out.println("batched : " + batch))
-     *              .flatMap(Collection::stream)
+     *              .flatMap(Collection::reactiveStream)
      *              .peek(individual -> System.out.println("Flattened : "
      *                      + individual))
      *              .forEach(a->{});

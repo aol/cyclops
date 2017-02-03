@@ -60,7 +60,7 @@ public class Tutorial {
     @Test
     public void IO(){
         
-        //stream builder with 50 threads and 50 active futures
+        //reactiveStream builder with 50 threads and 50 active futures
         LazyReact react = new LazyReact(50,50)
                                 .autoOptimizeOn(); //cache processing results
         
@@ -372,10 +372,10 @@ public class Tutorial {
 	@Test
 	public void skipUntil() {
 		SimpleReactStream<Boolean> stoppingStream = SimpleReact
-				.sequentialCommonBuilder().ofAsync(() -> 1000).then(this::sleep)
+				.sequentialCommonBuilder().ofAsync(() -> 10).then(this::sleep)
 				.peek(System.out::println);
 		System.out.println(SimpleReact.sequentialCommonBuilder()
-				.from(IntStream.range(0, 1000000))
+				.from(IntStream.range(0, 10000))
 				// .peek(System.out::println)
 				.skipUntil(stoppingStream).peek(System.out::println)
 				.toList()
@@ -509,7 +509,7 @@ public class Tutorial {
 	}
 
 	/**
-	 * create a stream of time intervals in seconds
+	 * create a reactiveStream of time intervals in seconds
 	 */
 	@Test @Ignore
 	public void secondsTimeInterval() {
@@ -753,7 +753,7 @@ public class Tutorial {
 				.map(this::processOrders)
 				.forEach(System.out::println);
 			/**	
-				.flatMap(Collection::stream)
+				.flatMap(Collection::reactiveStream)
 				.peek(individual -> System.out.println("Flattened : "
 						+ individual))
 				.forEach(this::save);**/

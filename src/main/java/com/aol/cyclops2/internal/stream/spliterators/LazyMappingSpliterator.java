@@ -28,17 +28,7 @@ public class LazyMappingSpliterator<T,R> extends Spliterators.AbstractSpliterato
     public <R2> LazyMappingSpliterator<T, ?> compose(Function<? super R, ? extends R2> fn) {
         return new LazyMappingSpliterator<T, R2>(CopyableSpliterator.copy(source),()->mapperSupplier.get().andThen(fn));
     }
-    /**
-    public Spliterator<R> compose(){
 
-        if(source instanceof MappingSpliterator){
-            return compose((MappingSpliterator)source,this);
-        }
-        return this;
-    }
-    public static <T1,T2,R> MappingSpliterator<T1,R> compose(FunctionSpliterator<T1,T2> before, MappingSpliterator<T2,R> after){
-        return new MappingSpliterator<T1, R>(before.source(),before.mapper.andThen(after.mapper));
-    }**/
 
     @Override
     public void forEachRemaining(Consumer<? super R> action) {

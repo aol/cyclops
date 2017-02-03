@@ -12,6 +12,7 @@ import cyclops.collections.immutable.PStackX;
 import cyclops.control.*;
 import cyclops.control.either.Either;
 import cyclops.control.either.Either3;
+import cyclops.control.either.Either3.CompletableEither3;
 import cyclops.function.Monoid;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -29,9 +30,50 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 
 public class Either3Test {
+
+    @Test
+    public void completableTest(){
+        CompletableEither3<Integer,Integer,Integer> completable = Either3.either3();
+        Either3<Throwable,Integer,Integer> mapped = completable.map(i->i*2)
+                                                               .flatMap(i->Eval.later(()->i+1));
+
+        completable.complete(5);
+        System.out.println(mapped.getClass());
+        mapped.printOut();
+        assertThat(mapped.get(),equalTo(11));
+
+
+    }
+    @Test
+    public void completableNoneTest(){
+        CompletableEither3<Integer,Integer,Integer> completable = Either3.either3();
+        Either3<Throwable,Integer,Integer> mapped = completable.map(i->i*2)
+                                                              .flatMap(i->Eval.later(()->i+1));
+
+        completable.complete(null);
+
+        mapped.printOut();
+        assertThat(mapped.isPresent(),equalTo(false));
+        assertThat(mapped.swap1().get(),instanceOf(NoSuchElementException.class));
+
+    }
+    @Test
+    public void completableErrorTest(){
+        CompletableEither3<Integer,Integer,Integer> completable = Either3.either3();
+        Either3<Throwable,Integer,Integer> mapped = completable.map(i->i*2)
+                                                                .flatMap(i->Eval.later(()->i+1));
+
+        completable.completeExceptionally(new IllegalStateException());
+
+        mapped.printOut();
+        assertThat(mapped.isPresent(),equalTo(false));
+        assertThat(mapped.swap1().get(),instanceOf(IllegalStateException.class));
+
+    }
     boolean lazy = true;
     @Test
     public void lazyTest() {
@@ -99,14 +141,14 @@ public class Either3Test {
    
     @Test
     public void testZip(){
-        assertThat(Either.right(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
+        assertThat(Either3.right(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
  //pending https://github.com/aol/cyclops-react/issues/380
         //       assertThat(Either.right(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
-        assertThat(Either.right(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Either.right(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Either.right(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(Either.right(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(Either.right(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Either3.right(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Either3.right(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Either3.right(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Either3.right(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Either3.right(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
     }
     @Test
     public void testTraverseLeft1() {

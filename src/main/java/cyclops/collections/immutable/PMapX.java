@@ -195,7 +195,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default PMapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -231,7 +231,7 @@ public interface PMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default PMapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -251,7 +251,7 @@ public interface PMapX<K, V>
 
 
     /* (non-Javadoc)
-     * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
+     * @see org.reactivestreams.Publisher#subscribeAll(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super Tuple2<K, V>> s) {

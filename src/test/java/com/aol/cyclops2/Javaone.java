@@ -82,12 +82,12 @@ public class Javaone {
         s.request(2);
         
         
-        SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
+        SeqSubscriber<Integer> sub = SeqSubscriber.reactiveSubscriber();
         Flux.just(1,2,3,4)
             .map(i->i*2)
-            .subscribe(sub);
+            .subscribeAll(sub);
         
-        ReactiveSeq<Integer> connected = sub.stream();
+        ReactiveSeq<Integer> connected = sub.reactiveStream();
         
         ReactiveSeq.of(1,2,3)
                    .map(this::load)
@@ -116,7 +116,7 @@ public class Javaone {
                       .run();
         
     }
-    public void stream(){
+    public void reactiveStream(){
         
         Stream<Integer> input;
         Stream<Integer> times2 = input.map(i->i*2);
@@ -178,7 +178,7 @@ public class Javaone {
     }
     
     public String process(String in){
-        return "produced on " + Thread.currentThread().getId();
+        return "emitted on " + Thread.currentThread().getId();
     }
     
     
@@ -189,7 +189,7 @@ public class Javaone {
                                                  .build();
 
         new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
-                                                      .map(d->"produced on " + Thread.currentThread().getId())
+                                                      .map(d->"emitted on " + Thread.currentThread().getId())
                                                       .peek(System.out::println)
                                                       .peek(d->transferQueue.offer(d))
                                                       .run();

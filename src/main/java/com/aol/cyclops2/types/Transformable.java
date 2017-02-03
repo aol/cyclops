@@ -18,7 +18,7 @@ import cyclops.control.Trampoline;
 public interface Transformable<T> {
 
     /**
-     * Cast all elements in a stream to a given type, possibly throwing a
+     * Cast all elements in a reactiveStream to a given type, possibly throwing a
      * {@link ClassCastException}.
      * 
      * 

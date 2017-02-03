@@ -1,7 +1,9 @@
 package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.*;
 import cyclops.Monoids;
+import cyclops.box.Mutable;
 import cyclops.control.*;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -10,10 +12,6 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.react.Status;
 import com.aol.cyclops2.react.collectors.lazy.Blocker;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.To;
-import com.aol.cyclops2.types.Value;
-import com.aol.cyclops2.types.Zippable;
 import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
@@ -35,6 +33,8 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.util.Iterator;
 import java.util.List;
@@ -43,6 +43,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -62,12 +63,58 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Slf4j
-public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Âµ,T> {
+public class Future<T> implements To<Future<T>>,MonadicValue<T>, Completable<T>,Higher<Future.Âµ,T> {
 
     public static class Âµ {
     }
     public <W extends WitnessType<W>> FutureT<W, T> liftM(W witness) {
         return FutureT.of(witness.adapter().unit(this));
+    }
+
+
+    @Override
+    public final void subscribe(final Subscriber<? super T> sub) {
+        Mutable<Future<T>> future = Mutable.of(this);
+        sub.onSubscribe(new Subscription() {
+
+            AtomicBoolean running = new AtomicBoolean(
+                    true);
+            AtomicBoolean cancelled = new AtomicBoolean(false);
+
+            @Override
+            public void request(final long n) {
+
+                if (n < 1) {
+                    sub.onError(new IllegalArgumentException(
+                            "3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
+                }
+
+                if (!running.compareAndSet(true, false)) {
+
+                    return;
+
+                }
+                    future.mutate(f -> f.peek(sub::onNext)
+                            .recover(t -> {
+                                sub.onError(t);
+                                return null;
+                            })
+                            .peek(i -> sub.onComplete()));
+
+
+            }
+
+
+            @Override
+            public void cancel() {
+
+                cancelled.set(true);
+                future.get().cancel();
+
+            }
+
+        });
+
     }
     /**
      * Convert the raw Higher Kinded Type for  FutureType types into the FutureType type definition class
@@ -204,9 +251,9 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
      * 
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Future<Integer> future = Future.fromPublisher(stream,ex);
+        Future<Integer> future = Future.fromPublisher(reactiveStream,ex);
         
         //Future[1]
      * 
@@ -228,9 +275,9 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
      * Construct a Future asyncrhonously that contains a single value extracted from the supplied Iterable
      * <pre>
      * {@code 
-     *  ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *  ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Future<Integer> future = Future.fromIterable(stream,ex);
+        Future<Integer> future = Future.fromIterable(reactiveStream,ex);
         
         //Future[1]
      * 
@@ -250,9 +297,9 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
      * Construct a Future syncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Future<Integer> future = Future.fromPublisher(stream);
+        Future<Integer> future = Future.fromPublisher(reactiveStream);
         
         //Future[1]
      * 
@@ -262,9 +309,32 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
      * @return Future populated syncrhonously from Publisher
      */
     public static <T> Future<T> fromPublisher(final Publisher<T> pub) {
-        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
-        pub.subscribe(sub);
-        return sub.toFuture();
+        Future<T> result = future();
+
+        pub.subscribe(new Subscriber<T>() {
+            @Override
+            public void onSubscribe(Subscription s) {
+                s.request(1l);
+            }
+
+            @Override
+            public void onNext(T t) {
+                result.complete(t);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                result.completeExceptionally(t);
+            }
+
+            @Override
+            public void onComplete() {
+                if(!result.isDone())  {
+                    result.complete(null);
+                }
+            }
+        });
+        return result;
     }
 
     /**
@@ -272,9 +342,9 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
      * 
      * <pre>
      * {@code 
-     *  ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *  ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Future<Integer> future = Future.fromIterable(stream);
+        Future<Integer> future = Future.fromIterable(reactiveStream);
         
         //Future[1]
      * 
@@ -802,8 +872,8 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
      * 
      * @param value Value to set this Future to
      */
-    public void complete(T value){
-        future.complete(value);
+    public boolean complete(T value){
+        return future.complete(value);
     }
 
     /**
@@ -837,7 +907,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Value#stream()
+     * @see com.aol.cyclops2.types.Value#reactiveStream()
      */
     @Override
     public ReactiveSeq<T> stream() {
@@ -1253,7 +1323,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -1264,7 +1334,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Higher<Future.Â
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     public <U> Future<Tuple2<T, U>> zipS(final Stream<? extends U> other) {

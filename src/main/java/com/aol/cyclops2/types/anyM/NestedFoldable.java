@@ -123,7 +123,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /*
      * (non-Javadoc)
      * 
-     * @see java.util.stream.Stream#reduce(java.lang.Object,
+     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
     default AnyM<W,T> reduce(final T identity, final BinaryOperator<T> accumulator) {
@@ -133,7 +133,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /*
      * (non-Javadoc)
      * 
-     * @see java.util.stream.Stream#reduce(java.lang.Object,
+     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
      * java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
     default <U> AnyM<W,U> reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
@@ -481,8 +481,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *                                          .map(i -> i + 2)
      *                                          .toConcurrentLazyStreamable();
      * 
-     *  assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     *  assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
+     *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
      * }
      * </pre>
      * 
@@ -608,7 +608,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Expression that determines when each job will run
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of output from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     default HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
         return stream().schedule(cron, ex);
@@ -643,7 +643,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            until the next one starts
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of output from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     default HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
         return stream().scheduleFixedDelay(delay, ex);
@@ -678,7 +678,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Time in millis between job runs
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of output from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     default HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
         return stream().scheduleFixedRate(rate, ex);

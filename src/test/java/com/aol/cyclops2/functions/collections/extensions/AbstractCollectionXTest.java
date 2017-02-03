@@ -22,12 +22,14 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.reactivestreams.Subscription;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -74,7 +76,117 @@ public abstract class AbstractCollectionXTest {
         int[] i = {10};
         assertThat(of(0,1,2).plusLoop(()->i[0]!=20? Optional.of(i[0]++) : Optional.empty()).size(),equalTo(13));
     }
+    @Test
+    public void subscribeEmpty(){
+        List result = new ArrayList<>();
+        Subscription s= of().subscribe(i->result.add(i));
+        s.request(1l);
+        assertThat(result.size(),equalTo(0));
+        s.request(1l);
+        assertThat(result.size(),equalTo(0));
+        s.request(1l);
+        assertThat(result.size(),equalTo(0));
 
+    }
+    @Test
+    public void subscribe(){
+        List<Integer> result = new ArrayList<>();
+        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        s.request(1l);
+        assertThat(result.size(),equalTo(1));
+        s.request(1l);
+        assertThat(result.size(),equalTo(2));
+        s.request(1l);
+        assertThat(result.size(),equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+    }
+    @Test
+    public void subscribe3(){
+        List<Integer> result = new ArrayList<>();
+        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        s.request(3l);
+        assertThat(result.size(),equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+    }
+    @Test
+    public void subscribeErrorEmpty(){
+        List result = new ArrayList<>();
+        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace());
+        s.request(1l);
+        assertThat(result.size(),equalTo(0));
+        s.request(1l);
+        assertThat(result.size(),equalTo(0));
+        s.request(1l);
+        assertThat(result.size(),equalTo(0));
+
+    }
+    @Test
+    public void subscribeError(){
+        List<Integer> result = new ArrayList<>();
+        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        s.request(1l);
+        assertThat(result.size(),equalTo(1));
+        s.request(1l);
+        assertThat(result.size(),equalTo(2));
+        s.request(1l);
+        assertThat(result.size(),equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+    }
+    @Test
+    public void subscribe3Error(){
+        List<Integer> result = new ArrayList<>();
+        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        s.request(3l);
+        assertThat(result.size(),equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+    }
+    @Test
+    public void subscribeErrorEmptyOnComplete(){
+        List result = new ArrayList<>();
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        s.request(1l);
+        assertThat(onComplete.get(),equalTo(true));
+        assertThat(result.size(),equalTo(0));
+        s.request(1l);
+        assertThat(result.size(),equalTo(0));
+        s.request(1l);
+        assertThat(result.size(),equalTo(0));
+
+    }
+    @Test
+    public void subscribeErrorOnComplete(){
+        List<Integer> result = new ArrayList<>();
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+
+        assertThat(onComplete.get(),equalTo(false));
+        s.request(1l);
+        assertThat(result.size(),equalTo(1));
+        assertThat(onComplete.get(),equalTo(false));
+        s.request(1l);
+        assertThat(result.size(),equalTo(2));
+        assertThat(onComplete.get(),equalTo(false));
+        s.request(1l);
+        assertThat(result.size(),equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+        s.request(1l);
+        assertThat(onComplete.get(),equalTo(true));
+    }
+    @Test
+    public void subscribe3ErrorOnComplete(){
+        List<Integer> result = new ArrayList<>();
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        assertThat(onComplete.get(),equalTo(false));
+        s.request(4l);
+        assertThat(onComplete.get(),equalTo(true));
+
+        assertThat(result.size(),equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+        s.request(1l);
+        assertThat(onComplete.get(),equalTo(true));
+    }
     @Test
     public void iterate(){
         Iterator<Integer> it = of(1,2,3).iterator();
@@ -985,7 +1097,7 @@ public abstract class AbstractCollectionXTest {
 	/**
 	@Test
 	public void splitBy(){
-		assertThat( of(1, 2, 3, 4, 5, 6).stream().splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
+		assertThat( of(1, 2, 3, 4, 5, 6).reactiveStream().splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
 		assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v2.toList(),equalTo(Arrays.asList(4,5,6)));
 	}
 	**/

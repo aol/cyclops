@@ -55,7 +55,7 @@ public interface FoldableTraversable<T> extends Fn1<Long,T>,
     }
 
     /**
-     * Perform a lazy caching fold (results are memoized)
+     * Perform a maybe caching fold (results are memoized)
      *  <pre>
      *  {@code
      *    Eval<Integer> sum =  ListX.of(1,2,3)
@@ -109,7 +109,7 @@ public interface FoldableTraversable<T> extends Fn1<Long,T>,
     }
     /**
      * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
-     * whenStream may be more efficient (as it is guaranteed to be lazy).
+     * whenStream may be more efficient (as it is guaranteed to be maybe).
      *
      * <pre>
      * {@code
@@ -160,6 +160,23 @@ public interface FoldableTraversable<T> extends Fn1<Long,T>,
      */
     default HeadAndTail<T> headAndTail() {
         return stream().headAndTail();
+    }
+    @Override
+    default <X extends Throwable> Subscription subscribe(Consumer<? super T> consumer){
+        Subscription result = CyclopsCollectable.super.subscribe(consumer,e->e.printStackTrace(),()->{});
+        return result;
+    }
+
+    @Override
+    default <X extends Throwable> Subscription subscribe(Consumer<? super T> consumer, Consumer<? super Throwable> consumerError){
+        Subscription result = CyclopsCollectable.super.subscribe(consumer,consumerError,()->{});
+        return result;
+    }
+
+    @Override
+    default <X extends Throwable> Subscription subscribe(Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
+        Subscription result = CyclopsCollectable.super.subscribe(consumer,consumerError,onComplete);
+        return result;
     }
     @Override
     default <X extends Throwable> Subscription forEach(long numberOfElements, Consumer<? super T> consumer){

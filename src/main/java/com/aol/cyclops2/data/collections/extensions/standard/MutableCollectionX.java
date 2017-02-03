@@ -181,7 +181,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#grouped(java.util.function.Function, java.util.stream.Collector)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#grouped(java.util.function.Function, java.util.reactiveStream.Collector)
      */
     @Override
     default <K, A, D> MutableCollectionX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
@@ -216,7 +216,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> MutableCollectionX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -357,7 +357,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> MutableCollectionX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -367,7 +367,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <S, U> MutableCollectionX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -376,7 +376,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <T2, T3, T4> MutableCollectionX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -556,10 +556,10 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.util.reactiveStream.Stream)
      */
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#removeAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default MutableCollectionX<T> removeAllS(final Stream<? extends T> stream) {
@@ -596,7 +596,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#retainAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default MutableCollectionX<T> retainAllS(final Stream<? extends T> stream) {

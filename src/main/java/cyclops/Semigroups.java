@@ -1,7 +1,11 @@
 package cyclops;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops2.internal.stream.spliterators.push.StreamSubscription;
 import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.futurestream.EagerFutureStreamFunctions;
+import com.aol.cyclops2.types.futurestream.SimpleReactStream;
+import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.collections.*;
 import cyclops.collections.immutable.*;
@@ -12,12 +16,18 @@ import cyclops.control.Xor;
 import cyclops.function.Semigroup;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.Seq;
 import org.pcollections.PCollection;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -276,6 +286,24 @@ public interface Semigroups {
         return (a, b) -> a.appendS(b);
     }
 
+    static <T> Semigroup<ReactiveSeq<T>> firstNonEmptyReactiveSeq() {
+        return (a, b) -> a.onEmptySwitch(()->b);
+    }
+    static <T> Semigroup<ReactiveSeq<T>> ambReactiveSeq() {
+        return (a,b)->(ReactiveSeq<T>)Semigroups.<T>amb().apply(a,b);
+    }
+
+    static <T> Semigroup<ReactiveSeq<T>> mergeLatestReactiveSeq() {
+        return (a,b) -> Spouts.mergeLatest(a,b);
+    }
+    static <T> Semigroup<Publisher<T>> mergeLatest() {
+        return (a,b) -> Spouts.mergeLatest(a,b);
+    }
+    static <T> Semigroup<Publisher<T>> amb() {
+        return (a, b) -> Spouts.amb(a,b);
+
+    }
+
     /**
      * @return Combination of two Seq's : b is appended to a
      */
@@ -321,6 +349,10 @@ public interface Semigroups {
      */
     static <T> Semigroup<Future<T>> firstCompleteFuture() {
         return (a, b) -> Future.anyOf(a,b);
+    }
+
+    static <T> Semigroup<SimpleReactStream<T>> firstOfSimpleReact() {
+        return (a, b) -> EagerFutureStreamFunctions.firstOf(a,b);
     }
     /**
      * @return Combine two Future's by taking the first successful

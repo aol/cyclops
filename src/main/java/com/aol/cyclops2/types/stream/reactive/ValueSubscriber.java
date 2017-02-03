@@ -21,7 +21,7 @@ import cyclops.function.Memoize;
  * 
  * <pre>
  * {@code 
- *    ValueSubscriber<Integer> anInt = ValueSubscriber.subscriber();
+ *    ValueSubscriber<Integer> anInt = ValueSubscriber.reactiveSubscriber();
  *    ReactiveSeq.of(1,2,3)
  *               .publish(anInt);
  *    

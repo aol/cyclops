@@ -52,7 +52,8 @@ public class LazyFutureStreamUtils {
                 @Override
                 public void onSubscribe(final Subscription s) {
                     Objects.requireNonNull(s);
-                    s.request(x);
+                    if(x!=0)
+                        s.request(x);
                     subscription.complete(s);
                 }
 
@@ -120,7 +121,8 @@ public class LazyFutureStreamUtils {
                 @Override
                 public void onSubscribe(final Subscription s) {
                     Objects.requireNonNull(s);
-                    s.request(x);
+                    if(x!=0)
+                        s.request(x);
                     subscription.complete(s);
                 }
 
@@ -191,7 +193,8 @@ public class LazyFutureStreamUtils {
                 @Override
                 public void onSubscribe(final Subscription s) {
                     Objects.requireNonNull(s);
-                    s.request(x);
+                    if(x!=0)
+                     s.request(x);
                     subscription.complete(s);
                 }
 

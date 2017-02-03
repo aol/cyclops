@@ -13,7 +13,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 /**
  * Maintain a pool of x-react builders
  * x-react builders (SimpleReact,LazyReact) can be extracted and returned to the pool externally
- * or Streams creating function can be supplied to the ReactPool which will select an x-react builder, run the stream and return
+ * or Streams creating function can be supplied to the ReactPool which will select an x-react builder, run the reactiveStream and return
  *  the x-react builder to the pool
  * 
  * @author johnmcclean

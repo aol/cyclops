@@ -152,7 +152,7 @@ public class AnyOfTest {
 
 		.then(it -> {
 			try {
-				Thread.sleep(10);
+				Thread.sleep(50);
 			} catch (Exception e) {
 
 			}

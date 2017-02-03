@@ -42,6 +42,14 @@ public class SchedulingTest {
 	}
 	@Test
 	public void fixedRateTest() throws InterruptedException{
+		ListX.of(1,2,3,4)
+				.peek(i->count.incrementAndGet())
+				.peek(System.out::println)
+				.scheduleFixedRate(1000, ex)
+				.connect()
+                .forEach(e->System.out.println("Result  " + e));
+
+		System.out.println("***************");
 		assertThat(ListX.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)

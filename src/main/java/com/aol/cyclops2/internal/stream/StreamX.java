@@ -1,52 +1,61 @@
 package com.aol.cyclops2.internal.stream;
 
 import com.aol.cyclops2.internal.stream.spliterators.CopyableSpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.IteratableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
-import com.aol.cyclops2.internal.stream.spliterators.push.PushingSpliterator;
+import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import cyclops.Streams;
+import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
-import java.util.Optional;
-import java.util.Spliterator;
+import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 
-public class StreamX<T> extends BaseExtendedStream<T> {
+public class StreamX<T> extends SpliteratorBasedStream<T> {
 
     public StreamX(Stream<T> stream) {
         super(stream);
     }
 
-    public StreamX(Spliterator<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
-        super(stream, rev, split);
+    public StreamX(Spliterator<T> stream, Optional<ReversableSpliterator> rev) {
+        super(stream, rev);
     }
 
-    public StreamX(Stream<T> stream, Optional<ReversableSpliterator> rev, Optional<PushingSpliterator<?>> split) {
-        super(stream, rev, split);
+    public StreamX(Stream<T> stream, Optional<ReversableSpliterator> rev) {
+        super(stream, rev);
     }
     @Override
     public ReactiveSeq<T> reverse() {
         if(this.stream instanceof ReversableSpliterator){
             ReversableSpliterator rev = (ReversableSpliterator)stream;
-            return createSeq(rev.invert(),reversible,split);
+            return createSeq(rev.invert(),reversible);
         }
-        return createSeq(Streams.reverse(this), reversible,split);
-    }
-
-
-    @Override
-    <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible, Optional<PushingSpliterator<?>> split) {
-        return new StreamX<X>(stream,reversible,split);
+        return createSeq(Streams.reverse(this), reversible);
     }
 
     @Override
-    <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible, Optional<PushingSpliterator<?>> split) {
-        return new StreamX<X>(stream,reversible,split);
+    public ReactiveSeq<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+        return createSeq(new IteratableSpliterator<>(Streams.combineI(this,predicate,op)))
+                .flatMapI(i->i);
+    }
+
+    @Override
+    <X> ReactiveSeq<X> createSeq(Stream<X> stream, Optional<ReversableSpliterator> reversible) {
+        return new StreamX<X>(stream,reversible);
+    }
+
+    @Override
+    <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible) {
+        return new StreamX<X>(stream,reversible);
     }
 
     @Override
@@ -54,35 +63,71 @@ public class StreamX<T> extends BaseExtendedStream<T> {
 
         Spliterator<T> t = copy();
         return  ReactiveSeq.fill(1)
-                .flatMap(i->createSeq(CopyableSpliterator.copy(t),reversible,split));
+                .flatMap(i->createSeq(CopyableSpliterator.copy(t),reversible));
     }
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
-        final Tuple2<Spliterator<T>, Spliterator<T>> tuple = Tuple.tuple(copy(),copy());
-        return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map2(s -> createSeq(s, reversible.map(r -> r.copy()),split));
+        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 2);
+
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
+                createSeq(new IteratableSpliterator<>(copy.get(1))));
+
+
+    }
+    @Override
+    public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate(Supplier<Deque<T>> bufferFactory) {
+
+        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 2,bufferFactory);
+
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
+                createSeq(new IteratableSpliterator<>(copy.get(1))));
+
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate() {
+        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 3);
 
-        final Tuple3<Spliterator<T>, Spliterator<T>, Spliterator<T>> tuple = Tuple.tuple(copy(),copy(),copy());
-        return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map2(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map3(s -> createSeq(s, reversible.map(r -> r.copy()),split));
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
+                createSeq(new IteratableSpliterator<>(copy.get(1))),
+                createSeq(new IteratableSpliterator<>(copy.get(2))));
+
 
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate() {
-        final Tuple4<Spliterator<T>, Spliterator<T>, Spliterator<T>, Spliterator<T>> tuple = Tuple.tuple(copy(),copy(),copy(),copy());
-        return tuple.map1(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map2(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map3(s -> createSeq(s, reversible.map(r -> r.copy()),split))
-                .map4(s -> createSeq(s, reversible.map(r -> r.copy()),split));
+        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 4);
+
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
+                createSeq(new IteratableSpliterator<>(copy.get(1))),
+                createSeq(new IteratableSpliterator<>(copy.get(2))),
+                createSeq(new IteratableSpliterator<>(copy.get(3))));
+    }
+    @Override
+    @SuppressWarnings("unchecked")
+    public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate(Supplier<Deque<T>> bufferFactory) {
+        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 3,bufferFactory);
+
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
+                createSeq(new IteratableSpliterator<>(copy.get(1))),
+                createSeq(new IteratableSpliterator<>(copy.get(2))));
+
+
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate(Supplier<Deque<T>> bufferFactory) {
+        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 4,bufferFactory);
+
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
+                createSeq(new IteratableSpliterator<>(copy.get(1))),
+                createSeq(new IteratableSpliterator<>(copy.get(2))),
+                createSeq(new IteratableSpliterator<>(copy.get(3))));
     }
 
     @Override
@@ -122,7 +167,7 @@ public class StreamX<T> extends BaseExtendedStream<T> {
     public ReactiveSeq<T> cycle(long times) {
         return ReactiveSeq.fill(1)
                 .limit(times)
-                .flatMap(i -> createSeq(copy(), reversible, split));
+                .flatMap(i -> createSeq(copy(), reversible));
 
     }
 

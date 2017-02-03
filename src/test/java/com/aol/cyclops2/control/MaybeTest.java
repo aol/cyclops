@@ -9,8 +9,11 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Future;
 import cyclops.control.*;
+import cyclops.control.Maybe.CompletableMaybe;
+import cyclops.control.either.Either;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple3;
@@ -41,8 +44,75 @@ public class MaybeTest implements Printable {
 
     @Before
     public void setUp() throws Exception {
-        just = Maybe.of(10);
+        just = Maybe.just(10);
         none = Maybe.none();
+
+    }
+    @Test
+    public void completableTest(){
+        CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
+        Maybe<Integer> mapped = completable.map(i->i*2)
+                                          .flatMap(i->Eval.later(()->i+1));
+
+        completable.complete(5);
+        System.out.println(mapped.getClass());
+        mapped.printOut();
+        assertThat(mapped.get(),equalTo(11));
+
+
+    }
+    @Test
+    public void completableNoneTest(){
+        CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
+        Maybe<Integer> mapped = completable.map(i->i*2)
+                                           .flatMap(i->Eval.later(()->i+1));
+
+        completable.complete(null);
+
+        mapped.printOut();
+        assertThat(mapped.isPresent(),equalTo(false));
+
+
+    }
+    @Test
+    public void completableErrorTest(){
+        CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
+        Maybe<Integer> mapped = completable.map(i->i*2)
+                .flatMap(i->Eval.later(()->i+1));
+
+        completable.completeExceptionally(new IllegalStateException());
+
+        mapped.printOut();
+        assertThat(mapped.isPresent(),equalTo(false));
+
+
+    }
+    @Test
+    public void reactive(){
+
+        Future<Integer> result = Future.future();
+        Future<Integer> future = Future.future();
+
+        Thread t=  new Thread(()->{
+            try {
+                Thread.sleep(1500l);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            future.complete(10);
+        });
+        t.start();
+
+        Spouts.from(Maybe.fromFuture(future)
+              .map(i->i*2))
+                .peek(System.out::println)
+                .map(i->i*100)
+                .subscribeAll(e->result.complete(e));
+
+
+        assertFalse(result.isDone());
+        System.out.println("Blocking?");
+        assertThat(result.get(),equalTo(2000));
 
     }
     
@@ -631,7 +701,7 @@ public class MaybeTest implements Printable {
         assertThat(cf.join(), equalTo(10));
     }
 
-    Executor exec = Executors.newFixedThreadPool(1);
+    static Executor exec = Executors.newFixedThreadPool(1);
 
     @Test
     public void testToCompletableFutureAsyncExecutor() {

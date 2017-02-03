@@ -2,11 +2,13 @@ package cyclops.async;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.futurestream.Continuation;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
 import org.pcollections.PVector;
@@ -20,7 +22,7 @@ import lombok.Getter;
 import lombok.Synchronized;
 
 /**
- * A class that can accept input streams and generate output streams where data sent in the Topic is guaranteed to be
+ * A class that can accept input streams and generate emitted streams where data sent in the Topic is guaranteed to be
  * provided to all Topic subsribers
  * 
  * @author johnmcclean
@@ -35,13 +37,14 @@ public class Topic<T> implements Adapter<T> {
     private volatile PMap<ReactiveSeq<?>, Queue<T>> streamToQueue = HashTreePMap.empty();
     private final Object lock = new Object();
     private volatile int index = 0;
+    private final QueueFactory<T> factory;
 
     /**
      * Construct a new Topic
      */
     public Topic() {
         final Queue<T> q = new Queue<T>();
-
+        factory = QueueFactories.unboundedQueue();
         distributor.addQueue(q);
     }
 
@@ -50,7 +53,11 @@ public class Topic<T> implements Adapter<T> {
      * @param q Queue to back this Topic with
      */
     public Topic(final Queue<T> q) {
-
+        factory = QueueFactories.unboundedQueue();
+        distributor.addQueue(q);
+    }
+    public Topic(final Queue<T> q,QueueFactory<T> factory) {
+        this.factory = factory;
         distributor.addQueue(q);
     }
 
@@ -90,7 +97,7 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Generating a streamCompletableFutures will register the Stream as a subscriber to this topic.
+     * Generating a streamCompletableFutures will register the Stream as a reactiveSubscriber to this topic.
      * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
      * 
      * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
@@ -101,7 +108,7 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Generating a stream will register the Stream as a subscriber to this topic.
+     * Generating a reactiveStream will register the Stream as a reactiveSubscriber to this topic.
      * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
      * @return Stream of data
      */
@@ -124,7 +131,7 @@ public class Topic<T> implements Adapter<T> {
         if (index >= this.distributor.getSubscribers()
                                      .size()) {
 
-            this.distributor.addQueue(new Queue());
+            this.distributor.addQueue(factory.build());
 
         }
         return this.distributor.getSubscribers()
@@ -172,6 +179,10 @@ public class Topic<T> implements Adapter<T> {
 
     }
 
+    public void addContinuation(Continuation cont) {
+        distributor.subscribers.forEach(q->q.addContinuation(cont));
+    }
+
     static class DistributingCollection<T> extends ArrayList<T> {
 
         private static final long serialVersionUID = 1L;
@@ -193,6 +204,7 @@ public class Topic<T> implements Adapter<T> {
 
         @Override
         public boolean add(final T e) {
+
             subscribers.forEach(it -> it.offer(e));
             return true;
         }

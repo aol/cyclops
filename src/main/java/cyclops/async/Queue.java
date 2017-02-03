@@ -37,7 +37,7 @@ import lombok.experimental.Wither;
  * Inspired by scalaz-streams async.Queue (functionally similar, but wraps a JDK Queue - wait-free or Blocking)
  * 
  * A Queue that takes data from one or more input Streams and provides them to
- * one or more output Streams
+ * one or more emitted Streams
  * 
  * Interface specifies a BlockingQueue, but non-BlockingQueues (such as ConcurrentLinkedQueue can be used
  * in conjunction with an implementation of the Continuation interface
@@ -51,13 +51,13 @@ import lombok.experimental.Wither;
                                                  .build();
         
         new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
-                                                      .map(d->"produced on " + Thread.currentThread().getId())
+                                                      .map(d->"emitted on " + Thread.currentThread().getId())
                                                       .peek(System.out::println)
                                                       .peek(d->transferQueue.offer(d))
                                                       .run();
         
 
-        transferQueue.stream()
+        transferQueue.reactiveStream()
                   .map(e->"Consumed on " + Thread.currentThread().getId())
                   .futureOperations(Executors.newFixedThreadPool(1))
                   .forEach(System.out::println);
@@ -189,7 +189,7 @@ public class Queue<T> implements Adapter<T> {
      * 
      * <pre>
      * {@code 
-     *        use queue.stream().parallel() to convert to a parallel Stream
+     *        use queue.reactiveStream().parallel() to convert to a parallel Stream
      *  }
      * </pre>
      * 
@@ -216,7 +216,7 @@ public class Queue<T> implements Adapter<T> {
      * 
      * <pre>
      * {@code 
-     *        use queue.stream().parallel() to convert to a parallel Stream
+     *        use queue.reactiveStream().parallel() to convert to a parallel Stream
      *  }
      * </pre>
      * @see Queue#jdkStream(int) for an alternative that sends more poision pills for use with parallel Streams.
@@ -343,10 +343,13 @@ public class Queue<T> implements Adapter<T> {
                     data = ensureClear(consumerWait.take(() -> queue.poll(sub.timeLimit(), TimeUnit.NANOSECONDS)));
                     if (data == null)
                         throw new QueueTimeoutException();
-                }
+            }
 
-                else
-                    data = ensureClear(consumerWait.take(() -> queue.take()));
+                else {
+                    data = ensureClear(consumerWait.take(() -> queue.poll()));
+                    if (data == null)
+                        throw new QueueTimeoutException();
+                }
             } else {
                 data = ensureClear(consumerWait.take(() -> queue.poll(timeout, timeUnit)));
                 if (data == null)
@@ -389,6 +392,7 @@ public class Queue<T> implements Adapter<T> {
         if (data instanceof PoisonPill) {
             throw new ClosedQueueException();
         }
+
         return data;
     }
 
@@ -673,9 +677,16 @@ public class Queue<T> implements Adapter<T> {
         this.continuationStrategy.addContinuation(c);
     }
 
+    public void setContinuations(Queue<T> queue){
+        queue.continuationStrategy = this.continuationStrategy;
+    }
     @Override
     public <R> R visit(final Function<? super Queue<T>, ? extends R> caseQueue, final Function<? super Topic<T>, ? extends R> caseTopic) {
         return caseQueue.apply(this);
+    }
+
+    public String toString(){
+        return "Q " + queue;
     }
 
 }

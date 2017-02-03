@@ -106,7 +106,7 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Duplicate a Stream, buffers intermediate values, leaders may change
-     * positions so a limit can be safely applied to the leading stream. Not
+     * positions so a limit can be safely applied to the leading reactiveStream. Not
      * thread-safe.
      * 
      * <pre>
@@ -119,7 +119,7 @@ public interface OperationsOnFutures<T> {
      * }
      * </pre>
      * 
-     * @return duplicated stream
+     * @return duplicated reactiveStream
      */
     default Tuple2<FutureStream<T>, FutureStream<T>> duplicate() {
         return ReactiveSeq.fromStream((Stream<FastFuture<T>>) (Stream) this.getLastActive()
@@ -132,7 +132,7 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Triplicates a Stream. Buffers intermediate values, leaders may change
-     * positions so a limit can be safely applied to the leading stream. Not
+     * positions so a limit can be safely applied to the leading reactiveStream. Not
      * thread-safe.
      * 
      * <pre>
@@ -158,7 +158,7 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Makes four copies of a Stream Buffers intermediate values, leaders may
-     * change positions so a limit can be safely applied to the leading stream.
+     * change positions so a limit can be safely applied to the leading reactiveStream.
      * Not thread-safe.
      * <pre>
      * {@code 
@@ -265,7 +265,7 @@ public interface OperationsOnFutures<T> {
     				of(1,2,3,4,5,6).actOnFutures().zipLfs(of(100,200,300,400), combiner)
     												.peek(it -> System.out.println(it)).collect(Collectors.toList());
     		
-    		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+    		List<Integer> right = list.reactiveStream().map(t -> t.v2).collect(Collectors.toList());
     		assertThat(right,hasItem(100));
     		assertThat(right,hasItem(200));
     		assertThat(right,hasItem(300));
@@ -634,8 +634,8 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Returns a stream with a given value interspersed between any two values
-     * of this stream.
+     * Returns a reactiveStream with a given value interspersed between any two values
+     * of this reactiveStream.
      * 
      * 
      * // (1, 0, 2, 0, 3, 0, 4) FutureStream.of(1, 2, 3, 4).actOnFutures().intersperse(0)
@@ -648,8 +648,8 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Returns a stream with a given value interspersed between any two values
-     * of this stream.
+     * Returns a reactiveStream with a given value interspersed between any two values
+     * of this reactiveStream.
      * 
      * FutureStream.of(1, 2, 3, 4)
      *                 .actOnFutures()
@@ -867,7 +867,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Insert data into a stream at given position
+     * Insert data into a reactiveStream at given position
      * 
      * <pre>
        {@code 
@@ -922,7 +922,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Insert a Stream into the middle of this stream at the specified position
+     * Insert a Stream into the middle of this reactiveStream at the specified position
      * 
      * <pre>
      * {@code 
@@ -948,7 +948,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Insert a Stream into the middle of this stream at the specified position
+     * Insert a Stream into the middle of this reactiveStream at the specified position
      * 
      * <pre>
      * {@code 
@@ -1090,7 +1090,7 @@ public interface OperationsOnFutures<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jooq.lambda.Seq#concat(java.util.stream.Stream)
+     * @see org.jooq.lambda.Seq#concat(java.util.reactiveStream.Stream)
      */
     default FutureStream<T> concat(final Stream<T> other) {
         return fromStreamOfFutures(this.getLastActive()
@@ -1160,7 +1160,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Shuffle a stream using specified source of randomness
+     * Shuffle a reactiveStream using specified source of randomness
      * 
      * 
      * // e.g. (2, 3, 1) FutureStream.of(1, 2, 3).actOnFutures().shuffle(new Random())
@@ -1321,14 +1321,14 @@ public interface OperationsOnFutures<T> {
      * 
      * 
      * (non-Javadoc)
-    * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
+    * @see java.util.reactiveStream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
     */
     default CompletableFuture<T> reduce(final CompletableFuture<T> identity, final BinaryOperator<CompletableFuture<T>> accumulator) {
         return toStream().reduce(identity, accumulator);
     }
 
     /* (non-Javadoc)
-    * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
+    * @see java.util.reactiveStream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
     */
     default <U> CompletableFuture<U> reduce(final CompletableFuture<U> identity,
             final BiFunction<CompletableFuture<U>, ? super CompletableFuture<T>, CompletableFuture<U>> accumulator,

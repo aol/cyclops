@@ -67,7 +67,7 @@ dependencies {
 	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.7.13'
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.13'
     testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
-    testCompile 'io.projectreactor:reactor-core:2.5.0.M2'
+    testCompile 'io.projectreactor:reactor-core:3.0.4.RELEASE'
 	testCompile  'com.google.guava:guava:19.0'
     testCompile 'com.google.guava:guava-testlib:19.0'
 	testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
@@ -111,6 +111,9 @@ jmh {
 
 task testNG(type: Test) {
     useTestNG {}
+	testLogging {
+		events "started","passed", "skipped", "failed"//, "standardOut", "standardError"
+	}
     reports.html.destination = file("$buildDir/reports/test")
 }
 
@@ -127,10 +130,10 @@ task testSuite(type: Test) {
 test {
         reports.html.destination = file("$buildDir/reports/test")
     
-        dependsOn testNG
+    //    dependsOn testNG
      //   dependsOn testSuite
-        forkEvery = 5
-        
+        forkEvery = 1
+		maxParallelForks = Runtime.runtime.availableProcessors()
         testLogging {
             events "started","passed", "skipped", "failed"//, "standardOut", "standardError"
         }

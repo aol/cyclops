@@ -24,12 +24,12 @@ import lombok.AllArgsConstructor;
  * <pre>
  * {@code 
  * PushableStream<Integer> pushable = StreamSource.ofUnbounded()
-                                                        .stream();
+                                                        .reactiveStream();
    pushable.getInput()
            .offer(10);
     
-    Stream<Integer> stream = pushable.getStream();
-    stream.forEach(System.out::println);
+    Stream<Integer> reactiveStream = pushable.getStream();
+    reactiveStream.forEach(System.out::println);
     
     //print 10
      
@@ -92,8 +92,8 @@ import lombok.AllArgsConstructor;
     //print 100
      
     //thread 3
-    Stream<Integer> stream = multi.stream();
-    stream.forEach(System.out::println);
+    Stream<Integer> reactiveStream = multi.reactiveStream();
+    reactiveStream.forEach(System.out::println);
    
     //print 100    
        
@@ -154,8 +154,8 @@ public class StreamSource {
         //print 100
          
         //thread 3
-        Stream<Integer> stream = multi.stream();
-        stream.forEach(System.out::println);
+        Stream<Integer> reactiveStream = multi.reactiveStream();
+        reactiveStream.forEach(System.out::println);
        
         //print 100    
            
@@ -188,7 +188,7 @@ public class StreamSource {
 
     /**
      * Connect multiple Streams to a Pushable datasource, each Stream will recieve the same
-     * data. In this backpresure is applied by using a LinkedBlockingQueue. @see cyclops2.stream.StreamSource#ofMultiple(QueueFactory)
+     * data. In this backpresure is applied by using a LinkedBlockingQueue. @see cyclops2.reactiveStream.StreamSource#ofMultiple(QueueFactory)
      * For more granular management of Adapter based backpressure. Adapters can be backed by non-blocking data structures and different backpressure strategies applied
      * <pre>
      * {@code 
@@ -214,8 +214,8 @@ public class StreamSource {
         //print 100
          
         //thread 3
-        Stream<Integer> stream = multi.stream();
-        stream.forEach(System.out::println);
+        Stream<Integer> reactiveStream = multi.reactiveStream();
+        reactiveStream.forEach(System.out::println);
        
         //print 100    
            
@@ -243,7 +243,7 @@ public class StreamSource {
      * 
      * }
      * </pre>
-     * @param backPressureAfter Excess number of produced records over consumed (by all connected Streams
+     * @param backPressureAfter Excess number of emitted records over consumed (by all connected Streams
      * after which backPressure will be applied).
      * @return a builder that will use Topics to allow multiple Streams from the same data
      */
@@ -290,12 +290,12 @@ public class StreamSource {
      * <pre>
      * {@code 
      * PushableStream<Integer> pushable = StreamSource.of(QueueFactories.boundedQueue(10))
-                                                        .stream();
+                                                        .reactiveStream();
        pushable.getInput()
                .offer(10);
     
-        Stream<Integer> stream = pushable.getStream();
-        stream.forEach(System.out::println);
+        Stream<Integer> reactiveStream = pushable.getStream();
+        reactiveStream.forEach(System.out::println);
     
         //print 10
      
@@ -333,12 +333,12 @@ public class StreamSource {
      * <pre>
      * {@code 
      * PushableStream<Integer> pushable = StreamSource.ofUnbounded()
-                                                      .stream();
+                                                      .reactiveStream();
        pushable.getInput()
                .offer(10);
     
-        Stream<Integer> stream = pushable.getStream();
-        stream.forEach(System.out::println);
+        Stream<Integer> reactiveStream = pushable.getStream();
+        reactiveStream.forEach(System.out::println);
     
         //print 10
      
@@ -361,7 +361,7 @@ public class StreamSource {
     /**
      * A builder for pushable Streams that apply backpressure if producing Streams exceed the capacity of consuming Streams.
      * 
-     * In this backpresure is applied by using a LinkedBlockingQueue. @see cyclops2.stream.StreamSource#ofMultiple(QueueFactory)
+     * In this backpresure is applied by using a LinkedBlockingQueue. @see cyclops2.reactiveStream.StreamSource#ofMultiple(QueueFactory)
      * For more granular management of Adapter based backpressure. Adapters can be backed by non-blocking data structures and different backpressure strategies applied
     
        <pre>
@@ -378,7 +378,7 @@ public class StreamSource {
        }
        </pre>
     
-     * @param backPressureAfter Excess number of produced records over consumed (by all connected Streams
+     * @param backPressureAfter Excess number of emitted records over consumed (by all connected Streams
      * after which backPressure will be applied).
      * @return A builder for Pushable Streams
      */
@@ -474,7 +474,7 @@ public class StreamSource {
      * <pre>
      * {@code 
      * PushableStream<Integer> pushable = StreamSource.ofUnbounded()
-                                                        .stream();
+                                                        .reactiveStream();
         pushable.getInput()
                 .add(10);
         pushable.getInput()
@@ -515,7 +515,7 @@ public class StreamSource {
      * </pre>
      * 
      * 
-     * @return PushableStream that can accept data to push into a {@see cyclops2.stream.ReactiveSeq}
+     * @return PushableStream that can accept data to push into a {@see cyclops2.reactiveStream.ReactiveSeq}
      * to push it to the Stream
      */
     public <T> PushableReactiveSeq<T> reactiveSeq() {
@@ -530,8 +530,8 @@ public class StreamSource {
      * <pre>
      * {@code 
      *   Queue<Integer> q = QueueFactories.boundedNonBlockingQueue(1000);
-     *   Stream<Integer> stream = StreamSource.stream(q);
-     *   stream.forEach(System.out::println);
+     *   Stream<Integer> reactiveStream = StreamSource.reactiveStream(q);
+     *   reactiveStream.forEach(System.out::println);
      *   
      *   //on a separate thread
      *   q.offer(10);

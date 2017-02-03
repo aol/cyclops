@@ -360,7 +360,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * {@code 
      *    AnyM<Integer> monad =  AnyM.fromOptional(Optional.of(10));
      *    
-     *    Stream<Integer> stream = monad.stream();
+     *    Stream<Integer> reactiveStream = monad.reactiveStream();
      *    //ReactiveSeq[10]
      * }
      * </pre>
@@ -1014,7 +1014,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @return List of AnyMs
      
     public static <T> ListX<AnyMSeq<T>> listFromIterable(final Iterable<Iterable<T>> fromEither5) {
-        return StreamSupport.stream(fromEither5.spliterator(), false)
+        return StreamSupport.reactiveStream(fromEither5.spliterator(), false)
                             .map(i -> AnyM.fromIterable(i))
                             .collect(ListX.listXCollector());
     }
@@ -1122,7 +1122,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @return List of AnyMs
      
     public static <T> ListX<AnyMSeq<T>> listFromIterator(final Iterable<Iterator<T>> fromEither5) {
-        return StreamSupport.stream(fromEither5.spliterator(), false)
+        return StreamSupport.reactiveStream(fromEither5.spliterator(), false)
                             .map(i -> AnyM.fromIterable(() -> i))
                             .collect(ListX.listXCollector());
     }*/
@@ -1206,11 +1206,11 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     }
     public static  <W extends WitnessType<W>,T> AnyM<W,Stream<T>> sequence(Stream<? extends AnyM<W,T>> stream, W witness) {
         FunctionalAdapter<W> c = witness.adapter();
-        AnyM<W,Stream<T>> identity = c.unit(Stream.empty());
+        AnyM<W,Stream<T>> identity = c.unit(ReactiveSeq.empty());
        
-        BiFunction<AnyM<W,Stream<T>>,AnyM<W,T>,AnyM<W,Stream<T>>> combineToStream = (acc,next) -> c.ap2(c.unit(Lambda.l2((Stream<T> a)->(T b)->Stream.concat(a,Stream.of(b)))),acc,next);
+        BiFunction<AnyM<W,Stream<T>>,AnyM<W,T>,AnyM<W,Stream<T>>> combineToStream = (acc,next) -> c.ap2(c.unit(Lambda.l2((Stream<T> a)->(T b)->ReactiveSeq.concat(a,ReactiveSeq.of(b)))),acc,next);
 
-        BinaryOperator<AnyM<W,Stream<T>>> combineStreams = (a,b)-> (AnyM<W,Stream<T>>)a.zip(b,(z1,z2)->Stream.concat(z1,z2)); // a.apply(b, (s1,s2)->s1);
+        BinaryOperator<AnyM<W,Stream<T>>> combineStreams = (a,b)-> (AnyM<W,Stream<T>>)a.zip(b,(z1,z2)->(Stream<T>)ReactiveSeq.concat(z1,z2)); // a.apply(b, (s1,s2)->s1);
 
         return stream.reduce(identity,combineToStream,combineStreams);
     }

@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  *
  * @param <T>
  */
-public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
+public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> , Unit<T>{
 
     @Override
     Iterator<T> iterator();
@@ -111,13 +111,13 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     CollectionX<T> shuffle(Random random);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Traversable#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     <S, U> CollectionX<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Traversable#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     <T2, T3, T4> CollectionX<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth);
@@ -204,7 +204,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     <X extends Throwable> CollectionX<T> onEmptyThrow(Supplier<? extends X> supplier);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.ExtendedTraversable#stream()
+     * @see com.aol.cyclops2.types.ExtendedTraversable#reactiveStream()
      */
     @Override
     default ReactiveSeq<T> stream() {
@@ -415,7 +415,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     CollectionX<ListX<T>> grouped(int groupSize);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#grouped(java.util.function.Function, java.util.stream.Collector)
+     * @see com.aol.cyclops2.types.Traversable#grouped(java.util.function.Function, java.util.reactiveStream.Collector)
      */
     @Override
     <K, A, D> CollectionX<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream);
@@ -450,13 +450,13 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Traversable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
      */
     @Override
     <U, R> CollectionX<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Traversable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     <U> CollectionX<Tuple2<T, U>> zipS(Stream<? extends U> other);
@@ -516,7 +516,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
     CollectionX<T> sorted();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.IterableFilterable#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.IterableFilterable#removeAllS(java.util.reactiveStream.Stream)
      */
     @Override
     CollectionX<T> removeAllS(Stream<? extends T> stream);
@@ -543,7 +543,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.IterableFilterable#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.IterableFilterable#retainAllS(java.util.reactiveStream.Stream)
      */
     @Override
     CollectionX<T> retainAllS(Stream<? extends T> seq);
@@ -767,7 +767,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
 
     /**
      * Perform a two level nested internal iteration over this Stream and the
-     * supplied stream
+     * supplied reactiveStream
      * 
      * <pre>
      * {@code 
@@ -802,7 +802,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> {
 
     /**
      * Perform a two level nested internal iteration over this Stream and the
-     * supplied stream
+     * supplied reactiveStream
      * 
      * <pre>
      * {@code 

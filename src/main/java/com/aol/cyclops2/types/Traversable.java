@@ -28,7 +28,7 @@ public interface Traversable<T> extends Publisher<T>,
                                         OnEmpty<T>,
                                         Zippable<T>,
                                         IterableFilterable<T>,
-        FilterableTransformable<T>,
+                                        FilterableTransformable<T>,
                                         TransformerTraversable<T>,
                                         Sequential<T>{
 
@@ -65,7 +65,7 @@ public interface Traversable<T> extends Publisher<T>,
      */
     <U> Traversable<U> unitIterator(Iterator<U> U);
     /* (non-Javadoc)
-     * @see org.reactivestreams.Publisher#subscribe(org.reactivestreams.Subscriber)
+     * @see org.reactivestreams.Publisher#subscribeAll(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super T> s) {
@@ -74,7 +74,7 @@ public interface Traversable<T> extends Publisher<T>,
 
     /**
      * Combine two adjacent elements in a traversable using the supplied BinaryOperator
-     * This is a stateful grouping and reduction operation. The output of a combination may in turn be combined
+     * This is a stateful grouping and reduction operation. The emitted of a combination may in turn be combined
      * with it's neighbour
      * <pre>
      * {@code 
@@ -85,7 +85,8 @@ public interface Traversable<T> extends Publisher<T>,
      *  //ListX(3,4) 
      * }</pre>
      * 
-     * @param predicate Test to see if two neighbours should be joined
+     * @param predicate Test to see if two neighbours should be joined. The first parameter to the bi-predicate is the currently
+     *                  accumulated result and the second is the next element
      * @param op Reducer to combine neighbours
      * @return Combined / Partially Reduced Traversable
      */
@@ -790,8 +791,8 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Returns a stream with a given value interspersed between any two values
-     * of this stream.
+     * Returns a reactiveStream with a given value interspersed between any two values
+     * of this reactiveStream.
      * 
      * 
      * // (1, 0, 2, 0, 3, 0, 4) ReactiveSeq.of(1, 2, 3, 4).intersperse(0)
@@ -991,7 +992,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Insert data into a stream at given position
+     * Insert data into a reactiveStream at given position
      *
      * <pre>
      * {@code
@@ -1032,7 +1033,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Insert a Stream into the middle of this stream at the specified position
+     * Insert a Stream into the middle of this reactiveStream at the specified position
      *
      * <pre>
      * {@code

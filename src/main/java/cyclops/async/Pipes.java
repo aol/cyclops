@@ -1,5 +1,22 @@
 package cyclops.async;
 
+import com.aol.cyclops2.react.threads.SequentialElasticPools;
+import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import cyclops.box.LazyImmutable;
+import cyclops.collections.ListX;
+import cyclops.collections.immutable.PMapX;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
+import cyclops.control.Try;
+import cyclops.control.Xor;
+import cyclops.stream.FutureStream;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -8,25 +25,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
-
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.control.Try;
-import cyclops.control.Xor;
-import cyclops.stream.FutureStream;
-import cyclops.stream.ReactiveSeq;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-
-import cyclops.box.LazyImmutable;
-import cyclops.collections.immutable.PMapX;
-import cyclops.collections.ListX;
-import com.aol.cyclops2.react.threads.SequentialElasticPools;
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
-import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
-
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 /**
  * Pipes : Stores and manages cyclops2-react Adapters for cross-thread communication
@@ -252,8 +250,8 @@ public class Pipes<K, V> {
         pipes.push("data-queue", "world");
         
         //on a separate thread
-        ReactiveSeq<String> stream = pipes.reactiveSeq("data-queue");
-        stream.forEach(System.out::println);
+        ReactiveSeq<String> reactiveStream = pipes.reactiveSeq("data-queue");
+        reactiveStream.forEach(System.out::println);
         //"world"
        
       
@@ -298,10 +296,8 @@ public class Pipes<K, V> {
      * @return List of the next x elements from the Adapter identified by the provided key
      */
     public ListX<V> xValues(final K key, final long x) {
-        final SeqSubscriber<V> sub = SeqSubscriber.subscriber();
-        return get(key).peek(a -> a.stream()
-                                   .subscribe(sub))
-                       .map(a -> sub.stream()
+
+        return get(key).map(a -> a.stream()
                                     .limit(x)
                                     .toListX())
                        .orElse(ListX.empty());
@@ -545,8 +541,8 @@ public class Pipes<K, V> {
      * Pipes.register("test", QueueFactories.
     										<String>boundedNonBlockingQueue(100)
     											.build());
-    	LazyFutureStream<String> stream =  PipesToLazyStreams.cpuBoundStream("test");
-    	stream.filter(it->it!=null).peek(System.out::println).run();
+    	LazyFutureStream<String> reactiveStream =  PipesToLazyStreams.cpuBoundStream("test");
+    	reactiveStream.filter(it->it!=null).peek(System.out::println).run();
      * 
      * }</pre>
      * 
@@ -571,7 +567,7 @@ public class Pipes<K, V> {
      * Subscribe synchronously to a pipe
      * 
      * @param key for registered simple-react async.Adapter
-     * @param subscriber Reactive Streams subscriber for data on this pipe
+     * @param subscriber Reactive Streams reactiveSubscriber for data on this pipe
      */
     public void subscribeTo(final K key, final Subscriber<V> subscriber) {
         registered.get(key)
@@ -585,14 +581,14 @@ public class Pipes<K, V> {
      * 
      *  <pre>
      *  {@code 
-     *  SeqSubscriber<String> subscriber = SeqSubscriber.subscriber();
+     *  SeqSubscriber<String> reactiveSubscriber = SeqSubscriber.reactiveSubscriber();
         Queue<String> queue = new Queue();
         pipes.register("hello", queue);
-        pipes.subscribeTo("hello",subscriber,ForkJoinPool.commonPool());
+        pipes.subscribeTo("hello",reactiveSubscriber,ForkJoinPool.commonPool());
         queue.offer("world");
         queue.close();
        
-        assertThat(subscriber.stream().findAny().get(),equalTo("world"));
+        assertThat(reactiveSubscriber.reactiveStream().findAny().get(),equalTo("world"));
      *  
      *  
      *  }
@@ -600,7 +596,7 @@ public class Pipes<K, V> {
      * 
      * 
      * @param key for registered simple-react async.Adapter
-     * @param subscriber Reactive Streams subscriber for data on this pipe
+     * @param subscriber Reactive Streams reactiveSubscriber for data on this pipe
      */
     public void subscribeTo(final K key, final Subscriber<V> subscriber, final Executor subscribeOn) {
         CompletableFuture.runAsync(() -> subscribeTo(key, subscriber), subscribeOn);
@@ -614,10 +610,7 @@ public class Pipes<K, V> {
      * @param publisher Reactive Streams publisher  to push data onto this pipe
      */
     public void publishTo(final K key, final Publisher<V> publisher) {
-        final SeqSubscriber<V> sub = SeqSubscriber.subscriber();
-        publisher.subscribe(sub);
-        registered.get(key)
-                  .fromStream(sub.stream());
+        registered.get(key).fromStream(Spouts.from(publisher));
     }
 
     
@@ -636,7 +629,7 @@ public class Pipes<K, V> {
         queue.offer(4);
         queue.close();
        
-        assertThat(queue.stream().toList(),equalTo(Arrays.asList(1,2,3,4)));
+        assertThat(queue.reactiveStream().toList(),equalTo(Arrays.asList(1,2,3,4)));
      * 
      * }
      * </pre>

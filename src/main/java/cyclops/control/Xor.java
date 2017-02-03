@@ -150,9 +150,9 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
      * Construct a Primary Xor from the supplied publisher
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-         Xor<Throwable,Integer> future = Xor.fromPublisher(stream);
+         Xor<Throwable,Integer> future = Xor.fromPublisher(reactiveStream);
         
          //Xor[1]
      * 
@@ -173,7 +173,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
      * {@code 
      *   List<Integer> list =  Arrays.asList(1,2,3);
         
-         Xor<Throwable,Integer> future = Xor.fromPublisher(stream);
+         Xor<Throwable,Integer> future = Xor.fromPublisher(reactiveStream);
         
          //Xor[1]
      * 
@@ -928,7 +928,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Xor<ST, R> zipS(final Stream<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
@@ -937,7 +937,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> Xor<ST, Tuple2<PT, U>> zipS(final Stream<? extends U> other) {

@@ -3,6 +3,7 @@ package cyclops.control.either;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import cyclops.async.Future;
 import cyclops.collections.ListX;
 import cyclops.control.*;
 import cyclops.function.*;
@@ -34,8 +35,10 @@ import java.util.stream.Stream;
  * @param <LT2> Left2 type
  * @param <RT> Right type (operations are performed on this type if present)
  */
-public interface Either3<LT1, LT2, RT>
-                extends MonadicValue<RT>, BiFunctor<LT2, RT>, To<Either3<LT1, LT2, RT>>, Supplier<RT> {
+public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
+                                                BiFunctor<LT2, RT>,
+                                                To<Either3<LT1, LT2, RT>>,
+                                                Supplier<RT>{
     
     static <LT1,LT2,RT> Either3<LT1,LT2,RT> fromMonadicValue(MonadicValue<RT> mv3){
         if(mv3 instanceof Either3){
@@ -45,7 +48,148 @@ public interface Either3<LT1, LT2, RT>
 
     }
 
+    /**
+     * Create a reactive CompletableEither
+     *
+     * <pre>
+     *  {@code
+     *      ___Example 1___
+     *
+     *      CompletableEither<Integer,Integer> completable = Either3.either3();
+            Either3<Throwable,String,Integer> mapped = completable.map(i->i*2)
+                                                                  .flatMap(i->Eval.later(()->i+1));
 
+            completable.complete(5);
+
+            mapped.printOut();
+            //11
+
+            ___Example 2___
+
+            CompletableEither<Integer,Integer> completable = Either3.either3();
+            Either3<Throwable,String,Integer> mapped = completable.map(i->i*2)
+                                                                  .flatMap(i->Eval.later(()->i+1));
+
+
+            completable.complete(null);
+
+            //Either3:Left3[NoSuchElementException]
+
+            ___Example 3___
+
+            CompletableEither<Integer,Integer> completable = Either3.either3();
+            Either3<Throwable,String,Integer> mapped = completable.map(i->i*2)
+                                                                 .flatMap(i->Eval.later(()->i+1));
+
+            completable.complete(new IllegalStateException());
+
+    //Either:Left[IllegalStateElementException]
+     *     }
+     * </pre>
+     *
+     * @param <RT>
+     * @return
+     */
+    static <LT2,RT> Either3.CompletableEither3<RT,LT2,RT> either3(){
+        Completable.CompletablePublisher<RT> c = new Completable.CompletablePublisher<RT>();
+        return new Either3.CompletableEither3<RT,LT2, RT>(c,fromFuture(Future.fromPublisher(c)));
+    }
+    @AllArgsConstructor
+    static class CompletableEither3<ORG,LT1,RT> implements Either3<Throwable,LT1,RT>, Completable<ORG> {
+
+        public final Completable.CompletablePublisher<ORG> complete;
+        public final Either3<Throwable, LT1,RT> either;
+
+        @Override
+        public boolean isFailed() {
+            return complete.isFailed();
+        }
+
+        @Override
+        public boolean isDone() {
+            return complete.isDone();
+        }
+
+        @Override
+        public boolean complete(ORG v) {
+            return complete.complete(v);
+        }
+
+        @Override
+        public boolean completeExceptionally(Throwable error) {
+            return complete.completeExceptionally(error);
+        }
+
+        @Override
+        public RT get() {
+            return either.get();
+        }
+
+        @Override
+        public <R> R visit(Function<? super Throwable, ? extends R> left1, Function<? super LT1, ? extends R> mid, Function<? super RT, ? extends R> right) {
+            return either.visit(left1,mid,right);
+        }
+
+        @Override
+        public Maybe<RT> filter(Predicate<? super RT> test) {
+            return either.filter(test);
+        }
+
+        @Override
+        public <R2> Either3<Throwable, LT1, R2> flatMap(Function<? super RT, ? extends MonadicValue<? extends R2>> mapper) {
+            return either.flatMap(mapper);
+        }
+
+        @Override
+        public Either3<Throwable, RT, LT1> swap2() {
+            return either.swap2();
+        }
+
+        @Override
+        public Either3<RT, LT1, Throwable> swap1() {
+            return either.swap1();
+        }
+
+        @Override
+        public boolean isRight() {
+            return either.isRight();
+        }
+
+        @Override
+        public boolean isLeft1() {
+            return either.isLeft1();
+        }
+
+        @Override
+        public boolean isLeft2() {
+            return either.isLeft2();
+        }
+
+        @Override
+        public <R1, R2> Either3<Throwable, R1, R2> bimap(Function<? super LT1, ? extends R1> fn1, Function<? super RT, ? extends R2> fn2) {
+            return either.bimap(fn1,fn2);
+        }
+
+        @Override
+        public <R> Either3<Throwable, LT1, R> map(Function<? super RT, ? extends R> fn) {
+            return either.map(fn);
+        }
+
+        @Override
+        public <T> Either3<Throwable, LT1, T> unit(T unit) {
+            return either.unit(unit);
+        }
+    }
+
+    static <LT1,LT2,RT> Either3<LT1,LT2,RT> fromLazy(Eval<Either3<LT1,LT2,RT>> lazy){
+        return new Either3.Lazy<>(lazy);
+    }
+
+    static <LT2,RT> Either3<Throwable,LT2,RT> fromFuture(Future<RT> future){
+        return fromLazy(Eval.<Either3<Throwable,LT2,RT>>fromFuture(
+                future.map(e->e!=null?Either3.<Throwable,LT2,RT>right(e) : Either3.<Throwable,LT2,RT>left1(new NoSuchElementException()))
+                        .recover(t->Either3.<Throwable,LT2,RT>left1(t.getCause()))));
+    }
     /**
      *  Turn a collection of Either3 into a single Either with Lists of values.
      *  
@@ -114,9 +258,9 @@ public interface Either3<LT1, LT2, RT>
      * Lazily construct a Right Either from the supplied publisher
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-         Either3<Throwable,String,Integer> future = Either3.fromPublisher(stream);
+         Either3<Throwable,String,Integer> future = Either3.fromPublisher(reactiveStream);
         
          //Either[1]
      * 
@@ -555,7 +699,7 @@ public interface Either3<LT1, LT2, RT>
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -568,7 +712,7 @@ public interface Either3<LT1, LT2, RT>
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> Either3<LT1, LT2, Tuple2<RT, U>> zipS(final Stream<? extends U> other) {
@@ -715,7 +859,7 @@ public interface Either3<LT1, LT2, RT>
         @Override
         public <R> Either3<ST, M, R> map(final Function<? super PT, ? extends R> mapper) {
 
-            return lazy(Eval.later(() -> resolve().map(mapper)));
+            return flatMap(t -> Either3.right(mapper.apply(t)));
 
         }
 
@@ -723,7 +867,7 @@ public interface Either3<LT1, LT2, RT>
         public <RT1> Either3<ST, M, RT1> flatMap(
                 final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
 
-            return lazy(Eval.later(() -> resolve().flatMap(mapper)));
+            return Either3.fromLazy(lazy.map(m->m.flatMap(mapper)));
       
 
         }

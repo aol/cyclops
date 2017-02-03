@@ -2,10 +2,7 @@ package com.aol.cyclops2.streams;
 
 import static cyclops.stream.ReactiveSeq.of;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -14,13 +11,24 @@ import static org.junit.Assert.assertTrue;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.Streams;
+import cyclops.async.QueueFactories;
+import cyclops.async.Topic;
 import cyclops.collections.ListX;
+import cyclops.monads.Witness;
+import cyclops.stream.Spouts;
+import lombok.val;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -31,6 +39,8 @@ import cyclops.function.Monoid;
 import cyclops.async.LazyReact;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
+import org.reactivestreams.Subscription;
+import reactor.core.publisher.Flux;
 
 
 //see BaseSequentialSeqTest for in order tests
@@ -46,9 +56,353 @@ public  class CoreReactiveSeqTest {
 		empty = of();
 		nonEmpty = of(1);
 	}
-	
-	
-	
+    @Test
+    public void enqueued(){
+        assertThat(ReactiveSeq.enqueued(sub->{
+            sub.onNext(1);
+            sub.onNext(2);
+            sub.onComplete();
+        }).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
+    }
+    @Test
+    public void subscribeErrorOnComplete(){
+        List<Integer> result = new ArrayList<>();
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        Subscription s= of(1,2,3).subscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
+
+        assertThat(onComplete.get(),equalTo(false));
+        s.request(1l);
+        assertThat(result.size(),equalTo(1));
+        assertThat(onComplete.get(),equalTo(false));
+        s.request(1l);
+        assertThat(result.size(),equalTo(2));
+        assertThat(onComplete.get(),equalTo(false));
+        s.request(1l);
+        assertThat(result.size(),equalTo(3));
+        assertThat(result,hasItems(1,2,3));
+        s.request(1l);
+        assertThat(onComplete.get(),equalTo(true));
+    }
+
+	@Test
+    public void publishToAndMerge(){
+	    cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+                                            .build();
+
+        Thread t=  new Thread( ()-> {
+
+            while(true) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                    System.out.println("Closing!");
+                    queue.close();
+
+            }
+        });
+        t.start();
+	    assertThat(ReactiveSeq.of(1,2,3)
+                             .publishTo(queue)
+                             .peek(System.out::println)
+                             .merge(queue)
+                             .toListX(),equalTo(ListX.of(1,1,2,2,3,3)));
+    }
+
+    @Test
+    public void parallelFanOut(){
+        assertThat(ReactiveSeq.of(1,2,3,4)
+                .parallelFanOut(ForkJoinPool.commonPool(), s1->s1.filter(i->i%2==0).map(i->i*2),
+                        s2->s2.filter(i->i%2!=0).map(i->i*100))
+                .toListX(),equalTo(ListX.of(4,100,8,300)));
+
+        assertThat(ReactiveSeq.of(1,2,3,4)
+                .parallelFanOutZipIn(ForkJoinPool.commonPool(), s1->s1.filter(i->i%2==0).map(i->i*2),
+                        s2->s2.filter(i->i%2!=0).map(i->i*100),(a,b)->a+b)
+                .toListX(),equalTo(ListX.of(104,308)));
+    }
+    @Test
+    public void mergePTest(){
+        ListX<Integer> list = ReactiveSeq.of(3,6,9).mergeP(ReactiveSeq.of(2,4,8),ReactiveSeq.of(1,5,7)).toListX();
+        assertThat(list,hasItems(1,2,3,4,5,6,7,8,9));
+        assertThat(list.size(),equalTo(9));
+    }
+    @Test
+    public void duplicateTest(){
+        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> tuples = ReactiveSeq.of(1, 2, 3, 4, 5, 6, 7, 8, 9).duplicate();
+
+        Tuple2<Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
+                .map2(s -> s.iterator());
+
+        List<Integer> result = new ArrayList<>();
+        while(its.v1.hasNext() || its.v2.hasNext() ){
+            if(its.v1.hasNext()){
+                result.add(its.v1.next());
+            }
+            if(its.v2.hasNext()){
+                result.add(its.v2.next());
+            }
+
+        }
+
+        System.out.println(result);
+
+        assertThat(result,hasItems(1,2,3,4,5,6,7,8,9));
+        assertThat(result.size(),equalTo(18));
+    }
+    @Test
+    public void duplicatePropertiesTest(){
+        for(int i=0;i<100;i++) {
+            Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> tuples = ReactiveSeq.range(0,i).duplicate();
+
+            Tuple2<Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
+                    .map2(s -> s.iterator());
+
+            List<Integer> result = new ArrayList<>();
+            while (its.v1.hasNext() || its.v2.hasNext()) {
+                if (its.v1.hasNext()) {
+                    result.add(its.v1.next());
+                }
+                if (its.v2.hasNext()) {
+                    result.add(its.v2.next());
+                }
+
+            }
+
+            System.out.println(result);
+            for(int x=0;x<i;x++) {
+                assertThat(result, hasItem(x));
+
+            }
+            assertThat(result.size(), equalTo(i*2));
+        }
+    }
+    @Test
+    public void bufferingCopierTest(){
+        for(int i=0;i<10;i++) {
+            for(int k=1;k<5;k++) {
+                System.out.println (" Length : " + i + " - copies " + k);
+                ListX<Iterable<Integer>> list = Streams.toBufferingCopier(ListX.range(0, i), k);
+                ListX<Integer> result = list.map(it -> ReactiveSeq.fromIterable(it))
+                        .flatMapS(s -> s);
+
+                for (int x = 0; x < i; x++) {
+                    assertThat("Failed on " + i + " and " + k,result, hasItem(x));
+
+                }
+                assertThat("Failed on " + i + " and " + k,result.size(), equalTo(i * k));
+            }
+
+        }
+    }
+    @Test
+    public void bufferingCopierTriplicateCompare(){
+
+
+        ListX<Iterable<Integer>> list = Streams.toBufferingCopier(ReactiveSeq.of(0, 1), 3);
+        Tuple3<Iterator<Integer>, Iterator<Integer>, Iterator<Integer>> its = Tuple.tuple(list.get(0).iterator(),
+                list.get(1).iterator(),
+                list.get(2).iterator());
+
+        List<Integer> result = new ArrayList<>();
+        while (its.v1.hasNext() || its.v2.hasNext() || its.v3.hasNext()) {
+            if (its.v1.hasNext()) {
+                result.add(its.v1.next() +100);
+            }
+            if (its.v2.hasNext()) {
+                result.add(its.v2.next()+200);
+            }
+            if (its.v3.hasNext()) {
+                result.add(its.v3.next()+300);
+            }
+        }
+
+        System.out.println(result);
+
+        assertThat(result.size(), equalTo(2 * 3));
+
+
+
+    }
+    @Test
+    public void triplicateBug(){
+        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> tuples = ReactiveSeq.of(0,1).triplicate();
+
+        Tuple3<Iterator<Integer>, Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
+                .map2(s -> s.iterator())
+                .map3(s -> s.iterator());
+
+        List<Integer> result = new ArrayList<>();
+        while(its.v1.hasNext() || its.v2.hasNext() || its.v3.hasNext()){
+            if(its.v1.hasNext()){
+                result.add(its.v1.next());
+            }
+            if(its.v2.hasNext()){
+                result.add(its.v2.next());
+            }
+            if(its.v3.hasNext()){
+                result.add(its.v3.next());
+            }
+        }
+
+        System.out.println(result);
+        for(int x=0;x<2;x++) {
+            assertThat(result, hasItem(x));
+
+        }
+        assertThat(result.size(), equalTo(2*3));
+    }
+    @Test
+    public void triplicatePropertiesTest(){
+        for(int i=0;i<100;i++) {
+            Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> tuples = ReactiveSeq.range(0,i).triplicate();
+
+            Tuple3<Iterator<Integer>, Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
+                    .map2(s -> s.iterator())
+                    .map3(s -> s.iterator());
+
+            List<Integer> result = new ArrayList<>();
+            while(its.v1.hasNext() || its.v2.hasNext() || its.v3.hasNext()){
+                if(its.v1.hasNext()){
+                    result.add(its.v1.next());
+                }
+                if(its.v2.hasNext()){
+                    result.add(its.v2.next());
+                }
+                if(its.v3.hasNext()){
+                    result.add(its.v3.next());
+                }
+            }
+
+            System.out.println(result);
+            for(int x=0;x<i;x++) {
+                assertThat(result, hasItem(x));
+
+            }
+            assertThat(result.size(), equalTo(i*3));
+        }
+    }
+    @Test
+    public void triplicateTest(){
+        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> tuples = ReactiveSeq.of(1, 2, 3, 4, 5, 6, 7, 8, 9).triplicate();
+
+        Tuple3<Iterator<Integer>, Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
+                .map2(s -> s.iterator())
+                .map3(s -> s.iterator());
+
+        List<Integer> result = new ArrayList<>();
+        while(its.v1.hasNext() || its.v2.hasNext() || its.v3.hasNext()){
+            if(its.v1.hasNext()){
+                result.add(its.v1.next());
+            }
+            if(its.v2.hasNext()){
+                result.add(its.v2.next());
+            }
+            if(its.v3.hasNext()){
+                result.add(its.v3.next());
+            }
+        }
+
+        System.out.println(result);
+
+        assertThat(result,hasItems(1,2,3,4,5,6,7,8,9));
+        assertThat(result.size(),equalTo(27));
+    }
+    @Test
+    public void triplicateFanOut(){
+
+
+        assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9)
+                .fanOut(s1->s1.peek(System.out::println).filter(i->i%3==0).map(i->i*2),
+                        s2->s2.filter(i->i%3==1).map(i->i*100),
+                        s3->s3.filter(i->i%3==2).map(i->i*1000))
+                .toListX(),equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+
+    }
+    @Test
+    public void fanOut(){
+
+        assertThat(ReactiveSeq.of(1,2,3,4)
+                   .fanOut(s1->s1.filter(i->i%2==0).map(i->i*2),
+                           s2->s2.filter(i->i%2!=0).map(i->i*100))
+                   .toListX(),equalTo(ListX.of(4,100,8,300)));
+        assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9)
+                .fanOut(s1->s1.filter(i->i%3==0).map(i->i*2),
+                        s2->s2.filter(i->i%3==1).map(i->i*100),
+                        s3->s3.filter(i->i%3==2).map(i->i*1000))
+                .toListX(),equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+        assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10,11,12)
+                             .fanOut(s1->s1.filter(i->i%4==0).map(i->i*2),
+                                     s2->s2.filter(i->i%4==1).map(i->i*100),
+                                     s3->s3.filter(i->i%4==2).map(i->i*1000),
+                                     s4->s4.filter(i->i%4==3).map(i->i*10000))
+                .toListX(),equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
+    }
+    @Test
+    public void parallelFanOut2(){
+
+        assertThat(ReactiveSeq.of(1,2,3,4)
+                .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%2==0).map(i->i*2),
+                        s2->s2.filter(i->i%2!=0).map(i->i*100))
+                .toListX(),equalTo(ListX.of(4,100,8,300)));
+        assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9)
+                .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%3==0).map(i->i*2),
+                        s2->s2.filter(i->i%3==1).map(i->i*100),
+                        s3->s3.filter(i->i%3==2).map(i->i*1000))
+                .toListX(),equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+        assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10,11,12)
+                .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%4==0).map(i->i*2),
+                        s2->s2.filter(i->i%4==1).map(i->i*100),
+                        s3->s3.filter(i->i%4==2).map(i->i*1000),
+                        s4->s4.filter(i->i%4==3).map(i->i*10000))
+                .toListX(),equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
+    }
+    @Test
+    public void iteratePred(){
+
+        assertThat(ReactiveSeq.iterate(0,i->i<10,i->i+1)
+                    .toListX().size(),equalTo(10));
+    }
+	@Test
+    public void broadcastTest(){
+	    Topic<Integer> topic = ReactiveSeq.of(1,2,3)
+                                          .broadcast();
+
+
+        ReactiveSeq<Integer> stream1 = topic.stream();
+        ReactiveSeq<Integer> stream2 = topic.stream();
+	    assertThat(stream1.toListX(),equalTo(ListX.of(1,2,3)));
+        assertThat(stream2.stream().toListX(),equalTo(ListX.of(1,2,3)));
+
+    }
+    @Test
+    public void broadcastThreads() throws InterruptedException {
+        Topic<Integer> topic = ReactiveSeq.range(0,100_000)
+                                          .broadcast();
+
+       Thread t=  new Thread( ()-> {
+            ReactiveSeq<Integer> stream2 = topic.stream();
+            assertThat(stream2.takeRight(1).single(), equalTo(99_999));
+        });
+       t.start();
+
+        ReactiveSeq<Integer> stream1 = topic.stream();
+
+        assertThat(stream1.takeRight(1).single(),equalTo(99_999));
+
+       t.join();
+    }
+
+
+
+    @Test
+	public void ambTest(){
+        for(int i=0;i<10;i++) {
+            assertThat(ReactiveSeq.of(1, 2, 3).ambWith(Flux.just(10, 20, 30)).toListX(), isOneOf(ListX.of(1, 2, 3), ListX.of(10, 20, 30)));
+        }
+	}
 	
 
     @Test

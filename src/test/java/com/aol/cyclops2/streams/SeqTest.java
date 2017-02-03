@@ -5,7 +5,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Ignore;
@@ -13,10 +15,10 @@ import org.junit.Test;
 
 public class SeqTest {
 
-	@Test @Ignore
+	@Test
 	public void testUnzipWithLimits() {
 		
-		Supplier<Seq<Tuple2<Integer, String>>> s = () -> Seq.of(
+		Supplier<Stream<Tuple2<Integer, String>>> s = () -> ReactiveSeq.of(
 				tuple(1, "a"),tuple(2, "b"),tuple(3, "c"));
 
 		Tuple2<Seq<Integer>, Seq<String>> u1 = Seq.unzip(s

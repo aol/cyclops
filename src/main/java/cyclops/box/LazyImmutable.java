@@ -27,8 +27,8 @@ import java.util.function.Supplier;
  * <pre>
  * {@code
  * public static <T> Supplier<T> memoiseSupplier(Supplier<T> s){
-		LazyImmutable<T> lazy = LazyImmutable.def();
-		return () -> lazy.computeIfAbsent(s);
+		LazyImmutable<T> maybe = LazyImmutable.def();
+		return () -> maybe.computeIfAbsent(s);
 	}
  * }</pre>
  * 
@@ -172,7 +172,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#stream()
+     * @see com.aol.cyclops2.types.Value#reactiveStream()
      */
     @Override
     public ReactiveSeq<T> stream() {

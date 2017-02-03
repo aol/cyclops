@@ -1,10 +1,14 @@
 package com.aol.cyclops2.control;
 
+import cyclops.async.Future;
 import cyclops.control.Eval;
+import cyclops.control.Eval.CompletableEval;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
+import reactor.core.publisher.Flux;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -19,6 +23,50 @@ public class EvalTest {
         
         
     }
+
+    @Test
+    public void completableTest(){
+        CompletableEval<Integer,Integer> completable = Eval.eval();
+        Eval<Integer> mapped = completable.map(i->i*2)
+                                          .flatMap(i->Eval.later(()->i+1));
+
+        completable.complete(5);
+        System.out.println(mapped.getClass());
+        mapped.printOut();
+        assertThat(mapped.get(),equalTo(11));
+
+
+    }
+
+    @Test
+    public void reactive(){
+        Eval<Integer> react = Eval.fromPublisher(Flux.create(s -> {
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000l);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                s.next(1);
+                s.complete();
+            }).start();
+        }));
+        react.map(i->i*2)
+                .flatMap(i->Eval.now(i*3))
+                .forEach(System.out::println);
+
+
+    }
+    @Test
+	public void coeval(){
+		Future<Eval<Integer>> input = Future.future();
+    	Eval<Integer> reactive = Eval.coeval(input);
+
+    	reactive.forEach(System.out::println);
+
+    	input.complete(Eval.now(10));
+	}
 
     @Test
     public void testZip(){

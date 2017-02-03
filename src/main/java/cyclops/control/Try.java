@@ -151,9 +151,9 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
      * of the provided types
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Try<Integer,Throwable> attempt = Try.fromPublisher(stream, RuntimeException.class);
+        Try<Integer,Throwable> attempt = Try.fromPublisher(reactiveStream, RuntimeException.class);
         
         //Try[1]
      * 
@@ -176,9 +176,9 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
      * 
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Try<Integer,Throwable> attempt = Try.fromPublisher(stream);
+        Try<Integer,Throwable> attempt = Try.fromPublisher(reactiveStream);
         
         //Try[1]
      * 
@@ -198,9 +198,9 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
      * 
      * <pre>
      * {@code 
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
         
-        Try<Integer,Throwable> attempt = Try.fromIterable(stream);
+        Try<Integer,Throwable> attempt = Try.fromIterable(reactiveStream);
         
         //Try[1]
      * 
@@ -774,7 +774,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             cf.run();
             return Try.success(null);
         } catch (final Throwable t) {
-            t.printStackTrace();
+
             if (classes.length == 0)
                 return Try.failure((X) t);
             val error = Stream.of(classes)
@@ -1674,7 +1674,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Try<R, X> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -1683,7 +1683,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> Try<Tuple2<T, U>, X> zipS(final Stream<? extends U> other) {

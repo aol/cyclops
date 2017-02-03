@@ -74,7 +74,7 @@ public class ReactiveTask implements Subscription {
     }
 
     /**
-     * Request all elements to be processed asynchronously in the processing stream
+     * Request all elements to be processed asynchronously in the processing reactiveStream
      * 
      * @return New ReactiveTask that references the execution of the new async task
      */

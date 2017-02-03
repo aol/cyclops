@@ -57,7 +57,7 @@ public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T>implement
         return Streams.reactiveSeq(StreamSupport.stream(new ClosingSpliterator(
                                                                                    Long.MAX_VALUE, queue, open),
                                                             false),
-                                       Optional.empty(), Optional.empty());
+                                       Optional.empty());
     }
 
 }

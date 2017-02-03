@@ -7,6 +7,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
+import com.aol.cyclops2.types.Unit;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Trampoline;
@@ -17,6 +18,7 @@ import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.ListT;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
@@ -577,12 +579,11 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     @SafeVarargs
     public static <T> ListX<T> of(final T... values) {
-      //  List<T> list = Arrays.asList(values);
+
         final List<T> res = (List<T>) defaultCollector().supplier()
                 .get();
         for (final T v : values)
             res.add(v);
-       // return fromIterable(res);
 
         return fromIterable(res);
     }
@@ -602,7 +603,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @return ListX
      */
     public static <T> ListX<T> fromPublisher(final Publisher<? extends T> publisher) {
-        return ReactiveSeq.fromPublisher((Publisher<T>) publisher)
+        return Spouts.from((Publisher<T>) publisher)
                           .toListX();
     }
 
@@ -641,7 +642,7 @@ public interface ListX<T> extends To<ListX<T>>,
     ListX<T> withCollector(Collector<T, ?, List<T>> collector);
 
     /**
-     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 
@@ -691,7 +692,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
 
     /* (non-Javadoc)
-     * @see java.util.Collection#stream()
+     * @see java.util.Collection#reactiveStream()
      */
     @Override
     default ReactiveSeq<T> stream() {
@@ -728,7 +729,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
     /**
      * Combine two adjacent elements in a ListX using the supplied BinaryOperator
-     * This is a stateful grouping and reduction operation. The output of a combination may in turn be combined
+     * This is a stateful grouping and reduction operation. The emitted of a combination may in turn be combined
      * with it's neighbor
      * <pre>
      * {@code 
@@ -878,7 +879,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function, java.util.stream.Collector)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function, java.util.reactiveStream.Collector)
      */
     @Override
     default <K, A, D> ListX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
@@ -1102,7 +1103,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> ListX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -1112,7 +1113,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <S, U> ListX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -1121,7 +1122,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <T2, T3, T4> ListX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -1338,7 +1339,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default ListX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1374,7 +1375,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.util.stream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default ListX<T> retainAllS(final Stream<? extends T> seq) {
@@ -1567,6 +1568,7 @@ public interface ListX<T> extends To<ListX<T>>,
     default ListX<T> plusLoop(Supplier<Optional<T>> supplier) {
         return (ListX<T>)MutableCollectionX.super.plusLoop(supplier);
     }
+
 
     /**
      * Narrow a covariant List

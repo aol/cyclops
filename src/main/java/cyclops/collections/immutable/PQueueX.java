@@ -14,6 +14,7 @@ import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
@@ -196,7 +197,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
      * @return PQueueX
      */
     public static <T> PQueueX<T> fromPublisher(final Publisher<? extends T> publisher) {
-        return ReactiveSeq.fromPublisher((Publisher<T>) publisher)
+        return Spouts.from((Publisher<T>) publisher)
                           .toPQueueX();
     }
 
@@ -230,7 +231,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
                        .mapReduce(stream);
     }
     /**
-     * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 
@@ -338,7 +339,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
     /**
      * Combine two adjacent elements in a PQueueX using the supplied
      * BinaryOperator This is a stateful grouping & reduction operation. The
-     * output of a combination may in turn be combined with it's neighbor
+     * emitted of a combination may in turn be combined with it's neighbor
      * 
      * <pre>
      * {@code 
@@ -792,7 +793,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
      * 
      * @see
      * com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#
-     * zip(java.util.stream.Stream)
+     * zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> PQueueX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -806,7 +807,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
      * 
      * @see
      * com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#
-     * zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <S, U> PQueueX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -819,8 +820,8 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
      * 
      * @see
      * com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#
-     * zip4(java.util.stream.Stream, java.util.stream.Stream,
-     * java.util.stream.Stream)
+     * zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream,
+     * java.util.reactiveStream.Stream)
      */
     @Override
     default <T2, T3, T4> PQueueX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -1091,7 +1092,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
      * 
      * @see
      * com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#
-     * removeAllS(java.util.stream.Stream)
+     * removeAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default PQueueX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1143,7 +1144,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
      * 
      * @see
      * com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#
-     * retainAllS(java.util.stream.Stream)
+     * retainAllS(java.util.reactiveStream.Stream)
      */
     @Override
     default PQueueX<T> retainAllS(final Stream<? extends T> seq) {

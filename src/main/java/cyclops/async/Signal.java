@@ -74,7 +74,8 @@ public class Signal<T> {
      * @return newValue
      */
     public T set(final T newValue) {
-        continuous.offer(newValue);
+        if(continuous!=null)
+         continuous.offer(newValue);
 
         setDiscreteIfDiff(newValue);
         return newValue;
@@ -96,8 +97,8 @@ public class Signal<T> {
      * 
      */
     public void close() {
-
-        continuous.close();
+        if(continuous!=null)
+          continuous.close();
         discrete.close();
     }
 

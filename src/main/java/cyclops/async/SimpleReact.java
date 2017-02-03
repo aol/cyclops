@@ -1,35 +1,24 @@
 package cyclops.async;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
-import java.util.function.Supplier;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import org.reactivestreams.Publisher;
-
 import com.aol.cyclops2.internal.react.SimpleReactStreamImpl;
 import com.aol.cyclops2.internal.react.stream.ReactBuilder;
 import com.aol.cyclops2.react.RetryBuilder;
 import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
-import com.aol.cyclops2.types.stream.reactive.SeqSubscriber;
 import com.nurkiewicz.asyncretry.RetryExecutor;
-
+import cyclops.stream.Spouts;
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
+import org.reactivestreams.Publisher;
+
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.function.Supplier;
+import java.util.stream.*;
 
 /**
  * 
@@ -198,9 +187,9 @@ public class SimpleReact implements ReactBuilder {
      */
     public <T> SimpleReactStream<T> fromPublisher(final Publisher<? extends T> publisher) {
         Objects.requireNonNull(publisher);
-        final SeqSubscriber<T> sub = SeqSubscriber.subscriber();
-        publisher.subscribe(sub);
-        return sub.toSimpleReact(this);
+        Publisher<T> narrowed = (Publisher<T>)publisher;
+        return Spouts.from(narrowed)
+                     .toSimpleReact(this);
     }
 
     /**
@@ -267,7 +256,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a stream.
+     * Start a reactive dataflow from a reactiveStream.
      * 
      * @param stream that will be used to drive the reactive dataflow
      * @return Next stage in the reactive flow
@@ -391,7 +380,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a stream of CompletableFutures.
+     * Start a reactive dataflow from a reactiveStream of CompletableFutures.
      * 
      * @param stream of CompletableFutures that will be used to drive the reactive dataflow
      * @return Next stage in the reactive flow
@@ -403,7 +392,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a stream.
+     * Start a reactive dataflow from a reactiveStream.
      * 
      * @param stream that will be used to drive the reactive dataflow
      * @return Next stage in the reactive flow
@@ -415,7 +404,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a stream.
+     * Start a reactive dataflow from a reactiveStream.
      * 
      * @param stream that will be used to drive the reactive dataflow
      * @return Next stage in the reactive flow
@@ -427,7 +416,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a stream.
+     * Start a reactive dataflow from a reactiveStream.
      * 
      * @param stream that will be used to drive the reactive dataflow
      * @return Next stage in the reactive flow

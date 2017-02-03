@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.futurestream.Continuation;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Xor;
@@ -11,14 +12,14 @@ import com.aol.cyclops2.react.async.subscription.Continueable;
 
 /**
  * 
- * Interface for an Adapter that inputs data from 1 or more input Streams and sends it to 1 or more output Streams
+ * Interface for an Adapter that inputs data from 1 or more input Streams and sends it to 1 or more emitted Streams
  * 
  * @author johnmcclean
  *
  * @param <T> Data type
  */
 public interface Adapter<T> {
-
+    public void addContinuation(Continuation cont);
     /**
      * @return A structural Pattern Matcher for this Adapter that allows matching on  Queue / Topic types
      */
@@ -59,7 +60,7 @@ public interface Adapter<T> {
     }
 
     /**
-     * @return Sequential future stream generated from this adapter {@see  Adapter#futureStream(LazyReact) }
+     * @return Sequential future reactiveStream generated from this adapter {@see  Adapter#futureStream(LazyReact) }
      */
     default FutureStream<T> futureStream() {
         return new LazyReact().fromStream(stream());
