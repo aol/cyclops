@@ -69,7 +69,7 @@ Mixed Sequential and Parallel Stream
 ReactiveSeq.range(0, 1000)
            .parallel(new ForkJoinPool(10),par -> par.map(this::parallelTransform))
            .map(this::sequentialTransform)
-           .forEach(System.out::println)
+           .forEach(System.out::println,System.err::println,this::finished);
 ``` 
 
 Replaying Streams
