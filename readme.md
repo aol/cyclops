@@ -125,6 +125,29 @@ new LazyReact(100,100).generate(()->"data") //100 active tasks, 100 threads
                       .run();
 ```
 
+reactive-streams : Event Driven Push based Streams
+
+```java
+ Either<Throwable,Integer> resultOrError =    Spouts.publishOn(ReactiveSeq.of(1,2,3,4,5),Executors.newFixedThreadPool(1));
+                                                    .combine((a, b) -> a < 5, Semigroups.intSum)
+                                                    .findFirstOrError();
+```
+In the example above a synchronous Stream is executed on the provided Executor and it's output pushed into another reactive-stream that sums numbers so long as the total remains below 5. Once the total exceeds 5 it's is pushed asynchronously into the returned Either type (alternatively an error may be pushed down instead). The Either type can continue the reactive chain. The code above is completely non-blocking.
+Streams created using Spouts factory can by default support non-blocking backpressure as defined in the reactive-streams spec.
+                               
+Backpressure free : Event Driven Push based Streams
+
+```java
+ Maybe<Integer> resultOrError =    Spouts.observeOn(ReactiveSeq.of(1,2,3,4,5),
+                                                                            Executors.newFixedThreadPool(1));
+                                                    .zipP(Spouts.observeOn(ReactiveSeq.of(100,200),
+                                                                            Executors.newFixedThreadPool(), (a,b)->a+b)
+                                                    .findOne();
+```
+The Spouts observeOn and async operators create event driven Streams that do not have the overhead of managing backpressure. In the above example the first result is pushed asynchronously into the reactive Maybe type.
+
+
+
 # 2.x Type dictionary
 
 ## cyclops
