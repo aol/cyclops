@@ -40,7 +40,8 @@ compile 'com.aol.simplereact:cyclops-react:x.y.z'
 # Features
 
 * Deep consistent and integrated API across a broad range of key functional types
-* An extended JDK Stream type - replayable + many additional operators
+* ReactiveSeq extends JDK Stream and offers multiple modes of execution - synchonous, asynchronous,
+   asynchronous with backpressure, parallel and more.
 * Fast Lazy Collection types for efficient functional transformations
 * FutureStreams for parallel I/O
 * Core components for building asynchronous applications
@@ -71,6 +72,25 @@ ReactiveSeq.range(0, 1000)
            .map(this::sequentialTransform)
            .forEach(System.out::println,System.err::println,this::finished);
 ``` 
+
+Single-threaded scatter / gather 
+
+```java
+ReactiveSeq.of(1,2,3,4)
+           .fanOutMergeIn(s1->s1.filter(i->i%2==0).map(this::group1),
+                        s2->s2.filter(i->i%2!=0).map(this::group2))
+           .toListX();
+ ```
+ 
+Parallel scatter / gather
+
+```java
+ReactiveSeq.of(1,2,3,4)
+           .parallelFanOutZipIn(s1->s1.filter(i->i%2==0).map(this::group1),
+                                s2->s2.filter(i->i%2!=0).map(this::group2),(g1,g2)->process(g1,g2))
+           .toListX();
+ ```
+
 
 Replaying Streams
 
