@@ -88,8 +88,9 @@ Asynchronous stream execution
 
 ```java
 //cyclops.async.Future
+ Executor ex = Executors.newFixedThreadPool(1)
  Future<Integer> asyncResult = ReactiveSeq.of(1,2,3,4)
-                                           .foldFuture(Executors.newFixedThreadPool(1),s->s.reduce( 50,(acc,next) -> acc+next));
+                                          .foldFuture(ex,s->s.reduce( 50,(acc,next) -> acc+next));
                                            
  asyncResult.peek(System.out::println)
             .map(this::processResult);
