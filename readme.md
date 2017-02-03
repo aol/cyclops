@@ -314,7 +314,12 @@ Interfaces
 | type | description | characteristics |
 |------|-------------|-----------------|
 | ListT     | Type safe list transformer of manipulating lists in a monadic context            | Higher kinded                 |
+| StreamT     | Type safe Stream transformer of manipulating Streams in a monadic context            | Higher kinded                 |
 | FutureT     | Type safe future transformer of manipulating futures in a monadic context            | Higher kinded                 |
+| CompletableFutureT     | Type safe CompletableFuture transformer of manipulating futures in a monadic context     | Higher kinded |
+| OptionalT     | Type safe Optional transformer of manipulating optionals in a monadic context          | Higher kinded                |
+| MaybeT     | Type safe Maybe transformer of manipulating Maybes in a monadic context            | Higher kinded                 |
+| EvalT     | Type safe Eval transformer of manipulating Evals in a monadic context            | Higher kinded                 |
 
 
 ### cyclops.typeclasses
