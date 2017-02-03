@@ -232,9 +232,9 @@ Interfaces
 | Ior     | Inclusive Or, maybe one of two values or both            | Eager, sum and product type                 |
 | Xor     | Exclusive Or, maybe one of two values, eager analogue of Either            | Eager, sum type                 |
 | Either     | Lazy Either type maybe one of two values, lazy analogue of Xor            | Optionally Reactive or Coreactive, Lazy, tail recursive, sum type                 |
-| Either3     | Lazy Either type maybe one of three values            | Lazy, tail recursive, sum type                 |
-| Either4     | Lazy Either type maybe one of four values            | Lazy, tail recursive, sum type                 |
-| Either5     | Lazy Either type maybe one of five values            | Lazy, tail recursive, sum type                 |
+| Either3     | Lazy Either type maybe one of three values            | Optionally Reactive or Coreactive, Lazy, tail recursive, sum type                 |
+| Either4     | Lazy Either type maybe one of four values            | Optionally Reactive or Coreactive, Lazy, tail recursive, sum type                 |
+| Either5     | Lazy Either type maybe one of five values            | Optionally Reactive or Coreactive, Lazy, tail recursive, sum type                 |
 
 ## cyclops.collections (mutable / immutable)
 
