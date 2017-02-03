@@ -60,7 +60,7 @@ public  class AsyncRSReactiveStreamXTest {
 
         assertThat(of(1,2,3)
                         .flatMapP(i->Maybe.of(i))
-                        .toListX(),equalTo(Arrays.asList(1,2,3)));
+                        .toListX(),Matchers.hasItems(1,2,3));
         
         
     }
