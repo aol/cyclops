@@ -754,13 +754,6 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor
      */
     <R> R visit(Function<? super ST, ? extends R> secondary, Function<? super PT, ? extends R> primary);
 
-    @Deprecated //use bimap instead
-    default <R1, R2> Xor<R1, R2> mapBoth(final Function<? super ST, ? extends R1> secondary, final Function<? super PT, ? extends R2> primary) {
-        if (isSecondary())
-            return (Xor<R1, R2>) swap().map(secondary)
-                                       .swap();
-        return (Xor<R1, R2>) map(primary);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)

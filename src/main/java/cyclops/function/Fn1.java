@@ -5,6 +5,8 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import cyclops.control.*;
+import cyclops.control.either.Either;
+import cyclops.monads.Kleisli;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import cyclops.collections.immutable.PStackX;
@@ -20,6 +22,8 @@ import cyclops.stream.Streamable;
 import org.jooq.lambda.function.Function1;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 
 @FunctionalInterface
 public interface Fn1<T1,  R> extends Function1<T1,R> {
@@ -62,8 +66,49 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
         return Memoize.memoizeFunction(this,c);
     }
 
+    default <T2,R2> Fn1<Xor<T1, T2>, Xor<R, R2>> merge(Function<? super T2, ? extends R2> fn) {
+        Fn1<T1, Xor<R, R2>> first = andThen(Either::left);
+        Function<? super T2, ? extends Xor<R,R2>> second = fn.andThen(Either::right);
+        return first.fanIn(second);
+
+    }
+
+    default <T2> Fn1<Xor<T1, T2>, R> fanIn(Function<? super T2, ? extends R> fanIn) {
+        return e ->   e.visit(this, fanIn);
+    }
+    default <__> Fn1<Xor<T1, __>, Xor<R, __>> left() {
+
+        return either ->  either.bimap(this,Function.identity());
+    }
+    default <__> Fn1<Xor<__,T1>, Xor<__,R>> right() {
+
+        return either ->  either.bimap(Function.identity(),this);
+    }
+
+
     default <R1> Fn1<T1,Tuple2<R,R1>> product(Fn1<? super T1, ? extends R1> fn){
         return in -> Tuple.tuple(apply(in),fn.apply(in));
+    }
+
+    default <__> Fn1<Tuple2<T1, __>, Tuple2<R, __>> first() {
+
+        return t-> Tuple.tuple(apply(t.v1),t.v2);
+    }
+    default <__> Fn1<Tuple2<__, T1>, Tuple2<__, R>> second() {
+
+        return t-> Tuple.tuple(t.v1,apply(t.v2));
+    }
+
+
+
+
+    default <R2,R3> Fn1<T1, Tuple3<R, R2, R3>> product(Function<? super T1, ? extends R2> fn2, Function<? super T1, ? extends R3> fn3) {
+        return a -> Tuple.tuple(apply(a), fn2.apply(a),fn3.apply(a));
+    }
+    default <R2,R3,R4> Fn1<T1, Tuple4<R, R2,R3,R4>> product(Function<? super T1, ? extends R2> fn2,
+                                                           Function<? super T1, ? extends R3> fn3,
+                                                           Function<? super T1, ? extends R4> fn4) {
+        return a -> Tuple.tuple(apply(a), fn2.apply(a),fn3.apply(a),fn4.apply(a));
     }
 
 
@@ -88,6 +133,12 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
 
 
 
+    static <T,R> Fn1<T,R> narrow(Function<? super T, ? extends R> fn){
+        if(fn instanceof Fn1){
+            return (Fn1<T,R>)fn;
+        }
+        return t->fn.apply(t);
+    }
     default FunctionalOperations<T1,R> functionOps(){
         return in->apply(in);
     }
@@ -109,6 +160,11 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
         default <R1> Fn1<T1,R1> coflatMap(final Function<? super Fn1<? super T1,? extends R>, ? extends  R1> f) {
             return in-> f.apply(this);
         }
+
+
+
+
+
 
         default <W extends WitnessType<W>> AnyM<W, R> mapF(AnyM<W, T1> functor) {
             return functor.map(this);
