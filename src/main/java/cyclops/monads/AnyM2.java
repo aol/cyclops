@@ -120,10 +120,10 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
     <R> AnyM2<W,R,T2> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
     <R> AnyM2<W,R,T2> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn);
     default <R> AnyM2<W,R,T2> flatMapA(Function<? super T, ? extends AnyM<W, ? extends R>> fn){
-        return adapter().flatMap(this, fn);
+        return (AnyM2<W,R,T2>)adapter().flatMap(this, fn);
     }
     default <R> AnyM2<W,R,T2> map(Function<? super T, ? extends R> fn){
-        return adapter().map(this, fn);
+        return (AnyM2<W,R,T2>)adapter().map(this, fn);
     }
     default <T> AnyM2<W,T,T2> fromIterable(Iterable<T> t){
         return  (AnyM2<W,T,T2>)adapter().unitIterable(t);
@@ -195,7 +195,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      */
     @Override
     default <T> AnyM2<W,T,T2> unit(T t){
-        return adapter().unit(t);
+        return (AnyM2<W,T,T2>)adapter().unit(t);
     }
     
     /**
@@ -216,7 +216,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      * @return Function to apply an Applicative's value to function
      */
     public static <W extends WitnessType<W>,T,T2,R> Function<AnyM2<W,T,T2>,AnyM2<W,R,T2>> ap(AnyM2<W, Function<T, R>,T2> fn){
-        return apply->apply.adapter().ap(fn,apply);
+        return apply->(AnyM2<W,R,T2>)apply.adapter().ap(fn,apply);
     }
     /**
      * Applicative ap2 method to use fluently to apply to a curried function
@@ -234,7 +234,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      * @return Function to apply two Applicative's values to a function
      */
     public static <W extends WitnessType<W>,T,T2,R,T3> BiFunction<AnyM2<W,T,T3>,AnyM2<W,T2,T3>,AnyM2<W,R,T3>> ap2(AnyM2<W, Function<T, Function<T2, R>>,T3> fn){
-        return (apply1,apply2)->apply1.adapter().ap2(fn,apply1,apply2);
+        return (apply1,apply2)->(AnyM2<W,R,T3>)apply1.adapter().ap2(fn,apply1,apply2);
     }
 
     /**
@@ -258,7 +258,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      * @return Filtered AnyM
      */
     default AnyM2<W,T,T2> filter(Predicate<? super T> fn){
-        return adapter().filter(this, fn);
+        return (AnyM2<W,T,T2>)adapter().filter(this, fn);
     }
 
 
@@ -418,7 +418,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      * @return Empty AnyM
      */
     default <T> AnyM2<W,T,T2> empty(){
-        return adapter().empty();
+        return (AnyM2<W,T,T2>)adapter().empty();
     }
 
     
@@ -490,9 +490,9 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
 
     public static  <W extends WitnessType<W>,T,T2> AnyM2<W,Stream<T>,T2> sequence(Stream<? extends AnyM2<W, T,T2>> stream, W witness) {
         FunctionalAdapter<W> c = witness.adapter();
-        AnyM2<W,Stream<T>,T2> identity = c.unit(ReactiveSeq.empty());
+        AnyM2<W,Stream<T>,T2> identity = ( AnyM2)c.unit(ReactiveSeq.empty());
        
-        BiFunction<AnyM2<W,Stream<T>,T2>,AnyM2<W,T,T2>,AnyM2<W,Stream<T>,T2>> combineToStream = (acc, next) -> c.ap2(c.unit(Lambda.l2((Stream<T> a)->(T b)->ReactiveSeq.concat(a,ReactiveSeq.of(b)))),acc,next);
+        BiFunction<AnyM2<W,Stream<T>,T2>,AnyM2<W,T,T2>,AnyM2<W,Stream<T>,T2>> combineToStream = (acc, next) -> (AnyM2)c.ap2(c.unit(Lambda.l2((Stream<T> a)->(T b)->ReactiveSeq.concat(a,ReactiveSeq.of(b)))),acc,next);
 
         BinaryOperator<AnyM2<W,Stream<T>,T2>> combineStreams = (a, b)-> (AnyM2<W,Stream<T>,T2>)a.zip(b,(z1, z2)->(Stream<T>)ReactiveSeq.concat(z1,z2)); // a.apply(b, (s1,s2)->s1);
 

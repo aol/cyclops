@@ -101,8 +101,8 @@ public class Xor2Test {
 	}
 	@Test
     public void visitXor(){
-        assertThat(just.mapBoth(secondary->"no", primary->"yes"),equalTo(Xor.primary("yes")));
-        assertThat(none.mapBoth(secondary->"no", primary->"yes"),equalTo(Xor.secondary("no")));
+        assertThat(just.bimap(secondary->"no", primary->"yes"),equalTo(Xor.primary("yes")));
+        assertThat(none.bimap(secondary->"no", primary->"yes"),equalTo(Xor.secondary("no")));
     }
 	@Test
 	public void testToMaybe() {

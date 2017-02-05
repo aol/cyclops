@@ -15,6 +15,7 @@ public final class FreeTest {
     private static Free<SupplierKind.µ, Long> fibonacci(long i){
         return fibonacci(i,1,0);
     }
+
     private static Free<SupplierKind.µ, Long> fibonacci(long n, long a, long b) {
         return n == 0 ? Free.done(b) : λK( ()->fibonacci(n-1, a+b, a))
                                         .kindTo(Fn0::suspend)

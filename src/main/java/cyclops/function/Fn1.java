@@ -76,11 +76,11 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
     default <T2> Fn1<Xor<T1, T2>, R> fanIn(Function<? super T2, ? extends R> fanIn) {
         return e ->   e.visit(this, fanIn);
     }
-    default <__> Fn1<Xor<T1, __>, Xor<R, __>> left() {
+    default <__> Fn1<Xor<T1, __>, Xor<R, __>> leftFn() {
 
         return either ->  either.bimap(this,Function.identity());
     }
-    default <__> Fn1<Xor<__,T1>, Xor<__,R>> right() {
+    default <__> Fn1<Xor<__,T1>, Xor<__,R>> rightFn() {
 
         return either ->  either.bimap(Function.identity(),this);
     }
@@ -90,11 +90,11 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
         return in -> Tuple.tuple(apply(in),fn.apply(in));
     }
 
-    default <__> Fn1<Tuple2<T1, __>, Tuple2<R, __>> first() {
+    default <__> Fn1<Tuple2<T1, __>, Tuple2<R, __>> firstFn() {
 
         return t-> Tuple.tuple(apply(t.v1),t.v2);
     }
-    default <__> Fn1<Tuple2<__, T1>, Tuple2<__, R>> second() {
+    default <__> Fn1<Tuple2<__, T1>, Tuple2<__, R>> secondFn() {
 
         return t-> Tuple.tuple(t.v1,apply(t.v2));
     }
