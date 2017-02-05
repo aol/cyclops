@@ -5,7 +5,6 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import cyclops.control.*;
-import cyclops.control.either.Either;
 import cyclops.monads.Kleisli;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
@@ -67,8 +66,8 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
     }
 
     default <T2,R2> Fn1<Xor<T1, T2>, Xor<R, R2>> merge(Function<? super T2, ? extends R2> fn) {
-        Fn1<T1, Xor<R, R2>> first = andThen(Either::left);
-        Function<? super T2, ? extends Xor<R,R2>> second = fn.andThen(Either::right);
+        Fn1<T1, Xor<R, R2>> first = andThen(Xor::secondary);
+        Function<? super T2, ? extends Xor<R,R2>> second = fn.andThen(Xor::primary);
         return first.fanIn(second);
 
     }
@@ -78,11 +77,11 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
     }
     default <__> Fn1<Xor<T1, __>, Xor<R, __>> leftFn() {
 
-        return either ->  either.bimap(this,Function.identity());
+        return either->  either.bimap(this,Function.identity());
     }
     default <__> Fn1<Xor<__,T1>, Xor<__,R>> rightFn() {
 
-        return either ->  either.bimap(Function.identity(),this);
+        return either->  either.bimap(Function.identity(),this);
     }
 
 
