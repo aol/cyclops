@@ -668,4 +668,14 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
         return ListT.of(this.map(a -> ListX.of(a)));
     }
 
+    /**
+     * Fluent api for type conversion
+     *
+     * @param reduce Funtion to convert this type
+     * @return Converted type
+     */
+    default <R> R to2(Function<? super AnyM2<W,T,T2>,? extends R> reduce){
+        return reduce.apply(this);
+    }
+
 }
