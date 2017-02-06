@@ -22,6 +22,11 @@ public class ReaderWriterState<R,W,S,T>  {
         return Fn0.run(runState.apply(r,s));
     }
 
+    public  ReaderWriterState<R,W,S,T> write(W value) {
+        BiFunction<? super R, ? super S, Free<Fn0.SupplierKind.µ,Tuple3<W,S, T>>> fn = (r,s)->runState.apply(r,s).map(t3->Tuple.tuple(monoid.apply(t3.v1,value),t3.v2,t3.v3));
+        return suspended(fn,monoid);
+    }
+
     public <R2> ReaderWriterState<R,W,S,R2> map(Function<? super T,? extends R2> mapper) {
 
         return mapState(t -> Tuple.tuple(t.v1, t.v2, mapper.apply(t.v3)));
@@ -41,6 +46,8 @@ public class ReaderWriterState<R,W,S,T>  {
         return suspended((r,s) -> runState.apply(r, s)
                 .flatMap(result -> Free.done(f.apply(result.v3).run(r, result.v2))),monoid);
     }
+
+
 
     public static <R,W,S,T> ReaderWriterState<R,W,S,T> rws(BiFunction<? super R, ? super S,? extends Tuple3<W,S, T>> runF, Monoid<W> monoid) {
 
