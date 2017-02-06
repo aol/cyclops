@@ -77,8 +77,8 @@ Single-threaded scatter / gather
 
 ```java
 ReactiveSeq.of(1,2,3,4)
-           .fanOutMergeIn(s1->s1.filter(i->i%2==0).map(this::group1),
-                          s2->s2.filter(i->i%2!=0).map(this::group2))
+           .fanOut(s1->s1.filter(i->i%2==0).map(this::group1),
+                   s2->s2.filter(i->i%2!=0).map(this::group2))
            .toListX();
  ```
  
