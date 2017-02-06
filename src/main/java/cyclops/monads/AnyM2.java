@@ -70,7 +70,6 @@ import java.util.stream.*;
  */
 public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
                                                                 Unwrapable,
-                                                              //  To<AnyM2<W,T,T2>>,
                                                                 EmptyUnit<T>,
                                                                 Unit<T>,
                                                                 Folds<T>,

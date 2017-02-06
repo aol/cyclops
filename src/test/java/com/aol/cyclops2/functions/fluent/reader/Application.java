@@ -3,14 +3,15 @@ package com.aol.cyclops2.functions.fluent.reader;
 import java.util.Map;
 
 import cyclops.function.Reader;
-
+import org.junit.Test;
 
 
 public class Application {
 
 	UserRepositoryImpl repo = new UserRepositoryImpl();
 	
-	
+
+
 	public Map<String,String> userInfo(String username) {
 		return run(new UserInfo().userInfo(username));
 	 }

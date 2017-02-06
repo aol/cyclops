@@ -18,8 +18,8 @@ import java.util.function.Function;
 /**
  * Free monad for cyclops2
  *
- * Inspiration and influences by https://github.com/xuwei-k/free-monad-java/blob/master/src/main/java/free/Free.java
- * and http://www.slideshare.net/kenbot/running-free-with-the-monads
+ * Inspiration and heavily influenced by https://github.com/xuwei-k/free-monad-java/blob/master/src/main/java/free/Free.java
+ * Other influences incl :- http://www.slideshare.net/kenbot/running-free-with-the-monads
  * and https://github.com/scalaz/scalaz/blob/series/7.2.x/core/src/main/scala/scalaz/Free.scala
  * and https://github.com/typelevel/cats/blob/master/free/src/main/scala/cats/free/Free.scala
  *

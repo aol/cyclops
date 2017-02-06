@@ -4,9 +4,7 @@ import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
 import cyclops.async.Future;
 import cyclops.control.Trampoline;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
-import cyclops.function.Reader;
+import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.AnyM2;
 import cyclops.monads.WitnessType;
@@ -33,7 +31,7 @@ import java.util.stream.Stream;
  * @param <T> Type of data stored inside the nested Future(s)
  */
 public final class ReaderT<W extends WitnessType<W>,T,R>  implements  To<ReaderT<W,T,R>>,
-        Transformable<R>{
+                                                                      Transformable<R>, Fn1<T,R> {
 
     private final AnyM2<W,Reader<T,R>,T> run;
 
@@ -105,7 +103,6 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements  To<ReaderT
                                   run.map(o -> o.map(f)));
     }
 
-
     public <B> ReaderT<W, T, B> flatMap(final Function<? super R, ? extends Reader<T, B>> f) {
 
         return new ReaderT<W,T, B>(
@@ -145,9 +142,114 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements  To<ReaderT
         return String.format("ReaderT[%s]", run.unwrap().toString());
     }
 
-    
+
+    public <T2, R1, R2, R3, B> ReaderT<W,T,B> forEach4M(Function<? super R, ? extends ReaderT<W,T,R1>> value1,
+                                                      BiFunction<? super R, ? super R1, ? extends ReaderT<W,T,R2>> value2,
+                                                      Fn3<? super R, ? super R1, ? super R2, ? extends ReaderT<W,T,R3>> value3,
+                                                      Fn4<? super R, ? super R1, ? super R2, ? super R3, ? extends B> yieldingFunction) {
+        return this.flatMapT(in->value1.apply(in)
+                .flatMapT(in2-> value2.apply(in,in2)
+                        .flatMapT(in3->value3.apply(in,in2,in3)
+                                .map(in4->yieldingFunction.apply(in,in2,in3,in4)))));
+
+    }
 
 
+    public <T2, R1, R2, B> ReaderT<W,T,B> forEach3M(Function<? super R, ? extends ReaderT<W,T,R1>> value1,
+                                                  BiFunction<? super R, ? super R1, ? extends ReaderT<W,T,R2>> value2,
+                                                  Fn3<? super R, ? super R1, ? super R2, ? extends B> yieldingFunction) {
+
+        return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2)
+                .map(in3->yieldingFunction.apply(in,in2,in3))));
+
+    }
+
+
+    public <R1, B> ReaderT<W,T,B> forEach2M(Function<? super R, ? extends ReaderT<W,T,R1>> value1,
+                                          BiFunction<? super R, ? super R1, ? extends B> yieldingFunction) {
+
+
+        return this.flatMapT(in->value1.apply(in)
+                .map(in2->yieldingFunction.apply(in,in2)));
+    }
+
+
+    public <R1, R2, R3, R4> ReaderT<W,T,R4> forEach4(Function<? super R, ? extends Function<T,R1>> value2,
+                                                   BiFunction<? super R, ? super R1, ? extends Function<T,R2>> value3,
+                                                   Fn3<? super R, ? super R1, ? super R2, ? extends Function<T,R3>> value4,
+                                                   Fn4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
+
+
+        return this.flatMap(in -> {
+
+            Reader<T,R1> a = FluentFunctions.of(value2.apply(in));
+            return a.flatMap(ina -> {
+                Reader<T,R2> b = FluentFunctions.of(value3.apply(in,ina));
+                return b.flatMap(inb -> {
+
+                    Reader<T,R3> c = FluentFunctions.of(value4.apply(in,ina,inb));
+
+                    return c.map(in2 -> {
+
+                        return yieldingFunction.apply(in, ina, inb, in2);
+
+                    });
+
+                });
+
+
+            });
+
+
+        });
+
+    }
+
+
+
+
+    public <R1, R2, R4> ReaderT<W,T,R4> forEach3(Function<? super R, ? extends Function<T,R1>> value2,
+                                               BiFunction<? super R, ? super R1, ? extends Function<T,R2>> value3,
+                                               Fn3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
+
+        return this.flatMap(in -> {
+
+            Reader<T,R1> a = FluentFunctions.of(value2.apply(in));
+            return a.flatMap(ina -> {
+                Reader<T,R2> b = FluentFunctions.of(value3.apply(in,ina));
+                return b.map(in2 -> {
+                    return yieldingFunction.apply(in, ina, in2);
+
+                });
+
+
+
+            });
+
+        });
+
+    }
+
+
+
+    public <R1, R4> ReaderT<W,T,R4> forEach2(Function<? super R, Function<T,R1>> value2,
+                                           BiFunction<? super R, ? super R1, ? extends R4> yieldingFunction) {
+
+        return this.flatMap(in -> {
+
+            Reader<T,R1> a = FluentFunctions.of(value2.apply(in));
+            return a.map(in2 -> {
+                return yieldingFunction.apply(in, in2);
+
+            });
+
+
+
+
+        });
+
+
+    }
 
 
    
@@ -182,5 +284,8 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements  To<ReaderT
     }
 
 
-
+    @Override
+    public R apply(T a) {
+        return run.firstValue().apply(a);
+    }
 }
