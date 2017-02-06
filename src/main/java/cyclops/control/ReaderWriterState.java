@@ -15,6 +15,9 @@ import java.util.function.Function;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReaderWriterState<R,W,S,T>  {
 
+    public static class µ {
+    }
+
     Monoid<W> monoid;
     BiFunction<R,S, Free<Fn0.SupplierKind.µ,Tuple3<W, S, T>>> runState;
 
@@ -38,6 +41,7 @@ public class ReaderWriterState<R,W,S,T>  {
         BiFunction<? super R, ? super S, Free<Fn0.SupplierKind.µ,Tuple3<W,S, T>>> runFn = (R r, S s) -> runState.apply(fn.apply(r), s);
         return suspended(runFn,monoid);
     }
+
     public <R2> ReaderWriterState<R,W,S,R2> map(Function<? super T,? extends R2> mapper) {
 
         return mapState(t -> Tuple.tuple(t.v1, t.v2, mapper.apply(t.v3)));
@@ -55,7 +59,11 @@ public class ReaderWriterState<R,W,S,T>  {
     public <R2> ReaderWriterState<R,W,S,R2> flatMap(Function<? super T,? extends  ReaderWriterState<R,W,S,R2>> f) {
 
         return suspended((r,s) -> runState.apply(r, s)
-                .flatMap(result -> Free.done(f.apply(result.v3).run(r, result.v2))),monoid);
+                .flatMap(result -> Free.done(f.apply(result.v3)
+                                              .run(r, result.v2)
+                                              .map((w2,s2,r2)->Tuple.tuple(monoid.apply(w2,result.v1),s2,r2)
+
+                ))),monoid);
     }
 
 

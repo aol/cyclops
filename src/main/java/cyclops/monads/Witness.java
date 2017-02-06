@@ -8,6 +8,7 @@ import java.util.SortedSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.internal.comprehensions.comprehenders.*;
 import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.control.Ior;
@@ -28,12 +29,6 @@ import cyclops.collections.ListX;
 import cyclops.collections.QueueX;
 import cyclops.collections.SetX;
 import cyclops.collections.SortedSetX;
-import com.aol.cyclops2.internal.comprehensions.comprehenders.CollectionXAdapter;
-import com.aol.cyclops2.internal.comprehensions.comprehenders.FutureAdapter;
-import com.aol.cyclops2.internal.comprehensions.comprehenders.MonadicValueAdapter;
-import com.aol.cyclops2.internal.comprehensions.comprehenders.OptionalAdapter;
-import com.aol.cyclops2.internal.comprehensions.comprehenders.StreamAdapter;
-import com.aol.cyclops2.internal.comprehensions.comprehenders.StreamableAdapter;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 
@@ -121,6 +116,8 @@ public interface Witness {
     public static <X extends Throwable,T> Try<T,X> Try(AnyM<tryType,? extends T> anyM){
         return anyM.unwrap();
     }
+
+
     public static enum stream implements StreamWitness<stream>{
         INSTANCE;
 
@@ -348,4 +345,4 @@ public interface Witness {
         }
         
     }
-}
+    }

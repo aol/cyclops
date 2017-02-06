@@ -13,6 +13,8 @@ import java.util.function.Function;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class State<S, T> {
+    public static class µ {
+    }
 
     private final Fn1<S, Free<Fn0.SupplierKind.µ,Tuple2<S, T>>> runState;
 
@@ -33,6 +35,9 @@ public final class State<S, T> {
 
     public static <S, T> State<S, T> transition(Function<? super S,? extends S> f, T value) {
         return state(s -> Tuple.tuple(f.apply(s),value));
+    }
+    public <T2, R> State<S, R> combine(State<S, T2> combine, BiFunction<? super T, ? super T2, ? extends R> combiner) {
+        return flatMap(a -> combine.map(b -> combiner.apply(a,b)));
     }
 
     public <R> State<S, R> map(Function<? super T,? extends R> mapper) {
@@ -197,6 +202,9 @@ public final class State<S, T> {
         return new State<>(s -> Free.done(runF.apply(s)));
     }
 
+    public static <S> State<S, Nothing> of(S s) {
+        return state(__ -> Tuple.tuple(s, (Nothing)Maybe.none()));
+    }
 
 
 

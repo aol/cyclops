@@ -21,6 +21,9 @@ import java.util.function.Function;
 @Getter
 public final class Writer<W, T> implements Transformable<T>, Iterable<T> {
 
+    public static class µ {
+    }
+
     private final Tuple2<T,W> value;
     private final Monoid<W> monoid;
 
