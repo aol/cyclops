@@ -14,6 +14,15 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+
+/**
+ * Compose functions that return monads
+ *
+ * @param <W> Monad kind
+ * @param <T> Function input type
+ * @param <R> Function return type
+ *              (inside monad e.g. Kleisli[stream,String,Integer] represents a function that takes a String and returns a Stream of Integers)
+ */
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
 public class Kleisli<W extends WitnessType<W>,T,R> implements Fn1<T,AnyM<W,R>>,
                                                                 Transformable<R>{
@@ -27,6 +36,9 @@ public class Kleisli<W extends WitnessType<W>,T,R> implements Fn1<T,AnyM<W,R>>,
         return fn.apply(a);
     }
 
+    public Kleisli<W,T,R> local(Function<? super R, ? extends R> local){
+        return kleisli(t->fn.apply(t).map(r->local.apply(r)),type);
+    }
     public <R1> Kleisli<W,T,R1> map(Function<? super R, ? extends R1> mapper){
         return kleisli(fn.andThen(am->am.map(mapper)),type);
     }
