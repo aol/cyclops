@@ -25,7 +25,7 @@ public class ReaderWriterState<R,W,S,T>  {
         return Fn0.run(runState.apply(r,s));
     }
 
-    public  ReaderWriterState<R,W,S,T> write(W value) {
+    public  ReaderWriterState<R,W,S,T> tell(W value) {
         BiFunction<? super R, ? super S, Free<Fn0.SupplierKind.µ,Tuple3<W,S, T>>> fn =
                 (r,s)->runState.apply(r,s).map(t3->Tuple.tuple(monoid.apply(t3.v1,value),t3.v2,t3.v3));
 

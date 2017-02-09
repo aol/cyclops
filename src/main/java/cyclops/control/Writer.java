@@ -36,8 +36,12 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T> {
         return writer(writer.value.v1, writer.monoid.apply(value.v2, writer.value.v2), writer.monoid);
     }
 
-    public Writer<W,T> write(W write){
+    public Writer<W,T> tell(W write){
         return writer(value.v1,monoid.apply(write,value.v2),monoid);
+    }
+
+    public <R> Writer<W,R> set(R value){
+            return writer(value,this.value.v2,monoid);
     }
 
     /*

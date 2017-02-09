@@ -798,7 +798,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
                     if(ref.get()==null && ref.compareAndSet(null,Continuation.empty())){
                         try {
-                            //use the first consuming thread to write this Stream onto the Queue
+                            //use the first consuming thread to tell this Stream onto the Queue
                             this.spliterator().forEachRemaining(queue::offer);
                         }finally {
                             queue.close();
@@ -4838,7 +4838,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                     if(wip.compareAndSet(false,true)){
                         try {
 
-                            //use the first consuming thread to write this Stream onto the Queue
+                            //use the first consuming thread to tell this Stream onto the Queue
                             if(!split.tryAdvance(topic::offer)){
                                 topic.close();
                                 return Continuation.empty();

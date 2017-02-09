@@ -60,7 +60,7 @@ abstract class CharToy<A> implements Higher<CharToy.µ, A> {
         }
 
 
-        public <Z> Z fold(final Fn2<Character, A, Z> output) {
+        public <Z> Z visit(final Fn2<Character, A, Z> output) {
             return output.apply(a, next);
         }
 
@@ -82,7 +82,7 @@ abstract class CharToy<A> implements Higher<CharToy.µ, A> {
         }
 
 
-        public <Z> Z fold(final Fn1<A, Z> bell) {
+        public <Z> Z visit(final Fn1<A, Z> bell) {
             return bell.apply(next);
         }
 
@@ -99,7 +99,7 @@ abstract class CharToy<A> implements Higher<CharToy.µ, A> {
         }
 
 
-        public <Z> Z fold(final Z done) {
+        public <Z> Z visit(final Z done) {
             return done;
         }
 

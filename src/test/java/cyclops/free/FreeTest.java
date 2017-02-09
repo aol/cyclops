@@ -1,9 +1,14 @@
 package cyclops.free;
 
 
+import static cyclops.free.CharToy.bell;
+import static cyclops.free.CharToy.done;
+import static cyclops.free.CharToy.output;
 import static cyclops.function.Fn0.SupplierKind;
 
+import cyclops.control.Xor;
 import cyclops.function.Fn0;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.free.CharToy.*;
@@ -52,16 +57,68 @@ public final class FreeTest {
 
 
         assertThat(expected,equalTo(
-                showProgram(CharToy.output('A')
-                                   .forEach4(unit1 -> CharToy.bell(),
-                                             (unit1,unit2) -> CharToy.output('B'),
-                                             (u1,u2,u3)->CharToy.done()))));
+                showProgram(output('A')
+                                   .forEach4(unit1 -> bell(),
+                                             (unit1,unit2) -> output('B'),
+                                             (u1,u2,u3)-> done()))));
+    }
+    @Test
+    public void interpreterInterleave(){
+        String expected = "emitted A\n" +
+                "bell \n" +
+                "emitted B\n" +
+                "done\n";
+
+
+
+        Free<µ, Void> one =                   output('A')
+                .forEach4(__ ->               bell(),
+                         (__, ___) ->         output('B'),
+                         (__, ___, ____) ->   done());
+
+        Free<µ, Void> two =                   output('C')
+                .forEach4(__ ->               bell(),
+                         (__, ___) ->         output('D'),
+                         (__, ___, ____) ->   done());
+
+
+        assertThat(expected,equalTo(
+                                interleaveProgram(one,two)));
     }
 
+    static <R> String interleaveProgram(Free<CharToy.µ,R> program1,Free<CharToy.µ,R> program2){
+
+        Tuple2<Xor<CharToy<Free<µ, R>>, R>, Xor<CharToy<Free<µ, R>>, R>> tuple = Free.product(CharToy.functor, program1, CharToy::narrowK, program2, CharToy::narrowK);
+        Xor<CharToy<Free<µ, R>>, R> a = tuple.v1;
+        Xor<CharToy<Free<µ, R>>, R> b = tuple.v2;
+
+
+
+
+        String one =a.visit(
+                        r ->   r.match()
+                                .visit(o->interleaveOutput(o,program2),
+                                        FreeTest::handleBell,
+                                        FreeTest::handleDone)
+                        ,
+                        FreeTest::handleReturn
+                    );
+        String two = b.visit(
+                r ->   r.match()
+                        .visit(o->interleaveOutput1(o,program1),
+                                FreeTest::handleBell,
+                                FreeTest::handleDone)
+                ,
+                FreeTest::handleReturn
+        );
+        return one +two;
+
+    }
 
     static <R> String showProgram(Free<CharToy.µ,R> program){
+        Xor<CharToy<Free<µ, R>>, R> xor = program.resume(CharToy.functor, CharToy::narrowK);
 
-       return program.resume(CharToy.functor, CharToy::narrowK)
+        return program.resume(CharToy.functor, CharToy::narrowK)
                 .visit(
                         r ->   r.match()
                                 .visit(FreeTest::handleOutput,
@@ -76,14 +133,26 @@ public final class FreeTest {
         return "return " + r + "\n";
     }
     static <R> String handleOutput(CharOutput<Free<CharToy.µ,R>> output){
-        return output.fold((a, next) -> "emitted " + a + "\n" + showProgram(next));
+        return output.visit((a, next) -> "emitted " + a + "\n" + showProgram(next));
     }
 
     static <R> String handleBell(CharBell<Free<CharToy.µ, R>> bell){
-       return bell.fold(next -> "bell " + "\n" + showProgram(next));
+       return bell.visit(next -> "bell " + "\n" + showProgram(next));
     }
 
     static <T> String handleDone(CharDone<T> done){
         return "done\n";
     }
+
+    static <R> String interleaveOutput(CharOutput<Free<CharToy.µ,R>> output,Free<CharToy.µ,R> program2){
+        System.out.println("Running interA");
+        return output.visit((a, next) -> "emitted " + a + "\n" + interleaveProgram(next,program2));
+    }
+
+    static <R> String interleaveOutput1(CharOutput<Free<CharToy.µ,R>> output,Free<CharToy.µ,R> program1){
+        System.out.println("Running interB");
+        return output.visit((a, next) -> "emitted " + a + "\n" + interleaveProgram(program1,next));
+    }
+
+
 }

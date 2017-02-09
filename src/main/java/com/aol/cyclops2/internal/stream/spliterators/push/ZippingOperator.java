@@ -24,7 +24,7 @@ import java.util.function.LongConsumer;
  * Created by johnmcclean on 12/01/2017.
  */
 @AllArgsConstructor
-public class ZippingOperator<T1,T2,R> implements Operator<R>, Printable {
+public class ZippingOperator<T1,T2,R> implements Operator<R>{
 
 
     Operator<? super T1> left;
