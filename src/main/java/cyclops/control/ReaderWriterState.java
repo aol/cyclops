@@ -18,8 +18,8 @@ public class ReaderWriterState<R,W,S,T>  {
     public static class µ {
     }
 
-    Monoid<W> monoid;
-    BiFunction<R,S, Free<Fn0.SupplierKind.µ,Tuple3<W, S, T>>> runState;
+    private final Monoid<W> monoid;
+    private final BiFunction<R,S, Free<Fn0.SupplierKind.µ,Tuple3<W, S, T>>> runState;
 
     public Tuple3<W,S,T> run(R r,S s) {
         return Fn0.run(runState.apply(r,s));
