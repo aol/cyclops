@@ -64,10 +64,7 @@ public final class FreeTest {
     }
     @Test
     public void interpreterInterleave(){
-        String expected = "emitted A\n" +
-                "bell \n" +
-                "emitted B\n" +
-                "done\n";
+        String expected = "emitted A\nbell \nemitted B\ndone\nemitted C\nbell \nemitted B\ndone\nbell \nemitted D\ndone\nemitted C\nemitted A\nbell \nemitted B\ndone\nbell \nemitted D\ndone\nbell \nemitted D\ndone\n";
 
 
 
