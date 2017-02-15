@@ -1,9 +1,12 @@
 package cyclops.monads;
 
 import cyclops.collections.ListX;
+import cyclops.control.Xor;
 import cyclops.monads.Witness.stream;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.stream.ReactiveSeq;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import java.util.stream.Collectors;
@@ -17,6 +20,37 @@ import static org.junit.Assert.*;
  * Created by johnmcclean on 06/02/2017.
  */
 public class KleisliTest {
+    @Test
+    public void firstK(){
+        Kleisli<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
+        assertThat(ListX.of(10),
+                equalTo(k1.firstK().apply(Tuple.tuple(10,-1)).reactiveSeq().map(Tuple2::v1).toList()));
+    }
+
+    @Test
+    public void secondK(){
+        Kleisli<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
+        assertThat(ListX.of(-1),
+                equalTo(k1.secondK().apply(Tuple.tuple(10,-1)).reactiveSeq().map(Tuple2::v2).toList()));
+    }
+    @Test
+    public void leftK(){
+        Kleisli<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
+        assertThat(ListX.of(10),
+                equalTo(k1.leftK(stream.INSTANCE).apply(Xor.secondary(10)).reactiveSeq().map(Xor::secondaryGet).toList()));
+    }
+    @Test
+    public void rightK(){
+        Kleisli<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
+        assertThat(ListX.of(10),
+                equalTo(k1.rightK(stream.INSTANCE).apply(Xor.primary(10)).reactiveSeq().map(Xor::get).toList()));
+    }
+    @Test
+    public void andThen(){
+        Kleisli<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
+        assertThat("10",equalTo(k1.andThen(s->s.reactiveSeq()
+                                                        .join()).apply(10)));
+    }
 
     @Test
     public void local(){

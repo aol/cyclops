@@ -147,34 +147,7 @@ public class LazyListX<T> extends AbstractLazyMutableCollection<T,List<T>> imple
     }
 
 
-    public static void main(String[] args){
 
-        ReactiveSeq<Integer> stream = ReactiveSeq.of(1,2,3);
-        stream.map(i->i*2).printOut();
-        ReactiveSeq<Integer> r2 = stream.map(i->i*2);
-        r2.map(i->i*100).zipWithIndex().printOut();
-        r2.map(i->i*1000).zipWithIndex().printOut();
-       /**
-        LazyListX<Integer> l2 = new LazyListX<>(null,ReactiveSeq.of(1,2,3), Collectors.toList());
-        l2.map(i->i*100).printOut();
-        l2.map(i->i*1000).printOut();
-**/
-        /**
-       // LazyListX<Integer> list = new LazyListX<>(null,ReactiveSeq.of(1,2,3), Collectors.toList());
-        LazyListX<Integer> list = new LazyListX<>(Arrays.asList(1,2,3),null, Collectors.toList());
-
-        list.map(i->i*2).printOut();
-        ListX<Integer> l2 = list.map(i->i*2);
-        System.out.println(l2.getClass());
-        list.map(i->i*3)
-            .peek(System.out::println)
-        .forEach(System.err::println);
-
-        l2.map(i->i*100).printOut();
-        System.out.println(l2.getClass() + " " + ((LazyListX)l2).getList());
-        l2.map(i->i*1000).printOut();
-**/
-    }
 
     @Override
     public <R> LazyListX<R> unit(Collection<R> col) {

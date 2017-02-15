@@ -2,8 +2,8 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import cyclops.Reducers;
-import cyclops.collections.immutable.PBagX;
 import cyclops.collections.immutable.PVectorX;
+import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PVector;
 
@@ -45,6 +45,9 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
         super(list, seq, Reducers.toPVector());
 
 
+    }
+    public LazyPVectorX(PVector<T> list, ReactiveSeq<T> seq, Reducer<PVector<T>> reducer) {
+        super(list, seq, reducer);
     }
     public LazyPVectorX(PVector<T> list) {
         super(list, null, Reducers.toPVector());

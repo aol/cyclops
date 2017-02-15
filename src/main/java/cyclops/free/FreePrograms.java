@@ -12,6 +12,8 @@ import java.util.function.Function;
  * Static for comprehensions for working with Free
  */
 public interface FreePrograms {
+
+
     public static <T,F,R1, R2, R3,R4,R5,R6,R7> Free<F,R7> forEach(Free<F,T> free,
                                                               Function<? super T, ? extends Free<F,R1>> value2,
                                                               Function<? super Tuple2<? super T,? super R1>, ? extends Free<F,R2>> value3,

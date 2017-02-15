@@ -2,8 +2,8 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import cyclops.Reducers;
-import cyclops.collections.immutable.PBagX;
 import cyclops.collections.immutable.POrderedSetX;
+import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.POrderedSet;
 
@@ -46,6 +46,11 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
     public LazyPOrderedSetX(POrderedSet<T> list, ReactiveSeq<T> seq) {
         super(list, seq, Reducers.toPOrderedSet());
         
+
+    }
+    public LazyPOrderedSetX(POrderedSet<T> list, ReactiveSeq<T> seq, Reducer<POrderedSet<T>> reducer) {
+        super(list, seq, reducer);
+
 
     }
     public LazyPOrderedSetX(POrderedSet<T> list) {

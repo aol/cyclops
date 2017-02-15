@@ -2,8 +2,8 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import cyclops.Reducers;
-import cyclops.collections.immutable.PBagX;
 import cyclops.collections.immutable.PStackX;
+import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import lombok.Getter;
 import org.pcollections.PStack;
@@ -49,6 +49,11 @@ public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>
     private final boolean efficientOps;
     public LazyPStackX(PStack<T> list, ReactiveSeq<T> seq, boolean efficientOps) {
         super(list, seq, Reducers.toPStack());
+        this.efficientOps= efficientOps;
+
+    }
+    public LazyPStackX(PStack<T> list, ReactiveSeq<T> seq, boolean efficientOps, Reducer<PStack<T>> reducer) {
+        super(list, seq, reducer);
         this.efficientOps= efficientOps;
 
     }
