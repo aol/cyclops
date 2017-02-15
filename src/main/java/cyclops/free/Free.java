@@ -10,7 +10,10 @@ import cyclops.function.Fn4;
 import cyclops.function.Fn5;
 import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -18,8 +21,8 @@ import java.util.function.Function;
 /**
  * Free monad for cyclops2
  *
- * Inspiration and influences by https://github.com/xuwei-k/free-monad-java/blob/master/src/main/java/free/Free.java
- * and http://www.slideshare.net/kenbot/running-free-with-the-monads
+ * Inspiration and heavily influenced by https://github.com/xuwei-k/free-monad-java/blob/master/src/main/java/free/Free.java
+ * Other influences incl :- http://www.slideshare.net/kenbot/running-free-with-the-monads
  * and https://github.com/scalaz/scalaz/blob/series/7.2.x/core/src/main/scala/scalaz/Free.scala
  * and https://github.com/typelevel/cats/blob/master/free/src/main/scala/cats/free/Free.scala
  *
@@ -29,7 +32,7 @@ import java.util.function.Function;
  * @param <T> Data type of Transformable
  */
 @NoArgsConstructor(access=AccessLevel.PRIVATE)
-public abstract class Free<F, T> implements Printable {
+public abstract class Free<F, T> {
 
     public <R1, R2, R3,R4,R5> Free<F,R5> forEach6(Function<? super T, ? extends Free<F,R1>> value2,
                                                BiFunction<? super T, ? super R1, ? extends Free<F,R2>> value3,
@@ -155,8 +158,11 @@ public abstract class Free<F, T> implements Printable {
 
     }
     public static <F, T> Free<F, T> liftF(final Higher<F, T> value, final Functor<F> functor){
+
         return new Suspend<F, T>(functor.map(Free::done, value));
     }
+
+
 
     public static <F, T> Free<F, T> done(final T t){
         return new Pure<>(t);
@@ -189,6 +195,36 @@ public abstract class Free<F, T> implements Printable {
 
     public final <R> Xor<R, T> resume(final Functor<F> functor, Function<Higher<F,Free<F,T>>,R> decoder) {
         return resume(functor).secondaryMap(decoder);
+    }
+
+
+
+    /*
+     * Functor and HKT decoder for Free
+     */
+    @AllArgsConstructor
+    static class FreeF<F,T>{
+
+        Functor<F> functor;
+        Function<Higher<F,Free<F,?>>,?> decoder1;
+
+        private <R,X> Function<Higher<F,Free<F,R>>,X> decoder(){
+            return (Function)decoder1;
+        }
+        public final <R1,R2,X1,X2> Tuple2<Xor<X1,R1>,Xor<X2,R2>> product(Free<F,R1> free1, Free<F,R2> free2 ){
+
+            return Tuple.tuple(free1.resume(functor,decoder()),free2.resume(functor,decoder()));
+
+        }
+
+    }
+
+
+    public static final <F,R1,R2,X1,X2> Tuple2<Xor<X1,R1>,Xor<X2,R2>> product(final Functor<F> functor, Free<F,R1> free1, Function<Higher<F,Free<F,R1>>,X1> decoder1,
+                                                                              Free<F,R2> free2, Function<Higher<F,Free<F,R2>>,X2> decoder2 ){
+
+        return Tuple.tuple(free1.resume(functor,decoder1),free2.resume(functor,decoder2));
+
     }
     public final Xor<Higher<F, Free<F, T>>, T> resume(final Functor<F> functor) {
         return resumeInternal( functor).visit(Xor::secondary,Xor::primary,t->null);

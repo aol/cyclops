@@ -1,9 +1,9 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
-import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
 import cyclops.Reducers;
 import cyclops.collections.immutable.PBagX;
+import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PBag;
 
@@ -46,6 +46,11 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
     public LazyPBagX(PBag<T> list, ReactiveSeq<T> seq) {
         super(list, seq, Reducers.toPBag());
         
+
+    }
+    public LazyPBagX(PBag<T> list, ReactiveSeq<T> seq, Reducer<PBag<T>> reducer) {
+        super(list, seq, reducer);
+
 
     }
     public LazyPBagX(PBag<T> list) {

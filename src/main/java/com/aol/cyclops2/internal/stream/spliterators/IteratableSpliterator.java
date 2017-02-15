@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * Created by johnmcclean on 22/12/2016.
  */
 
-public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T>, Printable {
+public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T>{
 
     private final Iterable<T> source;
 
@@ -40,7 +40,7 @@ public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T
         if(active==null)
             active=source.iterator();
         if (active.hasNext()) {
-            action.accept(print(active.next()));
+            action.accept(active.next());
             return true;
         }
 

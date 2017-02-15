@@ -5,10 +5,7 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.types.Value;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -189,6 +186,9 @@ public class Predicates {
     public static final <Y> Predicate<Y> any() {
         return __;
     };
+    public static final <Y> Predicate<Y> none() {
+        return t->false;
+    };
 
     /**
      * Match against any object that is an instance of supplied type
@@ -252,6 +252,10 @@ public class Predicates {
 
         return test -> Objects.equals(test, value);
     }
+    public static <T1> Predicate<T1> not(final Predicate<T1> p) {
+        return p.negate();
+    }
+
 
     /**
      *  Test for equivalence
@@ -303,12 +307,28 @@ public class Predicates {
 
     }
 
-    public static <T1> Predicate<T1> not(final Predicate<T1> p) {
-        return p.negate();
+
+    public static <T1> Predicate<T1> and(Predicate<? super T1>... preds)
+    {
+        Predicate<T1> current=  (Predicate<T1>)preds[0];
+        for(int i=1;i<preds.length;i++){
+            current = current.and((Predicate<T1>)preds[i]);
+        }
+        return current;
     }
+    public static <T1> Predicate<T1> or(Predicate<? super T1>... preds)
+    {
+        Predicate<T1> current =  (Predicate<T1>)preds[0];
+        for(int i=1;i<preds.length;i++){
+            current = current.or((Predicate<T1>)preds[i]);
+        }
+        return current;
+    }
+
 
     @SafeVarargs
     public static <T1> Predicate<T1> in(final T1... values){
+
     return test -> Arrays.asList(values)
                          .contains(test);
 }
@@ -380,23 +400,25 @@ public static <T1> Predicate<? super T1> instanceOf(final Class<?> clazz) {
 
     @SafeVarargs
     public static <T1> Predicate<? super T1> allOf(final Predicate<? super T1>... preds) {
-        return test -> ReactiveSeq.of(preds)
-                                  .map(t -> t.test(test))
-                                  .allMatch(r -> r);
+        Predicate<T1> current=  (Predicate<T1>)preds[0];
+        for(int i=1;i<preds.length;i++){
+            current = current.and((Predicate<T1>)preds[i]);
+        }
+        return current;
     }
 
     @SafeVarargs
     public static <T1> Predicate<? super T1> anyOf(final Predicate<? super T1>... preds) {
-        return test -> ReactiveSeq.of(preds)
-                                  .map(t -> t.test(test))
-                                  .anyMatch(r -> r);
+        Predicate<T1> current =  (Predicate<T1>)preds[0];
+        for(int i=1;i<preds.length;i++){
+            current = current.or((Predicate<T1>)preds[i]);
+        }
+        return current;
     }
 
     @SafeVarargs
     public static <T1> Predicate<? super T1> noneOf(final Predicate<? super T1>... preds) {
-        return test -> ReactiveSeq.of(preds)
-                                  .map(t -> t.test(test))
-                                  .noneMatch(r -> r);
+        return allOf(preds).negate();
     }
 
     @SafeVarargs
@@ -404,6 +426,11 @@ public static <T1> Predicate<? super T1> instanceOf(final Class<?> clazz) {
         return test -> ReactiveSeq.of(preds)
                                   .map(t -> t.test(test))
                                   .xMatch(x, r -> r);
+    }
+
+
+    static <T1> Predicate<T1> inSet(Set<T1> set) {
+        return set::contains;
     }
 
 }

@@ -2,8 +2,8 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import cyclops.Reducers;
-import cyclops.collections.immutable.PBagX;
 import cyclops.collections.immutable.PQueueX;
+import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PQueue;
 
@@ -46,6 +46,11 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
     public LazyPQueueX(PQueue<T> list, ReactiveSeq<T> seq) {
         super(list, seq, Reducers.toPQueue());
         
+
+    }
+    public LazyPQueueX(PQueue<T> list, ReactiveSeq<T> seq, Reducer<PQueue<T>> reducer) {
+        super(list, seq, reducer);
+
 
     }
     public LazyPQueueX(PQueue<T> list) {

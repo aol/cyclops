@@ -4,17 +4,17 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Unit;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
-import cyclops.function.Monoid;
+import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.monad.Monad;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Collection of useful functions
@@ -27,7 +27,7 @@ import java.util.function.Function;
  *          {@link cyclops.function.PartialApplicator}
  *          {@link cyclops.function.Memoize}
  *          {@link cyclops.function.FluentFunctions}
- *          {@link Fn1}F
+ *          {@link Fn1}
  *          {@link Fn2}
  *          {@link Fn3}
  *          {@link Fn4}
@@ -100,6 +100,51 @@ public class Functions {
     public static final  <T> Fn1<? super Iterable<T>,? extends T> reduce(Monoid<T> monoid){
         return it -> ReactiveSeq.fromIterable(it)
                                 .reduce(monoid.zero(),monoid);
+    }
+
+    static <K,V> Fn1<K,V> map(Map<K,V> map) {
+        return map::get;
+    }
+    static <K,V> Fn1<K,Maybe<V>> maybeMap(Map<K,V> map) {
+        return k->Maybe.ofNullable(map.get(k));
+    }
+    static <K,V> Fn1<K,Optional<V>> optionalMap(Map<K,V> map) {
+        return k-> Optional.ofNullable(map.get(k));
+    }
+
+    static <T,R,R1, R2, R3, R4> Function<T,R4> forEach4(Function<? super T, ? extends R> fn,
+                                                        Function<? super R, Function<? super T,? extends R1>> value2,
+                                                        BiFunction<? super R, ? super R1, Function<? super T,? extends R2>> value3,
+                                                        Fn3<? super R, ? super R1, ? super R2, Function<? super T,? extends R3>> value4,
+                                                        Fn4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
+
+        Reader< T,R> rd = Reader.narrow(FluentFunctions.of(fn));
+        return rd.forEach4(value2, value3, value4, yieldingFunction);
+
+
+
+    }
+
+    static <T,R,R1, R2, R4> Function<T,R4> forEach3(Function<? super T, ? extends R> fn,
+                                                  Function<? super R, Function<? super T,? extends R1>> value2,
+                                                  BiFunction<? super R, ? super R1, Function<? super T,? extends R2>> value3,
+                                                  Fn3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
+
+
+        Reader< T,R> rd = Reader.narrow(FluentFunctions.of(fn));
+        return rd.forEach3(value2, value3, yieldingFunction);
+    }
+
+
+
+    static <T,R,R1, R4> Function<T,R4> forEach2(Function<? super T, ? extends R> fn,
+                                                Function<? super R, Function<? super T,? extends R1>> value2,
+                                                 BiFunction<? super R, ? super R1, ? extends R4> yieldingFunction) {
+
+        Reader< T,R> rd = Reader.narrow(FluentFunctions.of(fn));
+        return rd.forEach2(value2, yieldingFunction);
+
+
     }
 
 }

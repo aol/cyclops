@@ -329,7 +329,7 @@ public interface Folds<T> extends ToStream<T> {
     /**
      * Write each element within this Folds in turn to the supplied PrintStream
      *
-     * @param str PrintStream to write to
+     * @param str PrintStream to tell to
      */
     default void print(final PrintStream str) {
         stream().print(str);
@@ -338,7 +338,7 @@ public interface Folds<T> extends ToStream<T> {
     /**
      * Write each element within this Folds in turn to the supplied PrintWriter
      *
-     * @param writer PrintWriter to write to
+     * @param writer PrintWriter to tell to
      */
     default void print(final PrintWriter writer) {
         stream().print(writer);
