@@ -266,6 +266,9 @@ Interfaces
 |------|-------------|-----------------|
 | Eval     | Lazy evaluation, optional caching            | Optionally Reactive or Coreactive, Lazy, tail recursive, Higher kinded                 |
 | Trampoline     | Easy to use trampoline implementations (see also Free using SupplierKind)            | Lazy                |
+| Writer     | Monad / Wrapper type that supports the accumulation of a values using a Monoid            | Eager                |
+| State     | State Monad to manage state  / state transformations in a functional manner (backed by Free)            | Lazy                |
+| ReaderWriterState     | Monad transformer encompassing behaviour from Reader, Writer and State Monads (backed by Free)            | Lazy                |
 | Free     | Higher kinded implementation of the Free monad for Java, facilitates functional interpreters. Free + SupplierKind (higher kinded Fn0) = a more advanced Trampoline implementation.            | Lazy                |
 
 ## cyclops.box
@@ -297,6 +300,7 @@ Interfaces
 | Monoid     | A function for combining values of the same type, with an identity value     |                  |
 | Semigroup     | A function for combining values of the same type        |                 |
 | Reader     | A transformable function : useful to implement dependency injection or Singletons in a functional style            |                 |
+| Coreader     | A contravariant reader            |                 |
 
 
 ## Higher level abstractions
@@ -308,6 +312,8 @@ Interfaces
 | AnyM     | Type safe monadic wrapper for any monad type            | Higher kinded                 |
 | AnyMValue     | Type safe monadic wrapper for any monadic sum type            | Higher kinded                 |
 | AnyMSeq     | Type safe monadic wrapper for any monadic non-scalar type            | Higher kinded                 |
+| Kleisli    | A functional interface that represents a manipulatable function that takes a  value and returns a monad            | Higher kinded                 |
+| Cokleisli    | A functional interface that represents a manipulatable function that takes a monad and returns a value           | Higher kinded                 |
 
 #### cyclops.monads.transformers
 
