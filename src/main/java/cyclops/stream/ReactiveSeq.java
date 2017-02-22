@@ -3874,23 +3874,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            TimeUnit to use for delay
      */
     default <R> ReactiveSeq<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        final Function<T, R> retry = t -> {
-            final long[] sleep = { timeUnit.toMillis(delay) };
-            Throwable exception = null;
-            for (int count = retries; count >=0; count--) {
-                try {
-                    return fn.apply(t);
-                } catch (final Throwable e) {
-                    exception = e;
-                    ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep[0]))
-                                     .run();
-                    sleep[0] = sleep[0] * 2;
-                }
-            }
-            ExceptionSoftener.throwSoftenedException(exception);
-            return null;
-        };
-        return map(retry);
+        return (ReactiveSeq) FoldableTraversable.super.retry(fn, retries, delay, timeUnit);
     }
 
     /**
