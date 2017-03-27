@@ -195,7 +195,7 @@ public class Validator<T, R, E> {
         if (next == null)
             return this.withNext(validator);
         else
-            return next.add(validation);
+            return next.add(validator);
     }
 
     private Validator<T, R, E> add(final Tuple3<Predicate<? super T>, R, E> validation) {
