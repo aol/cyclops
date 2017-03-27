@@ -70,7 +70,7 @@ import java.util.stream.*;
  * Implements the reactive-reactiveStream publisher api.
  * Replayable Stream by default, using primitive operators (ints,longs, doubles or jooλ results in conversion to a oneshot Stream
  * (as of 2.0.0-MI1)
- * 
+ *
  * Features include
  *      Asynchronous execution
  *      Scheduling
@@ -84,7 +84,7 @@ import java.util.stream.*;
  *      Parallelism via FutureStream
  *      Lazy grouping (group by size, time, state)
  *      Sliding windows
- *      
+ *
  *      Efficient reversal
  *      foldRight / scanLeft / scanRight
  *      Zipping and Combining
@@ -98,14 +98,14 @@ import java.util.stream.*;
  *      Cycling / repeating
  *      Controlled iteration (forEach)
  *      Event handling (on next, on error, on complete)
- *      
- * 
+ *
+ *
  * @author johnmcclean
  *
  * @param <T> Data type of elements within the Stream
  */
 public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
-                                        Stream<T>, 
+                                        Stream<T>,
                                         OnEmptySwitch<T, Stream<T>>,
                                         FoldableTraversable<T>,
                                         Unit<T>,
@@ -176,14 +176,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Construct a ReactiveSeq from a String
-     * 
+     *
      * @param input String to construct ReactiveSeq from
      * @return ReactiveSeq from a String
      */
     public static OneShotStreamX<Integer> fromCharSequence(CharSequence input){
         return Streams.<Integer>oneShotStream(input.chars().spliterator(),Optional.empty());
     }
-    
+
     /**
      * @param values ints to populate Stream from
      * @return ReactiveSeq of multiple Integers
@@ -305,9 +305,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> concatInts( ReactiveSeq<Integer> b){
         return a->fromSpliterator(IntStream.concat(a.mapToInt(i->i),b.mapToInt(i->i)).spliterator());
     }
-   
+
        /**
-     * 
+     *
      * @param values longs to populate Stream from
      * @return ReactiveSeq of multiple Longs
      */
@@ -431,7 +431,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * 
+     *
      * @param values longs to populate Stream from
      * @return ReactiveSeq of multiple Longs
      */
@@ -556,7 +556,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Efficiently construct a ReactiveSeq from a single value
-     * 
+     *
      * @param value Value to construct ReactiveSeq from
      * @return ReactiveSeq of one value
      */
@@ -565,7 +565,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     /**
      * Construct a ReactiveSeq from the Supplied Spliterator
-     * 
+     *
      * @param spliterator Spliterator to construct a Stream from
      * @return ReactiveSeq created from Spliterator
      */
@@ -577,17 +577,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
      * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
      * otherwise the provided conversion function will be used.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.range(1, 1000)
      *            .ints(i->i,s->s.map(i->i*2).filter(i->i<500))
                   .size(),
        //249
-     * 
+     *
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fn
      * @param mapper
      * @return
@@ -616,17 +616,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
      * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
      * otherwise the provided conversion function will be used.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.range(1, 1000)
      *            .longs(i->i.longValue(),s->s.map(i->i*2).filter(i->i<500))
                   .size(),
        //249
-     * 
+     *
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fn
      * @param mapper
      * @return
@@ -646,17 +646,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
      * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
      * otherwise the provided conversion function will be used.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.range(1, 1000)
      *            .doubles(i->i.doubleValue(),s->s.map(i->i*2).filter(i->i<500))
                   .size(),
        //249
-     * 
+     *
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fn
      * @param mapper
      * @return
@@ -673,11 +673,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
 
-    
+
     /**
      * Construct a Stream consisting of a single value repeatedly infinitely (use take / drop etc to
      * switch to a finite Stream)
-     * 
+     *
      * @param t Value to fill Stream with
      * @return Infinite ReactiveSeq consisting of a single value
      */
@@ -686,19 +686,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     /**
      * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
-     * 
+     *
      * <pre>
-     * {@code 
-     *   
+     * {@code
+     *
      *      ReactiveSeq.of(1,2,3)
      *                 .map(i->i*2)
      *                 .coflatMap(s -> s.reduce(0,(a,b)->a+b))
-     *      
+     *
      *      //ReactiveSeq[12]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fn
      * @return
      */
@@ -852,8 +852,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return zipS(ReactiveSeq.fromPublisher(other), zipper);
     }
 
-    
- 
+
+
 
     @Override
     <U, R> ReactiveSeq<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper);
@@ -862,20 +862,20 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * join / flatten one level of a nested hierarchy
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  ReactiveSeq.of(Arrays.asList(1,2))
      *             .to(ReactiveSeq::flatten));
-     *  
+     *
      *  //reactiveStream of (1,  2);
-     *  
-     * 
-     * 
+     *
+     *
+     *
      * }
-     * 
+     *
      * </pre>
-     * 
+     *
      * @return Flattened / joined one level
      */
     static <T1> ReactiveSeq<T1> flatten(ReactiveSeq<? extends ReactiveSeq<T1>> nested){
@@ -908,18 +908,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Duplicate a Stream, buffers intermediate values, leaders may change
      * positions so a limit can be safely applied to the leading reactiveStream. Not
      * thread-safe.
-     * 
+     *
      * <pre>
      * {@code
-     * 
+     *
      * 	Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies = of(1, 2, 3, 4, 5, 6)
      *                                                                  .duplicate();
      * 	assertTrue(copies.v1.anyMatch(i > i == 2));
      * 	assertTrue(copies.v2.anyMatch(i > i == 2));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @return duplicated reactiveStream
      */
     Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate();
@@ -929,11 +929,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Triplicates a Stream Buffers intermediate values, leaders may change
      * positions so a limit can be safely applied to the leading reactiveStream. Not
      * thread-safe.
-     * 
+     *
      * <pre>
      * {@code
      * 	Tuple3<ReactiveSeq<Tuple3<T1, T2, T3>>, ReactiveSeq<Tuple3<T1, T2, T3>>, ReactiveSeq<Tuple3<T1, T2, T3>>> Tuple3 = sequence.triplicate();
-     * 
+     *
      * }
      * </pre>
      */
@@ -946,17 +946,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Makes four copies of a Stream Buffers intermediate values, leaders may
      * change positions so a limit can be safely applied to the leading reactiveStream.
      * Not thread-safe.
-     * 
+     *
      * <pre>
      * {@code
-     * 	Tuple4<ReactiveSeq<Tuple4<T1, T2, T3, T4>>, 
-     *          ReactiveSeq<Tuple4<T1, T2, T3, T4>>, 
-     *          ReactiveSeq<Tuple4<T1, T2, T3, T4>>, 
+     * 	Tuple4<ReactiveSeq<Tuple4<T1, T2, T3, T4>>,
+     *          ReactiveSeq<Tuple4<T1, T2, T3, T4>>,
+     *          ReactiveSeq<Tuple4<T1, T2, T3, T4>>,
      *          ReactiveSeq<Tuple4<T1, T2, T3, T4>>> quad = sequence.quadruplicate();
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @return Tuple4 containing 4 duplicated ReactiveSeqs
      */
     @SuppressWarnings("unchecked")
@@ -965,43 +965,43 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Split a Stream at it's head (similar to headAndTail)
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of(1,2,3)
      *            .splitAtHead()
-     * 
+     *
      *  //Optional[1], ReactiveSeq[2,3]
      * }
-     * 
+     *
      * </pre>
-     * 
+     *
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead();
 
     /**
      * Split at supplied location
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of(1,2,3)
      *            .splitAt(1)
-     * 
+     *
      *  //ReactiveSeq[1], ReactiveSeq[2,3]
      * }
-     * 
+     *
      * </pre>
      */
     Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitAt(int where);
 
     /**
      * Split reactiveStream at point where predicate no longer holds
-     * 
+     *
      * <pre>
      * {@code
      *   ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
-     *   
+     *
      *   //ReactiveSeq[1,2,3] ReactiveSeq[4,5,6]
      * }
      * </pre>
@@ -1011,11 +1011,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Partition a Stream into two one a per element basis, based on predicate's
      * boolean value
-     * 
+     *
      * <pre>
-     * {@code 
-     *  ReactiveSeq.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
-     *  
+     * {@code
+     *  ReactiveSeq.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)
+     *
      *  //ReactiveSeq[1,3,5], ReactiveSeq[2,4,6]
      * }
      *
@@ -1026,16 +1026,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Convert to a Stream with the result of a reduction operation repeated
      * specified times
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   List<Integer> list = ReactiveSeq.of(1,2,2))
      *                                 .cycle(Reducers.toCountInt(),3)
      *                                 .collect(Collectors.toList());
      *   //List[3,3,3];
      *   }
      * </pre>
-     * 
+     *
      * @param m
      *            Monoid to be used in reduction
      * @param times
@@ -1049,18 +1049,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Repeat in a Stream while specified predicate holds
-     * 
+     *
      * <pre>
      * {@code
-     * 	
+     *
      * 	MutableInt count = MutableInt.of(0);
      * 	ReactiveSeq.of(1, 2, 2).cycleWhile(next -> count++ < 6)
      *             .collect(Collectors.toList());
-     * 
+     *
      * 	// List(1,2,2,1,2,2)
      * }
      * </pre>
-     * 
+     *
      * @param predicate
      *            repeat while true
      * @return Repeating Stream
@@ -1072,19 +1072,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Repeat in a Stream until specified predicate holds
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * 	MutableInt count =MutableInt.of(0);
      * 		ReactiveSeq.of(1,2,2)
      * 		 		.cycleUntil(next -> count.get()>6)
      * 		 		.peek(i-> count.mutate(i->i+1))
      * 		 		.collect(Collectors.toList());
-     * 
-     * 		//List[1,2,2,1,2,2,1]	
+     *
+     * 		//List[1,2,2,1,2,2,1]
      * }
-     * 
-     * 
+     *
+     *
      * @param predicate
      *            repeat while true
      * @return Repeating Stream
@@ -1101,19 +1101,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Zip 2 streams into one
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
      *  // [[1,"a"],[2,"b"]]
      * }
      * </pre>
-     * 
+     *
      */
     @Override
     <U> ReactiveSeq<Tuple2<T, U>> zipS(final Stream<? extends U> other);
-    
-    
+
+
 
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -1125,14 +1125,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * zip 3 Streams into one
-     * 
+     *
      * <pre>
      * {@code
      *  List<Tuple3<Integer, Integer, Character>> list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(Collectors.toList());
-     * 
+     *
      *  // [[1,100,'a'],[2,200,'b'],[3,300,'c']]
      * }
-     * 
+     *
      * </pre>
      */
     @Override
@@ -1140,12 +1140,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * zip 4 Streams into 1
-     * 
+     *
      * <pre>
      * {@code
      *  List<Tuple4<Integer, Integer, Character, String>> list = of(1, 2, 3, 4, 5, 6).zip4(of(100, 200, 300, 400), of('a', 'b', 'c'), of("hello", "world"))
      *          .collect(Collectors.toList());
-     * 
+     *
      * }
      * // [[1,100,'a',"hello"],[2,200,'b',"world"]]
      * </pre>
@@ -1202,9 +1202,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Add an index to the current Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L)), of("a", "b").zipWithIndex().toList());
      * }
      * </pre>
@@ -1214,22 +1214,22 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return zipS(ReactiveSeq.rangeLong(0,Long.MAX_VALUE));
     }
 
-  
+
 
     /**
      * Create a sliding view over this Sequence
-     * 
+     *
      * <pre>
      * {@code
      *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
-     * 
+     *
      *  assertThat(list.get(0), hasItems(1, 2));
      *  assertThat(list.get(1), hasItems(2, 3));
-     * 
+     *
      * }
-     * 
+     *
      * </pre>
-     * 
+     *
      * @param windowSize
      *            Size of sliding window
      * @return ReactiveSeq with sliding view
@@ -1241,18 +1241,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Create a sliding view over this Sequence
-     * 
+     *
      * <pre>
      * {@code
      *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
-     * 
+     *
      *  assertThat(list.get(0), hasItems(1, 2, 3));
      *  assertThat(list.get(1), hasItems(3, 4, 5));
-     * 
+     *
      * }
-     * 
+     *
      * </pre>
-     * 
+     *
      * @param windowSize
      *            number of elements in each batch
      * @param increment
@@ -1264,17 +1264,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Group elements in a Stream
-     * 
+     *
      * <pre>
      * {@code
      *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
-     * 
+     *
      *  assertThat(list.get(0), hasItems(1, 2, 3));
      *  assertThat(list.get(1), hasItems(4, 5, 6));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param groupSize
      *            Size of each Group
      * @return Stream with elements grouped by size
@@ -1288,9 +1288,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * bipredicate recieves the ListX from the last window as well as the
      * current value and can choose to aggregate the current value or create a
      * new window
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *    ReactiveSeq.of(1,2,3,4,5,6)
      *               .groupedStatefullyUntil((s,i)-> s.contains(4) ? true : false)
      *               .toList()
@@ -1298,7 +1298,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *     //5
      * }
      * </pre>
-     * 
+     *
      * @param predicate
      *            Window while true
      * @return ReactiveSeq windowed while predicate holds
@@ -1312,17 +1312,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                                       Function<? super C, ? extends R> finalizer);
     /**
      * Batch elements by size into a List
-     * 
+     *
      * <pre>
      * {@code
      * ReactiveSeq.of(1,2,3,4,5,6)
      *              .groupedBySizeAndTime(3,10,TimeUnit.SECONDS)
      *              .toList();
-     *          
-     * //[[1,2,3],[4,5,6]] 
+     *
+     * //[[1,2,3],[4,5,6]]
      * }
      * </pre>
-     * 
+     *
      * @param size Max size of a batch
      * @param time (Max) time period to build a single batch in
      * @param t time unit for batch
@@ -1332,17 +1332,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Batch elements by size into a collection created by the supplied factory
-     * 
+     *
      * <pre>
      * {@code
      * ReactiveSeq.of(1,2,3,4,5,6)
      *              .groupedBySizeAndTime(3,10,TimeUnit.SECONDS,()->SetX.empty())
      *              .toList();
-     *          
-     * //[[1,2,3],[4,5,6]] 
+     *
+     * //[[1,2,3],[4,5,6]]
      * }
      * </pre>
-     * 
+     *
      * @param size
      *            Max size of a batch
      * @param time
@@ -1364,14 +1364,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                                      final Supplier<C> factory, Function<? super C, ? extends R> finalizer);
     /**
      * Batch elements in a Stream by time period
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
      * }
      * </pre>
-     * 
+     *
      * @param time
      *            - time period to build a single batch in
      * @param t
@@ -1382,9 +1382,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Batch elements by time into a collection created by the supplied factory
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   assertThat(ReactiveSeq.of(1,1,1,1,1,1)
      *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
      *                       .toList()
@@ -1392,7 +1392,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *                       .size(),is(1));
      * }
      * </pre>
-     * 
+     *
      * @param time
      *            - time period to build a single batch in
      * @param unit
@@ -1406,7 +1406,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Batch elements in a Stream by size into a collection created by the
      * supplied factory
-     * 
+     *
      * <pre>
      * {@code
      * assertThat(ReactiveSeq.of(1,1,1,1,1,1)
@@ -1426,16 +1426,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Create a ReactiveSeq batched by List, where each batch is populated until
      * the predicate holds
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  assertThat(ReactiveSeq.of(1,2,3,4,5,6)
      *              .batchUntil(i->i%3==0)
      *              .toList()
      *              .size(),equalTo(2));
      * }
      * </pre>
-     * 
+     *
      * @param predicate
      *            Batch until predicate holds, transform open next batch
      * @return ReactiveSeq batched into lists determined by the predicate supplied
@@ -1448,16 +1448,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Create a ReactiveSeq batched by List, where each batch is populated while
      * the predicate holds
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
      *              .batchWhile(i->i%3!=0)
      *              .toList().size(),equalTo(2));
-     *  
+     *
      * }
      * </pre>
-     * 
+     *
      * @param predicate
      *            Batch while predicate holds, transform open next batch
      * @return ReactiveSeq batched into lists determined by the predicate supplied
@@ -1468,16 +1468,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Create a ReactiveSeq batched by a Collection, where each batch is populated
      * while the predicate holds
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
      *              .batchWhile(i->i%3!=0)
      *              .toList()
      *              .size(),equalTo(2));
      * }
      * </pre>
-     * 
+     *
      * @param predicate
      *            Batch while predicate holds, transform open next batch
      * @param factory
@@ -1491,17 +1491,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Create a ReactiveSeq batched by a Collection, where each batch is populated
      * until the predicate holds
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
      *              .batchUntil(i->i%3!=0)
      *              .toList()
      *              .size(),equalTo(2));
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param predicate
      *            Batch until predicate holds, transform open next batch
      * @param factory
@@ -1535,16 +1535,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Use classifier function to group elements in this Sequence into a Map
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Map<Integer, List<Integer>> map1 = of(1, 2, 3, 4).groupBy(i -> i % 2);
      *  assertEquals(asList(2, 4), map1.get(0));
      *  assertEquals(asList(1, 3), map1.get(1));
      *  assertEquals(2, map1.size());
-     * 
+     *
      * }
-     * 
+     *
      * </pre>
      */
     @Override
@@ -1554,7 +1554,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /*
      * Return the distinct Stream of elements
-     * 
+     *
      * <pre> {@code List<Integer> list = ReactiveSeq.of(1,2,2,2,5,6) .distinct()
      * .collect(Collectors.toList()); }</pre>
      */
@@ -1563,16 +1563,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Scan left using supplied Monoid
-     * 
+     *
      * <pre>
-     * {@code  
-     * 
+     * {@code
+     *
      * 	assertEquals(asList("", "a", "ab", "abc"),ReactiveSeq.of("a", "b", "c")
      * 													.scanLeft(Reducers.toString("")).toList());
-     *         
+     *
      *         }
      * </pre>
-     * 
+     *
      * @param monoid
      * @return ReactiveSeq with values combined scanning left
      */
@@ -1587,9 +1587,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Scan left
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().size(),
      *         		is(4));
      * }
@@ -1600,9 +1600,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Scan right
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(of("a", "b", "c").scanRight(Monoid.of("", String::concat)).toList().size(),
      *             is(asList("", "c", "bc", "abc").size()));
      * }
@@ -1616,12 +1616,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Scan right
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(of("a", "ab", "abc").map(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
      *             is(asList(0, 3, 5, 6).size()));
-     * 
+     *
      * }
      * </pre>
      */
@@ -1634,7 +1634,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code assertThat(ReactiveSeq.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
      * </pre>
-     * 
+     *
      */
     @Override
     ReactiveSeq<T> sorted();
@@ -1650,11 +1650,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * 	assertThat(ReactiveSeq.of(4,3,6,7).sorted((a,b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
      * }
      * </pre>
-     * 
+     *
      * @param c
      *            Compartor to sort with
      * @return Sorted Stream
@@ -1743,9 +1743,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code assertThat(ReactiveSeq.of(4,3,6,7).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
      * </pre>
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * @param num
      *            Number of elemenets to skip
      * @return Stream with specified number of elements skipped
@@ -1791,16 +1791,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         forEach(action);
     }
     /**
-     * 
+     *
      * SkipWhile drops elements from the Stream while the predicate holds, once
      * the predicte returns true all subsequent elements are included *
-     * 
+     *
      * <pre>
      * {@code
      * assertThat(ReactiveSeq.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
      * }
      * </pre>
-     * 
+     *
      * @param p
      *            Predicate to skip while true
      * @return Stream with elements skipped while predicate holds
@@ -1811,12 +1811,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Drop elements from the Stream until the predicate returns true, after
      * which all elements are included
-     * 
+     *
      * <pre>
      * {@code assertThat(ReactiveSeq.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param p
      *            Predicate to skip until true
      * @return Stream with elements skipped until predicate holds
@@ -1834,12 +1834,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * 
-     * 
+     *
+     *
      * <pre>
      * {@code assertThat(ReactiveSeq.of(4,3,6,7).limit(2).toList(),equalTo(Arrays.asList(4,3));}
      * </pre>
-     * 
+     *
      * @param num
      *            Limit element size to num
      * @return Monad converted to Stream with elements up to num
@@ -1850,11 +1850,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Take elements from the Stream while the predicate holds, once the
      * predicate returns false all subsequent elements are excluded
-     * 
+     *
      * <pre>
      * {@code assertThat(ReactiveSeq.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
      * </pre>
-     * 
+     *
      * @param p
      *            Limit while predicate is true
      * @return Stream with limited elements
@@ -1865,11 +1865,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Take elements from the Stream until the predicate returns true, after
      * which all elements are excluded.
-     * 
+     *
      * <pre>
      * {@code assertThat(ReactiveSeq.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
      * </pre>
-     * 
+     *
      * @param p
      *            Limit until predicate is true
      * @return Stream with limited elements
@@ -1886,20 +1886,20 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * @return Does nothing ReactiveSeq is for Sequential Streams
-     * 
+     *
      */
     @Override
     ReactiveSeq<T> parallel();
 
     /**
      * True if predicate matches all elements when Monad converted to a Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
      * }
      * </pre>
-     * 
+     *
      * @param c
      *            Predicate to check if all match
      */
@@ -1908,13 +1908,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * True if a single element matches when Monad converted to a Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
      * }
      * </pre>
-     * 
+     *
      * @param c
      *            Predicate to check if any match
      */
@@ -1924,13 +1924,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Check that there are specified number of matches of predicate in the
      * Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  assertTrue(ReactiveSeq.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
      * }
      * </pre>
-     * 
+     *
      */
     @Override
     boolean xMatch(int num, Predicate<? super T> c);
@@ -1938,7 +1938,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /*
      * <pre> {@code assertThat(of(1,2,3,4,5).noneMatch(it->
      * it==5000),equalTo(true));
-     * 
+     *
      * } </pre>
      */
     @Override
@@ -1950,7 +1950,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  assertEquals("123".length(),ReactiveSeq.of(1, 2, 3).join().length());
      * }
      * </pre>
-     * 
+     *
      * @return Stream as concatenated String
      */
     @Override
@@ -1962,7 +1962,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * assertEquals("1, 2, 3".length(), ReactiveSeq.of(1, 2, 3).join(", ").length());
      * }
      * </pre>
-     * 
+     *
      * @return Stream as concatenated String
      */
     @Override
@@ -1970,34 +1970,34 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * assertEquals("^1|2|3$".length(), of(1, 2, 3).join("|", "^", "$").length());
      * }
      * </pre>
-     * 
+     *
      * @return Stream as concatenated String
      */
     @Override
     String join(String sep, String start, String end);
 
-   
+
     @Override
     HeadAndTail<T> headAndTail();
 
 
     /**
      * @return First matching element in sequential order
-     * 
+     *
      * <pre>
      * {@code
      * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
-     * 
+     *
      * //3
      * }
      * </pre>
-     * 
+     *
      * (deterministic)
-     * 
+     *
      */
     @Override
     Optional<T> findFirst();
@@ -2024,16 +2024,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Either<Throwable,T> findFirstOrError();
     /**
      * @return first matching element, but order is not guaranteed
-     * 
+     *
      *         <pre>
      * {@code
      * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
-     * 
+     *
      * //3
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      *         (non-deterministic)
      */
     @Override
@@ -2045,29 +2045,29 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      * ReactiveSeq.of(10,20,30,40)
     		 .trampoline(i-> fibonacci(i))
-    		 .forEach(System.out::println); 
-    		 
+    		 .forEach(System.out::println);
+
     Trampoline<Long> fibonacci(int i){
     	return fibonacci(i,1,0);
     }
     Trampoline<Long> fibonacci(int n, long a, long b) {
        	return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
-    }		 
-    		 
+    }
+
      * 55
     6765
     832040
     102334155
-     * 
-     * 
+     *
+     *
      * ReactiveSeq.of(10_000,200_000,3_000_000,40_000_000)
     		 .trampoline(i-> fibonacci(i))
     		 .forEach(System.out::println);
-    		 
-    		 
+
+
      * completes successfully
      * }
-     * 
+     *
     * @param mapper
     * @return
     */
@@ -2080,15 +2080,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Attempt to map this Sequence to the same type as the supplied Monoid
      * (Reducer) Then use Monoid to reduce values
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
-     * 
+     *
      * //4
      * }
      * </pre>
-     * 
+     *
      * @param reducer
      *            Monoid to reduce values
      * @return Reduce result
@@ -2099,14 +2099,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Attempt to map this Monad to the same type as the supplied Monoid, using
      * supplied function Then use Monoid to reduce values
-     * 
+     *
      * <pre>
      *  {@code
      *  ReactiveSeq.of("one","two","three","four")
      *           .mapReduce(this::toInt,Reducers.toTotalInt());
-     *  
+     *
      *  //10
-     *  
+     *
      *  int toInt(String s){
      * 		if("one".equals(s))
      * 			return 1;
@@ -2120,7 +2120,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 	   }
      *  }
      * </pre>
-     * 
+     *
      * @param mapper
      *            Function to map Monad type
      * @param reducer
@@ -2132,13 +2132,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
-     * 
+     *
      * //hello,2,world,4
      * }
      * </pre>
-     * 
+     *
      * @param reducer
      *            Use supplied Monoid to reduce values
      * @return reduced values
@@ -2155,7 +2155,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
@@ -2167,7 +2167,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
      * java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
@@ -2290,19 +2290,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
      * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
-     * 
+     *
      * <pre>
      * {@code
      *  Monoid<Integer> sum = Monoid.of(0, (a, b) -> a + b);
      *  Monoid<Integer> mult = Monoid.of(1, (a, b) -> a * b);
      *  List<Integer> result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).reactiveStream());
-     * 
+     *
      *  assertThat(result, equalTo(Arrays.asList(10, 24)));
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param reducers
      * @return
      */
@@ -2314,19 +2314,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
      * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
      * 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
      * 		List<Integer> result = ReactiveSeq.of(1,2,3,4))
      * 										.reduce(Arrays.asList(sum,mult) );
-     * 				
-     * 		 
+     *
+     *
      * 		assertThat(result,equalTo(Arrays.asList(10,24)));
-     * 
+     *
      * }
-     * 
+     *
      * @param reducers
      * @return
      */
@@ -2334,15 +2334,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ListX<T> reduce(Iterable<? extends Monoid<T>> reducers);
 
     /**
-     * 
+     *
      * <pre>
      * 		{@code
      * 		ReactiveSeq.of("a","b","c").foldRight(Reducers.toString(""));
-     *        
+     *
      *         // "cab"
      *         }
      * </pre>
-     * 
+     *
      * @param reducer
      *            Use supplied Monoid to reduce values starting via foldRight
      * @return Reduced result
@@ -2352,13 +2352,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Immutable reduction from right to left
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  assertTrue(ReactiveSeq.of("a","b","c").foldRight("", String::concat).equals("cba"));
      * }
      * </pre>
-     * 
+     *
      */
     @Override
     public T foldRight(T identity, BinaryOperator<T> accumulator);
@@ -2366,16 +2366,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Attempt to map this Monad to the same type as the supplied Monoid (using
      * mapToType on the monoid interface) Then use Monoid to reduce values
-     * 
+     *
      * <pre>
      * 		{@code
      * 		ReactiveSeq.of(1,2,3).foldRightMapToType(Reducers.toString(""));
-     *        
+     *
      *         // "321"
      *         }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param reducer
      *            Monoid to reduce values
      * @return Reduce result
@@ -2385,18 +2385,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * 	Streamable<Integer> repeat = ReactiveSeq.of(1,2,3,4,5,6)
      * 												.map(i->i*2)
      * 												.toStreamable();
-     * 		
+     *
      * 		repeat.reactiveStream().toList(); //Arrays.asList(2,4,6,8,10,12));
      * 		repeat.reactiveStream().toList() //Arrays.asList(2,4,6,8,10,12));
-     * 
+     *
      * }
-     * 
+     *
      * @return Lazily Convert to a repeatable Streamable
-     * 
+     *
      */
     @Override
     public Streamable<T> toStreamable();
@@ -2415,7 +2415,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jooq.lambda.Seq#toCollection(java.util.function.Supplier)
      */
     @Override
@@ -2423,7 +2423,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Convert this ReactiveSeq into a Stream
-     * 
+     *
      * @return calls to reactiveStream() but more flexible on type for inferencing
      *         purposes.
      */
@@ -2436,13 +2436,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public ReactiveSeq<T> stream();
 
     /**
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3)));
      * }
      * </pre>
-     * 
+     *
      * @param iterable
      * @return True if Monad starts with Iterable sequence of data
      */
@@ -2453,7 +2453,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
      * </pre>
-     * 
+     *
      * @param stream
      * @return True if Monad starts with Iterators sequence of data
      */
@@ -2467,7 +2467,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.reactiveStream.Stream#map(java.util.function.Function)
      */
     @Override
@@ -2476,7 +2476,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.reactiveStream.Stream#peek(java.util.function.Consumer)
      */
     @Override
@@ -2488,16 +2488,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * flatMap operation
-     * 
+     *
      * <pre>
      * {@code
      * 	assertThat(ReactiveSeq.of(1,2)
      * 						.flatMap(i -> asList(i, -i).reactiveStream())
-     * 						.toList(),equalTo(asList(1, -1, 2, -2)));		
-     *  
+     * 						.toList(),equalTo(asList(1, -1, 2, -2)));
+     *
      * }
      * </pre>
-     * 
+     *
      * @param fn
      *            to be applied
      * @return new stage in Sequence with flatMap operation to be lazily applied
@@ -2507,15 +2507,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Allows flatMap return type to be any Monad type
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * 	assertThat(ReactiveSeq.of(1,2,3)).flatMapAnyM(i-> fromEither5(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fn
      *            to be applied
      * @return new stage in Sequence with flatMap operation to be lazily applied
@@ -2525,17 +2525,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * FlatMap where the result is a Collection, flattens the resultant
      * collections into the host ReactiveSeq
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * 	ReactiveSeq.of(1,2)
      * 			.flatMap(i -> asList(i, -i))
      *          .toList();
-     *          
-     *   //1,-1,2,-2       
+     *
+     *   //1,-1,2,-2
      * }
      * </pre>
-     * 
+     *
      * @param fn
      * @return
      */
@@ -2546,16 +2546,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     <R> ReactiveSeq<R> flatMapP(int maxConcurrency,Function<? super T, ? extends Publisher<? extends R>> fn);
     /**
      * flatMap operation
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * 	assertThat(ReactiveSeq.of(1,2,3)
      *                      .flatMapStream(i->IntStream.of(i))
      *                      .toList(),equalTo(Arrays.asList(1,2,3)));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param fn
      *            to be applied
      * @return new stage in Sequence with flatMap operation to be lazily applied
@@ -2564,7 +2564,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.reactiveStream.Stream#filter(java.util.function.Predicate)
      */
     @Override
@@ -2591,7 +2591,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.reactiveStream.BaseStream#unordered()
      */
     @Override
@@ -2600,10 +2600,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Returns a reactiveStream with a given value interspersed between any two values
      * of this reactiveStream.
-     * 
-     * 
+     *
+     *
      * // (1, 0, 2, 0, 3, 0, 4) ReactiveSeq.of(1, 2, 3, 4).intersperse(0)
-     * 
+     *
      */
     @Override
     default ReactiveSeq<T> intersperse(T value){
@@ -2612,10 +2612,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Keep only those elements in a reactiveStream that are of a given type.
-     * 
-     * 
+     *
+     *
      * // (1, 2, 3) ReactiveSeq.of(1, "a", 2, "b",3).ofType(Integer.class)
-     * 
+     *
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -2626,10 +2626,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Cast all elements in a reactiveStream to a given type, possibly throwing a
      * {@link ClassCastException}.
-     * 
-     * 
+     *
+     *
      * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
-     * 
+     *
      */
     @Override
     default <U> ReactiveSeq<U> cast(Class<? extends U> type){
@@ -2639,19 +2639,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Lazily converts this ReactiveSeq into a Collection. This does not trigger
      * the Stream. E.g. Collection is not thread safe on the first iteration.
-     * 
+     *
      * <pre>
      * {@code
      *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
      *                                       .peek(System.out::println)
      *                                       .toLazyCollection();
-     * 
+     *
      *  col.forEach(System.out::println);
      * }
-     * 
+     *
      * // Will print out "first!" before anything else
      * </pre>
-     * 
+     *
      * @return
      */
     @Override
@@ -2660,17 +2660,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Lazily converts this ReactiveSeq into a Collection. This does not trigger
      * the Stream. E.g.
-     * 
+     *
      * <pre>
      * {@code
      *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toConcurrentLazyCollection();
-     * 
+     *
      *  col.forEach(System.out::println);
      * }
-     * 
+     *
      * // Will print out "first!" before anything else
      * </pre>
-     * 
+     *
      * @return
      */
     @Override
@@ -2680,12 +2680,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *  Streamable<Integer> repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -> i + 2).toConcurrentLazyStreamable();
-     * 
+     *
      *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
      *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
      * }
      * </pre>
-     * 
+     *
      * @return Streamable that replay this ReactiveSeq, populated lazily and can
      *         be populated across threads
      */
@@ -2694,12 +2694,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /*
      * Potentially efficient Sequence reversal. Is efficient if
-     * 
+     *
      * - Sequence created via a range - Sequence created via a List - Sequence
      * created via an Array / var args
-     * 
+     *
      * Otherwise Sequence collected into a Collection prior to reversal
-     * 
+     *
      * <pre> {@code assertThat( of(1, 2, 3).reverse().toList(),
      * equalTo(asList(3, 2, 1))); } </pre>
      */
@@ -2708,7 +2708,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.reactiveStream.BaseStream#onClose(java.lang.Runnable)
      */
     @Override
@@ -2721,18 +2721,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Prepend Stream to this ReactiveSeq
-     * 
+     *
      * <pre>
      * {@code
      *  List<String> result = ReactiveSeq.of(1, 2, 3)
      *                                   .prependS(of(100, 200, 300))
      *                                   .map(it -> it + "!!")
      *                                   .collect(Collectors.toList());
-     * 
+     *
      *  assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!", "1!!", "2!!", "3!!")));
      * }
      * </pre>
-     * 
+     *
      * @param stream
      *            to Prepend
      * @return ReactiveSeq with Stream prepended
@@ -2741,14 +2741,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Append values to the take of this ReactiveSeq
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  List<String> result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).map(it -> it + "!!").collect(Collectors.toList());
-     * 
+     *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
      * </pre>
-     * 
+     *
      * @param values
      *            to append
      * @return ReactiveSeq with appended values
@@ -2763,14 +2763,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Prepend given values to the skip of the Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	ReactiveSeq.of(1,2,3)
      * 									 .prepend(100,200,300)
      * 										 .map(it ->it+"!!")
      * 										 .collect(Collectors.toList());
-     * 
+     *
      * 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
      * @param values to prepend
@@ -2781,15 +2781,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Insert data into a reactiveStream at given position
-     * 
+     *
      * <pre>
      * {@code
      *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).map(it -> it + "!!").collect(Collectors.toList());
-     * 
-     *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));     * 
+     *
+     *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));     *
      * }
      * </pre>
-     * 
+     *
      * @param pos
      *            to insert data at
      * @param values
@@ -2819,14 +2819,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Delete elements between given indexes in a Stream
-     * 
+     *
      * <pre>
      * {@code
      *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).map(it -> it + "!!").collect(Collectors.toList());
-     * 
+     *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "5!!", "6!!")));     * }
      * </pre>
-     * 
+     *
      * @param start
      *            index
      * @param end
@@ -2851,15 +2851,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Insert a Stream into the middle of this reactiveStream at the specified position
-     * 
+     *
      * <pre>
      * {@code
      *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).map(it -> it + "!!").collect(Collectors.toList());
-     * 
+     *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
      * }
      * </pre>
-     * 
+     *
      * @param pos
      *            to insert Stream at
      * @param stream
@@ -2892,9 +2892,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *  assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
      * 				.endsWith(Arrays.asList(5,6)));
-     * 
+     *
      * }
-     * 
+     *
      * @param iterable Values to check
      * @return true if ReactiveSeq ends with values in the supplied iterable
      */
@@ -2905,10 +2905,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     * 				.endsWith(Stream.of(5,6))); 
+     * 				.endsWith(Stream.of(5,6)));
      * }
      * </pre>
-     * 
+     *
      * @param stream
      *            Values to check
      * @return true if ReactiveSeq endswith values in the supplied Stream
@@ -2918,17 +2918,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Skip all elements until specified time period has passed
-     * 
+     *
      * <pre>
      * {@code
      *  List<Integer> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).peek(i -> sleep(i * 100)).skip(1000, TimeUnit.MILLISECONDS).toList();
-     * 
+     *
      *  // [4,5,6]
 
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param time
      *            Length of time
      * @param unit
@@ -2939,16 +2939,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Return all elements until specified time period has elapsed
-     * 
+     *
      * <pre>
      * {@code
      *  List<Integer> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).peek(i -> sleep(i * 100)).limit(1000, TimeUnit.MILLISECONDS).toList();
-     * 
+     *
      *  // [1,2,3,4]
 
      * }
      * </pre>
-     * 
+     *
      * @param time
      *            Length of time
      * @param unit
@@ -2960,7 +2960,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * assertThat(ReactiveSeq.of(1,2,3,4,5) .skipLast(2)
      * .collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
-     * 
+     *
      * @param num
      * @return
      */
@@ -2969,15 +2969,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Limit results to the last x elements in a ReactiveSeq
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * 	assertThat(ReactiveSeq.of(1,2,3,4,5)
      * 							.limitLast(2)
      * 							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
-     * 
+     *
      * }
-     * 
+     *
      * @param num of elements to return (last elements)
      * @return ReactiveSeq limited to last num elements
      */
@@ -2985,26 +2985,26 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> limitLast(int num);
 
     /**
-     * Turns this ReactiveSeq into a HotStream, a connectable Stream, being executed on a thread on the 
+     * Turns this ReactiveSeq into a HotStream, a connectable Stream, being executed on a thread on the
      * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
      * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedHotStream(Executor)}.
      * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#pausableHotStream(Executor)}.
      * Turns this ReactiveSeq into a HotStream, a connectable Stream, being
      * executed on a thread on the supplied executor, that is producing data
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
      * 											.hotStream(exec)
-     * 											
-     * 		
-     * 		ints.connect().forEach(System.out::println);									
+     *
+     *
+     * 		ints.connect().forEach(System.out::println);
      *  //print out all the ints
      *  //multiple consumers are possible, so other Streams can connect on different Threads
-     *  
+     *
      * }
      * </pre>
-     * 
+     *
      * @param e
      *            Executor to execute this ReactiveSeq on
      * @return a Connectable HotStream
@@ -3020,15 +3020,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
      * <pre>
       * <pre>
-     * {@code 
+     * {@code
      *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
     										.hotStream(exec)
-    										
-    	
-    	ints.connect().forEach(System.out::println);									
+
+
+    	ints.connect().forEach(System.out::println);
      *  //print out all the ints - starting when connect is called.
      *  //multiple consumers are possible, so other Streams can connect on different Threads
-     *  
+     *
      * }
      * </pre>
      * @param e
@@ -3042,23 +3042,23 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Turns this ReactiveSeq into a HotStream, a connectable & pausable Stream, being executed on a thread on the 
+     * Turns this ReactiveSeq into a HotStream, a connectable & pausable Stream, being executed on a thread on the
      * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
      * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
      * The generated HotStream is pausable, for a unpausable HotStream (slightly faster execution) @see {@link ReactiveSeq#hotStream(Executor)}.
      * <pre>
-     * {@code 
+     * {@code
      *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
     										.hotStream(exec)
-    										
-    	
+
+
     	ints.connect().forEach(System.out::println);
-    	
+
     	ints.pause(); //on a separate thread pause the generating Stream
-    										
+
      *  //print out all the ints
      *  //multiple consumers are possible, so other Streams can connect on different Threads
-     *  
+     *
      * }
      * </pre>
      * @param e Executor to execute this ReactiveSeq on
@@ -3075,15 +3075,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * The generated HotStream is pausable, for a unpausable HotStream @see {@link ReactiveSeq#primedHotStream(Executor)}.
      * <pre>
       * <pre>
-     * {@code 
+     * {@code
      *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
     										.hotStream(exec)
-    										
-    	
-    	ints.connect().forEach(System.out::println);									
+
+
+    	ints.connect().forEach(System.out::println);
      *  //print out all the ints - starting when connect is called.
      *  //multiple consumers are possible, so other Streams can connect on different Threads
-     *  
+     *
      * }
      * </pre>
      * @param e
@@ -3095,14 +3095,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * 	assertThat(ReactiveSeq.of(1,2,3,4)
      * 					.map(u->{throw new RuntimeException();})
      * 					.recover(e->"hello")
      * 					.firstValue(),equalTo("hello"));
      * }
      * </pre>
-     * 
+     *
      * @return first value in this Stream
      */
     @Override
@@ -3110,19 +3110,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * <pre>
-     * {@code 
-     *    
+     * {@code
+     *
      *    //1
-     *    ReactiveSeq.of(1).single(); 
-     *    
+     *    ReactiveSeq.of(1).single();
+     *
      *    //UnsupportedOperationException
      *    ReactiveSeq.of().single();
-     *     
+     *
      *     //UnsupportedOperationException
      *    ReactiveSeq.of(1,2,3).single();
      * }
      * </pre>
-     * 
+     *
      * @return a single value or an UnsupportedOperationException if 0/1 values
      *         in this Stream
      */
@@ -3148,19 +3148,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * <pre>
-     * {@code 
-     *    
+     * {@code
+     *
      *    //Optional[1]
-     *    ReactiveSeq.of(1).singleOptional(); 
-     *    
+     *    ReactiveSeq.of(1).singleOptional();
+     *
      *    //Optional.empty
      *    ReactiveSeq.of().singleOpional();
-     *     
+     *
      *     //Optional.empty
      *    ReactiveSeq.of(1,2,3).singleOptional();
      * }
      * </pre>
-     * 
+     *
      * @return An Optional with single value if this Stream has exactly one
      *         element, otherwise Optional Empty
      */
@@ -3178,13 +3178,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Return the elementAt index or Optional.empty
-     * 
+     *
      * <pre>
      * {@code
      * 	assertThat(ReactiveSeq.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
      * }
      * </pre>
-     * 
+     *
      * @param index
      *            to extract element from
      * @return elementAt index
@@ -3200,14 +3200,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Gets the element at index, and returns a Tuple containing the element (it
      * must be present) and a maybe copy of the Sequence for further processing.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of(1,2,3,4,5).get(2).v1
      * //3
      * }
      * </pre>
-     * 
+     *
      * @param index
      *            to extract element from
      * @return Element and Sequence
@@ -3223,13 +3223,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of(1,2,3,4,5)
      * 				 .elapsed()
      * 				 .forEach(System.out::println);
      * }
      * </pre>
-     * 
+     *
      * @return Sequence that adds the time between elements in millis to each
      *         element
      */
@@ -3252,11 +3252,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    ReactiveSeq.of(1,2,3,4,5)
      * 				   .timestamp()
      * 				   .forEach(System.out::println)
-     * 
+     *
      * }
-     * 
+     *
      * </pre>
-     * 
+     *
      * @return Sequence that adds a timestamp to each element
      */
     default ReactiveSeq<Tuple2<T, Long>> timestamp() {
@@ -3291,7 +3291,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Create an efficiently reversable Sequence from the provided elements
-     * 
+     *
      * @param elements
      *            To Construct sequence from
      * @return
@@ -3307,7 +3307,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Construct a Reveresed Sequence from the provided elements Can be reversed
      * (again) efficiently
-     * 
+     *
      * @param elements
      *            To Construct sequence from
      * @return
@@ -3323,7 +3323,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Construct a Reveresed Sequence from the provided elements Can be reversed
      * (again) efficiently
-     * 
+     *
      * @param elements
      *            To Construct sequence from
      * @return
@@ -3339,7 +3339,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Create an efficiently reversable Sequence that produces the integers
      * between skip and take
-     * 
+     *
      * @param start
      *            Number of range to skip from
      * @param end
@@ -3358,7 +3358,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Create an efficiently reversable Sequence that produces the integers
      * between skip and take
-     * 
+     *
      * @param start
      *            Number of range to skip from
      * @param end
@@ -3376,7 +3376,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Construct a ReactiveSeq from a Stream
-     * 
+     *
      * @param stream
      *            Stream to construct Sequence from
      * @return
@@ -3396,7 +3396,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Construct a ReactiveSeq from a Stream
-     * 
+     *
      * @param stream
      *            Stream to construct Sequence from
      * @return
@@ -3409,7 +3409,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Construct a ReactiveSeq from a Stream
-     * 
+     *
      * @param stream
      *            Stream to construct Sequence from
      * @return
@@ -3421,7 +3421,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Construct a ReactiveSeq from a Stream
-     * 
+     *
      * @param stream
      *            Stream to construct Sequence from
      * @return
@@ -3434,7 +3434,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Construct a ReactiveSeq from a List (prefer this method if the source is a
      * list, as it allows more efficient Stream reversal).
-     * 
+     *
      * @param list
      *            to construct Sequence from
      * @return ReactiveSeq
@@ -3454,7 +3454,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Construct a ReactiveSeq from an Publisher
-     * 
+     *
      * @param publisher
      *            to construct ReactiveSeq from
      * @return ReactiveSeq
@@ -3469,7 +3469,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Construct a ReactiveSeq from an Iterable
-     * 
+     *
      * @param iterable
      *            to construct Sequence from
      * @return ReactiveSeq
@@ -3493,7 +3493,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     /**
      * Construct a ReactiveSeq from an Iterator
-     * 
+     *
      * @param iterator
      *            to construct Sequence from
      * @return ReactiveSeq
@@ -3526,16 +3526,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     /**
      * Unfold a function into a ReactiveSeq
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  ReactiveSeq.unfold(1,i->i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.empty());
-     * 
+     *
      * //(1,2,3,4,5)
-     * 
+     *
      * }</code>
-     * 
-     * @param seed Initial value 
+     *
+     * @param seed Initial value
      * @param unfolder Iteratively applied function, terminated by an empty Optional
      * @return ReactiveSeq generated by unfolder function
      */
@@ -3553,16 +3553,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Unzip a zipped Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  unzip(ReactiveSeq.of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c")))
-     *  
+     *
      *  // ReactiveSeq[1,2,3], ReactiveSeq[a,b,c]
      * }
-     * 
+     *
      * </pre>
-     * 
+     *
      */
     public static <T, U> Tuple2<ReactiveSeq<T>, ReactiveSeq<U>> unzip(final ReactiveSeq<Tuple2<T, U>> sequence) {
         final Tuple2<ReactiveSeq<Tuple2<T, U>>, ReactiveSeq<Tuple2<T, U>>> tuple2 = sequence.duplicate();
@@ -3572,9 +3572,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Unzip a zipped Stream into 3
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *    unzip3(ReactiveSeq.of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3,"c", 4l)))
      * }
      * // ReactiveSeq[1,2,3], ReactiveSeq[a,b,c], ReactiveSeq[2l,3l,4l]
@@ -3588,9 +3588,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Unzip a zipped Stream into 4
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * unzip4(ReactiveSeq.of(new Tuple4(1, "a", 2l,'µ'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
      * 						"c", 4l,'x')));
      * 		}
@@ -3608,16 +3608,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * If this ReactiveSeq is empty replace it with a another Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(ReactiveSeq.of(4,5,6)
      * 							.onEmptySwitch(()->ReactiveSeq.of(1,2,3))
      * 							.toList(),
      * 							equalTo(Arrays.asList(4,5,6)));
      * }
      * </pre>
-     * 
+     *
      * @param switchTo
      *            Supplier that will generate the alternative Stream
      * @return ReactiveSeq that will switch to an alternative Stream if empty
@@ -3639,7 +3639,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
      */
     @Override
@@ -3647,7 +3647,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
@@ -3665,7 +3665,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * emit x elements per time period
-     * 
+     *
      * <pre>
      * {@code
      * 	code
@@ -3674,11 +3674,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *             .xPer(6, 100000000, TimeUnit.NANOSECONDS)
      *             .collect(Collectors.toList())
      *             .size();
-     * //6            
-     * 
+     * //6
+     *
      * }
      * </pre>
-     * 
+     *
      * @param x
      *            number of elements to emit
      * @param time
@@ -3691,9 +3691,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * emit one element per time period
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.iterate("", last -> "next")
      * 				.limit(100)
      * 				.batchBySize(10)
@@ -3713,16 +3713,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Allow one element through per time period, drop all other elements in
      * that time period
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of(1,2,3,4,5,6)
      *          .debounce(1000,TimeUnit.SECONDS).toList();
-     *          
-     * // 1 
+     *
+     * // 1
      * }
      * </pre>
-     * 
+     *
      * @param time Time to apply debouncing over
      * @param t Time unit for debounce period
      * @return ReactiveSeq with debouncing applied
@@ -3731,7 +3731,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * emit elements after a fixed delay
-     * 
+     *
      * <pre>
      * {@code
      * 	SimpleTimer timer = new SimpleTimer();
@@ -3739,11 +3739,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *             .fixedDelay(10000, TimeUnit.NANOSECONDS)
      *             .collect(Collectors.toList())
      *             .size();
-     *  //6           
+     *  //6
      * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(60000l));
      * }
      * </pre>
-     * 
+     *
      * @param l
      *            time length in nanos of the delay
      * @param unit
@@ -3754,18 +3754,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Introduce a random jitter / time delay between the emission of elements
-     * 
+     *
      * <pre>
      * { @code
      * 	SimpleTimer timer = new SimpleTimer();
      * 	ReactiveSeq.of(1, 2, 3, 4, 5, 6)
      *             .jitter(10000)
      *             .collect(Collectors.toList());
-     *             
+     *
      * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(20000l));
      * }
      * </pre>
-     * 
+     *
      * @param maxJitterPeriodInNanos
      *            - random number less than this is used for each jitter
      * @return ReactiveSeq with a random jitter between element emission
@@ -3774,9 +3774,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Recover from an exception with an alternative value
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4)
      * 						   .map(i->i+2)
      * 						   .map(u->{throw new RuntimeException();})
@@ -3784,7 +3784,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 						   .firstValue(),equalTo("hello"));
      * }
      * </pre>
-     * 
+     *
      * @param fn
      *            Function that accepts a Throwable and returns an alternative
      *            value
@@ -3794,18 +3794,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Recover from a particular exception type
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4)
      * 					.map(i->i+2)
      * 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
      * 					.recover(IOException.class,e->"hello")
      * 					.firstValue(),equalTo("hello"));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param exceptionClass
      *            Type to recover from
      * @param fn
@@ -3818,26 +3818,26 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Retry a transformation if it fails. Default settings are to retry up to 7
      * times, with an doubling backoff period starting @ 2 seconds delay before
      * retry.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * given(serviceMock.apply(anyInt())).willThrow(
      * 				new RuntimeException(new SocketException("First")),
      * 				new RuntimeException(new IOException("Second"))).willReturn(
      * 				"42");
-     * 
-     * 	
+     *
+     *
      * 		String result = ReactiveSeq.of( 1,  2, 3)
      * 				.retry(serviceMock)
      * 				.firstValue();
-     * 
+     *
      * 		//result = 42
      * }
      * </pre>
-     * 
+     *
      * @param fn
      *            Function to retry if fails
-     * 
+     *
      */
     default <R> ReactiveSeq<R> retry(final Function<? super T, ? extends R> fn) {
         return retry(fn, 7, 2, TimeUnit.SECONDS);
@@ -3847,26 +3847,26 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Retry a transformation if it fails. Retries up to <b>retries</b>
      * times, with an doubling backoff period starting @ <b>delay</b> TimeUnits delay before
      * retry.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * given(serviceMock.apply(anyInt())).willThrow(
      * 				new RuntimeException(new SocketException("First")),
      * 				new RuntimeException(new IOException("Second"))).willReturn(
      * 				"42");
-     * 
-     * 	
+     *
+     *
      * 		String result = ReactiveSeq.of( 1,  2, 3)
      * 				.retry(serviceMock, 7, 2, TimeUnit.SECONDS)
      * 				.firstValue();
-     * 
+     *
      * 		//result = 42
      * }
      * </pre>
-     * 
+     *
      * @param fn
      *            Function to retry if fails
-     * @param retries 
+     * @param retries
      *            Number of retries
      * @param delay
      *            Delay in TimeUnits
@@ -3874,38 +3874,20 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            TimeUnit to use for delay
      */
     default <R> ReactiveSeq<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        final Function<T, R> retry = t -> {
-            int count = retries;
-            final long[] sleep = { timeUnit.toMillis(delay) };
-            Throwable exception = null;
-            while (count-- > 0) {
-                ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep[0]))
-                                 .run();
-                try {
-                    return fn.apply(t);
-                } catch (final Throwable e) {
-                    exception = e;
-                }
-
-                sleep[0] = sleep[0] * 2;
-            }
-            ExceptionSoftener.throwSoftenedException(exception);
-            return null;
-        };
-        return map(retry);
+        return (ReactiveSeq) FoldableTraversable.super.retry(fn, retries, delay, timeUnit);
     }
 
     /**
      * Remove all occurances of the specified element from the ReactiveSeq
-     * 
+     *
      * <pre>
      * {@code
      * 	ReactiveSeq.of(1,2,3,4,5,1,2,3).remove(1)
-     * 
+     *
      *  //Streamable[2,3,4,5,2,3]
      * }
      * </pre>
-     * 
+     *
      * @param t
      *            element to remove
      * @return Filtered Stream / ReactiveSeq
@@ -3917,8 +3899,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Generate the permutations based on values in the ReactiveSeq Makes use of
      * Streamable to store intermediate stages in a collection
-     * 
-     * 
+     *
+     *
      * @return Permutations from this ReactiveSeq
      */
     @Override
@@ -3934,16 +3916,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Return a Stream with elements before the provided skip index removed,
      * and elements after the provided take index removed
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   ReactiveSeq.of(1,2,3,4,5,6).subStream(1,3);
-     *   
-     *   
+     *
+     *
      *   //ReactiveSeq[2,3]
      * }
      * </pre>
-     * 
+     *
      * @param start
      *            index inclusive
      * @param end
@@ -3959,12 +3941,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *   ReactiveSeq.of(1,2,3).combinations(2)
-     *   
+     *
      *   //ReactiveSeq[ReactiveSeq[1,2],ReactiveSeq[1,3],ReactiveSeq[2,3]]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param size
      *            of combinations
      * @return All combinations of the elements in this reactiveStream of the specified
@@ -3986,13 +3968,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *   ReactiveSeq.of(1,2,3).combinations()
-     *   
+     *
      *   //ReactiveSeq[ReactiveSeq[],ReactiveSeq[1],ReactiveSeq[2],ReactiveSeq[3].ReactiveSeq[1,2],ReactiveSeq[1,3],ReactiveSeq[2,3]
      *   			,ReactiveSeq[1,2,3]]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @return All combinations of the elements in this reactiveStream
      */
     @Override
@@ -4007,7 +3989,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Execute this Stream on a schedule
-     * 
+     *
      * <pre>
      * {@code
      *  //run at 8PM every night
@@ -4016,21 +3998,21 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
      * }
      * </pre>
-     * 
+     *
      * Connect to the Scheduled Stream
-     * 
+     *
      * <pre>
      * {@code
-     
+
      *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .schedule("0 20 * * *", Executors.newScheduledThreadPool(1));
-     * 
+     *
      *  data.connect().forEach(this::logToDB);
      * }
      * </pre>
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * @param cron
      *            Expression that determines when each job will run
      * @param ex
@@ -4046,7 +4028,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Execute this Stream on a schedule
-     * 
+     *
      * <pre>
      * {@code
      *  //run every 60 seconds after last job completes
@@ -4055,20 +4037,20 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
-     * 
+     *
      * Connect to the Scheduled Stream
-     * 
+     *
      * <pre>
      * {@code
      *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
-     * 
+     *
      *  data.connect().forEach(this::logToDB);
 
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param delay
      *            Between last element completes passing through the Stream
      *            until the next one starts
@@ -4083,7 +4065,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Execute this Stream on a schedule
-     * 
+     *
      * <pre>
      * {@code
      *  //run every 60 seconds
@@ -4092,18 +4074,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
-     * 
+     *
      * Connect to the Scheduled Stream
-     * 
+     *
      * <pre>
      * {@code
      *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
-     * 
+     *
      *  data.connect().forEach(this::logToDB);
      * }
      * </pre>
-     * 
+     *
      * @param rate
      *            Time in millis between job runs
      * @param ex
@@ -4117,7 +4099,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * [equivalent to count]
-     * 
+     *
      * @return size
      */
     default int size() {
@@ -4129,19 +4111,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * supplied streams
      *
      * <pre>
-     * {@code 
-     *   
+     * {@code
+     *
      *   //ReactiveSeq [1,2]
-     *   
+     *
      *   reactiveSeq.forEach4(a->ListX.range(10,13),
      *                        (a,b)->ListX.of(""+(a+b),"hello world"),
      *                        (a,b,c)->ListX.of(a,b,c)),
      *                        (a,b,c,d)->c+":"a+":"+b);
-     *                                  
+     *
 
      * }
      * </pre>
-     * 
+     *
      * @param stream1
      *            Nested Stream to iterate over
      * @param stream2
@@ -4174,23 +4156,23 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Perform a four level nested internal iteration over this Stream and the
      * supplied streams
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  //ReactiveSeq [1,2,3]
-     *  
+     *
      * seq.forEach4(a->ReactiveSeq.range(10,13),
      *                     (a,b)->Stream.of(""+(a+b),"hello world"),
      *                     (a,b,c)->Stream.of(a,b,c),
      *                     (a,b,c,d)-> c!=3,
      *                      (a,b,c)->c+":"a+":"+b);
-     *                                  
-     * 
-     *  
+     *
+     *
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param stream1
      *            Nested Stream to iterate over
      * @param stream2
@@ -4231,17 +4213,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * supplied streams
      *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of(1,2)
      *                      .forEach3(a->IntStream.range(10,13),
      *                               (a,b)->Stream.of(""+(a+b),"hello world"),
      *                               (a,b,c)->c+":"a+":"+b);
-     *                                  
-     * 
+     *
+     *
      *  //ReactiveSeq[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
      * }
      * </pre>
-     * 
+     *
      * @param stream1
      *            Nested Stream to iterate over
      * @param stream2
@@ -4270,21 +4252,21 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Perform a three level nested internal iteration over this Stream and the
      * supplied streams
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of(1,2,3)
      *                      .forEach3(a->IntStream.range(10,13),
      *                                (a,b)->Stream.of(""+(a+b),"hello world"),
      *                                (a,b,c)-> c!=3,
      *                                (a,b,c)->c+":"a+":"+b);
-     *                                  
-     * 
+     *
+     *
      *  //ReactiveSeq[11:1:2,hello world:1:2,14:1:4,hello world:1:4,12:1:2,hello world:1:2,15:1:5,hello world:1:5]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param stream1
      *            Nested Stream to iterate over
      * @param stream2
@@ -4317,19 +4299,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Perform a two level nested internal iteration over this Stream and the
      * supplied reactiveStream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of(1,2,3)
      *                      .forEach2(a->IntStream.range(10,13),
      *                                (a,b)->a+b);
-     *                                  
-     * 
+     *
+     *
      *  //ReactiveSeq[11,14,12,15,13,16]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param stream1
      *            Nested Stream to iterate over
      * @param yieldingFunction
@@ -4339,9 +4321,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends R> yieldingFunction){
-        return this.flatMap(in-> { 
-            
-            
+        return this.flatMap(in-> {
+
+
             ReactiveSeq<R1> b = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
             return b.map(in2->yieldingFunction.apply(in, in2));
         });
@@ -4350,19 +4332,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Perform a two level nested internal iteration over this Stream and the
      * supplied reactiveStream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of(1,2,3)
      *                      .forEach2(a->IntStream.range(10,13),
      *                                (a,b)-> a<3 && b>10,
      *                                (a,b)->a+b);
-     *                                  
-     * 
+     *
+     *
      *  //ReactiveSeq[14,15]
      * }
      * </pre>
-     * 
+     *
      * @param stream1
      *            Nested Stream to iterate over
      * @param filterFunction
@@ -4376,9 +4358,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, Boolean> filterFunction,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
-        return this.flatMap(in-> { 
-            
-            
+        return this.flatMap(in-> {
+
+
             ReactiveSeq<R1> b = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
             return b.filter(in2-> filterFunction.apply(in,in2))
                     .map(in2->yieldingFunction.apply(in, in2));
@@ -4478,7 +4460,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Stream with values repeated
      */
     ReactiveSeq<T> cycle(long times);
-  
+
 
     ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate);
 
