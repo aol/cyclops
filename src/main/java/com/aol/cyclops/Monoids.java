@@ -557,7 +557,7 @@ public interface Monoids {
     /**
      * Combine two booleans by AND'ing them (conjunction)
      */
-    static Monoid<Boolean> booleanConjunction =Monoid.of(true, Semigroups.booleanDisjunction);
+    static Monoid<Boolean> booleanConjunction = Monoid.of(true, Semigroups.booleanConjunction);
     
     /**
      * @return Monoid for composing functions
