@@ -3961,6 +3961,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default StreamT<reactiveSeq,T> combinationsT(final int size) {
         return StreamT.fromReactiveSeq(combinations(size));
     }
+
     default <W extends WitnessType<W>> StreamT<W, T> liftM(W witness) {
         return StreamT.of(witness.adapter().unit(this));
     }

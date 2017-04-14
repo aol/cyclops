@@ -11,6 +11,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
+import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.async.SimpleReact;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;
 import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
@@ -153,7 +154,9 @@ public interface LazyStream<U> extends BlockingStream<U> {
                     .operation(f -> f.peek(c))
                     .injectFutures()
                     .forEach(next -> {
+
                         safeJoin.apply(next);
+
 
                     });
             } catch (final SimpleReactProcessingException e) {

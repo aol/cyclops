@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.function.Consumer;
 
+import com.aol.cyclops2.util.ExceptionSoftener;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
@@ -31,11 +32,29 @@ public class TryTest {
 	}
 	@Test
 	public void ongoing(){
+
 	    assertTrue(Try.of(2, RuntimeException.class)
 	       .map(i->{throw new RuntimeException();}).isFailure());
 	       
 	}
-	@Test
+	public int throwsEx() throws Exception{
+	    return 0;
+    }
+    @Test
+    public void testExcept(){
+
+        assertThat(Try.withCatch(()-> throwsEx())
+                .map(i->i+" woo!")
+                .onFail(System.out::println)
+                .flatMap(e->Try.withCatch(()-> throwsEx()))
+                .orElse(1),is(0));
+
+        Try.withCatch(() -> throwsEx())
+                .onFail(e -> {})
+                .flatMap(v -> Try.withCatch(()-> throwsEx()));
+    }
+
+    @Test
 	public void test2(){
 		assertThat(Try.withCatch(()-> exceptional2())
 						.map(i->i+" woo!")

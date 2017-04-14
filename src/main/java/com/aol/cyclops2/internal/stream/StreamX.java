@@ -6,7 +6,10 @@ import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import cyclops.Streams;
 import cyclops.collections.ListX;
+import cyclops.monads.Witness;
+import cyclops.monads.transformers.StreamT;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Streamable;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -57,6 +60,8 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible) {
         return new StreamX<X>(stream,reversible);
     }
+
+
 
     @Override
     public ReactiveSeq<T> cycle() {

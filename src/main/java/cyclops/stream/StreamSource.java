@@ -465,6 +465,7 @@ public class StreamSource {
      */
     public static <T> FutureStream<T> futureStream(final Adapter<T> adapter, final LazyReact react) {
 
+
         return react.fromStream(adapter.stream());
     }
 

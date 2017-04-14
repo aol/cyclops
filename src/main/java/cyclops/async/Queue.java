@@ -315,57 +315,71 @@ public class Queue<T> implements Adapter<T> {
     }
 
     private T ensureOpen(final long timeout, final TimeUnit timeUnit) {
+
         if (!open && queue.size() == 0)
             throw new ClosedQueueException();
         
         final SimpleTimer timer = new SimpleTimer();
-        final long timeoutNanos = timeUnit.toNanos(timeout);
-        T data = null;
         try {
-            if (this.continuationStrategy != null) {
 
-                while (open && (data = ensureClear(queue.poll())) == null) {
+            final long timeoutNanos = timeUnit.toNanos(timeout);
+            T data = null;
+            try {
 
-                    this.continuationStrategy.handleContinuation();
+                if (this.continuationStrategy != null) {
 
-                    if (timeout != -1)
-                        handleTimeout(timer, timeoutNanos);
+                    final SimpleTimer streamTimer = new SimpleTimer();
+                    try {
+                        while (open && (data = ensureClear(queue.poll())) == null) {
 
+                            final SimpleTimer contTimer = new SimpleTimer();
+
+                            this.continuationStrategy.handleContinuation();
+
+                            if (timeout != -1)
+                                handleTimeout(timer, timeoutNanos);
+
+                        }
+                        if (data != null)
+                            return (T) nillSafe(ensureNotPoisonPill(ensureClear(data)));
+                    }finally{
+                     }
                 }
-                if (data != null)
-                    return (T) nillSafe(ensureNotPoisonPill(ensureClear(data)));
-            }
-            if (!open && queue.size() == 0)
-                throw new ClosedQueueException();
+                if (!open && queue.size() == 0)
+                    throw new ClosedQueueException();
 
-            if (timeout == -1) {
-                if (this.sub != null && this.sub.timeLimit() > -1) {
-                    data = ensureClear(consumerWait.take(() -> queue.poll(sub.timeLimit(), TimeUnit.NANOSECONDS)));
+                if (timeout == -1) {
+                    if (this.sub != null && this.sub.timeLimit() > -1) {
+                        data = ensureClear(consumerWait.take(() -> queue.poll(sub.timeLimit(), TimeUnit.NANOSECONDS)));
+                        if (data == null)
+                            throw new QueueTimeoutException();
+                    } else {
+                        SimpleTimer takeTimer = new SimpleTimer();
+                        data = ensureClear(consumerWait.take(() -> queue.take()));
+                        if (data == null)
+                            throw new QueueTimeoutException();
+
+                    }
+                } else {
+
+                    data = ensureClear(consumerWait.take(() -> queue.poll(timeout, timeUnit)));
                     if (data == null)
                         throw new QueueTimeoutException();
+
+                }
+            } catch (final InterruptedException e) {
+                Thread.currentThread()
+                        .interrupt();
+                throw ExceptionSoftener.throwSoftenedException(e);
             }
 
-                else {
-                    data = ensureClear(consumerWait.take(() -> queue.poll()));
-                    if (data == null)
-                        throw new QueueTimeoutException();
-                }
-            } else {
-                data = ensureClear(consumerWait.take(() -> queue.poll(timeout, timeUnit)));
-                if (data == null)
-                    throw new QueueTimeoutException();
-            }
-        } catch (final InterruptedException e) {
-            Thread.currentThread()
-                  .interrupt();
-            throw ExceptionSoftener.throwSoftenedException(e);
+            ensureNotPoisonPill(data);
+            if (sizeSignal != null)
+                this.sizeSignal.set(queue.size());
+
+            return (T) nillSafe(data);
+        }finally{
         }
-
-        ensureNotPoisonPill(data);
-        if (sizeSignal != null)
-            this.sizeSignal.set(queue.size());
-
-        return (T) nillSafe(data);
 
     }
 
@@ -461,6 +475,7 @@ public class Queue<T> implements Adapter<T> {
      * @return true if successfully added.
      */
     public boolean add(final T data) {
+
 
         try {
             final boolean result = queue.add((T) nullSafe(data));
