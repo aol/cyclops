@@ -32,8 +32,8 @@ public class SimpleTimerTest {
 	}
 	
 	@Test
-	public void testLessThanFifty() {
-		assertThat(timer.getElapsedNanoseconds(), is(lessThan(50l*1000l)));
+	public void testLessThanOneHundred() {
+		assertThat(timer.getElapsedNanoseconds(), is(lessThan(100l*1000l)));
 	}
 
 }

@@ -234,8 +234,9 @@ public  class AsyncReactiveStreamXTest {
 		assertThat(result,hasItems(4,5,6));
 	}
 	@Test
-	public void limitTime(){
-
+	public void limitTime() throws InterruptedException {
+			Thread.sleep(100); //sleep to allow any background tasks to complete
+									//before time sensitive test
 		    System.out.println("Next iteration...");
             List<Integer> result = of(1, 2, 3, 4, 5, 6)
                     .peek(i -> sleep(i*10))
