@@ -84,7 +84,7 @@ public class GroupedByTimeAndSizeSpliterator<T, C extends Collection<? super T>,
 
         while (System.nanoTime() - start < toRun  && collection.size() < groupSize) {
             boolean canAdvance = source.tryAdvance(t -> {
-       //         System.out.println("Next element " + t + " " + start + " nanos " +  (System.nanoTime() - start) + " to run " + toRun);
+
                 collection.add(t);
             });
             if (!canAdvance) {
@@ -96,10 +96,7 @@ public class GroupedByTimeAndSizeSpliterator<T, C extends Collection<? super T>,
                 closed = true;
                 return false;
             }
-            /**
-            System.out.println("Looping " + start + " nanos " +  (System.nanoTime() - start) + " to run " + toRun
-            + (System.nanoTime() - start < toRun) + " size " + (collection.size() < groupSize) +  " collection " + collection);
-**/
+            
         }
         System.out.println("Reseting!");
 
