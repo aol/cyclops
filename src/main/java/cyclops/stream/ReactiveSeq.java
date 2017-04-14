@@ -45,6 +45,7 @@ import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import lombok.val;
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -4328,6 +4329,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             ReactiveSeq<R1> b = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
             return b.map(in2->yieldingFunction.apply(in, in2));
         });
+
+    }
+
+    default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Stream<? extends U> other) {
+        return forEach2(a->other, Tuple::tuple);
     }
 
     /**

@@ -9,6 +9,7 @@ import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.hamcrest.Matchers;
+import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -47,6 +48,7 @@ public  class AsyncReactiveStreamXTest {
 	}
 
 	protected <U> ReactiveSeq<U> of(U... array){
+
         int[] index = {0};
 		return Spouts.async(s->{
 		    new Thread(()-> {
