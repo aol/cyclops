@@ -320,7 +320,7 @@ public interface AdaptersModule {
 
         @Override
         public void forEachRemaining(Consumer<? super T> action) {
-           // System.out.println("For each " + Thread.currentThread().getId());
+
             Spliterator.super.forEachRemaining(action);
         }
         List<T> ancillaryData = null;

@@ -8,7 +8,15 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
+import com.aol.cyclops2.util.SimpleTimer;
+import cyclops.function.FluentFunctions;
+import cyclops.monads.Kleisli;
+import cyclops.monads.Witness;
+import cyclops.stream.ReactiveSeq;
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
@@ -23,8 +31,39 @@ public class SortedSetXTest extends AbstractCollectionXTest {
         return SortedSetX.of(values);
     }
 
+    public boolean include(int i){
+        return true;
+    }
+    public String transform(int i){
+        return "";
+    }
+    @Test
+    public void tracking(){
+        ReactiveSeq.fromStream(Stream.of(1,2))
+                    .filter(this::include)
+                    .elapsed()
+                    .map(this::logAndUnwrap)
+                    .map(FluentFunctions.of(this::transform)
+                                       .around(a->{
+
+                                        SimpleTimer timer = new SimpleTimer();
+                                        String r = a.proceed();
+                                        System.out.println(timer.getElapsedNanoseconds());
+                                        return r;
+                    }));
+
+
+    }
+
+    private Integer logAndUnwrap(Tuple2<Integer, Long> t) {
+        return t.v1;
+    }
+
+
+
     @Test
     public void onEmptySwitch() {
+
         assertThat(SortedSetX.empty()
                              .onEmptySwitch(() -> SortedSetX.of(1, 2, 3)),
                    equalTo(SortedSetX.of(1, 2, 3)));

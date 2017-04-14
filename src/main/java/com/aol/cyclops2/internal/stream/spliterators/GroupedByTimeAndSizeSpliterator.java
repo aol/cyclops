@@ -51,14 +51,20 @@ public class GroupedByTimeAndSizeSpliterator<T, C extends Collection<? super T>,
         start = System.nanoTime();
         source.forEachRemaining(t->{
 
+
             collection.add(t);
 
             if(collection.size()==groupSize || System.nanoTime() - start >= toRun){
+
+                start = System.nanoTime();
+
                 action.accept(finalizer.apply(collection));
 
                 collection = factory.get();
-                start = System.nanoTime();
+
             }
+
+
 
         });
         if(collection.size()>0){
@@ -70,6 +76,7 @@ public class GroupedByTimeAndSizeSpliterator<T, C extends Collection<? super T>,
     boolean closed =false;
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
+        System.out.println("Current time  " + System.currentTimeMillis());
         if(closed)
             return false;
         if(start ==-1 )
@@ -77,6 +84,7 @@ public class GroupedByTimeAndSizeSpliterator<T, C extends Collection<? super T>,
 
         while (System.nanoTime() - start < toRun  && collection.size() < groupSize) {
             boolean canAdvance = source.tryAdvance(t -> {
+       //         System.out.println("Next element " + t + " " + start + " nanos " +  (System.nanoTime() - start) + " to run " + toRun);
                 collection.add(t);
             });
             if (!canAdvance) {
@@ -88,7 +96,12 @@ public class GroupedByTimeAndSizeSpliterator<T, C extends Collection<? super T>,
                 closed = true;
                 return false;
             }
+            /**
+            System.out.println("Looping " + start + " nanos " +  (System.nanoTime() - start) + " to run " + toRun
+            + (System.nanoTime() - start < toRun) + " size " + (collection.size() < groupSize) +  " collection " + collection);
+**/
         }
+        System.out.println("Reseting!");
 
         if(collection.size()>0) {
             action.accept(finalizer.apply(collection));

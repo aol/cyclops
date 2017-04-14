@@ -1,6 +1,8 @@
 package com.aol.cyclops2.control;
 
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
+import com.aol.cyclops2.util.SimpleTimer;
+import com.google.common.collect.Lists;
 import cyclops.Semigroups;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
@@ -10,6 +12,7 @@ import cyclops.control.Eval;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import cyclops.stream.Streamable;
 import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -36,6 +39,50 @@ import static org.junit.Assert.assertThat;
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
+    @Test
+    public void combinations(){
+        SimpleTimer timer = new SimpleTimer();
+
+            Streamable.of(1, 2, 3, 4,5,6)
+                    .combinations(3).forEach(s -> System.out.println(s.join(",")));
+
+
+        long streamTime = timer.getElapsedNanoseconds();
+        System.out.println("Streamable took " + streamTime);
+        timer = new SimpleTimer();
+
+            ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+                    .combinations(3)
+                    .forEach(s -> System.out.println(s.join(",")));
+
+        long rsTime = timer.getElapsedNanoseconds();
+
+        System.out.println("RS took " + rsTime);
+
+    }
+
+    @Test
+    public void recoverTest(){
+        for(int i=0;i<100;i++) {
+            Map<String, List<String>> txn = new HashMap<>();
+            txn.put("5000", Lists.newArrayList("5001", "5002", "5003", "5004a"));
+            txn.put("6000", Lists.newArrayList("6001", "6002a", "6003", "6004"));
+            txn.put("7000", Lists.newArrayList("7001", "7002a", "7003", "7004"));
+            txn.put("8000", Lists.newArrayList("8001", "8002", "8003a", "8004"));
+
+            List<Long> data = ReactiveSeq.fromIterable(txn.entrySet())
+                    .map(e -> e.getValue())
+                    .flatMap(v -> v.stream())
+                    .map(v -> Long.valueOf(v))
+                    .recover(t -> -1L)
+                    .toList();
+
+            assertThat(ListX.of(7001l, -1l, 7003l, 7004l, 8001l, 8002l, -1l,
+                    8004l, 5001l, 5002l, 5003l, -1l, 6001l, -1l, 6003l, 6004l),
+                    equalTo(data));
+
+        }
+    }
     @Test
     public void cycleUntil(){
         System.out.println("List " + PBagX.of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());

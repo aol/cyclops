@@ -41,11 +41,7 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
     @Override
     public ReversingArraySpliterator<T> invert() {
         return new ReversingArraySpliterator<T>(array,start,max,!reverse);
-/**
-        setReverse(!isReverse());
-        index = calcIndex();
-        return this;
- **/
+
     }
 
     private int calcIndex() {

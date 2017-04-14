@@ -1384,8 +1384,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<ListX<U>> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit) {
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .groupedBySizeAndTime(size, time, unit));
+        return fromStream(stream().groupedBySizeAndTime(size, time, unit));
      }
     @Override
     default <C extends Collection<? super U>,R> FutureStream<R> groupedBySizeAndTime(final int size, final long time,
