@@ -101,9 +101,6 @@ public  class AsyncReactiveStreamXTest {
 		System.out.println(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()));
 		assertThat(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()).size(),is(2));
 	}
-	
-
-	
 
 	
 	@Test
@@ -116,10 +113,7 @@ public  class AsyncReactiveStreamXTest {
 	
 		}
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(list.get(0)));
-		
-		
-		
-		
+
 	}
 
     @Test
