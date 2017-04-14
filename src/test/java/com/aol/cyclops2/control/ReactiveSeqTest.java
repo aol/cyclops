@@ -16,6 +16,7 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
+import org.jooq.lambda.tuple.Tuple;
 import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -42,6 +43,7 @@ import static cyclops.stream.ReactiveSeq.mapInts;
 import static cyclops.stream.ReactiveSeq.mapLongs;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -50,6 +52,16 @@ import static org.junit.Assert.fail;
 
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
+
+    @Test
+    public void crossJoinTest(){
+        assertThat(ReactiveSeq.of(1, 2)
+                   .crossJoin(ReactiveSeq.of('a', 'b'))
+                   .toList(),equalTo(ListX.of(tuple(1,'a'),
+                                              tuple(1,'b'),
+                                              tuple(2,'a'),
+                                              tuple(2,'b'))));
+    }
 
     @Test
     public void combinations(){

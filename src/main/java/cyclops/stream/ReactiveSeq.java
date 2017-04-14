@@ -4143,11 +4143,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                             final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
         return this.flatMap(in -> {
 
-            ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            ReactiveSeq<R1> a = stream1 instanceof ReactiveSeq ? (ReactiveSeq)stream1 :  ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
             return a.flatMap(ina -> {
-                ReactiveSeq<R2> b = ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
+                ReactiveSeq<R2> b = stream2 instanceof ReactiveSeq ? (ReactiveSeq)stream2 :  ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
                 return b.flatMap(inb -> {
-                    ReactiveSeq<R3> c = ReactiveSeq.fromIterable(()->stream3.apply(in, ina, inb).iterator());
+                    ReactiveSeq<R3> c = stream3 instanceof ReactiveSeq ? (ReactiveSeq)stream3 :  ReactiveSeq.fromIterable(()->stream3.apply(in, ina, inb).iterator());
                     return c.map(in2 -> yieldingFunction.apply(in, ina, inb, in2));
                 });
 
@@ -4197,11 +4197,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         return this.flatMap(in -> {
 
-            ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            ReactiveSeq<R1> a = stream1 instanceof ReactiveSeq ? (ReactiveSeq)stream1 :
+                                ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
             return a.flatMap(ina -> {
-                ReactiveSeq<R2> b = ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
+                ReactiveSeq<R2> b = stream2 instanceof ReactiveSeq ? (ReactiveSeq)stream2 :
+                                    ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
                 return b.flatMap(inb -> {
-                    ReactiveSeq<R3> c = ReactiveSeq.fromIterable(()->stream3.apply(in, ina, inb).iterator());
+                    ReactiveSeq<R3> c = stream3 instanceof ReactiveSeq ? (ReactiveSeq)stream3 :
+                                    ReactiveSeq.fromIterable(()->stream3.apply(in, ina, inb).iterator());
                     return c.filter(in2 -> filterFunction.apply(in, ina, inb, in2))
                             .map(in2 -> yieldingFunction.apply(in, ina, inb, in2));
                 });
@@ -4241,10 +4244,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         return this.flatMap(in -> {
 
-            ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            ReactiveSeq<R1> a = stream1 instanceof ReactiveSeq ? (ReactiveSeq)stream1 :
+                                ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
             return ReactiveSeq.fromIterable(a)
                               .flatMap(ina -> {
-                ReactiveSeq<R2> b = ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
+                ReactiveSeq<R2> b = stream2 instanceof ReactiveSeq ? (ReactiveSeq)stream2 :
+                        ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
                 return b.map(in2 -> yieldingFunction.apply(in, ina, in2));
             });
 
@@ -4287,10 +4292,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
        return this.flatMap(in -> {
 
-           ReactiveSeq<R1> a = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+           ReactiveSeq<R1> a = stream1 instanceof ReactiveSeq ? (ReactiveSeq)stream1 :
+                                    ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
            return ReactiveSeq.fromIterable(a)
                              .flatMap(ina -> {
-               ReactiveSeq<R2> b = ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
+               ReactiveSeq<R2> b = stream2 instanceof ReactiveSeq ? (ReactiveSeq)stream2 :
+                                    ReactiveSeq.fromIterable(()->stream2.apply(in, ina).iterator());
                return b.filter(in2 -> filterFunction.apply(in, ina, in2))
                        .map(in2 -> yieldingFunction.apply(in, ina, in2));
            });
@@ -4326,13 +4333,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return this.flatMap(in-> {
 
 
-            ReactiveSeq<R1> b = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            ReactiveSeq<R1> b = stream1 instanceof ReactiveSeq ? (ReactiveSeq)stream1 :
+                                    ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
             return b.map(in2->yieldingFunction.apply(in, in2));
         });
 
     }
 
-    default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(Stream<? extends U> other) {
+    /**
+     * crossJoin two Streams forming a cartesian product over both
+     * @param other Stream to crossJoin
+     * @return Single Stream with each pair across both Streams in a Tuple
+     */
+    default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(ReactiveSeq<? extends U> other) {
         return forEach2(a->other, Tuple::tuple);
     }
 
@@ -4368,7 +4381,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return this.flatMap(in-> {
 
 
-            ReactiveSeq<R1> b = ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
+            ReactiveSeq<R1> b = stream1 instanceof ReactiveSeq ? (ReactiveSeq)stream1 :  ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
             return b.filter(in2-> filterFunction.apply(in,in2))
                     .map(in2->yieldingFunction.apply(in, in2));
         });
