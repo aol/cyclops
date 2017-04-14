@@ -47,7 +47,7 @@ public class HotStreamTest {
 	public void hotStreamConnect() throws InterruptedException{
 		
 		
-		for(int i=0;i<1_000;i++)
+		for(int i=0;i<10;i++)
 		{
 			System.out.println(i);
 			value= null;
