@@ -283,7 +283,7 @@ public abstract class AbstractCollectionXTest {
     }
 	@Test
 	public void retainAll(){
-	    assertThat(of(1,2,3,4,5).retainAllS((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
+	    assertThat(of(1,2,3,4,5).retainAllI((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
 	}
 	
 
@@ -293,11 +293,11 @@ public abstract class AbstractCollectionXTest {
     }
 	@Test
     public void retainAllValues(){
-        assertThat(of(1,2,3,4,5).retainAllS(1,2,3),hasItems(1,2,3));
+        assertThat(of(1,2,3,4,5).retainAll(1,2,3),hasItems(1,2,3));
     }
 	@Test
     public void removeAll(){
-        assertThat(of(1,2,3,4,5).removeAllS((Iterable<Integer>)of(1,2,3)),hasItems(4,5));
+        assertThat(of(1,2,3,4,5).removeAllI((Iterable<Integer>)of(1,2,3)),hasItems(4,5));
     }
 
     @Test
@@ -306,7 +306,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void removeAllValues(){
-        assertThat(of(1,2,3,4,5).removeAllS(1,2,3),hasItems(4,5));
+        assertThat(of(1,2,3,4,5).removeAll(1,2,3),hasItems(4,5));
     }
 	@Test
     public void testAnyMatch(){

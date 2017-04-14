@@ -817,7 +817,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default SetX<T> removeAllS(final Stream<? extends T> stream) {
@@ -826,34 +826,34 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllI(java.lang.Iterable)
      */
     @Override
-    default SetX<T> removeAllS(final Iterable<? extends T> it) {
+    default SetX<T> removeAllI(final Iterable<? extends T> it) {
 
-        return (SetX<T>) MutableCollectionX.super.removeAllS(it);
+        return (SetX<T>) MutableCollectionX.super.removeAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllI(java.lang.Object[])
      */
     @Override
-    default SetX<T> removeAllS(final T... values) {
+    default SetX<T> removeAll(final T... values) {
 
-        return (SetX<T>) MutableCollectionX.super.removeAllS(values);
+        return (SetX<T>) MutableCollectionX.super.removeAll(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default SetX<T> retainAllS(final Iterable<? extends T> it) {
+    default SetX<T> retainAllI(final Iterable<? extends T> it) {
 
-        return (SetX<T>) MutableCollectionX.super.retainAllS(it);
+        return (SetX<T>) MutableCollectionX.super.retainAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default SetX<T> retainAllS(final Stream<? extends T> seq) {
@@ -862,12 +862,12 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllI(java.lang.Object[])
      */
     @Override
-    default SetX<T> retainAllS(final T... values) {
+    default SetX<T> retainAll(final T... values) {
 
-        return (SetX<T>) MutableCollectionX.super.retainAllS(values);
+        return (SetX<T>) MutableCollectionX.super.retainAll(values);
     }
 
     /* (non-Javadoc)

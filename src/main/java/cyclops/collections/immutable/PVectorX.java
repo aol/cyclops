@@ -984,7 +984,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default PVectorX<T> removeAllS(final Stream<? extends T> stream) {
@@ -993,34 +993,34 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllI(java.lang.Iterable)
      */
     @Override
-    default PVectorX<T> removeAllS(final Iterable<? extends T> it) {
+    default PVectorX<T> removeAllI(final Iterable<? extends T> it) {
 
-        return (PVectorX<T>) PersistentCollectionX.super.removeAllS(it);
+        return (PVectorX<T>) PersistentCollectionX.super.removeAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllI(java.lang.Object[])
      */
     @Override
-    default PVectorX<T> removeAllS(final T... values) {
+    default PVectorX<T> removeAll(final T... values) {
 
-        return (PVectorX<T>) PersistentCollectionX.super.removeAllS(values);
+        return (PVectorX<T>) PersistentCollectionX.super.removeAll(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default PVectorX<T> retainAllS(final Iterable<? extends T> it) {
+    default PVectorX<T> retainAllI(final Iterable<? extends T> it) {
 
-        return (PVectorX<T>) PersistentCollectionX.super.retainAllS(it);
+        return (PVectorX<T>) PersistentCollectionX.super.retainAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default PVectorX<T> retainAllS(final Stream<? extends T> seq) {
@@ -1029,12 +1029,12 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllI(java.lang.Object[])
      */
     @Override
-    default PVectorX<T> retainAllS(final T... values) {
+    default PVectorX<T> retainAll(final T... values) {
 
-        return (PVectorX<T>) PersistentCollectionX.super.retainAllS(values);
+        return (PVectorX<T>) PersistentCollectionX.super.retainAll(values);
     }
 
     /* (non-Javadoc)

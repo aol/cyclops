@@ -1018,7 +1018,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default DequeX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1027,34 +1027,34 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllI(java.lang.Iterable)
      */
     @Override
-    default DequeX<T> removeAllS(final Iterable<? extends T> it) {
+    default DequeX<T> removeAllI(final Iterable<? extends T> it) {
 
-        return (DequeX<T>) MutableCollectionX.super.removeAllS(it);
+        return (DequeX<T>) MutableCollectionX.super.removeAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllI(java.lang.Object[])
      */
     @Override
-    default DequeX<T> removeAllS(final T... values) {
+    default DequeX<T> removeAll(final T... values) {
 
-        return (DequeX<T>) MutableCollectionX.super.removeAllS(values);
+        return (DequeX<T>) MutableCollectionX.super.removeAll(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default DequeX<T> retainAllS(final Iterable<? extends T> it) {
+    default DequeX<T> retainAllI(final Iterable<? extends T> it) {
 
-        return (DequeX<T>) MutableCollectionX.super.retainAllS(it);
+        return (DequeX<T>) MutableCollectionX.super.retainAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default DequeX<T> retainAllS(final Stream<? extends T> seq) {
@@ -1063,12 +1063,12 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllI(java.lang.Object[])
      */
     @Override
-    default DequeX<T> retainAllS(final T... values) {
+    default DequeX<T> retainAll(final T... values) {
 
-        return (DequeX<T>) MutableCollectionX.super.retainAllS(values);
+        return (DequeX<T>) MutableCollectionX.super.retainAll(values);
     }
 
     /* (non-Javadoc)
