@@ -44,7 +44,7 @@ public class HotStreamTest {
               .peek(System.out::println)
               .forEach(c->captured=c);
         
-          assertThat(System.currentTimeMillis() - diff,greaterThan(1500l));
+          assertThat(System.currentTimeMillis() - diff,greaterThan(995l));
     }
 	@Test
     public void backpressureScheduledDelayNonBlocking(){

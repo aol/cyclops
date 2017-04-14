@@ -7,9 +7,9 @@ import java.util.function.Function;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Trampoline;
 
-/** 
+/**
  * An interface that represents a type that can transform a value from one type to another
- * 
+ *
  * @author johnmcclean
  *
  * @param <T> Data type of element(s) stored in this Transformable
@@ -20,10 +20,10 @@ public interface Transformable<T> {
     /**
      * Cast all elements in a reactiveStream to a given type, possibly throwing a
      * {@link ClassCastException}.
-     * 
-     * 
+     *
+     *
      * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
-     * 
+     *
      */
     default <U> Transformable<U> cast(final Class<? extends U> type) {
         return map(type::cast);
@@ -31,36 +31,36 @@ public interface Transformable<T> {
 
     /**
      * Transform this functor using the supplied transformation function
-     * 
+     *
      * <pre>
-     * {@code 
-     *  
-     *  
+     * {@code
+     *
+     *
      *    of(1,2,3).map(i->i*2)
-     *    
+     *
      *    //[2,4,6]
-     *  
+     *
      * }
      * </pre>
-     * 
+     *
      * @param fn Transformation function
      * @return Transformed Transformable
      */
     <R> Transformable<R> map(Function<? super T, ? extends R> fn);
- 
+
     /**
      * Peek at the current value of this Transformable, without transforming it
-     * 
+     *
       * <pre>
-     * {@code 
-     *  
-     *  
+     * {@code
+     *
+     *
      *    of(1,2,3).map(System.out::println)
-     *    
+     *
      *    1
      *    2
      *    3
-     *  
+     *
      * }
      * </pre>
      * @param c Consumer that recieves each element from this Transformable
@@ -79,30 +79,30 @@ public interface Transformable<T> {
       * {@code
       * ReactiveSeq.of(10,20,30,40)
     			 .trampoline(i-> fibonacci(i))
-    			 .forEach(System.out::println); 
-    			 
+    			 .forEach(System.out::println);
+
     	Trampoline<Long> fibonacci(int i){
     		return fibonacci(i,1,0);
     	}
     	Trampoline<Long> fibonacci(int n, long a, long b) {
         	return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
-    	}		 
-    			 
+    	}
+
       * 55
     	6765
     	832040
     	102334155
-      * 
-      * 
+      *
+      *
       * ReactiveSeq.of(10_000,200_000,3_000_000,40_000_000)
     			 .trampoline(i-> fibonacci(i))
     			 .forEach(System.out::println);
-    			 
-    			 
+
+
       * completes successfully
       * }
       * </pre>
-      * 
+      *
      * @param mapper TCO Transformation function
      * @return Transformable transformed by the supplied transformation function
      */
@@ -172,19 +172,17 @@ public interface Transformable<T> {
      */
     default <R> Transformable<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
         final Function<T, R> retry = t -> {
-            int count = retries;
             final long[] sleep = { timeUnit.toMillis(delay) };
             Throwable exception = null;
-            while (count-- > 0) {
-                ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep[0]))
-                        .run();
+            for (int count = retries; count >=0; count--) {
                 try {
                     return fn.apply(t);
                 } catch (final Throwable e) {
                     exception = e;
+                    ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep[0]))
+                                     .run();
+                    sleep[0] = sleep[0] * 2;
                 }
-
-                sleep[0] = sleep[0] * 2;
             }
             ExceptionSoftener.throwSoftenedException(exception);
             return null;

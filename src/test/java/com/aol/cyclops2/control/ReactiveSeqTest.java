@@ -5,8 +5,11 @@ import com.aol.cyclops2.util.SimpleTimer;
 import com.google.common.collect.Lists;
 import cyclops.Semigroups;
 import cyclops.collections.ListX;
+
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
+import cyclops.Semigroups;
 import cyclops.async.Future;
+import cyclops.collections.ListX;
 import cyclops.collections.immutable.PBagX;
 import cyclops.control.Eval;
 import cyclops.monads.AnyM;
@@ -21,20 +24,29 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static cyclops.function.Predicates.*;
+import static cyclops.function.Predicates.anyOf;
+import static cyclops.function.Predicates.greaterThan;
+import static cyclops.function.Predicates.hasItems;
+import static cyclops.function.Predicates.in;
+import static cyclops.function.Predicates.not;
 import static cyclops.stream.ReactiveSeq.mapDoubles;
 import static cyclops.stream.ReactiveSeq.mapInts;
 import static cyclops.stream.ReactiveSeq.mapLongs;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
@@ -501,15 +513,15 @@ public class ReactiveSeqTest {
     }
     @Test
     public void replayStream(){
-       
+
         ReactiveSeq<String> stream = ReactiveSeq.of("hello","world");
         ReactiveSeq<String> stream1 = stream.map(str->"hello world " + str);
         Spliterator<String> sp = stream1.spliterator();
-        
+
         ReactiveSeq.fromSpliterator(sp).forEach(System.out::println);
-       
+
         ReactiveSeq.fromSpliterator(sp).forEach(System.err::println);
-        
+
     }
     @Test
     public void replay(){
@@ -518,14 +530,14 @@ public class ReactiveSeqTest {
         ReactiveSeq<String> stream1 = stream.map(str->"hello world " + str);
         Spliterator<String> sp = stream1.spliterator();
         pushable.onNext("hello");
-       
+
         pushable.onComplete();
         ReactiveSeq.fromSpliterator(sp).forEach(System.out::println);
         pushable.onNext("world");
-        
+
         pushable.onComplete();
         ReactiveSeq.fromSpliterator(sp).forEach(System.err::println);
-        
+
     }
     @Test
     public void skip(){
@@ -597,13 +609,13 @@ public class ReactiveSeqTest {
     }
 
 
-    
+
     @Test @Ignore
     public void limitLast(){
         AsyncSubscriber<String> pushable = Spouts.asyncSubscriber();
         ReactiveSeq<String> stream = pushable.stream();
         pushable.onNext("hello1");
-        
+
         pushable.onNext("hello2");
         pushable.onNext("hello3");
         pushable.onComplete();
@@ -713,7 +725,7 @@ public class ReactiveSeqTest {
                 .forEach(System.out::println,System.err::println);
         pushable.onNext("world");
     }
-    
+
     @Test @Ignore
     public void zip(){
         Stream<Integer> s = Stream.of(1,2,3);
@@ -736,19 +748,19 @@ public class ReactiveSeqTest {
         assertThat(stream.zipS(Stream.of(1,2)).toList().size(),equalTo(1));
         assertFalse(active.get());
     }
-    
+
     @Test @Ignore
     public void lazy(){
         ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();
         ReactiveSeq<String> stream = pushable.reactiveStream();
-        
+
         Eval<List<String>> list = stream.peek(System.err::println)
                                         .foldLazy(s->s.collect(Collectors.toList()));
-      
+
         pushable.onNext("hello");
         pushable.onComplete();
         assertThat(list.get().size(),equalTo(1));
-        
+
     }
     @Test @Ignore
     public void push(){
@@ -757,13 +769,13 @@ public class ReactiveSeqTest {
         Executor ex= Executors.newFixedThreadPool(1);
         Future<List<String>> list = stream.peek(System.err::println)
                                            .foldFuture(ex,s->s.collect(Collectors.toList()));
-      
+
         pushable.onNext("hello");
         pushable.onComplete();
         assertThat(list.get().size(),equalTo(1));
-        
+
     }
-   
+
 
     @Test
     public void foldInt(){
@@ -802,7 +814,7 @@ public class ReactiveSeqTest {
         assertThat(ReactiveSeq.ofDoubles(6.0)
                              .single(),equalTo(6.0));
     }
-    
+
     @Test
     public void ofTestObj(){
         assertThat(ReactiveSeq.of("a")
@@ -815,11 +827,11 @@ public class ReactiveSeqTest {
     }
     @Test
     public void coflatMap(){
-        
+
        assertThat(ReactiveSeq.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
                    .single(),equalTo(6));
-        
+
     }
     @Test
     public void test1() {
@@ -835,19 +847,55 @@ public class ReactiveSeqTest {
     public void test3() {
         ReactiveSeq.of(Arrays.asList(1, 2, 3), Arrays.asList(2, 3, 4), Arrays.asList(3, 4, 5)).filter(hasItems(Arrays.asList(2, 3)));
     }
-    
+
     @Test
     public void test4() {
         ReactiveSeq.of(Arrays.asList(1, 2, 3), Arrays.asList(2, 3, 4), Arrays.asList(3, 4, 5)).filter(not(hasItems(Arrays.asList(2, 3))));
     }
-    
+
     @Test
     public void test() {
-        
+
         Predicate<? super Integer> inOne = in(2.4,3,4);
         Predicate<? super Integer> inTwo = in(1,10,20);
         ReactiveSeq.of(1,2,3).filter(anyOf(not(inOne),inTwo));
         ReactiveSeq.of(1,2,3).filter(anyOf(not(in(2.4,3,4)),in(1,10,20)));
     }
-    
+
+    @Test
+    public void retryShouldNotThrowNPEIfRetryIsZero() {
+        Function<Integer, Integer> fn = i -> 2 * i;
+
+        int result = ReactiveSeq.of(1)
+                                .retry(fn, 0, 1, TimeUnit.SECONDS)
+                                .firstValue();
+
+        assertEquals(2, result);
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void retryShouldExecuteFnEvenIfRetryIsZero() {
+        Function<Integer, Integer> fn = i -> i / 0;
+
+        ReactiveSeq.of(1)
+                   .retry(fn, 0, 1, TimeUnit.SECONDS)
+                   .firstValue();
+
+        fail();
+    }
+
+    @Test
+    public void retryShouldWaitOnlyAfterFailure() {
+        final long[] timings = {System.currentTimeMillis(), Long.MAX_VALUE};
+        Function<Integer, Integer> fn = i -> {
+            timings[1] = System.currentTimeMillis();
+            return 2 * i;
+        };
+
+        ReactiveSeq.of(1)
+                   .retry(fn, 3, 10000, TimeUnit.MILLISECONDS)
+                   .firstValue();
+
+        assertTrue(timings[1] - timings[0] < 5000);
+    }
 }
