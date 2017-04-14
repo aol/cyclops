@@ -293,7 +293,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default MapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -302,7 +302,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.lang.Iterable)
      */
     @Override
     default MapX<K, V> removeAllS(final Iterable<? extends Tuple2<K, V>> it) {
@@ -311,7 +311,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.lang.Object[])
      */
     @Override
     default MapX<K, V> removeAllS(final Tuple2<K, V>... values) {
@@ -320,7 +320,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.lang.Iterable)
      */
     @Override
     default MapX<K, V> retainAllS(final Iterable<? extends Tuple2<K, V>> it) {
@@ -329,7 +329,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default MapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -338,7 +338,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.lang.Object[])
      */
     @Override
     default MapX<K, V> retainAllS(final Tuple2<K, V>... values) {

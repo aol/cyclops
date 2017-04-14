@@ -337,7 +337,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
                 .connect()
                 .debounce(1,TimeUnit.DAYS)
                 .peek(System.out::println)
-                .toList(),equalTo(Arrays.asList(1)));
+                .toList().size(),lessThan(3));
     }
 
     @Test

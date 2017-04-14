@@ -556,10 +556,10 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.util.reactiveStream.Stream)
      */
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#removeAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#removeAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default MutableCollectionX<T> removeAllS(final Stream<? extends T> stream) {
@@ -570,33 +570,33 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#removeAllI(java.lang.Iterable)
      */
     @Override
-    default MutableCollectionX<T> removeAllS(final Iterable<? extends T> it) {
+    default MutableCollectionX<T> removeAllI(final Iterable<? extends T> it) {
         return fromStream(stream().removeAllS(it));
 
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#removeAllI(java.lang.Object[])
      */
     @Override
-    default MutableCollectionX<T> removeAllS(final T... values) {
+    default MutableCollectionX<T> removeAll(final T... values) {
         return fromStream(stream().removeAllS(values));
 
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default MutableCollectionX<T> retainAllS(final Iterable<? extends T> it) {
+    default MutableCollectionX<T> retainAllI(final Iterable<? extends T> it) {
         return fromStream(stream().retainAllS(it));
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#retainAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#retainAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default MutableCollectionX<T> retainAllS(final Stream<? extends T> stream) {
@@ -606,10 +606,10 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#retainAllI(java.lang.Object[])
      */
     @Override
-    default MutableCollectionX<T> retainAllS(final T... values) {
+    default MutableCollectionX<T> retainAll(final T... values) {
         return fromStream(stream().retainAllS(values));
     }
 

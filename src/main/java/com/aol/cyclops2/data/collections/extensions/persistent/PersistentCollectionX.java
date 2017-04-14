@@ -541,7 +541,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default PersistentCollectionX<T> removeAllS(final Stream<? extends T> stream) {
@@ -552,37 +552,37 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.lang.Iterable)
      */
     @Override
-    default PersistentCollectionX<T> removeAllS(final Iterable<? extends T> it) {
+    default PersistentCollectionX<T> removeAllI(final Iterable<? extends T> it) {
 
         return from(this.<T> monoid()
                         .mapReduce(stream().removeAllS(it)));
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.lang.Object[])
      */
     @Override
-    default PersistentCollectionX<T> removeAllS(final T... values) {
+    default PersistentCollectionX<T> removeAll(final T... values) {
 
         return from(this.<T> monoid()
                         .mapReduce(stream().removeAllS(values)));
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.lang.Iterable)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.lang.Iterable)
      */
     @Override
-    default PersistentCollectionX<T> retainAllS(final Iterable<? extends T> it) {
+    default PersistentCollectionX<T> retainAllI(final Iterable<? extends T> it) {
 
         return from(this.<T> monoid()
                         .mapReduce(stream().retainAllS(it)));
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default PersistentCollectionX<T> retainAllS(final Stream<? extends T> seq) {
@@ -594,10 +594,10 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllS(java.lang.Object[])
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.lang.Object[])
      */
     @Override
-    default PersistentCollectionX<T> retainAllS(final T... values) {
+    default PersistentCollectionX<T> retainAll(final T... values) {
 
         return from(this.<T> monoid()
                         .mapReduce(stream().retainAllS(values)));
