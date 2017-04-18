@@ -2431,9 +2431,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * FutureStream.of(1, 2).crossJoin(FutureStream.of("a", "b"))
      * }</pre>
      */
-    default <T> FutureStream<Tuple2<U, T>> crossJoin(final Stream<? extends T> other) {
+    default <T> FutureStream<Tuple2<U, T>> crossJoin(final ReactiveSeq<? extends T> other) {
         return fromStream(ReactiveSeq.oneShotStream(stream()).seq()
-                                     .crossJoin(other));
+                                     .crossJoin((Stream<T>)other));
     }
 
     /**
