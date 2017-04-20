@@ -16,6 +16,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,6 +27,19 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 public class PredicatesTest {
+
+    @Test
+    public void testSampleTime(){
+        assertThat(Stream.of(1,2,3,4).filter(Predicates.sample(1, TimeUnit.MILLISECONDS)).collect(Collectors.toList()).size(),equalTo(1));
+        assertThat(Stream.of(1,2,3,4).filter(Predicates.sample(1, TimeUnit.NANOSECONDS)).collect(Collectors.toList()).size(),equalTo(4));
+
+    }
+
+    @Test
+    public void testSample(){
+        assertThat(Stream.of(1,2,3,4).filter(Predicates.sample(2)).collect(Collectors.toList()).size(),equalTo(2));
+        assertThat(Stream.of(1,2,3,4).filter(Predicates.sample(4)).collect(Collectors.toList()).size(),equalTo(1));
+    }
 
     @Test
     public void testFilter(){

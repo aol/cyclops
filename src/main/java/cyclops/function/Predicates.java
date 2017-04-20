@@ -1,11 +1,16 @@
 package cyclops.function;
 
+import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.types.Value;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -428,6 +433,61 @@ public static <T1> Predicate<? super T1> instanceOf(final Class<?> clazz) {
                                   .xMatch(x, r -> r);
     }
 
+    /**
+     * Samples a dataset by only returning true when the modulus of the event count divided by the rate is 0
+     * e.g.
+     * To select every second member of a Stream, filter with Predicates.sample(2) - for every thid member filter with Predicates.sample(3) and so on.
+     * To take 1% of a Stream use Predicates.sample(100)
+     *
+     * @param rate Every x element to include in your sample
+     * @param <T> Data type to sample
+     * @return Sampling Predicate
+     */
+    public static <T> Predicate<T> sample(int rate){
+        return new Sample<T>(rate);
+    }
+    public static <T> Predicate<T> sample(long time,TimeUnit unit){
+        return new TimeSample<T>(unit.toNanos(time));
+    }
+    private static class TimeSample<T> implements Predicate<T>{
+        private final AtomicReference<SimpleTimer> timer = new AtomicReference(null);
+        private final  long nanos;
+
+
+        public TimeSample(long nanos) {
+            this.nanos = nanos;
+        }
+
+        @Override
+        public boolean test(T t) {
+            if(timer.get()==null){
+                timer.set(new SimpleTimer());
+                return true;
+            }
+            if(timer.get().getElapsedNanoseconds() > nanos){
+                timer.set(null);
+                return true;
+            }
+            return false;
+        }
+
+    }
+
+    private static class Sample<T> implements Predicate<T>{
+        private final int rate;
+
+        private AtomicInteger count = new AtomicInteger(0);
+
+        public Sample(int rate) {
+            this.rate = rate;
+        }
+
+        @Override
+        public boolean test(T t) {
+            return count.incrementAndGet() % rate ==0;
+        }
+
+    }
 
     static <T1> Predicate<T1> inSet(Set<T1> set) {
         return set::contains;
