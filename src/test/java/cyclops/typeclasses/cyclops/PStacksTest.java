@@ -29,7 +29,7 @@ public class PStacksTest {
         
         PStackX<Integer> list = PStackX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->PStackX.Instances.functor().map((String v) ->v.length(), h))
+                                     .apply(h->PStackX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(PStackX::narrowK);
         
         assertThat(list,equalTo(PStackX.of("hello".length())));
@@ -49,8 +49,8 @@ public class PStacksTest {
         
         PStackX<Integer> list = PStackX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->PStackX.Instances.functor().map((String v) ->v.length(), h))
-                                     .transform(h->PStackX.Instances.zippingApplicative().ap(listFn, h))
+                                     .apply(h->PStackX.Instances.functor().map((String v) ->v.length(), h))
+                                     .apply(h->PStackX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(PStackX::narrowK);
         
         assertThat(list,equalTo(PStackX.of("hello".length()*2)));
@@ -66,7 +66,7 @@ public class PStacksTest {
         
         PStackX<Integer> list = PStackX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->PStackX.Instances.monad().flatMap((String v) ->PStackX.Instances.unit().unit(v.length()), h))
+                                     .apply(h->PStackX.Instances.monad().flatMap((String v) ->PStackX.Instances.unit().unit(v.length()), h))
                                      .convert(PStackX::narrowK);
         
         assertThat(list,equalTo(PStackX.of("hello".length())));
@@ -76,7 +76,7 @@ public class PStacksTest {
         
         PStackX<String> list = PStackX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->PStackX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .apply(h->PStackX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(PStackX::narrowK);
         
         assertThat(list,equalTo(PStackX.of("hello")));
@@ -86,7 +86,7 @@ public class PStacksTest {
         
         PStackX<String> list = PStackX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->PStackX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .apply(h->PStackX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(PStackX::narrowK);
         
         assertThat(list,equalTo(PStackX.empty()));

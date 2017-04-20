@@ -1249,7 +1249,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
          * {@code
          *   PStackX<Integer> list = PStacks.unit()
         .unit("hello")
-        .transform(h->PStacks.functor().map((String v) ->v.length(), h))
+        .apply(h->PStacks.functor().map((String v) ->v.length(), h))
         .convert(PStackX::narrowK);
          *
          * }
@@ -1305,8 +1305,8 @@ public interface PStackX<T> extends To<PStackX<T>>,
 
         PStackX<Integer> list = PStacks.unit()
         .unit("hello")
-        .transform(h->PStacks.functor().map((String v) ->v.length(), h))
-        .transform(h->PStacks.zippingApplicative().ap(listFn, h))
+        .apply(h->PStacks.functor().map((String v) ->v.length(), h))
+        .apply(h->PStacks.zippingApplicative().ap(listFn, h))
         .convert(PStackX::narrowK);
 
         //Arrays.asPStack("hello".length()*2))
@@ -1337,7 +1337,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
          * {@code
          *    PStackX<Integer> list = PStacks.unit()
         .unit("hello")
-        .transform(h->PStacks.monad().flatMap((String v) ->PStacks.unit().unit(v.length()), h))
+        .apply(h->PStacks.monad().flatMap((String v) ->PStacks.unit().unit(v.length()), h))
         .convert(PStackX::narrowK);
 
         //Arrays.asPStack("hello".length())
@@ -1358,7 +1358,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
          * {@code
          *  PStackX<String> list = PStacks.unit()
         .unit("hello")
-        .transform(h->PStacks.monadZero().filter((String t)->t.startsWith("he"), h))
+        .apply(h->PStacks.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(PStackX::narrowK);
 
         //Arrays.asPStack("hello"));

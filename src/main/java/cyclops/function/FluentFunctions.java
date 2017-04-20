@@ -190,7 +190,7 @@ public class FluentFunctions {
      * <pre>
      * {@code
        FluentFunctions.of(this::add)	
-    				  .matches(-1,c->c.hasValues(3).transform(i->3))
+    				  .matches(-1,c->c.hasValues(3).apply(i->3))
     				  .apply(1,1,1)		   
        }  
        </pre>

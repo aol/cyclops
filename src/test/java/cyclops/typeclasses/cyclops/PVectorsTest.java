@@ -30,7 +30,7 @@ public class PVectorsTest {
         
         PVectorX<Integer> list = PVectorX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->PVectorX.Instances.functor().map((String v) ->v.length(), h))
+                                     .apply(h->PVectorX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(PVectorX::narrowK);
         
         assertThat(list,equalTo(PVectorX.of("hello".length())));
@@ -50,8 +50,8 @@ public class PVectorsTest {
         
         PVectorX<Integer> list = PVectorX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->PVectorX.Instances.functor().map((String v) ->v.length(), h))
-                                     .transform(h->PVectorX.Instances.zippingApplicative().ap(listFn, h))
+                                     .apply(h->PVectorX.Instances.functor().map((String v) ->v.length(), h))
+                                     .apply(h->PVectorX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(PVectorX::narrowK);
         
         assertThat(list,equalTo(PVectorX.of("hello".length()*2)));
@@ -67,7 +67,7 @@ public class PVectorsTest {
         
         PVectorX<Integer> list = PVectorX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->PVectorX.Instances.monad().flatMap((String v) ->PVectorX.Instances.unit().unit(v.length()), h))
+                                     .apply(h->PVectorX.Instances.monad().flatMap((String v) ->PVectorX.Instances.unit().unit(v.length()), h))
                                      .convert(PVectorX::narrowK);
         
         assertThat(list,equalTo(PVectorX.of("hello".length())));
@@ -77,7 +77,7 @@ public class PVectorsTest {
         
         PVectorX<String> list = PVectorX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->PVectorX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .apply(h->PVectorX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(PVectorX::narrowK);
         
         assertThat(list,equalTo(PVectorX.of("hello")));
@@ -87,7 +87,7 @@ public class PVectorsTest {
         
         PVectorX<String> list = PVectorX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->PVectorX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .apply(h->PVectorX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(PVectorX::narrowK);
         
         assertThat(list,equalTo(PVectorX.empty()));

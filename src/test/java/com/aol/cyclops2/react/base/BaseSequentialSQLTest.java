@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
+import cyclops.collections.ListX;
 import cyclops.stream.FutureStream;
 import org.junit.Test;
 
@@ -16,8 +17,10 @@ public abstract class BaseSequentialSQLTest {
 	abstract protected <U> FutureStream<U> react(Supplier<U>... array);
 	
 	 BiPredicate TRUE = (t, u) -> true;
-	 @Test
+	    @Test
 	    public void testCrossJoin() {
+
+
 
 	        // {A} x {B}
 	        // ---------------------------------------------------------------------

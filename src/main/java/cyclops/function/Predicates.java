@@ -143,7 +143,7 @@ public class Predicates {
 
      * 
      * Eval<Integer> result = Matchables.future(FutureW.ofResult(1))
-                                         .matches(c-> c.is( when(some(1)), transform(10)), c->c.is(when(instanceOf(RuntimeException.class)), transform(2)),otherwise(3));
+                                         .matches(c-> c.is( when(some(1)), apply(10)), c->c.is(when(instanceOf(RuntimeException.class)), apply(2)),otherwise(3));
         
        //Eval[10]
      * 

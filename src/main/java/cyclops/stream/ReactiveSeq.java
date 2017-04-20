@@ -1438,7 +1438,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param predicate
-     *            Batch until predicate holds, transform open next batch
+     *            Batch until predicate holds, apply open next batch
      * @return ReactiveSeq batched into lists determined by the predicate supplied
      */
     @Override
@@ -1460,7 +1460,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param predicate
-     *            Batch while predicate holds, transform open next batch
+     *            Batch while predicate holds, apply open next batch
      * @return ReactiveSeq batched into lists determined by the predicate supplied
      */
     @Override
@@ -1480,7 +1480,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param predicate
-     *            Batch while predicate holds, transform open next batch
+     *            Batch while predicate holds, apply open next batch
      * @param factory
      *            Collection factory
      * @return ReactiveSeq batched into collections determined by the predicate
@@ -1504,7 +1504,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param predicate
-     *            Batch until predicate holds, transform open next batch
+     *            Batch until predicate holds, apply open next batch
      * @param factory
      *            Collection factory
      * @return ReactiveSeq batched into collections determined by the predicate
@@ -2245,7 +2245,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * is {@link Collector.Characteristics#CONCURRENT concurrent}, and
      * either the reactiveStream is unordered or the collector is
      * {@link Collector.Characteristics#UNORDERED unordered},
-     * transform a concurrent reduction will be performed (see {@link Collector} for
+     * apply a concurrent reduction will be performed (see {@link Collector} for
      * details on concurrent reduction.)
      * <p>
      * <p>This is a <a href="package-summary.html#StreamOps">terminal
@@ -4913,7 +4913,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          *   ReactiveSeq<Integer> list = ReactiveSeq.Instances.unit()
         .unit("hello")
-        .transform(h->Lists.functor().map((String v) ->v.length(), h))
+        .apply(h->Lists.functor().map((String v) ->v.length(), h))
         .convert(ReactiveSeq::narrowK);
          *
          * }
@@ -4969,8 +4969,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
-        .transform(h->Lists.functor().map((String v) ->v.length(), h))
-        .transform(h->Lists.zippingApplicative().ap(listFn, h))
+        .apply(h->Lists.functor().map((String v) ->v.length(), h))
+        .apply(h->Lists.zippingApplicative().ap(listFn, h))
         .convert(ReactiveSeq::narrowK);
 
         //Arrays.asList("hello".length()*2))
@@ -5001,7 +5001,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          *    ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
-        .transform(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
+        .apply(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
         .convert(ReactiveSeq::narrowK);
 
         //Arrays.asList("hello".length())
@@ -5022,7 +5022,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          *  ReactiveSeq<String> list = Lists.unit()
         .unit("hello")
-        .transform(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
+        .apply(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(ReactiveSeq::narrowK);
 
         //Arrays.asList("hello"));

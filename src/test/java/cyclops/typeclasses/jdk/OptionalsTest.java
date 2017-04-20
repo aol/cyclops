@@ -34,7 +34,7 @@ public class OptionalsTest {
         
         OptionalKind<Integer> opt = Optionals.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->Optionals.Instances.functor().map((String v) ->v.length(), h))
+                                     .apply(h->Optionals.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(OptionalKind::narrow);
         
         assertThat(opt,equalTo(Optional.of("hello".length())));
@@ -54,8 +54,8 @@ public class OptionalsTest {
         
         OptionalKind<Integer> opt = Optionals.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->Optionals.Instances.functor().map((String v) ->v.length(), h))
-                                     .transform(h->Optionals.Instances.applicative().ap(optFn, h))
+                                     .apply(h->Optionals.Instances.functor().map((String v) ->v.length(), h))
+                                     .apply(h->Optionals.Instances.applicative().ap(optFn, h))
                                      .convert(OptionalKind::narrow);
         
         assertThat(opt,equalTo(Optional.of("hello".length()*2)));
@@ -71,7 +71,7 @@ public class OptionalsTest {
         
         OptionalKind<Integer> opt = Optionals.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->Optionals.Instances.monad().flatMap((String v) ->Optionals.Instances.unit().unit(v.length()), h))
+                                     .apply(h->Optionals.Instances.monad().flatMap((String v) ->Optionals.Instances.unit().unit(v.length()), h))
                                      .convert(OptionalKind::narrow);
         
         assertThat(opt,equalTo(Optional.of("hello".length())));
@@ -81,7 +81,7 @@ public class OptionalsTest {
         
         OptionalKind<String> opt = Optionals.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->Optionals.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .apply(h->Optionals.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(OptionalKind::narrow);
         
         assertThat(opt,equalTo(Optional.of("hello")));
@@ -91,7 +91,7 @@ public class OptionalsTest {
         
         OptionalKind<String> opt = Optionals.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->Optionals.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .apply(h->Optionals.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(OptionalKind::narrow);
         
         assertThat(opt,equalTo(Optional.empty()));

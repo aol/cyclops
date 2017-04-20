@@ -27,7 +27,7 @@ public interface Functor<CRE> {
      * </pre>
      * 
      * @param fn Transformation function
-     * @param ds Datastructure to transform
+     * @param ds Datastructure to apply
      * @return
      */
     public <T,R> Higher<CRE,R> map(Function<? super T, ? extends R> fn, Higher<CRE, T> ds);
