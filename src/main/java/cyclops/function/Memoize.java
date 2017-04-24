@@ -5,12 +5,17 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import cyclops.async.Future;
+import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -44,6 +49,34 @@ public class Memoize {
 
         return () -> cache.soften()
                           .computeIfAbsent("k", a -> s.get());
+    }
+    /**
+     * Memoize a Supplier and update the cached values asynchronously using the provided Scheduled Executor Service
+     * Does not support null keys
+     *
+     * @param fn Supplier to Memoize
+     * @param ex Scheduled Executor Service
+     * @param updateRateInMillis Time in millis between async updates
+     * @param <R> Return type of Function
+     * @return Memoized asynchronously updating function
+     */
+    public static <R> Fn0<R> memoizeSupplierAsync(final Supplier<R> fn,ScheduledExecutorService ex, long updateRateInMillis){
+        return ()-> Memoize.memoizeFunctionAsync(a-> fn.get(),ex,updateRateInMillis)
+                           .apply("k");
+    }
+    /**
+     * Memoize a Supplier and update the cached values asynchronously using the provided Scheduled Executor Service
+     * Does not support null keys
+     *
+     * @param fn Supplier to Memoize
+     * @param ex Scheduled Executor Service
+     * @param cron Expression to determine when async updates occur
+     * @param <R> Return type of Function
+     * @return Memoized asynchronously updating function
+     */
+    public static <R> Fn0<R> memoizeSupplierAsync(final Supplier<R> fn,ScheduledExecutorService ex, String cron){
+        return ()-> Memoize.memoizeFunctionAsync(a-> fn.get(),ex,cron)
+                .apply("k");
     }
 
     /**
@@ -107,6 +140,57 @@ public class Memoize {
         LazyImmutable<R> nullR = LazyImmutable.def();
         return t -> t==null? nullR.computeIfAbsent(()->fn.apply(null)) : lazy.computeIfAbsent(t, fn);
     }
+
+    /**
+     * Memoize a function and update the cached values asynchronously using the provided Scheduled Executor Service
+     * Does not support null keys
+     *
+     * @param fn Function to Memoize
+     * @param ex Scheduled Executor Service
+     * @param updateRateInMillis Time in millis between async updates
+     * @param <T> Input Type of Function
+     * @param <R> Return type of Function
+     * @return Memoized asynchronously updating function
+     */
+    public static <T, R> Fn1<T, R> memoizeFunctionAsync(final Function<T, R> fn,ScheduledExecutorService ex, long updateRateInMillis){
+        final Map<T, R> lazy = new ConcurrentHashMap<>();
+
+        ReactiveSeq.generate(()->{
+
+            lazy.forEach((k,v)->{
+
+                lazy.put(k,fn.apply(k));
+            });
+            return null;
+        }).scheduleFixedRate(updateRateInMillis,ex);
+
+        return t -> lazy.computeIfAbsent(t, fn);
+    }
+    /**
+     * Memoize this function and update cached values on a schedule
+     * Does not support null keys
+     *
+     * @param fn  Function to Memoize
+     * @param ex Scheduled Executor Service
+     * @param cron Cron expression for updating cached values asynchonrously
+     * @param <T> Input Type of Function
+     * @param <R> Return type of Function
+     * @return Memoized asynchronously updating function
+     */
+    public static <T, R> Fn1<T, R> memoizeFunctionAsync(final Function<T, R> fn, ScheduledExecutorService ex, String cron) {
+        final Map<T, R> lazy = new ConcurrentHashMap<>();
+
+        ReactiveSeq.generate(()->{
+
+            lazy.forEach((k,v)->{
+
+                lazy.put(k,fn.apply(k));
+            });
+            return null;
+        }).schedule(cron,ex);
+
+        return t -> lazy.computeIfAbsent(t, fn);
+    }
  
 
     /**
@@ -120,6 +204,33 @@ public class Memoize {
         LazyImmutable<R> nullR = LazyImmutable.def();
         return t -> t==null? nullR.computeIfAbsent(()->fn.apply(null)) : (R)cache.soften()
                          .computeIfAbsent(t, (Function) fn);
+    }
+
+    /**
+     * Memoize a function and update the cached values asynchronously using the provided Scheduled Executor Service
+     * Does not support null keys
+     *
+     * @param fn Function to Memoize
+     * @param ex Scheduled Executor Service
+     * @param updateRateInMillis Time in millis between async updates
+     * @return Memoized asynchronously updating function
+     */
+    public static <T1, T2, R> Fn2<T1, T2, R> memoizeBiFunctionAsync(final BiFunction<T1, T2, R> fn,ScheduledExecutorService ex, long updateRateInMillis) {
+        val memoise2 = memoizeFunctionAsync((final Tuple2<T1, T2> pair) -> fn.apply(pair.v1, pair.v2),ex,updateRateInMillis);
+        return (t1, t2) -> memoise2.apply(tuple(t1, t2));
+    }
+    /**
+     * Memoize this function and update cached values on a schedule
+     * Does not support null keys
+     *
+     * @param fn  Function to Memoize
+     * @param ex Scheduled Executor Service
+     * @param cron Cron expression for updating cached values asynchonrously
+     * @return Memoized asynchronously updating function
+     */
+    public static <T1, T2, R> Fn2<T1, T2, R> memoizeBiFunctionAsync(final BiFunction<T1, T2, R> fn, ScheduledExecutorService ex, String cron) {
+        val memoise2 = memoizeFunctionAsync((final Tuple2<T1, T2> pair) -> fn.apply(pair.v1, pair.v2),ex,cron);
+        return (t1, t2) -> memoise2.apply(tuple(t1, t2));
     }
 
     /**
@@ -157,6 +268,19 @@ public class Memoize {
     }
 
     /**
+     * Memoize this function and update cached values on a schedule
+     * Does not support null keys
+     *
+     * @param fn  Function to Memoize
+     * @param ex Scheduled Executor Service
+     * @param cron Cron expression for updating cached values asynchonrously
+     * @return Memoized asynchronously updating function
+     */
+    public static <T1, T2, T3, R> Fn3<T1, T2, T3, R> memoizeTriFunctionAsync(final Fn3<T1, T2, T3, R> fn, ScheduledExecutorService ex, String cron) {
+        val memoise2 = memoizeFunctionAsync((final Tuple3<T1, T2, T3> triple) -> fn.apply(triple.v1, triple.v2, triple.v3),ex,cron);
+        return (t1, t2, t3) -> memoise2.apply(tuple(t1, t2, t3));
+    }
+    /**
      * Convert a TriFunction into one that caches it's result
      * 
      * @param fn TriFunction to memoise
@@ -167,7 +291,19 @@ public class Memoize {
         val memoise2 = memoizeFunction((final Tuple3<T1, T2, T3> triple) -> fn.apply(triple.v1, triple.v2, triple.v3), cache);
         return (t1, t2, t3) -> memoise2.apply(tuple(t1, t2, t3));
     }
-
+    /**
+     * Memoize a function and update the cached values asynchronously using the provided Scheduled Executor Service
+     * Does not support null keys
+     *
+     * @param fn Function to Memoize
+     * @param ex Scheduled Executor Service
+     * @param updateRateInMillis Time in millis between async updates
+     * @return Memoized asynchronously updating function
+     */
+    public static <T1, T2, T3, R> Fn3<T1, T2, T3, R> memoizeTriFunctionAsync(final Fn3<T1, T2, T3, R> fn,ScheduledExecutorService ex, long updateRateInMillis) {
+        val memoise2 = memoizeFunctionAsync((final Tuple3<T1, T2, T3> triple) -> fn.apply(triple.v1, triple.v2, triple.v3),ex,updateRateInMillis);
+        return (t1, t2, t3) -> memoise2.apply(tuple(t1, t2, t3));
+    }
     /**
      * Convert a QuadFunction into one that caches it's result
      * 
@@ -178,6 +314,20 @@ public class Memoize {
         val memoise2 = memoizeFunction((final Tuple4<T1, T2, T3, T4> quad) -> fn.apply(quad.v1, quad.v2, quad.v3, quad.v4));
         return (t1, t2, t3, t4) -> memoise2.apply(tuple(t1, t2, t3, t4));
     }
+    /**
+     * Memoize this function and update cached values on a schedule
+     * Does not support null keys
+     *
+     * @param fn  Function to Memoize
+     * @param ex Scheduled Executor Service
+     * @param cron Cron expression for updating cached values asynchonrously
+     * @return Memoized asynchronously updating function
+     */
+    public static <T1, T2, T3, T4, R> Fn4<T1, T2, T3, T4, R> memoizeQuadFunctionAsync(final Fn4<T1, T2, T3, T4, R> fn, ScheduledExecutorService ex, String cron) {
+        val memoise2 = memoizeFunctionAsync((final Tuple4<T1, T2, T3, T4> quad) -> fn.apply(quad.v1, quad.v2, quad.v3, quad.v4),ex,cron);
+        return (t1, t2, t3, t4) -> memoise2.apply(tuple(t1, t2, t3, t4));
+    }
+
 
     /**
      * Convert a QuadFunction into one that caches it's result
@@ -189,6 +339,19 @@ public class Memoize {
     public static <T1, T2, T3, T4, R> Fn4<T1, T2, T3, T4, R> memoizeQuadFunction(final Fn4<T1, T2, T3, T4, R> fn,
                                                                                  final Cacheable<R> cache) {
         val memoise2 = memoizeFunction((final Tuple4<T1, T2, T3, T4> quad) -> fn.apply(quad.v1, quad.v2, quad.v3, quad.v4), cache);
+        return (t1, t2, t3, t4) -> memoise2.apply(tuple(t1, t2, t3, t4));
+    }
+    /**
+     * Memoize a function and update the cached values asynchronously using the provided Scheduled Executor Service
+     * Does not support null keys
+     *
+     * @param fn Function to Memoize
+     * @param ex Scheduled Executor Service
+     * @param updateRateInMillis Time in millis between async updates
+     * @return Memoized asynchronously updating function
+     */
+    public static <T1, T2, T3, T4, R> Fn4<T1, T2, T3, T4, R> memoizeQuadFunctionAsync(final Fn4<T1, T2, T3, T4, R> fn,ScheduledExecutorService ex, long updateRateInMillis) {
+        val memoise2 = memoizeFunctionAsync((final Tuple4<T1, T2, T3, T4> quad) -> fn.apply(quad.v1, quad.v2, quad.v3, quad.v4),ex,updateRateInMillis);
         return (t1, t2, t3, t4) -> memoise2.apply(tuple(t1, t2, t3, t4));
     }
 

@@ -9,7 +9,7 @@ import cyclops.async.Future;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 
-public interface Fn7<T1, T2, T3, T4, T5, T6, T7, R> {
+public interface Fn7<T1, T2, T3, T4, T5, T6, T7, R> extends Fn1<T1, Fn1<T2, Fn1<T3,Fn1<T4,Fn1<T5,Fn1<T6, Fn1<T7,R>>>>>>>{
     /**
      * Create a curried function with arity of 7
      * 
@@ -76,23 +76,23 @@ public interface Fn7<T1, T2, T3, T4, T5, T6, T7, R> {
                     .apply(s6);
     }
 
-    default <V> Fn7<T1, T2, T3, T4, T5, T6,T7,V> andThen(Function<? super R, ? extends V> after) {
+    default <V> Fn7<T1, T2, T3, T4, T5, T6,T7,V> andThen7(Function<? super R, ? extends V> after) {
         return (t1,t2,t3,t4,t5,t6,t7)-> after.apply(apply(t1,t2,t3,t4,t5,t6,t7));
     }
 
-    default Fn7<T1, T2, T3, T4, T5, T6, T7, Maybe<R>> lift() {
+    default Fn7<T1, T2, T3, T4, T5, T6, T7, Maybe<R>> lift7() {
         return (s1, s2, s3, s4, s5,s6,s7) -> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3,s4,s5,s6,s7))));
     }
-    default Fn7<T1, T2, T3, T4, T5, T6, T7,Future<R>> lift(Executor ex) {
+    default Fn7<T1, T2, T3, T4, T5, T6, T7,Future<R>> lift7(Executor ex) {
 
         return (s1, s2, s3, s4, s5,s6,s7) -> Future.ofSupplier(() -> apply(s1, s2, s3, s4, s5,s6,s7), ex);
     }
 
-    default Fn7<T1, T2, T3, T4, T5, T6, T7, Try<R, Throwable>> liftTry() {
+    default Fn7<T1, T2, T3, T4, T5, T6, T7, Try<R, Throwable>> liftTry7() {
         return (s1, s2, s3, s4, s5,s6,s7) -> Try.withCatch(() -> apply(s1, s2, s3, s4, s5,s6,s7), Throwable.class);
     }
 
-    default Fn7<T1, T2, T3, T4, T5, T6, T7, Optional<R>> liftOpt() {
+    default Fn7<T1, T2, T3, T4, T5, T6, T7, Optional<R>> liftOpt7() {
 
         return (s1, s2, s3, s4, s5, s6,s7) -> Optional.ofNullable(apply(s1, s2, s3, s4, s5, s6,s7));
     }

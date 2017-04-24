@@ -188,7 +188,7 @@ public class FluentBiFunctionTest {
 	public void testLift(){
 		Integer nullValue = null;
 		FluentFunctions.of(this::add)	
-						.lift()
+						.liftOptional()
 						.apply(Optional.ofNullable(nullValue),Optional.of(1));
 	}
 	@Test

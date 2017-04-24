@@ -27,7 +27,7 @@ public class Zipping3Spliterator<T1,T2,T3,R> implements CopyableSpliterator<R>,
     }
     public <R2> Zipping3Spliterator<T1,T2,T3,R2> compose(Function<? super R,? extends R2> fn){
         return new Zipping3Spliterator<>(CopyableSpliterator.copy(left),CopyableSpliterator.copy(middle),CopyableSpliterator.copy(right),
-                this.fn.andThen(fn));
+                this.fn.andThen3(fn));
     }
 
 

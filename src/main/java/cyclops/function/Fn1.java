@@ -2,6 +2,7 @@ package cyclops.function;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
 import cyclops.control.*;
@@ -63,6 +64,12 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
     }
     default Fn1<T1,R> memoize(Cacheable<R> c){
         return Memoize.memoizeFunction(this,c);
+    }
+    default Fn1<T1, R> memoizeAsync(ScheduledExecutorService ex, String cron){
+        return Memoize.memoizeFunctionAsync(this,ex,cron);
+    }
+    default Fn1<T1, R> memoizeAsync(ScheduledExecutorService ex, long timeToLiveMillis){
+        return Memoize.memoizeFunctionAsync(this,ex,timeToLiveMillis);
     }
 
     default <T2,R2> Fn1<Xor<T1, T2>, Xor<R, R2>> merge(Function<? super T2, ? extends R2> fn) {

@@ -8,8 +8,13 @@ import static cyclops.function.Memoize.memoizeQuadFunction;
 import static cyclops.function.Memoize.memoizeSupplier;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -28,6 +33,32 @@ public class MemoiseTest {
 	public void setup(){
 		called = 0;
 	}
+
+	ScheduledExecutorService  ex =Executors.newScheduledThreadPool(1);
+	@Test
+    public void testAsync() throws InterruptedException {
+	    AtomicInteger value = new AtomicInteger(0);
+	    Supplier<Integer> caching = Memoize.memoizeSupplierAsync(()->value.incrementAndGet(), ex,100);
+	    int current = caching.get();
+	    for(int i=0;i<10;i++){
+	        Thread.sleep(150);
+	        assertTrue(current!=caching.get());
+	        current=caching.get();
+        }
+    }
+
+    @Test
+    public void testAsyncCron() throws InterruptedException {
+        AtomicInteger value = new AtomicInteger(0);
+        Supplier<Integer> caching = Memoize.memoizeSupplierAsync(()->value.incrementAndGet(), ex, "* * * * * ?");
+        int current = caching.get();
+        for(int i=0;i<2;i++){
+            Thread.sleep(1200);
+            assertTrue(current!=caching.get());
+            current=caching.get();
+        }
+    }
+
 	@Test
 	public void testNullFunction(){
 	   Function<String,String> str = memoizeFunction(a->{++called; return "hello";});
