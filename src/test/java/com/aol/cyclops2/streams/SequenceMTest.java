@@ -75,6 +75,8 @@ public class SequenceMTest {
         assertThat(ReactiveSeq.of().combinations(2).toList(),equalTo(Arrays.asList()));
     }
 
+    
+
     @Test
     public void combinations2() {
         assertThat(ReactiveSeq.of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),

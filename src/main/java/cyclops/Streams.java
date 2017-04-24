@@ -52,10 +52,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
-import java.util.stream.BaseStream;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.stream.*;
 
 /**
  * Static utility methods for working with Java  8 Streams
@@ -65,6 +62,46 @@ import java.util.stream.StreamSupport;
  */
 @UtilityClass
 public class Streams {
+
+    public static <T> ReactiveSeq<ReactiveSeq<T>> combinations(int size,Object[] a){
+
+        final int fromIndex = 0;
+        final int toIndex = a.length;
+
+        final Iterator<ReactiveSeq<T>> iter = new Iterator<ReactiveSeq<T>>() {
+            private final int[] indices = IntStream.range(fromIndex, fromIndex + size).toArray();
+
+            @Override
+            public boolean hasNext() {
+                return indices[0] <= toIndex - size;
+            }
+
+            @Override
+            public ReactiveSeq<T> next() {
+                final List<T> result = new ArrayList<>(size);
+
+                for (int idx : indices) {
+                    result.add((T)a[idx]);
+                }
+
+                if (++indices[size - 1] == toIndex) {
+                    for (int i = size - 1; i > 0; i--) {
+                        if (indices[i] > toIndex - (size - i)) {
+                            indices[i - 1]++;
+
+                            for (int j = i; j < size; j++) {
+                                indices[j] = indices[j - 1] + 1;
+                            }
+                        }
+                    }
+                }
+
+                return ReactiveSeq.fromList(result);
+            }
+        };
+
+        return ReactiveSeq.fromIterator(iter);
+    }
     /**
      * Perform a For Comprehension over a Stream, accepting 3 generating functions.
      * This results in a four level nested internal iteration over the provided Publishers.
