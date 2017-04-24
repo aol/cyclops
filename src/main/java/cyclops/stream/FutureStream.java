@@ -523,7 +523,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default FutureStream<U> combine(final BiPredicate<? super U, ? super U> predicate, final BinaryOperator<U> op) {
         return fromStream(Streams.combine(this, predicate, op));
     }
-
+    @Override
+    default FutureStream<U> combine(final Monoid<U> op, final BiPredicate<? super U, ? super U> predicate) {
+        return (FutureStream<U>)ReactiveSeq.super.combine(op,predicate);
+    }
     /**
      * If this SequenceM is empty replace it with a another Stream
      *

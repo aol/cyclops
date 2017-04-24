@@ -327,6 +327,10 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     default PBagX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (PBagX<T>) PersistentCollectionX.super.combine(predicate, op);
     }
+    @Override
+    default PBagX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (PBagX<T>)PersistentCollectionX.super.combine(op,predicate);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.sequence.traits.ConvertableSequence#toListX()

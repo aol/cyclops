@@ -458,6 +458,11 @@ public interface PStackX<T> extends To<PStackX<T>>,
     default PStackX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (PStackX<T>) PersistentCollectionX.super.combine(predicate, op);
     }
+
+    @Override
+    default PStackX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (PStackX<T>)PersistentCollectionX.super.combine(op,predicate);
+    }
     
 
 

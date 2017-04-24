@@ -311,7 +311,10 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     default SortedSetX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (SortedSetX<T>) MutableCollectionX.super.combine(predicate, op);
     }
-   
+    @Override
+    default SortedSetX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (SortedSetX<T>)MutableCollectionX.super.combine(op,predicate);
+    }
     @Override
     default <R> SortedSetX<R> unit(final R value) {
         return singleton(value);

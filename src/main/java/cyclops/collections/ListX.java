@@ -747,6 +747,11 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<T>) MutableCollectionX.super.combine(predicate, op);
     }
 
+    @Override
+    default ListX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (ListX<T>)MutableCollectionX.super.combine(op,predicate);
+    }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#filter(java.util.function.Predicate)
      */

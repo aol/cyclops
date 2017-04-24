@@ -304,6 +304,10 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     default SetX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (SetX<T>) MutableCollectionX.super.combine(predicate, op);
     }
+    @Override
+    default SetX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (SetX<T>)MutableCollectionX.super.combine(op,predicate);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.sequence.traits.ConvertableSequence#toListX()

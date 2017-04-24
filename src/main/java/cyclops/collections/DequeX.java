@@ -1,8 +1,10 @@
 package cyclops.collections;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.FoldableTraversable;
 import cyclops.CyclopsCollectors;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
@@ -400,6 +402,11 @@ public interface DequeX<T> extends To<DequeX<T>>,
     @Override
     default DequeX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (DequeX<T>) MutableCollectionX.super.combine(predicate, op);
+    }
+
+    @Override
+    default DequeX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (DequeX<T>)MutableCollectionX.super.combine(op,predicate);
     }
 
     /**

@@ -1649,6 +1649,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return fromStream(Streams.combine(this, predicate, op));
     }
 
+
+    @Override
+    default ReactiveSeq<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.combine(op,predicate);
+    }
+
     /**
      * <pre>
      * {@code

@@ -368,6 +368,10 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     default QueueX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (QueueX<T>) MutableCollectionX.super.combine(predicate, op);
     }
+    @Override
+    default QueueX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (QueueX<T>)MutableCollectionX.super.combine(op,predicate);
+    }
 
     @Override
     default <R> QueueX<R> unit(final Collection<R> col) {

@@ -360,7 +360,11 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     @Override
     default POrderedSetX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (POrderedSetX<T>) PersistentCollectionX.super.combine(predicate, op);
-    }  
+    }
+    @Override
+    default POrderedSetX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (POrderedSetX<T>)PersistentCollectionX.super.combine(op,predicate);
+    }
 
 
     @Override

@@ -87,11 +87,38 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * @param predicate Test to see if two neighbours should be joined. The first parameter to the bi-predicate is the currently
      *                  accumulated result and the second is the next element
-     * @param op Reducer to combine neighbours
+     * @param op BinaryOperator to combine neighbours
      * @return Combined / Partially Reduced Traversable
      */
     default Traversable<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return traversable().combine(predicate, op);
+    }
+
+    /**
+     * Combine two adjacent elements in a traversable using the supplied BinaryOperator
+     * This is a stateful grouping and reduction operation. The emitted of a combination may in turn be combined
+     * with it's neighbour
+     * <pre>
+     * {@code
+     *  ReactiveSeq.of(1,1,2,3)
+                  .combine(Monoids.intMult,(a, b)->a.equals(b))
+                  .toListX()
+
+     *  //ListX(1)
+     * }</pre>
+     *
+     * Simalar to @see {@link Traversable#combine(BiPredicate, BinaryOperator)} but differs in that the first comparison is always to the Monoid zero
+     * This allows us to terminate with just a single value
+     *
+     * @param predicate Test to see if two neighbours should be joined. The first parameter to the bi-predicate is the currently
+     *                  accumulated result and the second is the next element
+     * @param op Monoid to combine neighbours
+     * @return Combined / Partially Reduced Traversable
+     */
+    default Traversable<T> combine(final Monoid<T> op,final BiPredicate<? super T, ? super T> predicate) {
+
+        return prepend(op.zero()).traversable()
+                                 .combine(predicate, op);
     }
 
     /**

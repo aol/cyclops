@@ -306,7 +306,10 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
     default PSetX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
         return (PSetX<T>) PersistentCollectionX.super.combine(predicate, op);
     }
-
+    @Override
+    default PSetX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (PSetX<T>)PersistentCollectionX.super.combine(op,predicate);
+    }
     @Override
     default <R> PSetX<R> unit(final Collection<R> col) {
         return fromCollection(col);

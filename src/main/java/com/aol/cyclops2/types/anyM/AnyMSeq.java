@@ -596,6 +596,10 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
         return fromIterable(FoldableTraversable.super.combine(predicate, op));
     }
+    @Override
+    default AnyMSeq<W,T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (AnyMSeq<W,T>)FoldableTraversable.super.combine(op,predicate);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Traversable#groupedWhile(java.util.function.Predicate)
