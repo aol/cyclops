@@ -20,6 +20,7 @@ import static org.junit.Assert.assertThat;
 
 public class PStackXTest extends CollectionXTestsWithNulls{
 
+
 	@Override
 	public <T> FluentCollectionX<T> of(T... values) {
 		PStackX<T> list = PStackX.empty();
