@@ -81,6 +81,10 @@ public class SuccessTest {
 	public void testRecover() {
 		assertThat(success.recover(e->20),equalTo(success));
 	}
+	@Test
+	public void testRecoverSupplier() {
+		assertThat(success.recover(()->20),equalTo(success));
+	}
 
 	@Test
 	public void testRecoverWith() {

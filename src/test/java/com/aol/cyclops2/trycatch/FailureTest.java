@@ -92,6 +92,10 @@ public class FailureTest {
 	public void testRecover() {
 		assertThat(failure.recover(e-> 10),equalTo(Try.success(10)));
 	}
+	@Test
+	public void testRecoverSupplier() {
+		assertThat(failure.recover(()-> 10),equalTo(Try.success(10)));
+	}
 
 	@Test
 	public void testRecoverWith() {

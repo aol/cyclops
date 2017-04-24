@@ -723,6 +723,10 @@ public class FutureTest {
     public void testRecover() {
         assertThat(Future.ofError(new RuntimeException()).recover(__ -> true).get(), equalTo(true));
     }
+    @Test
+    public void testRecoverSupplier() {
+        assertThat(Future.ofError(new RuntimeException()).recover(() -> true).get(), equalTo(true));
+    }
     
     @Test
     public void testFlatMapIterable() {
