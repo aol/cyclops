@@ -2,6 +2,7 @@ package cyclops.stream;
 
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
 import com.aol.cyclops2.internal.stream.ReactiveSeqFutureOpterationsImpl;
@@ -3480,6 +3481,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         if (iterable instanceof ReactiveSeq) {
             return (ReactiveSeq<T>)iterable;
 
+        }
+        if( iterable instanceof LazyFluentCollectionX){
+            return ((LazyFluentCollectionX<T>)iterable).stream();
         }
 
         //we can't just use the Iterable's Spliteratable as it might not be repeatable / copyable.
