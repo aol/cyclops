@@ -196,7 +196,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         
         if (it instanceof QueueX)
             return (QueueX) it;
-        if (it instanceof Deque)
+        if (it instanceof Queue)
             return new LazyQueueX<T>(
                                      (Queue) it, defaultCollector());
         return new LazyQueueX<T>(
@@ -212,9 +212,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
             return new LazyQueueX<T>(
                                      (Queue) it, collector);
         return new LazyQueueX<T>(
-                                 Streams.stream(it)
-                                            .collect(collector),
-                                 collector);
+                null,
+                ReactiveSeq.fromIterable(it),
+                collector);
     }
 
     QueueX<T> withCollector(Collector<T, ?, Queue<T>> collector);

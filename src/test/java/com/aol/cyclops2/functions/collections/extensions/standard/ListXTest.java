@@ -11,6 +11,7 @@ import java.util.function.UnaryOperator;
 
 import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.Witness;
+import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
@@ -25,7 +26,10 @@ public class ListXTest extends CollectionXTestsWithNulls {
     @Test
     public void lazy(){
 
-
+        ReactiveSeq b;
+        b.toListX()
+        ListX a;
+        a.stream()
         ListX<PVectorX<String>> list =     ListX.of(1,2,3,5,6,7,8)
                                                 .map(i->i*2)
                                                 .filter(i->i<4)

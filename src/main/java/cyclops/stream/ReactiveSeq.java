@@ -3479,7 +3479,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Objects.requireNonNull(iterable);
         if (iterable instanceof ReactiveSeq) {
             return (ReactiveSeq<T>)iterable;
-            //return ReactiveSeq.fromSpliterator(iterable.spliterator());
+
         }
 
         //we can't just use the Iterable's Spliteratable as it might not be repeatable / copyable.

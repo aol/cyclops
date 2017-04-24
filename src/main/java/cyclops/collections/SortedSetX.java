@@ -166,10 +166,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         if (it instanceof SortedSet)
             return new LazySortedSetX<T>(
                                          (SortedSet) it, defaultCollector());
-        return new LazySortedSetX<T>(
-                                     Streams.stream(it)
-                                                .collect(defaultCollector()),
-                                                defaultCollector());
+        return new LazySortedSetX<T>(null,
+                                       ReactiveSeq.fromIterable(it),
+                                     defaultCollector());
     }
     public static <T> SortedSetX<T> fromIterator(final Iterator<T> it) {
         return fromIterable(()->it);

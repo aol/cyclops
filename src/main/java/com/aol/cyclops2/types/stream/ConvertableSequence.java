@@ -37,7 +37,7 @@ import com.aol.cyclops2.types.futurestream.SimpleReactStream;
  * 
  * @author johnmcclean
  *
- * @param <T> Data types of elements in this ConvertableSequence
+ * @param <T> Data types of elements in stream() ConvertableSequence
  */
 public interface ConvertableSequence<T> extends Iterable<T> {
 
@@ -46,23 +46,23 @@ public interface ConvertableSequence<T> extends Iterable<T> {
     }
 
     default Seq<T> seq() {
-        return Seq.seq(this);
+        return Seq.seq((Iterable<T>)stream());
     }
 
     default FutureStream<T> toFutureStream(final LazyReact reactor) {
-        return reactor.fromIterable(this);
+        return reactor.fromIterable(stream());
     }
 
     default FutureStream<T> toFutureStream() {
-        return new LazyReact().fromIterable(this);
+        return new LazyReact().fromIterable(stream());
     }
 
     default SimpleReactStream<T> toSimpleReact(final SimpleReact reactor) {
-        return reactor.fromIterable(this);
+        return reactor.fromIterable(stream());
     }
 
     default SimpleReactStream<T> toSimpleReact() {
-        return new SimpleReact().fromIterable(this);
+        return new SimpleReact().fromIterable(stream());
     }
 
     default Streamable<T> toStreamable() {
@@ -70,24 +70,24 @@ public interface ConvertableSequence<T> extends Iterable<T> {
     }
 
     default DequeX<T> toDequeX() {
-        return DequeX.fromIterable(this);
+        return DequeX.fromIterable(stream());
     }
 
     default QueueX<T> toQueueX() {
-        return QueueX.fromIterable(this);
+        return QueueX.fromIterable(stream());
     }
 
     default SetX<T> toSetX() {
-        return SetX.fromIterable(this);
+        return SetX.fromIterable(stream());
 
     }
 
     default SortedSetX<T> toSortedSetX() {
-        return SortedSetX.fromIterable(this);
+        return SortedSetX.fromIterable(stream());
     }
 
     default ListX<T> toListX() {
-        return ListX.fromIterable(this);
+        return ListX.fromIterable(stream());
     }
 
     default <K, V> PMapX<K, V> toPMapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
@@ -101,27 +101,27 @@ public interface ConvertableSequence<T> extends Iterable<T> {
     }
 
     default PStackX<T> toPStackX() {
-        return PStackX.fromIterable(this);
+        return PStackX.fromIterable(stream());
     }
 
     default PVectorX<T> toPVectorX() {
-        return PVectorX.fromIterable(this);
+        return PVectorX.fromIterable(stream());
     }
 
     default PQueueX<T> toPQueueX() {
-        return PQueueX.fromIterable(this);
+        return PQueueX.fromIterable(stream());
     }
 
     default PBagX<T> toPBagX() {
-        return PBagX.fromIterable(this);
+        return PBagX.fromIterable(stream());
     }
 
     default PSetX<T> toPSetX() {
-        return PSetX.fromIterable(this);
+        return PSetX.fromIterable(stream());
     }
 
     default POrderedSetX<T> toPOrderedSetX() {
-        return POrderedSetX.fromIterable(this);
+        return POrderedSetX.fromIterable(stream());
     }
 
   
@@ -133,7 +133,7 @@ public interface ConvertableSequence<T> extends Iterable<T> {
     }
 
     default Value<ListX<T>> toValue() {
-        return Eval.later(() -> ListX.fromIterable(Streams.stream(this)
+        return Eval.later(() -> ListX.fromIterable(Streams.stream(stream())
                                                               .collect(Collectors.toList())));
     }
 

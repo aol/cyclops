@@ -269,13 +269,10 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
         if (iterable instanceof PVector)
             return new LazyPVectorX<>(
                                       (PVector) iterable);
-        PVector<T> res = TreePVector.<T> empty();
-        final Iterator<T> it = iterable.iterator();
-        while (it.hasNext())
-            res = res.plus(it.next());
-
-        return new LazyPVectorX<>(
-                                  res);
+       
+        return new LazyPVectorX<>(null,
+                ReactiveSeq.fromIterable(iterable),
+                Reducers.toPVector());
     }
 
     /**

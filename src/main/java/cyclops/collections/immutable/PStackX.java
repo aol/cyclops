@@ -232,15 +232,11 @@ public interface PStackX<T> extends To<PStackX<T>>,
         if (iterable instanceof PStack)
             return new LazyPStackX<T>(
                                      (PStack) iterable, true);
-        PStack<T> res = ConsPStack.<T> empty();
 
-        final Iterator<T> it = iterable.iterator();
 
-        while (it.hasNext())
-            res = res.plus(it.next());
-
-        return new LazyPStackX<>(
-                                 res, true);
+        return new LazyPStackX<T>(null,
+                ReactiveSeq.fromIterable(iterable),true,
+                Reducers.toPStack());
     }
 
     /**
