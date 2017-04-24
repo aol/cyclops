@@ -30,7 +30,7 @@ public class DequesTest {
         
         DequeX<Integer> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->DequeX.Instances.functor().map((String v) ->v.length(), h))
+                                     .apply(h->DequeX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of("hello".length()).toArray()));
@@ -50,8 +50,8 @@ public class DequesTest {
         
         DequeX<Integer> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->DequeX.Instances.functor().map((String v) ->v.length(), h))
-                                     .transform(h->DequeX.Instances.zippingApplicative().ap(listFn, h))
+                                     .apply(h->DequeX.Instances.functor().map((String v) ->v.length(), h))
+                                     .apply(h->DequeX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of("hello".length()*2).toArray()));
@@ -67,7 +67,7 @@ public class DequesTest {
         
         DequeX<Integer> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->DequeX.Instances.monad().flatMap((String v) ->DequeX.Instances.unit().unit(v.length()), h))
+                                     .apply(h->DequeX.Instances.monad().flatMap((String v) ->DequeX.Instances.unit().unit(v.length()), h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of("hello".length()).toArray()));
@@ -77,7 +77,7 @@ public class DequesTest {
         
         DequeX<String> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->DequeX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .apply(h->DequeX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of("hello").toArray()));
@@ -87,7 +87,7 @@ public class DequesTest {
         
         DequeX<String> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->DequeX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .apply(h->DequeX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of().toArray()));

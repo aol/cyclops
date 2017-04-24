@@ -30,7 +30,7 @@ public class EvalsTest {
         
         Eval<Integer> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->Eval.Instances.functor().map((String v) ->v.length(), h))
+                                     .apply(h->Eval.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now("hello".length())));
@@ -54,8 +54,8 @@ public class EvalsTest {
         
         Eval<Integer> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->Eval.Instances.functor().map((String v) ->v.length(), h))
-                                     .transform(h->Eval.Instances.applicative().ap(optFn, h))
+                                     .apply(h->Eval.Instances.functor().map((String v) ->v.length(), h))
+                                     .apply(h->Eval.Instances.applicative().ap(optFn, h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now("hello".length()*2)));
@@ -71,7 +71,7 @@ public class EvalsTest {
         
         Eval<Integer> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->Eval.Instances.monad().flatMap((String v) ->Eval.Instances.unit().unit(v.length()), h))
+                                     .apply(h->Eval.Instances.monad().flatMap((String v) ->Eval.Instances.unit().unit(v.length()), h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now("hello".length())));
@@ -81,7 +81,7 @@ public class EvalsTest {
         
         Eval<String> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->Eval.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .apply(h->Eval.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now("hello")));
@@ -91,7 +91,7 @@ public class EvalsTest {
         
         Eval<String> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .transform(h->Eval.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .apply(h->Eval.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now(null)));

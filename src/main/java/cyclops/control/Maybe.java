@@ -1469,7 +1469,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * {@code
          *   Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
-        .transform(h->Maybes.functor().map((String v) ->v.length(), h))
+        .apply(h->Maybes.functor().map((String v) ->v.length(), h))
         .convert(Maybe::narrowK);
          *
          * }
@@ -1525,8 +1525,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
         Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
-        .transform(h->Maybes.functor().map((String v) ->v.length(), h))
-        .transform(h->Maybes.applicative().ap(maybeFn, h))
+        .apply(h->Maybes.functor().map((String v) ->v.length(), h))
+        .apply(h->Maybes.applicative().ap(maybeFn, h))
         .convert(Maybe::narrowK);
 
         //Maybe.just("hello".length()*2))
@@ -1557,7 +1557,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * {@code
          *    Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
-        .transform(h->Maybes.monad().flatMap((String v) ->Maybes.unit().unit(v.length()), h))
+        .apply(h->Maybes.monad().flatMap((String v) ->Maybes.unit().unit(v.length()), h))
         .convert(Maybe::narrowK);
 
         //Maybe.just("hello".length())
@@ -1578,7 +1578,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * {@code
          *  Maybe<String> maybe = Maybes.unit()
         .unit("hello")
-        .transform(h->Maybes.monadZero().filter((String t)->t.startsWith("he"), h))
+        .apply(h->Maybes.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(Maybe::narrowK);
 
         //Maybe.just("hello"));

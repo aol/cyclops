@@ -1024,7 +1024,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Completable<T>,
     /**
      * Returns a new Future that, when this Future completes exceptionally is
      * executed with this Future exception as the argument to the supplied
-     * function. Otherwise, if this Future completes normally, transform the
+     * function. Otherwise, if this Future completes normally, apply the
      * returned Future also completes normally with the same value.
      * 
      * <pre>
@@ -1408,7 +1408,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Completable<T>,
          * {@code
          *   Future<Integer> future = FutureWs.unit()
         .unit("hello")
-        .transform(h->FutureWs.functor().map((String v) ->v.length(), h))
+        .apply(h->FutureWs.functor().map((String v) ->v.length(), h))
         .convert(Future::narrowK);
          *
          * }
@@ -1464,8 +1464,8 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Completable<T>,
 
         Future<Integer> future = FutureWs.unit()
         .unit("hello")
-        .transform(h->FutureWs.functor().map((String v) ->v.length(), h))
-        .transform(h->FutureWs.applicative().ap(futureFn, h))
+        .apply(h->FutureWs.functor().map((String v) ->v.length(), h))
+        .apply(h->FutureWs.applicative().ap(futureFn, h))
         .convert(Future::narrowK);
 
         //FutureW("hello".length()*2))
@@ -1496,7 +1496,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Completable<T>,
          * {@code
          *    Future<Integer> future = FutureWs.unit()
         .unit("hello")
-        .transform(h->FutureWs.monad().flatMap((String v) ->FutureWs.unit().unit(v.length()), h))
+        .apply(h->FutureWs.monad().flatMap((String v) ->FutureWs.unit().unit(v.length()), h))
         .convert(Future::narrowK);
 
         //FutureW("hello".length())
@@ -1517,7 +1517,7 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Completable<T>,
          * {@code
          *  Future<String> future = FutureWs.unit()
         .unit("hello")
-        .transform(h->FutureWs.monadZero().filter((String t)->t.startsWith("he"), h))
+        .apply(h->FutureWs.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(Future::narrowK);
 
         //FutureW["hello"]
