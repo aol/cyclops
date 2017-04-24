@@ -1,6 +1,7 @@
 package cyclops.collections.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
@@ -10,7 +11,6 @@ import cyclops.Reducers;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.monads.transformers.ListT;
-import com.aol.cyclops2.data.collections.extensions.FluentSequenceX;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
@@ -38,8 +38,8 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 public interface PVectorX<T> extends To<PVectorX<T>>,
-                                     PVector<T>, 
-                                     FluentSequenceX<T>,
+                                     PVector<T>,
+        IndexedSequenceX<T>,
                                      PersistentCollectionX<T>,
                                      OnEmptySwitch<T, 
                                      PVector<T>>,

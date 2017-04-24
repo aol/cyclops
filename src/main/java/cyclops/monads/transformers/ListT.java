@@ -22,7 +22,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops2.data.collections.extensions.FluentSequenceX;
+import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.collections.DequeX;
@@ -33,7 +33,6 @@ import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
 import com.aol.cyclops2.types.stream.CyclopsCollectable;
-import org.reactivestreams.Publisher;
 
 /**
  * Monad Transformer for Java Lists
@@ -46,17 +45,17 @@ import org.reactivestreams.Publisher;
 public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
                                                           FoldableTransformerSeq<W,T> {
 
-    final AnyM<W,FluentSequenceX<T>> run;
+    final AnyM<W,IndexedSequenceX<T>> run;
 
     
     
-    private ListT(final AnyM<W,? extends FluentSequenceX<T>> run) {
+    private ListT(final AnyM<W,? extends IndexedSequenceX<T>> run) {
         this.run = AnyM.narrow(run);
     }
     
    
     /**
-     * FluentSequenceX types that are not one of ListX, PStackX, PVectorX are converted to ListX types
+     * IndexedSequenceX types that are not one of ListX, PStackX, PVectorX are converted to ListX types
      * 
      * @param listXFn
      * @param pListFn
@@ -118,10 +117,10 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     /**
      * @return The wrapped AnyM
      */
-    public AnyM<W,FluentSequenceX<T>> unwrap() {
+    public AnyM<W,IndexedSequenceX<T>> unwrap() {
         return run;
     }
-    public <R> R unwrapTo(Function<? super AnyM<W,FluentSequenceX<T>>,? extends R> fn) {
+    public <R> R unwrapTo(Function<? super AnyM<W,IndexedSequenceX<T>>,? extends R> fn) {
         return unwrap().to(fn);
     }
 
@@ -235,7 +234,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @param monads AnyM that contains a monad wrapping an List
      * @return ListT
      */
-    public static <W extends WitnessType<W>,A> ListT<W,A> of(final AnyM<W,? extends FluentSequenceX<A>> monads) {
+    public static <W extends WitnessType<W>,A> ListT<W,A> of(final AnyM<W,? extends IndexedSequenceX<A>> monads) {
         return new ListT<>(
                               monads);
     }
@@ -243,19 +242,19 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return new ListT<>(
                               monads.map(ListX::fromIterable));
     }
-    public static <A> ListT<Witness.stream,A> fromStream(final Stream<? extends FluentSequenceX<A>> nested) {
+    public static <A> ListT<Witness.stream,A> fromStream(final Stream<? extends IndexedSequenceX<A>> nested) {
         return of(AnyM.fromStream(nested));
     }
-    public static <A> ListT<Witness.optional,A> fromOptional(final Optional<? extends FluentSequenceX<A>> nested) {
+    public static <A> ListT<Witness.optional,A> fromOptional(final Optional<? extends IndexedSequenceX<A>> nested) {
         return of(AnyM.fromOptional(nested));
     }
-    public static <A> ListT<Witness.maybe,A> fromMaybe(final Maybe<? extends FluentSequenceX<A>> nested) {
+    public static <A> ListT<Witness.maybe,A> fromMaybe(final Maybe<? extends IndexedSequenceX<A>> nested) {
         return of(AnyM.fromMaybe(nested));
     }
-    public static <A> ListT<Witness.list,A> fromList(final List<? extends FluentSequenceX<A>> nested) {
+    public static <A> ListT<Witness.list,A> fromList(final List<? extends IndexedSequenceX<A>> nested) {
         return of(AnyM.fromList(nested));
     }
-    public static <A> ListT<Witness.set,A> fromSet(final Set<? extends FluentSequenceX<A>> nested) {
+    public static <A> ListT<Witness.set,A> fromSet(final Set<? extends IndexedSequenceX<A>> nested) {
         return of(AnyM.fromSet(nested));
     }
 

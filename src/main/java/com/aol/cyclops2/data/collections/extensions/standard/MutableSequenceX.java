@@ -3,14 +3,14 @@ package com.aol.cyclops2.data.collections.extensions.standard;
 import java.util.Collection;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.data.collections.extensions.FluentSequenceX;
+import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 
 /**
  * @author johnmcclean
  *
  * @param <T> type of data held in this Collection
  */
-public interface MutableSequenceX<T> extends CollectionX<T>, FluentSequenceX<T> {
+public interface MutableSequenceX<T> extends CollectionX<T>, IndexedSequenceX<T> {
     @Override
     public MutableSequenceX<T> plus(T e);
 
