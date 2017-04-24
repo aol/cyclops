@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import java.util.function.Supplier;
 
 import cyclops.stream.FutureStream;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import com.aol.cyclops2.react.base.BaseSequentialSQLTest;
@@ -30,6 +31,7 @@ public class LazySequentialSQLTest extends BaseSequentialSQLTest {
 
 	@Test(expected=X.class)
 	public void testOnEmptyThrows() {
+
 		ex = null;
 		of().capture(e -> ex = e).onEmptyThrow(() -> new X()).toList();
 
