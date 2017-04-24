@@ -110,7 +110,10 @@ import java.util.stream.Stream;
  * @param <ST> Secondary type
  * @param <PT> Primary type
  */
-public interface Xor<ST, PT> extends To<Xor<ST,PT>>, MonadicValue<PT>, BiFunctor<ST,PT> {
+public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
+                                     MonadicValue<PT>,
+                                     BiFunctor<ST,PT> {
+
 
     /**
      * Static method useful as a method reference for fluent consumption of any value type stored in this Either 

@@ -63,7 +63,11 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Slf4j
-public class Future<T> implements To<Future<T>>,MonadicValue<T>, Completable<T>,Higher<Future.µ,T> {
+public class Future<T> implements To<Future<T>>,
+                                  MonadicValue<T>,
+                                  Completable<T>,
+                                  Higher<Future.µ,T>,
+                                  Recoverable<Throwable,T>{
 
     public static class µ {
     }
@@ -1042,8 +1046,11 @@ public class Future<T> implements To<Future<T>>,MonadicValue<T>, Completable<T>,
      *            Future if this Future completed exceptionally
      * @return the new Future
      */
-    public Future<T> recover(final Function<Throwable, ? extends T> fn) {
-        return Future.of(toCompletableFuture().exceptionally(fn));
+    public Future<T> recover(final Function<? super Throwable, ? extends T> fn) {
+        return Future.of(toCompletableFuture().exceptionally((Function)fn));
+    }
+    public Future<T> recover(final Supplier<? extends T> fn) {
+        return Future.of(toCompletableFuture().exceptionally(a->fn.get()));
     }
 
     /**

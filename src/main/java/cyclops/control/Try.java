@@ -142,10 +142,14 @@ import lombok.val;
  * @param <X> Base Error type
  */
 public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
+                                                        Recoverable<X,T>,
                                                         MonadicValue<T> {
 
     
-    
+
+    default Try<T,X> recover(Supplier<? extends T> s){
+        return recover(t->s.get());
+    }
     /**
      * Construct a Try  that contains a single value extracted from the supplied reactive-streams Publisher, will catch any Exceptions
      * of the provided types
