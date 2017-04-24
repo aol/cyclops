@@ -3981,12 +3981,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<ReactiveSeq<T>> combinations() {
        Object[] a = toArray();
         return range(1, size()+1).map(size->Streams.<T>combinations(size,a))
-                .flatMap(s -> s);
-        /**
-        final Streamable<ReactiveSeq<T>> streamable = Streamable.fromStream(this)
-                                                               .combinations();
-        return streamable.reactiveSeq();
-         **/
+                                 .flatMap(s -> s)
+                                 .prepend(ReactiveSeq.<T>empty());
+        
     }
     default StreamT<reactiveSeq,T> combinationsT() {
         return StreamT.fromReactiveSeq(combinations());
