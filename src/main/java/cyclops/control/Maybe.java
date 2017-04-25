@@ -103,6 +103,7 @@ import java.util.stream.Stream;
  */
 public interface Maybe<T> extends To<Maybe<T>>,
                                   MonadicValue<T>,
+                                  Recoverable<Void,T>,
                                   Higher<Maybe.µ,T> {
 
     default <W extends WitnessType<W>> MaybeT<W, T> liftM(W witness) {
@@ -167,7 +168,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
         }
 
         @Override
-        public Maybe<T2> recover(Supplier<T2> value) {
+        public Maybe<T2> recover(Supplier<? extends T2> value) {
             return maybe.recover(value);
         }
 
@@ -920,7 +921,11 @@ public interface Maybe<T> extends To<Maybe<T>>,
     @Override
     boolean isPresent();
 
-    Maybe<T> recover(Supplier<T> value);
+
+    default Maybe<T> recover(Function<? super Void,? extends T> rec){
+        return recover(()->rec.apply(null));
+    }
+    Maybe<T> recover(Supplier<? extends T> value);
 
     Maybe<T> recover(T value);
     
@@ -1067,7 +1072,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
         }
 
         @Override
-        public Maybe<T> recover(final Supplier<T> value) {
+        public Maybe<T> recover(final Supplier<? extends T> value) {
             return this;
         }
         
@@ -1229,7 +1234,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
         }
 
         @Override
-        public Maybe<T> recover(final Supplier<T> value) {
+        public Maybe<T> recover(final Supplier<? extends T> value) {
             return new Lazy<T>(
                                lazy.map(m -> m.recover(value)));
         }
@@ -1372,9 +1377,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
         }
 
         @Override
-        public Maybe<T> recover(final Supplier<T> value) {
-            return new Just<>(
-                              Eval.later(value));
+        public Maybe<T> recover(final Supplier<? extends T> value) {
+            return new Just<T>(
+                              Eval.later((Supplier<T>)value));
         }
         @Override
         public Maybe<T> recoverWith(Supplier<? extends Maybe<T>> fn) {
