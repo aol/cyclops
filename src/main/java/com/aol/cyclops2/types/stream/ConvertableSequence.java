@@ -124,7 +124,7 @@ public interface ConvertableSequence<T> extends Iterable<T> {
         return POrderedSetX.fromIterable(this);
     }
 
-  
+
     default Optional<ListX<T>> toOptional() {
         final ListX<T> list = toListX();
         if (list.size() == 0)

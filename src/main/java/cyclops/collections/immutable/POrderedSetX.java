@@ -184,13 +184,11 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
         if (iterable instanceof POrderedSet)
             return new LazyPOrderedSetX<>(
                                           (POrderedSet) iterable);
-        POrderedSet<T> res = OrderedPSet.<T> empty();
-        final Iterator<T> it = iterable.iterator();
-        while (it.hasNext())
-            res = res.plus(it.next());
 
-        return new LazyPOrderedSetX<>(
-                                      res);
+
+        return new LazyPOrderedSetX<>(null,
+                ReactiveSeq.fromIterable(iterable),
+                Reducers.toPOrderedSet());
     }
 
     public static <T> POrderedSetX<T> toPOrderedSet(final Stream<T> stream) {

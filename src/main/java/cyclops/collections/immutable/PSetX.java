@@ -144,13 +144,11 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
         if (iterable instanceof PSet)
             return new LazyPSetX<>(
                                    (PSet) iterable);
-        PSet<T> res = HashTreePSet.<T> empty();
-        final Iterator<T> it = iterable.iterator();
-        while (it.hasNext())
-            res = res.plus(it.next());
 
-        return new LazyPSetX<>(
-                               res);
+
+        return new LazyPSetX<>(null,
+                ReactiveSeq.fromIterable(iterable),
+                Reducers.toPSet());
     }
 
     /**

@@ -252,10 +252,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
         if (it instanceof Deque)
             return new LazyDequeX<T>(
                                      (Deque) it, defaultCollector());
-        return new LazyDequeX<T>(
-                                 Streams.stream(it)
-                                            .collect(defaultCollector()),
-                                            defaultCollector());
+        return new LazyDequeX<T>(null,
+                                    ReactiveSeq.fromIterable(it),
+                                    defaultCollector());
     }
 
     /**

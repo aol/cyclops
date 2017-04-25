@@ -259,13 +259,11 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
         if (iterable instanceof PBag)
             return new LazyPBagX<>(
                                    (PBag) iterable);
-        MapPBag<T> res = HashTreePBag.<T> empty();
-        final Iterator<T> it = iterable.iterator();
-        while (it.hasNext())
-            res = res.plus(it.next());
 
-        return new LazyPBagX<>(
-                               res);
+
+        return new LazyPBagX<>(null,
+                                 ReactiveSeq.fromIterable(iterable),
+                                 Reducers.toPBag());
     }
 
     public static <T> PBagX<T> fromCollection(final Collection<T> stream) {

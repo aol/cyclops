@@ -167,10 +167,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
         if (it instanceof Set)
             return new LazySetX<T>(
                                    (Set) it, collector);
-        return new LazySetX<T>(
-                               Streams.stream(it)
-                                          .collect(collector),
-                               collector);
+        return new LazySetX<T>(null,
+                                ReactiveSeq.fromIterable(it),
+                                collector);
     }
 
     @Override

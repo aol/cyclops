@@ -207,13 +207,11 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
         if (iterable instanceof PQueue)
             return new LazyPQueueX<>(
                                      (PQueue) iterable);
-        PQueue<T> res = empty();
-        final Iterator<T> it = iterable.iterator();
-        while (it.hasNext())
-            res = res.plus(it.next());
 
-        return new LazyPQueueX<>(
-                                 res);
+
+        return new LazyPQueueX<>(null,
+                ReactiveSeq.fromIterable(iterable),
+                Reducers.toPQueue());
     }
 
     public static <T> PQueueX<T> fromCollection(final Collection<T> stream) {

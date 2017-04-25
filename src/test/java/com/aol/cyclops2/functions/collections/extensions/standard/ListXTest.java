@@ -1,7 +1,14 @@
 package com.aol.cyclops2.functions.collections.extensions.standard;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops2.functions.collections.extensions.CollectionXTestsWithNulls;
+import com.aol.cyclops2.types.Zippable;
+import cyclops.Semigroups;
+import cyclops.collections.ListX;
+import cyclops.collections.immutable.PVectorX;
+import cyclops.monads.Witness;
+import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Test;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -9,22 +16,13 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-import cyclops.collections.immutable.PVectorX;
-import cyclops.monads.Witness;
-import org.jooq.lambda.tuple.Tuple2;
-import org.junit.Test;
-
-import cyclops.Semigroups;
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.ListX;
-import com.aol.cyclops2.functions.collections.extensions.CollectionXTestsWithNulls;
-import com.aol.cyclops2.types.Zippable;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class ListXTest extends CollectionXTestsWithNulls {
 
     @Test
     public void lazy(){
-
 
         ListX<PVectorX<String>> list =     ListX.of(1,2,3,5,6,7,8)
                                                 .map(i->i*2)

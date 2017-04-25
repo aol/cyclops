@@ -689,9 +689,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
 
 
-    /* (non-Javadoc)
-     * @see java.util.Collection#reactiveStream()
-     */
+
     @Override
     default ReactiveSeq<T> stream() {
 
