@@ -341,6 +341,10 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
         return (PVectorX<T>) PersistentCollectionX.super.combine(predicate, op);
     }
     @Override
+    default PVectorX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (PVectorX<T>)PersistentCollectionX.super.combine(op,predicate);
+    }
+    @Override
     default PVectorX<T> materialize() {
         return (PVectorX<T>)PersistentCollectionX.super.materialize();
     }

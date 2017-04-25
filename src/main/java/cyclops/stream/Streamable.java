@@ -165,6 +165,10 @@ public interface Streamable<T> extends  To<Streamable<T>>,
 
         return Streamable.fromIterable(FoldableTraversable.super.combine(predicate, op));
     }
+    @Override
+    default Streamable<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (Streamable<T>)FoldableTraversable.super.combine(op,predicate);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)

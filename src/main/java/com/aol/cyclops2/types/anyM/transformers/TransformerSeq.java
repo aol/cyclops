@@ -137,6 +137,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
         return unitAnyM(transformerStream().map(s -> s.combine(predicate, op)));
     }
 
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Traversable#subscribeAll(org.reactivestreams.Subscriber)
      */

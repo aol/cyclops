@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import cyclops.control.Maybe;
 import com.aol.cyclops2.types.FoldableTraversable;
 import cyclops.function.Fn3;
@@ -346,6 +347,10 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     public ListT<W,T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
 
         return (ListT<W,T>) FoldableTransformerSeq.super.combine(predicate, op);
+    }
+    @Override
+    public ListT<W,T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (ListT<W,T>)FoldableTransformerSeq.super.combine(op,predicate);
     }
 
     /* (non-Javadoc)

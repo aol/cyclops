@@ -3,6 +3,7 @@ package com.aol.cyclops2.control;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.util.SimpleTimer;
 import com.google.common.collect.Lists;
+import cyclops.Monoids;
 import cyclops.Semigroups;
 import cyclops.collections.ListX;
 
@@ -53,6 +54,13 @@ import static org.junit.Assert.fail;
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
+    @Test
+    public void testCombineMonoid(){
+        assertThat(ReactiveSeq.of(1,1,2,3)
+                .combine(Monoids.intMult,(a, b)->a.equals(b))
+                .findFirst().get()
+               , equalTo(1));
+    }
     @Test
     public void crossJoinTest(){
         assertThat(ReactiveSeq.of(1, 2)

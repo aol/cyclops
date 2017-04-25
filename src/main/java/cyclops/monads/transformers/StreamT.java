@@ -296,7 +296,10 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
         return (StreamT<W,T>) FoldableTransformerSeq.super.combine(predicate, op);
     }
-
+    @Override
+    public StreamT<W,T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return (StreamT<W,T>)FoldableTransformerSeq.super.combine(op,predicate);
+    }
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ListT#cycle(int)
      */
