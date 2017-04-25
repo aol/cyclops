@@ -3979,11 +3979,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<ReactiveSeq<T>> combinations() {
-       Object[] a = toArray();
-        return range(1, size()+1).map(size->Streams.<T>combinations(size,a))
+        Object[] a = toArray();
+        return range(1, a.length+1).map(size->Streams.<T>combinations(size,a))
                                  .flatMap(s -> s)
                                  .prepend(ReactiveSeq.<T>empty());
-        
+
     }
     default StreamT<reactiveSeq,T> combinationsT() {
         return StreamT.fromReactiveSeq(combinations());
