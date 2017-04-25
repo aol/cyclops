@@ -54,7 +54,7 @@ public class Combinations {
  @Fork(1)
  public void iteratorCombos() {
      final int size = 2;
-     String[] a = { "1","2","3","4"};
+     Object[] a = ReactiveSeq.of( "1","2","3","4").toArray();
      final int fromIndex = 0;
      final int toIndex = a.length;
 
@@ -71,7 +71,7 @@ public class Combinations {
              final List<String> result = new ArrayList<>(size);
 
              for (int idx : indices) {
-                 result.add(a[idx]);
+                 result.add((String)a[idx]);
              }
 
              if (++indices[size - 1] == toIndex) {
