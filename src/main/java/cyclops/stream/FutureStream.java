@@ -1874,7 +1874,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default <R> FutureStream<R> fromStream(final Stream<R> stream) {
-
         return this.withLastActive(getLastActive().withNewStream(stream, this.getSimpleReact()));
     }
 
@@ -2607,7 +2606,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default ReactiveSeq<U> stream() {
-        return Streams.oneShotStream(toQueue().jdkStream(getSubscription()));
+          return Streams.oneShotStream(toQueue().jdkStream(getSubscription()));
 
     }
 

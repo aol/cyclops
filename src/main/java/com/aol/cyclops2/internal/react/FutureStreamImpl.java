@@ -79,7 +79,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
 
         this.simpleReact = lazyReact;
 
-        this.lastActive = new LazyStreamWrapper<>(
+        this.lastActive = new LazyStreamWrapper<>(()->
                                                   stream, lazyReact);
         this.error = new ConsumerHolder(
                                         a -> {
@@ -90,6 +90,27 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
         });
         this.lazyCollector = () -> new BatchingCollector<U>(
                                                             getMaxActive(), this);
+        this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
+        this.subscription = new Subscription();
+
+        this.maxActive = lazyReact.getMaxActive();
+
+    }
+
+    public FutureStreamImpl(final LazyReact lazyReact, final Supplier<Stream<U>> stream) {
+
+        this.simpleReact = lazyReact;
+
+        this.lastActive = new LazyStreamWrapper<>((Supplier)stream, lazyReact);
+        this.error = new ConsumerHolder(
+                a -> {
+                });
+        this.errorHandler = Optional.of((e) -> {
+            error.forward.accept(e);
+            log.error(e.getMessage(), e);
+        });
+        this.lazyCollector = () -> new BatchingCollector<U>(
+                getMaxActive(), this);
         this.queueFactory = QueueFactories.unboundedNonBlockingQueue();
         this.subscription = new Subscription();
 

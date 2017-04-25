@@ -12,9 +12,9 @@ import cyclops.stream.FutureStream;
  *
  * @param <T> data type
  */
-public class PushableLazyFutureStream<T> extends AbstractPushableStream<T, Queue<T>, FutureStream<T>> {
+public class PushableFutureStream<T> extends AbstractPushableStream<T, Queue<T>, FutureStream<T>> {
 
-    public PushableLazyFutureStream(final Queue<T> v1, final FutureStream<T> v2) {
+    public PushableFutureStream(final Queue<T> v1, final FutureStream<T> v2) {
         super(v1, v2);
 
     }

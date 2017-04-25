@@ -36,10 +36,7 @@ import com.aol.cyclops2.react.base.BaseSeqTest;
 
 public class LazySeqAgronaTest extends BaseSeqTest {
 	
-	
 
-	
-	
 	@Test
 	public void testZipWithFutures(){
 		FutureStream stream = of("a","b");

@@ -28,7 +28,7 @@ import cyclops.collections.immutable.PStackX;
 import cyclops.collections.SetX;
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.util.stream.pushable.MultipleStreamSource;
-import com.aol.cyclops2.util.stream.pushable.PushableLazyFutureStream;
+import com.aol.cyclops2.util.stream.pushable.PushableFutureStream;
 import com.aol.cyclops2.util.stream.pushable.PushableReactiveSeq;
 import com.aol.cyclops2.util.stream.pushable.PushableStream;
 
@@ -72,7 +72,7 @@ public class PushableStreamTest {
 	    
 	   
 	    
-		PushableLazyFutureStream<Integer> pushable = StreamSource.ofUnbounded()
+		PushableFutureStream<Integer> pushable = StreamSource.ofUnbounded()
 				                                                 .futureStream(new LazyReact());
 		pushable.getInput().add(100);
 		pushable.getInput().close();
@@ -82,7 +82,7 @@ public class PushableStreamTest {
 
 	@Test
 	public void testReactPool() {
-		PushableLazyFutureStream<Integer> pushable = StreamSource.ofUnbounded()
+		PushableFutureStream<Integer> pushable = StreamSource.ofUnbounded()
 		                                                        .futureStream(SequentialElasticPools.lazyReact.nextReactor());
 		pushable.getInput().add(100);
 		pushable.getInput().close();
@@ -276,7 +276,7 @@ public class PushableStreamTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testWithBackPressureNegativeAfterButOn() {
-		PushableLazyFutureStream<Integer> pushable = StreamSource.of(-10)
+		PushableFutureStream<Integer> pushable = StreamSource.of(-10)
 		                                                          .futureStream(new LazyReact());
 		
 		pushable.getInput().add(100);
