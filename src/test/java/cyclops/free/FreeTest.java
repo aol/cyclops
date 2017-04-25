@@ -113,7 +113,7 @@ public final class FreeTest {
     }
 
     static <R> String showProgram(Free<CharToy.µ,R> program){
-        Xor<CharToy<Free<µ, R>>, R> xor = program.resume(CharToy.functor, CharToy::narrowK);
+
 
         return program.resume(CharToy.functor, CharToy::narrowK)
                 .visit(
