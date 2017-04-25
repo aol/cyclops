@@ -1,26 +1,16 @@
 package cyclops.monads;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.data.collections.extensions.FluentSequenceX;
-import com.aol.cyclops2.internal.monads.AnyMSeqImpl;
-import com.aol.cyclops2.internal.monads.AnyMValueImpl;
+import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.stream.ToStream;
-import cyclops.Optionals;
 import cyclops.Streams;
 import cyclops.async.Future;
 import cyclops.collections.ListX;
-import cyclops.collections.SetX;
 import cyclops.control.*;
-import cyclops.control.either.Either;
-import cyclops.control.either.Either3;
-import cyclops.control.either.Either4;
-import cyclops.control.either.Either5;
 import cyclops.function.*;
-import cyclops.monads.Witness.*;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import cyclops.stream.FutureStream;
@@ -655,7 +645,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
         return FutureT.of(this.map(a -> lift.apply(a)));
     }
 
-    default ListT<W, T> liftMList(Function<? super T, ? extends FluentSequenceX<T>> lift) {
+    default ListT<W, T> liftMList(Function<? super T, ? extends IndexedSequenceX<T>> lift) {
         return ListT.of(this.map(a -> lift.apply(a)));
     }
 

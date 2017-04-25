@@ -10,7 +10,7 @@ import cyclops.Reducers;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.monads.transformers.ListT;
-import com.aol.cyclops2.data.collections.extensions.FluentSequenceX;
+import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 public interface PStackX<T> extends To<PStackX<T>>,
                                     PStack<T>,
                                     PersistentCollectionX<T>,
-                                    FluentSequenceX<T>, 
+        IndexedSequenceX<T>,
                                     OnEmptySwitch<T, PStack<T>>,
                                     Higher<PStackX.µ,T> {
 

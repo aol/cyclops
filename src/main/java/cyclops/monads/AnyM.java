@@ -33,7 +33,7 @@ import cyclops.control.either.Either4;
 import cyclops.control.either.Either5;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
-import com.aol.cyclops2.data.collections.extensions.FluentSequenceX;
+import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import cyclops.collections.SetX;
 import com.aol.cyclops2.types.*;
 import cyclops.async.Future;
@@ -1372,7 +1372,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return FutureT.of(this.map(a -> lift.apply(a)));
     }
 
-    default ListT<W, T> liftMList(Function<? super T, ? extends FluentSequenceX<T>> lift) {
+    default ListT<W, T> liftMList(Function<? super T, ? extends IndexedSequenceX<T>> lift) {
         return ListT.of(this.map(a -> lift.apply(a)));
     }
 
