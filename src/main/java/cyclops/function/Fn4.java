@@ -2,6 +2,7 @@ package cyclops.function;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
 import cyclops.async.Future;
@@ -11,11 +12,11 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 
-public interface Fn4<T1, T2, T3, T4, R> extends Function4<T1,T2,T3,T4,R> {
+public interface Fn4<T1, T2, T3, T4, R> extends Fn1<T1,Fn1<T2,Fn1<T3,Fn1<T4,R>>>> {
 
     public R apply(T1 a, T2 b, T3 c, T4 d);
     
-    default Fn4<T1, T2, T3, T4, Maybe<R>> lift(){
+    default Fn4<T1, T2, T3, T4, Maybe<R>> lift4(){
        return (s1,s2,s3,s4)-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3,s4))));
     }
     default Fn1<T2, Fn1<T3, Fn1<T4, R>>> apply(final T1 s) {
@@ -35,20 +36,26 @@ public interface Fn4<T1, T2, T3, T4, R> extends Function4<T1,T2,T3,T4,R> {
                     .apply(s2)
                     .apply(s3);
     }
-    default Fn4<T1,T2,T3,T4,R> memoize(){
+    default Fn4<T1,T2,T3,T4,R> memoize4(){
         return Memoize.memoizeQuadFunction(this);
     }
-    default Fn4<T1,T2,T3,T4,R> memoize(Cacheable<R> c){
+    default Fn4<T1,T2,T3,T4,R> memoize4(Cacheable<R> c){
         return Memoize.memoizeQuadFunction(this,c);
     }
-    default Fn4<T1, T2, T3, T4, Future<R>> lift(Executor ex){
+    default Fn4<T1,T2,T3,T4, R> memoize4Async(ScheduledExecutorService ex, String cron){
+        return Memoize.memoizeQuadFunctionAsync(this,ex,cron);
+    }
+    default Fn4<T1,T2,T3,T4, R> memoize4Async(ScheduledExecutorService ex, long timeToLiveMillis){
+        return Memoize.memoizeQuadFunctionAsync(this,ex,timeToLiveMillis);
+    }
+    default Fn4<T1, T2, T3, T4, Future<R>> lift4(Executor ex){
        
        return (s1,s2,s3,s4)-> Future.ofSupplier(()->apply(s1,s2,s3,s4),ex);
     }
-    default Fn4<T1, T2, T3, T4, Try<R,Throwable>> liftTry(){
+    default Fn4<T1, T2, T3, T4, Try<R,Throwable>> liftTry4(){
        return (s1,s2,s3,s4)->  Try.withCatch(()->apply(s1,s2,s3,s4),Throwable.class);
     }
-    default Fn4<T1, T2, T3, T4, Optional<R>> liftOpt(){
+    default Fn4<T1, T2, T3, T4, Optional<R>> liftOpt4(){
        
        return (s1,s2,s3,s4)-> Optional.ofNullable(apply(s1,s2,s3,s4));
     }
@@ -57,7 +64,7 @@ public interface Fn4<T1, T2, T3, T4, R> extends Function4<T1,T2,T3,T4,R> {
         return CurryVariance.curry4(this);
     }
 
-    default <V> Fn4<T1, T2, T3, T4, V> andThen(Function<? super R, ? extends V> after) {
+    default <V> Fn4<T1, T2, T3, T4, V> andThen4(Function<? super R, ? extends V> after) {
         return (t1,t2,t3,t4)-> after.apply(apply(t1,t2,t3,t4));
     }
 

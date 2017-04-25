@@ -308,7 +308,7 @@ public class FluentFunctions {
 
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentSupplier<R> implements Supplier<R> {
+    public static class FluentSupplier<R> implements Fn0<R> {
         private final Supplier<R> fn;
         private final String name;
 
@@ -484,13 +484,6 @@ public class FluentFunctions {
             return ReactiveSeq.generate(fn);
         }
 
-        /**
-         * @return A Supplier that returns it's value wrapped in an Optional
-         */
-        public FluentSupplier<Optional<R>> lift() {
-            return new FluentSupplier<>(
-                                        () -> Optional.ofNullable(fn.get()));
-        }
 
         /**
          * @param classes To catch exceptions for
@@ -500,13 +493,7 @@ public class FluentFunctions {
             return FluentFunctions.of(() -> Try.withCatch(() -> fn.get(), classes));
         }
 
-        /**
-         * @return A Supplier that returns it's value wrapped in an Optional inside an AnyM
-         */
-        public  <W extends WitnessType<W>> FluentSupplier<AnyM<W,R>> liftF(W witness) {
-            return new FluentSupplier<>(
-                                        () -> witness.adapter().unit(get()));
-        }
+
 
         /**
          * @param ex Executor to execute this Supplier on
@@ -528,7 +515,7 @@ public class FluentFunctions {
 
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentFunction<T, R> implements Function<T, R>, Reader<T, R> {
+    public static class FluentFunction<T, R> implements Fn1<T, R>, Reader<T, R> {
         private final Function<T, R> fn;
         private final String name;
 
@@ -853,7 +840,7 @@ public class FluentFunctions {
 
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentBiFunction<T1, T2, R> implements BiFunction<T1, T2, R> {
+    public static class FluentBiFunction<T1, T2, R> implements Fn2<T1, T2, R> {
         BiFunction<T1, T2, R> fn;
         private final String name;
 
@@ -946,32 +933,7 @@ public class FluentFunctions {
                                         PartialApplicator.partial2(param1, param2, fn));
         }
 
-        /**
-         * Curry this BiFunction, that is convert it from a BiFunction that accepts two input parameters to a 'chain'
-         * of two Functions that accept a single parameter
-         * 
-         * <pre>
-         * {@code 
-         * public int add(Integer a,Integer b ){
-               return a+b;
-           }
-         * 
-         *      FluentFunctions.of(this::add)
-                               .curry()
-                               .apply(1)
-                               .apply(2);
-                               
-                //3               
-         *    
-         * }
-         * </pre>
-         * 
-         * @return Curried function 
-         */
-        public FluentFunction<T1, Function<T2, R>> curry() {
-            return new FluentFunction(
-                                      CurryVariance.curry2(fn));
-        }
+
 
         /**
          * @return A caching (memoizing) version of this BiFunction, outputs for all inputs will be cached
@@ -1190,13 +1152,7 @@ public class FluentFunctions {
             return ReactiveSeq.generate(() -> fn.apply(input1, input2));
         }
 
-        /**
-         * @return A BiFunction that accepts and returns Optionals
-         */
-        public FluentBiFunction<Optional<T1>, Optional<T2>, Optional<R>> lift() {
-            return new FluentBiFunction<>(
-                                          (opt1, opt2) -> opt1.flatMap(t1 -> opt2.map(t2 -> fn.apply(t1, t2))));
-        }
+
 
         /**
          * @param classes Classes to catch exceptions for
@@ -1207,10 +1163,11 @@ public class FluentFunctions {
         }
 
         /**
-         * @return A BiFunction that accepts and returns a generic Monad instance
+         * @return A BiFunction that accepts and returns Optionals
          */
-        public <W extends WitnessType<W>> FluentBiFunction<AnyM<W,T1>, AnyM<W,T2>, AnyM<W,R>> liftF() {
-            return FluentFunctions.of(AnyM.liftF2(fn));
+        public FluentBiFunction<Optional<T1>, Optional<T2>, Optional<R>> liftOptional() {
+            return new FluentBiFunction<>(
+                    (opt1, opt2) -> opt1.flatMap(t1 -> opt2.map(t2 -> fn.apply(t1, t2))));
         }
 
         /**
@@ -1245,7 +1202,7 @@ public class FluentFunctions {
          */
         @Override
         public <V> FluentBiFunction<T1, T2, V> andThen(final Function<? super R, ? extends V> after) {
-            return FluentFunctions.of(BiFunction.super.andThen(after));
+            return FluentFunctions.of(Fn2.super.andThen(after));
         }
 
     }
@@ -1384,45 +1341,45 @@ public class FluentFunctions {
         /**
          * @return Function that logs it's result or error to the console
          */
-        public FluentTriFunction<T1, T2, T3, R> memoize() {
+        public FluentTriFunction<T1, T2, T3, R> memoize3() {
             return withFn(Memoize.memoizeTriFunction(fn));
         }
 
         /**
          * This methods creates a caching version of this BiFunction, caching is implemented via the Cacheable wrapper,
          * that can be used to wrap any concrete cache implementation
-         * 
+         *
          * E.g. to use a Guava cache for memoization
-         * 
+         *
          * <pre>
-         * {@code 
-         * 
+         * {@code
+         *
          * Cache<Object, Integer> cache = CacheBuilder.newBuilder()
                    .maximumSize(1000)
                    .expireAfterWrite(10, TimeUnit.MINUTES)
                    .build();
-        
+
                    called=0;
             TriFunction<Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
                                                                      .name("myFunction")
-                                                                     .memoize((key,f)->cache.get(key,()->f.apply(key)));
-        
+                                                                     .memoize3((key,f)->cache.get(key,()->f.apply(key)));
+
             fn.apply(10,1,4);
             fn.apply(10,1,4);
             fn.apply(10,1,4);
-        
+
             assertThat(called,equalTo(1));
-         * 
-         * 
-         * 
+         *
+         *
+         *
          * }</pre>
-         * 
-         * 
+         *
+         *
          * @param cache Cache implementation wrapper
-         * 
+         *
          * @return A caching (memoizing) version of this BiFunction, outputs for all inputs will be cached (unless ejected from the cache)
          */
-        public FluentTriFunction<T1, T2, T3, R> memoize(final Cacheable<R> cache) {
+        public FluentTriFunction<T1, T2, T3, R> memoize3(final Cacheable<R> cache) {
             return withFn(Memoize.memoizeTriFunction(fn));
         }
         /**
@@ -1604,7 +1561,7 @@ public class FluentFunctions {
         /**
          * @return Lift this TriFunction into one that accepts and returns generic monad types (AnyM)
          */
-        public  <W extends WitnessType<W>> FluentTriFunction<AnyM<W,T1>, AnyM<W,T2>, AnyM<W,T3>, AnyM<W,R>> liftF() {
+        public  <W extends WitnessType<W>> FluentTriFunction<AnyM<W,T1>, AnyM<W,T2>, AnyM<W,T3>, AnyM<W,R>> liftF3() {
             return FluentFunctions.of(AnyM.liftF3(fn));
         }
 
@@ -1635,7 +1592,7 @@ public class FluentFunctions {
          * @param after Function to execute after this one in a chain
          * @return TriFunction that executes this TriFunction and the provided Function in a chain
          */
-        public <R2> FluentTriFunction<T1, T2, T3, R2> andThen(final Function<? super R, ? extends R2> after) {
+        public <R2> FluentTriFunction<T1, T2, T3, R2> andThen3(final Function<? super R, ? extends R2> after) {
             Objects.requireNonNull(after);
             return FluentFunctions.of((final T1 t1, final T2 t2, final T3 t3) -> after.apply(apply(t1, t2, t3)));
         }

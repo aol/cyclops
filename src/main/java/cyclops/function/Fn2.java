@@ -2,6 +2,7 @@ package cyclops.function;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -20,7 +21,7 @@ import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.function.Function2;
 
 @FunctionalInterface
-public interface Fn2<T1, T2, R> extends Function2<T1,T2,R> {
+public interface Fn2<T1, T2, R> extends BiFunction<T1,T2,R> {
 
     public static <T1, T2, T3,R> Fn2<T1,T2, R> λ(final Fn2<T1,T2, R> triFunc){
         return triFunc;
@@ -32,8 +33,7 @@ public interface Fn2<T1, T2, R> extends Function2<T1,T2,R> {
     public R apply(T1 a, T2 b);
 
 
-    default <W extends WitnessType<W>> AnyMFn2<W,T1,T2,R> liftF(){
-        return AnyM.liftF2(this);
+    default <W extends WitnessType<W>> AnyMFn2<W,T1,T2,R> liftF(){return AnyM.liftF2(this);
     }
     
     
@@ -61,7 +61,13 @@ public interface Fn2<T1, T2, R> extends Function2<T1,T2,R> {
     default Fn2<T1,T2,R> memoize(Cacheable<R> c){
         return Memoize.memoizeBiFunction(this,c);
     }
-    
+    default Fn2<T1,T2, R> memoizeAsync(ScheduledExecutorService ex, String cron){
+        return Memoize.memoizeBiFunctionAsync(this,ex,cron);
+    }
+    default Fn2<T1,T2, R> memoizeAsync(ScheduledExecutorService ex, long timeToLiveMillis){
+        return Memoize.memoizeBiFunctionAsync(this,ex,timeToLiveMillis);
+    }
+
     default Fn1<? super T1,Fn1<? super T2,? extends  R>> curry(){
         return CurryVariance.curry2(this);
     }

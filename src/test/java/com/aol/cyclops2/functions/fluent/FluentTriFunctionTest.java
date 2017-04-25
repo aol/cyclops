@@ -59,7 +59,7 @@ public class FluentTriFunctionTest {
         called = 0;
         FluentTriFunction<Integer, Integer, Integer, Integer> fn = FluentFunctions.of(this::add)
                                                                                   .name("myFunction")
-                                                                                  .memoize();
+                                                                                  .memoize3();
 
         fn.apply(10, 1, 0);
         fn.apply(10, 1, 0);
@@ -79,7 +79,7 @@ public class FluentTriFunctionTest {
         called = 0;
         FluentTriFunction<Integer, Integer, Integer, Integer> fn = FluentFunctions.of(this::add)
                                                                                   .name("myFunction")
-                                                                                  .memoize((key, f) -> cache.get(key, () -> f.apply(key)));
+                                                                                  .memoize3((key, f) -> cache.get(key, () -> f.apply(key)));
 
         fn.apply(10, 1, 0);
         fn.apply(10, 1, 0);
@@ -215,7 +215,7 @@ public class FluentTriFunctionTest {
     public void testLift() {
         Integer nullValue = null;
         assertThat(FluentFunctions.of(this::add)
-                                  .liftOpt()
+                                  .liftOpt3()
                                   .apply(2, 1, 3),
                    equalTo(Optional.of(6)));
     }
@@ -224,7 +224,7 @@ public class FluentTriFunctionTest {
     public void testLiftM() {
 
         AnyM<Witness.list,Integer> result = FluentFunctions.of(this::add)
-                                              .<Witness.list>liftF()
+                                              .<Witness.list>liftF3()
                                               .apply(AnyM.listOf(1, 2, 3, 4), AnyM.listOf(1), AnyM.listOf(10));
 
         assertThat(result.stream()

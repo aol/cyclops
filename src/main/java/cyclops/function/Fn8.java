@@ -8,7 +8,7 @@ import cyclops.async.Future;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 
-public interface Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> {
+public interface Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> extends Fn1<T1, Fn1<T2, Fn1<T3,Fn1<T4,Fn1<T5,Fn1<T6, Fn1<T7,Fn1<T8,R>>>>>>>>{
 
     public R apply(T1 a, T2 b, T3 c, T4 d, T5 e, T6 f, T7 g, T8 h);
     /**
@@ -83,19 +83,19 @@ public interface Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> {
                     .apply(s6)
                     .apply(s7);
     }
-    default Fn8<T1, T2, T3, T4, T5, T6, T7, T8, Maybe<R>> lift() {
+    default Fn8<T1, T2, T3, T4, T5, T6, T7, T8, Maybe<R>> lift8() {
         return (s1, s2, s3, s4, s5,s6,s7,s8) -> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3,s4,s5,s6,s7,s8))));
     }
-    default Fn8<T1, T2, T3, T4, T5, T6, T7,T8,Future<R>> lift(Executor ex) {
+    default Fn8<T1, T2, T3, T4, T5, T6, T7,T8,Future<R>> lift8(Executor ex) {
 
         return (s1, s2, s3, s4, s5,s6,s7,s8) -> Future.ofSupplier(() -> apply(s1, s2, s3, s4, s5,s6,s7,s8), ex);
     }
 
-    default Fn8<T1, T2, T3, T4, T5, T6, T7, T8,Try<R, Throwable>> liftTry() {
+    default Fn8<T1, T2, T3, T4, T5, T6, T7, T8,Try<R, Throwable>> liftTry8() {
         return (s1, s2, s3, s4, s5,s6,s7,s8) -> Try.withCatch(() -> apply(s1, s2, s3, s4, s5,s6,s7,s8), Throwable.class);
     }
 
-    default Fn8<T1, T2, T3, T4, T5, T6, T7, T8,Optional<R>> liftOpt() {
+    default Fn8<T1, T2, T3, T4, T5, T6, T7, T8,Optional<R>> liftOpt8() {
 
         return (s1, s2, s3, s4, s5, s6,s7,s8) -> Optional.ofNullable(apply(s1, s2, s3, s4, s5, s6,s7,s8));
     }
