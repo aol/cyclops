@@ -1,6 +1,7 @@
 package cyclops.async;
 
 import static com.aol.cyclops2.types.futurestream.BaseSimpleReactStream.parallel;
+import static cyclops.stream.ReactiveSeq.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -9,6 +10,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +37,32 @@ public class QueueTest {
 	private final AtomicInteger found = new AtomicInteger(0);
 
 	volatile boolean success = false;
-	
+	@Test
+	public void batchBySizeAndTimeSizeCollection(){
+		Queue<Integer> queue = QueueFactories.<Integer>boundedQueue(10).build();
+		queue.fromStream(of(1,2,3,4,5,6));
+		queue.add(1);
+		queue.add(2);
+		queue.close();
+
+		assertThat(queue.streamGroupedBySizeAndTime(3,10,TimeUnit.SECONDS)
+				.toList().get(0)
+				.size(),is(3));
+
+	}
+    @Test
+    public void batchByTime(){
+        Queue<Integer> queue = QueueFactories.<Integer>boundedQueue(10).build();
+        queue.fromStream(of(1,2,3,4,5,6));
+        queue.add(1);
+        queue.add(2);
+        queue.close();
+
+        assertThat(queue.streamGroupedByTime(1,TimeUnit.SECONDS)
+                .toList().get(0)
+                .size(),is(8));
+
+    }
 	@Test
 	public void parallelStreamClose(){
 	    int cores = Runtime.getRuntime()

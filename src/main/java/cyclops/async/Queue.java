@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops2.react.async.subscription.Subscription;
+import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.async.AdaptersModule.ClosingSpliterator;
 import cyclops.async.AdaptersModule.QueueToBlockingQueueWrapper;
@@ -250,6 +252,49 @@ public class Queue<T> implements Adapter<T> {
         this.sub = s;
         listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
         return ReactiveSeq.fromStream(closingStreamBatch(batcher.apply((timeout, timeUnit) -> ensureOpen(timeout, timeUnit)), s));
+    }
+    public ReactiveSeq<ListX<T>> streamGroupedByTime(long time, TimeUnit t){
+        return streamGroupedBySizeAndTime(Integer.MAX_VALUE,time,t);
+
+    }
+    public boolean checkTime(long current, long start,long toRun){
+        boolean result = current-start < toRun;
+
+        return result;
+    }
+    public ReactiveSeq<ListX<T>> streamGroupedBySizeAndTime(int size, long time, TimeUnit t){
+        long toRun = t.toNanos(time);
+        return streamBatch(new Subscription(), source->{
+
+            return ()->{
+                List<T> result = new ArrayList<>();
+
+
+                long start = System.nanoTime();
+              try {
+                  while (result.size() < size && checkTime(System.nanoTime(), start, toRun)) {
+                      try {
+                          T next = source.apply(100l, TimeUnit.MICROSECONDS);
+                          if (next != null) {
+
+                              result.add(next);
+                          }
+                      } catch (Queue.QueueTimeoutException e) {
+
+                      }
+
+
+                  }
+              }catch(Queue.ClosedQueueException e){
+                  if(result.size()>0)
+                    throw new ClosedQueueException(ListX.of(result));
+              }
+
+
+                return result;
+            };
+        }).filter(l->l.size()>0)
+                .map(ListX::fromIterable);
     }
 
     public ReactiveSeq<T> streamControl(final Continueable s, final Function<Supplier<T>, Supplier<T>> batcher) {
