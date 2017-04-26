@@ -3,13 +3,13 @@ package cyclops.stream;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.util.stream.pushable.PushableFutureStream;
 import cyclops.async.LazyReact;
 import cyclops.async.Adapter;
 import cyclops.async.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.async.QueueFactory;
 import com.aol.cyclops2.util.stream.pushable.MultipleStreamSource;
-import com.aol.cyclops2.util.stream.pushable.PushableLazyFutureStream;
 import com.aol.cyclops2.util.stream.pushable.PushableReactiveSeq;
 import com.aol.cyclops2.util.stream.pushable.PushableStream;
 
@@ -52,7 +52,7 @@ import lombok.AllArgsConstructor;
  * 
  * <pre>
  * {@code 
- * PushableLazyFutureStream<Integer> pushable = StreamSource.ofUnbounded()
+ * PushableFutureStream<Integer> pushable = StreamSource.ofUnbounded()
                                                             .futureStream(new LazyReact());
    pushable.getInput()
            .offer(100);
@@ -263,7 +263,7 @@ public class StreamSource {
      * {@code 
      *  MultipleStreamSource<Integer> multi = StreamSource
                                                 .ofMultiple(QueueFactories.boundedQueue(100));
-        LazyFutureStream<Integer> pushable = multi.futureStream(new LazyReact());
+        FutureStream<Integer> pushable = multi.futureStream(new LazyReact());
         ReactiveSeq<Integer> seq = multi.reactiveSeq();
         multi.getInput().offer(100);
         multi.getInput().close();
@@ -410,12 +410,12 @@ public class StreamSource {
     }
 
     /**
-     * Create a pushable LazyFutureStream using the supplied ReactPool
+     * Create a pushable FutureStream using the supplied ReactPool
      * 
      * <pre>
      * {@code 
      * 
-     *  PushableLazyFutureStream<Integer> pushable = StreamSource.ofUnbounded()
+     *  PushableFutureStream<Integer> pushable = StreamSource.ofUnbounded()
                                                                  .futureStream(new LazyReact());
         pushable.getInput().add(100);
         pushable.getInput().close();
@@ -433,10 +433,10 @@ public class StreamSource {
      * @return a Tuple2 with a Queue&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
      * to push it to the Stream
      */
-    public <T> PushableLazyFutureStream<T> futureStream(final LazyReact s) {
+    public <T> PushableFutureStream<T> futureStream(final LazyReact s) {
 
         final Queue<T> q = createQueue();
-        return new PushableLazyFutureStream<T>(
+        return new PushableFutureStream<T>(
                                                q, s.fromStream(q.stream()));
 
     }
@@ -448,7 +448,7 @@ public class StreamSource {
      * <pre>
      * {@code 
      * 
-     *  PushableLazyFutureStream<Integer> pushable = StreamSource.futureStream(QueueFactories.boundedNonBlockingQueue(1000),new LazyReact());
+     *  PushableFutureStream<Integer> pushable = StreamSource.futureStream(QueueFactories.boundedNonBlockingQueue(1000),new LazyReact());
         pushable.getInput().add(100);
         pushable.getInput().close();
         
@@ -466,7 +466,7 @@ public class StreamSource {
     public static <T> FutureStream<T> futureStream(final Adapter<T> adapter, final LazyReact react) {
 
 
-        return react.fromStream(adapter.stream());
+        return react.fromAdapter(adapter);
     }
 
     /**

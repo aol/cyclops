@@ -2,6 +2,7 @@ package com.aol.cyclops2.internal.react.stream;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
@@ -19,15 +20,15 @@ import lombok.experimental.Wither;
 @AllArgsConstructor
 public class LazyStreamWrapper<U> implements StreamWrapper<U> {
     @Wither
-    private final Stream<U> values;
+    private final Supplier<Stream<U>> values;
     @Wither
     private final LazyReact react;
     private PipelineBuilder pipeline;
     private final FuturePool pool;
 
-    public LazyStreamWrapper(final Stream values, final LazyReact react) {
+    public LazyStreamWrapper(final Supplier<Stream> values, final LazyReact react) {
 
-        this.values = values;
+        this.values = (Supplier)values;
         this.pipeline = new PipelineBuilder(
                                             react.isAutoOptimize(), react.getExecutor(), react.isAutoMemoize(), react.getMemoizeCache());
 
@@ -62,18 +63,18 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
         if (react.isStreamOfFutures())
             return convertCompletableFutures(f.getPipeline());
 
-        final Stream<FastFuture> result = values.map(factory);
+        final Stream<FastFuture> result = values.get().map(factory);
 
         return result;
     }
 
     public LazyStreamWrapper<U> concat(final Stream<U> concatWith) {
-        return this.withValues(Stream.concat(values, concatWith));
+        return this.withValues(()->Stream.concat(values.get(), concatWith));
     }
 
     private Stream<FastFuture> convertCompletableFutures(final FinalPipeline pipeline) {
 
-        return values.map(cf -> buildPool(pipeline).populateFromCompletableFuture((CompletableFuture) cf));
+        return values.get().map(cf -> buildPool(pipeline).populateFromCompletableFuture((CompletableFuture) cf));
     }
 
     private FastFuture buildPool(final FinalPipeline pipeline) {
@@ -90,21 +91,21 @@ public class LazyStreamWrapper<U> implements StreamWrapper<U> {
 
     public <R> LazyStreamWrapper<R> withNewStreamFutures(final Stream<R> values) {
         return new LazyStreamWrapper(
-                                     values, react.withStreamOfFutures(true));
+                (Supplier)()->values, react.withStreamOfFutures(true));
     }
 
     public <R> LazyStreamWrapper<R> withNewStream(final Stream<R> values, final LazyReact react) {
         return new LazyStreamWrapper(
-                                     values, react.withStreamOfFutures(false));
+                (Supplier)()->values, react.withStreamOfFutures(false));
     }
 
     @Override
     public Stream<U> stream() {
-        return values;
+        return values.get();
     }
 
     public LazyStreamWrapper withStream(final Stream noType) {
-        return this.withValues(noType);
+        return this.withValues(()->noType);
     }
 
     public boolean isSequential() {

@@ -5,6 +5,7 @@ import com.aol.cyclops2.react.async.subscription.Subscription;
 import cyclops.async.LazyReact;
 import cyclops.async.Queue;
 import cyclops.async.QueueFactories;
+import cyclops.stream.StreamSource;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -94,6 +95,25 @@ public class BatchingInvestigationsTest {
                 .async()
                 .peek(System.out::println)
                 .run();
+
+        while(true){
+
+        }
+
+    }
+    @Test
+    public void batchIssueStreamSource() throws InterruptedException {
+        Queue<String> queue = QueueFactories.<String>unboundedQueue().build();
+        new Thread(()->{
+        while (true) {
+            sleep(1000);
+            queue.offer("New message " + System.currentTimeMillis());
+        }
+    }).start();
+
+        StreamSource.futureStream(queue, new LazyReact(ThreadPools.getSequential()))
+                .groupedBySizeAndTime(10,500,TimeUnit.MILLISECONDS)
+                .forEach(i->System.out.println(i + " Batch Time:" + System.currentTimeMillis()));
 
         while(true){
 

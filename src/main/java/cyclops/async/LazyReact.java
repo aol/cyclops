@@ -75,7 +75,6 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 @Wither
 @ToString
-@Slf4j
 public class LazyReact implements ReactBuilder {
 
     @Getter
@@ -97,6 +96,8 @@ public class LazyReact implements ReactBuilder {
     private final boolean autoMemoize;
     @Getter
     private final Cacheable<?> memoizeCache;
+
+
 
     /**
      * Turn automatic caching of values on for the FutureStream to be generated
@@ -172,6 +173,7 @@ public class LazyReact implements ReactBuilder {
         autoOptimize = true;
         autoMemoize = false;
         memoizeCache = null;
+
     }
 
     /**
@@ -190,6 +192,7 @@ public class LazyReact implements ReactBuilder {
         autoOptimize = true;
         autoMemoize = false;
         memoizeCache = null;
+
     }
 
     /**
@@ -205,7 +208,7 @@ public class LazyReact implements ReactBuilder {
         retrier = new RetryBuilder().parallelism(threadPoolSize);
         async = true;
         maxActive = new MaxActive(
-                                  maxActiveTasks, threadPoolSize);
+                maxActiveTasks, threadPoolSize);
 
         streamOfFutures = false;
         poolingActive = false;
@@ -260,7 +263,7 @@ public class LazyReact implements ReactBuilder {
      * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#construct(java.util.reactiveStream.Stream, java.util.List)
      */
     public <U> FutureStream<U> construct(final Stream<U> s) {
-        log.debug("Constructing Stream with {}", this);
+
         return new FutureStreamImpl<U>(
                                            this, s);
 
@@ -274,7 +277,6 @@ public class LazyReact implements ReactBuilder {
      */
     public <U> FutureStream<U> constructFutures(final Stream<CompletableFuture<U>> s) {
         final LazyReact toUse = withStreamOfFutures(true);
-        log.debug("Constructing Stream with {}", toUse);
         return toUse.construct((Stream<U>) s);
     }
 
@@ -530,6 +532,8 @@ public class LazyReact implements ReactBuilder {
         return construct(stream);
     }
 
+
+
     /* 
      * 
      * Construct a FutureStream from specified Suppliers. Each Supplier is executed asyncrhonously,
@@ -583,6 +587,7 @@ public class LazyReact implements ReactBuilder {
         this.autoOptimize = autoOptimize;
         this.autoMemoize = autoMemoize;
         this.memoizeCache = memoizeCache;
+
     }
 
     /**
@@ -852,7 +857,14 @@ public class LazyReact implements ReactBuilder {
      */
     public <U> FutureStream<U> fromAdapter(final Adapter<U> adapter) {
         final Subscription sub = new Subscription();
-        return this.construct(adapter.stream(sub));
+        return new FutureStreamImpl(this,()->adapter.stream(sub)){
+            @Override
+            public ReactiveSeq<U> stream() {
+                return (ReactiveSeq<U>)adapter.stream(sub);
+            }
+        };
+
+
     }
 
     /**
