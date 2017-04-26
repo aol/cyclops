@@ -21,7 +21,7 @@ abstract class CharToy<A> implements Higher<CharToy.µ, A> {
     }
 
 
-    public static Free<CharToy.µ, Void> output(final char a){
+    public static Free<CharToy.µ, String> output(final char a){
         return Free.liftF(new CharOutput<>(a, null), functor);
     }
     public static Free<CharToy.µ, Void> bell(){
