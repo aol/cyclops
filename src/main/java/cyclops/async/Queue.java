@@ -254,10 +254,15 @@ public class Queue<T> implements Adapter<T> {
         return ReactiveSeq.fromStream(closingStreamBatch(batcher.apply((timeout, timeUnit) -> ensureOpen(timeout, timeUnit)), s));
     }
     public ReactiveSeq<ListX<T>> streamGroupedByTime(long time, TimeUnit t){
-        return streamGroupedByTimeAndSize(Integer.MAX_VALUE,time,t);
-        
+        return streamGroupedBySizeAndTime(Integer.MAX_VALUE,time,t);
+
     }
-    public ReactiveSeq<ListX<T>> streamGroupedByTimeAndSize(int size, long time, TimeUnit t){
+    public boolean checkTime(long current, long start,long toRun){
+        boolean result = current-start < toRun;
+
+        return result;
+    }
+    public ReactiveSeq<ListX<T>> streamGroupedBySizeAndTime(int size, long time, TimeUnit t){
         long toRun = t.toNanos(time);
         return streamBatch(new Subscription(), source->{
 
@@ -266,26 +271,24 @@ public class Queue<T> implements Adapter<T> {
 
 
                 long start = System.nanoTime();
+              try {
+                  while (result.size() < size && checkTime(System.nanoTime(), start, toRun)) {
+                      try {
+                          T next = source.apply(100l, TimeUnit.MICROSECONDS);
+                          if (next != null) {
 
-                while (result.size() < 10 && (System.nanoTime() - start) < toRun) {
-                    try {
-                        T next = source.apply(1l, TimeUnit.MILLISECONDS);
-                        if (next != null) {
-                            result.add(next);
-                        }
-                    }catch(Queue.QueueTimeoutException e){
+                              result.add(next);
+                          }
+                      } catch (Queue.QueueTimeoutException e) {
 
-                    }
-
-
-                }
-
-                if(result.size()>0){
-                    System.out.println("Result " +  result);
-                }
+                      }
 
 
-                start=System.nanoTime();
+                  }
+              }catch(Queue.ClosedQueueException e){
+                  if(result.size()>0)
+                    throw new ClosedQueueException(ListX.of(result));
+              }
 
 
                 return result;
