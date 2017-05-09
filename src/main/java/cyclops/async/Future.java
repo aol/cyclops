@@ -378,17 +378,7 @@ public class Future<T> implements To<Future<T>>,
                              f);
     }
 
-    /**
-     * Construct a Future asyncrhonously from the Supplied Try
-     * 
-     * @param value Try to populate Future from
-     * @param ex Executor to execute 
-     * @return Future populated with either the value or error in provided Try
-     */
-    @Deprecated
-    public static <T, X extends Throwable> Future<T> fromTry(final Try<T, X> value, final Executor ex) {
-        return Future.ofSupplier(value, ex);
-    }
+    
     /**
      * Construct a Future syncrhonously from the Supplied Try
      * 
