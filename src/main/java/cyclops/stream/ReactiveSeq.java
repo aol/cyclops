@@ -4539,9 +4539,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<T>)FoldableTraversable.super.notNull();
     }
 
-    default ReactiveStreamsTerminalFutureOperations<T> futureOperations(Executor ex){
-        return new ReactiveSeqFutureOpterationsImpl<T>(ex,this);
-    }
+
 
     default boolean isEmpty(){
         return !findAny().isPresent();

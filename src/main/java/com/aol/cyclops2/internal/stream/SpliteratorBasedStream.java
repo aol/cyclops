@@ -7,7 +7,6 @@ import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.*;
-import cyclops.async.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.async.QueueFactory;
 import cyclops.async.Signal;
@@ -753,21 +752,21 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     @Override
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer) {
-        return Streams.forEachX(this, numberOfElements, consumer);
+        return Streams.forEach(this, numberOfElements, consumer);
     }
 
     @Override
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
                                                       final Consumer<? super Throwable> consumerError) {
 
-        return Streams.forEachXWithError(this, numberOfElements, consumer, consumerError);
+        return Streams.forEach(this, numberOfElements, consumer, consumerError);
     }
 
     @Override
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
                                                       final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
 
-        return Streams.forEachXEvents(this, numberOfElements, consumer, consumerError, onComplete);
+        return Streams.forEach(this, numberOfElements, consumer, consumerError, onComplete);
     }
 
     @Override
