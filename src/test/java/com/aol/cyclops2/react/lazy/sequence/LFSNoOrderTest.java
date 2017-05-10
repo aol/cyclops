@@ -40,7 +40,7 @@ import cyclops.stream.ReactiveSeq;
 public  class LFSNoOrderTest {
 
 	public static <T> FutureStream<T> of(T... array){
-		return new LazyReact().of(array);
+		return LazyReact.sequentialBuilder().of(array);
 	}
 	FutureStream<Integer> empty;
 	FutureStream<Integer> nonEmpty;
@@ -150,7 +150,7 @@ public  class LFSNoOrderTest {
     @Test
     public void testReverseList() {
     	
-        assertThat( new LazyReact().fromIterable(Arrays.asList(10,400,2,-1))
+        assertThat( LazyReact.sequentialBuilder().fromIterable(Arrays.asList(10,400,2,-1))
         				.reverse().toList(), equalTo(asList(-1, 2, 400,10)));
     }
     @Test
@@ -162,7 +162,7 @@ public  class LFSNoOrderTest {
     @Test
     public void testReverseRange() {
     	
-        assertThat( new LazyReact().fromStream(IntStream.range(0,10).boxed())
+        assertThat( LazyReact.sequentialBuilder().fromStream(IntStream.range(0,10).boxed())
         				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
     }
 
