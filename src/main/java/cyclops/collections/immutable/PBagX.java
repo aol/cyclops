@@ -881,7 +881,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     default PBagX<T> removeAllS(final Stream<? extends T> stream) {
@@ -890,7 +890,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllI(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Iterable)
      */
     @Override
     default PBagX<T> removeAllI(final Iterable<? extends T> it) {
@@ -899,7 +899,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllI(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default PBagX<T> removeAll(final T... values) {

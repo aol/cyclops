@@ -4505,18 +4505,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     @Override
-    default ReactiveSeq<T> removeAllS(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.removeAllS(it);
+    default ReactiveSeq<T> removeAllI(final Iterable<? extends T> it) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.removeAllI(it);
     }
 
     @Override
-    default ReactiveSeq<T> removeAllS(final T... values) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.removeAllS(values);
+    default ReactiveSeq<T> removeAll(final T... values) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.removeAll(values);
     }
 
     @Override
-    default ReactiveSeq<T> retainAllS(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.retainAllS(it);
+    default ReactiveSeq<T> retainAllI(final Iterable<? extends T> it) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.retainAllI(it);
     }
 
     @Override
@@ -4525,8 +4525,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     @Override
-    default ReactiveSeq<T> retainAllS(final T... values) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.retainAllS(values);
+    default ReactiveSeq<T> retainAll(final T... values) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.retainAll(values);
     }
 
     @Override

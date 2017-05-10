@@ -35,7 +35,6 @@ import cyclops.async.Queue;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
-import cyclops.control.Xor;
 import cyclops.control.either.Either;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
@@ -158,18 +157,18 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default FutureStream<U> removeAllS(final Iterable<? extends U> it) {
-        return fromStream(stream().removeAllS(it));
+    default FutureStream<U> removeAllI(final Iterable<? extends U> it) {
+        return fromStream(stream().removeAllI(it));
     }
 
     @Override
-    default FutureStream<U> removeAllS(final U... values) {
-        return fromStream(stream().removeAllS(values));
+    default FutureStream<U> removeAll(final U... values) {
+        return fromStream(stream().removeAll(values));
     }
 
     @Override
-    default FutureStream<U> retainAllS(final Iterable<? extends U> it) {
-        return fromStream(stream().removeAllS(it));
+    default FutureStream<U> retainAllI(final Iterable<? extends U> it) {
+        return fromStream(stream().removeAllI(it));
     }
 
     @Override
@@ -178,8 +177,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default FutureStream<U> retainAllS(final U... values) {
-        return fromStream(stream().retainAllS(values));
+    default FutureStream<U> retainAll(final U... values) {
+        return fromStream(stream().retainAll(values));
     }
 
     @Override

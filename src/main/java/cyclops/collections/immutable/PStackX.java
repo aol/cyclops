@@ -1055,7 +1055,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     default PStackX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1064,7 +1064,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllI(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Iterable)
      */
     @Override
     default PStackX<T> removeAllI(final Iterable<? extends T> it) {
@@ -1073,7 +1073,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllI(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default PStackX<T> removeAll(final T... values) {

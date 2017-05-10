@@ -293,7 +293,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     default MapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -302,30 +302,30 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.lang.Iterable)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.lang.Iterable)
      */
     @Override
-    default MapX<K, V> removeAllS(final Iterable<? extends Tuple2<K, V>> it) {
+    default MapX<K, V> removeAllI(final Iterable<? extends Tuple2<K, V>> it) {
 
-        return (MapX<K, V>) IterableFilterable.super.removeAllS(it);
+        return (MapX<K, V>) IterableFilterable.super.removeAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.lang.Object[])
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.lang.Object[])
      */
     @Override
-    default MapX<K, V> removeAllS(final Tuple2<K, V>... values) {
+    default MapX<K, V> removeAll(final Tuple2<K, V>... values) {
 
-        return (MapX<K, V>) IterableFilterable.super.removeAllS(values);
+        return (MapX<K, V>) IterableFilterable.super.removeAll(values);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.lang.Iterable)
      */
     @Override
-    default MapX<K, V> retainAllS(final Iterable<? extends Tuple2<K, V>> it) {
+    default MapX<K, V> retainAllI(final Iterable<? extends Tuple2<K, V>> it) {
 
-        return (MapX<K, V>) IterableFilterable.super.retainAllS(it);
+        return (MapX<K, V>) IterableFilterable.super.retainAllI(it);
     }
 
     /* (non-Javadoc)
@@ -341,9 +341,9 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>, FluentMapX<K, V>, B
      * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.lang.Object[])
      */
     @Override
-    default MapX<K, V> retainAllS(final Tuple2<K, V>... values) {
+    default MapX<K, V> retainAll(final Tuple2<K, V>... values) {
 
-        return (MapX<K, V>) IterableFilterable.super.retainAllS(values);
+        return (MapX<K, V>) IterableFilterable.super.retainAll(values);
     }
 
 

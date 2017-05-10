@@ -541,7 +541,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     default PersistentCollectionX<T> removeAllS(final Stream<? extends T> stream) {
@@ -552,23 +552,23 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.lang.Iterable)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.lang.Iterable)
      */
     @Override
     default PersistentCollectionX<T> removeAllI(final Iterable<? extends T> it) {
 
         return from(this.<T> monoid()
-                        .mapReduce(stream().removeAllS(it)));
+                        .mapReduce(stream().removeAllI(it)));
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAllI(java.lang.Object[])
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.lang.Object[])
      */
     @Override
     default PersistentCollectionX<T> removeAll(final T... values) {
 
         return from(this.<T> monoid()
-                        .mapReduce(stream().removeAllS(values)));
+                        .mapReduce(stream().removeAll(values)));
     }
 
     /* (non-Javadoc)
@@ -578,7 +578,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     default PersistentCollectionX<T> retainAllI(final Iterable<? extends T> it) {
 
         return from(this.<T> monoid()
-                        .mapReduce(stream().retainAllS(it)));
+                        .mapReduce(stream().retainAllI(it)));
     }
 
     /* (non-Javadoc)
@@ -600,7 +600,7 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     default PersistentCollectionX<T> retainAll(final T... values) {
 
         return from(this.<T> monoid()
-                        .mapReduce(stream().retainAllS(values)));
+                        .mapReduce(stream().retainAll(values)));
     }
 
     /* (non-Javadoc)
