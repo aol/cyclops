@@ -1,6 +1,6 @@
 package com.aol.cyclops2.react.lazy.futures;
 
-import static cyclops.stream.FutureStream.of;
+import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 import static org.junit.Assert.assertTrue;
 
 import cyclops.stream.FutureStream;

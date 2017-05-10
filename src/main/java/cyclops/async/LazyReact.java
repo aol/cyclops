@@ -787,6 +787,7 @@ public class LazyReact implements ReactBuilder {
     public static LazyReact sequentialCurrentBuilder() {
         return LazyReact.builder()
                         .async(false)
+                        .maxActive(new MaxActive(1,1))
                         .executor(ThreadPools.getCurrentThreadExecutor())
                         .retrier(RetryBuilder.getDefaultInstance()
                                              .withScheduler(ThreadPools.getCommonFreeThreadRetry()))

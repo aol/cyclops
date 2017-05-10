@@ -6,6 +6,8 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Date;
 
+import com.aol.cyclops2.react.ThreadPools;
+import cyclops.async.LazyReact;
 import cyclops.monads.Witness;
 import cyclops.stream.FutureStream;
 import org.junit.Test;
@@ -15,19 +17,20 @@ import cyclops.monads.AnyM;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
+import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 
 public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<Witness.reactiveSeq>{
    
 	@Override
 	public <T> AnyMSeq<Witness.reactiveSeq,T> of(T... values) {
-		return AnyM.fromStream(FutureStream.of(values).async());
+		return AnyM.fromStream(new LazyReact(ThreadPools.getCommonFreeThread()).async().of(values));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.reactiveSeq,T> empty() {
-		return AnyM.fromStream(FutureStream.empty());
+		return AnyM.fromStream(new LazyReact().of());
 	}
 	@Test
 	public void when(){
@@ -74,7 +77,7 @@ public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<Witnes
     
     @Test
     public void testParallelFlatMap() {
-        assertThat(FutureStream.lazyFutureStream(Stream.generate(() -> 1).limit(1000)).parallel()
+        assertThat(new LazyReact(ThreadPools.getCommonFreeThread()).fromStream(Stream.generate(() -> 1).limit(1000)).parallel()
                 .map(a -> Thread.currentThread().getName()).toSet().size(), greaterThan(1));
     }
 

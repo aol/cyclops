@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
@@ -31,16 +32,16 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 
 	@Override
 	protected <U> FutureStream<U> of(U... array) {
-		return FutureStream.of(array);
+		return LazyReact.sequentialBuilder().of(array);
 	}
 	@Override
 	protected <U> FutureStream<U> ofThread(U... array) {
-		return FutureStream.freeThread(array);
+		return LazyReact.sequentialCommonBuilder().of(array);
 	}
 
 	@Override
 	protected <U> FutureStream<U> react(Supplier<U>... array) {
-		return FutureStream.react(array);
+		return LazyReact.sequentialBuilder().react(Arrays.asList(array));
 	}
 	@Test
     public void testCycle() {
@@ -165,7 +166,7 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 	@Test
 	public void shouldLazilyFlattenInfiniteStream() throws Exception {
 		
-		assertThat( FutureStream.iterate(1, n -> n+1)
+		assertThat( LazyReact.sequentialBuilder().iterate(1, n -> n+1)
 				.flatMap(i -> Arrays.asList(i, 0, -i).stream())
 				.limit(10).block(),
 				equalTo(Arrays.asList(1, 0, -1, 2, 0, -2, 3, 0, -3, 4)));

@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
-
+import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 
 public class RetryTest {
 
@@ -41,7 +41,7 @@ public class RetryTest {
 
 	@Test
 	public void recover(){
-		assertThat(FutureStream.of(1,2,3,4)
+		assertThat(of(1,2,3,4)
 					.map(u->{throw new RuntimeException();})
 					.recover(e->"hello")
 					.firstValue(),equalTo("hello"));
@@ -49,7 +49,7 @@ public class RetryTest {
 
 	@Test
 	public void recover2(){
-		assertThat(FutureStream.of(1,2,3,4)
+		assertThat(of(1,2,3,4)
 					.map(i->i+2)
 					.map(u->{throw new RuntimeException();})
 					.recover(e->"hello")
@@ -57,7 +57,7 @@ public class RetryTest {
 	}
 	@Test
 	public void recover3(){
-		assertThat(FutureStream.of(1,2,3,4)
+		assertThat(of(1,2,3,4)
 					.map(i->i+2)
 					.map(u->{throw new RuntimeException();})
 					.map(i->"x!"+i)
@@ -66,7 +66,7 @@ public class RetryTest {
 	}
 	@Test
 	public void recoverIO(){
-		assertThat(FutureStream.of(1,2,3,4)
+		assertThat(of(1,2,3,4)
 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
 					.recover(e->"hello")
 					.firstValue(),equalTo("hello"));
@@ -74,7 +74,7 @@ public class RetryTest {
 	
 	@Test
 	public void recover2IO(){
-		assertThat(FutureStream.of(1,2,3,4)
+		assertThat(of(1,2,3,4)
 					.map(i->i+2)
 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
 					.recover(IOException.class,e->"hello")
@@ -82,7 +82,7 @@ public class RetryTest {
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void recoverIOUnhandledThrown(){
-		assertThat(FutureStream.of(1,2,3,4)
+		assertThat(of(1,2,3,4)
 					.map(i->i+2)
 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
 					.map(i->"x!"+i)
@@ -99,7 +99,7 @@ public class RetryTest {
 				new RuntimeException(new IOException("Second"))).willReturn(
 				"42");
 
-		String result = FutureStream.of( 1,  2, 3)
+		String result = of( 1,  2, 3)
 				.retry(serviceMock)
 				.firstValue();
 
@@ -126,7 +126,7 @@ public class RetryTest {
 				new RuntimeException("DONT PANIC"));
 
 		
-		List<String> result = FutureStream.of(1)
+		List<String> result = of(1)
 				
 				.retry(serviceMock).toList();
 
@@ -147,7 +147,7 @@ public class RetryTest {
 				new IllegalArgumentException("DONT PANIC"));
 
 		
-		List<String> result = FutureStream.of(1).retry(serviceMock).toList();
+		List<String> result = of(1).retry(serviceMock).toList();
 		
 		assertThat(result.size(), is(0));
 

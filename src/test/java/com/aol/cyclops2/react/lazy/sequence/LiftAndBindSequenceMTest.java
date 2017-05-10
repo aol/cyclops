@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import cyclops.Streams;
+import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import org.junit.Test;
 
@@ -21,7 +22,7 @@ public class LiftAndBindSequenceMTest {
 	public void testLiftAndBindFile(){
 		
 		
-		List<String> result = Streams.flatMapFile(FutureStream.of("input.file")
+		List<String> result = Streams.flatMapFile(LazyReact.sequentialBuilder().of("input.file")
 								.map(getClass().getClassLoader()::getResource)
 								.peek(System.out::println)
 								.map(URL::getFile)
@@ -34,7 +35,7 @@ public class LiftAndBindSequenceMTest {
 	public void testLiftAndBindURL(){
 		
 		
-		List<String> result = Streams.flatMapURL(FutureStream.of("input.file")
+		List<String> result = Streams.flatMapURL(LazyReact.sequentialBuilder().of("input.file")
 								,getClass().getClassLoader()::getResource)
 								.collect(Collectors.toList());
 		
@@ -44,7 +45,7 @@ public class LiftAndBindSequenceMTest {
 	public void testLiftAndBindString(){
 		
 		
-		List<Character> result = Streams.flatMapCharSequence(FutureStream.of("input.file")
+		List<Character> result = Streams.flatMapCharSequence(LazyReact.sequentialBuilder().of("input.file")
 									,i->"hello world")
 									.collect(Collectors.toList());
 		
@@ -54,7 +55,7 @@ public class LiftAndBindSequenceMTest {
 	public void testLiftAndBindBufferedReader(){
 		
 		
-		List<String> result = Streams.flatMapBufferedReader(FutureStream.of("input.file")
+		List<String> result = Streams.flatMapBufferedReader(LazyReact.sequentialBuilder().of("input.file")
 								.map(getClass().getClassLoader()::getResourceAsStream)
 								.map(InputStreamReader::new)
 								,r-> new BufferedReader(r))

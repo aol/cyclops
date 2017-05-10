@@ -1,8 +1,11 @@
 package com.aol.cyclops2.react.lazy;
 
-import static cyclops.stream.FutureStream.of;
+
 import static org.junit.Assert.assertTrue;
 
+import com.aol.cyclops2.react.ThreadPools;
+import cyclops.async.LazyReact;
+import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -10,13 +13,20 @@ import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;
 public class DuplicationTest {
+
+	public static <T> FutureStream<T> of(T... array){
+	    return new LazyReact(ThreadPools.getCommonFreeThread()).of(array);
+    }
 	@Test
 	public void testDuplicate(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies = of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies.v1.anyMatch(i->i==2));
 		 assertTrue(copies.v2.anyMatch(i->i==2));
 	}
-	@Test
+
+
+
+    @Test
 	public void testTriplicate(){
 		 Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
 		 assertTrue(copies.v1.anyMatch(i->i==2));

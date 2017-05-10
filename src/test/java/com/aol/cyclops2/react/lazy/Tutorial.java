@@ -576,7 +576,7 @@ public class Tutorial {
 
 	@Test
 	public void filterAndLimit(){
-		FutureStream.of(1,2,3,4,5,6,7,8,9,10)
+		LazyReact.sequentialBuilder().of(1,2,3,4,5,6,7,8,9,10)
 					.limit(6)
 					.filter(i->i%2==0)
 					.forEach(System.out::println);
@@ -596,7 +596,7 @@ public class Tutorial {
 	@Test
 	public void testFilterAndFlatMapWithFilter(){
 		count=0;
-		FutureStream.of(1,2,3).limit(2)
+		LazyReact.sequentialBuilder().of(1,2,3).limit(2)
 		.flatMap(a->Arrays.asList(10,20,30,40).stream())
 		.limit(6)
 		.forEach(next->count++);
@@ -606,7 +606,7 @@ public class Tutorial {
 	@Test
 	public void testFilterAndFlatMapWithFilterRunOnCurrent(){
 		count=0;
-		FutureStream.of(1,2,3).limit(2)
+		LazyReact.sequentialBuilder().of(1,2,3).limit(2)
 		.flatMap(a->Arrays.asList(10,20,30,40).stream())
 		.limit(6)
 		.peek(next->count++)
@@ -617,7 +617,7 @@ public class Tutorial {
 	@Test
 	public void testFilterAndFlatMapWithFilterList(){
 		count=0;
-		List list = FutureStream.of(1,2,3).limit(2)
+		List list = LazyReact.sequentialBuilder().of(1,2,3).limit(2)
 		.flatMap(a->Arrays.asList(10,20,30,40).stream())
 		.limit(6)
 		.toList();

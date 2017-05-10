@@ -2,6 +2,7 @@ package com.aol.cyclops2.react.lazy.futures;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import org.junit.Test;
 
@@ -13,7 +14,7 @@ public class HeadTailFuturesTest {
 	@Test
 	public void headTailReplay() {
 
-		FutureStream<String> helloWorld = FutureStream.of("hello",
+		FutureStream<String> helloWorld = LazyReact.sequentialBuilder().of("hello",
 				"world", "last");
 		HeadAndTail<String> headAndTail = helloWorld.actOnFutures()
 				.headAndTail();

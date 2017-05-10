@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -34,16 +35,17 @@ public class OperationsOnFuturesTest {
 
 	
 	protected <U> FutureStream<U> of(U... array) {
-		return FutureStream.of(array);
+		return LazyReact.sequentialCurrentBuilder()
+						.of(array);
 	}
 	
 	protected <U> FutureStream<U> ofThread(U... array) {
-		return FutureStream.freeThread(array);
+		return LazyReact.sequentialCommonBuilder().of(array);
 	}
 
 
 	protected <U> FutureStream<U> react(Supplier<U>... array) {
-		return FutureStream.react(array);
+		return LazyReact.sequentialCommonBuilder().react(Arrays.asList(array));
 	}
 		
 		FutureStream<Integer> empty;
@@ -78,7 +80,7 @@ public class OperationsOnFuturesTest {
 		@Test
 		public void testIntersperse() {
 			
-			assertThat(FutureStream.of(1,2,3)
+			assertThat(LazyReact.sequentialBuilder().of(1,2,3)
 							.actOnFutures()
 							.intersperse(0)
 							.toList(),
@@ -91,7 +93,7 @@ public class OperationsOnFuturesTest {
 		@Test
 		public void testIntersperseCf() {
 			
-			assertThat(FutureStream.of(1,2,3)
+			assertThat(LazyReact.sequentialBuilder().of(1,2,3)
 							.actOnFutures()
 							.intersperse(CompletableFuture.completedFuture(0))
 							.toList(),
@@ -467,7 +469,7 @@ public class OperationsOnFuturesTest {
 	    @Test
 	    public void testReduce() {
 	    	
-	       CompletableFuture<Integer> sum = FutureStream.of(1, 2, 3)
+	       CompletableFuture<Integer> sum = LazyReact.sequentialBuilder().of(1, 2, 3)
 	    		   											.actOnFutures()
 	    		   											.reduce((cf1,cf2)-> cf1.thenCombine(cf2, (a,b)->a+b)).get();
 

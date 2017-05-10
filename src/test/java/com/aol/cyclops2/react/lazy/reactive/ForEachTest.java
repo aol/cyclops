@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.reactivestreams.Subscription;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
-
+import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 public class ForEachTest {
 	boolean complete =false;
 	@Before
@@ -29,14 +29,14 @@ public class ForEachTest {
 	@Test
 	public void forEachX(){
 		
-		Subscription s = FutureStream.of(1,2,3).forEach( 2, System.out::println);
+		Subscription s = of(1,2,3).forEach( 2, System.out::println);
 		System.out.println("first batch");
 		s.request(1);
 	}
 	@Test
 	public void forEachXTest(){
 		List<Integer> list = new ArrayList<>();
-		Subscription s = FutureStream.of(1,2,3).forEach( 2, i->list.add(i));
+		Subscription s = of(1,2,3).forEach( 2, i->list.add(i));
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
 		s.request(1);
@@ -49,7 +49,7 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		
-		FutureStream<Integer> stream = FutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->4).map(Supplier::get);
+		FutureStream<Integer> stream = of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->4).map(Supplier::get);
 		Subscription s = stream.forEach( 2, i->list.add(i),
 								e->error=e);
 		
@@ -68,7 +68,7 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		
-		FutureStream<Integer> stream =  FutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		FutureStream<Integer> stream =  of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
 		Subscription s = stream.forEach( 2, i->list.add(i),
 								e->error=e,()->complete=true);
 		
@@ -92,7 +92,7 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
-		FutureStream<Integer> stream = FutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		FutureStream<Integer> stream = of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
 		stream.forEach(i->list.add(i),
 								e->error=e);
 		
@@ -110,7 +110,7 @@ public class ForEachTest {
 	
 		List<Integer> list = new ArrayList<>();
 		assertThat(error,nullValue());
-		FutureStream<Integer> stream = FutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->4,()->5)
+		FutureStream<Integer> stream = of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();},()->4,()->5)
 													.async()
 													.map(Supplier::get);
 		stream.forEach(i->list.add(i),
@@ -132,7 +132,7 @@ public class ForEachTest {
 		List<Integer> list = new ArrayList<>();
 		assertFalse(complete);
 		assertThat(error,nullValue());
-		FutureStream<Integer> stream = FutureStream.of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
+		FutureStream<Integer> stream = of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
 		stream.forEach(i->list.add(i), e->error=e,()->complete=true);
 		
 		
