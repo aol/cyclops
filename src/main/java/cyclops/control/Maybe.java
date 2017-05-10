@@ -3,12 +3,14 @@ package cyclops.control;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.*;
 import cyclops.Monoids;
+import cyclops.Optionals;
+import cyclops.Optionals.OptionalKind;
 import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
-import cyclops.higherkindedtypes.OptionalKind;
+
 import cyclops.monads.Witness;
 import cyclops.function.Curry;
 import cyclops.function.Fn3;
