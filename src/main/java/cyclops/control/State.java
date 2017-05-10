@@ -1,7 +1,7 @@
 package cyclops.control;
 
 import cyclops.control.Maybe.Nothing;
-import cyclops.free.Free;
+import cyclops.typeclasses.free.Free;
 import cyclops.function.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

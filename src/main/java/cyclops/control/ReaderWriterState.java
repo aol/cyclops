@@ -1,11 +1,10 @@
 package cyclops.control;
 
-import cyclops.free.Free;
+import cyclops.typeclasses.free.Free;
 import cyclops.function.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.function.BiFunction;
