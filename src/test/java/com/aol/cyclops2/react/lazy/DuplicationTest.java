@@ -15,7 +15,7 @@ import cyclops.stream.ReactiveSeq;
 public class DuplicationTest {
 
 	public static <T> FutureStream<T> of(T... array){
-	    return new LazyReact(ThreadPools.getCommonFreeThread()).of(array);
+	    return LazyReact.sequentialCurrentBuilder().of(array);
     }
 	@Test
 	public void testDuplicate(){

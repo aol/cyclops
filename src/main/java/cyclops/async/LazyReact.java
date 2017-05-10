@@ -1001,7 +1001,7 @@ public class LazyReact implements ReactBuilder {
      */
     @SafeVarargs
     public final <U> FutureStream<U> of(final U... array) {
-        return fromStream(Stream.of(array));
+        return fromStream(ReactiveSeq.of(array));
     }
 
 }
