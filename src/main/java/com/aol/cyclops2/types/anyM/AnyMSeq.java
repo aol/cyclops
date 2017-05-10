@@ -52,13 +52,13 @@ import cyclops.function.Fn3;
 public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, FoldableTraversable<T>, Publisher<T> {
 
 
-    default <R> AnyM<W,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn){
+    default <R> AnyMSeq<W,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn){
         return this.flatMap(fn.andThen(i->unitIterator(i.iterator())));
     }
-    default <R> AnyM<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
+    default <R> AnyMSeq<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
         return this.flatMap(fn.andThen(i->unitIterator(ReactiveSeq.fromPublisher(i).iterator())));
     }
-    default <R> AnyM<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){
+    default <R> AnyMSeq<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){
         return this.flatMap(fn.andThen(i->unitIterator(i.iterator())));
     }
     /**
