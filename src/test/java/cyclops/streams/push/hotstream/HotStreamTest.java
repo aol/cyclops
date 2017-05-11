@@ -183,8 +183,8 @@ public class HotStreamTest {
 					.hotStream(exec)
 					.connect()
 					.limit(100)
-					.futureOperations(ForkJoinPool.commonPool())
-					.forEachWithError(System.out::println,System.err::println);
+					.runFuture(ForkJoinPool.commonPool(),
+					  t->t.forEach(System.out::println,System.err::println));
 			
 			latch.await();
 			assertTrue(value!=null);
@@ -202,8 +202,8 @@ public class HotStreamTest {
 				.hotStream(exec)
 				.connect(new LinkedBlockingQueue<>())
 				.limit(100)
-				.futureOperations(ForkJoinPool.commonPool())
-				.forEachWithError(System.out::println,System.err::println);
+				.runFuture(ForkJoinPool.commonPool(),
+						t->t.forEach(System.out::println,System.err::println));
 		
 		latch.await();
 		assertTrue(value!=null);
@@ -214,15 +214,15 @@ public class HotStreamTest {
 		value= null;
 		active=true;
 		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream s = Spouts.range(0,Integer.MAX_VALUE)
+		PausableHotStream<Integer> s = Spouts.range(0,Integer.MAX_VALUE)
 		        .limitWhile(i->active)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.pausableHotStream(exec2);
 		s.connect(new LinkedBlockingQueue<>())
 				.limit(100)
-				.futureOperations(ForkJoinPool.commonPool())
-				.forEachWithError(System.out::println,System.err::println);
+				.runFuture(ForkJoinPool.commonPool(),
+						t->t.forEach(System.out::println,System.err::println));
 		
 		Object oldValue = value;
 		s.pause();

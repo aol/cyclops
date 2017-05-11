@@ -871,7 +871,7 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     default POrderedSetX<T> removeAllS(final Stream<? extends T> stream) {
@@ -880,7 +880,7 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllI(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Iterable)
      */
     @Override
     default POrderedSetX<T> removeAllI(final Iterable<? extends T> it) {
@@ -889,7 +889,7 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAllI(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default POrderedSetX<T> removeAll(final T... values) {

@@ -5,7 +5,6 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
-import com.aol.cyclops2.internal.stream.ReactiveSeqFutureOpterationsImpl;
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import com.aol.cyclops2.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingIntArraySpliterator;
@@ -3272,20 +3271,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
 
-     default <R> Future<R> foldFuture(Function<? super FoldableTraversable<T>,? extends R> fn, Executor ex){
-
-        return Future.ofSupplier(()->{
-
-            return fn.apply(this);
-        },ex);
-    }
-
-    default <R> Eval<R> foldLazy(Function<? super CyclopsCollectable<T>,? extends R> fn, Executor ex){
-
-        return Eval.later(()->fn.apply(this));
-    }
-
-
     public static <T> ReactiveSeq<T> empty() {
         return fromStream(Stream.empty());
     }
@@ -4505,18 +4490,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     @Override
-    default ReactiveSeq<T> removeAllS(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.removeAllS(it);
+    default ReactiveSeq<T> removeAllI(final Iterable<? extends T> it) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.removeAllI(it);
     }
 
     @Override
-    default ReactiveSeq<T> removeAllS(final T... values) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.removeAllS(values);
+    default ReactiveSeq<T> removeAll(final T... values) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.removeAll(values);
     }
 
     @Override
-    default ReactiveSeq<T> retainAllS(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.retainAllS(it);
+    default ReactiveSeq<T> retainAllI(final Iterable<? extends T> it) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.retainAllI(it);
     }
 
     @Override
@@ -4525,8 +4510,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     @Override
-    default ReactiveSeq<T> retainAllS(final T... values) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.retainAllS(values);
+    default ReactiveSeq<T> retainAll(final T... values) {
+        return (ReactiveSeq<T>)FoldableTraversable.super.retainAll(values);
     }
 
     @Override

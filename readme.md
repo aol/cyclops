@@ -260,7 +260,7 @@ Interfaces
 | PMapX     | Functional extensions for working with persistent Maps          | Map, persistent, 3rd party support                 |
 
 
-## cyclops.control + cyclops.free
+## cyclops.control + cyclops.typeclasses.free
 
 | type | description | characteristics |
 |------|-------------|-----------------|

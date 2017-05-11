@@ -1,5 +1,6 @@
 package com.aol.cyclops2.react.lazy;
 
+import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import org.junit.Test;
 
@@ -7,7 +8,7 @@ public class ForEachParallelTest {
 
 	@Test
 	 public void testOnEmptyThrows(){
-		FutureStream.parallel(1,2,3,4)
+		new LazyReact().of(1,2,3,4)
 						.peek(i-> System.out.println("A"+Thread.currentThread().getId()))
 						.peekSync(i->sleep(i*100)).forEach(i-> System.out.println(Thread.currentThread().getId()));
 	    	

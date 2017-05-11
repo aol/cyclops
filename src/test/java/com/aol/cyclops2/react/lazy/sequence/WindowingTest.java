@@ -1,7 +1,6 @@
 package com.aol.cyclops2.react.lazy.sequence;
 
-
-import static cyclops.stream.FutureStream.of;
+import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -12,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.aol.cyclops2.react.lazy.DuplicationTest;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.stream.FutureStream;
 import org.junit.Before;
@@ -33,10 +33,10 @@ public class WindowingTest {
 	
 	@Test
 	public void windowWhile(){
-		assertThat(FutureStream.of(1,2,3,4,5,6)
+		assertThat(of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0)
 				.toList().size(),equalTo(2));
-		assertThat(FutureStream.of(1,2,3,4,5,6)
+		assertThat(of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0)
 				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
@@ -45,28 +45,28 @@ public class WindowingTest {
 		
 		
 		
-		assertThat(FutureStream.of(1,2,3,4,5,6)
+		assertThat(of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0)
 				.toList().size(),equalTo(2));
-		assertThat(FutureStream.of(1,2,3,4,5,6)
+		assertThat(of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0)
 				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void windowUntilEmpty(){
-		assertThat(FutureStream.<Integer>of()
+		assertThat(DuplicationTest.<Integer>of()
 				.groupedUntil(i->i%3==0)
 				.toList().size(),equalTo(0));
 	}
 	@Test
 	public void windowStatefullyUntil(){
-		System.out.println(FutureStream.of(1,2,3,4,5,6)
+		System.out.println(of(1,2,3,4,5,6)
 				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false).toList());
 		System.out.println(ReactiveSeq.of(1,2,3,4,5,6)
 				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false).toList());
 		System.out.println(Streamable.of(1,2,3,4,5,6)
 				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false).toList());
-	    assertThat(FutureStream.of(1,2,3,4,5,6)
+	    assertThat(of(1,2,3,4,5,6)
 	                .groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 	                .toList().size(),equalTo(2));
 		
@@ -75,14 +75,14 @@ public class WindowingTest {
 	@Test
 	public void windowStatefullyWhileEmpty(){
 		
-		assertThat(FutureStream.of()
+		assertThat(DuplicationTest.of()
 				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
 				.toList().size(),equalTo(0));
 		
 	}
 	@Test
 	public void sliding() {
-		List<List<Integer>> list = FutureStream.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+		List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2));
 		assertThat(list.get(1), hasItems(2, 3));
@@ -90,7 +90,7 @@ public class WindowingTest {
 
 	@Test
 	public void slidingIncrement() {
-		List<List<Integer>> list = FutureStream.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+		List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(3, 4, 5));
@@ -99,7 +99,7 @@ public class WindowingTest {
 	@Test
 	public void grouped() {
 
-		List<List<Integer>> list = FutureStream.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
+		List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(4, 5, 6));
@@ -110,7 +110,7 @@ public class WindowingTest {
 	public void sliding2() {
 		
 
-		List<PVectorX<Integer>> sliding = FutureStream.of(1, 2, 3, 4, 5).sliding(2).toList();
+		List<PVectorX<Integer>> sliding = of(1, 2, 3, 4, 5).sliding(2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(2, 3), asList(3, 4), asList(4, 5)));
 	}
@@ -118,7 +118,7 @@ public class WindowingTest {
 	@Test
 	public void slidingOverlap() {
 		
-		List<PVectorX<Integer>> sliding = FutureStream.of(1, 2, 3, 4, 5).sliding(3,2).toList();
+		List<PVectorX<Integer>> sliding = of(1, 2, 3, 4, 5).sliding(3,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2, 3), asList(3, 4, 5)));
 	}
@@ -127,14 +127,14 @@ public class WindowingTest {
 	public void slidingEmpty() {
 		
 
-		assertThat(FutureStream.of().sliding(1).toList().size(),equalTo(0));
+		assertThat(DuplicationTest.of().sliding(1).toList().size(),equalTo(0));
 	}
 
 	@Test
 	public void slidingWithSmallWindowAtEnd() {
 		
 
-		List<PVectorX<Integer>> sliding = FutureStream.of(1, 2, 3, 4, 5).sliding(2,2).toList();
+		List<PVectorX<Integer>> sliding = of(1, 2, 3, 4, 5).sliding(2,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
 	}

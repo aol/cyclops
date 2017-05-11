@@ -175,7 +175,7 @@ public class LazySequentialSeqObjectPoolsTest extends BaseSequentialSeqTest {
 	@Test
 	public void shouldLazilyFlattenInfiniteStream() throws Exception {
 		
-		assertThat( FutureStream.iterate(1, n -> n+1)
+		assertThat( LazyReact.sequentialCommonBuilder().iterate(1, n -> n+1)
 				.flatMap(i -> Arrays.asList(i, 0, -i).stream())
 				.limit(10).block(),
 				equalTo(Arrays.asList(1, 0, -1, 2, 0, -2, 3, 0, -3, 4)));

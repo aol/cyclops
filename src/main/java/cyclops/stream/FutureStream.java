@@ -157,18 +157,18 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default FutureStream<U> removeAllS(final Iterable<? extends U> it) {
-        return fromStream(stream().removeAllS(it));
+    default FutureStream<U> removeAllI(final Iterable<? extends U> it) {
+        return fromStream(stream().removeAllI(it));
     }
 
     @Override
-    default FutureStream<U> removeAllS(final U... values) {
-        return fromStream(stream().removeAllS(values));
+    default FutureStream<U> removeAll(final U... values) {
+        return fromStream(stream().removeAll(values));
     }
 
     @Override
-    default FutureStream<U> retainAllS(final Iterable<? extends U> it) {
-        return fromStream(stream().removeAllS(it));
+    default FutureStream<U> retainAllI(final Iterable<? extends U> it) {
+        return fromStream(stream().removeAllI(it));
     }
 
     @Override
@@ -177,8 +177,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default FutureStream<U> retainAllS(final U... values) {
-        return fromStream(stream().retainAllS(values));
+    default FutureStream<U> retainAll(final U... values) {
+        return fromStream(stream().retainAll(values));
     }
 
     @Override
@@ -324,10 +324,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
 
-    default LazyReact builder(int maxActiveTasks, Executor exec){
+    public static LazyReact builder(int maxActiveTasks, Executor exec){
         return new LazyReact(maxActiveTasks,exec);
     }
-    default LazyReact builder(){
+    public static LazyReact builder(){
         return new LazyReact();
     }
 
@@ -2704,7 +2704,13 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.reactiveStream.ReactiveSeq#flatten()
      */
     public static <T1> FutureStream<T1> flatten(ReactiveSeq<? extends Stream<? extends T1>> nested){
-        return FutureStream.lazyFutureStream(nested).flatMap(Function.identity());
+
+        ReactiveSeq<? extends T1> res = nested.flatMap(Function.identity());
+        if(res instanceof FutureStream){
+            return (FutureStream<T1>)res;
+        }
+        FutureStream<? extends T1> ret = new LazyReact().fromStream(res);
+        return narrow(ret);
 
     }
     public static <T1> FutureStream<T1> narrow(FutureStream<? extends T1> broad){
@@ -3580,210 +3586,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         t2.v2.run();
     }
 
-    /** END REACTIVESEQ **/
 
-    /**
-     * Construct an parallel FutureStream from specified array, using the configured
-     * standard parallel thread pool. By default this is the Common ForkJoinPool.
-     * To use a different thread pool, the recommended approach is to construct your own LazyReact builder
-     *
-     * @see ThreadPools#getStandard()
-     * @see ThreadPools#setUseCommon(boolean)
-     *
-     * @param array
-     *            Values to react to
-     * @return Next SimpleReact stage
-     */
-    public static <U> FutureStream<U> parallel(final U... array) {
-        return LazyReact.parallelCommonBuilder()
-                        .of(array);
-    }
-
-    /**
-     *  Create a 'free threaded' asynchronous reactiveStream that runs on the supplied CompletableFutures executor service (unless async operator invoked
-     *  , in which it will switch to the common 'free' thread executor)
-     *  Subsequent tasks will be executed synchronously unless the async() operator is invoked.
-     *
-     *
-     */
-    static <T> FutureStream<T> lazyFutureStreamFrom(final Stream<CompletableFuture<T>> stream) {
-        return new LazyReact(
-                             ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(
-                                                                                             ThreadPools.getSequentialRetry()))
-                                                         .withAsync(false)
-                                                         .fromStreamFutures(stream);
-    }
-
-    /**
-     *  Create a 'free threaded' asynchronous reactiveStream that runs on the supplied CompletableFutures executor service (unless async operator invoked
-     *  , in which it will switch to the common 'free' thread executor)
-     *  Subsequent tasks will be executed synchronously unless the async() operator is invoked.
-     *
-     *
-     */
-    static <T> FutureStream<T> lazyFutureStream(final CompletableFuture<T> value) {
-        return new LazyReact(
-                             ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(
-                                                                                             ThreadPools.getSequentialRetry()))
-                                                         .withAsync(false)
-                                                         .fromStreamFutures(Stream.of(value));
-    }
-
-    /**
-     *  Create a 'free threaded' asynchronous reactiveStream that runs on a single thread (not current)
-     *  The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator
-     *  is invoked.
-     *
-     *
-     */
-    static <T> FutureStream<T> lazyFutureStream(final CompletableFuture<T>... values) {
-        return new LazyReact(
-                             ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(
-                                                                                             ThreadPools.getSequentialRetry()))
-                                                         .withAsync(false)
-                                                         .fromStreamFutures(Stream.of(values));
-    }
-
-    /**
-     *  Create a 'free threaded' asynchronous reactiveStream that runs on a single thread (not current)
-     *  The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator
-     *  is invoked.
-     *
-     * @see Stream#of(Object)
-     */
-    static <T> FutureStream<T> react(final Supplier<T> value) {
-        return new LazyReact(
-                             ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(
-                                                                                             ThreadPools.getSequentialRetry()))
-                                                         .withAsync(false)
-                                                         .ofAsync(value);
-    }
-
-    /**
-     Create a 'free threaded' asynchronous reactiveStream that runs on a single thread (not current)
-     * The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator is invoked.
-    
-     */
-    @SafeVarargs
-    static <T> FutureStream<T> react(final Supplier<T>... values) {
-        return new LazyReact(
-                             ThreadPools.getSequential()).withRetrier(new AsyncRetryExecutor(
-                                                                                             ThreadPools.getSequentialRetry()))
-                                                         .withAsync(false)
-                                                         .ofAsync(values);
-    }
-
-    /**
-     * Create a sequential synchronous reactiveStream that runs on the current thread
-     *
-     */
-    static <T> FutureStream<T> of(final T value) {
-        return lazyFutureStream((Stream) ReactiveSeq.of(value));
-    }
-
-    /**
-     * Create a sequential synchronous reactiveStream that runs on the current thread
-     *
-     */
-    @SafeVarargs
-    static <T> FutureStream<T> of(final T... values) {
-        return lazyFutureStream((Stream) ReactiveSeq.of(values));
-    }
-
-    /**
-     * Create a sequential synchronous reactiveStream that runs on a free thread (commonFreeThread executor by default, shared
-     * across any instances created in this manner.
-     * @see com.aol.cyclops2.react.ThreadPools#setUseCommon(boolean)
-     *
-     */
-    static <T> FutureStream<T> freeThread(final T value) {
-        return (FutureStream) freeThread(new Object[] { value });
-    }
-
-    /**
-     * Create a sequential synchronous reactiveStream that runs on a free thread (commonFreeThread executor by default, shared
-     * across any instances created in this manner.
-     * @see com.aol.cyclops2.react.ThreadPools#setUseCommon(boolean)
-     *
-     */
-    @SafeVarargs
-    static <T> FutureStream<T> freeThread(final T... values) {
-        final LazyReact react = new LazyReact(
-                                              ThreadPools.getSequential(), RetryBuilder.getDefaultInstance()
-                                                                                       .withScheduler(ThreadPools.getSequentialRetry()),
-                                              false, new MaxActive(
-                                                                   1, 1));
-        return new FutureStreamImpl<T>(
-                                           react, Stream.of(values));
-
-    }
-
-    /**
-     * Create a sequential synchronous reactiveStream that runs on the current thread
-     */
-    static <T> FutureStream<T> empty() {
-        return lazyFutureStream((Stream) Seq.empty());
-    }
-
-    /**
-     * @see Stream#iterate(Object, UnaryOperator)
-     */
-    static <T> FutureStream<T> iterate(final T seed, final UnaryOperator<T> f) {
-        return lazyFutureStream((Stream) Seq.iterate(seed, f));
-    }
-
-    /**
-     * Generate an infinite Stream of null values that runs on the current thread
-     * @see Stream#generate(Supplier)
-     */
-    static FutureStream<Void> generate() {
-        return generate(() -> null);
-    }
-
-    /**
-     * Generate an infinite Stream of given value that runs on the current thread
-     * @see Stream#generate(Supplier)
-     */
-    static <T> FutureStream<T> generate(final T value) {
-        return generate(() -> value);
-    }
-
-    /**
-     * Generate an infinite Stream of value returned from Supplier that runs on the current thread
-     * @see Stream#generate(Supplier)
-     */
-    static <T> FutureStream<T> generate(final Supplier<T> s) {
-        return lazyFutureStream(Stream.generate(s));
-    }
-
-    /**
-     * Wrap a Stream into a FutureStream that runs on the current thread
-     */
-    static <T> FutureStream<T> lazyFutureStream(final Stream<T> stream) {
-        if (stream instanceof FutureStream)
-            return (FutureStream<T>) stream;
-        final LazyReact react = new LazyReact(
-                                              ThreadPools.getCurrentThreadExecutor(), RetryBuilder.getDefaultInstance()
-                                                                                                  .withScheduler(ThreadPools.getSequentialRetry()),
-                                              false, new MaxActive(
-                                                                   1, 1));
-        return new FutureStreamImpl<T>(
-                                           react, stream);
-
-    }
-
-    /**
-     * Wrap an Iterable into a FutureStream that runs on the current thread
-     */
-    static <T> FutureStream<T> lazyFutureStreamFromIterable(final Iterable<T> iterable) {
-        return lazyFutureStream(iterable.iterator());
-    }
-
-    /**
-     * Wrap an Iterator into a FutureStream that runs on the current thread
-     */
-    static <T> FutureStream<T> lazyFutureStream(final Iterator<T> iterator) {
-        return lazyFutureStream(StreamSupport.stream(spliteratorUnknownSize(iterator, ORDERED), false));
-    }
 
 }

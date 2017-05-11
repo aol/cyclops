@@ -22,7 +22,7 @@ public class ConnectionTesst {
         value.set(-1);
         active=true;
         CountDownLatch latch = new CountDownLatch(1);
-        PausableHotStream s = ReactiveSeq.range(0,Integer.MAX_VALUE)
+        PausableHotStream<Integer> s = ReactiveSeq.range(0,Integer.MAX_VALUE)
                 .limitWhile(i->active)
                 .peek(v->value.set(v))
                 .peek(v->latch.countDown())
@@ -30,8 +30,8 @@ public class ConnectionTesst {
        Integer oldValue = value.get();
         s.connect()
                 .limit(10000)
-                .futureOperations(exec3)
-                .forEachWithError(System.out::println,System.err::println);
+                .runFuture(exec3,
+                 t->t.forEach(System.out::println,System.err::println));
         
         
         s.pause();

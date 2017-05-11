@@ -36,7 +36,7 @@ public interface FoldableTraversable<T> extends Fn1<Long,T>,
      *  {@code
      *    Future<Integer> sum =  ListX.of(1,2,3)
      *                                 .map(this::load)
-     *                                 .foldFuture(list->list.reduce(0,(a,b)->a+b),exec)
+     *                                 .foldFuture(exec,list->list.reduce(0,(a,b)->a+b))
      *
      *  }
      *  </pre>
@@ -48,6 +48,7 @@ public interface FoldableTraversable<T> extends Fn1<Long,T>,
      * @return Future that will contain the result when complete
      */
     default <R> Future<R> foldFuture(Executor ex,Function<? super FoldableTraversable<T>,? extends R> fn){
+
         return Future.ofSupplier(()->fn.apply(this),ex);
     }
     default Future<Void> runFuture(Executor ex, Consumer<? super FoldableTraversable<T>> fn){

@@ -1,5 +1,6 @@
 package com.aol.cyclops2.react.lazy.sequence;
 
+import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -37,7 +38,7 @@ public class ReverseTest {
 		List<Integer> list= new ArrayList<>();
 		for(int i=0;i<1000;i++)
 			list.add(i);
-		assertThat(FutureStream.of(list.toArray())
+		assertThat(of(list.toArray())
 				 .limit(100)
 				 .count(),equalTo(100L));
 		
@@ -48,7 +49,7 @@ public class ReverseTest {
 		List<Integer> list= new ArrayList<>();
 		for(int i=0;i<1000;i++)
 			list.add(i);
-		assertThat(FutureStream.of(list.toArray())
+		assertThat(of(list.toArray())
 				 .skip(100)
 				 .count(),equalTo(900L));
 		

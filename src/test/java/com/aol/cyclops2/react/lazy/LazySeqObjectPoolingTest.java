@@ -1,6 +1,7 @@
 package com.aol.cyclops2.react.lazy;
 
-import static cyclops.stream.FutureStream.parallel;
+import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
+
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -57,7 +58,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	}
 	@Test
 	public void copy(){
-		FutureStream.of(1,2,3,4,5,6)
+		of(1,2,3,4,5,6)
 				.map(i->i+2)
 				.copy(5)
 				.forEach(s -> System.out.println(s.toList()));
@@ -69,7 +70,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
     }
 	@Test
 	public void lazyCollection(){
-		Collection<Integer> col = FutureStream.of(1,2,3,4,5,6)
+		Collection<Integer> col = of(1,2,3,4,5,6)
 				.map(i->i+2)
 				.toLazyCollection();
 			
@@ -181,7 +182,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 		Queue q = new Queue();
 		LazyReact.parallelBuilder().generate(() -> sleep(100))
 				.then(it -> q.add("100")).runThread(new Thread());
-		parallel(1, 2, 3, 4, 5, 6).zip(q.stream())
+		new LazyReact().of(1, 2, 3, 4, 5, 6).zip(q.stream())
 				.peek(it -> System.out.println(it))
 				.collect(Collectors.toList());
 
@@ -240,32 +241,32 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	@Test @Ignore
 	public void shouldZipTwoInfiniteSequences() throws Exception {
 		
-		final FutureStream<Integer> units = FutureStream.iterate(1, n -> n+1);
-		final FutureStream<Integer> hundreds = FutureStream.iterate(100, n-> n+100);
+		final FutureStream<Integer> units = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(1, n -> n+1);
+		final FutureStream<Integer> hundreds = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(100, n-> n+100);
 		final ReactiveSeq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 
 		
-		assertThat(zipped.limit(5).join(),equalTo(FutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
+		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 	}
 
 	@Test
 	public void shouldZipFiniteWithInfiniteSeq() throws Exception {
 		ThreadPools.setUseCommon(false);
-		final ReactiveSeq<Integer> units = FutureStream.iterate(1, n -> n+1).limit(5);
-		final FutureStream<Integer> hundreds = FutureStream.iterate(100, n-> n+100); // <-- MEMORY LEAK! - no auto-closing yet, so writes infinetely to it's async queue
+		final ReactiveSeq<Integer> units = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(1, n -> n+1).limit(5);
+		final FutureStream<Integer> hundreds = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(100, n-> n+100); // <-- MEMORY LEAK! - no auto-closing yet, so writes infinetely to it's async queue
 		final ReactiveSeq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		
-		assertThat(zipped.limit(5).join(),equalTo(FutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
+		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 		ThreadPools.setUseCommon(true);
 	}
 
 	@Test
 	public void shouldZipInfiniteWithFiniteSeq() throws Exception {
 		ThreadPools.setUseCommon(false);
-		final FutureStream<Integer> units = FutureStream.iterate(1, n -> n+1); // <-- MEMORY LEAK!- no auto-closing yet, so writes infinetely to it's async queue
-		final ReactiveSeq<Integer> hundreds = FutureStream.iterate(100, n-> n+100).limit(5);
+		final FutureStream<Integer> units = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(1, n -> n+1); // <-- MEMORY LEAK!- no auto-closing yet, so writes infinetely to it's async queue
+		final ReactiveSeq<Integer> hundreds = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(100, n-> n+100).limit(5);
 		final ReactiveSeq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
-		assertThat(zipped.limit(5).join(),equalTo(FutureStream.of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
+		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 		ThreadPools.setUseCommon(true);
 	}
 

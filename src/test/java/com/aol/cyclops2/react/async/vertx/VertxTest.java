@@ -108,8 +108,7 @@ public class VertxTest {
         //populate the download queue asynchronously
         ReactiveSeq.of("www.aol.com","www.rte.ie","www.aol.com")
                    .peek(next->System.out.println("adding to download queue " + next))
-                   .futureOperations(c->vertx.runOnContext(v -> c.run()))
-                   .forEachWithError(downloadQueue::add,System.err::println);
+                   .runFuture(c->vertx.runOnContext(v -> c.run()),t->t.forEach(downloadQueue::add,System.err::println));
         
         //download asynchronously : all cyclops2-react tasks are passed into vert.x
         react.fromStream(downloadQueue.stream())

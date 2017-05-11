@@ -38,6 +38,17 @@ public class TryTest {
 		just = Try.success(10);
 		none = Try.failure(exception);
 	}
+
+	@Test
+    public void recover(){
+
+        final String result = Try.withCatch(() -> "first", RuntimeException.class)
+                .recoverWith(__ -> Try.<String,RuntimeException>success("ignored")
+                        .retry(i->"retry"))
+                .get();
+        Try.withCatch(() -> "hello", RuntimeException.class)
+           .recover(()->"world");
+	}
 	
 
 	   @Test

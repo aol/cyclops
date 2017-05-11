@@ -1,4 +1,4 @@
-package cyclops.free;
+package cyclops.typeclasses.free;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.either.Either3;

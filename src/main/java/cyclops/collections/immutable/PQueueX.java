@@ -1094,7 +1094,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
      * 
      * @see
      * com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#
-     * removeAllI(java.util.reactiveStream.Stream)
+     * removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     default PQueueX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1107,7 +1107,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
      * 
      * @see
      * com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#
-     * removeAllI(java.lang.Iterable)
+     * removeAll(java.lang.Iterable)
      */
     @Override
     default PQueueX<T> removeAllI(final Iterable<? extends T> it) {
@@ -1120,7 +1120,7 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
      * 
      * @see
      * com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#
-     * removeAllI(java.lang.Object[])
+     * removeAll(java.lang.Object[])
      */
     @Override
     default PQueueX<T> removeAll(final T... values) {

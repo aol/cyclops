@@ -68,7 +68,7 @@ public class SimpleReactTest {
 	
 	@Test
 	public void futureStreamTest(){
-		assertThat(BaseSimpleReactStream.simpleReactStream((Stream) FutureStream.of(1,2,3,4)).block().size(),is(4));
+		assertThat(BaseSimpleReactStream.simpleReactStream((Stream) LazyReact.sequentialBuilder().of(1,2,3,4)).block().size(),is(4));
 	}
 	@Test
 	public void futureStreamFromStreamTest(){

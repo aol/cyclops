@@ -1024,7 +1024,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     default DequeX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1033,7 +1033,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllI(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
      */
     @Override
     default DequeX<T> removeAllI(final Iterable<? extends T> it) {
@@ -1042,7 +1042,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllI(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default DequeX<T> removeAll(final T... values) {
