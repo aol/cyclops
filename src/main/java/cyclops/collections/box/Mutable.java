@@ -1,4 +1,4 @@
-package cyclops.box;
+package cyclops.collections.box;
 
 import com.aol.cyclops2.types.To;
 import lombok.AllArgsConstructor;

@@ -271,7 +271,7 @@ Interfaces
 | ReaderWriterState     | Monad transformer encompassing behaviour from Reader, Writer and State Monads (backed by Free)            | Lazy                |
 | Free     | Higher kinded implementation of the Free monad for Java, facilitates functional interpreters. Free + SupplierKind (higher kinded Fn0) = a more advanced Trampoline implementation.            | Lazy                |
 
-## cyclops.box
+## cyclops.collections.box
 
 | type | description | characteristics |
 |------|-------------|-----------------|

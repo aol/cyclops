@@ -1,4 +1,4 @@
-package cyclops.box;
+package cyclops.collections.box;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -17,7 +17,7 @@ import lombok.ToString;
  * variables can't be changed.
  * e.g.
  *<pre>{@code 
- * char var = true;
+ * short var = true;
  * Runnable r = () -> var =false;
  * }</pre>
  * 
@@ -26,7 +26,7 @@ import lombok.ToString;
  * 
  * e.g.
  * <pre>{@code
- * MutableChar var =  MutableChar.of(true);
+ * MutableShort var =  MutableShort.of(true);
  * Runnable r = () -> var.set(false);
  * }</pre>
  * 
@@ -38,60 +38,60 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableChar implements To<MutableChar>,Supplier<Character>, Consumer<Character> {
+public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer<Short> {
 
-    private char var;
+    private short var;
 
     /**
      * Create a Mutable variable, which can be mutated inside a Closure 
      * 
      * e.g.
      * <pre>{@code
-     *   MutableChar char = MutableChar.of('c');
+     *   MutableShort num = MutableShort.of(true);
      *   
-     *    char.mutate(n->'d'))
+     *    num.mutate(n->!n))
      *   
-     *   System.out.println(num.getAsChar());
-     *   //prints d
+     *   System.out.println(num.getAsShort());
+     *   //prints false
      * } </pre>
      * 
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static <T> MutableChar of(final char var) {
-        return new MutableChar(
-                               var);
+    public static <T> MutableShort of(final short var) {
+        return new MutableShort(
+                                var);
     }
 
     /** 
-     * Construct a MutableChar that gets and sets an external value using the provided Supplier and Consumer
+     * Construct a MutableShort that gets and sets an external value using the provided Supplier and Consumer
      * 
      * e.g.
      * <pre>
      * {@code 
-     *    MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
+     *    MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
      * }
      * </pre>
      * 
      * 
      * @param s Supplier of an external value
      * @param c Consumer that sets an external value
-     * @return MutableChar that gets / sets an external (mutable) value
+     * @return MutableShort that gets / sets an external (mutable) value
      */
-    public static MutableChar fromExternal(final Supplier<Character> s, final Consumer<Character> c) {
-        return new MutableChar() {
+    public static MutableShort fromExternal(final Supplier<Short> s, final Consumer<Short> c) {
+        return new MutableShort() {
             @Override
-            public char getAsChar() {
+            public short getAsShort() {
                 return s.get();
             }
 
             @Override
-            public Character get() {
-                return getAsChar();
+            public Short get() {
+                return getAsShort();
             }
 
             @Override
-            public MutableChar set(final char value) {
+            public MutableShort set(final short value) {
                 c.accept(value);
                 return this;
             }
@@ -102,10 +102,10 @@ public class MutableChar implements To<MutableChar>,Supplier<Character>, Consume
      * Use the supplied function to perform a lazy map operation when get is called 
      * <pre>
      * {@code 
-     *  MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Character> withOverride = mutable.mapOutput(b->{ 
+     *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Short> withOverride = mutable.mapOutputToObj(b->{ 
      *                                                        if(override)
-     *                                                             return 'a';
+     *                                                             return 3s;
      *                                                         return b;
      *                                                         });
      *          
@@ -116,8 +116,8 @@ public class MutableChar implements To<MutableChar>,Supplier<Character>, Consume
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(final Function<Character, R> fn) {
-        final MutableChar host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Short, R> fn) {
+        final MutableShort host = this;
         return new Mutable<R>() {
             @Override
             public R get() {
@@ -131,10 +131,10 @@ public class MutableChar implements To<MutableChar>,Supplier<Character>, Consume
      * Use the supplied function to perform a lazy map operation when get is called 
      * <pre>
      * {@code 
-     *  MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Character> withOverride = mutable.mapInput(b->{ 
+     *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Short> withOverride = mutable.mapInputToObj(b->{ 
      *                                                        if(override)
-     *                                                             return 'v';
+     *                                                             return 1s;
      *                                                         return b;
      *                                                         });
      *          
@@ -145,8 +145,8 @@ public class MutableChar implements To<MutableChar>,Supplier<Character>, Consume
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Character> fn) {
-        final MutableChar host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Short> fn) {
+        final MutableShort host = this;
         return new Mutable<T1>() {
             @Override
             public Mutable<T1> set(final T1 value) {
@@ -160,7 +160,7 @@ public class MutableChar implements To<MutableChar>,Supplier<Character>, Consume
     /**
      * @return Current value
      */
-    public char getAsChar() {
+    public short getAsShort() {
         return var;
     }
 
@@ -168,7 +168,7 @@ public class MutableChar implements To<MutableChar>,Supplier<Character>, Consume
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableChar set(final char var) {
+    public MutableShort set(final short var) {
         this.var = var;
         return this;
     }
@@ -177,24 +177,24 @@ public class MutableChar implements To<MutableChar>,Supplier<Character>, Consume
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableChar mutate(final CharFunction varFn) {
+    public MutableShort mutate(final ShortFunction varFn) {
         return set(varFn.apply(get()));
 
     }
 
-    public static interface CharFunction {
-        char apply(char var);
+    public static interface ShortFunction {
+        short apply(short var);
     }
 
     @Override
-    public void accept(final Character t) {
+    public Short get() {
+        return getAsShort();
+    }
+
+    @Override
+    public void accept(final Short t) {
         set(t);
 
-    }
-
-    @Override
-    public Character get() {
-        return getAsChar();
     }
 
 }

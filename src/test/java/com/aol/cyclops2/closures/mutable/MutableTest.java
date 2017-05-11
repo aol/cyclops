@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import cyclops.box.Mutable;
+import cyclops.collections.box.Mutable;
 public class MutableTest {
 
 	@Test

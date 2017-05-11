@@ -1,7 +1,7 @@
 package com.aol.cyclops2.control;
 
 import cyclops.*;
-import cyclops.box.Mutable;
+import cyclops.collections.box.Mutable;
 import cyclops.collections.immutable.PSetX;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
@@ -10,7 +10,6 @@ import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Future;
 import cyclops.control.*;
 import cyclops.control.Maybe.CompletableMaybe;
-import cyclops.control.either.Either;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;

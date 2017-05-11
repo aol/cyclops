@@ -2,7 +2,7 @@ package cyclops.async;
 
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
-import cyclops.box.LazyImmutable;
+import cyclops.collections.box.LazyImmutable;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PMapX;
 import cyclops.control.Eval;

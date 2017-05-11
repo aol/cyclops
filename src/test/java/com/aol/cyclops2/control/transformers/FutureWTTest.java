@@ -31,7 +31,7 @@ import org.junit.Test;
 import cyclops.function.Monoid;
 import cyclops.Reducers;
 import cyclops.Semigroups;
-import cyclops.box.Mutable;
+import cyclops.collections.box.Mutable;
 import cyclops.collections.immutable.PStackX;
 import cyclops.collections.ListX;
 

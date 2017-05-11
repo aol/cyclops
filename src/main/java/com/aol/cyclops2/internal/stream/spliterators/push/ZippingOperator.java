@@ -1,23 +1,17 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import com.aol.cyclops2.types.mixins.Printable;
-import cyclops.box.Mutable;
-import cyclops.box.MutableBoolean;
+import cyclops.collections.box.Mutable;
+import cyclops.collections.box.MutableBoolean;
 import lombok.AllArgsConstructor;
-import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.LongConsumer;
 
 /**
