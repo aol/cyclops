@@ -2,8 +2,7 @@ package com.aol.cyclops2.functions.fluent.reader;
 
 import java.util.Map;
 
-import cyclops.function.Reader;
-import org.junit.Test;
+import cyclops.control.Reader;
 
 
 public class Application {

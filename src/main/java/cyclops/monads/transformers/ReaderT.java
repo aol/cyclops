@@ -1,24 +1,13 @@
 package cyclops.monads.transformers;
 
 import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
-import cyclops.async.Future;
+import cyclops.control.Reader;
 import cyclops.control.Trampoline;
 import cyclops.function.*;
-import cyclops.monads.AnyM;
 import cyclops.monads.AnyM2;
 import cyclops.monads.WitnessType;
-import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
-import org.reactivestreams.Publisher;
 
-import java.util.Iterator;
-import java.util.concurrent.Executor;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 /**
 * Monad Transformer for Future's nested within another monadic type

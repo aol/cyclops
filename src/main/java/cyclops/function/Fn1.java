@@ -6,7 +6,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
 import cyclops.control.*;
-import cyclops.monads.Kleisli;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import cyclops.collections.immutable.PStackX;

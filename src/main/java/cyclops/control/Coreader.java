@@ -1,9 +1,8 @@
-package cyclops.function;
+package cyclops.control;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Value;
 
 import java.util.function.Function;
 
