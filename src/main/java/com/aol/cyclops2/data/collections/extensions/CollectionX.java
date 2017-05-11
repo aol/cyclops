@@ -517,20 +517,20 @@ public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> ,
     CollectionX<T> sorted();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.IterableFilterable#removeAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.IterableFilterable#removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     CollectionX<T> removeAllS(Stream<? extends T> stream);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.IterableFilterable#removeAllI(java.lang.Iterable)
+     * @see com.aol.cyclops2.types.IterableFilterable#removeAll(java.lang.Iterable)
      */
     CollectionX<T> removeAllI(Iterable<? extends T> it);
 
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.IterableFilterable#removeAllI(java.lang.Object[])
+     * @see com.aol.cyclops2.types.IterableFilterable#removeAll(java.lang.Object[])
      */
     CollectionX<T> removeAll(T... values);
 

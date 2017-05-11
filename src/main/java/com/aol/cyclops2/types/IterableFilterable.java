@@ -33,7 +33,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
      * @param it  an Iterable of elements to remove
      * @return Filters with all supplied elements removed
      */
-    default Filters<T> removeAllS(final Iterable<? extends T> it) {
+    default Filters<T> removeAllI(final Iterable<? extends T> it) {
         return removeAllS(Streams.stream(it));
     }
 
@@ -43,7 +43,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
      * @param values to remove
      * @return Filters with all supplied values removed
      */
-    default Filters<T> removeAllS(final T... values) {
+    default Filters<T> removeAll(final T... values) {
         return removeAllS(Stream.of(values));
 
     }
@@ -54,7 +54,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
      * @param it Iterable of elements to retain
      * @return Filters with supplied values retained, and others removed
      */
-    default Filters<T> retainAllS(final Iterable<? extends T> it) {
+    default Filters<T> retainAllI(final Iterable<? extends T> it) {
         return retainAllS(Streams.stream(it));
     }
 
@@ -75,7 +75,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
      * @param values elements to retain
      * @return Filters with supplied values retained, and others removed
      */
-    default Filters<T> retainAllS(final T... values) {
+    default Filters<T> retainAll(final T... values) {
         return retainAllS(Stream.of(values));
     }
 

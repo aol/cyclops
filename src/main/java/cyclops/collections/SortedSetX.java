@@ -820,7 +820,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     default SortedSetX<T> removeAllS(final Stream<? extends T> stream) {
@@ -829,7 +829,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllI(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
      */
     @Override
     default SortedSetX<T> removeAllI(final Iterable<? extends T> it) {
@@ -838,7 +838,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAllI(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default SortedSetX<T> removeAll(final T... values) {
