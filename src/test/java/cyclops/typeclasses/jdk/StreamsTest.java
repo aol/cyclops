@@ -1,5 +1,6 @@
 package com.aol.cyclops.hkt.instances.jdk;
-import static cyclops.higherkindedtypes.StreamKind.widen;
+
+import static cyclops.Streams.StreamKind.widen;
 import static cyclops.function.Lambda.l1;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -10,11 +11,11 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.Streams;
+import cyclops.Streams.StreamKind;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
-import cyclops.higherkindedtypes.StreamKind;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
@@ -102,7 +103,7 @@ public class StreamsTest {
     @Test
     public void monadPlus(){
         StreamKind<Integer> list = Streams.Instances.<Integer>monadPlus()
-                                      .plus(StreamKind.widen(Stream.of()), StreamKind.widen(Stream.of(10)))
+                                      .plus(widen(Stream.of()), widen(Stream.of(10)))
                                       .convert(StreamKind::narrowK);
         assertThat(list.collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
@@ -120,14 +121,14 @@ public class StreamsTest {
     @Test
     public void  foldLeft(){
         int sum  = Streams.Instances.foldable()
-                        .foldLeft(0, (a,b)->a+b, StreamKind.widen(Stream.of(1,2,3,4)));
+                        .foldLeft(0, (a,b)->a+b, widen(Stream.of(1,2,3,4)));
         
         assertThat(sum,equalTo(10));
     }
     @Test
     public void  foldRight(){
         int sum  = Streams.Instances.foldable()
-                        .foldRight(0, (a,b)->a+b, StreamKind.widen(Stream.of(1,2,3,4)));
+                        .foldRight(0, (a,b)->a+b, widen(Stream.of(1,2,3,4)));
         
         assertThat(sum,equalTo(10));
     }
