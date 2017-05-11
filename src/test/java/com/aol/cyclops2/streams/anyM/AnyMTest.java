@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.monads.Witness;
-import cyclops.function.AnyMFn1;
-import cyclops.function.AnyMFn2;
+import cyclops.monads.function.AnyMFn1;
+import cyclops.monads.function.AnyMFn2;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
