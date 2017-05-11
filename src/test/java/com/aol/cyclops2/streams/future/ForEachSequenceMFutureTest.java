@@ -33,7 +33,7 @@ public class ForEachSequenceMFutureTest {
 	@Test
 	public void forEachX(){
 		Subscription s = ReactiveSeq.of(1,2,3)
-                                    .foldFuture(t->t.forEach(2,System.out::println),exec)
+                                    .foldFuture(exec,t->t.forEach(2,System.out::println))
                                     .get();
 
 		
@@ -45,7 +45,7 @@ public class ForEachSequenceMFutureTest {
 	public void forEachXTest(){
 		List<Integer> list = new ArrayList<>();
 		Subscription s = ReactiveSeq.of(1,2,3)
-                                    .foldFuture(t->t.forEach(2, i->list.add(i)),exec).get();
+                                    .foldFuture(exec,t->t.forEach(2, i->list.add(i))).get();
 
 		while(list.size()!=2){
 

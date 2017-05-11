@@ -91,11 +91,12 @@ public interface Spouts {
     static <T> ReactiveSeq<T> observeOn(Stream<T> seq, Executor exec){
         Subscriber[] subscriber = {null};
 
-        ReactiveSeq.fromStream(seq).foldFuture(t->{
+        ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
+
             Subscriber<T> local = subscriber[0];
             t.forEach(local::onNext,local::onError,local::onComplete);
             return null;
-        },exec);
+        });
         return async(s->{
             subscriber[0]=s;
         });
@@ -103,12 +104,12 @@ public interface Spouts {
     static <T> ReactiveSeq<T> publishOn(Stream<T> seq, Executor exec){
         Future<Subscriber<T>> subscriber = Future.future();
         Future<Subscription> sub = Future.future();
-        ReactiveSeq.fromStream(seq).foldFuture(t->{
+        ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
             Subscriber<T> local = subscriber.get();
             sub.complete(t.subscribe(local::onNext,local::onError,local::onComplete));
 
             return null;
-        },exec);
+        });
         return new ReactiveStreamX<T>(new PublisherToOperator<T>(new Publisher<T>() {
             @Override
             public void subscribe(Subscriber<? super T> s) {

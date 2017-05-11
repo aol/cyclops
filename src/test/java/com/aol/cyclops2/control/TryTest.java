@@ -41,14 +41,13 @@ public class TryTest {
 
 	@Test
     public void recover(){
-	    Try.catchExceptions()
+
         final String result = Try.withCatch(() -> "first", RuntimeException.class)
                 .recoverWith(__ -> Try.<String,RuntimeException>success("ignored")
                         .retry(i->"retry"))
                 .get();
-        Try.withCatch(() -> "hello", RuntimeException.class).ret
-           .recover(()->"world")
-        .recoverWith();
+        Try.withCatch(() -> "hello", RuntimeException.class)
+           .recover(()->"world");
 	}
 	
 
