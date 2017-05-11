@@ -27,12 +27,12 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
 
 
-    default <X extends Throwable> AnyM<W,? extends Subscription> forEachXWithError(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError){
+    default <X extends Throwable> AnyM<W,? extends Subscription> forEach(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError){
         return nestedFoldables().map(n->n.forEach(numberOfElements,consumer,consumerError));
     }
 
 
-    default <X extends Throwable> AnyM<W,? extends Subscription> forEachXEvents(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
+    default <X extends Throwable> AnyM<W,? extends Subscription> forEach(long numberOfElements, Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
         return nestedFoldables().map(n->n.forEach(numberOfElements,consumer,consumerError,onComplete));
     }
 

@@ -58,7 +58,7 @@ import com.aol.cyclops2.internal.react.stream.CloseableIterator;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops2.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
 import com.aol.cyclops2.internal.react.stream.traits.future.operators.OperationsOnFuturesImpl;
-import com.aol.cyclops2.internal.stream.LazyFutureStreamFutureOpterationsImpl;
+import com.aol.cyclops2.internal.stream.FutureOpterationsImpl;
 import com.aol.cyclops2.react.RetryBuilder;
 import com.aol.cyclops2.react.SimpleReactFailedStageException;
 import com.aol.cyclops2.react.ThreadPools;
@@ -334,12 +334,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default <R> Future<R> foldFuture(Function<? super FoldableTraversable<U>,? extends R> fn){
         return Future.ofSupplier(()->fn.apply(this),getSimpleReact().getExecutor());
     }
-    @Override
-    default ReactiveStreamsTerminalFutureOperations<U> futureOperations(Executor ex){
-        return new LazyFutureStreamFutureOpterationsImpl<U>(ex,this);
-    }
+
     default ReactiveStreamsTerminalFutureOperations<U> futureOperations(){
-        return new LazyFutureStreamFutureOpterationsImpl<U>(getSimpleReact().getExecutor(),this);
+        return new FutureOpterationsImpl<U>(getSimpleReact().getExecutor(),this);
     }
     default <A,R> FutureStream<R> collectSeq(Collector<? super U,A,R> c){
         return this.getSimpleReact().fromStream(Stream.of(Lambda.λ(()->this.collect(c))).map(Supplier::get));

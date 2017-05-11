@@ -470,7 +470,7 @@ public class Streams {
      * @param consumer To accept incoming events from the Stream
      * @return Subscription so that further processing can be continued or cancelled.
      */
-    public static <T, X extends Throwable> Subscription forEachX(final Stream<T> stream, final long x, final Consumer<? super T> consumerElement) {
+    public static <T, X extends Throwable> Subscription forEach(final Stream<T> stream, final long x, final Consumer<? super T> consumerElement) {
         val t2 = FutureStreamUtils.forEachX(stream, x, consumerElement);
         t2.v2.run();
         return t2.v1.join();
@@ -509,8 +509,8 @@ public class Streams {
      * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.
      */
-    public static <T, X extends Throwable> Subscription forEachXWithError(final Stream<T> stream, final long x,
-            final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
+    public static <T, X extends Throwable> Subscription forEach(final Stream<T> stream, final long x,
+                                                                final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
         val t2 = FutureStreamUtils.forEachXWithError(stream, x, consumerElement, consumerError);
         t2.v2.run();
         return t2.v1.join();
@@ -551,8 +551,8 @@ public class Streams {
      * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.
      */
-    public static <T, X extends Throwable> Subscription forEachXEvents(final Stream<T> stream, final long x,
-            final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
+    public static <T, X extends Throwable> Subscription forEach(final Stream<T> stream, final long x,
+                                                                final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
         val t2 = FutureStreamUtils.forEachXEvents(stream, x, consumerElement, consumerError, onComplete);
         t2.v2.run();
         return t2.v1.join();
@@ -582,8 +582,8 @@ public class Streams {
      * @param consumer To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      */
-    public static <T, X extends Throwable> void forEachWithError(final Stream<T> stream, final Consumer<? super T> consumerElement,
-            final Consumer<? super Throwable> consumerError) {
+    public static <T, X extends Throwable> void forEach(final Stream<T> stream, final Consumer<? super T> consumerElement,
+                                                        final Consumer<? super Throwable> consumerError) {
 
 
         val t2 = FutureStreamUtils.forEachWithError(stream, consumerElement, consumerError);
@@ -597,7 +597,7 @@ public class Streams {
      * 
      * <pre>
      * @{code
-     *     Subscription next = Streams.forEachEvents(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");
@@ -619,8 +619,8 @@ public class Streams {
      * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.
      */
-    public static <T, X extends Throwable> void forEachEvent(final Stream<T> stream, final Consumer<? super T> consumerElement,
-            final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
+    public static <T, X extends Throwable> void forEach(final Stream<T> stream, final Consumer<? super T> consumerElement,
+                                                        final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
 
         val t2 = FutureStreamUtils.forEachEvent(stream, consumerElement, consumerError, onComplete);
         t2.v2.run();

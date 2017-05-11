@@ -4,7 +4,6 @@ import cyclops.Streams;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
@@ -39,14 +38,14 @@ public class AsyncForEachTest {
 	}
 	@Test
 	public void forEachX(){
-		Subscription s = Streams.forEachX(of(1,2,3), 2, System.out::println);
+		Subscription s = Streams.forEach(of(1,2,3), 2, System.out::println);
 		System.out.println("first batch");
 		s.request(1);
 	}
 	@Test
 	public void forEachXTest(){
 		List<Integer> list = new ArrayList<>();
-		Subscription s = Streams.forEachX(of(1,2,3), 2, i->list.add(i));
+		Subscription s = Streams.forEach(of(1,2,3), 2, i->list.add(i));
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
 		s.request(1);
@@ -60,7 +59,7 @@ public class AsyncForEachTest {
 		List<Integer> list = new ArrayList<>();
 		
 		Stream<Integer> stream = of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
-		Subscription s = Streams.forEachXWithError(stream, 2, i->list.add(i),
+		Subscription s = Streams.forEach(stream, 2, i->list.add(i),
 								e->error=e);
 		
 		assertThat(list,hasItems(1,2));
@@ -79,7 +78,7 @@ public class AsyncForEachTest {
 		List<Integer> list = new ArrayList<>();
 		
 		Stream<Integer> stream = of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
-		Subscription s = Streams.forEachXEvents(stream, 2, i->list.add(i),
+		Subscription s = Streams.forEach(stream, 2, i->list.add(i),
 								e->error=e,()->complete=true);
 		
 		assertThat(list,hasItems(1,2));
@@ -105,7 +104,7 @@ public class AsyncForEachTest {
 		Stream<Integer> stream = of(()->1,()->2,()->3,
 				(Supplier<Integer>)()->{ throw new RuntimeException();})
                 .map(Supplier::get);
-		Streams.forEachWithError(stream, i->list.add(i),
+		Streams.forEach(stream, i->list.add(i),
 								e->error=e);
 		
 		assertThat(list,hasItems(1,2,3));
@@ -124,7 +123,7 @@ public class AsyncForEachTest {
 		assertFalse(complete);
 		assertThat(error,nullValue());
 		Stream<Integer> stream = of(()->1,()->2,()->3,(Supplier<Integer>)()->{ throw new RuntimeException();}).map(Supplier::get);
-		Streams.forEachEvent(stream, i->list.add(i), e->error=e,()->complete=true);
+		Streams.forEach(stream, i->list.add(i), e->error=e,()->complete=true);
 		
 		
 		
