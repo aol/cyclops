@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple2;
@@ -33,7 +34,7 @@ import cyclops.stream.ReactiveSeq;
 public class BaseSequentialTest {
 
 	<U> ReactiveSeq<U> of(U... array){
-			  return FutureStream.of(array);
+			  return LazyReact.sequentialBuilder().of(array);
 	}
 	
 		
@@ -42,8 +43,8 @@ public class BaseSequentialTest {
 
 		@Before
 		public void setup(){
-			empty = FutureStream.of();
-			nonEmpty = FutureStream.of(1);
+			empty = LazyReact.sequentialBuilder().of();
+			nonEmpty = LazyReact.sequentialBuilder().of(1);
 		}
 		@Test
 	    public void dropRight(){

@@ -1,8 +1,7 @@
 
 package com.aol.cyclops2.react.lazy.futures;
 
-
-import static cyclops.stream.FutureStream.of;
+import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;

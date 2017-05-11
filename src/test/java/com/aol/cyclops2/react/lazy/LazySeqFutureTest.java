@@ -7,9 +7,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.aol.cyclops2.react.ThreadPools;
+import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
@@ -38,17 +41,17 @@ public class LazySeqFutureTest extends BaseSeqFutureTest{
 
 		@Override
 		protected <U> FutureStream<U> of(U... array) {
-			return FutureStream.of(array);
+			return new LazyReact(ThreadPools.getCurrentThreadExecutor()).of(array);
 		}
 
 		@Override
 		protected <U> FutureStream<U> ofThread(U... array) {
-			return FutureStream.freeThread(array);
+			return new LazyReact(ThreadPools.getCurrentThreadExecutor()).of(array);
 		}
 
 		@Override
 		protected <U> FutureStream<U> react(Supplier<U>... array) {
-			return FutureStream.react(array);
+			return new LazyReact().react(Arrays.asList(array));
 		}
 
 	   

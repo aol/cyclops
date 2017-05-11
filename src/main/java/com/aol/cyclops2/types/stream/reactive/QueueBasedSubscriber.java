@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -84,7 +85,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
     private FutureStream<T> genStream() {
         final Continueable subscription = new com.aol.cyclops2.react.async.subscription.Subscription();
-        return FutureStream.of()
+        return new LazyReact().of()
                 .withSubscription(subscription)
                 .fromStream(queue.stream(subscription));
     }

@@ -9,11 +9,11 @@ import cyclops.stream.FutureStream;
 public class LazyNumberOperationsTest extends BaseLazyNumberOperationsTest{
 	@Override
 	protected <U> FutureStream<U> of(U... array) {
-		return FutureStream.parallel(array);
+		return LazyReact.parallelBuilder().of(array);
 	}
 	@Override
 	protected <U> FutureStream<U> ofThread(U... array) {
-		return FutureStream.freeThread(array);
+		return LazyReact.sequentialCommonBuilder().of(array);
 	}
 	
 	@Override

@@ -357,7 +357,7 @@ public class PipesTest {
 	    Pipes<String,Integer> pipes = Pipes.of();
 		Queue queue = new Queue();
 		pipes.register("hello", queue);
-		pipes.publishToAsync("hello", FutureStream.of(1,2,3));
+		pipes.publishToAsync("hello", LazyReact.sequentialBuilder().of(1,2,3));
 		Thread.sleep(100);
 		queue.offer(4);
 		queue.close();

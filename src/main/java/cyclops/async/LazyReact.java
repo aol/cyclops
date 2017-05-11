@@ -787,6 +787,7 @@ public class LazyReact implements ReactBuilder {
     public static LazyReact sequentialCurrentBuilder() {
         return LazyReact.builder()
                         .async(false)
+                        .maxActive(new MaxActive(1,1))
                         .executor(ThreadPools.getCurrentThreadExecutor())
                         .retrier(RetryBuilder.getDefaultInstance()
                                              .withScheduler(ThreadPools.getCommonFreeThreadRetry()))
@@ -1000,7 +1001,7 @@ public class LazyReact implements ReactBuilder {
      */
     @SafeVarargs
     public final <U> FutureStream<U> of(final U... array) {
-        return fromStream(Stream.of(array));
+        return fromStream(ReactiveSeq.of(array));
     }
 
 }

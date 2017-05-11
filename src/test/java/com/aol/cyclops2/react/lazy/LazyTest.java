@@ -62,7 +62,7 @@ public class LazyTest implements Printable {
 	public void onePerSecond() {
 
 		long start = System.currentTimeMillis();
-				FutureStream.iterate(0, it -> it + 1)
+		LazyReact.sequentialBuilder().iterate(0, it -> it + 1)
 				.limit(3)
 				.onePer(1, TimeUnit.SECONDS)
 				.map(seconds -> "hello!")
@@ -74,30 +74,30 @@ public class LazyTest implements Printable {
 	}
 	@Test
 	public void subStream(){
-		List<Integer> list = FutureStream.of(1,2,3,4,5,6).subStream(1,3).toList();
+		List<Integer> list = LazyReact.sequentialBuilder().of(1,2,3,4,5,6).subStream(1,3).toList();
 		assertThat(list,equalTo(Arrays.asList(2,3)));
 	}
 	@Test
     public void emptyPermutations() {
-        assertThat(FutureStream.of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
+        assertThat(LazyReact.sequentialBuilder().of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
     }
 
     @Test
     public void permuations3() {
-    	System.out.println(FutureStream.of(1, 2, 3).permutations().map(s->s.toList()).toList());
-        assertThat(FutureStream.of(1, 2, 3).permutations().map(s->s.toList()).toList(),
-        		equalTo(FutureStream.of(FutureStream.of(1, 2, 3),
-        		FutureStream.of(1, 3, 2), FutureStream.of(2, 1, 3), FutureStream.of(2, 3, 1), FutureStream.of(3, 1, 2), FutureStream.of(3, 2, 1)).map(s->s.toList()).toList()));
+    	System.out.println(LazyReact.sequentialBuilder().of(1, 2, 3).permutations().map(s->s.toList()).toList());
+        assertThat(LazyReact.sequentialBuilder().of(1, 2, 3).permutations().map(s->s.toList()).toList(),
+        		equalTo(LazyReact.sequentialBuilder().of(LazyReact.sequentialBuilder().of(1, 2, 3),
+        		LazyReact.sequentialBuilder().of(1, 3, 2), LazyReact.sequentialBuilder().of(2, 1, 3), LazyReact.sequentialBuilder().of(2, 3, 1), LazyReact.sequentialBuilder().of(3, 1, 2), LazyReact.sequentialBuilder().of(3, 2, 1)).map(s->s.toList()).toList()));
     }
     
     @Test
     public void emptyAllCombinations() {
-        assertThat(FutureStream.of().combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList())));
+        assertThat(LazyReact.sequentialBuilder().of().combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList())));
     }
 
     @Test
     public void allCombinations3() {
-        assertThat(FutureStream.of(1, 2, 3).combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
+        assertThat(LazyReact.sequentialBuilder().of(1, 2, 3).combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
         		Arrays.asList(3), Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3), Arrays.asList(1, 2, 3))));
     }
 
@@ -105,26 +105,26 @@ public class LazyTest implements Printable {
 
     @Test
     public void emptyCombinations() {
-        assertThat(FutureStream.of().combinations(2).toList(),equalTo(Arrays.asList()));
+        assertThat(LazyReact.sequentialBuilder().of().combinations(2).toList(),equalTo(Arrays.asList()));
     }
 
     @Test
     public void combinations2() {
-        assertThat(FutureStream.of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
+        assertThat(LazyReact.sequentialBuilder().of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
                 equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
     }
 	@Test
 	public void onEmptySwitchEmpty(){
-		assertThat(FutureStream.of()
-							.onEmptySwitch(()-> FutureStream.of(1,2,3))
+		assertThat(LazyReact.sequentialBuilder().of()
+							.onEmptySwitch(()-> LazyReact.sequentialBuilder().of(1,2,3))
 							.toList(),
 							equalTo(Arrays.asList(1,2,3)));
 				
 	}
 	@Test
 	public void onEmptySwitch(){
-		assertThat(FutureStream.of(4,5,6)
-							.onEmptySwitch(()-> FutureStream.of(1,2,3))
+		assertThat(LazyReact.sequentialBuilder().of(4,5,6)
+							.onEmptySwitch(()-> LazyReact.sequentialBuilder().of(1,2,3))
 							.toList(),
 							equalTo(Arrays.asList(4,5,6)));
 				
@@ -134,7 +134,7 @@ public class LazyTest implements Printable {
 	public void elapsedIsPositive(){
 		
 		
-		assertTrue(FutureStream.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
+		assertTrue(LazyReact.sequentialBuilder().of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
 	}
 
 

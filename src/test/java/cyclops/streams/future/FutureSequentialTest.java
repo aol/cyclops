@@ -1,6 +1,7 @@
 package cyclops.streams.future;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
+import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
@@ -20,7 +21,7 @@ public class FutureSequentialTest extends BaseSequentialTest {
     @Override
     protected <U> ReactiveSeq<U> of(U... array){
 
-        return FutureStream.of(array);
+        return LazyReact.sequentialBuilder().of(array);
     }
     @Test
     public void duplicateReplay(){

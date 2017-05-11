@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-
+import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 public class ForComprehensionsTest {
 
 	@Test
@@ -17,7 +17,7 @@ public class ForComprehensionsTest {
 		
 		
 
-		assertThat(FutureStream.of(1,2,3)
+		assertThat(of(1,2,3)
 		         .forEach2(a->IntStream.range(0,10), 
 		        		   (a,b)-> a+b)
 		         .toList(),equalTo(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 
@@ -29,7 +29,7 @@ public class ForComprehensionsTest {
 
 		
 		
-		assertThat(FutureStream.of(1,2,3)
+		assertThat(of(1,2,3)
 		         .forEach2(a->IntStream.range(0,10), 
 		        		  (a,b)->a>2 && b<8,
 		        		  (a,b)-> a+b)
@@ -38,7 +38,7 @@ public class ForComprehensionsTest {
 	@Test
 	public void forEach3(){
 	
-		assertThat(FutureStream.of(2,3)
+		assertThat(of(2,3)
 		         .forEach3(a->IntStream.range(6,9),
 		        		   (a,b)->IntStream.range(100,105),
 		        		    (a,b,c)-> a+b+c)
@@ -50,7 +50,7 @@ public class ForComprehensionsTest {
 	public void forEach3Filter(){
 		
 		
-		assertThat(FutureStream.of(2,3)
+		assertThat(of(2,3)
 		         .forEach3(a->IntStream.range(6,9),
 		        		   (a,b)->IntStream.range(100,105),
 		        		    (a,b,c) -> a==3,

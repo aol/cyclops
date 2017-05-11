@@ -23,7 +23,7 @@ public class HotStreamTest {
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
 		
-		FutureStream.of(1,2,3)
+		LazyReact.sequentialBuilder().of(1,2,3)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.hotStream(exec);
@@ -35,7 +35,7 @@ public class HotStreamTest {
 	public void hotStreamOwn() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		FutureStream.of(1,2,3)
+		LazyReact.sequentialBuilder().of(1,2,3)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.hotStream();

@@ -7,13 +7,13 @@ import org.junit.Test;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.FutureStream;
 import com.aol.cyclops2.types.stream.HeadAndTail;
-
+import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 public class HeadTailTest {
 
 	@Test
 	public void headTailReplay(){
 	
-		ReactiveSeq<String> helloWorld = FutureStream.of("hello","world","last");
+		ReactiveSeq<String> helloWorld = of("hello","world","last");
 		HeadAndTail<String> headAndTail = helloWorld.headAndTail();
 		 String head = headAndTail.head();
 		 assertThat(head,equalTo("hello"));

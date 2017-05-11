@@ -1,6 +1,6 @@
 package com.aol.cyclops2.react.lazy.sequence;
 
-import static cyclops.stream.FutureStream.of;
+
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -38,8 +38,10 @@ import cyclops.stream.ReactiveSeq;
 
 //see BaseSequentialSeqTest for in order tests
 public  class LFSNoOrderTest {
-	
-	
+
+	public static <T> FutureStream<T> of(T... array){
+		return LazyReact.sequentialBuilder().of(array);
+	}
 	FutureStream<Integer> empty;
 	FutureStream<Integer> nonEmpty;
 	public static Executor ex =  Executors.newFixedThreadPool(10);
@@ -81,7 +83,7 @@ public  class LFSNoOrderTest {
     }
 	@Test
 	public void toStream(){
-		List<Integer> list = FutureStream.of(1,2,3).<Integer>toStream().collect(Collectors.toList());
+		List<Integer> list = of(1,2,3).<Integer>toStream().collect(Collectors.toList());
 		assertThat(list,equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
@@ -148,19 +150,19 @@ public  class LFSNoOrderTest {
     @Test
     public void testReverseList() {
     	
-        assertThat( FutureStream.lazyFutureStreamFromIterable(Arrays.asList(10,400,2,-1))
+        assertThat( LazyReact.sequentialBuilder().fromIterable(Arrays.asList(10,400,2,-1))
         				.reverse().toList(), equalTo(asList(-1, 2, 400,10)));
     }
     @Test
     public void testReverseListLimit() {
     	
-        assertThat( FutureStream.lazyFutureStreamFromIterable(Arrays.asList(10,400,2,-1)).reverse().limit(2)
+        assertThat( new LazyReact().fromIterable(Arrays.asList(10,400,2,-1)).reverse().limit(2)
         				.toList(), equalTo(asList(-1, 2)));
     }
     @Test
     public void testReverseRange() {
     	
-        assertThat( FutureStream.lazyFutureStream(IntStream.range(0,10).boxed())
+        assertThat( LazyReact.sequentialBuilder().fromStream(IntStream.range(0,10).boxed())
         				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
     }
 
@@ -388,13 +390,13 @@ public  class LFSNoOrderTest {
 	    //tests converted from lazy-seq suite
 	    @Test
 		public void flattenEmpty() throws Exception {
-				assertTrue(FutureStream.<Stream<Integer>>of()
+				assertTrue(this.<Stream<Integer>>of()
 				                           .to(FutureStream::flatten).toList().isEmpty());
 		}
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(FutureStream.of(Stream.of(1,2)).to(FutureStream::flatten).toList().size(),equalTo(asList(1,  2).size()));
+			assertThat(of(Stream.of(1,2)).to(FutureStream::flatten).toList().size(),equalTo(asList(1,  2).size()));
 		}
 
 		

@@ -22,16 +22,16 @@ import org.junit.Test;
 
 import cyclops.async.LazyReact;
 import com.aol.cyclops2.react.base.BaseSequentialSeqTest;
-
+import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 
 	@Override
 	protected <U> FutureStream<U> of(U... array) {
-		return FutureStream.of(array).boundedWaitFree(1000);
+		return LazyReact.sequentialBuilder().of(array).boundedWaitFree(1000);
 	}
 	@Override
 	protected <U> FutureStream<U> ofThread(U... array) {
-		return FutureStream.freeThread(array).boundedWaitFree(1000);
+		return LazyReact.sequentialCommonBuilder().of(array).boundedWaitFree(1000);
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 	@Test
 	public void shouldLazilyFlattenInfiniteStream() throws Exception {
 		
-		assertThat( FutureStream.iterate(1, n -> n+1)
+		assertThat( LazyReact.sequentialBuilder().iterate(1, n -> n+1)
 				.flatMap(i -> Arrays.asList(i, 0, -i).stream())
 				.limit(10).block(),
 				equalTo(Arrays.asList(1, 0, -1, 2, 0, -2, 3, 0, -3, 4)));
