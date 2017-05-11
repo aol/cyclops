@@ -1,11 +1,7 @@
-package cyclops.free;
+package cyclops.typeclasses.free;
 
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
-import cyclops.function.Fn5;
 import org.jooq.lambda.tuple.*;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**

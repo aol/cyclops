@@ -1,8 +1,7 @@
-package cyclops.free;
+package cyclops.typeclasses.free;
 
 import com.aol.cyclops2.hkt.Higher;
 
-import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.control.Xor;
 import cyclops.control.either.Either3;
 import cyclops.function.Fn3;
