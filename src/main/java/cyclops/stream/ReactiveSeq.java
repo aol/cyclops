@@ -5,7 +5,6 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
-import com.aol.cyclops2.internal.stream.ReactiveSeqFutureOpterationsImpl;
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import com.aol.cyclops2.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ints.ReversingIntArraySpliterator;
@@ -3269,20 +3268,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default ReactiveSeq<Tuple2<T, Long>> timestamp() {
         return zip(ReactiveSeq.generate(() -> System.currentTimeMillis()));
-    }
-
-
-     default <R> Future<R> foldFuture(Function<? super FoldableTraversable<T>,? extends R> fn, Executor ex){
-
-        return Future.ofSupplier(()->{
-
-            return fn.apply(this);
-        },ex);
-    }
-
-    default <R> Eval<R> foldLazy(Function<? super CyclopsCollectable<T>,? extends R> fn, Executor ex){
-
-        return Eval.later(()->fn.apply(this));
     }
 
 
