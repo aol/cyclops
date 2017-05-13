@@ -1,9 +1,13 @@
-package cyclops.function;
+package cyclops.control;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.aol.cyclops2.types.Transformable;
+import cyclops.function.FluentFunctions;
+import cyclops.function.Fn1;
+import cyclops.function.Fn3;
+import cyclops.function.Fn4;
 
 /**
  * An interface that represents the Reader monad

@@ -4,7 +4,7 @@ package com.aol.cyclops2.functions.fluent.reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import cyclops.function.Reader;
+import cyclops.control.Reader;
 
 
 

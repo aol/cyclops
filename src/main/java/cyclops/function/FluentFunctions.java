@@ -1,5 +1,6 @@
 package cyclops.function;
 
+import cyclops.control.Reader;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;

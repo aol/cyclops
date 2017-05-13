@@ -2,8 +2,8 @@ package cyclops;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Unit;
-import cyclops.collections.ListX;
 import cyclops.control.Maybe;
+import cyclops.control.Reader;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -14,7 +14,6 @@ import cyclops.typeclasses.monad.Monad;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * Collection of useful functions
