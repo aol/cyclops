@@ -1,7 +1,8 @@
 package cyclops.typeclasses.jdk;
 
+import static cyclops.CompletableFutures.CompletableFutureKind.widen;
 import static cyclops.function.Lambda.l1;
-import static cyclops.higherkindedtypes.CompletableFutureKind.widen;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -10,11 +11,12 @@ import java.util.concurrent.CompletableFuture;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.CompletableFutures;
+import cyclops.CompletableFutures.CompletableFutureKind;
 import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.higherkindedtypes.CompletableFutureKind;
+
 import org.junit.Test;
 
 
@@ -112,21 +114,21 @@ public class CompletableFuturesTest {
         
         Monoid<CompletableFutureKind<Integer>> m = Monoid.of(widen(new CompletableFuture<>()), (a, b)->a.toCompletableFuture().isDone() ? b : a);
         CompletableFuture<Integer> opt = CompletableFutures.Instances.<Integer>monadPlus(m)
-                                      .plus(CompletableFutureKind.widen(CompletableFuture.completedFuture(5)), CompletableFutureKind.widen(CompletableFuture.completedFuture(10)))
+                                      .plus(widen(CompletableFuture.completedFuture(5)), widen(CompletableFuture.completedFuture(10)))
                                       .convert(CompletableFutureKind::narrowK);
         assertThat(opt.toCompletableFuture().join(),equalTo(CompletableFuture.completedFuture(10).join()));
     }
     @Test
     public void  foldLeft(){
         int sum  = CompletableFutures.Instances.foldable()
-                        .foldLeft(0, (a,b)->a+b, CompletableFutureKind.widen(CompletableFuture.completedFuture(4)));
+                        .foldLeft(0, (a,b)->a+b, widen(CompletableFuture.completedFuture(4)));
         
         assertThat(sum,equalTo(4));
     }
     @Test
     public void  foldRight(){
         int sum  = CompletableFutures.Instances.foldable()
-                        .foldRight(0, (a,b)->a+b, CompletableFutureKind.widen(CompletableFuture.completedFuture(1)));
+                        .foldRight(0, (a,b)->a+b, widen(CompletableFuture.completedFuture(1)));
         
         assertThat(sum,equalTo(1));
     }

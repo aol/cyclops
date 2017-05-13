@@ -458,6 +458,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
     @Override
     default <T> AnyMSeq<W,T> fromIterable(Iterable<T> t){
+
         if(t instanceof AnyMSeq) {
             AnyMSeq check =(AnyMSeq) t;
             if(check.adapter() == this.adapter())

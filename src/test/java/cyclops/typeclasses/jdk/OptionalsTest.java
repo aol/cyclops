@@ -1,7 +1,8 @@
 package com.aol.cyclops.hkt.instances.jdk;
 
+import static cyclops.Optionals.OptionalKind.widen;
 import static cyclops.function.Lambda.l1;
-import static cyclops.higherkindedtypes.OptionalKind.widen;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -9,11 +10,12 @@ import java.util.Optional;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.Optionals;
+import cyclops.Optionals.OptionalKind;
 import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.higherkindedtypes.OptionalKind;
+
 import org.junit.Test;
 
 
