@@ -6,7 +6,7 @@ import cyclops.Semigroups;
 import cyclops.Streams;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
-import cyclops.box.Mutable;
+import cyclops.collections.box.Mutable;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PSetX;
 import cyclops.control.*;

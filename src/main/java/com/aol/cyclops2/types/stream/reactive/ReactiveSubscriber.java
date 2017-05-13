@@ -2,26 +2,18 @@ package com.aol.cyclops2.types.stream.reactive;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
-import com.aol.cyclops2.internal.stream.ReactiveStreamX;
-import com.aol.cyclops2.internal.stream.spliterators.push.PublisherToOperator;
-import com.aol.cyclops2.internal.stream.spliterators.push.StreamSubscription;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.box.LazyImmutable;
+import cyclops.collections.box.LazyImmutable;
 import cyclops.stream.Spouts;
 import lombok.Getter;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 
-import lombok.AllArgsConstructor;
 import lombok.val;
-import sun.security.provider.Sun;
 
 /**
  * A Subscriber for Observable type event driven Streams that implement backpressure via the reactive-streams API

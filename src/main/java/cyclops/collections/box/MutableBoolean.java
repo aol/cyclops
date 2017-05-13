@@ -1,15 +1,15 @@
-package cyclops.box;
-
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+package cyclops.collections.box;
 
 import com.aol.cyclops2.types.To;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Class that represents a Closed Variable
@@ -17,7 +17,7 @@ import lombok.ToString;
  * variables can't be changed.
  * e.g.
  *<pre>{@code 
- * short var = true;
+ * boolean var = true;
  * Runnable r = () -> var =false;
  * }</pre>
  * 
@@ -26,7 +26,7 @@ import lombok.ToString;
  * 
  * e.g.
  * <pre>{@code
- * MutableShort var =  MutableShort.of(true);
+ * MutableBoolean var =  MutableBoolean.of(true);
  * Runnable r = () -> var.set(false);
  * }</pre>
  * 
@@ -38,60 +38,61 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer<Short> {
+public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consumer<Boolean>, Supplier<Boolean> {
 
-    private short var;
+
+    private boolean var;
 
     /**
      * Create a Mutable variable, which can be mutated inside a Closure 
      * 
      * e.g.
      * <pre>{@code
-     *   MutableShort num = MutableShort.of(true);
+     *   MutableBoolean num = MutableBoolean.of(true);
      *   
      *    num.mutate(n->!n))
      *   
-     *   System.out.println(num.getAsShort());
+     *   System.out.println(num.getAsBoolean());
      *   //prints false
      * } </pre>
      * 
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static <T> MutableShort of(final short var) {
-        return new MutableShort(
-                                var);
+    public static <T> MutableBoolean of(final boolean var) {
+        return new MutableBoolean(
+                                  var);
     }
 
     /** 
-     * Construct a MutableShort that gets and sets an external value using the provided Supplier and Consumer
+     * Construct a MutableBoolean that gets and sets an external value using the provided Supplier and Consumer
      * 
      * e.g.
      * <pre>
      * {@code 
-     *    MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
+     *    MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
      * }
      * </pre>
      * 
      * 
      * @param s Supplier of an external value
      * @param c Consumer that sets an external value
-     * @return MutableShort that gets / sets an external (mutable) value
+     * @return MutableBoolean that gets / sets an external (mutable) value
      */
-    public static MutableShort fromExternal(final Supplier<Short> s, final Consumer<Short> c) {
-        return new MutableShort() {
+    public static MutableBoolean fromExternal(final BooleanSupplier s, final Consumer<Boolean> c) {
+        return new MutableBoolean() {
             @Override
-            public short getAsShort() {
-                return s.get();
+            public boolean getAsBoolean() {
+                return s.getAsBoolean();
             }
 
             @Override
-            public Short get() {
-                return getAsShort();
+            public Boolean get() {
+                return getAsBoolean();
             }
 
             @Override
-            public MutableShort set(final short value) {
+            public MutableBoolean set(final boolean value) {
                 c.accept(value);
                 return this;
             }
@@ -102,10 +103,10 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
      * Use the supplied function to perform a lazy map operation when get is called 
      * <pre>
      * {@code 
-     *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Short> withOverride = mutable.mapOutputToObj(b->{ 
+     *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Boolean> withOverride = mutable.mapOutput(b->{ 
      *                                                        if(override)
-     *                                                             return 3s;
+     *                                                             return true;
      *                                                         return b;
      *                                                         });
      *          
@@ -116,8 +117,8 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(final Function<Short, R> fn) {
-        final MutableShort host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Boolean, R> fn) {
+        final MutableBoolean host = this;
         return new Mutable<R>() {
             @Override
             public R get() {
@@ -131,10 +132,10 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
      * Use the supplied function to perform a lazy map operation when get is called 
      * <pre>
      * {@code 
-     *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Short> withOverride = mutable.mapInputToObj(b->{ 
+     *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Boolean> withOverride = mutable.mapInput(b->{ 
      *                                                        if(override)
-     *                                                             return 1s;
+     *                                                             return true;
      *                                                         return b;
      *                                                         });
      *          
@@ -145,8 +146,8 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Short> fn) {
-        final MutableShort host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Boolean> fn) {
+        final MutableBoolean host = this;
         return new Mutable<T1>() {
             @Override
             public Mutable<T1> set(final T1 value) {
@@ -160,7 +161,8 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
     /**
      * @return Current value
      */
-    public short getAsShort() {
+    @Override
+    public boolean getAsBoolean() {
         return var;
     }
 
@@ -168,7 +170,7 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableShort set(final short var) {
+    public MutableBoolean set(final boolean var) {
         this.var = var;
         return this;
     }
@@ -177,24 +179,24 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableShort mutate(final ShortFunction varFn) {
-        return set(varFn.apply(get()));
+    public MutableBoolean mutate(final BooleanFunction varFn) {
+        return set(varFn.apply(getAsBoolean()));
 
     }
 
-    public static interface ShortFunction {
-        short apply(short var);
-    }
-
-    @Override
-    public Short get() {
-        return getAsShort();
+    public static interface BooleanFunction {
+        boolean apply(boolean var);
     }
 
     @Override
-    public void accept(final Short t) {
+    public void accept(final Boolean t) {
         set(t);
 
+    }
+
+
+    public Boolean get() {
+        return getAsBoolean();
     }
 
 }
