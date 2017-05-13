@@ -1,15 +1,15 @@
-package cyclops.box;
+package cyclops.collections.box;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.aol.cyclops2.types.To;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Class that represents a Closed Variable
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  * variables can't be changed.
  * e.g.
  *<pre>{@code 
- * boolean var = true;
+ * byte var = true;
  * Runnable r = () -> var =false;
  * }</pre>
  * 
@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  * 
  * e.g.
  * <pre>{@code
- * MutableBoolean var =  MutableBoolean.of(true);
+ * MutableByte var =  MutableByte.of(true);
  * Runnable r = () -> var.set(false);
  * }</pre>
  * 
@@ -38,61 +38,60 @@ import java.util.function.Supplier;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consumer<Boolean>, Supplier<Boolean> {
+public class MutableByte implements To<MutableByte>,Supplier<Byte>, Consumer<Byte> {
 
-
-    private boolean var;
+    private byte var;
 
     /**
      * Create a Mutable variable, which can be mutated inside a Closure 
      * 
      * e.g.
      * <pre>{@code
-     *   MutableBoolean num = MutableBoolean.of(true);
+     *   MutableByte num = MutableByte.of(true);
      *   
      *    num.mutate(n->!n))
      *   
-     *   System.out.println(num.getAsBoolean());
+     *   System.out.println(num.getAsByte());
      *   //prints false
      * } </pre>
      * 
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static <T> MutableBoolean of(final boolean var) {
-        return new MutableBoolean(
-                                  var);
+    public static <T> MutableByte of(final byte var) {
+        return new MutableByte(
+                               var);
     }
 
     /** 
-     * Construct a MutableBoolean that gets and sets an external value using the provided Supplier and Consumer
+     * Construct a MutableByte that gets and sets an external value using the provided Supplier and Consumer
      * 
      * e.g.
      * <pre>
      * {@code 
-     *    MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
+     *    MutableByte mutable = MutableByte.fromExternal(()->!this.value,val->!this.value);
      * }
      * </pre>
      * 
      * 
      * @param s Supplier of an external value
      * @param c Consumer that sets an external value
-     * @return MutableBoolean that gets / sets an external (mutable) value
+     * @return MutableByte that gets / sets an external (mutable) value
      */
-    public static MutableBoolean fromExternal(final BooleanSupplier s, final Consumer<Boolean> c) {
-        return new MutableBoolean() {
+    public static MutableByte fromExternal(final Supplier<Byte> s, final Consumer<Byte> c) {
+        return new MutableByte() {
             @Override
-            public boolean getAsBoolean() {
-                return s.getAsBoolean();
+            public byte getAsByte() {
+                return s.get();
             }
 
             @Override
-            public Boolean get() {
-                return getAsBoolean();
+            public Byte get() {
+                return getAsByte();
             }
 
             @Override
-            public MutableBoolean set(final boolean value) {
+            public MutableByte set(final byte value) {
                 c.accept(value);
                 return this;
             }
@@ -103,10 +102,10 @@ public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consu
      * Use the supplied function to perform a lazy map operation when get is called 
      * <pre>
      * {@code 
-     *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Boolean> withOverride = mutable.mapOutput(b->{ 
+     *  MutableByte mutable = MutableByte.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Byte> withOverride = mutable.mapOutputToObj(b->{ 
      *                                                        if(override)
-     *                                                             return true;
+     *                                                             return 1b;
      *                                                         return b;
      *                                                         });
      *          
@@ -117,8 +116,8 @@ public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consu
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(final Function<Boolean, R> fn) {
-        final MutableBoolean host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Byte, R> fn) {
+        final MutableByte host = this;
         return new Mutable<R>() {
             @Override
             public R get() {
@@ -132,10 +131,10 @@ public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consu
      * Use the supplied function to perform a lazy map operation when get is called 
      * <pre>
      * {@code 
-     *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Boolean> withOverride = mutable.mapInput(b->{ 
+     *  MutableByte mutable = MutablByte.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Byte> withOverride = mutable.mapInputToObj(b->{ 
      *                                                        if(override)
-     *                                                             return true;
+     *                                                             return 1b;
      *                                                         return b;
      *                                                         });
      *          
@@ -146,8 +145,8 @@ public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consu
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Boolean> fn) {
-        final MutableBoolean host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Byte> fn) {
+        final MutableByte host = this;
         return new Mutable<T1>() {
             @Override
             public Mutable<T1> set(final T1 value) {
@@ -161,8 +160,7 @@ public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consu
     /**
      * @return Current value
      */
-    @Override
-    public boolean getAsBoolean() {
+    public byte getAsByte() {
         return var;
     }
 
@@ -170,7 +168,7 @@ public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consu
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableBoolean set(final boolean var) {
+    public MutableByte set(final byte var) {
         this.var = var;
         return this;
     }
@@ -179,24 +177,24 @@ public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consu
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableBoolean mutate(final BooleanFunction varFn) {
-        return set(varFn.apply(getAsBoolean()));
+    public MutableByte mutate(final ByteFunction varFn) {
+        return set(varFn.apply(getAsByte()));
 
     }
 
-    public static interface BooleanFunction {
-        boolean apply(boolean var);
+    public static interface ByteFunction {
+        byte apply(byte var);
     }
 
     @Override
-    public void accept(final Boolean t) {
+    public void accept(final Byte t) {
         set(t);
 
     }
 
-
-    public Boolean get() {
-        return getAsBoolean();
+    @Override
+    public Byte get() {
+        return getAsByte();
     }
 
 }

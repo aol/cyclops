@@ -1,4 +1,4 @@
-package cyclops.box;
+package cyclops.collections.box;
 
 import java.util.OptionalDouble;
 import java.util.function.*;

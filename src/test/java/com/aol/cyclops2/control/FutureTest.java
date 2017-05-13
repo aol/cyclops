@@ -1,7 +1,7 @@
 package com.aol.cyclops2.control;
 
 import cyclops.*;
-import cyclops.box.Mutable;
+import cyclops.collections.box.Mutable;
 import cyclops.collections.immutable.PSetX;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;

@@ -3,7 +3,7 @@ package cyclops.async;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.*;
 import cyclops.Monoids;
-import cyclops.box.Mutable;
+import cyclops.collections.box.Mutable;
 import cyclops.control.*;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;

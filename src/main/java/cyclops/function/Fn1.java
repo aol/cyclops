@@ -6,6 +6,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
 import cyclops.control.*;
+<<<<<<< HEAD
+=======
+import cyclops.monads.function.AnyMFn1;
+>>>>>>> master
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import cyclops.collections.immutable.PStackX;

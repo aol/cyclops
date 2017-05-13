@@ -5,7 +5,7 @@ import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.Reducers;
 import cyclops.Semigroups;
 import cyclops.Streams;
-import cyclops.box.Mutable;
+import cyclops.collections.box.Mutable;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.control.Eval;

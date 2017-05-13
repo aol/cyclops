@@ -4,7 +4,7 @@ import cyclops.control.Reader;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;
-import cyclops.box.MutableInt;
+import cyclops.collections.box.MutableInt;
 import com.aol.cyclops2.internal.invokedynamic.CheckedTriFunction;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.util.ExceptionSoftener;

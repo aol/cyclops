@@ -6,7 +6,7 @@ import cyclops.Optionals;
 import cyclops.Reducers;
 import cyclops.Semigroups;
 import cyclops.Streams;
-import cyclops.box.Mutable;
+import cyclops.collections.box.Mutable;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.control.Maybe;

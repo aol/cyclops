@@ -6,7 +6,7 @@ import cyclops.control.*;
 import cyclops.function.Monoid;
 import cyclops.Reducers;
 import cyclops.Semigroups;
-import cyclops.box.Mutable;
+import cyclops.collections.box.Mutable;
 import cyclops.collections.ListX;
 import cyclops.Streams;
 import org.jooq.lambda.Seq;

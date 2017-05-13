@@ -11,6 +11,8 @@ import cyclops.async.Future;
 import cyclops.collections.ListX;
 import cyclops.control.*;
 import cyclops.function.*;
+import cyclops.monads.function.AnyMFn1;
+import cyclops.monads.function.AnyMFn2;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import cyclops.stream.FutureStream;

@@ -9,6 +9,7 @@ import java.util.function.Function;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
+import cyclops.monads.function.AnyMFn2;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import cyclops.collections.immutable.PStackX;
@@ -18,7 +19,6 @@ import cyclops.monads.WitnessType;
 import cyclops.async.Future;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.function.Function2;
 
 @FunctionalInterface
 public interface Fn2<T1, T2, R> extends BiFunction<T1,T2,R> {

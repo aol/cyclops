@@ -1,6 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.box.Mutable;
+import cyclops.collections.box.Mutable;
 import cyclops.collections.immutable.PVectorX;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
@@ -8,7 +8,6 @@ import org.pcollections.TreePVector;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Created by johnmcclean on 12/01/2017.
@@ -63,7 +62,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                 super.cancel();
             }
         };
-        final Mutable<PVector<T>> list = cyclops.box.Mutable.of(TreePVector.empty());
+        final Mutable<PVector<T>> list = cyclops.collections.box.Mutable.of(TreePVector.empty());
         boolean[] sent = {false};
         upstream[0] = source.subscribe(e-> {
                     try {
@@ -103,7 +102,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        final Mutable<PVector<T>> list = cyclops.box.Mutable.of(TreePVector.empty());
+        final Mutable<PVector<T>> list = cyclops.collections.box.Mutable.of(TreePVector.empty());
         boolean[] sent = {false};
         source.subscribeAll(e-> {
                     try {

@@ -10,6 +10,7 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.collections.immutable.PVectorX;
+import cyclops.monads.function.AnyMFn0;
 import cyclops.typeclasses.free.Free;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.FutureT;

@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.control.Xor;
-import cyclops.box.Mutable;
+import cyclops.collections.box.Mutable;
 
 public class XorAnyMValueTest extends BaseAnyMValueTest<Witness.xor> {
     @Before
