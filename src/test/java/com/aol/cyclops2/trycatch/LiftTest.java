@@ -7,7 +7,7 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import cyclops.function.AnyMFn2;
+import cyclops.monads.function.AnyMFn2;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;

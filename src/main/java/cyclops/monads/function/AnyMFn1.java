@@ -1,4 +1,4 @@
-package cyclops.function;
+package cyclops.monads.function;
 
 import cyclops.monads.AnyM;
 import cyclops.monads.Kleisli;
