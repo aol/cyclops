@@ -112,7 +112,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
    }
 
 
-        @Override
+    @Override
     default FutureStream<U> skipUntilClosed(final Predicate<? super U> p) {
         return fromStream(stream().skipUntilClosed(p));
     }

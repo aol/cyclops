@@ -107,14 +107,12 @@ public class AsyncRSZippingTest {
                     .collect(Collectors.toList());
 
             System.out.println(list);
-          //  assertThat(list.get(0).v1, is(1));
-            //assertThat(list.get(0).v2, is(100));
-        //    assertThat(list.get(1).v1, is(2));
-        //   // assertThat(list.get(1).v2, is(200));
-         //   assertThat(list.get(2).v1, is(3));
-            //assertThat(list.get(2).v2, is(300));
-        //    assertThat(list.get(3).v1, is(4));
-            //assertThat(list.get(3).v2, is(400));
+            assertThat(list.size(),greaterThan(3));
+            if(list.size()==4){
+                list.forEach(t->{
+                    assertThat(t.v1,equalTo(6));
+                });
+            }
         }
 
 

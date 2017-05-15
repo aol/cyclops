@@ -17,9 +17,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
 
-/**
- * Created by johnmcclean on 12/01/2017.
- */
 @AllArgsConstructor
 public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
 

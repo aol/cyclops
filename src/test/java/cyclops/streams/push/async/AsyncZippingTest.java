@@ -2,6 +2,7 @@ package cyclops.streams.push.async;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -40,6 +41,27 @@ public class AsyncZippingTest {
 			});
 			t.start();
 		});
+	}
+	@Test
+	public void zipLatest(){
+
+		for(int i=0;i<10_000;i++) {
+			List<Tuple2<Integer, Integer>> list = of(1, 2, 3, 4, 5, 6)
+					.zipLatest(of(100, 200, 300, 400), Tuple::tuple)
+					.collect(Collectors.toList());
+
+			System.out.println(list);
+			assertThat(list.size(),greaterThan(3));
+			if(list.size()==4){
+			    list.forEach(t->{
+			        assertThat(t.v1,equalTo(6));
+                });
+            }
+
+		}
+
+
+
 	}
 	@Test
 	public void zipInOrderNoLimit(){

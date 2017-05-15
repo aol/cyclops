@@ -29,10 +29,7 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.either.Either;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
-import cyclops.function.Monoid;
-import cyclops.function.Reducer;
+import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.reactiveSeq;
@@ -1115,8 +1112,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     <U> ReactiveSeq<Tuple2<T, U>> zipS(final Stream<? extends U> other);
 
     default <U, R> ReactiveSeq<R> zipLatest(final Publisher<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return zipP(other, zipper);
+         return zipP(other, zipper);
     }
 
     @Override
