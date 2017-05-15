@@ -349,13 +349,13 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see org.jooq.lambda.Seq#crossApply(java.util.function.Function)
      */
     default <U1> FutureStream<Tuple2<U, U1>> crossApply(Function<? super U, ? extends Iterable<? extends U1>> function) {
-        return fromStream(ReactiveSeq.oneShotStream(stream()).seq().crossApply(function));
+        return fromStream(((FutureStream<U>) ReactiveSeq.oneShotStream(stream()).seq()).crossApply(function));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#outerApply(java.util.function.Function)
      */
     default <U1> FutureStream<Tuple2<U, U1>> outerApply(Function<? super U, ? extends Iterable<? extends U1>> function) {
-        return fromStream(ReactiveSeq.oneShotStream(stream()).seq().outerApply(function));
+        return fromStream(((FutureStream<U>) ReactiveSeq.oneShotStream(stream()).seq()).outerApply(function));
     }
 
     /* (non-Javadoc)
