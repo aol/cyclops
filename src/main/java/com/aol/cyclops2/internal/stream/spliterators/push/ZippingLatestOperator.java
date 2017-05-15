@@ -191,9 +191,7 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
                         }
                     }
                 }
-                if(sub.requested.get()>1) {
-                    rightSub[0].request(1);
-                }
+
 
 
             } catch (Throwable t) {
@@ -247,164 +245,118 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        OneToOneConcurrentArrayQueue<T1> leftQ = new OneToOneConcurrentArrayQueue<T1>(1024);
-        OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
 
-        StreamSubscription  rightSub[] = {null};
+
+        AtomicBoolean active = new AtomicBoolean(false);
+        ManyToOneConcurrentArrayQueue<R> data = new ManyToOneConcurrentArrayQueue<R>(1024);
+        AtomicReference<Tuple2<T1,T2>> nextValue = new AtomicReference<>(Tuple.tuple((T1)UNSET,(T2)UNSET));
         AtomicBoolean leftComplete = new AtomicBoolean(false); //left & right compelte can be merged into single integer
         AtomicBoolean rightComplete = new AtomicBoolean(false);
-        AtomicLong leftActive = new AtomicLong(0);
-        AtomicLong rightActive = new AtomicLong(0);
-        AtomicBoolean completing = new AtomicBoolean(false);
-        AtomicInteger status = new AtomicInteger(0); //1st bit for left, 2 bit for right pushing
-
-
-
-        rightSub[0] = right.subscribe(e->{
-            if(completing.get())
-                return;
-            try {
-                if (!leftQ.isEmpty()) {
-                    R value =fn.apply(leftQ.peek(), (T2) e);
-
-
-                    onNext.accept(value);
-                    leftActive.decrementAndGet();
-
-
-
-                } else {
-
-
-                    if(status.compareAndSet(0,2) && leftQ.isEmpty()) {
-
-                        rightActive.incrementAndGet();
-                        rightQ.offer((T2) e);
-
-
-
-                        status.set(0);
-                    }else {
-
-                        status.compareAndSet(2,0);
-                        while (leftQ.isEmpty()) { // VALUE IS COMING
-                            if(leftComplete.get() && leftQ.isEmpty()){
-                                handleComplete(completing,onCompleteDs);
-                                return;
-                            }
-                            LockSupport.parkNanos(0);
-                        }
-                        R value = fn.apply(leftQ.peek(), (T2) e);
-
-                        onNext.accept(value);
-                        leftActive.decrementAndGet();
-                    }
-
-                }
-            }catch(Throwable t){
-                onError.accept(t);
-            }
-
-
-            if( (leftComplete.get() && leftQ.isEmpty()) || (rightComplete.get() && rightQ.isEmpty())){
-                rightSub[0].cancel();
-                handleComplete(completing,onCompleteDs);
-
-            }
-
-        },e->{
-            onError.accept(e);
-
-        },()->{
-
-            rightComplete.set(true);
-
-            if (rightActive.get()==0 || leftComplete.get()) {
-
-                rightSub[0].cancel();
-                handleComplete(completing,onCompleteDs);
-
-            }
-
-
-
-        });
         left.subscribeAll(e->{
 
-            if(completing.get())
-                return;
+
             try {
 
-                if (!rightQ.isEmpty() ) {
-                    R value = fn.apply((T1) e, rightQ.peek());
-
-
-                    onNext.accept(value);
-                    rightActive.decrementAndGet();
-
-                    /**
-                     * request more / next!
-                     */
-                    rightSub[0].request(1);
-
-
-                } else {
-
-                    if(status.compareAndSet(0,1) && rightQ.isEmpty()) {
-
-                        leftActive.incrementAndGet();
-                        leftQ.offer((T1) e);
-
-
-                        status.set(0);
-                    }else{
-                        status.compareAndSet(1,0);
-
-                        while(rightQ.isEmpty()){ // VALUE IS COMING
-                            if(rightComplete.get() && rightQ.isEmpty()){
-                                handleComplete(completing,onCompleteDs);
-                                return;
+                boolean set = false;
+                while(!set){
+                    Tuple2<T1,T2> local = nextValue.get();
+                    Tuple2<T1,T2> updated = local.map1(__->(T1)e);
+                    set = nextValue.compareAndSet(local,updated);
+                    if(set){
+                        if(updated.v2!=UNSET){
+                            if(active.compareAndSet(false,true)){
+                                data.drain(onNext::accept);
+                                onNext.accept(applyFn(updated));
+                                active.set(false);
                             }
-                            LockSupport.parkNanos(0);
+                            else{
+                                while(!data.offer(applyFn(updated))){
+
+                                }
+                            }
+
+
+
                         }
-                        R value = fn.apply((T1) e, rightQ.peek());
-                        onNext.accept(value);
-                        rightActive.decrementAndGet();
                     }
-
-
                 }
+
+
             } catch (Throwable t) {
                 onError.accept(t);
             }
 
-            if( (rightComplete.get() && rightQ.isEmpty()) || (leftComplete.get() && leftQ.isEmpty())){
-                rightSub[0].cancel();
-                handleComplete(completing,onCompleteDs);
+
+        },e->{
+            onError.accept(e);
+
+        },()->{
+            while(!active.compareAndSet(false,true)) {
 
             }
+            data.drain(onNext::accept);
+            if(rightComplete.get()){
+                onCompleteDs.run();
+            }
+            leftComplete.set(true);
+            active.set(false);
+
+
+        });
+        right.subscribeAll(e->{
+
+            try {
+
+                boolean set = false;
+                while(!set){
+                    Tuple2<T1,T2> local = nextValue.get();
+                    Tuple2<T1,T2> updated = local.map2(__->(T2)e);
+                    set = nextValue.compareAndSet(local,updated);
+                    if(set){
+                        if(updated.v1!=UNSET){
+                            if(active.compareAndSet(false,true)){
+                                data.drain(onNext::accept);
+                                onNext.accept(applyFn(updated));
+                                active.set(false);
+                            }
+                            else{
+                                while(!data.offer(applyFn(updated))){
+
+                                }
+                            }
+
+
+                        }
+                    }
+                }
+
+
+            } catch (Throwable t) {
+                onError.accept(t);
+            }
+
 
 
         },e->{
             onError.accept(e);
 
-
         },()->{
-            leftComplete.set(true);
 
-
-            if (leftActive.get()==0 || rightComplete.get()) {
-                if(rightSub[0]!=null)
-                    rightSub[0].cancel();
-                handleComplete(completing,onCompleteDs);
+            while(!active.compareAndSet(false,true)) {
 
             }
+            data.drain(onNext::accept);
+            if(leftComplete.get()){
+                onCompleteDs.run();
+            }
+            rightComplete.set(true);
 
+            active.set(false);
 
 
 
         });
-        rightSub[0].request(Long.MAX_VALUE);
+
 
     }
 
