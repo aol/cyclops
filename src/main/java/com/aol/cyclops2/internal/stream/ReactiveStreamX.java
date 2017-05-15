@@ -534,7 +534,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             return queue.stream();
 
         }
-    //    return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).spliterator(),false);
        return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).spliterator(),false);
     }
 
@@ -641,7 +640,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
     @Override
-    public <U> Traversable<U> unitIterator(Iterator<U> it) {
+    public <U> ReactiveSeq<U> unitIterator(Iterator<U> it) {
         Iterable<U> iterable = ()->it;
         return createSeq(new IterableSourceOperator<U>(iterable));
     }
