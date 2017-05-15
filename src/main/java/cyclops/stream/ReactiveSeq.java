@@ -1114,7 +1114,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     <U> ReactiveSeq<Tuple2<T, U>> zipS(final Stream<? extends U> other);
 
+    default <U, R> ReactiveSeq<R> zipLatest(final Publisher<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
+        return zipP(other, zipper);
+    }
 
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> zip(final Iterable<? extends U> other) {

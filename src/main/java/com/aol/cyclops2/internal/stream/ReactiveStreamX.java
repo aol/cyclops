@@ -602,6 +602,17 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
     }
+    @Override
+    public <U, R> ReactiveSeq<R> zipLatest(final Publisher<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+
+        Operator<U> right;
+        if(other instanceof ReactiveStreamX){
+            right = ((ReactiveStreamX<U>)other).source;
+        }else{
+            right = new PublisherToOperator<U>((Publisher<U>)other);
+        }
+        return createSeq(new ZippingLatestOperator<>(source,right,zipper),Type.BACKPRESSURE);
+    }
 
     @Override
     public void subscribeAll(final Consumer<? super T> action) {

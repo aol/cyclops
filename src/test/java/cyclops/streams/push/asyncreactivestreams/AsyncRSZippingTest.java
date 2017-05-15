@@ -2,6 +2,7 @@ package cyclops.streams.push.asyncreactivestreams;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -37,16 +38,94 @@ public class AsyncRSZippingTest {
 		return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
 	}
+    protected <U> Flux<U> flux(U... array){
+
+        return Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool()));
+
+    }
+    protected <U> ReactiveSeq<U> withSleep(U... array){
+
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool()))).peek(c->{
+            try {
+                System.out.println("Sleeping " + c  + "T" + Thread.currentThread().getId());
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+    @Test
+    public void zipLatestFlux(){
+
+        for(int i=0;i<10_000;i++) {
+            List<Tuple2<Integer, Integer>> list = Flux.combineLatest(flux(1, 2, 3, 4, 5, 6)
+                   ,flux(100, 200, 300, 400), Tuple::tuple)
+                    .collect(Collectors.toList()).block();
+
+            System.out.println(list);
+            //  assertThat(list.get(0).v1, is(1));
+            //assertThat(list.get(0).v2, is(100));
+            //    assertThat(list.get(1).v1, is(2));
+            //   // assertThat(list.get(1).v2, is(200));
+            //   assertThat(list.get(2).v1, is(3));
+            //assertThat(list.get(2).v2, is(300));
+            //    assertThat(list.get(3).v1, is(4));
+            //assertThat(list.get(3).v2, is(400));
+        }
+
+
+
+    }
+    @Test
+    public void collectLatest(){
+
+        for(int i=0;i<100_000;i++) {
+            List<Integer> list = of(1, 2, 3, 4, 5, 6)
+                                         .collect(Collectors.toList());
+
+            System.out.println(list);
+            //  assertThat(list.get(0).v1, is(1));
+            //assertThat(list.get(0).v2, is(100));
+            //    assertThat(list.get(1).v1, is(2));
+            //   // assertThat(list.get(1).v2, is(200));
+            //   assertThat(list.get(2).v1, is(3));
+            //assertThat(list.get(2).v2, is(300));
+            //    assertThat(list.get(3).v1, is(4));
+            //assertThat(list.get(3).v2, is(400));
+        }
+
+
+
+    }
+	@Test
+	public void zipLatest(){
+
+	    for(int i=0;i<10_000;i++) {
+            List<Tuple2<Integer, Integer>> list = of(1, 2, 3, 4, 5, 6)
+                    .zipLatest(of(100, 200, 300, 400), Tuple::tuple)
+                    .collect(Collectors.toList());
+
+            System.out.println(list);
+          //  assertThat(list.get(0).v1, is(1));
+            //assertThat(list.get(0).v2, is(100));
+        //    assertThat(list.get(1).v1, is(2));
+        //   // assertThat(list.get(1).v2, is(200));
+         //   assertThat(list.get(2).v1, is(3));
+            //assertThat(list.get(2).v2, is(300));
+        //    assertThat(list.get(3).v1, is(4));
+            //assertThat(list.get(3).v2, is(400));
+        }
+
+
+
+	}
 	@Test
 	public void zipInOrderNoLimit(){
 
 		List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6)
 				.zip( of(100,200,300,400))
 				.collect(Collectors.toList());
-		/**
-		 List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6).limit(6)
-		 .zip( of(100,200,300,400).limit(4))
-		 .collect(Collectors.toList());**/
 
 		assertThat(list.get(0).v1,is(1));
 		assertThat(list.get(0).v2,is(100));

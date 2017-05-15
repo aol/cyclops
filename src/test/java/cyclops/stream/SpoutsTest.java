@@ -39,6 +39,17 @@ import static org.junit.Assert.*;
 public class SpoutsTest {
 
     @Test
+    public void combineLatest(){
+       for(int i=0;i<10_000;i++) {
+           assertThat(Spouts.of(100, 200, 300)
+                            .zipLatest(nextAsyncRS(), (a, b) -> Tuple.tuple(a, b))
+                           .toList(),
+                   equalTo(ListX.of(Tuple.tuple(100, 1), Tuple.tuple(200, 2))));
+       }
+   }
+
+
+    @Test
     public void iteratePredicate(){
         Iterator<Integer> it = Spouts.iterate(1,i->i<4,i->i+1).iterator();
         List<Integer> list = new ArrayList<>();

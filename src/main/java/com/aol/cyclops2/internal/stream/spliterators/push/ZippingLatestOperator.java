@@ -1,14 +1,18 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.collections.box.Mutable;
-import cyclops.collections.box.MutableBoolean;
 import lombok.AllArgsConstructor;
+import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -18,7 +22,7 @@ import java.util.function.LongConsumer;
  * Created by johnmcclean on 12/01/2017.
  */
 @AllArgsConstructor
-public class ZippingOperator<T1,T2,R> implements Operator<R>{
+public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
 
 
     Operator<? super T1> left;
@@ -26,27 +30,86 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>{
     private final BiFunction<? super T1, ? super T2, ? extends R> fn;
 
 
+    private final Object UNSET = new Object();
 
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
 
-        OneToOneConcurrentArrayQueue<T1> leftQ = new OneToOneConcurrentArrayQueue<T1>(1024);
-        OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
+
         StreamSubscription  leftSub[] = {null};
         StreamSubscription  rightSub[] = {null};
         AtomicBoolean leftComplete = new AtomicBoolean(false); //left & right compelte can be merged into single integer
         AtomicBoolean rightComplete = new AtomicBoolean(false);
-        AtomicLong leftActive = new AtomicLong(0);
-        AtomicLong rightActive = new AtomicLong(0);
+        AtomicReference<Tuple2<T1,T2>> nextValue = new AtomicReference<>(Tuple.tuple((T1)UNSET,(T2)UNSET));
         AtomicBoolean completing = new AtomicBoolean(false);
-        AtomicInteger status = new AtomicInteger(0); //1st bit for left, 2 bit for right pushing
 
+        AtomicInteger completed = new AtomicInteger(0);
+        AtomicInteger index = new AtomicInteger(0);
+        ManyToOneConcurrentArrayQueue<R> data = new ManyToOneConcurrentArrayQueue<R>(1024);
+
+        List<StreamSubscription> subs = new ArrayList<>(2);
         StreamSubscription sub   = new StreamSubscription(){
             LongConsumer work = n->{
+                while(requested.get()>0)
+                {
+                    if (completed.get() == 2 && data.size() == 0) {
+
+                        onComplete.run();
+                        return;
+                    }
+
+                    long sent = 0;
+                    long reqCycle = requested.get();
+                    for (long k = 0; k < reqCycle; k++) {
+                        if (!isOpen)
+                            return;
+                        int toUse = index.incrementAndGet() - 1;
+                        if (toUse + 1 >= subs.size()) {
+                            index.set(0);
+
+                        }
+
+                        if (subs.get(toUse).isOpen) {
+                            subs.get(toUse).request(1l);
+
+                        } else
+                            k--;
+
+                        R fromQ = nilsafeOut(data.poll());
+                        if (fromQ != null) {
+
+                            onNext.accept(fromQ);
+                            requested.decrementAndGet();
+                            sent++;
+                        }
+                        if (completed.get() == subs.size() && data.size() == 0) {
+
+                            onComplete.run();
+                            return;
+                        }
 
 
-                leftSub[0].request(1);
-                rightSub[0].request(1);
+
+                    }
+
+                    while (sent < reqCycle && isOpen && !(completed.get() == subs.size() && data.size() == 0)) {
+
+                        R fromQ = nilsafeOut(data.poll());
+                        if (fromQ != null) {
+                            onNext.accept(fromQ);
+                            requested.decrementAndGet();
+                            sent++;
+                        }
+
+                    }
+                    if (completed.get() == subs.size() && data.size() == 0) {
+
+                        onComplete.run();
+                        return;
+
+                    }
+
+                }
 
 
 
@@ -75,61 +138,29 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>{
             if(!sub.isOpen)
                 return;
 
+
             try {
 
-                if (!rightQ.isEmpty() ) {
-                    R value = fn.apply((T1) e, rightQ.poll());
-                    sub.requested.decrementAndGet();
-                    onNext.accept(value);
-                    rightActive.decrementAndGet();
-                    if(sub.requested.get()>1){
-                        leftSub[0].request(1);
-                        rightSub[0].request(1);
-                    }
-                    /**
-                     * request more / next!
-                     */
+                boolean set = false;
+                while(!set){
+                    Tuple2<T1,T2> local = nextValue.get();
+                    Tuple2<T1,T2> updated = local.map1(__->(T1)e);
+                    set = nextValue.compareAndSet(local,updated);
+                    if(set){
+                        if(updated.v2!=UNSET){
+
+                                while(!data.offer((R)nilsafeIn(checkNull(updated)))){
+
+                                }
 
 
-                } else {
-
-                    if(status.compareAndSet(0,1) && rightQ.isEmpty()) {
-
-                        leftActive.incrementAndGet();
-                        leftQ.offer((T1) e);
-
-
-                        status.set(0);
-                    }else{
-                        status.compareAndSet(1,0);
-
-                        while(rightQ.isEmpty()){ // VALUE IS COMING - RIGHT IS ADDING TO Q
-                            if(rightComplete.get() && rightQ.isEmpty()){
-                                handleComplete(completing,onComplete);
-                                return;
-                            }
-                            LockSupport.parkNanos(0);
                         }
-                        R value = fn.apply((T1) e, rightQ.poll());
-                        sub.requested.decrementAndGet();
-                        onNext.accept(value);
-                        if(sub.requested.get()>1){
-                            leftSub[0].request(1);
-                            rightSub[0].request(1);
-                        }
-                        rightActive.decrementAndGet();
                     }
-
-
                 }
+
+
             } catch (Throwable t) {
                 onError.accept(t);
-            }
-
-            if( (rightComplete.get() && rightQ.isEmpty()) || (leftComplete.get() && leftQ.isEmpty())){
-                leftSub[0].cancel();
-                handleComplete(completing,onComplete);
-
             }
 
 
@@ -137,99 +168,74 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>{
             onError.accept(e);
             leftSub[0].request(1l);
         },()->{
-            leftComplete.set(true);
-
-
-            if (leftActive.get()==0 || rightComplete.get()) {
-                if(rightSub[0]!=null)
-                    rightSub[0].cancel();
-                handleComplete(completing,onComplete);
-
-            }
-
-
+            completed.incrementAndGet();
 
 
         });
         rightSub[0] = right.subscribe(e->{
             if(!sub.isOpen)
                 return;
+
             try {
-                if (!leftQ.isEmpty()) {
-                    R value =fn.apply(leftQ.poll(), (T2) e);
 
-                    sub.requested.decrementAndGet();
-                    onNext.accept(value);
-                    leftActive.decrementAndGet();
-                    if(sub.requested.get()>1){
+                boolean set = false;
+                while(!set){
+                    Tuple2<T1,T2> local = nextValue.get();
+                    Tuple2<T1,T2> updated = local.map2(__->(T2)e);
+                    set = nextValue.compareAndSet(local,updated);
+                    if(set){
+                        if(updated.v1!=UNSET){
+                            while(!data.offer((R)nilsafeIn(checkNull(updated)))){
 
-                        leftSub[0].request(1l);
-                        rightSub[0].request(1);
-                    }
-
-
-                } else {
-
-
-                    if(status.compareAndSet(0,2) && leftQ.isEmpty()) {
-
-                        rightActive.incrementAndGet();
-                        rightQ.offer((T2) e);
-
-
-
-                        status.set(0);
-                    }else {
-
-                        status.compareAndSet(2,0);
-                        while (leftQ.isEmpty()) { // VALUE IS COMING  - LEFT IS ADDING TO Q
-                           if(leftComplete.get() && leftQ.isEmpty()){
-                                handleComplete(completing,onComplete);
-                                return;
                             }
-                            LockSupport.parkNanos(0);
-                        }
-                        R value = fn.apply(leftQ.poll(), (T2) e);
 
-                        sub.requested.decrementAndGet();
-                        onNext.accept(value);
-                        if(sub.requested.get()>1){
-                            leftSub[0].request(1);
-                            rightSub[0].request(1);
                         }
-                        leftActive.decrementAndGet();
                     }
-
                 }
-            }catch(Throwable t){
+                if(sub.requested.get()>1) {
+                    rightSub[0].request(1);
+                }
+
+
+            } catch (Throwable t) {
                 onError.accept(t);
             }
 
-            if( (leftComplete.get() && leftQ.isEmpty()) || (rightComplete.get() && rightQ.isEmpty())){
-                rightSub[0].cancel();
-                handleComplete(completing,onComplete);
 
-            }
 
         },e->{
             onError.accept(e);
             rightSub[0].request(1l);
         },()->{
-
-            rightComplete.set(true);
-
-            if (rightActive.get()==0 || leftComplete.get()) {
-                if(leftSub[0]!=null)
-                    leftSub[0].cancel();
-                handleComplete(completing,onComplete);
-
-            }
-
+            completed.incrementAndGet();
 
 
         });
 
+        subs.add(leftSub[0]);
+        subs.add(rightSub[0]);
+
+
         return sub;
+    }
+
+    private Object nilsafeIn(Object o){
+        if(o==null)
+            return cyclops.async.Queue.NILL;
+        return o;
+    }
+    private <T> T nilsafeOut(Object o){
+        if(cyclops.async.Queue.NILL==o){
+            return null;
+        }
+        return (T)o;
+    }
+
+    private R checkNull(Tuple2<T1, T2> updated) {
+        R res = fn.apply(updated.v1,updated.v2);
+        if(res==null)
+            System.out.println("IT'S NULL!");
+        return res;
     }
 
     private void handleComplete(AtomicBoolean completeSent,Runnable onComplete){
@@ -262,7 +268,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>{
                 return;
             try {
                 if (!leftQ.isEmpty()) {
-                    R value =fn.apply(leftQ.poll(), (T2) e);
+                    R value =fn.apply(leftQ.peek(), (T2) e);
 
 
                     onNext.accept(value);
@@ -291,7 +297,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>{
                             }
                             LockSupport.parkNanos(0);
                         }
-                        R value = fn.apply(leftQ.poll(), (T2) e);
+                        R value = fn.apply(leftQ.peek(), (T2) e);
 
                         onNext.accept(value);
                         leftActive.decrementAndGet();
@@ -333,7 +339,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>{
             try {
 
                 if (!rightQ.isEmpty() ) {
-                    R value = fn.apply((T1) e, rightQ.poll());
+                    R value = fn.apply((T1) e, rightQ.peek());
 
 
                     onNext.accept(value);
@@ -364,7 +370,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>{
                             }
                             LockSupport.parkNanos(0);
                         }
-                        R value = fn.apply((T1) e, rightQ.poll());
+                        R value = fn.apply((T1) e, rightQ.peek());
                         onNext.accept(value);
                         rightActive.decrementAndGet();
                     }
@@ -404,6 +410,5 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>{
         rightSub[0].request(Long.MAX_VALUE);
 
     }
-
 
 }
