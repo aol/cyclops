@@ -8,7 +8,6 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -149,7 +148,7 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
                     if(set){
                         if(updated.v2!=UNSET){
 
-                                while(!data.offer((R)nilsafeIn(checkNull(updated)))){
+                                while(!data.offer((R)nilsafeIn(applyFn(updated)))){
 
                                 }
 
@@ -185,7 +184,7 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
                     set = nextValue.compareAndSet(local,updated);
                     if(set){
                         if(updated.v1!=UNSET){
-                            while(!data.offer((R)nilsafeIn(checkNull(updated)))){
+                            while(!data.offer((R)nilsafeIn(applyFn(updated)))){
 
                             }
 
@@ -231,10 +230,8 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
         return (T)o;
     }
 
-    private R checkNull(Tuple2<T1, T2> updated) {
+    private R applyFn(Tuple2<T1, T2> updated) {
         R res = fn.apply(updated.v1,updated.v2);
-        if(res==null)
-            System.out.println("IT'S NULL!");
         return res;
     }
 

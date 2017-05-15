@@ -76,7 +76,7 @@ public class GroupedByTimeAndSizeSpliterator<T, C extends Collection<? super T>,
     boolean closed =false;
     @Override
     public boolean tryAdvance(Consumer<? super R> action) {
-        System.out.println("Current time  " + System.currentTimeMillis());
+
         if(closed)
             return false;
         if(start ==-1 )
@@ -98,7 +98,7 @@ public class GroupedByTimeAndSizeSpliterator<T, C extends Collection<? super T>,
             }
             
         }
-        System.out.println("Reseting!");
+
 
         if(collection.size()>0) {
             action.accept(finalizer.apply(collection));
