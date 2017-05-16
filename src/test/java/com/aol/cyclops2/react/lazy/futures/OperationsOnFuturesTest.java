@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.internal.react.FutureStreamImpl;
-import com.aol.cyclops2.react.RetryBuilder;
 import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.react.collectors.lazy.MaxActive;
 import cyclops.async.LazyReact;

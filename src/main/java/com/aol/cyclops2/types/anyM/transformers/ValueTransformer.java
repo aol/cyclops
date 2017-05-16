@@ -19,7 +19,7 @@ import cyclops.function.Fn3;
 public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
                                                                             Unwrapable,
                                                                             Unit<T>,
-        Folds<T>,
+                                                                            Folds<T>,
                                                                             Zippable<T>,
         Fn0<T> {
     public abstract <R> ValueTransformer<W,R> empty();

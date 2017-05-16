@@ -59,7 +59,6 @@ import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops2.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
 import com.aol.cyclops2.internal.react.stream.traits.future.operators.OperationsOnFuturesImpl;
 import com.aol.cyclops2.internal.stream.FutureOpterationsImpl;
-import com.aol.cyclops2.react.RetryBuilder;
 import com.aol.cyclops2.react.SimpleReactFailedStageException;
 import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.react.async.subscription.Continueable;
@@ -71,8 +70,6 @@ import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.reactive.FutureStreamSynchronousPublisher;
 import cyclops.function.Fn4;
 import cyclops.function.Fn3;
-import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
-import com.nurkiewicz.asyncretry.RetryExecutor;
 
 import lombok.val;
 
@@ -141,7 +138,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     @Override
     default <R> FutureStream<R> retry(final Function<? super U, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return fromStream(stream().retry(fn,retries,delay,timeUnit));
+        return (FutureStream)ReactiveSeq.super.retry(fn,retries,delay,timeUnit);
     }
 
 
@@ -889,25 +886,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     FutureStream<U> withTaskExecutor(Executor e);
 
-    /*
-     * Change the Retry Executor used in this reactiveStream for subsequent stages
-     * <pre>
-     * {@code
-     * List<String> result = new LazyReact().react(() -> 1)
-                .withRetrier(executor)
-                .(e -> error = e)
-                .retry(serviceMock).block();
-     *
-     * }
-     * </pre>
-     *
-     *
-     *	@param retry Retry executor to use
-     *	@return Stream
-     * @see com.aol.cyclops2.react.reactiveStream.traits.ConfigurableStream#withRetrier(com.nurkiewicz.asyncretry.RetryExecutor)
-     */
-    @Override
-    FutureStream<U> withRetrier(RetryExecutor retry);
+
 
     FutureStream<U> withLazyCollector(Supplier<LazyResultConsumer<U>> lazy);
 
@@ -1227,7 +1206,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     default SimpleReactStream<U> convertToSimpleReact() {
         return new SimpleReact(
-                               getTaskExecutor()).withRetrier(getRetrier())
+                               getTaskExecutor())
                                                  .fromStream((Stream) getLastActive().injectFutures()
                                                                                      .map(f -> {
                                                                                          try {
@@ -1859,15 +1838,17 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default <R> FutureStream<R> retry(final Function<? super U, ? extends R> fn) {
 
-        return (FutureStream) LazySimpleReactStream.super.retry(fn);
+        return (FutureStream) ReactiveSeq.super.retry(fn);
     }
 
+
+
     /*
-     * Convert the specified Stream to a FutureStream, using the configuration
-     * of this FutureStream (task executors, current config settings)
-     *
-     * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#fromStream(java.util.reactiveStream.Stream)
-     */
+         * Convert the specified Stream to a FutureStream, using the configuration
+         * of this FutureStream (task executors, current config settings)
+         *
+         * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#fromStream(java.util.reactiveStream.Stream)
+         */
     @Override
     default <R> FutureStream<R> fromStream(final Stream<R> stream) {
         return this.withLastActive(getLastActive().withNewStream(stream, this.getSimpleReact()));
@@ -3433,7 +3414,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super U> consumer) {
-        val t2 = LazyFutureStreamUtils.forEachX(this, numberOfElements, consumer);
+        Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> t2 = LazyFutureStreamUtils.forEachX(this, numberOfElements, consumer);
         t2.v2.run();
         return t2.v1.join();
     }
@@ -3474,7 +3455,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super U> consumer,
                                                        final Consumer<? super Throwable> consumerError) {
-        val t2 = LazyFutureStreamUtils.forEachXWithError(this, numberOfElements, consumer, consumerError);
+        Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> t2 = LazyFutureStreamUtils.forEachXWithError(this, numberOfElements, consumer, consumerError);
         t2.v2.run();
         return t2.v1.join();
     }
