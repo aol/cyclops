@@ -1,4 +1,4 @@
-package com.aol.cyclops2.internal.comprehensions.comprehenders;
+package com.aol.cyclops2.internal.adapters;
 
 import static cyclops.monads.AnyM.fromCompletableFuture;
 import static cyclops.monads.Witness.completableFuture;

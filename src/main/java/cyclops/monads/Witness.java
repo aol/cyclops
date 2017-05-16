@@ -8,7 +8,7 @@ import java.util.SortedSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.internal.comprehensions.comprehenders.*;
+import com.aol.cyclops2.internal.adapters.*;
 import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.control.Ior;
@@ -17,6 +17,7 @@ import cyclops.control.either.Either;
 import cyclops.control.either.Either3;
 import cyclops.control.either.Either4;
 import cyclops.control.either.Either5;
+import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import cyclops.control.Try;
@@ -45,8 +46,11 @@ public interface Witness {
     public static <T> Stream<T> stream(AnyM<stream,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> ReactiveSeq<T> reactiveSeq(AnyM<stream,? extends T> anyM){
-        return ReactiveSeq.fromStream(anyM.unwrap());
+    public static <T> ReactiveSeq<T> reactiveSeq(AnyM<reactiveSeq,? extends T> anyM){
+        return anyM.unwrap();
+    }
+    public static <T> FutureStream<T> futureStream(AnyM<futureStream,? extends T> anyM){
+        return anyM.unwrap();
     }
     public static <T> Streamable<T> streamable(AnyM<streamable,? extends T> anyM){
         return anyM.unwrap();
@@ -127,15 +131,31 @@ public interface Witness {
         }
         
     }
-    public static enum reactiveSeq implements StreamWitness<reactiveSeq>{
+    public static enum futureStream implements StreamWitness<futureStream>{
         INSTANCE;
 
         @Override
+        public  FunctionalAdapter<futureStream> adapter() {
+            return StreamAdapter.futureStream;
+        }
+
+    }
+    public static enum reactiveSeq implements StreamWitness<reactiveSeq>{
+
+        REACTIVE(ReactiveAdapter.reactiveSeq),CO_REACTIVE(StreamAdapter.reactiveSeq);
+        private final FunctionalAdapter<reactiveSeq> adapter;
+
+        reactiveSeq(FunctionalAdapter<reactiveSeq> adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
         public  FunctionalAdapter<reactiveSeq> adapter() {
-            return StreamAdapter.reactiveSeq;
+            return adapter;
         }
         
     }
+
     public static enum sortedSet implements CollectionXWitness<sortedSet>{
         INSTANCE;
 
@@ -222,7 +242,7 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<tryType> adapter() {
-            return new MonadicValueAdapter<Witness.tryType>(()->Try.failure(null),
+            return new MonadicValueAdapter<tryType>(()->Try.failure(null),
                     Try::success,Try::fromIterable,false,this);
         }
         

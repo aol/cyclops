@@ -1,8 +1,13 @@
-package com.aol.cyclops2.internal.comprehensions.comprehenders;
+package com.aol.cyclops2.internal.adapters;
 
-import static cyclops.monads.AnyM.fromStream;
-import static cyclops.Streams.zipSequence;
-import static cyclops.monads.Witness.stream;
+import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
+import cyclops.Streams;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
+import lombok.AllArgsConstructor;
+import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -10,24 +15,19 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
-import cyclops.Streams;
-import cyclops.monads.Witness;
-import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
-
-import lombok.AllArgsConstructor;
+import static cyclops.Streams.zipSequence;
+import static cyclops.monads.AnyM.fromStream;
 
 @AllArgsConstructor
-public class StreamAdapter<W extends Witness.StreamWitness<W>> extends  AbstractFunctionalAdapter<W> {
+public class ReactiveAdapter<W extends Witness.StreamWitness<W>> extends  AbstractFunctionalAdapter<W> {
     
     private final Supplier<Stream<?>> empty;
     private final Function<?,Stream<?>> unit;
     private final Function<Iterator<?>,Stream<?>> unitIterator;
     private final W witness;
-    public final static StreamAdapter stream = new StreamAdapter( ()->Stream.of(), t->Stream.of(t), it-> (Stream)Streams.stream(()->(Iterator)it),Witness.stream.INSTANCE);
 
-    public final static StreamAdapter reactiveSeq = new StreamAdapter(()->ReactiveSeq.of(),t->ReactiveSeq.of(t),it->(Stream)ReactiveSeq.fromIterator((Iterator)it),Witness.reactiveSeq.INSTANCE);
+
+    public final static ReactiveAdapter reactiveSeq = new ReactiveAdapter(()->Spouts.of(), t->Spouts.of(t), it->(Stream)ReactiveSeq.fromIterator((Iterator)it),Witness.reactiveSeq.REACTIVE);
 
     private <U> Supplier<Stream<U>> getEmpty(){
         return (Supplier)empty;
@@ -72,6 +72,12 @@ public class StreamAdapter<W extends Witness.StreamWitness<W>> extends  Abstract
 
     @Override
     public <T> AnyM<W, T> unitIterable(Iterable<T> it)  {
+        if(it instanceof ReactiveSeq){
+            return fromStream((ReactiveSeq<T>)it,witness);
+        }
+        if(it instanceof Publisher){
+            return fromStream(Spouts.from((Publisher)it),witness);
+        }
        return fromStream(this.<T>getUnitIterator().apply(it.iterator()),witness);
     }
    

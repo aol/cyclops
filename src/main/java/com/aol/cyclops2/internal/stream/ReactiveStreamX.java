@@ -1,8 +1,6 @@
 package com.aol.cyclops2.internal.stream;
 
-import com.aol.cyclops2.internal.stream.spliterators.IteratableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
-import com.aol.cyclops2.types.Traversable;
 import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
@@ -13,7 +11,6 @@ import cyclops.async.*;
 import cyclops.async.Queue;
 import cyclops.async.wait.DirectWaitStrategy;
 import cyclops.collections.ListX;
-import cyclops.collections.SetX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Maybe;
 import cyclops.control.either.Either;
@@ -25,7 +22,6 @@ import cyclops.stream.Spouts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
-import lombok.val;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -39,15 +35,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static com.aol.cyclops2.internal.comprehensions.comprehenders.StreamAdapter.stream;
+import static com.aol.cyclops2.internal.adapters.StreamAdapter.stream;
 
 
 @AllArgsConstructor

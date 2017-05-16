@@ -1,4 +1,4 @@
-package com.aol.cyclops2.internal.comprehensions.comprehenders;
+package com.aol.cyclops2.internal.adapters;
 
 import static cyclops.monads.AnyM.fromStreamable;
 import static cyclops.monads.Witness.streamable;
