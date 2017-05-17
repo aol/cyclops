@@ -416,7 +416,7 @@ public class SpoutsTest {
             sub.onComplete();
 
 
-            // Flux.just(1,2).subscribeAll(sub);
+            // Flux.just(1,2).forEachAsync(sub);
 
 
         }).start();

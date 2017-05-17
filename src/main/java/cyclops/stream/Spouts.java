@@ -26,8 +26,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -107,7 +105,7 @@ public interface Spouts {
         Future<Subscription> sub = Future.future();
         ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
             Subscriber<T> local = subscriber.get();
-            sub.complete(t.subscribe(local::onNext,local::onError,local::onComplete));
+            sub.complete(t.forEachSubscribe(local::onNext,local::onError,local::onComplete));
 
             return null;
         });

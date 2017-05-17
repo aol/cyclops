@@ -163,20 +163,20 @@ public interface FoldableTraversable<T> extends Fn1<Long,T>,
         return stream().headAndTail();
     }
     @Override
-    default <X extends Throwable> Subscription subscribe(Consumer<? super T> consumer){
-        Subscription result = CyclopsCollectable.super.subscribe(consumer,e->e.printStackTrace(),()->{});
+    default <X extends Throwable> Subscription forEachSubscribe(Consumer<? super T> consumer){
+        Subscription result = CyclopsCollectable.super.forEachSubscribe(consumer, e->e.printStackTrace(),()->{});
         return result;
     }
 
     @Override
-    default <X extends Throwable> Subscription subscribe(Consumer<? super T> consumer, Consumer<? super Throwable> consumerError){
-        Subscription result = CyclopsCollectable.super.subscribe(consumer,consumerError,()->{});
+    default <X extends Throwable> Subscription forEachSubscribe(Consumer<? super T> consumer, Consumer<? super Throwable> consumerError){
+        Subscription result = CyclopsCollectable.super.forEachSubscribe(consumer,consumerError,()->{});
         return result;
     }
 
     @Override
-    default <X extends Throwable> Subscription subscribe(Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
-        Subscription result = CyclopsCollectable.super.subscribe(consumer,consumerError,onComplete);
+    default <X extends Throwable> Subscription forEachSubscribe(Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
+        Subscription result = CyclopsCollectable.super.forEachSubscribe(consumer,consumerError,onComplete);
         return result;
     }
     @Override

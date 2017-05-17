@@ -85,7 +85,7 @@ public class Javaone {
         SeqSubscriber<Integer> sub = SeqSubscriber.reactiveSubscriber();
         Flux.just(1,2,3,4)
             .map(i->i*2)
-            .subscribeAll(sub);
+            .forEachAsync(sub);
         
         ReactiveSeq<Integer> connected = sub.reactiveStream();
         

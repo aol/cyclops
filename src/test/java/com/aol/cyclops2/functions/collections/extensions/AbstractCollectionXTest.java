@@ -79,7 +79,7 @@ public abstract class AbstractCollectionXTest {
     @Test
     public void subscribeEmpty(){
         List result = new ArrayList<>();
-        Subscription s= of().subscribe(i->result.add(i));
+        Subscription s= of().forEachSubscribe(i->result.add(i));
         s.request(1l);
         assertThat(result.size(),equalTo(0));
         s.request(1l);
@@ -91,7 +91,7 @@ public abstract class AbstractCollectionXTest {
     @Test
     public void subscribe(){
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i));
         s.request(1l);
         assertThat(result.size(),equalTo(1));
         s.request(1l);
@@ -103,7 +103,7 @@ public abstract class AbstractCollectionXTest {
     @Test
     public void subscribe3(){
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i));
         s.request(3l);
         assertThat(result.size(),equalTo(3));
         assertThat(result,hasItems(1,2,3));
@@ -111,7 +111,7 @@ public abstract class AbstractCollectionXTest {
     @Test
     public void subscribeErrorEmpty(){
         List result = new ArrayList<>();
-        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace());
+        Subscription s= of().forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(1l);
         assertThat(result.size(),equalTo(0));
         s.request(1l);
@@ -123,7 +123,7 @@ public abstract class AbstractCollectionXTest {
     @Test
     public void subscribeError(){
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(1l);
         assertThat(result.size(),equalTo(1));
         s.request(1l);
@@ -135,7 +135,7 @@ public abstract class AbstractCollectionXTest {
     @Test
     public void subscribe3Error(){
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(3l);
         assertThat(result.size(),equalTo(3));
         assertThat(result,hasItems(1,2,3));
@@ -144,7 +144,7 @@ public abstract class AbstractCollectionXTest {
     public void subscribeErrorEmptyOnComplete(){
         List result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of().forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
         s.request(1l);
         assertThat(onComplete.get(),equalTo(true));
         assertThat(result.size(),equalTo(0));
@@ -158,7 +158,7 @@ public abstract class AbstractCollectionXTest {
     public void subscribeErrorOnComplete(){
         List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
 
         assertThat(onComplete.get(),equalTo(false));
         s.request(1l);
@@ -177,7 +177,7 @@ public abstract class AbstractCollectionXTest {
     public void subscribe3ErrorOnComplete(){
         List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
         assertThat(onComplete.get(),equalTo(false));
         s.request(4l);
         assertThat(onComplete.get(),equalTo(true));

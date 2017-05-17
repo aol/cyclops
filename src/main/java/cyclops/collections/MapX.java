@@ -378,7 +378,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#subscribeAll(org.reactivestreams.Subscriber)
+     * @see com.aol.cyclops2.types.Traversable#forEachAsync(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super Tuple2<K, V>> s) {

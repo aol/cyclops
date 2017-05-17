@@ -17,7 +17,6 @@ import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.*;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
-import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.Streams;
 import cyclops.async.*;
@@ -25,7 +24,6 @@ import cyclops.async.Queue;
 import cyclops.collections.ListX;
 import cyclops.collections.MapX;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.either.Either;
@@ -1763,7 +1761,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Performs an action for each element of this Stream.
      *
-     * For potentially non-blocking analogs see {@link ReactiveSeq#subscribeAll(Consumer)}   and forEach overloads
+     * For potentially non-blocking analogs see {@link ReactiveSeq#forEachAsync(Consumer)}   and forEach overloads
      * such as {@link ReactiveSeq#forEach(Consumer, Consumer)} and {@link ReactiveSeq#forEach(Consumer, Consumer,Runnable)}
      *
      * This method overrides the JDK {@link java.util.stream.Stream#forEach(Consumer)}  and maintains it's blocking
@@ -1794,7 +1792,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param action a <a href="package-summary.html#NonInterference">
      *               non-interfering</a> action to perform on the elements
      */
-    default void subscribeAll(final Consumer<? super T> action){
+    default void forEachAsync(final Consumer<? super T> action){
         forEach(action);
     }
     /**
@@ -4567,7 +4565,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#mergePublisher(Collection, QueueFactory)}
-     * method to subscribeAll asynchronously also. Max concurrency is determined by the publishers collection size, along with a default limit of 5k queued values before
+     * method to forEachAsync asynchronously also. Max concurrency is determined by the publishers collection size, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param publishers Publishers to merge

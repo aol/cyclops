@@ -757,17 +757,17 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * Subscribe to this Stream
      * If this Stream is executing in async mode it will operate as an Async Publisher, otherwise it will operate as a Synchronous publisher.
-     * async() or sync() can be used just prior to subscribeAll.
+     * async() or sync() can be used just prior to forEachAsync.
      *
      * <pre>
      * {@code
      *  FutureStreamSubscriber<Integer> sub = new FutureStreamSubscriber();
-        FutureStream.of(1,2,3).subscribeAll(sub);
+        FutureStream.of(1,2,3).forEachAsync(sub);
         sub.getStream().forEach(System.out::println);
      * }
      * </pre>
      *	@param s Subscriber
-     * @see org.reactivestreams.Publisher#subscribeAll(org.reactivestreams.Subscriber)
+     * @see org.reactivestreams.Publisher#forEachAsync(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super U> s) {
@@ -3124,7 +3124,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *               non-interfering</a> action to perform on the elements
      */
     @Override
-    default void subscribeAll(final Consumer<? super U> action){
+    default void forEachAsync(final Consumer<? super U> action){
             peek(action).run();
     }
     @Override

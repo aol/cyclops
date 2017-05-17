@@ -164,7 +164,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
             Subscription sub[] = {null};
-            //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
+            //may be quicker to use forEachAsync and throw an Exception with fillInStackTrace overriden
             sub[0] = source.subscribe(e -> {
 
                     result.complete(e);
@@ -208,7 +208,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
         Subscription sub[] = {null};
-        //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
+        //may be quicker to use forEachAsync and throw an Exception with fillInStackTrace overriden
         sub[0] = stream.source.subscribe(e -> {
 
             result.complete(e);
@@ -375,7 +375,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
         final ReactiveSeq<T> stream = stream();
         Subscription sub = stream.map(mapper)
-                .subscribe(p -> {
+                .forEachSubscribe(p -> {
                     c.active.incrementAndGet();
                     p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));
 
@@ -597,7 +597,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public void subscribeAll(final Consumer<? super T> action) {
+    public void forEachAsync(final Consumer<? super T> action) {
         if(async==Type.NO_BACKPRESSURE)
             source.subscribeAll(action, this.defaultErrorHandler,()->{});
         else
@@ -871,22 +871,22 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public <X extends Throwable> Subscription subscribe(final Consumer<? super T> consumer) {
+    public <X extends Throwable> Subscription forEachSubscribe(final Consumer<? super T> consumer) {
         StreamSubscription sub = source.subscribe(consumer, this.defaultErrorHandler, ()->{});
         return sub;
     }
 
     @Override
-    public <X extends Throwable> Subscription subscribe(final Consumer<? super T> consumer,
-                                                      final Consumer<? super Throwable> consumerError) {
+    public <X extends Throwable> Subscription forEachSubscribe(final Consumer<? super T> consumer,
+                                                               final Consumer<? super Throwable> consumerError) {
 
         StreamSubscription sub = source.subscribe(consumer, consumerError, ()->{});
         return sub;
     }
 
     @Override
-    public <X extends Throwable> Subscription subscribe(final Consumer<? super T> consumer,
-                                                      final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
+    public <X extends Throwable> Subscription forEachSubscribe(final Consumer<? super T> consumer,
+                                                               final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
         StreamSubscription sub = source.subscribe(consumer, consumerError, onComplete);
         return sub;
     }
@@ -1146,7 +1146,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         if(this.async==Type.BACKPRESSURE){
             ConcurrentLinkedQueue<Subscriber> subs = new ConcurrentLinkedQueue<>();
             ListX<ReactiveSeq<T>> result = ListX.empty();
-            Subscription sub =subscribe(e -> subs.forEach(s -> s.onNext(e)), ex -> subs.forEach(s -> s.onError(ex)), () -> subs.forEach(s -> s.onComplete()));
+            Subscription sub = forEachSubscribe(e -> subs.forEach(s -> s.onNext(e)), ex -> subs.forEach(s -> s.onError(ex)), () -> subs.forEach(s -> s.onComplete()));
             for(int i=0;i<num;i++) {
                 ReactiveSeq<T> seq = new ReactiveStreamX<T>(new PublisherToOperator<T>(new Publisher<T>() {
                     @Override
@@ -1357,7 +1357,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
         Subscription sub[] = {null};
-        //may be quicker to use subscribeAll and throw an Exception with fillInStackTrace overriden
+        //may be quicker to use forEachAsync and throw an Exception with fillInStackTrace overriden
         sub[0] = filtered.source.subscribe(e -> {
             result.complete(true);
             sub[0].cancel();

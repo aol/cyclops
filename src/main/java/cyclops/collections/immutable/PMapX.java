@@ -256,7 +256,7 @@ public interface PMapX<K, V>
 
 
     /* (non-Javadoc)
-     * @see org.reactivestreams.Publisher#subscribeAll(org.reactivestreams.Subscriber)
+     * @see org.reactivestreams.Publisher#forEachAsync(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super Tuple2<K, V>> s) {

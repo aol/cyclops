@@ -1,19 +1,13 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.flatMap.publisher;
 
-import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
-import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
-import cyclops.async.QueueFactories;
-import cyclops.async.wait.DirectWaitStrategy;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
@@ -28,8 +22,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
 import static cyclops.stream.Spouts.of;
@@ -55,7 +47,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapFlux(){
-        flux(1, 2, 3).subscribe(System.out::println).request(Long.MAX_VALUE);
+        flux(1, 2, 3).forEachSubscribe(System.out::println).request(Long.MAX_VALUE);
        for(int i=0;i<100;i++){
             System.out.println("************Iteration " + i);
             System.out.println("************Iteration " + i);
@@ -363,7 +355,7 @@ public class FlatMapPublisherTest {
         Flux.just(1, 2, 3).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool()))
                 .flatMap(i -> flux(i, 1, 2, 3))
                 .subscribe(System.out::println);
-        // .subscribeAll(System.out::println);
+        // .forEachAsync(System.out::println);
 /**
  Spouts.of(1,2,3)
  .flatMap(i->flux(i,1,2,3))

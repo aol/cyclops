@@ -23,7 +23,7 @@ public class PublisherFlatMap2TckPublisherTest{//} extends PublisherVerification
 
 //	@Override
 	public Publisher<Long> createFailedPublisher() {
-		return null; //not possible to subscribeAll to failed Stream
+		return null; //not possible to forEachAsync to failed Stream
 		
 	}
 //	@Override @Test

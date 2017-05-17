@@ -106,7 +106,7 @@ public class MaybeTest implements Printable {
               .map(i->i*2))
                 .peek(System.out::println)
                 .map(i->i*100)
-                .subscribeAll(e->result.complete(e));
+                .forEachAsync(e->result.complete(e));
 
 
         assertFalse(result.isDone());
