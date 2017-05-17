@@ -44,6 +44,20 @@ public class AsyncJDKStreamTest {
             .collect(Collectors.toList()).block());
     }
     @Test
+    public void flatMapPub1(){
+        for(int l=0;l<10_000;l++) {
+            System.out.println("************Iteration " + l);
+            System.out.println("************Iteration " + l);
+            System.out.println("************Iteration " + l);
+
+            System.out.println(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                    .flatMapP(i -> of(i, i * 2, i * 4)
+                            .flatMapP(2,x -> rs(5, 6, 7)))
+                    .toListX());
+
+        }
+    }
+    @Test
     public void flatMapPub(){
         for(int l=0;l<1_000;l++) {
             System.out.println("************Iteration " + l);
@@ -54,11 +68,7 @@ public class AsyncJDKStreamTest {
                     .flatMapP(i -> of(i, i * 2, i * 4)
                             .flatMapP(x -> rs(5, 6, 7)))
                     .toListX());
-           /**
-            System.out.println(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP(i -> of(i, i * 2, i * 4))
-                    .toListX());
-            **/
+
         }
     }
 	@Test

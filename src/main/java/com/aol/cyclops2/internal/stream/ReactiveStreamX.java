@@ -12,6 +12,7 @@ import cyclops.Streams;
 import cyclops.async.*;
 import cyclops.async.Queue;
 import cyclops.async.wait.DirectWaitStrategy;
+import cyclops.async.wait.ExponentialBackofWaitStrategy;
 import cyclops.collections.ListX;
 import cyclops.collections.SetX;
 import cyclops.collections.immutable.PVectorX;
@@ -375,7 +376,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public final <R> ReactiveSeq<R> flatMapP(int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> fn) {
         return flatMapP(maxConcurrency, QueueFactories.unboundedNonBlockingQueue(new DirectWaitStrategy<>()),fn);
-
     }
     public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory,Function<? super T, ? extends Publisher<? extends R>> mapper) {
 

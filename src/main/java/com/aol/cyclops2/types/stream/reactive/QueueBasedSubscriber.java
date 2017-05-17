@@ -253,7 +253,6 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
         counter.active.decrementAndGet();
         counter.subscription.minus(subscription);
-        System.out.println("Upstream complete! " + counter.active + " " + counter.completable + "Added so far " + counter.added);
         if (queue != null && counter.active.get() == 0) {
 
             if (counter.completable) {
