@@ -2,6 +2,7 @@ package cyclops;
 
 import cyclops.collections.*;
 import cyclops.collections.immutable.*;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 import org.pcollections.*;
 
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
 public class ConvertersTest {
     @Test
     public void convert(){
+
         LinkedList<Integer> list1 = ListX.of(1,2,3).to(Converters::LinkedList);
         ArrayList<Integer> list2 = ListX.of(1,2,3).to(Converters::ArrayList);
 
