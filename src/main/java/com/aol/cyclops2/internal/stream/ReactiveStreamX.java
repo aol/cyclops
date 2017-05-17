@@ -1,19 +1,16 @@
 package com.aol.cyclops2.internal.stream;
 
-import com.aol.cyclops2.internal.stream.spliterators.IteratableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
-import com.aol.cyclops2.types.Traversable;
 import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.CyclopsCollectors;
-import cyclops.Streams;
+import cyclops.companion.Collectors;
+import cyclops.companion.Streams;
 import cyclops.async.*;
 import cyclops.async.Queue;
 import cyclops.async.wait.DirectWaitStrategy;
 import cyclops.collections.ListX;
-import cyclops.collections.SetX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Maybe;
 import cyclops.control.either.Either;
@@ -25,7 +22,6 @@ import cyclops.stream.Spouts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
-import lombok.val;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -39,11 +35,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -1079,7 +1073,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public ReactiveSeq<T> cycle() {
 
-        ReactiveSeq<T> cycling =  collectAll(CyclopsCollectors.toListX())
+        ReactiveSeq<T> cycling =  collectAll(Collectors.toListX())
                                     .map(s -> s.stream().cycle(Long.MAX_VALUE))
                                     .flatMap(i->i);
         return createSeq(new IterableSourceOperator<T>(cycling),Type.SYNC);

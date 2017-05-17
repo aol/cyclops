@@ -2,10 +2,10 @@ package com.aol.cyclops2.control;
 
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;
-import cyclops.Monoids;
-import cyclops.Reducers;
-import cyclops.Semigroups;
-import cyclops.Streams;
+import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import cyclops.collections.box.Mutable;

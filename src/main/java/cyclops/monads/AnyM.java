@@ -25,7 +25,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.control.either.Either;
 import cyclops.control.either.Either3;
@@ -71,7 +71,7 @@ import cyclops.monads.Witness.*;
 import cyclops.monads.Witness.future;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.stream.ToStream;
-import cyclops.Optionals;
+import cyclops.companion.Optionals;
 
 /**
  * 

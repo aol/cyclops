@@ -2,7 +2,7 @@ package com.aol.cyclops2.control.anym;
 
 import cyclops.async.Future;
 import cyclops.function.Monoid;
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import cyclops.monads.Witness;
 import org.junit.Before;
 

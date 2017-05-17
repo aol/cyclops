@@ -130,7 +130,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
 
     @Test
     public void testCycleAsync() {
-      //  of(1, 2).collectAll(CyclopsCollectors.toListX())
+      //  of(1, 2).collectAll(Collectors.toListX())
         //        .flatMapI(i->i.cycle(3)).printOut();
 
        // of(1, 2).cycle().limit(6).forEach(n->System.out.println("Next " + n));

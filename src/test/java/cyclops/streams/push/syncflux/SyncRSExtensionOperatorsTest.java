@@ -1,9 +1,8 @@
 package cyclops.streams.push.syncflux;
 
 
-import cyclops.Semigroups;
-import cyclops.Streams;
-import cyclops.async.Future;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
 import cyclops.monads.AnyM;

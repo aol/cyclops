@@ -1,12 +1,10 @@
 package com.aol.cyclops2.types.futurestream;
 
-import com.aol.cyclops2.internal.react.stream.BaseSimpleReact;
-import com.aol.cyclops2.types.Transformable;
 import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.async.SimpleReact;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.Queue;
 import cyclops.async.QueueFactory;
 import cyclops.collections.ListX;

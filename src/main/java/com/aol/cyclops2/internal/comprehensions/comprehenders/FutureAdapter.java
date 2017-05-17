@@ -2,7 +2,7 @@ package com.aol.cyclops2.internal.comprehensions.comprehenders;
 
 import static cyclops.monads.AnyM.fromCompletableFuture;
 import static cyclops.monads.Witness.completableFuture;
-import static cyclops.CompletableFutures.combine;
+import static cyclops.companion.CompletableFutures.combine;
 
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
@@ -15,7 +15,7 @@ import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.monads.Witness;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 import com.aol.cyclops2.types.extensability.ValueAdapter;
-import cyclops.CompletableFutures;
+import cyclops.companion.CompletableFutures;
 
 import lombok.AllArgsConstructor;
 

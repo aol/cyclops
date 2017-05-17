@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;

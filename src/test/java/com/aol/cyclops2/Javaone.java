@@ -5,10 +5,9 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.async.Queue;
 import cyclops.async.QueueFactories;

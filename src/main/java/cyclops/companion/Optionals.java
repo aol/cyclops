@@ -1,4 +1,4 @@
-package cyclops;
+package cyclops.companion;
 
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -13,7 +13,6 @@ import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.WitnessType;
-import cyclops.monads.transformers.MaybeT;
 import cyclops.monads.transformers.OptionalT;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;

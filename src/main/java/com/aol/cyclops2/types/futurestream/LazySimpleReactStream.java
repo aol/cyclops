@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
@@ -15,7 +14,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import cyclops.async.LazyReact;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.QueueFactory;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;

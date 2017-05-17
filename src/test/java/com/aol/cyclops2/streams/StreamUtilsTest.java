@@ -20,12 +20,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;

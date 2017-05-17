@@ -3,8 +3,8 @@ package cyclops.collections;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.CyclopsCollectors;
-import cyclops.Streams;
+import cyclops.companion.Collectors;
+import cyclops.companion.Streams;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
@@ -40,7 +39,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     public static class µ {
     }
     static <T> Collector<T, ?, Queue<T>> defaultCollector() {
-        return Collectors.toCollection(() -> new LinkedList<>());
+        return java.util.stream.Collectors.toCollection(() -> new LinkedList<>());
     }
 
     /**
@@ -1324,7 +1323,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         }
 
         private static  <T> QueueX<T> concat(Queue<T> l1, Queue<T> l2){
-            return Stream.concat(l1.stream(),l2.stream()).collect(CyclopsCollectors.toQueueX());
+            return Stream.concat(l1.stream(),l2.stream()).collect(Collectors.toQueueX());
         }
         private <T> QueueX<T> of(T value){
             return QueueX.of(value);

@@ -2,9 +2,9 @@ package com.aol.cyclops2.functions.collections.extensions;
 
 import java.util.Arrays;
 
+import cyclops.companion.Collectors;
 import org.junit.Test;
 
-import cyclops.CyclopsCollectors;
 import cyclops.collections.DequeX;
 import cyclops.collections.ListX;
 import cyclops.collections.QueueX;
@@ -35,7 +35,7 @@ public class ExampleTest {
 								.flatMap(i->Arrays.asList(i+2,10))
 								 .plus(5)
 								 .map(i->"hello" + i).toSetX()
-								 .collect(CyclopsCollectors.toSetX());
+								 .collect(Collectors.toSetX());
 		
 		set.printOut();
 					

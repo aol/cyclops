@@ -15,7 +15,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.stream.FutureStream;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;

@@ -1,6 +1,6 @@
 package com.aol.cyclops2.data.collections.extensions.persistent;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;

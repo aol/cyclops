@@ -1,9 +1,9 @@
 package com.aol.cyclops2.sum.types;
 
-import cyclops.Monoids;
-import cyclops.Reducers;
-import cyclops.Semigroups;
-import cyclops.Streams;
+import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.ListX;

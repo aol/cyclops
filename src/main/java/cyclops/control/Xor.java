@@ -2,7 +2,7 @@ package cyclops.control;
 
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.collections.ListX;
@@ -10,7 +10,7 @@ import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.monads.Witness;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.function.Curry;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;

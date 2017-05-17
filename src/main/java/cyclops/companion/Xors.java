@@ -1,4 +1,4 @@
-package cyclops;
+package cyclops.companion;
 
 import cyclops.monads.AnyM;
 import cyclops.control.Xor;
@@ -17,7 +17,7 @@ import java.util.concurrent.BlockingQueue;
  * @author johnmcclean
  *
  */
-public class Matchables {
+public class Xors {
 
    
 
@@ -31,7 +31,7 @@ public class Matchables {
      *     Adapter<Integer> adapter = QueueFactories.<Integer>unboundedQueue()
      *                                              .build();
      *                                              
-     *     String result =   Matchables.adapter(adapter)
+     *     String result =   Xors.adapter(adapter)
                                        .visit(queue->"we have a queue",topic->"we have a topic");
      *                      
      *    //"we have a queue"                                                  
@@ -50,7 +50,7 @@ public class Matchables {
      * 
      * <pre>
      * {@code 
-     *  Eval<Integer> result = Matchables.future(CompletableFuture.completedFuture(10))
+     *  Eval<Integer> result = Xors.future(CompletableFuture.completedFuture(10))
                                          .matches(c-> 
                                                      c.is( when(some(10)), transform(20)),  //success
                                                       
@@ -77,14 +77,14 @@ public class Matchables {
      * Pattern Match on a FutureW handling success and failure cases differently
      * <pre>
      * {@code 
-     *  Eval<Integer> result = Matchables.future(FutureW.ofResult(1))
+     *  Eval<Integer> result = Xors.future(FutureW.ofResult(1))
                                          .matches(c-> c.is( when(some(1)), transform(10)),
                                                   c->c.is(when(instanceOf(RuntimeException.class)), transform(2)),
                                                   otherwise(3));
         
         //Eval.now[10]
      * 
-     *  Eval<Integer> result = Matchables.future(FutureW.ofError(new RuntimeException()))
+     *  Eval<Integer> result = Xors.future(FutureW.ofError(new RuntimeException()))
                                          .matches(c-> c.is( when(some(10)), transform(2)),
                                                   c->c.is(when(instanceOf(RuntimeException.class)), transform(2)),
                                                   otherwise(3));
@@ -126,12 +126,12 @@ USE EITHER
      * 
      * <pre>
      * {@code 
-     *  Matchables.blocking(new ManyToManyConcurrentArrayQueue(10))
+     *  Xors.blocking(new ManyToManyConcurrentArrayQueue(10))
                   .visit(c->"blocking", c->"not")
          //"not"
     
    
-       Matchables.blocking(new LinkedBlockingQueue(10))
+       Xors.blocking(new LinkedBlockingQueue(10))
                  .visit(c->"blocking", c->"not")
         //"blocking
      * 

@@ -2,7 +2,7 @@ package cyclops.collections;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySortedSetX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;

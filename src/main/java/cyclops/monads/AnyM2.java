@@ -6,7 +6,7 @@ import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.stream.ToStream;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collections.ListX;
 import cyclops.control.*;

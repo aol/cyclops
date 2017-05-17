@@ -1,8 +1,7 @@
-package cyclops;
+package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.spliterators.*;
-import cyclops.collections.box.LazyImmutable;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
@@ -108,7 +107,7 @@ public class Streams {
      *  <pre>
      * {@code
      *
-     *   import static cyclops.Streams.forEach4;
+     *   import static cyclops.companion.Streams.forEach4;
      *
           forEach4(IntStream.range(1,10).boxed(),
                    a-> Stream.iterate(a,i->i+1).limit(10),
@@ -390,7 +389,7 @@ public class Streams {
      */
     public final static <T> Optional<ListX<T>> streamToOptional(final Stream<T> stream) {
         
-        final List<T> collected = stream.collect(Collectors.toList());
+        final List<T> collected = stream.collect(java.util.stream.Collectors.toList());
         if (collected.size() == 0)
             return Optional.empty();
         return Optional.of(ListX.fromIterable(collected));
@@ -425,7 +424,7 @@ public class Streams {
      * @return CompletableFuture with a List of values
      */
     public final static <T> CompletableFuture<List<T>> streamToCompletableFuture(final Stream<T> stream) {
-        return CompletableFuture.completedFuture(stream.collect(CyclopsCollectors.toListX()));
+        return CompletableFuture.completedFuture(stream.collect(Collectors.toListX()));
 
     }
 
@@ -1284,7 +1283,7 @@ public class Streams {
      * @return Reversed reactiveStream
      */
     public static <U> Stream<U> reverse(final Stream<U> stream) {
-        return ReactiveSeq.of(1).flatMap(i->reversedStream(stream.collect(Collectors.toList())));
+        return ReactiveSeq.of(1).flatMap(i->reversedStream(stream.collect(java.util.stream.Collectors.toList())));
 
     }
 
@@ -1489,7 +1488,7 @@ public class Streams {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static <R> ListX<R> reduce(final Stream<R> stream, final Stream<? extends Monoid<R>> reducers) {
-        return reduce(stream, ListX.fromIterable((List) reducers.collect(Collectors.toList())));
+        return reduce(stream, ListX.fromIterable((List) reducers.collect(java.util.stream.Collectors.toList())));
 
     }
 
@@ -1785,7 +1784,7 @@ public class Streams {
     }
 
     public final static <T> Streamable<T> shuffle(final Stream<T> stream) {
-        final List<T> list = stream.collect(Collectors.toList());
+        final List<T> list = stream.collect(java.util.stream.Collectors.toList());
         Collections.shuffle(list);
         return Streamable.fromIterable(list);
     }
@@ -1862,7 +1861,7 @@ public class Streams {
     public static <T> boolean xMatch(final Stream<T> stream, final int num, final Predicate<? super T> c) {
 
         return stream.filter(t -> c.test(t))
-                     .collect(Collectors.counting()) == num;
+                     .collect(java.util.stream.Collectors.counting()) == num;
     }
 
     /**
@@ -1879,17 +1878,17 @@ public class Streams {
 
     public final static <T> String join(final Stream<T> stream) {
         return stream.map(t -> t.toString())
-                     .collect(Collectors.joining());
+                     .collect(java.util.stream.Collectors.joining());
     }
 
     public final static <T> String join(final Stream<T> stream, final String sep) {
         return stream.map(t -> t.toString())
-                     .collect(Collectors.joining(sep));
+                     .collect(java.util.stream.Collectors.joining(sep));
     }
 
     public final static <T> String join(final Stream<T> stream, final String sep, final String start, final String end) {
         return stream.map(t -> t.toString())
-                     .collect(Collectors.joining(sep, start, end));
+                     .collect(java.util.stream.Collectors.joining(sep, start, end));
     }
 
     public final static <T, C extends Comparable<? super C>> Optional<T> minBy(final Stream<T> stream, final Function<? super T, ? extends C> f) {
@@ -1900,7 +1899,7 @@ public class Streams {
     }
 
     public final static <T> Optional<T> min(final Stream<T> stream, final Comparator<? super T> comparator) {
-        return stream.collect(Collectors.minBy(comparator));
+        return stream.collect(java.util.stream.Collectors.minBy(comparator));
     }
 
     public final static <T, C extends Comparable<? super C>> Optional<T> maxBy(final Stream<T> stream, final Function<? super T, ? extends C> f) {
@@ -1911,7 +1910,7 @@ public class Streams {
     }
 
     public final static <T> Optional<T> max(final Stream<T> stream, final Comparator<? super T> comparator) {
-        return stream.collect(Collectors.maxBy(comparator));
+        return stream.collect(java.util.stream.Collectors.maxBy(comparator));
     }
 
     /**
@@ -1990,7 +1989,7 @@ public class Streams {
      * @return This monad converted to a set
      */
     public final static <T> Set<T> toSet(final Stream<T> stream) {
-        return stream.collect(Collectors.toSet());
+        return stream.collect(java.util.stream.Collectors.toSet());
     }
 
     /**
@@ -1998,7 +1997,7 @@ public class Streams {
      */
     public final static <T> List<T> toList(final Stream<T> stream) {
 
-        return stream.collect(Collectors.toList());
+        return stream.collect(java.util.stream.Collectors.toList());
     }
 
     /**

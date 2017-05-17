@@ -1,6 +1,6 @@
 package cyclops.streams.push.syncflux;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
@@ -13,7 +13,6 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.matchers.Null;
 import reactor.core.publisher.Flux;
 
 import java.util.*;

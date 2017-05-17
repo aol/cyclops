@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.comprehensions.comprehenders;
 
 import static cyclops.monads.AnyM.fromStream;
-import static cyclops.Streams.zipSequence;
+import static cyclops.companion.Streams.zipSequence;
 import static cyclops.monads.Witness.stream;
 
 import java.util.Iterator;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.monads.Witness;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 

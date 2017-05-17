@@ -1,10 +1,8 @@
 package cyclops.streams.push.asyncreactivestreams;
 
 
-import cyclops.CompletableFutures;
-import cyclops.Semigroups;
-import cyclops.Streams;
-import cyclops.async.Future;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
 import cyclops.monads.AnyM;
@@ -13,16 +11,12 @@ import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.reactivestreams.Subscription;
-import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.WorkQueueProcessor;
 import reactor.core.scheduler.Schedulers;
 
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;

@@ -2,8 +2,8 @@ package cyclops.stream;
 
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
-import cyclops.Monoids;
-import cyclops.Semigroups;
+import cyclops.companion.Monoids;
+import cyclops.companion.Semigroups;
 import cyclops.async.QueueFactories;
 import cyclops.async.Topic;
 import cyclops.collections.ListX;

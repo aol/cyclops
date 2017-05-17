@@ -1,13 +1,9 @@
 package cyclops.streams.push.async;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
-import cyclops.CyclopsCollectors;
-import cyclops.Semigroups;
-import cyclops.async.Queue;
-import cyclops.async.QueueFactories;
+import cyclops.companion.Semigroups;
 import cyclops.async.Topic;
 import cyclops.collections.ListX;
-import cyclops.collections.SetX;
 import cyclops.control.Maybe;
 import cyclops.control.either.Either;
 import cyclops.stream.ReactiveSeq;
@@ -20,17 +16,12 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
-import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;

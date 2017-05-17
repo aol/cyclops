@@ -1,7 +1,6 @@
 package cyclops.streams.push.asyncreactivestreams;
 
-import cyclops.Streams;
-import cyclops.async.LazyReact;
+import cyclops.companion.Streams;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
@@ -17,8 +16,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;

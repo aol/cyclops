@@ -8,11 +8,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import org.jooq.lambda.Seq;
 import org.junit.Test;
-
-import cyclops.stream.ReactiveSeq;
 
 public class FlatMapStreamUtilsTest {
 

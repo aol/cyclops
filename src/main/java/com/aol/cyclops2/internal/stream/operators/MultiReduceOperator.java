@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 
 import lombok.AllArgsConstructor;
 

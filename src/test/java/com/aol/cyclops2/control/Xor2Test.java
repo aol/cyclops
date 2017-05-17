@@ -1,11 +1,14 @@
 package com.aol.cyclops2.control;
 
-import cyclops.*;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.immutable.PSetX;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 import cyclops.async.Future;
+import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.function.Monoid;
 import org.jooq.lambda.Seq;
@@ -420,7 +423,7 @@ public class Xor2Test {
 
 	@Test
 	public void testReduceStreamOfQextendsMonoidOfT() {
-		ListX<Integer> countAndTotal = just.reduce(Stream.of(Reducers.toCountInt(),Reducers.toTotalInt()));
+		ListX<Integer> countAndTotal = just.reduce(Stream.of(Reducers.toCountInt(), Reducers.toTotalInt()));
 		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
 	}
 
@@ -434,7 +437,7 @@ public class Xor2Test {
 
 	@Test
 	public void testFoldRightMonoidOfT() {
-		assertThat(just.foldRight(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+		assertThat(just.foldRight(Monoid.of(1, Semigroups.intMult)),equalTo(10));
 	}
 
 	@Test

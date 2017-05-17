@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import com.aol.cyclops2.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;

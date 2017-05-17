@@ -3,7 +3,7 @@ package com.aol.cyclops2.functions.collections.extensions.standard;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.functions.collections.extensions.CollectionXTestsWithNulls;
 import com.aol.cyclops2.types.Zippable;
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.Witness;

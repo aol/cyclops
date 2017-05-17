@@ -1,12 +1,11 @@
 package com.aol.cyclops2.internal.stream;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.internal.stream.spliterators.LazyMappingSpliterator;
 import com.aol.cyclops2.types.Unwrapable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.collections.ListX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;

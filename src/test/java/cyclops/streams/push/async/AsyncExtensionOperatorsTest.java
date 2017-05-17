@@ -1,8 +1,8 @@
 package cyclops.streams.push.async;
 
 
-import cyclops.Semigroups;
-import cyclops.Streams;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.collections.ListX;
 import cyclops.control.Maybe;
 import cyclops.monads.AnyM;
@@ -13,7 +13,6 @@ import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
-import reactor.core.publisher.Flux;
 
 import java.io.Serializable;
 import java.util.*;

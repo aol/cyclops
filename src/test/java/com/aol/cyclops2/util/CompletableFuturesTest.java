@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.CompletableFuture;
 
-import cyclops.CompletableFutures;
+import cyclops.companion.CompletableFutures;
 import org.junit.Before;
 import org.junit.Test;
 

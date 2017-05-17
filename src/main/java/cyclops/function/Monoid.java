@@ -1,6 +1,6 @@
 package cyclops.function;
 
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.reactivestreams.Publisher;

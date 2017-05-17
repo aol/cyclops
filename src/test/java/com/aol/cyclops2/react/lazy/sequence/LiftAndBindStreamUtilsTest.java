@@ -11,9 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
 import org.junit.Test;
 
 public class LiftAndBindStreamUtilsTest {

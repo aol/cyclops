@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
 
-import cyclops.CyclopsCollectors;
+import cyclops.companion.Collectors;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.internal.react.stream.EagerStreamWrapper;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
@@ -43,10 +43,10 @@ public interface BlockingStream<U> {
         final Object lastActive = getLastActive();
         if (lastActive instanceof EagerStreamWrapper) {
             final EagerStreamWrapper last = (EagerStreamWrapper) lastActive;
-            return BlockingStreamHelper.block(this, CyclopsCollectors.toListX(), last);
+            return BlockingStreamHelper.block(this, Collectors.toListX(), last);
         } else {
             final LazyStreamWrapper<U> last = (LazyStreamWrapper) lastActive;
-            return BlockingStreamHelper.block(this, CyclopsCollectors.toListX(), last);
+            return BlockingStreamHelper.block(this, Collectors.toListX(), last);
         }
     }
 

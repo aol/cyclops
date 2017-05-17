@@ -1,6 +1,9 @@
 package com.aol.cyclops2.control;
 
-import cyclops.*;
+import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.control.Eval.Module.Later;
 import cyclops.collections.box.Mutable;
@@ -430,7 +433,7 @@ public class Eval2Test {
 
 	@Test
 	public void testReduceMonoidOfT() {
-		assertThat(just.reduce(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+		assertThat(just.reduce(Monoid.of(1, Semigroups.intMult)),equalTo(10));
 	}
 
 	@Test

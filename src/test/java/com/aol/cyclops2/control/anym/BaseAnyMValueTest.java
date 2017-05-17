@@ -5,13 +5,13 @@ import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import cyclops.control.*;
 import cyclops.function.Monoid;
-import cyclops.Reducers;
-import cyclops.Semigroups;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.monads.WitnessType;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.monads.AnyM;
 import org.junit.Test;
 

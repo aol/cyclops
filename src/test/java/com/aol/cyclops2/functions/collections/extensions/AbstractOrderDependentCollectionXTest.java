@@ -23,7 +23,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Test;
 
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;

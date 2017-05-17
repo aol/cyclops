@@ -1,11 +1,14 @@
 package com.aol.cyclops2.control;
 
-import cyclops.*;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.immutable.PSetX;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 import cyclops.async.Future;
+import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.function.Monoid;
 import org.jooq.lambda.Seq;
@@ -417,7 +420,7 @@ public class Ior2Test {
 
 	@Test
 	public void testReduceMonoidOfT() {
-		assertThat(just.reduce(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+		assertThat(just.reduce(Monoid.of(1, Semigroups.intMult)),equalTo(10));
 	}
 
 	@Test

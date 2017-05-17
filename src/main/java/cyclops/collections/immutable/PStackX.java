@@ -6,7 +6,7 @@ import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollect
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.monads.transformers.ListT;

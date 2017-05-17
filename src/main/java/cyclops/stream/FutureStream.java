@@ -1,6 +1,5 @@
 package cyclops.stream;
 
-import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
 import java.util.*;
@@ -21,18 +20,18 @@ import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
-import java.util.function.UnaryOperator;
 import java.util.stream.*;
+import java.util.stream.Collectors;
 
 import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
 import com.aol.cyclops2.types.FoldableTraversable;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.futurestream.*;
 import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
-import cyclops.*;
 import cyclops.async.*;
 import cyclops.async.Queue;
 import cyclops.collections.immutable.PVectorX;
+import cyclops.companion.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.either.Either;
@@ -52,7 +51,6 @@ import cyclops.async.Queue.QueueTimeoutException;
 import cyclops.async.QueueFactory;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
-import com.aol.cyclops2.internal.react.FutureStreamImpl;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;
 import com.aol.cyclops2.internal.react.stream.CloseableIterator;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
@@ -60,10 +58,8 @@ import com.aol.cyclops2.internal.react.stream.traits.future.operators.LazyFuture
 import com.aol.cyclops2.internal.react.stream.traits.future.operators.OperationsOnFuturesImpl;
 import com.aol.cyclops2.internal.stream.FutureOpterationsImpl;
 import com.aol.cyclops2.react.SimpleReactFailedStageException;
-import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 import com.aol.cyclops2.react.collectors.lazy.LazyResultConsumer;
-import com.aol.cyclops2.react.collectors.lazy.MaxActive;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.monads.Witness;
 import com.aol.cyclops2.types.stream.HotStream;
