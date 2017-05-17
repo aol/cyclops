@@ -10,7 +10,6 @@ import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Assert;
 import org.junit.Test;
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
@@ -233,19 +232,19 @@ public class ZipAsyncTest {
        Spouts.of(1, 2, 3, 4, 5)
                // .peek(System.out::println)
                 .zipS(nextAsync())
-                .collectAll(Collectors.toList())
+                .collectStream(Collectors.toList())
                 .forEach(System.out::println);
 
        System.out.println(Spouts.of(1, 2, 3, 4, 5)
                                 .peek(System.out::println)
                                 .zipS(nextAsync())
-                                .collectAll(Collectors.toList())
+                                .collectStream(Collectors.toList())
                                 .single());
 
         System.out.println(Spouts.of(1, 2, 3, 4, 5)
                 .peek(System.out::println)
                 .zipS(nextAsync())
-                .collectAll(Collectors.toList())
+                .collectStream(Collectors.toList())
                 .findFirst().get());
 
 

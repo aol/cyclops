@@ -93,7 +93,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return createSeq(new ReduceAllOperator<>(source,identity,accumulator));
     }
     @Override
-    public <R, A> ReactiveSeq<R> collectAll(Collector<? super T, A, R> collector){
+    public <R, A> ReactiveSeq<R> collectStream(Collector<? super T, A, R> collector){
         return createSeq(new CollectAllOperator<T,A,R>(source,collector));
     }
     @Override
@@ -1076,7 +1076,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public ReactiveSeq<T> cycle() {
 
-        ReactiveSeq<T> cycling =  collectAll(CyclopsCollectors.toListX())
+        ReactiveSeq<T> cycling =  collectStream(CyclopsCollectors.toListX())
                                     .map(s -> s.stream().cycle(Long.MAX_VALUE))
                                     .flatMap(i->i);
         return createSeq(new IterableSourceOperator<T>(cycling),Type.SYNC);
@@ -1282,7 +1282,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public final <R, A> R collect(final Collector<? super T, A, R> collector) {
 
-        return findFirstCallAll((ReactiveStreamX<R>)collectAll(collector)).get();
+        return findFirstCallAll((ReactiveStreamX<R>) collectStream(collector)).get();
 
 
     }

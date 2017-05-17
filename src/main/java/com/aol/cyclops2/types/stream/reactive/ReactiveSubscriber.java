@@ -56,7 +56,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
                 sub.reactiveStream().forEach(System.out::println);
 
      *          //note JDK Stream based terminal operations may block the current thread
-     *          //see ReactiveSeq#collectAll ReactiveSeq#foldAll for non-blocking alternatives
+     *          //see ReactiveSeq#collectStream ReactiveSeq#foldAll for non-blocking alternatives
      *    }
      * </pre>
      *

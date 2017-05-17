@@ -795,7 +795,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public Collectable<T> statisticalOperations() {
+    public Collectable<T> collectionOperations() {
         return Seq.seq(copy());
     }
 

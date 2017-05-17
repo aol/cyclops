@@ -517,7 +517,7 @@ public abstract class AbstractCollectionXTest {
 	
 	@Test
 	public void testCollectable(){
-		assertThat(of(1,2,3).statisticalOperations().anyMatch(i->i==2),equalTo(true));
+		assertThat(of(1,2,3).collectionOperations().anyMatch(i->i==2),equalTo(true));
 	}
 	@Test
 	public void dropRight(){

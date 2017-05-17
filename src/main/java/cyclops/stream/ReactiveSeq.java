@@ -2234,7 +2234,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return seq().collect(supplier,accumulator,combiner);
     }
 
-    default <R, A> ReactiveSeq<R> collectAll(Collector<? super T, A, R> collector){
+    default <R, A> ReactiveSeq<R> collectStream(Collector<? super T, A, R> collector){
         return coflatMap(s->s.collect(collector));
     }
     /**
@@ -2410,14 +2410,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * @return This Stream converted to a set
      */
-    @Override
-    public Set<T> toSet();
+    default Set<T> toSet(){
+        return collect(Collectors.toSet());
+    }
 
     /**
      * @return this Stream converted to a list
      */
-    @Override
-    public List<T> toList();
+    default List<T> toList(){
+        return collect(Collectors.toList());
+    }
 
     /*
      * (non-Javadoc)

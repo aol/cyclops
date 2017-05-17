@@ -20,14 +20,37 @@ import org.jooq.lambda.Seq;
  */
 public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveStreamsTerminalOperations<T> {
 
-
+    /**
+     * Get the minimum value by a function.
+     */
+    default Optional<T> min(Comparator<? super T> comparator){
+        return collectionOperations().min(comparator);
+    }
+    /**
+     * Get the minimum value by a function.
+     */
+    default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function){
+        return collectionOperations().minBy(function);
+    }
+    /**
+     * Get the maximum value by a function.
+     */
+    default Optional<T> max(Comparator<? super T> comparator){
+        return collectionOperations().max(comparator);
+    }
+    /**
+     * Get the maximum value by a function.
+     */
+    default <U extends Comparable<? super U>> Optional<T> maxBy(Function<? super T, ? extends U> function){
+        return collectionOperations().maxBy(function);
+    }
 
    /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#mode()
      */
 
     default Optional<T> mode() {
-        return statisticalOperations().mode();
+        return collectionOperations().mode();
     }
 
 
@@ -37,7 +60,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
     
     default String commonPrefix() {
 
-        return statisticalOperations().commonPrefix();
+        return collectionOperations().commonPrefix();
     }
 
     /* (non-Javadoc)
@@ -46,7 +69,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
     
     default String commonSuffix() {
 
-        return statisticalOperations().commonSuffix();
+        return collectionOperations().commonSuffix();
     }
 
     /* (non-Javadoc)
@@ -54,7 +77,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default <R, A> R collect(final Collector<? super T, A, R> collector) {
-        return statisticalOperations().collect(collector);
+        return collectionOperations().collect(collector);
     }
 
     /* (non-Javadoc)
@@ -62,7 +85,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default long count() {
-        return statisticalOperations().count();
+        return collectionOperations().count();
     }
 
     /* (non-Javadoc)
@@ -70,7 +93,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default long count(final Predicate<? super T> predicate) {
-        return statisticalOperations().count(predicate);
+        return collectionOperations().count(predicate);
     }
 
     /* (non-Javadoc)
@@ -78,7 +101,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default long countDistinct(final Predicate<? super T> predicate) {
-        return statisticalOperations().countDistinct(predicate);
+        return collectionOperations().countDistinct(predicate);
     }
 
     /* (non-Javadoc)
@@ -86,7 +109,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default <U> long countDistinctBy(final Function<? super T, ? extends U> function, final Predicate<? super U> predicate) {
-        return statisticalOperations().countDistinctBy(function, predicate);
+        return collectionOperations().countDistinctBy(function, predicate);
     }
 
     /**
@@ -94,17 +117,29 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      * 
      * @return Collectable
      */
-    default Collectable<T> statisticalOperations(){
+    default Collectable<T> collectionOperations(){
         return Seq.seq(this);
     }
 
+    /**
+     * Collect the collectable into a {@link Map}.
+     */
+    default <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper){
+        return collectionOperations().toMap(keyMapper,valueMapper);
+    }
 
+    /**
+     * Collect the collectable into a {@link Map} with the given keys and the self element as value.
+     */
+    default <K> Map<K, T> toMap(Function<? super T, ? extends K> keyMapper){
+        return collectionOperations().toMap(keyMapper);
+    }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#countDistinct()
      */
     
     default long countDistinct() {
-        return statisticalOperations().countDistinct();
+        return collectionOperations().countDistinct();
     }
 
     /* (non-Javadoc)
@@ -112,7 +147,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default <U> long countDistinctBy(final Function<? super T, ? extends U> function) {
-        return statisticalOperations().countDistinctBy(function);
+        return collectionOperations().countDistinctBy(function);
     }
 
 
@@ -126,7 +161,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
     
     default int sumInt(final ToIntFunction<? super T> function) {
 
-        return statisticalOperations().sumInt(function);
+        return collectionOperations().sumInt(function);
     }
 
     /* (non-Javadoc)
@@ -134,7 +169,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default long sumLong(final ToLongFunction<? super T> function) {
-        return statisticalOperations().sumLong(function);
+        return collectionOperations().sumLong(function);
     }
 
     /* (non-Javadoc)
@@ -142,7 +177,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default double sumDouble(final ToDoubleFunction<? super T> function) {
-        return statisticalOperations().sumDouble(function);
+        return collectionOperations().sumDouble(function);
     }
 
 
@@ -160,7 +195,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default boolean allMatch(final Predicate<? super T> c) {
-        return statisticalOperations().allMatch(c);
+        return collectionOperations().allMatch(c);
     }
 
     /**
@@ -178,7 +213,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default boolean anyMatch(final Predicate<? super T> c) {
-        return statisticalOperations().anyMatch(c);
+        return collectionOperations().anyMatch(c);
     }
 
     /* (non-Javadoc)
@@ -186,7 +221,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default boolean noneMatch(final Predicate<? super T> c) {
-        return statisticalOperations().noneMatch(c);
+        return collectionOperations().noneMatch(c);
     }
 
         /* (non-Javadoc)
@@ -194,7 +229,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default <C extends Collection<T>> C toCollection(final Supplier<C> factory) {
-        return statisticalOperations().toCollection(factory);
+        return collectionOperations().toCollection(factory);
     }
 
 
@@ -203,7 +238,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default String toString(final CharSequence delimiter) {
-        return statisticalOperations().toString(delimiter);
+        return collectionOperations().toString(delimiter);
     }
 
     /* (non-Javadoc)
@@ -211,7 +246,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      */
     
     default String toString(final CharSequence delimiter, final CharSequence prefix, final CharSequence suffix) {
-        return statisticalOperations().toString(delimiter, prefix, suffix);
+        return collectionOperations().toString(delimiter, prefix, suffix);
     }
 
 }

@@ -241,10 +241,10 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#statisticalOperations()
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectionOperations()
      
     @Override
-    public Collectable<T> statisticalOperations() {
+    public Collectable<T> collectionOperations() {
        return this;
     } */
     @Override

@@ -244,7 +244,7 @@ public class ExtensionOperatorsTest {
 	    System.out.println("Hello world!");
         Future result = Future.future();
 
-        Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).forEachSubscribe(e -> {
+        Spouts.of(1,2,3,4,5).limitLast(1).collectStream(Collectors.toList()).forEachSubscribe(e -> {
             System.out.println("Value recieved " + e);
             result.complete(e);
           //  sub[0].cancel();
@@ -261,7 +261,7 @@ public class ExtensionOperatorsTest {
         }).request(1l);
 
         assertThat(result.get(),equalTo(ListX.of(5)));
-        System.out.println(Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).findFirst());
+        System.out.println(Spouts.of(1,2,3,4,5).limitLast(1).collectStream(Collectors.toList()).findFirst());
 
 
 		assertThat(Spouts.of(1,2,3,4,5)

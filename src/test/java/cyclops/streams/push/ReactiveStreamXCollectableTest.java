@@ -8,7 +8,7 @@ public class ReactiveStreamXCollectableTest extends CollectableTest {
 
     @Override
     public <T> Collectable<T> of(T... values) {
-       return Spouts.of(values).statisticalOperations();
+       return Spouts.of(values).collectionOperations();
     }
 
 }

@@ -6,7 +6,7 @@ import org.jooq.lambda.Collectable;
 public class FutureStreamCollectableTest extends CollectableTest {
     @Override
     public <T> Collectable<T> of(T... values) {
-       return LazyReact.sequentialBuilder().of(values).statisticalOperations();
+       return LazyReact.sequentialBuilder().of(values).collectionOperations();
     }
 
 }

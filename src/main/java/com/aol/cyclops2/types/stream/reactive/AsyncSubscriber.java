@@ -33,7 +33,7 @@ import java.util.concurrent.locks.LockSupport;
  *             .collect(Collectors.toList());
  *
  *          //note JDK Stream based terminal operations may block the current thread
- *          //see ReactiveSeq#collectAll ReactiveSeq#foldAll for non-blocking alternatives
+ *          //see ReactiveSeq#collectStream ReactiveSeq#foldAll for non-blocking alternatives
  *    }
  * </pre>
  * 
@@ -87,7 +87,7 @@ public class AsyncSubscriber<T> implements Subscriber<T> {
      *             .collect(Collectors.toList());
      *
      *          //note JDK Stream based terminal operations may block the current thread
-     *          //see ReactiveSeq#collectAll ReactiveSeq#foldAll for non-blocking alternatives
+     *          //see ReactiveSeq#collectStream ReactiveSeq#foldAll for non-blocking alternatives
      *    }
      * </pre>
      *

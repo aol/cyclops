@@ -118,8 +118,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default <R, A> FutureStream<R> collectAll(Collector<? super U, A, R> collector) {
-        return fromStream(stream().collectAll(collector));
+    default <R, A> FutureStream<R> collectStream(Collector<? super U, A, R> collector) {
+        return fromStream(stream().collectStream(collector));
     }
 
     @Override
