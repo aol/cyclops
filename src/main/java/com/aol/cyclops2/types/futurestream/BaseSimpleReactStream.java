@@ -24,12 +24,9 @@ import com.aol.cyclops2.internal.react.SimpleReactStreamImpl;
 import com.aol.cyclops2.internal.react.stream.CloseableIterator;
 import com.aol.cyclops2.internal.react.stream.ReactBuilder;
 import com.aol.cyclops2.internal.react.stream.StreamWrapper;
-import com.aol.cyclops2.react.RetryBuilder;
 import com.aol.cyclops2.react.SimpleReactFailedStageException;
 import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.react.async.subscription.Continueable;
-import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
-import com.nurkiewicz.asyncretry.RetryExecutor;
 
 public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
 
@@ -131,21 +128,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      */
     <R> BaseSimpleReactStream<R> thenSync(final Function<? super U, ? extends R> fn);
 
-    /**
-     * Will execute this phase on the RetryExecutor (default or user supplied).
-     * The RetryExecutor can be changed via withRetrier.
-     * 
-     * This stage will be retried according to the configured rules. See
-     * https://github.com/nurkiewicz/async-retry for detailed advice on how to
-     * conifugre
-     * 
-     * 
-     * @param fn
-     *            Function that will be executed and retried on failure
-     * @return Next Stage in the Strea,
-     */
-    @SuppressWarnings("unchecked")
-    <R> Object retry(final Function<? super U, ? extends R> fn);
+
 
     <R> BaseSimpleReactStream<R> fromStream(Stream<R> stream);
 
@@ -452,8 +435,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      */
     static <T> SimpleReactStream<T> react(final Supplier<T> value) {
         return new SimpleReact(
-                               ThreadPools.getStandard(), new AsyncRetryExecutor(
-                                                                                 ThreadPools.getSequentialRetry()),
+                               ThreadPools.getStandard(),
                                false).ofAsync(value);
     }
 
@@ -465,8 +447,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     @SafeVarargs
     static <T> SimpleReactStream<T> react(final Supplier<T>... values) {
         return new SimpleReact(
-                               ThreadPools.getStandard(), new AsyncRetryExecutor(
-                                                                                 ThreadPools.getSequentialRetry()),
+                               ThreadPools.getStandard(),
                                false).ofAsync(values);
     }
 
@@ -496,8 +477,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      */
     static <T> SimpleReactStream<T> freeThread(final T value) {
         return new SimpleReact(
-                               ThreadPools.getSequential(), new AsyncRetryExecutor(
-                                                                                   ThreadPools.getSequentialRetry()),
+                               ThreadPools.getSequential(),
                                false).of(value);
     }
 
@@ -509,8 +489,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     @SafeVarargs
     static <T> SimpleReactStream<T> freeThread(final T... values) {
         return new SimpleReact(
-                               ThreadPools.getSequential(), new AsyncRetryExecutor(
-                                                                                   ThreadPools.getSequentialRetry()),
+                               ThreadPools.getSequential(),
                                false).of(values);
     }
 
@@ -546,8 +525,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      */
     static <T> BaseSimpleReactStream<T> simpleReactStreamFrom(final Stream<CompletableFuture<T>> stream) {
         return new SimpleReact(
-                               ThreadPools.getSequential(), new AsyncRetryExecutor(
-                                                                                   ThreadPools.getSequentialRetry()),
+                               ThreadPools.getSequential(),
                                false).fromStream(stream);
     }
 
@@ -560,8 +538,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      */
     static <T> BaseSimpleReactStream<T> simpleReactStream(final CompletableFuture<T> value) {
         return new SimpleReact(
-                               ThreadPools.getSequential(), new AsyncRetryExecutor(
-                                                                                   ThreadPools.getSequentialRetry()),
+                               ThreadPools.getSequential(),
                                false).fromStream(Stream.of(value));
     }
 
@@ -574,8 +551,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      */
     static <T> SimpleReactStream<T> simpleReactStream(final CompletableFuture<T>... values) {
         return new SimpleReact(
-                               ThreadPools.getSequential(), new AsyncRetryExecutor(
-                                                                                   ThreadPools.getSequentialRetry()),
+                               ThreadPools.getSequential(),
                                false).fromStream(Stream.of(values));
     }
 
@@ -589,8 +565,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
                                                 .stream(((FutureStream) stream).getSubscription());
 
         final SimpleReact sr = new SimpleReact(
-                                               ThreadPools.getCurrentThreadExecutor(), RetryBuilder.getDefaultInstance()
-                                                                                                   .withScheduler(ThreadPools.getSequentialRetry()),
+                                               ThreadPools.getCurrentThreadExecutor(),
                                                false);
         return new SimpleReactStreamImpl<T>(
                                             sr, stream.map(CompletableFuture::completedFuture));
@@ -618,7 +593,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
 
     BaseSimpleReactStream<U> withQueueFactory(QueueFactory<U> queueFactory);
 
-    BaseSimpleReactStream<U> withRetrier(RetryExecutor executor);
+
 
     Executor getTaskExecutor();
 

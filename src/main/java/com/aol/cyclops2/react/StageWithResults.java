@@ -11,10 +11,9 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+
 
 @AllArgsConstructor
-@Slf4j
 public class StageWithResults<RS, U> {
 
     private final Executor taskExecutor;
@@ -47,7 +46,6 @@ public class StageWithResults<RS, U> {
      */
     public <T> T submit(final Callable<T> callable) {
         if (taskExecutor instanceof ForkJoinPool) {
-            log.debug("Submited callable to SimpleReact ForkJoinPool. JDK ParallelStreams will reuse SimpleReact ForkJoinPool.");
             try {
 
                 return ((ForkJoinPool) taskExecutor).submit(callable)
@@ -63,7 +61,6 @@ public class StageWithResults<RS, U> {
             }
         }
         try {
-            log.debug("Submited callable but do not have a ForkJoinPool. JDK ParallelStreams will use Common ForkJoinPool not SimpleReact Executor.");
             return callable.call();
         } catch (final Exception e) {
             throw new RuntimeException(

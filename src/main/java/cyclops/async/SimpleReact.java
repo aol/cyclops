@@ -2,10 +2,8 @@ package cyclops.async;
 
 import com.aol.cyclops2.internal.react.SimpleReactStreamImpl;
 import com.aol.cyclops2.internal.react.stream.ReactBuilder;
-import com.aol.cyclops2.react.RetryBuilder;
 import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
-import com.nurkiewicz.asyncretry.RetryExecutor;
 import cyclops.stream.Spouts;
 import lombok.Getter;
 import lombok.experimental.Builder;
@@ -77,8 +75,7 @@ public class SimpleReact implements ReactBuilder {
     private final Executor queueService;
     @Getter
     private final Executor executor;
-    @Getter
-    private final RetryExecutor retrier;
+
 
     private final Boolean async;
 
@@ -106,40 +103,26 @@ public class SimpleReact implements ReactBuilder {
      * @param async If false, subsequent tasks are executed on the completing thread
      *              If true each subsequent task is resubmitted to a task executor,
      */
-    public SimpleReact(final Executor executor, final RetryExecutor retrier, final Boolean async) {
+    public SimpleReact(final Executor executor, final Boolean async) {
         queueService = ThreadPools.getQueueCopyExecutor();
         this.executor = Optional.ofNullable(executor)
                                 .orElse(new ForkJoinPool(
                                                          Runtime.getRuntime()
                                                                 .availableProcessors()));
-        this.retrier = retrier;
+
 
         this.async = Optional.ofNullable(async)
                              .orElse(true);
     }
 
     /**
-     * @param executor Executor this SimpleReact instance will use to execute concurrent tasks.
+     * Construct a SimpleReact builder from the provided Executor
+     * 
+     * @param executor Task executor to execute tasks on
      */
     public SimpleReact(final Executor executor) {
         queueService = ThreadPools.getQueueCopyExecutor();
         this.executor = executor;
-        retrier = null;
-
-        async = true;
-    }
-
-    /**
-     * Construct a SimpleReact builder from the provided Executor, Retrier.
-     * 
-     * @param executor Task executor to execute tasks on
-     * @param retrier Retrier to use for asyncrhonous retry
-     */
-    public SimpleReact(final Executor executor, final RetryExecutor retrier) {
-        queueService = ThreadPools.getQueueCopyExecutor();
-        this.executor = executor;
-        this.retrier = retrier;
-
         async = true;
     }
 
@@ -149,17 +132,15 @@ public class SimpleReact implements ReactBuilder {
      * @param retrier
      * @param queueCopier Task executor to transfer results during flatMap operations
      */
-    public SimpleReact(final Executor executor, final RetryExecutor retrier, final Executor queueCopier) {
+    public SimpleReact(final Executor executor, final Executor queueCopier) {
         queueService = ThreadPools.getQueueCopyExecutor();
         this.executor = executor;
-        this.retrier = retrier;
-
         async = true;
     }
 
     public SimpleReact withQueueCopyExecutor(final Executor queueCopyExecutor) {
         return new SimpleReact(
-                               executor, retrier, queueCopyExecutor);
+                               executor,  queueCopyExecutor);
     }
 
     /**
@@ -303,7 +284,6 @@ public class SimpleReact implements ReactBuilder {
                           .executor(new ForkJoinPool(
                                                      parallelism))
                           .async(true)
-                          .retrier(new RetryBuilder().parallelism(parallelism))
                           .build();
     }
 
@@ -318,8 +298,6 @@ public class SimpleReact implements ReactBuilder {
         return SimpleReact.builder()
                           .executor(ThreadPools.getStandard())
                           .async(true)
-                          .retrier(RetryBuilder.getDefaultInstance()
-                                               .withScheduler(ThreadPools.getCommonFreeThreadRetry()))
                           .build();
 
     }
@@ -333,8 +311,7 @@ public class SimpleReact implements ReactBuilder {
                           .async(false)
                           .executor(new ForkJoinPool(
                                                      1))
-                          .retrier(RetryBuilder.getDefaultInstance()
-                                               .withScheduler(Executors.newScheduledThreadPool(1)))
+
                           .build();
     }
 
@@ -346,8 +323,7 @@ public class SimpleReact implements ReactBuilder {
         return SimpleReact.builder()
                           .async(false)
                           .executor(ThreadPools.getCommonFreeThread())
-                          .retrier(RetryBuilder.getDefaultInstance()
-                                               .withScheduler(ThreadPools.getCommonFreeThreadRetry()))
+
                           .build();
     }
 
@@ -445,13 +421,13 @@ public class SimpleReact implements ReactBuilder {
         return this.construct(Stream.of(cf));
     }
 
-    public SimpleReact(final Executor queueService, final Executor executor, final RetryExecutor retrier, final Boolean async) {
+    public SimpleReact(final Executor queueService, final Executor executor,  final Boolean async) {
         super();
         this.queueService = Optional.ofNullable(queueService)
                                     .orElse(ThreadPools.getQueueCopyExecutor());
         this.executor = Optional.ofNullable(executor)
                                 .orElse(ThreadPools.getCurrentThreadExecutor());
-        this.retrier = retrier;
+
         this.async = Optional.ofNullable(async)
                              .orElse(true);
     }

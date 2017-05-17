@@ -1,5 +1,7 @@
 package com.aol.cyclops2.types.futurestream;
 
+import com.aol.cyclops2.internal.react.stream.BaseSimpleReact;
+import com.aol.cyclops2.types.Transformable;
 import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
@@ -16,8 +18,6 @@ import com.aol.cyclops2.react.Status;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 import com.aol.cyclops2.react.collectors.lazy.Blocker;
 import com.aol.cyclops2.util.ThrowsSoftened;
-import com.nurkiewicz.asyncretry.RetryExecutor;
-import com.nurkiewicz.asyncretry.policy.AbortRetryException;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -48,8 +48,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     @Override
     SimpleReactStream<U> withTaskExecutor(Executor e);
 
-    @Override
-    SimpleReactStream<U> withRetrier(RetryExecutor retry);
+
 
     @Override
     SimpleReactStream<U> withQueueFactory(QueueFactory<U> queue);
@@ -440,30 +439,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
                          .toArray(new CompletableFuture[0]);
     }
 
-    /**
-     * Will execute this phase on the RetryExecutor (default or user supplied).
-     * The RetryExecutor can be changed via withRetrier.
-     *
-     * This stage will be retried according to the configured rules. See
-     * https://github.com/nurkiewicz/async-retry for detailed advice on how to
-     * conifugre
-     *
-     *
-     * @param fn
-     *            Function that will be executed and retried on failure
-     * @return Next Stage in the Strea,
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    default <R> SimpleReactStream<R> retry(final Function<? super U, ? extends R> fn) {
-        final Function<Stream<CompletableFuture>, Stream<CompletableFuture>> mapper = stream -> stream.map((
-                ft) -> ft.thenApplyAsync(res -> getRetrier().getWithRetry(() -> SimpleReactStream.<U, R> handleExceptions(fn)
-                                                                                                 .apply((U) res))
-                                                            .join(),
-                                         getTaskExecutor()));
 
-        return (SimpleReactStream<R>) this.withLastActive(getLastActive().stream(mapper));
-    }
 
     @Override
     default <R> SimpleReactStream<R> fromStream(final Stream<R> stream) {
@@ -580,8 +556,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
             try {
                 return fn.apply(input);
             } catch (final Throwable t) {
-                if (t instanceof AbortRetryException) //special case for retry
-                    throw t;
+
                 throw new SimpleReactFailedStageException(
                                                           input, t);
 
@@ -1089,7 +1064,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      */
     default FutureStream<U> convertToLazyStream() {
         return new LazyReact(
-                             getTaskExecutor()).withRetrier(getRetrier())
+                             getTaskExecutor())
                                                .fromStreamFutures((Stream) getLastActive().stream());
     }
 
