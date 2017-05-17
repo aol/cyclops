@@ -11,10 +11,12 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.data.collections.extensions.persistent.PMapXImpl;
 import com.aol.cyclops2.types.*;
+import cyclops.Reducers;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
+import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -26,8 +28,11 @@ import com.aol.cyclops2.types.Transformable;
 import com.aol.cyclops2.types.stream.CyclopsCollectable;
 
 public interface PMapX<K, V>
-        extends To<PMapX<K,V>>,PMap<K, V>, FluentMapX<K, V>, BiFunctor<K, V>, Transformable<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
+        extends To<PMapX<K,V>>,
+                PMap<K, V>, Unwrapable,
+                FluentMapX<K, V>, BiFunctor<K, V>, Transformable<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
         OnEmptySwitch<Tuple2<K, V>, PMap<K, V>>, Publisher<Tuple2<K, V>>, Folds<Tuple2<K, V>>, CyclopsCollectable<Tuple2<K, V>> {
+
 
     public static <K, V> PMapX<K, V> empty() {
         return new PMapXImpl<K, V>(

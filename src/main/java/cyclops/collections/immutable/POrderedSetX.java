@@ -19,6 +19,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.OrderedPSet;
 import org.pcollections.POrderedSet;
+import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
@@ -28,6 +29,8 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, POrderedSet<T>> {
+
+
     /**
      * Narrow a covariant POrderedSetX
      * 
@@ -332,10 +335,6 @@ public interface POrderedSetX<T> extends To<POrderedSetX<T>>,POrderedSet<T>, Per
     default ReactiveSeq<T> stream() {
 
         return ReactiveSeq.fromIterable(this);
-    }
-
-    default POrderedSet<T> toPOrderedSet() {
-        return this;
     }
 
     /**

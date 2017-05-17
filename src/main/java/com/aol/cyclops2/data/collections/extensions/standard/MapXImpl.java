@@ -33,6 +33,11 @@ public class MapXImpl<K, V> implements MapX<K, V> {
                                        .get();
     }
 
+    @Override
+    public <R> R unwrap() {
+        return (R)map;
+    }
+
     /**
      * @return
      * @see java.util.Map#size()

@@ -43,6 +43,10 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     }
 
 
+    @Override
+    public <T> T unwrap(){
+        return (T)get();
+    }
 
     @Override
     public C get() {

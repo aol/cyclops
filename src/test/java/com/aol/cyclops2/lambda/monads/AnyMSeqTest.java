@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import static cyclops.monads.Witness.*;
 
+import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.Witness;
 import cyclops.monads.function.AnyMFn1;
 import cyclops.monads.function.AnyMFn2;
@@ -110,6 +111,7 @@ public class AnyMSeqTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
+
         AnyMFn2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of(4)));

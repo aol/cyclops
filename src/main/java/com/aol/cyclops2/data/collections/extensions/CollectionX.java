@@ -27,7 +27,10 @@ import java.util.stream.Stream;
  *
  * @param <T>
  */
-public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> , Unit<T>{
+public interface CollectionX<T> extends FoldableTraversable<T>,
+                                        Collection<T> ,
+                                        Unwrapable,
+                                        Unit<T>{
 
     @Override
     Iterator<T> iterator();

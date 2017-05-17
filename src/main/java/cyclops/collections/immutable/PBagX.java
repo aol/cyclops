@@ -1,5 +1,6 @@
 package cyclops.collections.immutable;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
 import com.aol.cyclops2.types.OnEmptySwitch;
@@ -19,6 +20,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.HashTreePBag;
 import org.pcollections.MapPBag;
 import org.pcollections.PBag;
+import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
@@ -29,7 +31,7 @@ import java.util.stream.Stream;
 
 
 public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PBag<T>> {
-    
+
     /**
      * Narrow a covariant PBagX
      * 
@@ -370,12 +372,7 @@ public interface PBagX<T> extends To<PBagX<T>>,PBag<T>, PersistentCollectionX<T>
         return empty();
     }
 
-    /**
-     * @return This with typed narrowed to a PBag
-     */
-    default PBag<T> toPBag() {
-        return this;
-    }
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX#from(java.util.Collection)

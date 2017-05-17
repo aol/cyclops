@@ -25,6 +25,11 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
     @Wither
     private final PMap<K, V> map;
 
+    @Override
+    public <R> R unwrap() {
+        return (R)map;
+    }
+
     /**
      * @param key
      * @param value

@@ -580,7 +580,7 @@ public class Optionals {
 
     /**
      * Companion class for creating Type Class instances for working with Optionals
-     * @author johnmcclean
+     * @author johnmccleanP
      *
      */
     @UtilityClass

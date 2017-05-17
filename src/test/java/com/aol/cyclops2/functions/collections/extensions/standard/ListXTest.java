@@ -1,25 +1,31 @@
 package com.aol.cyclops2.functions.collections.extensions.standard;
 
+import cyclops.Converters;
+import cyclops.Converters.*;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.functions.collections.extensions.CollectionXTestsWithNulls;
 import com.aol.cyclops2.types.Zippable;
 import cyclops.Semigroups;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.*;
+import cyclops.collections.immutable.*;
 import cyclops.monads.Witness;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
+import org.pcollections.*;
 
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class ListXTest extends CollectionXTestsWithNulls {
+
 
     @Test
     public void lazy(){
