@@ -47,9 +47,9 @@ import java.util.stream.*;
  * 
  * <pre>
  * {@code 
- *    AnyMValue<String> monad1 = AnyM.fromOptional(Optional.of("hello"));
+ *    AnyMValue<optional,String> monad1 = AnyM.fromOptional(Optional.of("hello"));
  *    
- *    AnyMSeq<String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
+ *    AnyMSeq<stream,String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
  *  
  * }
  * </pre>
