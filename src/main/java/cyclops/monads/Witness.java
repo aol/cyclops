@@ -145,16 +145,15 @@ public interface Witness {
     }
     public static enum reactiveSeq implements StreamWitness<reactiveSeq>{
 
-        REACTIVE(ReactiveAdapter.reactiveSeq),CO_REACTIVE(StreamAdapter.reactiveSeq);
-        private final FunctionalAdapter<reactiveSeq> adapter;
-
-        reactiveSeq(FunctionalAdapter<reactiveSeq> adapter) {
-            this.adapter = adapter;
-        }
+        REACTIVE,CO_REACTIVE;
 
         @Override
         public  FunctionalAdapter<reactiveSeq> adapter() {
-            return adapter;
+            if(ordinal()==0)
+                return ReactiveAdapter.reactiveSeq;
+            return StreamAdapter.reactiveSeq;
+
+
         }
         
     }

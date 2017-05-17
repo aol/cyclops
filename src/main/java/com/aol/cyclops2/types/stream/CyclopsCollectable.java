@@ -19,7 +19,18 @@ import org.jooq.lambda.Seq;
  * @param <T> Data type of elements in this Collectable
  */
 public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveStreamsTerminalOperations<T> {
-
+    /**
+     * Collect the collectable into an {@link ArrayList}.
+     */
+    default List<T> toList(){
+        return  collectionOperations().toList();
+    }
+    /**
+     * Collect the collectable into a {@link LinkedHashSet}.
+     */
+    default Set<T> toSet(){
+        return collectionOperations().toSet();
+    }
     /**
      * Get the minimum value by a function.
      */
@@ -153,7 +164,12 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
 
 
 
-
+    /**
+     * Get the sum of the elements in this collectable.
+     */
+    default <U> Optional<U> sum(Function<? super T, ? extends U> function){
+        return collectionOperations().sum(function);
+    }
 
     /* (non-Javadoc)
      * @see org.jooq.lambda.Collectable#sumInt(java.util.function.ToIntFunction)

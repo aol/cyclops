@@ -19,13 +19,22 @@ import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
+
 public class StreamAdapter<W extends Witness.StreamWitness<W>> extends  AbstractFunctionalAdapter<W> {
     
     private final Supplier<Stream<?>> empty;
     private final Function<?,Stream<?>> unit;
     private final Function<Iterator<?>,Stream<?>> unitIterator;
     private final W witness;
+
+
+    public StreamAdapter(Supplier<Stream<?>> empty, Function<?, Stream<?>> unit, Function<Iterator<?>, Stream<?>> unitIterator, W witness) {
+        this.empty = empty;
+        this.unit = unit;
+        this.unitIterator = unitIterator;
+        this.witness = witness;
+    }
+
     public final static StreamAdapter stream = new StreamAdapter( ()->Stream.of(), t->Stream.of(t), it-> (Stream)Streams.stream(()->(Iterator)it),Witness.stream.INSTANCE);
 
     public final static StreamAdapter reactiveSeq = new StreamAdapter(()->ReactiveSeq.of(),t->ReactiveSeq.of(t),it->(Stream)ReactiveSeq.fromIterator((Iterator)it),Witness.reactiveSeq.CO_REACTIVE);

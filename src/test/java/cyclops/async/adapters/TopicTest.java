@@ -1,4 +1,4 @@
-package cyclops.async;
+package cyclops.async.adapters;
 
 import static com.aol.cyclops2.types.futurestream.BaseSimpleReactStream.parallel;
 import static org.hamcrest.Matchers.hasItem;
@@ -16,6 +16,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.async.SimpleReact;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Topic;
 import org.junit.Before;
