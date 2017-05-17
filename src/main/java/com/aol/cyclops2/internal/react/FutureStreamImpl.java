@@ -37,17 +37,15 @@ import com.aol.cyclops2.react.threads.ReactPool;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.PausableHotStream;
-import com.nurkiewicz.asyncretry.RetryExecutor;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
-import lombok.extern.slf4j.Slf4j;
+
 
 
 @Getter
-@Slf4j
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FutureStreamImpl<U> implements FutureStream<U> {
 
@@ -86,7 +84,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
                                         });
         this.errorHandler = Optional.of((e) -> {
             error.forward.accept(e);
-            log.error(e.getMessage(), e);
+
         });
         this.lazyCollector = () -> new BatchingCollector<U>(
                                                             getMaxActive(), this);
@@ -107,7 +105,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
                 });
         this.errorHandler = Optional.of((e) -> {
             error.forward.accept(e);
-            log.error(e.getMessage(), e);
+
         });
         this.lazyCollector = () -> new BatchingCollector<U>(
                 getMaxActive(), this);
@@ -155,10 +153,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
         return this.simpleReact.getExecutor();
     }
 
-    @Override
-    public RetryExecutor getRetrier() {
-        return this.simpleReact.getRetrier();
-    }
+
 
     @Override
     public boolean isAsync() {
@@ -170,10 +165,6 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
         return this.withSimpleReact(simpleReact.withExecutor(e));
     }
 
-    @Override
-    public FutureStream<U> withRetrier(final RetryExecutor retry) {
-        return this.withSimpleReact(simpleReact.withRetrier(retry));
-    }
 
 
 

@@ -24,8 +24,7 @@ import com.aol.cyclops2.internal.react.exceptions.FilteredExecutionPathException
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops2.react.SimpleReactFailedStageException;
 import com.aol.cyclops2.react.async.subscription.Continueable;
-import com.nurkiewicz.asyncretry.RetryExecutor;
-import com.nurkiewicz.asyncretry.policy.AbortRetryException;
+
 
 public interface LazySimpleReactStream<U> extends BlockingStream<U>, ConfigurableStream<U, FastFuture<U>>, ToQueue<U>, BaseSimpleReactStream<U> {
 
@@ -35,8 +34,6 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     @Override
     LazySimpleReactStream<U> withTaskExecutor(Executor e);
 
-    @Override
-    LazySimpleReactStream<U> withRetrier(RetryExecutor retry);
 
     @Override
     LazySimpleReactStream<U> withQueueFactory(QueueFactory<U> queue);
@@ -85,30 +82,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
         return this.withLastActive(getLastActive().operation((ft) -> ft.thenApply(LazySimpleReactStream.<U, R> handleExceptions(fn))));
     }
 
-    /**
-     * Will execute this phase on the RetryExecutor (default or user supplied).
-     * The RetryExecutor can be changed via withRetrier.
-     * 
-     * This stage will be retried according to the configured rules. See
-     * https://github.com/nurkiewicz/async-retry for detailed advice on how to
-     * conifugre
-     * 
-     * 
-     * @param fn
-     *            Function that will be executed and retried on failure
-     * @return Next Stage in the Strea,
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    default <R> LazySimpleReactStream<R> retry(final Function<? super U, ? extends R> fn) {
-        final Function<PipelineBuilder, PipelineBuilder> mapper = (
-                ft) -> ft.thenApplyAsync(res -> getRetrier().getWithRetry((Callable) () -> LazySimpleReactStream.<U, R> handleExceptions(fn)
-                                                                                                                .apply((U) res))
-                                                            .join(),
-                                         getTaskExecutor());
 
-        return this.withLastActive(getLastActive().operation(mapper));
-    }
 
     /**
      * React <b>transform</b>
@@ -199,8 +173,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
                 return fn.apply(input);
             } catch (final Throwable t) {
 
-                if (t instanceof AbortRetryException) //special case for retry
-                    throw t;
+
                 throw new SimpleReactFailedStageException(
                                                           input, t);
 
