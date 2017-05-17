@@ -374,8 +374,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public final <R> ReactiveSeq<R> flatMapP(int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> fn) {
-        //QueueFactories.boundedNonBlockingQueue(maxConcurrency*4,new DirectWaitStrategy<>())
-        //QueueFactories.unboundedNonBlockingQueue(new DirectWaitStrategy<>())
         return flatMapP(maxConcurrency, QueueFactories.unboundedNonBlockingQueue(new DirectWaitStrategy<>()),fn);
 
     }
@@ -390,17 +388,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         AtomicInteger closed = new AtomicInteger(0);
         final ReactiveSeq<T> stream = stream();
         long id = System.identityHashCode(stream);
-        System.out.println("FlatMapP for " +" t"+ Thread.currentThread().getId() + " i" + id);
         Subscription sub = stream.map(mapper)
                 .subscribe(p -> {
-
                     c.active.incrementAndGet();
-                    System.out.println("Subscribing upstream! " +" active " + c.active.get() +" t"+ Thread.currentThread().getId() + " i" + id);
-
                     p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));
 
                 } , defaultErrorHandler , () -> {
-                    System.out.println("Parent stream closed!" +" active " + c.active.get() +" t"+ Thread.currentThread().getId()+ " i" + id);
                     init.close();
                 });
 
@@ -434,19 +427,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
                             int loops = 0;
                             while(e<r) {
-                               // System.out.println("Requested " + r + " : sent " + e);
+
                                 if(!isOpen)
                                     return;
-
-                                if(loops++>100000){
-                                    System.out.println("Requested " + r + " : sent " + e + "  total " + totalSent.get() +" t " + Thread.currentThread().getId() + " i" + id);
-                                    System.out.println("Counter " + c.active + " : completable " + c.completable+ " i" + id);
-                                    System.out.println("Added " + c.added+ " i" + id);
-                                    System.exit(0);
-                                }
                                 if(c.active.get()<maxConcurrency){
-
-                                   // System.out.println("Requesting! " + c.active +" t " + Thread.currentThread().getId());
                                     sub.request(1l);
                                 }
                                 try {
@@ -463,7 +447,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                                         totalSent.incrementAndGet();
 
                                     }else {
-                                 //       System.out.println("Getting?");
                                         R value = init.getQueue().get();
                                         s.onNext(value);
                                         e++;
@@ -472,10 +455,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                                     }
 
                                 } catch (Queue.QueueTimeoutException t) {
-                                   // t.printStackTrace();
+
                                     Thread.yield();
                                 } catch (Queue.ClosedQueueException t){
-                                  //  t.printStackTrace();
+
                                     if(t.isDataPresent()){
                                         ancillaryData[0]=t.getCurrentData();
                                         List<R> local = ancillaryData[0];
@@ -492,9 +475,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
                                         cancel();
                                         s.onComplete();
-                                        System.out.println("Requested " + r + " : sent " + e + "  total " + totalSent.get() +" t " + Thread.currentThread().getId()+ " i" + id);
-                                        System.out.println("Counter " + c.active + " : completable " + c.completable+ " i" + id);
-                                        System.out.println("Added " + c.added+ " i" + id);
                                         return;
                                     }
                                 }catch( Exception t){

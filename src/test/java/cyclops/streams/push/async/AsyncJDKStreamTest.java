@@ -45,7 +45,7 @@ public class AsyncJDKStreamTest {
     }
     @Test
     public void flatMapPub(){
-        for(int l=0;l<100_000;l++) {
+        for(int l=0;l<1_000;l++) {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
@@ -63,7 +63,7 @@ public class AsyncJDKStreamTest {
     }
 	@Test
 	public void flatMapP(){
-        for(int l=0;l<100_000;l++) {
+        for(int l=0;l<1_000;l++) {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
@@ -83,7 +83,7 @@ public class AsyncJDKStreamTest {
     }
     @Test
     public void flatMapP2(){
-        for(int l=0;l<100_000;l++) {
+        for(int l=0;l<1_000;l++) {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
@@ -95,7 +95,7 @@ public class AsyncJDKStreamTest {
     }
     @Test
     public void flatMapP2a(){
-        for(int l=0;l<100_000;l++) {
+        for(int l=0;l<1_000;l++) {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);

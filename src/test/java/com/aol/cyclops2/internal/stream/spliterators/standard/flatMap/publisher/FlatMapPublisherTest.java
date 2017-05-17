@@ -185,7 +185,7 @@ public class FlatMapPublisherTest {
         }
 
     }
-
+/**
     @Test
     public void flatMapPAsyncRS2() throws InterruptedException {
         for(int k=0;k<1000;k++) {
@@ -224,6 +224,7 @@ public class FlatMapPublisherTest {
         }
 
     }
+
     @Test
     public void flatMapPAsyncRS2Conc(){
         for(int k=0;k<1000;k++) {
@@ -256,7 +257,7 @@ public class FlatMapPublisherTest {
         }
 
     }
-
+**/
     @Test
     public void flatMapPAsyncRS3(){
         for(int k=0;k<100;k++) {
