@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 
+import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
 
 /**
@@ -82,6 +83,9 @@ public interface FunctionalAdapter<W extends WitnessType<W>> {
         return unitIterable(()->new ValueIterator<T>(o,0));
     }
 
+    default  <T> ReactiveSeq<T> toStream(AnyM<W,T> t){
+        return ReactiveSeq.fromIterable(toIterable(t));
+    }
     <T> Iterable<T> toIterable(AnyM<W,T> t);
     
     default <T> AnyM<W,T> empty(){

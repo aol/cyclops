@@ -371,7 +371,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      */
     @Override
     default ReactiveSeq<T> stream(){
-        return ReactiveSeq.fromIterable(this);
+        return this.adapter().toStream(this);
     }
 
     
