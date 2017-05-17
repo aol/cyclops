@@ -46,6 +46,9 @@ public interface Witness {
     public static <T> Stream<T> stream(AnyM<stream,? extends T> anyM){
         return anyM.unwrap();
     }
+    public static <T> ReactiveSeq<T> toReactiveSeq(AnyM<stream,? extends T> anyM){
+        return ReactiveSeq.fromStream(anyM.unwrap());
+    }
     public static <T> ReactiveSeq<T> reactiveSeq(AnyM<reactiveSeq,? extends T> anyM){
         return anyM.unwrap();
     }

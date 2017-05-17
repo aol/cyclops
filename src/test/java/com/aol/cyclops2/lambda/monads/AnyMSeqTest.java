@@ -66,7 +66,7 @@ public class AnyMSeqTest {
 
         System.out.println(" future list " + futureList);
 
-        ListX<ListX<Integer>> collected = futureList.to(Witness::reactiveSeq).toListX();
+        ListX<ListX<Integer>> collected = futureList.to(Witness::toReactiveSeq).toListX();
 
 
         System.out.println(collected);
@@ -89,7 +89,7 @@ public class AnyMSeqTest {
        
         AnyM<stream,ListX<String>> futureList = AnyM.traverse( AnyM.listFromStream(futures), (Integer i) -> "hello" +i, stream.INSTANCE);
 
-        ListX<ListX<String>> collected = futureList.to(Witness::reactiveSeq).toListX();
+        ListX<ListX<String>> collected = futureList.to(Witness::toReactiveSeq).toListX();
 
         assertThat(collected.get(0).size(),equalTo( list.size()));
         
