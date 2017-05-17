@@ -3,7 +3,7 @@ package cyclops.streams.push;
 import cyclops.Streams;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;

@@ -8,7 +8,7 @@ import cyclops.Streams;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PStackX;
-import cyclops.control.Eval;
+import cyclops.control.lazy.Eval;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.control.Xor;

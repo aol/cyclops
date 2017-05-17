@@ -2,9 +2,9 @@ package cyclops;
 
 import cyclops.monads.AnyM;
 import cyclops.control.Xor;
-import cyclops.async.Adapter;
-import cyclops.async.Queue;
-import cyclops.async.Topic;
+import cyclops.async.adapters.Adapter;
+import cyclops.async.adapters.Queue;
+import cyclops.async.adapters.Topic;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.monads.WitnessType;

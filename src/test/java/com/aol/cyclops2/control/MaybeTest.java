@@ -9,7 +9,9 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Future;
 import cyclops.control.*;
-import cyclops.control.Maybe.CompletableMaybe;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Maybe.CompletableMaybe;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -31,7 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static cyclops.control.Maybe.just;
+import static cyclops.control.lazy.Maybe.just;
 import static org.hamcrest.Matchers.equalTo;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
@@ -51,7 +53,7 @@ public class MaybeTest implements Printable {
     public void completableTest(){
         CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
         Maybe<Integer> mapped = completable.map(i->i*2)
-                                          .flatMap(i->Eval.later(()->i+1));
+                                          .flatMap(i-> Eval.later(()->i+1));
 
         completable.complete(5);
         System.out.println(mapped.getClass());

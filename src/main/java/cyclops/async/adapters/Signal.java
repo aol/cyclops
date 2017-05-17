@@ -1,4 +1,4 @@
-package cyclops.async;
+package cyclops.async.adapters;
 
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;

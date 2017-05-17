@@ -2,12 +2,14 @@ package com.aol.cyclops2.control;
 
 import cyclops.*;
 import cyclops.control.*;
-import cyclops.control.Eval.Module.Later;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Eval.Module.Later;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.immutable.PSetX;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 import cyclops.async.Future;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import org.junit.Before;
 import org.junit.Test;

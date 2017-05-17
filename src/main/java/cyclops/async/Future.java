@@ -5,6 +5,8 @@ import com.aol.cyclops2.types.*;
 import cyclops.Monoids;
 import cyclops.collections.box.Mutable;
 import cyclops.control.*;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.transformers.FutureT;
@@ -30,7 +32,6 @@ import cyclops.typeclasses.monad.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -413,7 +414,7 @@ public class Future<T> implements To<Future<T>>,
      * Construct a Future syncrhonously from the Supplied Try
      * 
      * @param value Try to populate Future from
-     * @return Future populated with either the value or error in provided Try
+     * @return Future populated with lazy the value or error in provided Try
      */
     public static <T, X extends Throwable> Future<T> fromTry(final Try<T, X> value) {
         return Future.ofSupplier(value);

@@ -1,4 +1,4 @@
-package cyclops.control.either;
+package cyclops.control.lazy;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.*;
@@ -453,17 +453,17 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
     Either3<RT, LT2, LT1> swap1();
 
     /**
-     * @return True if this either contains the right type
+     * @return True if this lazy contains the right type
      */
     boolean isRight();
 
     /**
-     * @return True if this either contains the left1 type
+     * @return True if this lazy contains the left1 type
      */
     boolean isLeft1();
 
     /**
-     * @return True if this either contains the left2 type
+     * @return True if this lazy contains the left2 type
      */
     boolean isLeft2();
 

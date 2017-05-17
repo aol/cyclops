@@ -2,10 +2,10 @@ package cyclops.streams.push.async;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
 import cyclops.Semigroups;
-import cyclops.async.Topic;
+import cyclops.async.adapters.Topic;
 import cyclops.collections.ListX;
-import cyclops.control.Maybe;
-import cyclops.control.either.Either;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Either;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;

@@ -1,6 +1,6 @@
 package com.aol.cyclops2.types;
 
-import cyclops.control.Eval;
+import cyclops.control.lazy.Eval;
 import cyclops.async.Future;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 /**
  * Created by johnmcclean on 17/12/2016.
  */
-public interface FoldableTraversable<T> extends Fn1<Long,T>,
+public interface FoldableTraversable<T> extends
                                                 Traversable<T>,
                                                 CyclopsCollectable<T>,
                                                 ConvertableSequence<T>,
@@ -96,10 +96,11 @@ public interface FoldableTraversable<T> extends Fn1<Long,T>,
                                                        final Class<X>... classes){
         return Try.catchExceptions(classes).tryThis(()->fn.apply(this));
     }
-    @Override
-    default T apply(Long index){
-        return this.get(index).orElse(null);
+
+    default  Fn1<Long,T> asFunction(){
+        return index->this.get(index).orElse(null);
     }
+
 
 
     @Override

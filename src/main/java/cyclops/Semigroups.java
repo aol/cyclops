@@ -1,16 +1,14 @@
 package cyclops;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops2.internal.stream.spliterators.push.StreamSubscription;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.futurestream.EagerFutureStreamFunctions;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
-import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.collections.*;
 import cyclops.collections.immutable.*;
 import cyclops.control.Ior;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Xor;
 import cyclops.function.Semigroup;
@@ -20,14 +18,10 @@ import cyclops.stream.Spouts;
 import org.jooq.lambda.Seq;
 import org.pcollections.PCollection;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;

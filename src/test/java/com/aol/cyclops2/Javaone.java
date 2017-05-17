@@ -8,9 +8,8 @@ import java.util.stream.Stream;
 import cyclops.Streams;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
 
 public class Javaone {

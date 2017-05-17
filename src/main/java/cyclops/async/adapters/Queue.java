@@ -1,4 +1,4 @@
-package cyclops.async;
+package cyclops.async.adapters;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -14,12 +14,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops2.react.async.subscription.Subscription;
+import cyclops.async.QueueFactories;
 import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
-import cyclops.async.AdaptersModule.ClosingSpliterator;
-import cyclops.async.AdaptersModule.QueueToBlockingQueueWrapper;
-import cyclops.async.AdaptersModule.SingleContinuation;
-import cyclops.async.AdaptersModule.StreamOfContinuations;
 import cyclops.async.wait.DirectWaitStrategy;
 import cyclops.async.wait.WaitStrategy;
 import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
@@ -163,14 +160,14 @@ public class Queue<T> implements Adapter<T> {
     }
 
     public Queue(final java.util.Queue<T> q, final WaitStrategy<T> consumer, final WaitStrategy<T> producer) {
-        this(new QueueToBlockingQueueWrapper(
+        this(new AdaptersModule.QueueToBlockingQueueWrapper(
                                              q),
              consumer, producer);
     }
 
     public static <T> Queue<T> createMergeQueue() {
         final Queue<T> q = new Queue<>();
-        q.continuationStrategy = new StreamOfContinuations(
+        q.continuationStrategy = new AdaptersModule.StreamOfContinuations(
                                                            q);
         return q;
     }
@@ -311,7 +308,7 @@ public class Queue<T> implements Adapter<T> {
 
     private Stream<Collection<T>> closingStreamBatch(final Supplier<Collection<T>> s, final Continueable sub) {
 
-        final Stream<Collection<T>> st = StreamSupport.stream(new ClosingSpliterator<>(
+        final Stream<Collection<T>> st = StreamSupport.stream(new AdaptersModule.ClosingSpliterator<>(
                                                                                      Long.MAX_VALUE, s, sub, this),
                                                               false);
 
@@ -320,7 +317,7 @@ public class Queue<T> implements Adapter<T> {
 
     private Stream<T> closingStream(final Supplier<T> s, final Continueable sub) {
 
-        final Stream<T> st = StreamSupport.stream(new ClosingSpliterator<T>(
+        final Stream<T> st = StreamSupport.stream(new AdaptersModule.ClosingSpliterator<T>(
                                                                          Long.MAX_VALUE, s, sub, this),
                                                  false);
 
@@ -329,7 +326,7 @@ public class Queue<T> implements Adapter<T> {
 
     private Stream<CompletableFuture<T>> closingStreamFutures(final Supplier<CompletableFuture<T>> s, final Continueable sub) {
 
-        final Stream<CompletableFuture<T>> st = StreamSupport.stream(new ClosingSpliterator<>(
+        final Stream<CompletableFuture<T>> st = StreamSupport.stream(new AdaptersModule.ClosingSpliterator<>(
                                                                                             Long.MAX_VALUE, s, sub, this),
                                                                      false);
 
@@ -732,7 +729,7 @@ public class Queue<T> implements Adapter<T> {
 
     public void addContinuation(final Continuation c) {
         if (this.continuationStrategy == null)
-            continuationStrategy = new SingleContinuation(
+            continuationStrategy = new AdaptersModule.SingleContinuation(
                                                           this);
         this.continuationStrategy.addContinuation(c);
     }

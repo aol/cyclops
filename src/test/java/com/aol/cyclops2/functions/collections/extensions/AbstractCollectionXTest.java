@@ -9,7 +9,7 @@ import cyclops.*;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
@@ -517,7 +517,7 @@ public abstract class AbstractCollectionXTest {
 	
 	@Test
 	public void testCollectable(){
-		assertThat(of(1,2,3).collectable().anyMatch(i->i==2),equalTo(true));
+		assertThat(of(1,2,3).statisticalOperations().anyMatch(i->i==2),equalTo(true));
 	}
 	@Test
 	public void dropRight(){

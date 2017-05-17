@@ -1,7 +1,7 @@
 package com.aol.cyclops2.types;
 
 import cyclops.control.Xor;
-import cyclops.control.either.Either;
+import cyclops.control.lazy.Either;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;

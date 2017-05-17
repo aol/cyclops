@@ -1,6 +1,6 @@
-package cyclops.control.either;
+package com.aol.cyclops2.sum.types;
 
-
+import cyclops.Monoids;
 import cyclops.Reducers;
 import cyclops.Semigroups;
 import cyclops.Streams;
@@ -9,7 +9,10 @@ import cyclops.collections.box.Mutable;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.control.*;
-import cyclops.control.either.Either4.CompletableEither4;
+import cyclops.control.lazy.Either;
+import cyclops.control.lazy.Either4;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -27,60 +30,15 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class CompletableEither4Test {
-    public static <LT2,LT3,RT> CompletableEither4<RT,LT2,LT3,RT> right(RT value){
-        CompletableEither4<RT,LT2,LT3,RT> completable = Either4.either4();
-        completable.complete(value);
-        return completable;
-    }
-    @Test
-    public void completableTest(){
-        CompletableEither4<Integer,Integer,Integer,Integer> completable = Either4.either4();
-        Either4<Throwable,Integer,Integer,Integer> mapped = completable.map(i->i*2)
-                                                               .flatMap(i->Eval.later(()->i+1));
-
-        completable.complete(5);
-        System.out.println(mapped.getClass());
-        mapped.printOut();
-        assertThat(mapped.get(),equalTo(11));
-
-
-    }
-    @Test
-    public void completableNoneTest(){
-        CompletableEither4<Integer,Integer,Integer,Integer> completable = Either4.either4();
-        Either4<Throwable,Integer,Integer,Integer> mapped = completable.map(i->i*2)
-                                                              .flatMap(i->Eval.later(()->i+1));
-
-        completable.complete(null);
-
-        mapped.printOut();
-        assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.swap1().get(),instanceOf(NoSuchElementException.class));
-
-    }
-    @Test
-    public void completableErrorTest(){
-        CompletableEither4<Integer,Integer,Integer,Integer> completable = Either4.either4();
-        Either4<Throwable,Integer,Integer,Integer> mapped = completable.map(i->i*2)
-                                                                .flatMap(i->Eval.later(()->i+1));
-
-        completable.completeExceptionally(new IllegalStateException());
-
-        mapped.printOut();
-        assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.swap1().get(),instanceOf(IllegalStateException.class));
-
-    }
+public class Either4Test {
     boolean lazy = true;
     @Test
     public void lazyTest() {
-        CompletableEither4Test.right(10)
-             .flatMap(i -> { lazy=false; return  right(15);})
-             .map(i -> { lazy=false; return  right(15);})
+        Either4.right(10)
+             .flatMap(i -> { lazy=false; return  Either4.right(15);})
+             .map(i -> { lazy=false; return  Either4.right(15);})
              .map(i -> Maybe.of(20));
              
         
@@ -90,21 +48,45 @@ public class CompletableEither4Test {
     
     @Test
     public void mapFlatMapTest(){
-        assertThat(right(10)
+        assertThat(Either4.right(10)
                .map(i->i*2)
-               .flatMap(i->right(i*4))
+               .flatMap(i->Either4.right(i*4))
                .get(),equalTo(80));
     }
-    static class Base{ }
-    static class One extends Base{ }
-    static class Two extends Base{}
+    @Test
+    public void odd() {
+        System.out.println(even(Either4.right(200000)).get());
+    }
+
+    public Either4<String,String,String,String> odd(Either4<String,String,String,Integer> n) {
+
+        return n.flatMap(x -> even(Either4.right(x - 1)));
+    }
+
+    public Either4<String,String,String,String> even(Either4<String,String,String,Integer> n) {
+        return n.flatMap(x -> {
+            return x <= 0 ? Either4.right("done") : odd(Either4.right(x - 1));
+        });
+    }
+    Either4<String,String,String,Integer> just;
+    Either4<String,String,String,Integer> left2;
+    Either4<String,String,String,Integer> left3;
+    Either4<String,String,String,Integer> none;
+    @Before
+    public void setUp() throws Exception {
+        just = Either4.right(10);
+        none = Either4.left1("none");
+        left2 = Either4.left2("left2");
+        left3 = Either4.left3("left3");
+        
+    }
     @Test
     public void isLeftRight(){
         assertTrue(just.isRight());
         assertTrue(none.isLeft1());
         assertTrue(left2.isLeft2());
         assertTrue(left3.isLeft3());
-
+        
         assertFalse(just.isLeft1());
         assertFalse(just.isLeft2());
         assertFalse(just.isLeft3());
@@ -119,64 +101,61 @@ public class CompletableEither4Test {
         assertFalse(left3.isRight());
     }
 
-    @Test
-    public void odd() {
-        System.out.println(even(CompletableEither4Test.right(200000)).get());
-    }
-
-    public Either4<Throwable,String,String,String> odd(Either4<Throwable,String,String,Integer> n) {
-
-        return n.flatMap(x -> even(CompletableEither4Test.right(x - 1)));
-    }
-
-    public Either4<Throwable,String,String,String> even(Either4<Throwable,String,String,Integer> n) {
-        return n.flatMap(x -> {
-            return x <= 0 ? CompletableEither4Test.right("done") : odd(CompletableEither4Test.right(x - 1));
-        });
-    }
-    Either4<Throwable,String,String,Integer> just;
-    Either4<String,String,String,Integer> left2;
-    Either4<String,String,String,Integer> left3;
-    Either4<String,String,String,Integer> none;
-    @Before
-    public void setUp() throws Exception {
-        just = right(10);
-        none = Either4.left1("none");
-        left2 = Either4.left2("left2");
-        left3 = Either4.left3("left3");
-    }
-
-
    
     @Test
     public void testZip(){
-        assertThat(right(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
+        assertThat(Either.right(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
  //pending https://github.com/aol/cyclops-react/issues/380
         //       assertThat(Either.right(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
-        assertThat(right(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(right(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(right(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(right(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(right(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Either.right(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Either.right(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Either.right(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Either.right(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Either.right(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
+    }
+    @Test
+    public void testTraverseLeft1() {
+        ListX<Either4<Integer,String,String,String>> list = ListX.of(just,none,Either4.<String,String,String,Integer>right(1)).map(Either4::swap1);
+        Either4<ListX<Integer>,ListX<String>,ListX<String>,ListX<String>> xors   = Either4.traverse(list,s->"hello:"+s);
+        assertThat(xors,equalTo(Either4.right(ListX.of("hello:none"))));
+    }
+    @Test
+    public void testSequenceLeft1() {
+        ListX<Either4<Integer,String,String,String>> list = ListX.of(just,none,Either4.<String,String,String,Integer>right(1)).map(Either4::swap1);
+        Either4<ListX<Integer>,ListX<String>,ListX<String>,ListX<String>> xors   = Either4.sequence(list);
+        assertThat(xors,equalTo(Either4.right(ListX.of("none"))));
+    }
+    @Test
+    public void testSequenceLeft2() {
+        ListX<Either4<String,Integer,String,String>> list = ListX.of(just,left2,Either4.<String,String,String,Integer>right(1)).map(Either4::swap2);
+        Either4<ListX<String>,ListX<Integer>,ListX<String>,ListX<String>> xors   = Either4.sequence(list);
+        assertThat(xors,equalTo(Either4.right(ListX.of("left2"))));
+    }
+
+
+    @Test
+    public void testAccumulate() {
+        Either4<ListX<String>,ListX<String>,ListX<String>,Integer> iors = Either4.accumulate(Monoids.intSum,ListX.of(none,just,Either4.right(10)));
+        assertThat(iors,equalTo(Either4.right(20)));
     }
 
     @Test
     public void nest(){
-       assertThat(just.nest().map(m->m.get()),equalTo(Either4.right(10)));
-
+       assertThat(just.nest().map(m->m.get()),equalTo(just));
+       assertThat(none.nest().map(m->m.get()),equalTo(none));
     }
     @Test
     public void coFlatMap(){
-        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Either4.right(10)));
+        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
         assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Either4.right(50)));
     }
     @Test
     public void combine(){
        
-        Monoid<Integer> add = Monoid.of(0, Semigroups.intSum);
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
         assertThat(just.combineEager(add,none),equalTo(Either4.right(10)));
-        assertThat(none.combineEager(add,just),equalTo(Either4.right(0)));
-        assertThat(none.combineEager(add,none),equalTo(Either4.right(0)));
+        assertThat(none.combineEager(add,just),equalTo(Either4.right(0))); 
+        assertThat(none.combineEager(add,none),equalTo(Either4.right(0))); 
         assertThat(just.combineEager(add,Either4.right(10)),equalTo(Either4.right(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
         Either<String,Integer> nil = Either.right(null);
@@ -189,14 +168,13 @@ public class CompletableEither4Test {
     }
     @Test
     public void visit(){
-
+        
         assertThat(just.visit(secondary->"no", left2->"left2",left3->"left3", primary->"yes"),equalTo("yes"));
         assertThat(none.visit(secondary->"no", left2->"left2",left3->"left3", primary->"yes"),equalTo("no"));
         assertThat(left2.visit(secondary->"no", left2->"left2",left3->"left3", primary->"yes"),equalTo("left2"));
         assertThat(left3.visit(secondary->"no", left2->"left2",left3->"left3", primary->"yes"),equalTo("left3"));
     }
-
-
+    
     @Test
     public void testToMaybe() {
         assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
@@ -207,8 +185,6 @@ public class CompletableEither4Test {
         return i+1;
     }
 
-
-    
     @Test
     public void testOfT() {
         assertThat(Ior.primary(1),equalTo(Ior.primary(1)));
@@ -239,7 +215,7 @@ public class CompletableEither4Test {
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
         assertThat(just.map(i->i+5),equalTo(Either4.right(15)));
-
+        assertThat(none.map(i->i+5),equalTo(Either4.left1("none")));
     }
 
     @Test
@@ -253,7 +229,6 @@ public class CompletableEither4Test {
         assertThat(just.visit(i->i+1,()->20),equalTo(11));
         assertThat(none.visit(i->i+1,()->20),equalTo(20));
     }
-
 
 
     @Test
@@ -307,14 +282,6 @@ public class CompletableEither4Test {
         assertThat(just.foldLeft(1, (a,b)->a*b),equalTo(10));
     }
 
-
-
-
-
-   
-
-
-    
 
    
     @Test
@@ -389,9 +356,10 @@ public class CompletableEither4Test {
     }
 
 
+
     @Test
     public void testMkString() {
-        assertThat(just.mkString(),equalTo("CompletableEither4[10]"));
+        assertThat(just.mkString(),equalTo("Either4.right[10]"));
         assertThat(none.mkString(),equalTo("Either4.left1[none]"));
     }
 
@@ -438,6 +406,7 @@ public class CompletableEither4Test {
     }
 
     
+
 
 
 
@@ -530,8 +499,6 @@ public class CompletableEither4Test {
     }
 
 
-
-
     @Test
     public void testOrElse() {
         assertThat(none.orElse(20),equalTo(20));
@@ -549,6 +516,7 @@ public class CompletableEither4Test {
     }
 
 
+    
     @Test
     public void testToFutureW() {
         Future<Integer> cf = just.toFuture();
@@ -598,7 +566,7 @@ public class CompletableEither4Test {
 
     @Test
     public void testCast() {
-        Either4<Throwable,String,String,Number> num = just.cast(Number.class);
+        Either4<String,String,String,Number> num = just.cast(Number.class);
     }
 
     @Test
@@ -615,7 +583,7 @@ public class CompletableEither4Test {
         assertThat(capture.get(),equalTo(10));
     }
 
-    private Trampoline<Integer> sum(int times, int sum){
+    private Trampoline<Integer> sum(int times,int sum){
         return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
     }
     @Test
@@ -627,7 +595,7 @@ public class CompletableEither4Test {
 
     @Test
     public void testUnitT1() {
-        assertThat(none.unit(10),equalTo(Either4.right(10)));
+        assertThat(none.unit(10),equalTo(just));
     }
 
   

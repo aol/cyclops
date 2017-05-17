@@ -1,4 +1,4 @@
-package cyclops.control.either;
+package cyclops.control.lazy;
 
 
 import cyclops.Reducers;
@@ -9,7 +9,7 @@ import cyclops.collections.box.Mutable;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PStackX;
 import cyclops.control.*;
-import cyclops.control.either.Either5.CompletableEither5;
+import cyclops.control.lazy.Either5.CompletableEither5;
 import cyclops.function.Monoid;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;

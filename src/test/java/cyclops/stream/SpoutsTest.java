@@ -5,7 +5,7 @@ import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.Monoids;
 import cyclops.Semigroups;
 import cyclops.async.QueueFactories;
-import cyclops.async.Topic;
+import cyclops.async.adapters.Topic;
 import cyclops.collections.ListX;
 
 import org.hamcrest.CoreMatchers;
@@ -230,7 +230,7 @@ public class SpoutsTest {
     }
     @Test
     public void publishToAndMerge(){
-        cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+        cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                 .build();
 
         Thread t=  new Thread( ()-> {

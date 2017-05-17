@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import org.jooq.lambda.Seq;
 
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 
 import lombok.Getter;
 import lombok.Setter;

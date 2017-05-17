@@ -8,12 +8,15 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.CyclopsCollectors;
 import cyclops.Streams;
 import cyclops.async.*;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
+import cyclops.async.adapters.QueueFactory;
+import cyclops.async.adapters.Signal;
+import cyclops.async.adapters.Topic;
 import cyclops.async.wait.DirectWaitStrategy;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.Maybe;
-import cyclops.control.either.Either;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Either;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -53,7 +56,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     final Consumer<? super Throwable> defaultErrorHandler;
 
     @Wither
-    final Type async; //SYNC streams should switch to either Backpressured or No backpressure when zip or flatMapP are called
+    final Type async; //SYNC streams should switch to lazy Backpressured or No backpressure when zip or flatMapP are called
 
     public Type getType() {
         return async;
@@ -97,7 +100,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public Iterator<T> iterator() {
         if(async==Type.NO_BACKPRESSURE){
 
-            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+            Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
 
             AtomicBoolean wip = new AtomicBoolean(false);
@@ -368,7 +371,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return flatMapP(maxConcurrency, QueueFactories.unboundedNonBlockingQueue(new DirectWaitStrategy<>()),fn);
 
     }
-    public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory,Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory, Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
         final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
         final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
@@ -506,7 +509,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
         if(async==Type.NO_BACKPRESSURE){
 
-            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+            Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                                                          .build();
 
             AtomicBoolean wip = new AtomicBoolean(false);
@@ -553,7 +556,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public ReactiveSeq<T> changes(){
         if(async==Type.NO_BACKPRESSURE) {
-            cyclops.async.Queue<T> discrete = QueueFactories.<T>unboundedNonBlockingQueue()
+            Queue<T> discrete = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build()
                     .withTimeout(1);
 
@@ -566,7 +569,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
             return signal.getDiscrete().stream();
         }else{
-            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+            Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
             Signal<T> signal = new Signal<T>(null, queue);
             Subscription sub = source.subscribe(signal::set, i ->{
@@ -964,7 +967,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
    public Topic<T> broadcast(){
         if(async==Type.NO_BACKPRESSURE){
-            cyclops.async.Queue<T> queue = QueueFactories.<T>boundedNonBlockingQueue(1000)
+            Queue<T> queue = QueueFactories.<T>boundedNonBlockingQueue(1000)
                     .build()
                     .withTimeout(1);
 
@@ -992,7 +995,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             queue.addContinuation(cont);
             return topic;
         }
-        cyclops.async.Queue<T> queue = QueueFactories.<T>boundedNonBlockingQueue(1000)
+        Queue<T> queue = QueueFactories.<T>boundedNonBlockingQueue(1000)
                 .build()
                 .withTimeout(1);
 

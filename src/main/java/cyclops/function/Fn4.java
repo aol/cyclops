@@ -6,10 +6,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
 import cyclops.async.Future;
-import org.jooq.lambda.function.Function4;
 
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 
 public interface Fn4<T1, T2, T3, T4, R> extends Fn1<T1,Fn1<T2,Fn1<T3,Fn1<T4,R>>>> {

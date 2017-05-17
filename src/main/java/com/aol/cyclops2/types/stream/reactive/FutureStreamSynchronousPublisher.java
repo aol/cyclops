@@ -12,7 +12,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 

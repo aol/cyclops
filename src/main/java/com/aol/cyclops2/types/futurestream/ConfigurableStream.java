@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
-import cyclops.async.QueueFactory;
+import cyclops.async.adapters.QueueFactory;
 import com.aol.cyclops2.internal.react.stream.ReactBuilder;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 

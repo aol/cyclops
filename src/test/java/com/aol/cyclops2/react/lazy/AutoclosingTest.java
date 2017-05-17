@@ -10,12 +10,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.async.LazyReact;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 
 public class AutoclosingTest {
 

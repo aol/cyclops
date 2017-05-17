@@ -1,10 +1,11 @@
-package cyclops.async;
+package cyclops.async.adapters;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.futurestream.Continuation;
+import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Xor;

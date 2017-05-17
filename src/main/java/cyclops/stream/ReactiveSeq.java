@@ -20,13 +20,14 @@ import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.Streams;
 import cyclops.async.*;
-import cyclops.async.Queue;
+import cyclops.async.adapters.*;
+import cyclops.async.adapters.Queue;
 import cyclops.collections.ListX;
 import cyclops.collections.MapX;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Trampoline;
-import cyclops.control.either.Either;
+import cyclops.control.lazy.Either;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
@@ -163,7 +164,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         sub.accept(s);
         return s.reactiveSeq();
     }
-    static <T> ReactiveSeq<T> enqueued(QueueFactory<T> factory,Consumer<? super Subscriber<T>>... subs){
+    static <T> ReactiveSeq<T> enqueued(QueueFactory<T> factory, Consumer<? super Subscriber<T>>... subs){
         final Counter c = new Counter();
         c.active.set(subs.length);
         QueueBasedSubscriber<T> s = QueueBasedSubscriber.subscriber(factory,c,subs.length);
@@ -723,7 +724,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Continuation cont =
                 new Continuation(()->{
                     if(it[0]==null)
-                        it[0] = stream.apply(0l);
+                        it[0] = stream.asFunction().apply(0l);
                     Iterator<R> local = it[0];
                     try {
                         if (!local.hasNext()) {
@@ -759,7 +760,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Continuation cont =
                 new Continuation(()->{
                     if(it[0]==null)
-                        it[0] = stream.apply(0l);
+                        it[0] = stream.asFunction().apply(0l);
                     Iterator<R> local = it[0];
                     try {
                         if (!local.hasNext()) {
@@ -788,7 +789,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R> R foldParallel(Function<? super Stream<T>,? extends R> fn){
 
 
-        cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue().build().withTimeout(1);
+        Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue().build().withTimeout(1);
 
 
         AtomicReference<Continuation> ref = new AtomicReference<>(null);
@@ -2247,7 +2248,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <p>
      * <p>If the reactiveStream is parallel, and the {@code Collector}
      * is {@link Collector.Characteristics#CONCURRENT concurrent}, and
-     * either the reactiveStream is unordered or the collector is
+     * lazy the reactiveStream is unordered or the collector is
      * {@link Collector.Characteristics#UNORDERED unordered},
      * apply a concurrent reduction will be performed (see {@link Collector} for
      * details on concurrent reduction.)
@@ -4816,7 +4817,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> changes();
 
     default Topic<T> broadcast(){
-        cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+        Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                                                     .build()
                                                     .withTimeout(1);
 

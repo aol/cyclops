@@ -22,7 +22,7 @@ import lombok.Getter;
  * 3. For results / errors : single writer (one thread executing a task at a time, one thread sets the result or error) 
  * 						/ single reader (simple-react Stream)
  * 4. For post-hoc event listeners : single writer (simple-react Stream adds event listeners) : single reader (only one thread can read event listeners - 
- * 						either the thread that sets the result / error and eventually done,
+ * 						lazy the thread that sets the result / error and eventually done,
  * 							or if done already set - the calling thread can execute post-hoc events)
  */
 @AllArgsConstructor

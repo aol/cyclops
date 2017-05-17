@@ -22,11 +22,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.Streams;
 import cyclops.stream.Streamable;

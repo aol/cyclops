@@ -5,7 +5,7 @@ import cyclops.Semigroups;
 import cyclops.Streams;
 import cyclops.async.Future;
 import cyclops.collections.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;

@@ -2,11 +2,12 @@ package cyclops.async;
 
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import cyclops.async.adapters.Adapter;
 import cyclops.collections.box.LazyImmutable;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PMapX;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Xor;
 import cyclops.stream.FutureStream;
@@ -30,7 +31,7 @@ import java.util.concurrent.Executor;
  * Pipes : Stores and manages cyclops2-react Adapters for cross-thread communication
  * 
  * Connected Streams will not be able to complete collect or reduce style methods unless the underlying Adapter for data transfer is closed.
- * I.e. connected Streams remain connected until either the Adapter is closed, or they disconnect (due to a limit for example).
+ * I.e. connected Streams remain connected until lazy the Adapter is closed, or they disconnect (due to a limit for example).
  * 
  * <pre>
  * {@close 
@@ -63,7 +64,7 @@ import java.util.concurrent.Executor;
  * }
  * </pre>
  * 
- * @see cyclops.async.Adapter
+ * @see Adapter
  * 
  * @author johnmcclean
  * 
@@ -334,7 +335,7 @@ public class Pipes<K, V> {
      * }
      * </pre>
      * @param key : Adapter identifier
-     * @return Xor containing either a NoSuchElementException an Adapter with the specified key does not exist,
+     * @return Xor containing lazy a NoSuchElementException an Adapter with the specified key does not exist,
      *            or the next value from that Adapter
      */
     public Xor<Throwable, V> oneOrError(final K key) {
@@ -420,7 +421,7 @@ public class Pipes<K, V> {
      * 
      * @param key : Adapter identifier
      * @param ex Executor to extract value from Adapter from on
-     * @return Future containing either next value or NoSuchElementException
+     * @return Future containing lazy next value or NoSuchElementException
      */
     public Future<V> oneOrErrorAsync(final K key, final Executor ex) {
         final CompletableFuture<V> cf = CompletableFuture.supplyAsync(() -> {

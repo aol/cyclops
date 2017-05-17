@@ -4,9 +4,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.Lists;
-import cyclops.collections.ListX;
-import cyclops.stream.ReactiveSeq;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.junit.Test;
 
@@ -59,7 +56,7 @@ public class DirectWaitStrategyTest {
 	
 	@Test
 	public void testwithQueue(){
-		Queue<String> q = new Queue<>(new ManyToOneConcurrentArrayQueue<String>(100),
+		cyclops.async.adapters.Queue<String> q = new cyclops.async.adapters.Queue<>(new ManyToOneConcurrentArrayQueue<String>(100),
 									new DirectWaitStrategy<>(),
 									new DirectWaitStrategy<>());
 		

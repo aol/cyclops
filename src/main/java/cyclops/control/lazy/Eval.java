@@ -1,4 +1,4 @@
-package cyclops.control;
+package cyclops.control.lazy;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
@@ -8,6 +8,7 @@ import cyclops.collections.box.Mutable;
 import cyclops.collections.DequeX;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
+import cyclops.control.Trampoline;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -43,7 +44,7 @@ import java.util.stream.Stream;
 /**
  * Represents a computation that can be deferred (always), cached (later) or immediate(now).
  * Supports tail recursion via map / flatMap. 
- * Computations are always Lazy even when performed against a Now instance. 
+ * Unrestricted are always Lazy even when performed against a Now instance.
  * Heavily inspired by Cats Eval @link https://github.com/typelevel/cats/blob/master/core/src/main/scala/cats/Eval.scala
  * 
  * Tail Recursion example

@@ -18,8 +18,8 @@ import cyclops.stream.FutureStream;
 import org.jooq.lambda.Seq;
 
 import cyclops.async.SimpleReact;
-import cyclops.async.Queue;
-import cyclops.async.QueueFactory;
+import cyclops.async.adapters.Queue;
+import cyclops.async.adapters.QueueFactory;
 import com.aol.cyclops2.internal.react.SimpleReactStreamImpl;
 import com.aol.cyclops2.internal.react.stream.CloseableIterator;
 import com.aol.cyclops2.internal.react.stream.ReactBuilder;

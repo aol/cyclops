@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 import cyclops.Streams;
 import cyclops.async.QueueFactories;
-import cyclops.async.Topic;
+import cyclops.async.adapters.Topic;
 import cyclops.collections.ListX;
 import org.hamcrest.CoreMatchers;
 import org.jooq.lambda.tuple.Tuple;
@@ -32,7 +32,7 @@ import org.junit.Test;
 
 import cyclops.function.Monoid;
 import cyclops.async.LazyReact;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.stream.ReactiveSeq;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
@@ -81,7 +81,7 @@ public  class CoreReactiveSeqTest {
 
 	@Test
     public void publishToAndMerge(){
-	    cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+	    cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                                             .build();
 
         Thread t=  new Thread( ()-> {

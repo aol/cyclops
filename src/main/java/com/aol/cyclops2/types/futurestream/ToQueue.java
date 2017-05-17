@@ -3,8 +3,8 @@ package com.aol.cyclops2.types.futurestream;
 import java.util.Map;
 import java.util.function.Function;
 
-import cyclops.async.Queue;
-import cyclops.async.QueueFactory;
+import cyclops.async.adapters.Queue;
+import cyclops.async.adapters.QueueFactory;
 
 /**
  * 

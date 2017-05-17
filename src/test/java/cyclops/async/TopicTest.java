@@ -16,6 +16,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.async.adapters.Queue;
+import cyclops.async.adapters.Topic;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

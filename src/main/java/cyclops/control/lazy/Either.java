@@ -1,4 +1,4 @@
-package cyclops.control.either;
+package cyclops.control.lazy;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.Completable;
@@ -17,7 +17,6 @@ import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -41,7 +40,7 @@ import java.util.stream.Stream;
  * 
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
  *  
- *  Either is used to represent values that can be one of two states (for example a validation result, either everything is ok - or we have an error).
+ *  Either is used to represent values that can be one of two states (for example a validation result, lazy everything is ok - or we have an error).
  *  It can be used to avoid a common design anti-pattern where an Object has two fields one of which is always null (or worse, both are defined as Optionals).
  *  
  *  <pre>
@@ -129,7 +128,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      *  {@code
      *      ___Example 1___
      *
-     *      CompletableEither<Integer,Integer> completable = Either.either();
+     *      CompletableEither<Integer,Integer> completable = Either.lazy();
             Either<Throwable,Integer> mapped = completable.map(i->i*2)
                                                           .flatMap(i->Eval.later(()->i+1));
 
@@ -140,7 +139,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
             ___Example 2___
 
-            CompletableEither<Integer,Integer> completable = Either.either();
+            CompletableEither<Integer,Integer> completable = Either.lazy();
             Either<Throwable,Integer> mapped = completable.map(i->i*2)
                                                           .flatMap(i->Eval.later(()->i+1));
 
@@ -151,7 +150,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
             ___Example 3___
 
-            CompletableEither<Integer,Integer> completable = Either.either();
+            CompletableEither<Integer,Integer> completable = Either.lazy();
             Either<Throwable,Integer> mapped = completable.map(i->i*2)
                                                           .flatMap(i->Eval.later(()->i+1));
 

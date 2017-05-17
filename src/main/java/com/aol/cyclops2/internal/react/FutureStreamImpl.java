@@ -25,7 +25,7 @@ import cyclops.function.Reducer;
 import cyclops.async.LazyReact;
 import cyclops.stream.ReactiveSeq;
 import cyclops.async.QueueFactories;
-import cyclops.async.QueueFactory;
+import cyclops.async.adapters.QueueFactory;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops2.react.async.subscription.Continueable;
@@ -257,7 +257,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     }
 
     @Override
-    public Collectable<U> collectable() {
+    public Collectable<U> statisticalOperations() {
         //in order for tasks to be executed concurrently we need to make sure that collect is
         //ultimately called via LazyStream#collect. Passing 'this' directly into Seq results in 'this' being returned
         //Seq implements the collection extensions on SeqImpl, so we need to construct a SeqImpl with this as the Stream.

@@ -32,6 +32,9 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
                                         Unwrapable,
                                         Unit<T>{
 
+    default <R extends Collection<T>> R collection(Function<? super CollectionX<T>,? extends R> fn){
+        return fn.apply(this);
+    }
     @Override
     Iterator<T> iterator();
 

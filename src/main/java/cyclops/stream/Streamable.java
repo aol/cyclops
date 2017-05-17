@@ -149,10 +149,10 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectable()
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#statisticalOperations()
      */
     @Override
-    default Collectable<T> collectable() {
+    default Collectable<T> statisticalOperations() {
 
         return Seq.seq((Stream<T>)stream());
     }

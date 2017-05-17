@@ -18,11 +18,12 @@ import java.util.stream.Stream;
 
 import cyclops.Semigroups;
 import cyclops.async.QueueFactories;
-import cyclops.async.Topic;
+import cyclops.async.adapters.Topic;
+import cyclops.async.adapters.Queue;
 import cyclops.collections.ListX;
 import cyclops.collections.SetX;
-import cyclops.control.Maybe;
-import cyclops.control.either.Either;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Either;
 import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -239,7 +240,7 @@ public class BaseSequentialTest {
     public void publishToAndMerge() {
         for (int k = 0; k < ITERATIONS; k++) {
             System.out.println("Publish to and product iteration " + k);
-            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+            cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
             Thread t = new Thread(() -> {
@@ -279,7 +280,7 @@ public class BaseSequentialTest {
     @Test
     public void publishTest() {
         for (int k = 0; k < ITERATIONS; k++) {
-            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+            Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
             Thread t = new Thread(() -> {
@@ -310,7 +311,7 @@ public class BaseSequentialTest {
     @Test
     public void mergeAdapterTest() {
         for (int k = 0; k < ITERATIONS; k++) {
-            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+            Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
             Thread t = new Thread(() -> {
@@ -345,7 +346,7 @@ public class BaseSequentialTest {
     public void mergeAdapterTest1() {
         for (int k = 0; k < ITERATIONS; k++) {
             System.out.println("Test iteration " + k);
-            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+            Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
             Thread t = new Thread(() -> {

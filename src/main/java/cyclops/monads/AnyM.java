@@ -28,12 +28,8 @@ import java.util.stream.StreamSupport;
 import com.aol.cyclops2.internal.adapters.StreamAdapter;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import cyclops.Streams;
-import cyclops.async.Adapter;
 import cyclops.control.*;
-import cyclops.control.either.Either;
-import cyclops.control.either.Either3;
-import cyclops.control.either.Either4;
-import cyclops.control.either.Either5;
+import cyclops.control.lazy.*;
 import cyclops.monads.function.AnyMFn1;
 import cyclops.monads.function.AnyMFn2;
 import cyclops.monads.transformers.FutureT;
@@ -349,7 +345,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * </pre>
      * 
      * 
-     * @return An Xor for pattern matching either an AnyMValue or AnyMSeq
+     * @return An Xor for pattern matching lazy an AnyMValue or AnyMSeq
      */
     Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable();
 

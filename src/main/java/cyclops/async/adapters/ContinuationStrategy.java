@@ -1,4 +1,4 @@
-package cyclops.async;
+package cyclops.async.adapters;
 
 import com.aol.cyclops2.types.futurestream.Continuation;
 

@@ -1,14 +1,14 @@
-package cyclops.async;
+package cyclops.async.adapters;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.futurestream.Continuation;
+import cyclops.async.QueueFactories;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
 import org.pcollections.PVector;

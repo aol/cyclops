@@ -16,12 +16,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
-import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.*;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.stream.FutureStream;
-import cyclops.stream.Spouts;
+import cyclops.async.adapters.Queue;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

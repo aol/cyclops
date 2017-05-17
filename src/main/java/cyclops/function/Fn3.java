@@ -8,8 +8,8 @@ import java.util.function.Function;
 import cyclops.async.Future;
 import org.jooq.lambda.function.Function3;
 
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 
 @FunctionalInterface

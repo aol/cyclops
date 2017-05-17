@@ -1,6 +1,5 @@
 package com.aol.cyclops2.react.lazy;
 
-import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -31,9 +30,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.async.LazyReact;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
-import cyclops.async.Signal;
+import cyclops.async.adapters.Signal;
 import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.react.base.BaseSeqTest;
 

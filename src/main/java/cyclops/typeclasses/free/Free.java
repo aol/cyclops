@@ -3,7 +3,7 @@ package cyclops.typeclasses.free;
 import com.aol.cyclops2.hkt.Higher;
 
 import cyclops.control.Xor;
-import cyclops.control.either.Either3;
+import cyclops.control.lazy.Either3;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Fn5;

@@ -9,9 +9,9 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import cyclops.async.SimpleReact;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
-import cyclops.async.QueueFactory;
+import cyclops.async.adapters.QueueFactory;
 import com.aol.cyclops2.internal.react.stream.EagerStreamWrapper;
 import com.aol.cyclops2.react.async.subscription.AlwaysContinue;
 import com.aol.cyclops2.react.async.subscription.Continueable;
@@ -22,7 +22,6 @@ import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
-import lombok.extern.slf4j.Slf4j;
 
 @Wither
 @Getter

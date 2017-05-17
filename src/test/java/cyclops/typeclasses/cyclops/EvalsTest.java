@@ -6,8 +6,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Monoid;
 import org.junit.Test;

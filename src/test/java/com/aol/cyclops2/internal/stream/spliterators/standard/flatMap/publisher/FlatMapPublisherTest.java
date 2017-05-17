@@ -1,9 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.standard.flatMap.publisher;
 
-import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
-import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.collections.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.hamcrest.Matchers;
@@ -21,11 +19,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import static cyclops.stream.ReactiveSeq.of;
-import static cyclops.stream.Spouts.concat;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;

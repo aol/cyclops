@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 
 /**
  * Interface for defining how Comprehensions should work for a type
- * Cyclops For Comprehensions will supply either a JDK 8 Predicate or Function
+ * Cyclops For Comprehensions will supply lazy a JDK 8 Predicate or Function
  * for filter / map / flatMap
  * The comprehender should wrap these in a suitable type and make the call to the
  * underlying Monadic Type (T) the Comprehender implementation supports.

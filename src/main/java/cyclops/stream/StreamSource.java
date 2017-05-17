@@ -5,10 +5,10 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.util.stream.pushable.PushableFutureStream;
 import cyclops.async.LazyReact;
-import cyclops.async.Adapter;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Adapter;
+import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
-import cyclops.async.QueueFactory;
+import cyclops.async.adapters.QueueFactory;
 import com.aol.cyclops2.util.stream.pushable.MultipleStreamSource;
 import com.aol.cyclops2.util.stream.pushable.PushableReactiveSeq;
 import com.aol.cyclops2.util.stream.pushable.PushableStream;

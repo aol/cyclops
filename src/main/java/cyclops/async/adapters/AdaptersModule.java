@@ -1,4 +1,4 @@
-package cyclops.async;
+package cyclops.async.adapters;
 
 
 
@@ -20,7 +20,6 @@ import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
 
-import cyclops.async.Queue.ClosedQueueException;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 import com.aol.cyclops2.types.futurestream.Continuation;
 
@@ -49,7 +48,7 @@ public interface AdaptersModule {
                               .<Optional<Continuation>> map(c -> {
                                   try {
                                       return Optional.of(c.proceed());
-                                  } catch (final ClosedQueueException e) {
+                                  } catch (final Queue.ClosedQueueException e) {
 
                                       return Optional.empty();
                                   }
@@ -62,7 +61,7 @@ public interface AdaptersModule {
             if (continuation.size() == 0) {
 
                 queue.close();
-                throw new ClosedQueueException();
+                throw new Queue.ClosedQueueException();
             }
         }
 
@@ -339,7 +338,7 @@ public interface AdaptersModule {
                     action.accept(s.get());
                     subscription.closeQueueIfFinished(queue);
                     return true;
-                } catch (final ClosedQueueException e) {
+                } catch (final Queue.ClosedQueueException e) {
 
                     if (e.isDataPresent()) {
 
