@@ -65,7 +65,7 @@ public interface Traversable<T> extends Publisher<T>,
      */
     <U> Traversable<U> unitIterator(Iterator<U> U);
     /* (non-Javadoc)
-     * @see org.reactivestreams.Publisher#subscribeAll(org.reactivestreams.Subscriber)
+     * @see org.reactivestreams.Publisher#forEachAsync(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super T> s) {

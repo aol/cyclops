@@ -1,6 +1,5 @@
 package cyclops.stream;
 
-import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
 import java.util.*;
@@ -21,7 +20,6 @@ import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
-import java.util.function.UnaryOperator;
 import java.util.stream.*;
 
 import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
@@ -31,11 +29,12 @@ import com.aol.cyclops2.types.futurestream.*;
 import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import cyclops.*;
 import cyclops.async.*;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Adapter;
+import cyclops.async.adapters.Queue;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Trampoline;
-import cyclops.control.either.Either;
+import cyclops.control.lazy.Either;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
@@ -47,12 +46,11 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.async.Queue.ClosedQueueException;
-import cyclops.async.Queue.QueueTimeoutException;
-import cyclops.async.QueueFactory;
+import cyclops.async.adapters.Queue.ClosedQueueException;
+import cyclops.async.adapters.Queue.QueueTimeoutException;
+import cyclops.async.adapters.QueueFactory;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;
-import com.aol.cyclops2.internal.react.FutureStreamImpl;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;
 import com.aol.cyclops2.internal.react.stream.CloseableIterator;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
@@ -60,10 +58,8 @@ import com.aol.cyclops2.internal.react.stream.traits.future.operators.LazyFuture
 import com.aol.cyclops2.internal.react.stream.traits.future.operators.OperationsOnFuturesImpl;
 import com.aol.cyclops2.internal.stream.FutureOpterationsImpl;
 import com.aol.cyclops2.react.SimpleReactFailedStageException;
-import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 import com.aol.cyclops2.react.collectors.lazy.LazyResultConsumer;
-import com.aol.cyclops2.react.collectors.lazy.MaxActive;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.monads.Witness;
 import com.aol.cyclops2.types.stream.HotStream;
@@ -122,8 +118,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default <R, A> FutureStream<R> collectAll(Collector<? super U, A, R> collector) {
-        return fromStream(stream().collectAll(collector));
+    default <R, A> FutureStream<R> collectStream(Collector<? super U, A, R> collector) {
+        return fromStream(stream().collectStream(collector));
     }
 
     @Override
@@ -757,17 +753,17 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * Subscribe to this Stream
      * If this Stream is executing in async mode it will operate as an Async Publisher, otherwise it will operate as a Synchronous publisher.
-     * async() or sync() can be used just prior to subscribeAll.
+     * async() or sync() can be used just prior to forEachAsync.
      *
      * <pre>
      * {@code
      *  FutureStreamSubscriber<Integer> sub = new FutureStreamSubscriber();
-        FutureStream.of(1,2,3).subscribeAll(sub);
+        FutureStream.of(1,2,3).forEachAsync(sub);
         sub.getStream().forEach(System.out::println);
      * }
      * </pre>
      *	@param s Subscriber
-     * @see org.reactivestreams.Publisher#subscribeAll(org.reactivestreams.Subscriber)
+     * @see org.reactivestreams.Publisher#forEachAsync(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super U> s) {
@@ -3124,7 +3120,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *               non-interfering</a> action to perform on the elements
      */
     @Override
-    default void subscribeAll(final Consumer<? super U> action){
+    default void forEachAsync(final Consumer<? super U> action){
             peek(action).run();
     }
     @Override

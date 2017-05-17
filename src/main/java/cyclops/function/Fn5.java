@@ -4,11 +4,9 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import org.jooq.lambda.function.Function5;
-
-import cyclops.control.Eval;
+import cyclops.control.lazy.Eval;
 import cyclops.async.Future;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 
 public interface Fn5<T1, T2, T3, T4, T5, R> extends Fn1<T1, Fn1<T2, Fn1<T3,Fn1<T4,Fn1<T5, R>>>>> {

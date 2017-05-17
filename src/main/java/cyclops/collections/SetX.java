@@ -18,6 +18,9 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
@@ -26,6 +29,7 @@ import java.util.stream.Stream;
 
 
 public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEmptySwitch<T, Set<T>> {
+
 
     /**
      * Create a SetX that contains the Integers between skip and take

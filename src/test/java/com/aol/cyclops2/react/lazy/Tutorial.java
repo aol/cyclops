@@ -18,7 +18,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import cyclops.async.*;
-import cyclops.control.Eval;
+import cyclops.async.adapters.Queue;
+import cyclops.control.lazy.Eval;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;

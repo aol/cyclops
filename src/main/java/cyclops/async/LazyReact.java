@@ -18,6 +18,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import cyclops.async.adapters.Adapter;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -36,7 +37,6 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 

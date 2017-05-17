@@ -26,7 +26,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -39,6 +39,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
     public static class µ {
     }
+
     static <T> Collector<T, ?, Queue<T>> defaultCollector() {
         return Collectors.toCollection(() -> new LinkedList<>());
     }

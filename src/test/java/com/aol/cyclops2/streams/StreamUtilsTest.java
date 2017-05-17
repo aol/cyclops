@@ -38,9 +38,10 @@ public class StreamUtilsTest {
 
 	@Test
 	public void iterate(){
+
 		ReactiveSeq<Integer> s = ReactiveSeq.iterate(1,i->i+1);
-		assertThat(s.limit(10).takeRight(1).apply(0l),equalTo(10));
-		assertThat(s.limit(10).takeRight(1).apply(0l),equalTo(10));
+		assertThat(s.limit(10).takeRight(1).asFunction().apply(0l),equalTo(10));
+		assertThat(s.limit(10).takeRight(1).asFunction().apply(0l),equalTo(10));
 
 
 	}

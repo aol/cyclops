@@ -25,12 +25,11 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.aol.cyclops2.internal.adapters.StreamAdapter;
+import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import cyclops.Streams;
 import cyclops.control.*;
-import cyclops.control.either.Either;
-import cyclops.control.either.Either3;
-import cyclops.control.either.Either4;
-import cyclops.control.either.Either5;
+import cyclops.control.lazy.*;
 import cyclops.monads.function.AnyMFn1;
 import cyclops.monads.function.AnyMFn2;
 import cyclops.monads.transformers.FutureT;
@@ -42,6 +41,7 @@ import cyclops.async.Future;
 import cyclops.function.*;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -86,9 +86,9 @@ import cyclops.Optionals;
  * 
  * <pre>
  * {@code 
- *    AnyMValue<String> monad1 = AnyM.fromOptional(Optional.of("hello"));
+ *    AnyMValue<optional,String> monad1 = AnyM.fromOptional(Optional.of("hello"));
  *    
- *    AnyMSeq<String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
+ *    AnyMSeq<stream,String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
  *  
  * }
  * </pre>
@@ -345,7 +345,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * </pre>
      * 
      * 
-     * @return An Xor for pattern matching either an AnyMValue or AnyMSeq
+     * @return An Xor for pattern matching lazy an AnyMValue or AnyMSeq
      */
     Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable();
 
@@ -367,7 +367,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      */
     @Override
     default ReactiveSeq<T> stream(){
-        return ReactiveSeq.fromIterable(this);
+        return this.adapter().toStream(this);
     }
 
     
@@ -586,8 +586,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @param publisher Publisher to wrap inside an AnyM
      * @return AnyMSeq that wraps a Publisher
      */
-    public static <T> AnyMSeq<stream,T> fromPublisher(final Publisher<T> publisher) {
-        return AnyMFactory.instance.seq(ReactiveSeq.fromPublisher(publisher),Witness.stream.INSTANCE);
+    public static <T> AnyMSeq<reactiveSeq,T> fromPublisher(final Publisher<T> publisher) {
+        return AnyMFactory.instance.seq(Spouts.from(publisher),reactiveSeq.REACTIVE);
     }
     /**
      * Create an AnyM instance that wraps a Stream
@@ -597,7 +597,25 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      */
     public static <T> AnyMSeq<reactiveSeq,T> fromStream(final ReactiveSeq<T> stream) {
         Objects.requireNonNull(stream);
-        return AnyMFactory.instance.seq(stream,Witness.reactiveSeq.INSTANCE);
+        if(stream instanceof ReactiveStreamX) {
+            return AnyMFactory.instance.seq(stream, reactiveSeq.REACTIVE);
+        }else{
+            return AnyMFactory.instance.seq(stream, reactiveSeq.CO_REACTIVE);
+        }
+
+    }
+    /**
+     * Create an AnyM instance that wraps a FutureStream
+     *
+     * @param stream FutureStream to wrap
+     * @return AnyM that wraps the provided Stream
+     */
+    public static <T> AnyMSeq<futureStream,T> fromFutureStream(final FutureStream<T> stream) {
+        Objects.requireNonNull(stream);
+        return AnyMFactory.instance.seq(stream, futureStream.INSTANCE,new StreamAdapter<futureStream>(
+                    ()->stream.getSimpleReact().of(), t->stream.getSimpleReact().of(t), it->(Stream)stream.getSimpleReact().from((Iterator)it),Witness.futureStream.INSTANCE));
+
+
 
     }
     public static <W extends Witness.StreamWitness<W>,T> AnyMSeq<W,T> fromStream(final Stream<T> stream, W witness) {
@@ -1197,6 +1215,11 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
          * @return AnyMValue wrapping supplied monad
          */
         public <W extends WitnessType<W>,T> AnyMSeq<W,T> seq(final Object o, WitnessType comp) {
+            if (o instanceof AnyMSeq)
+                return (AnyMSeq<W,T>) o;
+            return new AnyMSeqImpl<W,T>(o,comp.adapter());
+        }
+        public <W extends WitnessType<W>,T> AnyMSeq<W,T> seq(final Object o, WitnessType comp, FunctionalAdapter adapter) {
             if (o instanceof AnyMSeq)
                 return (AnyMSeq<W,T>) o;
             return new AnyMSeqImpl<W,T>(o,comp.adapter());

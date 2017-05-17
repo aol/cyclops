@@ -27,8 +27,14 @@ import java.util.stream.Stream;
  *
  * @param <T>
  */
-public interface CollectionX<T> extends FoldableTraversable<T>,  Collection<T> , Unit<T>{
+public interface CollectionX<T> extends FoldableTraversable<T>,
+                                        Collection<T> ,
+                                        Unwrapable,
+                                        Unit<T>{
 
+    default <R extends Collection<T>> R collection(Function<? super CollectionX<T>,? extends R> fn){
+        return fn.apply(this);
+    }
     @Override
     Iterator<T> iterator();
 

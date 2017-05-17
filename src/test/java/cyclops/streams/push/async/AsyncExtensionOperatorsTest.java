@@ -3,8 +3,9 @@ package cyclops.streams.push.async;
 
 import cyclops.Semigroups;
 import cyclops.Streams;
+import cyclops.async.adapters.Queue;
 import cyclops.collections.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -13,7 +14,6 @@ import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
-import reactor.core.publisher.Flux;
 
 import java.io.Serializable;
 import java.util.*;
@@ -41,7 +41,7 @@ public class AsyncExtensionOperatorsTest {
 
 	@Test
     public void queueTest(){
-	    cyclops.async.Queue<Integer> q = new cyclops.async.Queue<>();
+	    cyclops.async.adapters.Queue<Integer> q = new Queue<>();
 	    q.add(1);
 	    q.add(2);
 	    q.add(3);

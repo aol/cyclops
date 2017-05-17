@@ -1,15 +1,11 @@
 package cyclops.streams.push.async;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
-import cyclops.CyclopsCollectors;
 import cyclops.Semigroups;
-import cyclops.async.Queue;
-import cyclops.async.QueueFactories;
-import cyclops.async.Topic;
+import cyclops.async.adapters.Topic;
 import cyclops.collections.ListX;
-import cyclops.collections.SetX;
-import cyclops.control.Maybe;
-import cyclops.control.either.Either;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Either;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
@@ -20,14 +16,10 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
-import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -71,7 +63,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     public void subscribe3ErrorOnComplete() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
 
         assertThat(onComplete.get(), Matchers.equalTo(false));
         s.request(4l);
@@ -87,7 +79,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     public void subscribeErrorEmptyOnComplete() throws InterruptedException {
         List result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of().forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
         Thread.sleep(100);
         s.request(1l);
         assertThat(onComplete.get(), Matchers.equalTo(true));
@@ -101,7 +93,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     @Test
     public void subscribe3Error() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(3l);
         Thread.sleep(100);
         assertThat(result.size(), Matchers.equalTo(3));
@@ -384,7 +376,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     @Test
     public void subscribeEmpty(){
         List result = new ArrayList<>();
-        Subscription s= of().subscribe(i->result.add(i));
+        Subscription s= of().forEachSubscribe(i->result.add(i));
         s.request(1l);
         assertThat(result.size(), Matchers.equalTo(0));
         s.request(1l);
@@ -396,7 +388,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     @Test
     public void subscribe() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i));
         s.request(1l);
         Thread.sleep(100);
         assertThat(result.size(), Matchers.equalTo(3));
@@ -405,7 +397,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     @Test
     public void subscribe3() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i));
         s.request(3l);
         Thread.sleep(100);
         assertThat(result.size(), Matchers.equalTo(3));
@@ -414,7 +406,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     @Test
     public void subscribeErrorEmpty(){
         List result = new ArrayList<>();
-        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace());
+        Subscription s= of().forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(1l);
         assertThat(result.size(), Matchers.equalTo(0));
         s.request(1l);
@@ -426,7 +418,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     @Test
     public void subscribeError() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(1l);
 
         Thread.sleep(100);
@@ -440,7 +432,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     public void subscribeErrorOnComplete() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
 
 
         s.request(1l);

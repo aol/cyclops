@@ -1,25 +1,19 @@
 package cyclops.streams.push.async;
 
 import cyclops.Streams;
-import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
-import cyclops.control.Maybe;
-import cyclops.control.Try;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.hamcrest.Matchers;
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.URL;
 import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;

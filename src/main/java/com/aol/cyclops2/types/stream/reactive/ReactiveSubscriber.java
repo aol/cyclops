@@ -52,11 +52,11 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
      *    {@code
      *           ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
 
-                Flux.just(1,2,3).subscribeAll(sub);
+                Flux.just(1,2,3).forEachAsync(sub);
                 sub.reactiveStream().forEach(System.out::println);
 
      *          //note JDK Stream based terminal operations may block the current thread
-     *          //see ReactiveSeq#collectAll ReactiveSeq#foldAll for non-blocking alternatives
+     *          //see ReactiveSeq#collectStream ReactiveSeq#foldAll for non-blocking alternatives
      *    }
      * </pre>
      *

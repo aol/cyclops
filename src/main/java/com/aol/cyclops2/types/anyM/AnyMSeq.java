@@ -383,7 +383,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#subscribeAll(org.reactivestreams.Subscriber)
+     * @see com.aol.cyclops2.types.Traversable#forEachAsync(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super T> sub) {

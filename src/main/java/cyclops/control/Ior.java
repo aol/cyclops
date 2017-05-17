@@ -6,6 +6,8 @@ import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.Streams;
 import cyclops.collections.ListX;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -448,7 +450,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /**
-     * @return An empty Optional if this Ior only has either the Secondary or Primary type. Or an Optional containing a Tuple2
+     * @return An empty Optional if this Ior only has lazy the Secondary or Primary type. Or an Optional containing a Tuple2
      * with both the Secondary and Primary types if they are both present.
      */
     Optional<Tuple2<ST, PT>> both();

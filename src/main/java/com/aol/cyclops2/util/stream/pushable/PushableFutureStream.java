@@ -1,6 +1,6 @@
 package com.aol.cyclops2.util.stream.pushable;
 
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import cyclops.stream.FutureStream;
 
 /**

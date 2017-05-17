@@ -18,6 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.*;
+import cyclops.control.lazy.Maybe;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple;
@@ -928,7 +929,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
          * Initialise a try / catch / finally block
          * Define the variables to be used within the block.
          * A Tuple or Iterable can be returned to defined multiple values.
-         * Closeables (either individually or within an iterable) will be closed
+         * Closeables (lazy individually or within an iterable) will be closed
          * via tryWithResources.
          * 
          * <pre>
@@ -980,7 +981,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /**
          * Will execute and run the CheckedFunction supplied and will automatically
-         * safely close any Closeables supplied during init (either individually or inside an iterable)
+         * safely close any Closeables supplied during init (lazy individually or inside an iterable)
          * 
          * @param catchBlock CheckedFunction to Try
          * @return New Try capturing return data or Exception

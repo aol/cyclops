@@ -5,7 +5,7 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import cyclops.async.Queue.ClosedQueueException;
+import cyclops.async.adapters.Queue.ClosedQueueException;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 
 public class InfiniteClosingSpliteratorFromSupplier<T> implements Spliterator<T> {

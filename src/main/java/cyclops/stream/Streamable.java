@@ -149,10 +149,10 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectable()
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectionOperations()
      */
     @Override
-    default Collectable<T> collectable() {
+    default Collectable<T> collectionOperations() {
 
         return Seq.seq((Stream<T>)stream());
     }
@@ -614,7 +614,6 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * 
      * @return Streamable converted to a List
      */
-    @Override
     default List<T> toList() {
 
         if (getStreamable() instanceof List)

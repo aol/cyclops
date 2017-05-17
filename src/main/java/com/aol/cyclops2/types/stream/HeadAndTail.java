@@ -5,8 +5,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.function.Memoize;
 

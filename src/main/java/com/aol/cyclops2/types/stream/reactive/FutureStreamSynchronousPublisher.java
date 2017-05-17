@@ -12,7 +12,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 
@@ -33,7 +33,7 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
 
 
     /* (non-Javadoc)
-     * @see org.reactivestreams.Publisher#subscribeAll(org.reactivestreams.Subscriber)
+     * @see org.reactivestreams.Publisher#forEachAsync(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super T> s) {

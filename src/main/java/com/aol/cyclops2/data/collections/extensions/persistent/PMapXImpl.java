@@ -25,6 +25,11 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
     @Wither
     private final PMap<K, V> map;
 
+    @Override
+    public <R> R unwrap() {
+        return (R)map;
+    }
+
     /**
      * @param key
      * @param value
@@ -350,18 +355,18 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
     }
 
     @Override
-    public <X extends Throwable> Subscription subscribe(Consumer<? super Tuple2<K, V>> consumer) {
-        return this.stream().subscribe(consumer);
+    public <X extends Throwable> Subscription forEachSubscribe(Consumer<? super Tuple2<K, V>> consumer) {
+        return this.stream().forEachSubscribe(consumer);
     }
 
     @Override
-    public <X extends Throwable> Subscription subscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError) {
-        return this.stream().subscribe(consumer,consumerError);
+    public <X extends Throwable> Subscription forEachSubscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError) {
+        return this.stream().forEachSubscribe(consumer,consumerError);
     }
 
     @Override
-    public <X extends Throwable> Subscription subscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete) {
-        return this.stream().subscribe(consumer,consumerError,onComplete);
+    public <X extends Throwable> Subscription forEachSubscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete) {
+        return this.stream().forEachSubscribe(consumer,consumerError,onComplete);
     }
 
     @Override

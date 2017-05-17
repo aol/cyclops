@@ -8,9 +8,8 @@ import java.util.stream.Stream;
 import cyclops.Streams;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
 
 public class Javaone {
@@ -85,7 +84,7 @@ public class Javaone {
         SeqSubscriber<Integer> sub = SeqSubscriber.reactiveSubscriber();
         Flux.just(1,2,3,4)
             .map(i->i*2)
-            .subscribeAll(sub);
+            .forEachAsync(sub);
         
         ReactiveSeq<Integer> connected = sub.reactiveStream();
         

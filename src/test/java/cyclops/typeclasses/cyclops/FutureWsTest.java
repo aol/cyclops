@@ -3,7 +3,7 @@ package cyclops.typeclasses.cyclops;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.async.Future;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;

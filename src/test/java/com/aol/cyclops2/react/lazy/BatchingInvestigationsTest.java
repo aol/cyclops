@@ -3,7 +3,7 @@ package com.aol.cyclops2.react.lazy;
 import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.react.async.subscription.Subscription;
 import cyclops.async.LazyReact;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.stream.StreamSource;
 import org.junit.Ignore;

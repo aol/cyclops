@@ -39,7 +39,7 @@ import java.util.stream.Stream;
 
 public interface PVectorX<T> extends To<PVectorX<T>>,
                                      PVector<T>,
-        IndexedSequenceX<T>,
+                                     IndexedSequenceX<T>,
                                      PersistentCollectionX<T>,
                                      OnEmptySwitch<T, 
                                      PVector<T>>,
@@ -48,6 +48,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
 
     public static class µ {
     }
+
 
     default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {
         return ListT.of(witness.adapter().unit(this));
@@ -452,9 +453,7 @@ public interface PVectorX<T> extends To<PVectorX<T>>,
                 .apply(this);
     }
 
-    default PVector<T> toPVector() {
-        return this;
-    }
+
 
     @Override
     default <X> PVectorX<X> from(final Collection<X> col) {

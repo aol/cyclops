@@ -2,7 +2,7 @@ package cyclops.monads.transformers;
 
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -16,7 +16,6 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
-import java.util.concurrent.Executor;
 import java.util.function.*;
 import java.util.stream.Stream;
 

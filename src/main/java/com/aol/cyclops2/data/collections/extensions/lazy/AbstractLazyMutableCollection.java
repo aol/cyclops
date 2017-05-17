@@ -41,7 +41,10 @@ public abstract class AbstractLazyMutableCollection<T, C extends Collection<T>> 
     }
 
 
-
+    @Override
+    public <T> T unwrap(){
+        return (T)get();
+    }
     @Override
     public C get() {
         if (seq.get() != null) {

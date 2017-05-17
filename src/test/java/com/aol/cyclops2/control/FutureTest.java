@@ -7,6 +7,8 @@ import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 import cyclops.async.Future;
 import cyclops.control.*;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
@@ -60,7 +62,7 @@ public class FutureTest {
     public void sub(){
         Future<Integer> f = Future.future();
 
-        Spouts.from(f).subscribe(System.out::println);
+        Spouts.from(f).forEachSubscribe(System.out::println);
 
         f.complete(10);
     }
@@ -216,7 +218,7 @@ public class FutureTest {
     public void combine(){
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
         
-        assertThat(just.combineEager(add,Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
+        assertThat(just.combineEager(add, Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
         assertThat(just.combineEager(firstNonNull,none).get(),equalTo(just.get()));
          

@@ -37,7 +37,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.util.SimpleTimer;
 

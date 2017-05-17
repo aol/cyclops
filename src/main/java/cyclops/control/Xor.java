@@ -1,5 +1,6 @@
 package cyclops.control;
 
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.Semigroups;
@@ -39,7 +40,7 @@ import java.util.stream.Stream;
  * 
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
  *  
- *  Xor is used to represent values that can be one of two states (for example a validation result, either everything is ok - or we have an error).
+ *  Xor is used to represent values that can be one of two states (for example a validation result, lazy everything is ok - or we have an error).
  *  It can be used to avoid a common design anti-pattern where an Object has two fields one of which is always null (or worse, both are defined as Optionals).
  *  
  *  <pre>

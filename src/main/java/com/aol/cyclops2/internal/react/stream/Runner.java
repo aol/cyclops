@@ -3,7 +3,7 @@ package com.aol.cyclops2.internal.react.stream;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import cyclops.async.Queue.ClosedQueueException;
+import cyclops.async.adapters.Queue.ClosedQueueException;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;
 import com.aol.cyclops2.internal.react.exceptions.FilteredExecutionPathException;
 import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;

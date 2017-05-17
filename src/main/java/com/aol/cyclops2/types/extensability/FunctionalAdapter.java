@@ -8,11 +8,12 @@ import java.util.function.Predicate;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 
+import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
 
 /**
  * Interface for defining how Comprehensions should work for a type
- * Cyclops For Comprehensions will supply either a JDK 8 Predicate or Function
+ * Cyclops For Comprehensions will supply lazy a JDK 8 Predicate or Function
  * for filter / map / flatMap
  * The comprehender should wrap these in a suitable type and make the call to the
  * underlying Monadic Type (T) the Comprehender implementation supports.
@@ -82,6 +83,9 @@ public interface FunctionalAdapter<W extends WitnessType<W>> {
         return unitIterable(()->new ValueIterator<T>(o,0));
     }
 
+    default  <T> ReactiveSeq<T> toStream(AnyM<W,T> t){
+        return ReactiveSeq.fromIterable(toIterable(t));
+    }
     <T> Iterable<T> toIterable(AnyM<W,T> t);
     
     default <T> AnyM<W,T> empty(){

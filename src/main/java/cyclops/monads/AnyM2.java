@@ -10,6 +10,8 @@ import cyclops.Streams;
 import cyclops.async.Future;
 import cyclops.collections.ListX;
 import cyclops.control.*;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.*;
 import cyclops.monads.function.AnyMFn1;
 import cyclops.monads.function.AnyMFn2;
@@ -45,9 +47,9 @@ import java.util.stream.*;
  * 
  * <pre>
  * {@code 
- *    AnyMValue<String> monad1 = AnyM.fromOptional(Optional.of("hello"));
+ *    AnyMValue<optional,String> monad1 = AnyM.fromOptional(Optional.of("hello"));
  *    
- *    AnyMSeq<String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
+ *    AnyMSeq<stream,String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
  *  
  * }
  * </pre>
@@ -304,7 +306,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      * </pre>
      * 
      * 
-     * @return An Xor for pattern matching either an AnyMValue or AnyMSeq
+     * @return An Xor for pattern matching lazy an AnyMValue or AnyMSeq
      */
     Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable();
 

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.control.Xor;

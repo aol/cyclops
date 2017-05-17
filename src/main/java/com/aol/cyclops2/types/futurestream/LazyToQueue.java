@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import cyclops.async.LazyReact;
-import cyclops.async.Queue;
-import cyclops.async.Queue.ClosedQueueException;
+import cyclops.async.adapters.Queue;
+import cyclops.async.adapters.Queue.ClosedQueueException;
 import com.aol.cyclops2.internal.react.async.future.CompletedException;
 import cyclops.stream.FutureStream;
 

@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import static cyclops.monads.Witness.*;
 
+import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.Witness;
 import cyclops.monads.function.AnyMFn1;
 import cyclops.monads.function.AnyMFn2;
@@ -66,7 +67,7 @@ public class AnyMSeqTest {
 
         System.out.println(" future list " + futureList);
 
-        ListX<ListX<Integer>> collected = futureList.to(Witness::reactiveSeq).toListX();
+        ListX<ListX<Integer>> collected = futureList.to(Witness::toReactiveSeq).toListX();
 
 
         System.out.println(collected);
@@ -89,7 +90,7 @@ public class AnyMSeqTest {
        
         AnyM<stream,ListX<String>> futureList = AnyM.traverse( AnyM.listFromStream(futures), (Integer i) -> "hello" +i, stream.INSTANCE);
 
-        ListX<ListX<String>> collected = futureList.to(Witness::reactiveSeq).toListX();
+        ListX<ListX<String>> collected = futureList.to(Witness::toReactiveSeq).toListX();
 
         assertThat(collected.get(0).size(),equalTo( list.size()));
         
@@ -110,6 +111,7 @@ public class AnyMSeqTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
+
         AnyMFn2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromStream(Stream.of(3)),AnyM.fromStream(Stream.of(4)));

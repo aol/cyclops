@@ -1,7 +1,7 @@
 package com.aol.cyclops2.util.stream.pushable;
 
 import cyclops.stream.ReactiveSeq;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 
 /**
  * A more concrete Tuple2 impl

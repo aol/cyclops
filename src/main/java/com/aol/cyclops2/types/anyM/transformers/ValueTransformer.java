@@ -56,7 +56,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
     
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#subscribeAll(org.reactivestreams.Subscriber)
+     * @see com.aol.cyclops2.types.Traversable#forEachAsync(org.reactivestreams.Subscriber)
      */
      @Override
     public void subscribe(final Subscriber<? super T> s) {

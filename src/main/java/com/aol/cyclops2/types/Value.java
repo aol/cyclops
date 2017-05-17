@@ -12,9 +12,9 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.control.Eval;
+import cyclops.control.lazy.Eval;
 import cyclops.control.Ior;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;
 import cyclops.control.Xor;
@@ -72,7 +72,7 @@ public interface Value<T> extends Folds<T>,
     }
 
     /* (non-Javadoc)
-     * @see org.reactivestreams.Publisher#subscribeAll(org.reactivestreams.Subscriber)
+     * @see org.reactivestreams.Publisher#forEachAsync(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super T> sub) {

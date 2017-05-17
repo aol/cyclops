@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
+import cyclops.async.adapters.Queue;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.junit.Test;
 

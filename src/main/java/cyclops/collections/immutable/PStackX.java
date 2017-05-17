@@ -1,6 +1,7 @@
 package cyclops.collections.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPStackX;
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
@@ -29,6 +30,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
+import org.pcollections.PVector;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
@@ -40,7 +42,7 @@ import java.util.stream.Stream;
 public interface PStackX<T> extends To<PStackX<T>>,
                                     PStack<T>,
                                     PersistentCollectionX<T>,
-        IndexedSequenceX<T>,
+                                    IndexedSequenceX<T>,
                                     OnEmptySwitch<T, PStack<T>>,
                                     Higher<PStackX.µ,T> {
 
@@ -498,9 +500,7 @@ public interface PStackX<T> extends To<PStackX<T>>,
                       .efficientOpsOff();
     }
 
-    default PStack<T> toPStack() {
-        return this;
-    }
+
 
     @Override
     default PStackX<T> plusInOrder(final T e) {

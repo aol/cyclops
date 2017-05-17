@@ -1,11 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
 
-import cyclops.async.Queue;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.LongConsumer;
 
 /**

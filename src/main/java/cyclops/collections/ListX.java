@@ -28,6 +28,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
