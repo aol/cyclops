@@ -611,7 +611,8 @@ public class FlatMapPublisherTest {
             while(it.hasNext()){
                 System.out.println("it " + it.next());
             }**/
-            List<Integer> res = flux.collect(Collectors.toList()).block();
+            List<Integer> res = flux.collect(Collectors.toList())
+                                    .block();
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1, 2));

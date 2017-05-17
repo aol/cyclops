@@ -3,10 +3,13 @@ package cyclops.streams.push.async;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Test;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -27,6 +30,88 @@ public class AsyncJDKStreamTest {
 			t.start();
 		});
 	}
+    protected <U> ReactiveSeq<U> rs(U... array){
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+
+    }
+    protected <U> Flux<U> flux(U... array){
+        return Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool()));
+
+    }
+    @Test
+    public void fluxConcatMap(){
+        System.out.println(Flux.just(1,2,3).concatMap(i->Flux.just(i+100,200))
+            .collect(Collectors.toList()).block());
+    }
+    @Test
+    public void flatMapPub(){
+        for(int l=0;l<1_000;l++) {
+            System.out.println("************Iteration " + l);
+            System.out.println("************Iteration " + l);
+            System.out.println("************Iteration " + l);
+
+           System.out.println(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                    .flatMapP(i -> of(i, i * 2, i * 4)
+                            .flatMapP(x -> rs(5, 6, 7)))
+                    .toListX());
+           /**
+            System.out.println(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                    .flatMapP(i -> of(i, i * 2, i * 4))
+                    .toListX());
+            **/
+        }
+    }
+	@Test
+	public void flatMapP(){
+        for(int l=0;l<1_000;l++) {
+            System.out.println("************Iteration " + l);
+            System.out.println("************Iteration " + l);
+            System.out.println("************Iteration " + l);
+            System.out.println(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                    .flatMapP(i -> rs(i, i * 2, i * 4)
+                            .flatMapP(x -> rs(5, 6, 7)))
+                    .toListX());
+        }
+    }
+    @Test
+    public void flatMapP3(){
+        System.out.println(this.rs(1,2)
+                .flatMapP(i->rs(i,i*2,i*4)
+                        .flatMapP(x->rs(5,6,7)
+                        .flatMapP(y->rs(2,3,4))))
+                .toListX());
+    }
+    @Test
+    public void flatMapP2(){
+        for(int l=0;l<1_000;l++) {
+            System.out.println("************Iteration " + l);
+            System.out.println("************Iteration " + l);
+            System.out.println("************Iteration " + l);
+            System.out.println(this.rs("1", "2")
+                    .flatMapP(i -> rs(1, 2,3))
+                      .flatMapP(x -> rs('a','b'))
+                    .toListX());
+        }
+    }
+    @Test
+    public void flatMapP2a(){
+        for(int l=0;l<1_000;l++) {
+            System.out.println("************Iteration " + l);
+            System.out.println("************Iteration " + l);
+            System.out.println("************Iteration " + l);
+            System.out.println(this.rs("1", "2","3")
+                    .flatMapP(i -> rs(1, 2,3,4,5))
+                    .flatMapP(x -> rs('a','b'))
+                    .toListX());
+        }
+    }
+    @Test
+    public void flatMapFlux(){
+        System.out.println(this.flux(1,2,3,4,5,6,7,8,9,10)
+                .flatMap(i->flux(i,i*2,i*4)
+                        .flatMap(x->flux(5,6,7),2),2)
+                .collect(Collectors.toList()).block());
+    }
 
 	@Test
 	public void testAnyMatch(){

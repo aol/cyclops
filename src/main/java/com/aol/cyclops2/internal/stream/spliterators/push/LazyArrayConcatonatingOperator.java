@@ -1,26 +1,20 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.collections.DequeX;
 import cyclops.collections.ListX;
 import cyclops.collections.QueueX;
-import org.reactivestreams.Subscription;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.LockSupport;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
+public class LazyArrayConcatonatingOperator<IN> implements Operator<IN> {
 
 
     private final ListX<Operator<IN>> operators;
 
 
-    public ArrayConcatonatingOperator(Operator<IN>... sources){
+    public LazyArrayConcatonatingOperator(Operator<IN>... sources){
         this.operators = ListX.empty();
         for(Operator<IN> next : sources){
             operators.add(next);
@@ -28,7 +22,7 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
 
 
     }
-    public ArrayConcatonatingOperator(ListX<Operator<IN>> sources){
+    public LazyArrayConcatonatingOperator(ListX<Operator<IN>> sources){
         this.operators = sources;
 
 
@@ -43,7 +37,7 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
         boolean[] finished = {false};
 
 
-        Concat[] ref = {null};
+        LazyConcat[] ref = {null};
         StreamSubscription sub = new StreamSubscription() {
 
             @Override
@@ -73,7 +67,7 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
             }
         };
 
-        Concat c = new Concat(sub,operators,onNext,onError,onComplete);
+        LazyConcat c = new LazyConcat(sub,operators,onNext,onError,onComplete);
         ref[0]=c;
 
 
