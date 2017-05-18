@@ -1,15 +1,22 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+
+import cyclops.async.adapters.Queue;
 import cyclops.collections.ListX;
+import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 
-public class Concat<IN> {
+public class LazyConcat<IN> {
 
     final AtomicLong produced = new AtomicLong(0);
     final AtomicLong requested = new AtomicLong(0);
@@ -18,31 +25,37 @@ public class Concat<IN> {
     final StreamSubscription sub;
     final AtomicReference<Subscription> active = new AtomicReference<>(null);
     final AtomicReference<Subscription>  next = new AtomicReference<>(null);
-    int index =0;
 
-    final ListX<Operator<IN>> operators;
-    boolean finished =false;
+
+    final Publisher<Operator<IN>> operators;
+    AtomicBoolean finished = new AtomicBoolean(false);
     final Consumer<? super IN> onNext;
     final Consumer<? super Throwable> onError;
     final Runnable onComplete;
     final AtomicLong queued = new AtomicLong(0);
     AtomicInteger wip = new AtomicInteger(0);
 
+    ManyToOneConcurrentArrayQueue<Operator<IN>> ops = new ManyToOneConcurrentArrayQueue<>(1024);
+    Subscription operatorsSub;
 
-    public Concat(StreamSubscription sub,
+    public LazyConcat(StreamSubscription sub,
 
-                   ListX<Operator<IN>> operators, Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+                      ListX<Operator<IN>> operators, Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         this.sub = sub;
         this.operators = operators;
         this.onNext = onNext;
         this.onError = onError;
         this.onComplete = onComplete;
-        this.subscribeNext();
 
+        operatorsSubscription();
+        operatorsSub.request(1);
     }
 
 
+
+
     public void request(long n) {
+
 
         if(!sub.isOpen){
             return;
@@ -54,11 +67,21 @@ public class Concat<IN> {
             //if processAll the demand is self-sustaining, passed on in onComplete
             if (n == Long.MAX_VALUE || sub.requested.get() == Long.MAX_VALUE) {
                 processAll = true;
-                active.get().request(Long.MAX_VALUE);
-                Subscription nextLocal = next.get();
-                if(nextLocal!=null) {
-                    nextLocal.request(Long.MAX_VALUE);
 
+                Subscription sa = null;
+                Subscription nextLocal = null;
+                while(sa==null && nextLocal==null && !complete) {
+                    sa = active.get();
+                    if (sa != null) {
+                       // System.out.println("Setting requests to MAX!");
+                        sa.request(Long.MAX_VALUE);
+                    }
+                    nextLocal = next.get();
+                    if (nextLocal != null) {
+                      //  System.out.println("Setting NEXT requests to MAX!");
+                        nextLocal.request(Long.MAX_VALUE);
+
+                    }
                 }
                 return;
             }
@@ -68,8 +91,10 @@ public class Concat<IN> {
             if (decrementAndCheckActive()) {
                 addMissingRequests();
             }
-
-            local.request(n);
+            if(local!=null) {
+               // System.out.println("Request local " + n);
+                local.request(n);
+            }
 
         }else{
 
@@ -127,8 +152,10 @@ public class Concat<IN> {
 
         }while(missed!=0);
 
-        if(toRequest>0)
+        if(toRequest>0) {
+           // System.out.println("Adding " + toRequest);
             active.get().request(toRequest);
+        }
 
     }
     public void emitted(long n) {
@@ -173,64 +200,112 @@ public class Concat<IN> {
 
     }
 
-
     public void onComplete(){
 
-        //check complete
-        if(index==operators.size()){
-            if(!finished) {
-                finished = true;
-                onComplete.run();
-            }
-        }
-
-        index++; //next index
-        int localIndex = index;
-        subscribeNext(); //next subscription
-
+        running =false;
+        handleMainPublisher();
 
     }
 
+    volatile boolean complete = false;
 
 
-    public boolean subscribeNext(){
-        if(index==operators.size()){
-            if(!finished) {
-                finished = true;
-                onComplete.run();
+    private void operatorsSubscription() {
+        operators.subscribe(new Subscriber<Operator<IN>>() {
+            @Override
+            public void onSubscribe(Subscription s) {
+                operatorsSub = s;
             }
-            return true;
+
+            @Override
+            public void onNext(Operator<IN> inOperator) {
+
+                ops.add((Operator<IN>)nilsafeIn(inOperator));
+                handleMainPublisher();
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+                onError.accept(t);
+            }
+
+            @Override
+            public void onComplete() {
+
+                complete =true;
+                handleMainPublisher();
+            }
+        });
+    }
+    private Object nilsafeIn(Object o){
+        if(o==null)
+            return Queue.NILL;
+        return o;
+    }
+    private <T> T nilsafeOut(Object o){
+        if(Queue.NILL==o){
+            return null;
         }
-        Subscription local = operators.get(index).subscribe(this::onNext ,this::onError,this::onComplete);
+        return (T)o;
+    }
+    volatile boolean running = false;
+    AtomicInteger mainActive = new AtomicInteger(0);
+    int consumed =0;
+    int limit =1;
+    void handleMainPublisher() {
+        if (mainActive.getAndIncrement()==0) {
+            do {
+                if (!sub.isOpen) {
+                    return;
+                }
+                if (!running) {
+                    Object next = ops.poll();
+                    if (complete && next==null) {
+                        onComplete.run();
+                        break;
+                    }else if(next!=null) {
+                        operatorsSub.request(1l);
+                        Operator<IN> pub = (Operator<IN>) nilsafeOut(next);
+                        running = true;
+                        nextSub(pub);
+                    }
+                }
+            } while (mainActive.decrementAndGet()!=0) ;
+
+        }
+    }
+
+    public void nextSub(Operator<IN> op){
+
+        Subscription local = op.subscribe(this::onNext ,this::onError,this::onComplete);
         if(processAll){
+           // System.out.println("Request ALL!");
             local.request(Long.MAX_VALUE);
             active.set(local);
-            return false;
+            return;
         }
         if (wip.compareAndSet(0, 1)) {
-
             active.set(local);
-
             long r = requested.get();
-
             if (decrementAndCheckActive()) {
 
                 this.addMissingRequests();
             }
 
-            if(r>0)
+            if(r>0) {
+            //    System.out.println("Requesting " + r);
                 local.request(r);
-            return false;
+            }
+            return;
         }
-
         next.set(local);
         if(incrementAndCheckInactive()){
             this.addMissingRequests();
-            return false;
+            return;
         }
-
-
-        return false;
+        return;
     }
 
     private boolean incrementAndCheckInactive() {

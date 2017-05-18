@@ -423,7 +423,16 @@ public interface Spouts {
     static <U, T> ReactiveSeq<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return reactiveStream(new SpliteratorToOperator<T>(new UnfoldSpliterator<>(seed, unfolder)));
     }
+    public static  <T> ReactiveSeq<T> concat(Publisher<Publisher<T>> pubs){
 
+        return new ReactiveStreamX<>(new ArrayConcatonatingOperator<T>(ListX.fromPublisher(pubs)
+                .map(p->new PublisherToOperator<T>(p))));
+    }
+    public static  <T> ReactiveSeq<T> lazyConcat(Publisher<Publisher<T>> pubs){
+
+        return new ReactiveStreamX<>(new LazyArrayConcatonatingOperator<T>(ListX.fromPublisher(pubs)
+                .map(p->new PublisherToOperator<T>(p))));
+    }
     public static  <T> ReactiveSeq<T> concat(Stream<? extends T>... streams){
         Operator<T>[] operators = new Operator[streams.length];
         int index = 0;

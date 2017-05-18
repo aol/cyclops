@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.aol.cyclops2.internal.adapters.OptionalAdapter;
 import org.junit.Test;
 import org.testng.Assert;
 
 import static org.junit.Assert.*;
 
-import com.aol.cyclops2.internal.comprehensions.comprehenders.OptionalAdapter;
 import com.aol.cyclops2.internal.monads.AnyMSeqImpl;
 
 import cyclops.async.QueueFactories;

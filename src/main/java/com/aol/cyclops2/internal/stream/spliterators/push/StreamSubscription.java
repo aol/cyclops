@@ -21,7 +21,7 @@ public class StreamSubscription implements Subscription {
             work.accept(n);
             return true;
         }
-      //  System.out.println("Another process running..");
+
         return false;
     }
 
