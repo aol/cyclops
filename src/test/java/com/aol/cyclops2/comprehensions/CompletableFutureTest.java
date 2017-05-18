@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.util.concurrent.CompletableFuture;
 
 import cyclops.async.Future;
-import cyclops.CompletableFutures;
+import cyclops.companion.CompletableFutures;
 import org.junit.Test;
 
 import lombok.val;

@@ -9,9 +9,9 @@ import com.aol.cyclops2.types.stream.ToStream;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
-import cyclops.Monoids;
+import cyclops.companion.Monoids;
 import cyclops.function.Semigroup;
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -138,7 +138,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T>, ToStream<T> 
      *
      * <pre>
      * {@code
-     *  List<Tuple3<Integer, Integer, Character>> list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(Collectors.toList());
+     *  List<Tuple3<Integer, Integer, Character>> list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(CyclopsCollectors.toList());
      *
      *  // [[1,100,'a'],[2,200,'b'],[3,300,'c']]
      * }
@@ -159,7 +159,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T>, ToStream<T> 
      * <pre>
      * {@code
      *  List<Tuple4<Integer, Integer, Character, String>> list = of(1, 2, 3, 4, 5, 6).zip4(of(100, 200, 300, 400), of('a', 'b', 'c'), of("hello", "world"))
-     *          .collect(Collectors.toList());
+     *          .collect(CyclopsCollectors.toList());
      *
      * }
      * // [[1,100,'a',"hello"],[2,200,'b',"world"]]

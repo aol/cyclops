@@ -1,6 +1,6 @@
 package cyclops.streams.push.async;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.collections.ListX;
 import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;

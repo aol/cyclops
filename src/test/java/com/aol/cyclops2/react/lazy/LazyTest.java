@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 import com.aol.cyclops2.types.mixins.Printable;
 import org.junit.Test;
 
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 

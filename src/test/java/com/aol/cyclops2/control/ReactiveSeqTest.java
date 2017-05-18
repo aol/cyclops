@@ -3,8 +3,8 @@ package com.aol.cyclops2.control;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.util.SimpleTimer;
 import com.google.common.collect.Lists;
-import cyclops.Monoids;
-import cyclops.Semigroups;
+import cyclops.companion.Monoids;
+import cyclops.companion.Semigroups;
 import cyclops.collections.ListX;
 
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
@@ -283,7 +283,7 @@ public class ReactiveSeqTest {
                     .map(i->"hello" + i)
                     .map(s->s.length())
                     .map(i -> i * 2)
-                    .forEach(i->count++);//collect(Collectors.toList()).size();
+                    .forEach(i->count++);//collect(CyclopsCollectors.toList()).size();
 
         }
         System.out.println("Streams " + (System.currentTimeMillis() - time));
@@ -297,7 +297,7 @@ public class ReactiveSeqTest {
         for(int x=0;x<1000;x++) {
 
             //total +=
-                    stream.forEach(i->count++);//collect(Collectors.toList()).size();
+                    stream.forEach(i->count++);//collect(CyclopsCollectors.toList()).size();
 
         }
         System.out.println("Reactive Seq without construction " + (System.currentTimeMillis() - time));
@@ -311,7 +311,7 @@ public class ReactiveSeqTest {
                     .map(i -> i * 2)
                     .map(i -> "hello" + i)
                     .map(s -> s.length())
-                    .map(i -> i * 2).forEach(i->count++);//collect(Collectors.toList()).size();
+                    .map(i -> i * 2).forEach(i->count++);//collect(CyclopsCollectors.toList()).size();
 
         }
         System.out.println("Reactive Seq with construction " + (System.currentTimeMillis() - time));
@@ -586,7 +586,7 @@ public class ReactiveSeqTest {
         ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
         ReactiveSeq<String> reactiveStream = pushable.reactiveStream();
         ReactiveSeq<List<String>> res = reactiveStream.map(i->i+"-hello").limit(2)
-                                               .collectSeq(Collectors.toList());
+                                               .collectSeq(CyclopsCollectors.toList());
         pushable.onNext("hello1");
         pushable.onNext("hello2");
         pushable.onNext("hello3");

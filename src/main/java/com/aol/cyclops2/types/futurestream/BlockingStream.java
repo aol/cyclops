@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
 
-import cyclops.CyclopsCollectors;
+import cyclops.companion.CyclopsCollectors;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.internal.react.stream.EagerStreamWrapper;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;

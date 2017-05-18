@@ -1,4 +1,4 @@
-package cyclops;
+package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Unit;

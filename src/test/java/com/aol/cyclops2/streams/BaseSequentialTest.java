@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Topic;
 import cyclops.async.adapters.Queue;

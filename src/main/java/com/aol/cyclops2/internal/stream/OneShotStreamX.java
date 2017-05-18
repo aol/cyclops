@@ -1,19 +1,15 @@
 package com.aol.cyclops2.internal.stream;
 
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
-import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import lombok.val;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
 import java.util.*;
-import java.util.concurrent.ForkJoinPool;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;

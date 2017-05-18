@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.control.lazy.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.ListX;

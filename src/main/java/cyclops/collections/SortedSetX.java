@@ -2,7 +2,7 @@ package cyclops.collections;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySortedSetX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
@@ -21,7 +21,6 @@ import org.reactivestreams.Publisher;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;

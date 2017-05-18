@@ -1,7 +1,7 @@
 package com.aol.cyclops2.comprehensions;
 
 
-import cyclops.Optionals;
+import cyclops.companion.Optionals;
 import org.junit.Test;
 
 import java.util.Optional;

@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
 import org.jooq.lambda.tuple.Tuple2;

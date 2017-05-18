@@ -1,16 +1,13 @@
 package cyclops.collections;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.FoldableTraversable;
-import cyclops.CyclopsCollectors;
-import cyclops.Reducers;
+import cyclops.companion.CyclopsCollectors;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.control.Trampoline;
 import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
@@ -26,16 +23,12 @@ import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
-import org.pcollections.PVector;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -172,7 +165,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @return A Collector that generates a mutable Deque from a Collection
      */
     static <T> Collector<T, ?, Deque<T>> defaultCollector() {
-        return Collectors.toCollection(() -> new ArrayDeque<>());
+        return java.util.stream.Collectors.toCollection(() -> new ArrayDeque<>());
     }
 
     /**

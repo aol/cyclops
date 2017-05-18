@@ -5,10 +5,12 @@ import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.CyclopsCollectors;
-import cyclops.Streams;
+
 import cyclops.async.Future;
 import cyclops.async.QueueFactories;
+import cyclops.companion.CyclopsCollectors;
+import cyclops.companion.Streams;
+import cyclops.async.*;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.QueueFactory;
 import cyclops.async.adapters.Signal;

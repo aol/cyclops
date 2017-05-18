@@ -1,4 +1,4 @@
-package cyclops;
+package cyclops.companion;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.types.Zippable;

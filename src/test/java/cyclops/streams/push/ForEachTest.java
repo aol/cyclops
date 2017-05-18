@@ -1,6 +1,6 @@
 package cyclops.streams.push;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.stream.Spouts;
 import org.junit.Before;
 import org.junit.Test;

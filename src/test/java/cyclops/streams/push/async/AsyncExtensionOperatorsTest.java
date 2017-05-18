@@ -1,8 +1,8 @@
 package cyclops.streams.push.async;
 
 
-import cyclops.Semigroups;
-import cyclops.Streams;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.async.adapters.Queue;
 import cyclops.collections.ListX;
 import cyclops.control.lazy.Maybe;

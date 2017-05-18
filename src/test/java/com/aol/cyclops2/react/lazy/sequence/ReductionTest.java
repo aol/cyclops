@@ -7,10 +7,9 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
 import org.junit.Test;
 
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 
 
 public class ReductionTest {

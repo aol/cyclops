@@ -1,7 +1,7 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.collections.immutable.PSetX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;

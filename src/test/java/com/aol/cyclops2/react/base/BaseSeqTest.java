@@ -224,7 +224,7 @@ public abstract class BaseSeqTest {
 			sharded.get(0).forEach(next ->{
 				System.out.println ("next is " + next);
 			});
-			//assertThat(sharded.get(0).collect(Collectors.toList()),hasItem(6));
+			//assertThat(sharded.get(0).collect(CyclopsCollectors.toList()),hasItem(6));
 		}
 	}
 	@Test
@@ -270,7 +270,7 @@ public abstract class BaseSeqTest {
 		
 		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6).zip(of(100,200,300,400))
 						.peek(it -> System.out.println(it)).collect(Collectors.toList());
-				//		.collect(Collectors.toList());
+				//		.collect(CyclopsCollectors.toList());
 	
 		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
 		assertThat(right,hasItem(100));

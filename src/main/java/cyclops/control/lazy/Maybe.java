@@ -2,8 +2,8 @@ package cyclops.control.lazy;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.*;
-import cyclops.Monoids;
-import cyclops.Optionals.OptionalKind;
+import cyclops.companion.Monoids;
+import cyclops.companion.Optionals.OptionalKind;
 import cyclops.async.Future;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;

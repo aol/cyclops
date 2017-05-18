@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
-import cyclops.Matchables;
+import cyclops.companion.Xors;
 import cyclops.function.FluentFunctions;
 import com.aol.cyclops2.types.stream.PausableHotStream;
 
@@ -24,7 +24,7 @@ public class PausableHotStreamImpl<T> extends BaseHotStreamImpl<T>implements Pau
 
                 for (int i = 0; i < local; i++) {
 
-                    Matchables.blocking(connections.get(i))
+                    Xors.blocking(connections.get(i))
                               .visit(FluentFunctions.ofChecked(in -> {
                         in.put(a);
                         return true;

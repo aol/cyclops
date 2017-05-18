@@ -1,6 +1,5 @@
-package cyclops;
+package cyclops.companion;
 
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
@@ -9,7 +8,6 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.Completable;
 import cyclops.async.Future;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -17,7 +15,6 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.CompletableFutureT;
-import cyclops.monads.transformers.OptionalT;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;

@@ -8,7 +8,7 @@ import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.CyclopsCollectable;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.ToStream;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.collections.ListX;
 import cyclops.collections.MapX;
 import cyclops.collections.immutable.PVectorX;
@@ -429,7 +429,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * List<String> result = 	Streamable.of(1,2,3)
      * 									 .prepend(100,200,300)
     									 .map(it ->it+"!!")
-    									 .collect(Collectors.toList());
+    									 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
@@ -447,7 +447,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * <pre>
      * {@code List<Integer> list =  Streamable.of(1,2,2,2,5,6)
      *           	 						 .distinct()
-     *				 						 .collect(Collectors.toList()); 
+     *				 						 .collect(CyclopsCollectors.toList());
      * }
      *</pre>
      */
@@ -820,7 +820,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * {@code 
      * 		assertThat(Streamable.of(1,2,2)
     							.cycle(3)
-    							.collect(Collectors.toList()),
+    							.collect(CyclopsCollectors.toList()),
     							equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
     
      * 
@@ -958,7 +958,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * {@code 
      *   		List<Integer> list = AsGenericMonad,asMonad(Stream.of(1,2,2))
      * 										.cycle(Reducers.toCountInt(),3)
-     * 										.collect(Collectors.toList());
+     * 										.collect(CyclopsCollectors.toList());
      * 	//is asList(3,3,3);
      *   }
      * </pre>
@@ -983,7 +983,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      *   count =0;
     	assertThat(Streamable.of(1,2,2)
     						.cycleWhile(next -> count++<6)
-    						.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
+    						.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
      * }
      * </pre>
      * 
@@ -1003,7 +1003,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * 	count =0;
     	assertThat(Streamable.of(1,2,2)
     						.cycleUntil(next -> count++>6)
-    						.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
+    						.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1)));
     
      * 
      * }
@@ -1041,7 +1041,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * {@code 
      * List<Tuple3<Integer,Integer,Character>> list =
     			of(1,2,3,4,5,6).zip3(of(100,200,300,400),of('a','b','c'))
-    										.collect(Collectors.toList());
+    										.collect(CyclopsCollectors.toList());
      * 
      * //[[1,100,'a'],[2,200,'b'],[3,300,'c']]
      * }
@@ -1059,7 +1059,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * {@code 
      * List<Tuple4<Integer,Integer,Character,String>> list =
     			of(1,2,3,4,5,6).zip4(of(100,200,300,400),of('a','b','c'),of("hello","world"))
-    											.collect(Collectors.toList());
+    											.collect(CyclopsCollectors.toList());
     		
      * }
      *  //[[1,100,'a',"hello"],[2,200,'b',"world"]]
@@ -1094,7 +1094,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * List<List<Integer>> list = fromEither5(Stream.of(1,2,3,4,5,6))
     								.asSequence()
     								.sliding(2)
-    								.collect(Collectors.toList());
+    								.collect(CyclopsCollectors.toList());
     	
     
     	assertThat(list.get(0),hasItems(1,2));
@@ -1119,7 +1119,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * List<List<Integer>> list = fromEither5(Stream.of(1,2,3,4,5,6))
     								.asSequence()
     								.sliding(3,2)
-    								.collect(Collectors.toList());
+    								.collect(CyclopsCollectors.toList());
     	
     
     	assertThat(list.get(0),hasItems(1,2,3));
@@ -1144,7 +1144,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * <pre>
      * {@code
      *  List<List<Integer>> list = monad(Stream.of(1, 2, 3, 4, 5, 6)).grouped(3)
-     *          .collect(Collectors.toList());
+     *          .collect(CyclopsCollectors.toList());
      * 
      *  assertThat(list.get(0), hasItems(1, 2, 3));
      *  assertThat(list.get(1), hasItems(4, 5, 6));
@@ -1949,7 +1949,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * List<String> result = 	Streamable.of(1,2,3)
      *                                  .appendStream(Streamable.of(100,200,300))
     									.map(it ->it+"!!")
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
      * }
@@ -1970,7 +1970,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * List<String> result = Streamable.of(1,2,3)
      * 								  .prependStream(of(100,200,300))
     								  .map(it ->it+"!!")
-    								  .collect(Collectors.toList());
+    								  .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * 
@@ -2004,7 +2004,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * List<String> result = Streamable.of(1,2,3)
      * 								   .append(100,200,300)
     									.map(it ->it+"!!")
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
      * }
@@ -2023,7 +2023,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * List<String> result = 	Streamable.of(1,2,3)
      * 									 .prepend(100,200,300)
     									 .map(it ->it+"!!")
-    									 .collect(Collectors.toList());
+    									 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
@@ -2042,7 +2042,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * List<String> result = 	Streamable.of(1,2,3)
      * 									 .insertAt(1,100,200,300)
     									 .map(it ->it+"!!")
-    									 .collect(Collectors.toList());
+    									 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
      * 
@@ -2063,7 +2063,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * List<String> result = 	Streamable.of(1,2,3,4,5,6)
      * 									 .deleteBetween(2,4)
     									 .map(it ->it+"!!")
-    									 .collect(Collectors.toList());
+    									 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
      * }
@@ -2083,7 +2083,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * List<String> result = 	Streamable.of(1,2,3)
      * 									 .insertAtS(1,of(100,200,300))
     									 .map(it ->it+"!!")
-    									 .collect(Collectors.toList());
+    									 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
      * }
@@ -2176,7 +2176,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     /**
      * assertThat(Streamable.of(1,2,3,4,5)
     						.skipLast(2)
-    						.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
+    						.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,3)));
      * 
      * @param num
      * @return
@@ -2192,7 +2192,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * {@code 
      * 	assertThat(Streamable.of(1,2,3,4,5)
     						.limitLast(2)
-    						.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
+    						.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(4,5)));
      * 
      * }
      * </pre>
@@ -2582,7 +2582,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      *  SimpleTimer timer = new SimpleTimer();
     	assertThat(Streamable.of(1,2,3,4,5,6)
     	                    .xPer(6,100000000,TimeUnit.NANOSECONDS)
-    	                    .collect(Collectors.toList()).size(),is(6));
+    	                    .collect(CyclopsCollectors.toList()).size(),is(6));
     
      * }
      * </pre>
@@ -2687,8 +2687,8 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * 
      * <pre>
      * {@code 
-     * assertThat(Streamable.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
-     * assertThat(Streamable.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
+     * assertThat(Streamable.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(CyclopsCollectors.toList()).size(),is(1));
+     * assertThat(Streamable.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(CyclopsCollectors.toList()).size(),greaterThan(5));
      * }
      * </pre>
      * 
@@ -2750,7 +2750,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * 	SimpleTimer timer = new SimpleTimer();
     	assertThat(Streamable.of(1,2,3,4,5,6)
     						.fixedDelay(10000,TimeUnit.NANOSECONDS)
-    						.collect(Collectors.toList())
+    						.collect(CyclopsCollectors.toList())
     						.size(),is(6));
     	assertThat(timer.getElapsedNanoseconds(),greaterThan(60000l));
      * }
@@ -2770,7 +2770,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * SimpleTimer timer = new SimpleTimer();
     	assertThat(Streamable.of(1,2,3,4,5,6)
     						.jitter(10000)
-    						.collect(Collectors.toList())
+    						.collect(CyclopsCollectors.toList())
     						.size(),is(6));
     	assertThat(timer.getElapsedNanoseconds(),greaterThan(20000l));
      * }

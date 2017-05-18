@@ -1,11 +1,14 @@
 package com.aol.cyclops2.control;
 
-import cyclops.*;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.immutable.PSetX;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 import cyclops.async.Future;
+import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
@@ -127,7 +130,7 @@ public class Ior2Test {
 
 	@Test
     public void testAccumulateSecondary() {
-        Ior<?,PSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPSetX());
+        Ior<?,PSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)), Reducers.<String>toPSetX());
         assertThat(iors,equalTo(Ior.primary(PSetX.of("none"))));
     }
 
@@ -453,7 +456,7 @@ public class Ior2Test {
 
 	@Test
 	public void testFoldRightMonoidOfT() {
-		assertThat(just.foldRight(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+		assertThat(just.foldRight(Monoid.of(1, Semigroups.intMult)),equalTo(10));
 	}
 
 	@Test

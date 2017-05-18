@@ -1,6 +1,9 @@
 package com.aol.cyclops2.control;
 
-import cyclops.*;
+import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Eval.Module.Later;
@@ -131,7 +134,7 @@ public class Eval2Test {
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Eval<String> maybes =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
+		Eval<String> maybes =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i, Monoids.stringConcat);
 		assertThat(maybes,equalTo(Eval.now("101")));
 	}
 	@Test

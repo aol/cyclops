@@ -3,6 +3,7 @@ package cyclops;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.*;
 import cyclops.collections.immutable.*;
+import cyclops.companion.Reducers;
 import org.pcollections.*;
 
 import java.util.*;
@@ -68,7 +69,7 @@ public interface Converters {
     }
     public static <T> PVector<T> PVector(CollectionX<T> vec){
         return vec.unwrapIfInstance(PVector.class,
-                ()->Reducers.<T>toPVector().mapReduce(vec.stream()));
+                ()-> Reducers.<T>toPVector().mapReduce(vec.stream()));
     }
     public static <T> LinkedList<T> LinkedList(CollectionX<T> vec){
 

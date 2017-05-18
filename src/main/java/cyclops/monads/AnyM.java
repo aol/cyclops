@@ -27,7 +27,7 @@ import java.util.stream.StreamSupport;
 
 import com.aol.cyclops2.internal.adapters.StreamAdapter;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.control.lazy.*;
 import cyclops.monads.function.AnyMFn1;
@@ -71,7 +71,7 @@ import cyclops.monads.Witness.*;
 import cyclops.monads.Witness.future;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.stream.ToStream;
-import cyclops.Optionals;
+import cyclops.companion.Optionals;
 
 /**
  * 
@@ -124,8 +124,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      *      AnyM<Integer> monad1 = AnyM.fromStream(Stream.of(1,2,3));
      *      AnyM<Integer> monad2 = AnyM.fromOptional(Optional.of(1));
      *
-     *      List<Integer> list1 = monad1.collect(Collectors.toList());
-     *      List<Integer> list2 = monad2.collect(Collectors.toList());
+     *      List<Integer> list1 = monad1.collect(CyclopsCollectors.toList());
+     *      List<Integer> list2 = monad2.collect(CyclopsCollectors.toList());
      *
      * }
      * </pre>

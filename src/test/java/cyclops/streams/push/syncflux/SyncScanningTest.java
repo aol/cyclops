@@ -1,6 +1,6 @@
 package cyclops.streams.push.syncflux;
 
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Test;
