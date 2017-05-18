@@ -34,7 +34,7 @@ public class PVectorsTest {
 	}
 	@Test
 	public void testToPVectorStreamOfT() {
-		assertThat(VectorX.fromStream(Stream.of("a","b","c")),
+		assertThat(VectorX.vectorX(ReactiveSeq.of("a","b","c")),
 						equalTo(Arrays.asList("a","b","c")));
 	}
 

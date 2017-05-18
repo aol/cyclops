@@ -41,7 +41,7 @@ public class POrderedSetsTest {
 	}
 	@Test
 	public void testToPOrderedSetstreamOfT() {
-		assertThat(OrderedSetX.fromStream(Stream.of("a","b","c")).stream()
+		assertThat(OrderedSetX.orderedSet(ReactiveSeq.of("a","b","c")).stream()
 				.collect(Collectors.toList()),
 						hasItems("a","b","c"));
 	}

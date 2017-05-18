@@ -40,7 +40,7 @@ public class PQueuesTest {
 	}
 	@Test
 	public void testToPStackstreamOfT() {
-		assertThat(PersistentQueueX.fromStream(Stream.of("a","b","c")).stream()
+		assertThat(PersistentQueueX.fromIterable(ReactiveSeq.of("a","b","c")).stream()
 				.collect(Collectors.toList()),
 						equalTo(Arrays.asList("a","b","c")));
 	}

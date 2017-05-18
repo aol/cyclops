@@ -262,13 +262,13 @@ public class FutureTest {
     }
     @Test
     public void testAccumulateSuccess() {
-        Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofResult(1)), Reducers.toPSetX());
+        Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofResult(1)), Reducers.toPersistentSetX());
         
         assertThat(maybes.get(),equalTo(PersistentSetX.of(10,1)));
     }
     @Test @Ignore
     public void testAccumulateJNonBlocking() {
-        Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofSupplier(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)), Future.ofResult(1)),Reducers.toPSetX());
+        Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofSupplier(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)), Future.ofResult(1)),Reducers.toPersistentSetX());
         System.out.println("not blocked");
        
     }

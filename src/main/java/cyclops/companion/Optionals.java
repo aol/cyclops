@@ -400,7 +400,7 @@ public class Optionals {
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.empty();
         
-     * Optional<PersistentSetX<Integer>> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), Reducers.toPSetX());
+     * Optional<PersistentSetX<Integer>> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), Reducers.toPersistentSetX());
        //Optional.of(PersistentSetX.of(10, 1)));
      * 
      * }

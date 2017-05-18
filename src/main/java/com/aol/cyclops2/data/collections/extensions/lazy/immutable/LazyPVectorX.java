@@ -10,7 +10,6 @@ import org.pcollections.PVector;
 import java.util.*;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -72,7 +71,7 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
 
 
   //  @Override
-    private <X> LazyPVectorX<X> fromStream(Stream<X> stream) {
+    public <X> LazyPVectorX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyPVectorX<X>((PVector)getList(),ReactiveSeq.fromStream(stream));
     }

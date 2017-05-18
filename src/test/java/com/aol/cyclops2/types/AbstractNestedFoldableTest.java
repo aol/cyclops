@@ -150,7 +150,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     
     @Test
     public void foldRightMapToType() {
-        assertThat(of(1,2,3,4).foldRightMapToType(Reducers.toPStackX()).single().size(),
+        assertThat(of(1,2,3,4).foldRightMapToType(Reducers.toLinkedListX()).single().size(),
                 equalTo(4));
     }
     

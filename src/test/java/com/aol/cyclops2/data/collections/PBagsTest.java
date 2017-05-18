@@ -41,7 +41,7 @@ public class PBagsTest {
 	}
 	@Test
 	public void testToPBagXtreamOfT() {
-		assertThat(BagX.fromStream(Stream.of("a","b","c")).stream()
+		assertThat(BagX.persistentBag(ReactiveSeq.of("a","b","c")).stream()
 				.collect(Collectors.toList()),
 						hasItems("a","b","c"));
 	}

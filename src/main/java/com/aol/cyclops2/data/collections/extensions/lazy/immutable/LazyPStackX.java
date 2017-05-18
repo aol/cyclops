@@ -14,7 +14,6 @@ import java.util.ListIterator;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -78,10 +77,13 @@ public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>
     }
 
 
+    @Override
+    public LinkedListX<T> type(Reducer<? extends PStack<T>> reducer) {
+        return new LazyPStackX<T>(list,seq.get(),this.efficientOps,Reducer.narrow(reducer));
+    }
 
-
-  //  @Override
-    private <X> LazyPStackX<X> fromStream(Stream<X> stream) {
+    //  @Override
+    public <X> LazyPStackX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyPStackX<X>((PStack)getList(),ReactiveSeq.fromStream(stream),this.efficientOps);
     }
