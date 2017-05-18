@@ -1,7 +1,7 @@
 package com.aol.cyclops2.types;
 
 import cyclops.function.Monoid;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.function.Curry;
 import cyclops.function.Fn3;

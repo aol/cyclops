@@ -1,8 +1,8 @@
 package com.aol.cyclops2.control;
 
 import cyclops.async.Future;
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Eval.CompletableEval;
+import cyclops.control.Eval;
+import cyclops.control.Eval.CompletableEval;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;

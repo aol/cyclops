@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import org.jooq.lambda.Seq;

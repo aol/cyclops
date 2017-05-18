@@ -22,7 +22,7 @@ import cyclops.async.adapters.Topic;
 import cyclops.async.adapters.Queue;
 import cyclops.collections.ListX;
 import cyclops.collections.SetX;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.lazy.Either;
 import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple2;

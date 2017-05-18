@@ -23,8 +23,8 @@ import java.util.stream.Stream;
 import cyclops.function.Predicates;
 import org.junit.Test;
 
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 public class PredicatesTest {
 

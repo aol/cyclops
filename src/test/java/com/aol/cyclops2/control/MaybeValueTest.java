@@ -2,7 +2,7 @@ package com.aol.cyclops2.control;
 
 import com.aol.cyclops2.types.AbstractValueTest;
 import com.aol.cyclops2.types.Value;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 
 public class MaybeValueTest extends AbstractValueTest {
 

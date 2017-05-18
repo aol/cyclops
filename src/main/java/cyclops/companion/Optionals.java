@@ -25,7 +25,7 @@ import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
 import cyclops.monads.AnyM;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.ListX;

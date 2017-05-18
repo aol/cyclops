@@ -18,7 +18,7 @@ import cyclops.stream.FutureStream;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.stream.ReactiveSeq;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Queue.ClosedQueueException;

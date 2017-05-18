@@ -1,6 +1,5 @@
 package cyclops.control;
 
-import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Semigroups;

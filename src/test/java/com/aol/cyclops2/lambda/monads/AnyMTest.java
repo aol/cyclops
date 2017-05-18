@@ -25,8 +25,8 @@ import cyclops.monads.WitnessType;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.collections.ListX;
 import cyclops.collections.QueueX;
 import cyclops.collections.SetX;

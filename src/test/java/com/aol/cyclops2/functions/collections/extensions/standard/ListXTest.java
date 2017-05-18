@@ -7,6 +7,7 @@ import cyclops.companion.Semigroups;
 import cyclops.collections.*;
 import cyclops.collections.immutable.*;
 import cyclops.monads.Witness;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
@@ -24,6 +25,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
 
     @Test
     public void lazy(){
+
 
         ListX<PVectorX<String>> list =     ListX.of(1,2,3,5,6,7,8)
                                                 .map(i->i*2)

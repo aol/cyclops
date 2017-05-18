@@ -6,8 +6,6 @@ import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.companion.Streams;
 import cyclops.collections.ListX;
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Maybe;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
