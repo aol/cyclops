@@ -3,8 +3,8 @@ package cyclops.streams.push;
 
 import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
-import cyclops.collections.*;
 import cyclops.collections.immutable.*;
+import cyclops.collections.mutable.*;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
@@ -62,27 +62,27 @@ public class ReactiveStreamsTest {
     }
     @Test
     public void fromFluxPSetX(){
-        assertThat( PSetX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+        assertThat( PersistentSetX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
                 Arrays.asList(1,2,3)));
     }
     @Test
     public void fromFluxPOrderedSetX(){
-        assertThat( POrderedSetX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+        assertThat( OrderedSetX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
                 Arrays.asList(1,2,3)));
     }
     @Test
     public void fromFluxPStackX(){
-        assertThat( PStackX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+        assertThat( LinkedListX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
                 Arrays.asList(3,2,1)));
     }
     @Test
     public void fromFluxPVectorX(){
-        assertThat( PVectorX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+        assertThat( VectorX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
                 Arrays.asList(1,2,3)));
     }
     @Test
     public void fromFluxPBagX(){
-        assertThat( PBagX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+        assertThat( BagX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
                 Arrays.asList(1,2,3)));
     }
     @Test

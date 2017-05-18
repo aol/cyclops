@@ -28,7 +28,7 @@ import org.reactivestreams.Publisher;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.Value;
 import cyclops.monads.Witness;
 
@@ -238,9 +238,9 @@ public class CompletableFutures {
       CompletableFuture<Integer> none = Future.ofError(new NoSuchElementException())
                                                .getFuture();
        
-     * CompletableFuture<PSetX<Integer>> futures = CompletableFutures.accumulateSuccess(ListX.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPSetX());
+     * CompletableFuture<PersistentSetX<Integer>> futures = CompletableFutures.accumulateSuccess(ListX.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPSetX());
        
-       //CompletableFuture[PSetX[10,1]]
+       //CompletableFuture[PersistentSetX[10,1]]
      *  }
      *  </pre>
      * 
@@ -325,9 +325,9 @@ public class CompletableFutures {
      * CompletableFuture<Integer> just =CompletableFuture.completedFuture(10);
        CompletableFuture<Integer> none = Future.ofError(new NoSuchElementException()).getFuture();
        
-     * CompletableFuture<PSetX<Integer>> futures = CompletableFutures.accumulateSuccess(ListX.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPSetX());
+     * CompletableFuture<PersistentSetX<Integer>> futures = CompletableFutures.accumulateSuccess(ListX.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPSetX());
        
-       //CompletableFuture[PSetX[10,1]]
+       //CompletableFuture[PersistentSetX[10,1]]
      *  }
      *  </pre>
      * 

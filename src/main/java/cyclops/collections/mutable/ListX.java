@@ -1,4 +1,4 @@
-package cyclops.collections;
+package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
@@ -7,7 +7,7 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.control.Trampoline;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -28,7 +28,6 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
@@ -924,16 +923,16 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#sliding(int)
      */
     @Override
-    default ListX<PVectorX<T>> sliding(final int windowSize) {
-        return (ListX<PVectorX<T>>) MutableCollectionX.super.sliding(windowSize);
+    default ListX<VectorX<T>> sliding(final int windowSize) {
+        return (ListX<VectorX<T>>) MutableCollectionX.super.sliding(windowSize);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#sliding(int, int)
      */
     @Override
-    default ListX<PVectorX<T>> sliding(final int windowSize, final int increment) {
-        return (ListX<PVectorX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
+    default ListX<VectorX<T>> sliding(final int windowSize, final int increment) {
+        return (ListX<VectorX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
     }
 
     /* (non-Javadoc)

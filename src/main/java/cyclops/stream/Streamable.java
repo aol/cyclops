@@ -8,10 +8,10 @@ import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.CyclopsCollectable;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.ToStream;
+import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
-import cyclops.collections.ListX;
-import cyclops.collections.MapX;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.MapX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
@@ -1108,7 +1108,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return Streamable with sliding view
      */
     @Override
-    default Streamable<PVectorX<T>> sliding(final int windowSize) {
+    default Streamable<VectorX<T>> sliding(final int windowSize) {
         return fromStream(reactiveSeq().sliding(windowSize));
     }
 
@@ -1134,7 +1134,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return Streamable with sliding view
      */
     @Override
-    default Streamable<PVectorX<T>> sliding(final int windowSize, final int increment) {
+    default Streamable<VectorX<T>> sliding(final int windowSize, final int increment) {
         return fromStream(reactiveSeq().sliding(windowSize, increment));
     }
 

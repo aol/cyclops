@@ -13,10 +13,10 @@ import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.ListX;
-import cyclops.collections.MapX;
-import cyclops.collections.MapXs;
-import cyclops.collections.SetX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.MapX;
+import cyclops.companion.MapXs;
+import cyclops.collections.mutable.SetX;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

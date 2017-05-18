@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.collections.ListX;
-import cyclops.collections.QueueX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.QueueX;
 
 import java.util.function.Consumer;
 

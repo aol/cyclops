@@ -13,9 +13,9 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.*;
-import cyclops.collections.DequeX;
-import cyclops.collections.QueueX;
-import cyclops.collections.SetX;
+import cyclops.collections.mutable.DequeX;
+import cyclops.collections.mutable.QueueX;
+import cyclops.collections.mutable.SetX;
 import cyclops.collections.immutable.*;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -27,7 +27,7 @@ import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ToStream;
@@ -60,26 +60,26 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     @Override
-    default PStackX<T> toPStackX() {
+    default LinkedListX<T> toPStackX() {
         return ConvertableSequence.super.toPStackX().materialize();
     }
 
     @Override
-    default PVectorX<T> toPVectorX() {
+    default VectorX<T> toPVectorX() {
         return ConvertableSequence.super.toPVectorX().materialize();
     }
 
     @Override
-    default PQueueX<T> toPQueueX() {
+    default PersistentQueueX<T> toPQueueX() {
         return ConvertableSequence.super.toPQueueX().materialize();
     }
     @Override
-    default PBagX<T> toPBagX() {
+    default BagX<T> toPBagX() {
         return ConvertableSequence.super.toPBagX().materialize();
     }
 
     @Override
-    default PSetX<T> toPSetX() {
+    default PersistentSetX<T> toPSetX() {
         return ConvertableSequence.super.toPSetX().materialize();
     }
     public boolean isSeqPresent();
@@ -255,7 +255,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
      * @see com.aol.cyclops2.types.Traversable#sliding(int)
      */
     @Override
-    default Traversable<PVectorX<T>> sliding(final int windowSize) {
+    default Traversable<VectorX<T>> sliding(final int windowSize) {
         return unitAnyM(transformerStream().map(s -> s.sliding(windowSize)));
 
     }
@@ -264,7 +264,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
      * @see com.aol.cyclops2.types.Traversable#sliding(int, int)
      */
     @Override
-    default Traversable<PVectorX<T>> sliding(final int windowSize, final int increment) {
+    default Traversable<VectorX<T>> sliding(final int windowSize, final int increment) {
         return unitAnyM(transformerStream().map(s -> s.sliding(windowSize, increment)));
     }
 

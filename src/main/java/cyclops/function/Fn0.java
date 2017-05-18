@@ -7,9 +7,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.monads.function.AnyMFn0;
 import cyclops.typeclasses.free.Free;
 import cyclops.monads.WitnessType;
@@ -110,12 +110,12 @@ public interface Fn0< R> extends Function0<R>{
             return liftList().andThen(l->l.liftM(witness));
         }
 
-        default Fn0<PStackX<R>> liftPStack() {
-            return () -> PStackX.of(apply());
+        default Fn0<LinkedListX<R>> liftPStack() {
+            return () -> LinkedListX.of(apply());
         }
 
-        default Fn0<PVectorX<R>> liftPVector() {
-            return () -> PVectorX.of(apply());
+        default Fn0<VectorX<R>> liftPVector() {
+            return () -> VectorX.of(apply());
         }
     }
     public static <A> Free<SupplierKind.µ, A> suspend(final SupplierKind<Free<SupplierKind.µ, A>> f){
@@ -159,12 +159,12 @@ public interface Fn0< R> extends Function0<R>{
             }
 
 
-            default SupplierKind<PStackX<R>> liftPStack() {
-                return () -> PStackX.of(apply());
+            default SupplierKind<LinkedListX<R>> liftPStack() {
+                return () -> LinkedListX.of(apply());
             }
 
-            default SupplierKind<PVectorX<R>> liftPVector() {
-                return () -> PVectorX.of(apply());
+            default SupplierKind<VectorX<R>> liftPVector() {
+                return () -> VectorX.of(apply());
             }
 
     }

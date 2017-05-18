@@ -8,7 +8,7 @@ import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.stream.ToStream;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;

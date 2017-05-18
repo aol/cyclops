@@ -1,6 +1,5 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.arrayconcat;
 
-import cyclops.collections.ListX;
 import cyclops.stream.Spouts;
 import org.junit.Before;
 import org.junit.Test;

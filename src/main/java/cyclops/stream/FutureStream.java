@@ -30,7 +30,7 @@ import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOpera
 import cyclops.async.*;
 import cyclops.async.adapters.Adapter;
 import cyclops.async.adapters.Queue;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.companion.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
@@ -50,7 +50,7 @@ import cyclops.async.adapters.Queue.ClosedQueueException;
 import cyclops.async.adapters.Queue.QueueTimeoutException;
 import cyclops.async.adapters.QueueFactory;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;
 import com.aol.cyclops2.internal.react.stream.CloseableIterator;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
@@ -2100,7 +2100,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @return Stream with sliding view over data in this reactiveStream
      */
     @Override
-    default FutureStream<PVectorX<U>> sliding(final int size) {
+    default FutureStream<VectorX<U>> sliding(final int size) {
         //    return this.fromStream(SlidingWindow.sliding(this,size, 1));
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .sliding(size));
@@ -2126,7 +2126,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @return Stream with sliding view over data in this reactiveStream
      */
     @Override
-    default FutureStream<PVectorX<U>> sliding(final int size, final int increment) {
+    default FutureStream<VectorX<U>> sliding(final int size, final int increment) {
 
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .sliding(size, increment));

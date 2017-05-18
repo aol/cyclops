@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.stream.Streamable;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.streamable>{

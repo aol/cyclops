@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 
 import static cyclops.monads.Witness.*;
 
-import cyclops.collections.immutable.PVectorX;
 import cyclops.monads.Witness;
 import cyclops.monads.function.AnyMFn1;
 import cyclops.monads.function.AnyMFn2;
@@ -21,7 +20,7 @@ import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 
 

@@ -1,5 +1,6 @@
 package com.aol.cyclops2.control;
 
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
@@ -7,8 +8,7 @@ import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PSetX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Eval;
 import cyclops.control.Eval.CompletableEval;
@@ -120,8 +120,8 @@ public class CompletableEvalTest {
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
 	    
 	   
-		Eval<PSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,CompletableEvalTest.now(1)),Reducers.toPSetX());
-		assertThat(maybes,equalTo(Eval.now(PSetX.of(10,1))));
+		Eval<PersistentSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,CompletableEvalTest.now(1)),Reducers.toPSetX());
+		assertThat(maybes,equalTo(Eval.now(PersistentSetX.of(10,1))));
 	}
 
 	@Test

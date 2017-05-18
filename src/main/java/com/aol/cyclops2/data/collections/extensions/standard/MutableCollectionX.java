@@ -12,9 +12,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.mutable.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -227,7 +227,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
      * @see com.aol.cyclops2.data.collections.extensions.CollectionX#sliding(int)
      */
     @Override
-    default MutableCollectionX<PVectorX<T>> sliding(final int windowSize) {
+    default MutableCollectionX<VectorX<T>> sliding(final int windowSize) {
         return fromStream(stream().sliding(windowSize));
     }
 
@@ -235,7 +235,7 @@ public interface MutableCollectionX<T> extends FluentCollectionX<T> {
      * @see com.aol.cyclops2.data.collections.extensions.CollectionX#sliding(int, int)
      */
     @Override
-    default MutableCollectionX<PVectorX<T>> sliding(final int windowSize, final int increment) {
+    default MutableCollectionX<VectorX<T>> sliding(final int windowSize, final int increment) {
         return fromStream(stream().sliding(windowSize, increment));
     }
 

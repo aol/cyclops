@@ -3,11 +3,10 @@ package com.aol.cyclops2.functions.collections.extensions.standard;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.functions.collections.extensions.CollectionXTestsWithNulls;
 import com.aol.cyclops2.types.Zippable;
+import cyclops.collections.mutable.ListX;
 import cyclops.companion.Semigroups;
-import cyclops.collections.*;
 import cyclops.collections.immutable.*;
 import cyclops.monads.Witness;
-import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
@@ -27,7 +26,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
     public void lazy(){
 
 
-        ListX<PVectorX<String>> list =     ListX.of(1,2,3,5,6,7,8)
+        ListX<VectorX<String>> list =     ListX.of(1,2,3,5,6,7,8)
                                                 .map(i->i*2)
                                                 .filter(i->i<4)
                                                 .sliding(2)

@@ -22,9 +22,9 @@ import com.aol.cyclops2.types.*;
 
 
 import cyclops.async.adapters.QueueFactory;
-import cyclops.collections.DequeX;
-import cyclops.collections.QueueX;
-import cyclops.collections.SetX;
+import cyclops.collections.mutable.DequeX;
+import cyclops.collections.mutable.QueueX;
+import cyclops.collections.mutable.SetX;
 import cyclops.collections.immutable.*;
 import cyclops.monads.WitnessType;
 import org.jooq.lambda.tuple.Tuple2;
@@ -39,7 +39,7 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import cyclops.function.Predicates;
 import cyclops.function.Fn4;
@@ -551,7 +551,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * @see com.aol.cyclops2.types.Traversable#sliding(int)
      */
     @Override
-    default AnyMSeq<W,PVectorX<T>> sliding(final int windowSize) {
+    default AnyMSeq<W,VectorX<T>> sliding(final int windowSize) {
 
         return fromIterable(FoldableTraversable.super.sliding(windowSize));
     }
@@ -560,7 +560,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * @see com.aol.cyclops2.types.Traversable#sliding(int, int)
      */
     @Override
-    default AnyMSeq<W,PVectorX<T>> sliding(final int windowSize, final int increment) {
+    default AnyMSeq<W,VectorX<T>> sliding(final int windowSize, final int increment) {
 
         return fromIterable(FoldableTraversable.super.sliding(windowSize, increment));
     }
@@ -1139,31 +1139,31 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     @Override
-    default PStackX<T> toPStackX() {
+    default LinkedListX<T> toPStackX() {
         return FoldableTraversable.super.toPStackX().materialize();
     }
 
     @Override
-    default PVectorX<T> toPVectorX() {
+    default VectorX<T> toPVectorX() {
         return FoldableTraversable.super.toPVectorX().materialize();
     }
 
     @Override
-    default PQueueX<T> toPQueueX() {
+    default PersistentQueueX<T> toPQueueX() {
         return FoldableTraversable.super.toPQueueX().materialize();
     }
     @Override
-    default PBagX<T> toPBagX() {
+    default BagX<T> toPBagX() {
         return FoldableTraversable.super.toPBagX().materialize();
     }
 
     @Override
-    default PSetX<T> toPSetX() {
+    default PersistentSetX<T> toPSetX() {
         return FoldableTraversable.super.toPSetX().materialize();
     }
 
     @Override
-    default POrderedSetX<T> toPOrderedSetX() {
+    default OrderedSetX<T> toPOrderedSetX() {
         return FoldableTraversable.super.toPOrderedSetX().materialize();
     }
     

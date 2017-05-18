@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;

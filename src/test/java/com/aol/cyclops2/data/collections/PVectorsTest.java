@@ -6,35 +6,35 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import cyclops.collections.immutable.VectorX;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.immutable.PVectorX;
 
 public class PVectorsTest {
 
 	@Test
 	public void testOf() {
-		assertThat(PVectorX.of("a","b","c"),equalTo(Arrays.asList("a","b","c")));
+		assertThat(VectorX.of("a","b","c"),equalTo(Arrays.asList("a","b","c")));
 	}
 
 	@Test
 	public void testEmpty() {
-		assertThat(PVectorX.empty(),equalTo(Arrays.asList()));
+		assertThat(VectorX.empty(),equalTo(Arrays.asList()));
 	}
 
 	@Test
 	public void testSingleton() {
-		assertThat(PVectorX.of("a"),equalTo(Arrays.asList("a")));
+		assertThat(VectorX.of("a"),equalTo(Arrays.asList("a")));
 	}
 	@Test
 	public void testFromCollection() {
-		assertThat(PVectorX.fromCollection(Arrays.asList("a","b","c")),equalTo(Arrays.asList("a","b","c")));
+		assertThat(VectorX.fromCollection(Arrays.asList("a","b","c")),equalTo(Arrays.asList("a","b","c")));
 	}
 	@Test
 	public void testToPVectorStreamOfT() {
-		assertThat(PVectorX.fromStream(Stream.of("a","b","c")),
+		assertThat(VectorX.fromStream(Stream.of("a","b","c")),
 						equalTo(Arrays.asList("a","b","c")));
 	}
 

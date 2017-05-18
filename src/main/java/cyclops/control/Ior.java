@@ -5,7 +5,7 @@ import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.companion.Streams;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -627,8 +627,8 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
         
-     *  Ior<?,PSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPSetX());
-      //Ior.primary(PSetX.of("none"))));
+     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPSetX());
+      //Ior.primary(PersistentSetX.of("none"))));
       * }
      * </pre>
      * @param iors Collection of Iors to accumulate secondary values
@@ -727,8 +727,8 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
      * 
-     *  Ior<?,PSetX<Integer>> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPSetX());
-        //Ior.primary(PSetX.of(10,1))));
+     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPSetX());
+        //Ior.primary(PersistentSetX.of(10,1))));
      * }
      * </pre>
      * @param iors Collection of Iors to accumulate primary values

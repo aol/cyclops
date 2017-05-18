@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.ListX;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.react.Status;
 import com.aol.cyclops2.util.SimpleTimer;
 import com.aol.cyclops2.util.ThrowsSoftened;
@@ -63,7 +63,7 @@ public class Blocker<U> {
         }
 
         return new Status(
-                          completed.get(), errors.get(), lastActive.size(), timer.getElapsedNanoseconds(), PStackX.fromIterable(currentResults));
+                          completed.get(), errors.get(), lastActive.size(), timer.getElapsedNanoseconds(), LinkedListX.fromIterable(currentResults));
 
     }
 

@@ -3,7 +3,7 @@ package com.aol.cyclops2.internal.stream.spliterators.push.zip;
 import com.aol.cyclops2.internal.stream.spliterators.push.Fixtures;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import cyclops.async.Future;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple;

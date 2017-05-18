@@ -11,7 +11,7 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.transformers.FutureT;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.react.Status;
 import com.aol.cyclops2.react.collectors.lazy.Blocker;
 import cyclops.monads.Witness;
@@ -546,9 +546,9 @@ public class Future<T> implements To<Future<T>>,
      * Future<Integer> just =Future.of(CompletableFuture.completedFuture(10));
        Future<Integer> none = Future.ofError(new NoSuchElementException());
        
-     * Future<PSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPSetX());
+     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPSetX());
        
-       //Future[PSetX[10,1]]
+       //Future[PersistentSetX[10,1]]
      *  }
      *  </pre>
      * 
@@ -567,9 +567,9 @@ public class Future<T> implements To<Future<T>>,
      * Future<Integer> just =Future.of(CompletableFuture.completedFuture(10));
        Future<Integer> none = Future.ofError(new NoSuchElementException());
        
-     * Future<PSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPSetX());
+     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPSetX());
        
-       //Future[PSetX[10,1]]
+       //Future[PersistentSetX[10,1]]
      *  }
      *  </pre>
      * 

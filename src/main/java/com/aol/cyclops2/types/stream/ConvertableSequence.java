@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
+import cyclops.collections.immutable.*;
 import cyclops.control.Eval;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
@@ -15,19 +16,13 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import cyclops.companion.Reducers;
 import cyclops.companion.Streams;
-import cyclops.collections.immutable.PBagX;
-import cyclops.collections.immutable.PMapX;
-import cyclops.collections.immutable.POrderedSetX;
-import cyclops.collections.immutable.PQueueX;
-import cyclops.collections.immutable.PSetX;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.immutable.PVectorX;
-import cyclops.collections.DequeX;
-import cyclops.collections.ListX;
-import cyclops.collections.MapX;
-import cyclops.collections.QueueX;
-import cyclops.collections.SetX;
-import cyclops.collections.SortedSetX;
+import cyclops.collections.immutable.OrderedSetX;
+import cyclops.collections.mutable.DequeX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.MapX;
+import cyclops.collections.mutable.QueueX;
+import cyclops.collections.mutable.SetX;
+import cyclops.collections.mutable.SortedSetX;
 import com.aol.cyclops2.types.Value;
 import cyclops.stream.FutureStream;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
@@ -90,7 +85,7 @@ public interface ConvertableSequence<T> extends Iterable<T> {
         return ListX.fromIterable(this);
     }
 
-    default <K, V> PMapX<K, V> toPMapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
+    default <K, V> PersistentMapX<K, V> toPMapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
 
         final ReactiveSeq<Tuple2<K, V>> stream = stream().map(t -> Tuple.tuple(keyMapper.apply(t), valueMapper.apply(t)));
         return stream.mapReduce(Reducers.toPMapX());
@@ -100,28 +95,28 @@ public interface ConvertableSequence<T> extends Iterable<T> {
         return MapX.fromMap(stream().toMap(keyMapper, valueMapper));
     }
 
-    default PStackX<T> toPStackX() {
-        return PStackX.fromIterable(this);
+    default LinkedListX<T> toPStackX() {
+        return LinkedListX.fromIterable(this);
     }
 
-    default PVectorX<T> toPVectorX() {
-        return PVectorX.fromIterable(this);
+    default VectorX<T> toPVectorX() {
+        return VectorX.fromIterable(this);
     }
 
-    default PQueueX<T> toPQueueX() {
-        return PQueueX.fromIterable(this);
+    default PersistentQueueX<T> toPQueueX() {
+        return PersistentQueueX.fromIterable(this);
     }
 
-    default PBagX<T> toPBagX() {
-        return PBagX.fromIterable(this);
+    default BagX<T> toPBagX() {
+        return BagX.fromIterable(this);
     }
 
-    default PSetX<T> toPSetX() {
-        return PSetX.fromIterable(this);
+    default PersistentSetX<T> toPSetX() {
+        return PersistentSetX.fromIterable(this);
     }
 
-    default POrderedSetX<T> toPOrderedSetX() {
-        return POrderedSetX.fromIterable(this);
+    default OrderedSetX<T> toPOrderedSetX() {
+        return OrderedSetX.fromIterable(this);
     }
 
 

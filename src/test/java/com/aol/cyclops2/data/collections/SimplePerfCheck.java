@@ -3,12 +3,12 @@ package com.aol.cyclops2.data.collections;
 import java.util.ArrayList;
 import java.util.List;
 
+import cyclops.collections.immutable.LinkedListX;
 import org.junit.Test;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 
 
 //simple sanity check to make sure performance is in the ballpark not a proper benchmark!
@@ -66,11 +66,11 @@ public class SimplePerfCheck {
 	@Test
 	public void pstackXPrepend(){
 		long start = System.currentTimeMillis();
-		PStackX<Integer> list = PStackX.empty();
+		LinkedListX<Integer> list = LinkedListX.empty();
 		for(int i=0;i<1_000_000;i++){
 			list = list.plus(1);
 		}
-		System.out.println("PStackX  insert took " + (System.currentTimeMillis()- start));
+		System.out.println("LinkedListX  insert took " + (System.currentTimeMillis()- start));
 		System.out.println(list.size());
 		
 		
@@ -79,13 +79,13 @@ public class SimplePerfCheck {
 	@Test
 	public void pStackXMap(){
 		
-		PStackX<Integer> list = PStackX.empty();
+		LinkedListX<Integer> list = LinkedListX.empty();
 		for(int i=0;i<10_000;i++){
 			list = list.plus(1);
 		}
 		long skip = System.currentTimeMillis();
 		list = list.map(i->i+1);
-		System.out.println("PStackX  Map took " + (System.currentTimeMillis()- skip));
+		System.out.println("LinkedListX  Map took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.size());
 		
 		
@@ -93,13 +93,13 @@ public class SimplePerfCheck {
 	@Test
 	public void pVectorXMapt(){
 		
-		PVectorX<Integer> list = PVectorX.empty();
+		VectorX<Integer> list = VectorX.empty();
 		for(int i=0;i<1_000_000;i++){
 			list = list.plus(1);
 		}
 		long skip = System.currentTimeMillis();
 		list = list.map(i->i+1);
-		System.out.println("PVectorX  Map took " + (System.currentTimeMillis()- skip));
+		System.out.println("VectorX  Map took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.size());
 		
 		

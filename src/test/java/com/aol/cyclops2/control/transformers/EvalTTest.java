@@ -6,8 +6,8 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PStackX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.Eval;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
@@ -265,7 +265,7 @@ public class EvalTTest implements Printable {
 
 	@Test
 	public void testMapReduceReducerOfR() {
-		assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(PStackX.of(10)));
+		assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(LinkedListX.of(10)));
 	}
 
 	@Test
@@ -319,7 +319,7 @@ public class EvalTTest implements Printable {
 
 	@Test
 	public void testFoldRightMapToType() {
-		assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(PStackX.of(10)));
+		assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(LinkedListX.of(10)));
 	}
 
 	

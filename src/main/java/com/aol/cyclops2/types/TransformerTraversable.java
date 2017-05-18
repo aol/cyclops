@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.monads.transformers.ListT;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.monads.Witness.stream;
 
 /**

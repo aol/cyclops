@@ -26,7 +26,7 @@ import cyclops.async.LazyReact;
 import cyclops.stream.ReactiveSeq;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.QueueFactory;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 import com.aol.cyclops2.react.async.subscription.Subscription;

@@ -1,9 +1,8 @@
 package com.aol.cyclops2;
 
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.immutable.VectorX;
 import org.junit.Test;
-
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.immutable.PVectorX;
 
 public class NQueens {
     
@@ -13,12 +12,12 @@ public class NQueens {
         show(placeQueens(num));
     }
     
-    public PStackX<PStackX<Integer>> placeQueens(int k){
+    public LinkedListX<LinkedListX<Integer>> placeQueens(int k){
         if (k == 0) 
-            return PStackX.of(PStackX.empty());
+            return LinkedListX.of(LinkedListX.empty());
         else{
             return placeQueens(k - 1).forEach2(
-                         queens -> PStackX.range(1, num),
+                         queens -> LinkedListX.range(1, num),
                          (queens, column) -> isSafe(column, queens,1),
                          (queens, column) -> queens.plus(column));
                   
@@ -26,7 +25,7 @@ public class NQueens {
       
     }
    
-    public Boolean isSafe(int column, PStackX<Integer> queens, int delta){
+    public Boolean isSafe(int column, LinkedListX<Integer> queens, int delta){
        return  queens.visit((c, rest)-> c != column &&
                                            Math.abs(c - column) != delta &&
                                            isSafe(column, rest.toPStackX(), delta + 1) ,
@@ -35,11 +34,11 @@ public class NQueens {
            
 
     
-    public void show(PStackX<PStackX<Integer>> solutions){
+    public void show(LinkedListX<LinkedListX<Integer>> solutions){
         solutions.forEach(solution->{
             System.out.println("----Solution----");
             solution.forEach(col->{
-                System.out.println(PVectorX.range(0,solution.size())
+                System.out.println(VectorX.range(0,solution.size())
                                            .map(i->"*")
                                            .with(col-1, "X")
                                            .join(" "));

@@ -4,7 +4,6 @@ package com.aol.cyclops2.internal.stream.spliterators.push.filter;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.push.OperatorToIterable;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.reactivestreams.Publisher;

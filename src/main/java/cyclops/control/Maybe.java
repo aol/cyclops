@@ -8,7 +8,7 @@ import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 
 import cyclops.monads.Witness;
 import cyclops.function.Curry;
@@ -579,8 +579,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
      *  Maybe<Integer> just = Maybe.of(10);
         Maybe<Integer> none = Maybe.none();
         
-     * Maybe<PSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPSetX());
-       //Maybe.of(PSetX.of(10, 1)));
+     * Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPSetX());
+       //Maybe.of(PersistentSetX.of(10, 1)));
      * 
      * }
      * </pre>

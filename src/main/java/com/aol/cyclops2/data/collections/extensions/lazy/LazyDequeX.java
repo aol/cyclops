@@ -1,7 +1,7 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
-import cyclops.collections.DequeX;
+import cyclops.collections.mutable.DequeX;
 import cyclops.stream.ReactiveSeq;
 import lombok.EqualsAndHashCode;
 

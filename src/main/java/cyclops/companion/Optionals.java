@@ -28,7 +28,7 @@ import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.Value;
 import cyclops.monads.Witness;
 
@@ -400,8 +400,8 @@ public class Optionals {
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.empty();
         
-     * Optional<PSetX<Integer>> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), Reducers.toPSetX());
-       //Optional.of(PSetX.of(10, 1)));
+     * Optional<PersistentSetX<Integer>> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), Reducers.toPSetX());
+       //Optional.of(PersistentSetX.of(10, 1)));
      * 
      * }
      * </pre>

@@ -12,13 +12,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.VectorX;
 import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 
 public class WindowingTest {
 	ReactiveSeq<Integer> empty;
@@ -125,7 +125,7 @@ public class WindowingTest {
 	public void sliding2() {
 		
 
-		List<PVectorX<Integer>> sliding = ReactiveSeq.of(1, 2, 3, 4, 5).sliding(2).toList();
+		List<VectorX<Integer>> sliding = ReactiveSeq.of(1, 2, 3, 4, 5).sliding(2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(2, 3), asList(3, 4), asList(4, 5)));
 	}
@@ -133,7 +133,7 @@ public class WindowingTest {
 	@Test
 	public void slidingOverlap() {
 		
-		List<PVectorX<Integer>> sliding = ReactiveSeq.of(1, 2, 3, 4, 5).sliding(3,2).toList();
+		List<VectorX<Integer>> sliding = ReactiveSeq.of(1, 2, 3, 4, 5).sliding(3,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2, 3), asList(3, 4, 5)));
 	}
@@ -149,7 +149,7 @@ public class WindowingTest {
 	public void slidingWithSmallWindowAtEnd() {
 		
 
-		List<PVectorX<Integer>> sliding = ReactiveSeq.of(1, 2, 3, 4, 5).sliding(2,2).toList();
+		List<VectorX<Integer>> sliding = ReactiveSeq.of(1, 2, 3, 4, 5).sliding(2,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
 	}
@@ -157,8 +157,8 @@ public class WindowingTest {
 	public void slidingWithSmallWindowAtEndIterative() {
 
 
-		Iterator<PVectorX<Integer>> it =  ReactiveSeq.of(1, 2, 3, 4, 5).sliding(2,2).iterator();
-		List<PVectorX<Integer>> sliding = ReactiveSeq.fromIterator(it).toList();
+		Iterator<VectorX<Integer>> it =  ReactiveSeq.of(1, 2, 3, 4, 5).sliding(2,2).iterator();
+		List<VectorX<Integer>> sliding = ReactiveSeq.fromIterator(it).toList();
 		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
 	}
 

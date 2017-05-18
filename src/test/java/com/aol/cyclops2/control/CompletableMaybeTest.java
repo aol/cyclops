@@ -2,6 +2,7 @@ package com.aol.cyclops2.control;
 
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
@@ -9,8 +10,7 @@ import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PSetX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
@@ -281,8 +281,8 @@ public class CompletableMaybeTest implements Printable {
 
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-        Maybe<PSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPSetX());
-        assertThat(maybes, equalTo(Maybe.of(PSetX.of(10, 1))));
+        Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPSetX());
+        assertThat(maybes, equalTo(Maybe.of(PersistentSetX.of(10, 1))));
     }
 
     @Test

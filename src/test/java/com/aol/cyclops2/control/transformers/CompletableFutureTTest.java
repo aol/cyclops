@@ -2,14 +2,14 @@ package com.aol.cyclops2.control.transformers;
 
 
 import com.aol.cyclops2.types.mixins.Printable;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.CompletableFutures;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PStackX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
@@ -266,7 +266,7 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
 	public void testMapReduceReducerOfR() {
-		assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(PStackX.of(10)));
+		assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(LinkedListX.of(10)));
 	}
 
 	@Test
@@ -320,7 +320,7 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
 	public void testFoldRightMapToType() {
-		assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(PStackX.of(10)));
+		assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(LinkedListX.of(10)));
 	}
 
 	

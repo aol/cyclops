@@ -1,10 +1,10 @@
-package cyclops.collections;
+package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
-import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.companion.Streams;
@@ -651,16 +651,16 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#sliding(int)
      */
     @Override
-    default DequeX<PVectorX<T>> sliding(final int windowSize) {
-        return (DequeX<PVectorX<T>>) MutableCollectionX.super.sliding(windowSize);
+    default DequeX<VectorX<T>> sliding(final int windowSize) {
+        return (DequeX<VectorX<T>>) MutableCollectionX.super.sliding(windowSize);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#sliding(int, int)
      */
     @Override
-    default DequeX<PVectorX<T>> sliding(final int windowSize, final int increment) {
-        return (DequeX<PVectorX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
+    default DequeX<VectorX<T>> sliding(final int windowSize, final int increment) {
+        return (DequeX<VectorX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
     }
 
     /* (non-Javadoc)

@@ -5,11 +5,11 @@ import com.aol.cyclops2.types.Completable;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PStackX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
@@ -512,10 +512,10 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @see com.aol.cyclops2.control.Xor#combineToList(com.aol.cyclops2.control.Xor, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> Either<PStackX<LT>, R> combineToList(Xor<LT, ? extends T2> app,
-                                                         BiFunction<? super RT, ? super T2, ? extends R> fn) {
+    default <T2, R> Either<LinkedListX<LT>, R> combineToList(Xor<LT, ? extends T2> app,
+                                                             BiFunction<? super RT, ? super T2, ? extends R> fn) {
         
-        return (Either<PStackX<LT>, R>)Xor.super.combineToList(app, fn);
+        return (Either<LinkedListX<LT>, R>)Xor.super.combineToList(app, fn);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.control.Xor#combine(com.aol.cyclops2.control.Xor, java.util.function.BinaryOperator, java.util.function.BiFunction)
@@ -1063,20 +1063,20 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /**
      * @return An Either with the secondary type converted to a persistent list, for use with accumulating app function  {@link Either#combine(Either,BiFunction)}
      */
-    default Either<PStackX<LT>, RT> list() {
-        return secondaryMap(PStackX::of);
+    default Either<LinkedListX<LT>, RT> list() {
+        return secondaryMap(LinkedListX::of);
     }
 
     /**
-     * Accumulate secondarys into a PStackX (extended Persistent List) and Right with the supplied combiner function
+     * Accumulate secondarys into a LinkedListX (extended Persistent List) and Right with the supplied combiner function
      * Right accumulation only occurs if all phases are primary
      * 
      * @param app Value to combine with
      * @param fn Combiner function for primary values
      * @return Combined Either
      */
-    default <T2, R> Either<PStackX<LT>, R> combineToList(final Either<LT, ? extends T2> app,
-                                                         final BiFunction<? super RT, ? super T2, ? extends R> fn) {
+    default <T2, R> Either<LinkedListX<LT>, R> combineToList(final Either<LT, ? extends T2> app,
+                                                             final BiFunction<? super RT, ? super T2, ? extends R> fn) {
         return list().combine(app.list(), Semigroups.collectionXConcat(), fn);
     }
 
@@ -1087,9 +1087,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * <pre>
      * {@code 
      *  Either<String,String> fail1 =  Either.left("failed1");
-        Either<PStackX<String>,String> result = fail1.list().combine(Either.left("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
+        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.left("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
         
-        //Left of [PStackX.of("failed1","failed2")))]
+        //Left of [LinkedListX.of("failed1","failed2")))]
      * }
      * </pre>
      * 

@@ -7,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
-import cyclops.collections.ListX;
 import cyclops.stream.FutureStream;
 import org.junit.Test;
 

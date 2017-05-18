@@ -4,7 +4,6 @@ import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.collections.immutable.PBagX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;

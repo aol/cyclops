@@ -12,16 +12,12 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.function.FluentFunctions;
-import cyclops.monads.Kleisli;
-import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.SortedSetX;
+import cyclops.collections.mutable.SortedSetX;
 import com.aol.cyclops2.functions.collections.extensions.AbstractCollectionXTest;
 
 public class SortedSetXTest extends AbstractCollectionXTest {

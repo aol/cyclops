@@ -32,9 +32,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.async.LazyReact;
-import cyclops.collections.immutable.PVectorX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.monads.WitnessType;
@@ -52,7 +52,7 @@ import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.util.SimpleTimer;
 
@@ -1174,7 +1174,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
           
             @Test
             public void slidingNoOrder() {
-                ListX<PVectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
+                ListX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
 
                 System.out.println(list);
                 assertThat(list.get(0).size(), equalTo(2));

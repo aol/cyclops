@@ -38,7 +38,7 @@ import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
 import cyclops.async.adapters.Queue;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.util.SimpleTimer;
 
 public abstract class BaseSequentialSeqTest {

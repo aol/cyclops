@@ -1,8 +1,8 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.companion.Reducers;
-import cyclops.collections.immutable.PSetX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PSet;
@@ -40,7 +40,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> implements PSetX<T> {
+public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> implements PersistentSetX<T> {
 
 
     public LazyPSetX(PSet<T> list, ReactiveSeq<T> seq) {
@@ -67,7 +67,7 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
     
     
     //@Override
-    public PSetX<T> materialize() {
+    public PersistentSetX<T> materialize() {
         get();
         return this;
     }
@@ -90,24 +90,24 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
 
 
     @Override
-    public PSetX<T> plus(T e) {
+    public PersistentSetX<T> plus(T e) {
         return from(get().plus(e));
     }
 
     @Override
-    public PSetX<T> plusAll(Collection<? extends T> list) {
+    public PersistentSetX<T> plusAll(Collection<? extends T> list) {
         return from(get().plusAll(list));
     }
 
 
     @Override
-    public PSetX<T> minusAll(Collection<?> list) {
+    public PersistentSetX<T> minusAll(Collection<?> list) {
         return from(get().minusAll(list));
     }
 
 
     @Override
-    public PSetX<T> minus(Object remove) {
+    public PersistentSetX<T> minus(Object remove) {
         return from(get().minus(remove));
     }
 
@@ -127,12 +127,12 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
     }
 
     @Override
-    public PSetX<T> plusLoop(int max, IntFunction<T> value) {
-        return (PSetX<T>)super.plusLoop(max,value);
+    public PersistentSetX<T> plusLoop(int max, IntFunction<T> value) {
+        return (PersistentSetX<T>)super.plusLoop(max,value);
     }
 
     @Override
-    public PSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
-        return (PSetX<T>)super.plusLoop(supplier);
+    public PersistentSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (PersistentSetX<T>)super.plusLoop(supplier);
     }
 }

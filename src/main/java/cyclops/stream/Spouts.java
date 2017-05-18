@@ -8,7 +8,7 @@ import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;

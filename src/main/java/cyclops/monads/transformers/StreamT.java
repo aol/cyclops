@@ -6,8 +6,8 @@ import com.aol.cyclops2.types.To;
 import com.aol.cyclops2.types.Traversable;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
 import com.aol.cyclops2.types.stream.CyclopsCollectable;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -395,18 +395,18 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
      * @see cyclops2.monads.transformers.values.ListT#sliding(int)
      */
     @Override
-    public StreamT<W,PVectorX<T>> sliding(final int windowSize) {
+    public StreamT<W,VectorX<T>> sliding(final int windowSize) {
 
-        return (StreamT<W,PVectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize);
+        return (StreamT<W,VectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize);
     }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ListT#sliding(int, int)
      */
     @Override
-    public StreamT<W,PVectorX<T>> sliding(final int windowSize, final int increment) {
+    public StreamT<W,VectorX<T>> sliding(final int windowSize, final int increment) {
 
-        return (StreamT<W,PVectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
+        return (StreamT<W,VectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
     }
 
     /* (non-Javadoc)

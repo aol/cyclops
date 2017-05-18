@@ -1,14 +1,14 @@
 package com.aol.cyclops2.data.collections.extensions.persistent;
 
+import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
-import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -241,14 +241,14 @@ public interface PersistentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     @Override
-    default PersistentCollectionX<PVectorX<T>> sliding(final int windowSize) {
-        return from(this.<PVectorX<T>> monoid()
+    default PersistentCollectionX<VectorX<T>> sliding(final int windowSize) {
+        return from(this.<VectorX<T>> monoid()
                         .mapReduce(stream().sliding(windowSize)));
     }
 
     @Override
-    default PersistentCollectionX<PVectorX<T>> sliding(final int windowSize, final int increment) {
-        return from(this.<PVectorX<T>> monoid()
+    default PersistentCollectionX<VectorX<T>> sliding(final int windowSize, final int increment) {
+        return from(this.<VectorX<T>> monoid()
                         .mapReduce(stream().sliding(windowSize, increment)));
     }
 

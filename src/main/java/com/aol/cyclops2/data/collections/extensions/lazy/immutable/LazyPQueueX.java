@@ -1,8 +1,8 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
+import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.companion.Reducers;
-import cyclops.collections.immutable.PQueueX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PQueue;
@@ -40,7 +40,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>> implements PQueueX<T> {
+public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>> implements PersistentQueueX<T> {
 
 
     public LazyPQueueX(PQueue<T> list, ReactiveSeq<T> seq) {
@@ -67,7 +67,7 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
     
     
     //@Override
-    public PQueueX<T> materialize() {
+    public PersistentQueueX<T> materialize() {
         get();
         return this;
     }
@@ -89,23 +89,23 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
     }
 
     @Override
-    public PQueueX<T> minus() {
+    public PersistentQueueX<T> minus() {
         return from(get().minus());
     }
 
     @Override
-    public PQueueX<T> plus(T e) {
+    public PersistentQueueX<T> plus(T e) {
         return from(get().plus(e));
     }
 
     @Override
-    public PQueueX<T> plusAll(Collection<? extends T> list) {
+    public PersistentQueueX<T> plusAll(Collection<? extends T> list) {
         return from(get().plusAll(list));
     }
 
 
     @Override
-    public PQueueX<T> minusAll(Collection<?> list) {
+    public PersistentQueueX<T> minusAll(Collection<?> list) {
         return from(get().minusAll(list));
     }
 
@@ -135,7 +135,7 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
     }
 
     @Override
-    public PQueueX<T> minus(Object remove) {
+    public PersistentQueueX<T> minus(Object remove) {
         return from(get().minus(remove));
     }
 
@@ -155,13 +155,13 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
     }
 
     @Override
-    public PQueueX<T> plusLoop(int max, IntFunction<T> value) {
-        return (PQueueX<T>)super.plusLoop(max,value);
+    public PersistentQueueX<T> plusLoop(int max, IntFunction<T> value) {
+        return (PersistentQueueX<T>)super.plusLoop(max,value);
     }
 
     @Override
-    public PQueueX<T> plusLoop(Supplier<Optional<T>> supplier) {
-        return (PQueueX<T>)super.plusLoop(supplier);
+    public PersistentQueueX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (PersistentQueueX<T>)super.plusLoop(supplier);
     }
     
 }
