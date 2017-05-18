@@ -20,7 +20,7 @@ public class NQueensPStackTest {
         show(placeQueens(num));
     }
     
-    public LinkedListX<PStackX<Integer>> placeQueens(int k) {
+    public LinkedListX<LinkedListX<Integer>> placeQueens(int k) {
         if (k == 0)
             return LinkedListX.of(LinkedListX.empty());
         else {
@@ -40,7 +40,7 @@ public class NQueensPStackTest {
            
 
     
-    public void show(LinkedListX<PStackX<Integer>> solutions){
+    public void show(LinkedListX<LinkedListX<Integer>> solutions){
         solutions.forEach(solution->{
             System.out.println("----Solution----");
             solution.forEach(col->{

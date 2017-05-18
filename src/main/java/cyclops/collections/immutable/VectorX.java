@@ -698,13 +698,13 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     @Override
-    default VectorX<PVectorX<T>> sliding(final int windowSize) {
-        return (VectorX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize);
+    default VectorX<VectorX<T>> sliding(final int windowSize) {
+        return (VectorX<VectorX<T>>) PersistentCollectionX.super.sliding(windowSize);
     }
 
     @Override
     default VectorX<VectorX<T>> sliding(final int windowSize, final int increment) {
-        return (VectorX<PVectorX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
+        return (VectorX<VectorX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override
