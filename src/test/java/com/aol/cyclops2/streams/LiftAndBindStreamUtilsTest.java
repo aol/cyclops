@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 
 public class LiftAndBindStreamUtilsTest {
 	@Test

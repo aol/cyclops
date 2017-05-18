@@ -1,6 +1,6 @@
 package cyclops.streams.push;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 import cyclops.control.lazy.Maybe;

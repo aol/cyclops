@@ -1,11 +1,10 @@
 package cyclops.collections.immutable;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
 import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.collections.ListX;
 import cyclops.control.Trampoline;
 import cyclops.function.Fn3;
@@ -18,9 +17,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.HashTreePBag;
-import org.pcollections.MapPBag;
 import org.pcollections.PBag;
-import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
 import java.util.*;

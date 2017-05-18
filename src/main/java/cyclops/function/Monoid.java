@@ -1,6 +1,6 @@
 package cyclops.function;
 
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.reactivestreams.Publisher;
@@ -15,7 +15,7 @@ import java.util.stream.Stream;
  * Also inteded for use with Java 8 Streams (reduce method)
  * 
  * Practically the method signature to reduce matches the Monoid interface
- * Monoids could regrarded as immutable equivalents to JDK Collectors for Immutable Reduction
+ * Monoids could regrarded as immutable equivalents to JDK CyclopsCollectors for Immutable Reduction
  * 
  * @author johnmcclean
  *

@@ -4,7 +4,7 @@ import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.async.SimpleReact;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.QueueFactory;
 import cyclops.collections.ListX;

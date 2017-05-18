@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import cyclops.async.LazyReact;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.adapters.QueueFactory;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;

@@ -1,6 +1,6 @@
 package com.aol.cyclops2.internal.monads;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.monads.WitnessType;

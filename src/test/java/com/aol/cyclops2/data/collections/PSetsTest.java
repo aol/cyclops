@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.immutable.PSetX;
 

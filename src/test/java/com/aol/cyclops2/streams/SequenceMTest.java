@@ -26,8 +26,8 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import org.junit.Test;
 
-import cyclops.Semigroups;
-import cyclops.Streams;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.collections.ListX;
 
 public class SequenceMTest {

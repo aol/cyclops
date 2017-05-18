@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 import org.jooq.lambda.tuple.Tuple2;
 
 import cyclops.function.Reducer;
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.collections.immutable.PMapX;
 
 public class MapXs {

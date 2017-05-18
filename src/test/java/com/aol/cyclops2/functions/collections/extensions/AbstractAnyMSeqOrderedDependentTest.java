@@ -1,6 +1,6 @@
 package com.aol.cyclops2.functions.collections.extensions;
 
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;

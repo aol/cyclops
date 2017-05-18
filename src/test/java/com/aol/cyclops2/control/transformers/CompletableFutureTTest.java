@@ -2,10 +2,10 @@ package com.aol.cyclops2.control.transformers;
 
 
 import com.aol.cyclops2.types.mixins.Printable;
-import cyclops.CompletableFutures;
-import cyclops.Reducers;
-import cyclops.Semigroups;
-import cyclops.Streams;
+import cyclops.companion.CompletableFutures;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.ListX;

@@ -182,7 +182,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     									.unwrap()
     									.<Stream<Optional<Integer>>>unwrap()
     									.map(Optional::join)
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     	
     	
     	//Optional.completedOptional(List[3,4]);
@@ -220,7 +220,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     									.unwrap()
     									.<Stream<Optional<Integer>>>unwrap()
     									.map(Optional::join)
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     									
     		//Optional.completedOptional(List[3,4,5]);
       }

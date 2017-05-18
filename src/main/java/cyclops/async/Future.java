@@ -2,7 +2,7 @@ package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.*;
-import cyclops.Monoids;
+import cyclops.companion.Monoids;
 import cyclops.collections.box.Mutable;
 import cyclops.control.*;
 import cyclops.control.lazy.Eval;
@@ -17,7 +17,7 @@ import com.aol.cyclops2.react.collectors.lazy.Blocker;
 import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
-import cyclops.CompletableFutures;
+import cyclops.companion.CompletableFutures;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;

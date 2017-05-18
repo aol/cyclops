@@ -1,11 +1,11 @@
 package com.aol.cyclops2.control;
 
-import cyclops.*;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.immutable.PSetX;
 import cyclops.async.LazyReact;
 import cyclops.collections.ListX;
 import cyclops.async.Future;
+import cyclops.companion.*;
 import cyclops.control.*;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
@@ -250,7 +250,7 @@ public class FutureTest {
     }
     @Test
     public void testSequenceCF() {
-        CompletableFuture<ListX<Integer>> maybes =CompletableFutures.sequence(ListX.of(just.getFuture(),none.getFuture(), Future.ofResult(1).getFuture()));
+        CompletableFuture<ListX<Integer>> maybes = CompletableFutures.sequence(ListX.of(just.getFuture(),none.getFuture(), Future.ofResult(1).getFuture()));
         assertThat(maybes.isCompletedExceptionally(),equalTo(true));
  
     }
@@ -262,7 +262,7 @@ public class FutureTest {
     }
     @Test
     public void testAccumulateSuccess() {
-        Future<PSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofResult(1)),Reducers.toPSetX());
+        Future<PSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofResult(1)), Reducers.toPSetX());
         
         assertThat(maybes.get(),equalTo(PSetX.of(10,1)));
     }
@@ -583,7 +583,7 @@ public class FutureTest {
 
     @Test
     public void testFoldRightMonoidOfT() {
-        assertThat(just.foldRight(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+        assertThat(just.foldRight(Monoid.of(1, Semigroups.intMult)),equalTo(10));
     }
 
     @Test

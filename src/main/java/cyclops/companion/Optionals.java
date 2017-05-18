@@ -1,4 +1,4 @@
-package cyclops;
+package cyclops.companion;
 
 import java.util.Optional;
 import java.util.OptionalDouble;

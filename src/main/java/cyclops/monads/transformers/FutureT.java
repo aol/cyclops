@@ -189,7 +189,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     									.unwrap()
     									.<Stream<Future<Integer>>>unwrap()
     									.map(Future::join)
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     	
     	
     	//Future.completedFuture(List[3,4]);
@@ -227,7 +227,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     									.unwrap()
     									.<Stream<Future<Integer>>>unwrap()
     									.map(Future::join)
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     									
     		//Future.completedFuture(List[3,4,5]);
       }

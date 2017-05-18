@@ -1,7 +1,7 @@
 package cyclops.streams.push.async;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import cyclops.async.adapters.Topic;
 import cyclops.collections.ListX;
 import cyclops.control.lazy.Maybe;

@@ -11,12 +11,10 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.data.collections.extensions.persistent.PMapXImpl;
 import com.aol.cyclops2.types.*;
-import cyclops.Reducers;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
-import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 

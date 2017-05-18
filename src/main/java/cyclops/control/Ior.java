@@ -4,7 +4,7 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.collections.ListX;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;

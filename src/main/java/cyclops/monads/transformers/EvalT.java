@@ -178,7 +178,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     									.unwrap()
     									.<Stream<Eval<Integer>>>unwrap()
     									.map(Eval::join)
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     	
     	
     	//Eval.completedEval(List[3,4]);
@@ -216,7 +216,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     									.unwrap()
     									.<Stream<Eval<Integer>>>unwrap()
     									.map(Eval::join)
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     									
     		//Eval.completedEval(List[3,4,5]);
       }

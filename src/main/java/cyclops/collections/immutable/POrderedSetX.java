@@ -5,7 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPOrderedS
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.collections.ListX;
@@ -19,7 +19,6 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.OrderedPSet;
 import org.pcollections.POrderedSet;
-import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
 import java.util.*;

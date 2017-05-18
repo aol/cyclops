@@ -2,7 +2,7 @@ package cyclops.collections;
 
 import com.aol.cyclops2.data.collections.extensions.standard.MapXImpl;
 import cyclops.stream.ReactiveSeq;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.control.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.FluentMapX;
 import com.aol.cyclops2.types.*;
@@ -13,7 +13,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;

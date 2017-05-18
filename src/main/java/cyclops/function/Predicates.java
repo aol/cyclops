@@ -146,7 +146,7 @@ public class Predicates {
      * import static cyclops2.function.Predicates.some
 
      * 
-     * Eval<Integer> result = Matchables.future(FutureW.ofResult(1))
+     * Eval<Integer> result = Xors.future(FutureW.ofResult(1))
                                          .matches(c-> c.is( when(some(1)), apply(10)), c->c.is(when(instanceOf(RuntimeException.class)), apply(2)),otherwise(3));
         
        //Eval[10]
@@ -170,7 +170,7 @@ public class Predicates {
      * {@code 
      *  import static cyclops2.function.Predicates.__
      * 
-     *  Eval<String> result = Matchables.listOfValues(1,new MyCase(4,5,6))
+     *  Eval<String> result = Xors.listOfValues(1,new MyCase(4,5,6))
                                 .matches(c->c.is(when(__,Predicates.has(4,5,6)),transform("rec")),otherwise("n/a"));
         
         //Eval["rec"]
@@ -239,7 +239,7 @@ public class Predicates {
      * 
      *  <pre>
      *  {@code 
-     *   Eval<String> url = Matchables.url(new URL("http://www.aol.com/path?q=hello"))
+     *   Eval<String> url = Xors.url(new URL("http://www.aol.com/path?q=hello"))
                                      .on$12_45()
                                      .matches(c->c.is(when(eq("http"),in("www.aol.com","aol.com"),any(),not(eq("q=hello!"))), transform("correct")),otherwise("miss"));
        

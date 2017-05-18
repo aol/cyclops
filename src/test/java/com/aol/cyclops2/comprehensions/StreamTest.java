@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;

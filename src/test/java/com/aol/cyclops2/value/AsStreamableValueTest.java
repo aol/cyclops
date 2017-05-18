@@ -5,7 +5,7 @@ public class AsStreamableValueTest {
 	@Test
 	public void testAsStreamableValue() {
 		double total = AsStreamableValue.<Double>asStreamableValue(new BaseData(10.00,5.00,100.30))
-									.stream().collect(Collectors.summingDouble(t->t));
+									.stream().collect(CyclopsCollectors.summingDouble(t->t));
 		
 		assertThat(total,equalTo(115.3));
 	}
@@ -18,7 +18,7 @@ public class AsStreamableValueTest {
 		
 		
 		//withBonus.forEach(System.out::println);
-		val total = withBonus.collect(Collectors.summingDouble(t->t));
+		val total = withBonus.collect(CyclopsCollectors.summingDouble(t->t));
 		
 		assertThat(total,equalTo(345.9));
 	}

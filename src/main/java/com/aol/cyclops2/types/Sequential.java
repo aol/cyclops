@@ -26,7 +26,7 @@ public interface Sequential<T> {
      *  SimpleTimer timer = new SimpleTimer();
         ReactiveSeq.of(1, 2, 3, 4, 5, 6)
                   .xPer(6, 100000000, TimeUnit.NANOSECONDS)
-                  .collect(Collectors.toList())
+                  .collect(CyclopsCollectors.toList())
                   .size()
                   
        //6           
@@ -78,7 +78,7 @@ public interface Sequential<T> {
      *  SimpleTimer timer = new SimpleTimer();
      *  ReactiveSeq.of(1, 2, 3, 4, 5, 6)
      *             .fixedDelay(10000, TimeUnit.NANOSECONDS)
-     *             .collect(Collectors.toList())
+     *             .collect(CyclopsCollectors.toList())
      *             .size()
      *  //6           
      *  //timer.getElapsedNanoseconds() > greaterThan(60000l)

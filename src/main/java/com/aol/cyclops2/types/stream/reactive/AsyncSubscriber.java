@@ -30,7 +30,7 @@ import java.util.concurrent.locks.LockSupport;
  *
  *          sub.reactiveStream()
  *             .peek(System.out::println)
- *             .collect(Collectors.toList());
+ *             .collect(CyclopsCollectors.toList());
  *
  *          //note JDK Stream based terminal operations may block the current thread
  *          //see ReactiveSeq#collectStream ReactiveSeq#foldAll for non-blocking alternatives
@@ -84,7 +84,7 @@ public class AsyncSubscriber<T> implements Subscriber<T> {
      *
      *          sub.reactiveStream()
      *             .peek(System.out::println)
-     *             .collect(Collectors.toList());
+     *             .collect(CyclopsCollectors.toList());
      *
      *          //note JDK Stream based terminal operations may block the current thread
      *          //see ReactiveSeq#collectStream ReactiveSeq#foldAll for non-blocking alternatives

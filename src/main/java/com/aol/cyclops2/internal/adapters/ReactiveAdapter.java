@@ -1,7 +1,6 @@
 package com.aol.cyclops2.internal.adapters;
 
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
-import cyclops.Streams;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
@@ -15,7 +14,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static cyclops.Streams.zipSequence;
+import static cyclops.companion.Streams.zipSequence;
 import static cyclops.monads.AnyM.fromStream;
 
 @AllArgsConstructor

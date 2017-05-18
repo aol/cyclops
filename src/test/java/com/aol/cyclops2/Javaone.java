@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 
 import cyclops.async.LazyReact;
 import cyclops.stream.ReactiveSeq;
@@ -50,7 +50,7 @@ public class Javaone {
               .limit(100)
               .map(i->"prefix"+i)
               .map(this::loadStr)
-              .collect(Collectors.toList());
+              .collect(CyclopsCollectors.toList());
         
         new LazyReact().of(1,2,3,4)
                        .map(this::load)

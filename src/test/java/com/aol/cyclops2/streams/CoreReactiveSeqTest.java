@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Topic;
 import cyclops.collections.ListX;
