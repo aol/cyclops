@@ -1,8 +1,10 @@
 package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
+import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.collections.immutable.BagX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.function.Monoid;
@@ -41,7 +43,7 @@ import java.util.stream.Stream;
  */
 public interface DequeX<T> extends To<DequeX<T>>,
                                    Deque<T>,
-        LazyCollectionX<T>,
+                                   LazyCollectionX<T>,
                                    OnEmptySwitch<T, Deque<T>>,
                                    Higher<DequeX.µ,T>{
 
@@ -191,11 +193,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @return DequeX
      */
     public static <T> DequeX<T> of(final T... values) {
-        final Deque<T> res = (Deque<T>) defaultCollector().supplier()
-                                                          .get();
-        for (final T v : values)
-            res.add(v);
-        return fromIterable(res);
+        return new LazyDequeX<T>(null,
+                ReactiveSeq.of(values),
+                defaultCollector());
     }
     /**
      * 
@@ -236,6 +236,25 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return Spouts.from((Publisher<T>) publisher)
                           .toDequeX();
     }
+    /**
+     *
+     * <pre>
+     * {@code
+     *  import static cyclops.stream.ReactiveSeq.range;
+     *
+     *  DequeX<Integer> bag = dequeX(range(10,20));
+     *
+     * }
+     * </pre>
+     * @param stream To create DequeX from
+     * @param <T> DequeX generated from Stream
+     * @return
+     */
+    public static <T> DequeX<T> dequeX(ReactiveSeq<T> stream){
+        return new LazyDequeX<T>(null,
+                stream,
+                defaultCollector());
+    }
 
     /**
      * Construct a DequeX from an Iterable
@@ -265,7 +284,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      */
     public static <T> DequeX<T> fromIterable(final Collector<T, ?, Deque<T>> collector, final Iterable<T> it) {
         if (it instanceof DequeX)
-            return ((DequeX) it).withCollector(collector);
+            return ((DequeX) it).type(collector);
         if (it instanceof Deque)
             return new LazyDequeX<T>(
                                      (Deque) it, collector);
@@ -280,7 +299,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return (DequeX<T>)LazyCollectionX.super.materialize();
     }
 
-    DequeX<T> withCollector(Collector<T, ?, Deque<T>> collector);
+    DequeX<T> type(Collector<T, ?, Deque<T>> collector);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)

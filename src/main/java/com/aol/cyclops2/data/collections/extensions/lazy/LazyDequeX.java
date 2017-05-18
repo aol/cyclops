@@ -53,7 +53,7 @@ public class LazyDequeX<T> extends AbstractLazyMutableCollection<T,Deque<T>> imp
     }
 
     @Override
-    public LazyDequeX<T> withCollector(Collector<T, ?, Deque<T>> collector){
+    public LazyDequeX<T> type(Collector<T, ?, Deque<T>> collector){
         return (LazyDequeX)new LazyDequeX<T>(this.getList(),this.getSeq().get(),collector);
     }
     //@Override

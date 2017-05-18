@@ -1,5 +1,6 @@
 package cyclops.collections.mutable;
 
+import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
@@ -578,12 +579,9 @@ public interface ListX<T> extends To<ListX<T>>,
     @SafeVarargs
     public static <T> ListX<T> of(final T... values) {
 
-        final List<T> res = (List<T>) defaultCollector().supplier()
-                .get();
-        for (final T v : values)
-            res.add(v);
-
-        return fromIterable(res);
+        return new LazyListX<T>(null,
+                ReactiveSeq.of(values),
+                defaultCollector());
     }
     public static <T> ListX<T> fromIterator(final Iterator<T> it) {
         return fromIterable(()->it);

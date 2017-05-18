@@ -1,5 +1,6 @@
 package cyclops.collections.mutable;
 
+import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySortedSetX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
@@ -125,11 +126,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     public static <T> SortedSetX<T> of(final T... values) {
-        final SortedSet<T> res = (SortedSet<T>) defaultCollector().supplier()
-                                                                  .get();
-        for (final T v : values)
-            res.add(v);
-        return fromIterable(res);
+        return new LazySortedSetX<T>(null,
+                ReactiveSeq.of(values),
+                defaultCollector());
     }
 
     public static <T> SortedSetX<T> singleton(final T value) {
@@ -184,9 +183,8 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         if (it instanceof SortedSet)
             return new LazySortedSetX<T>(
                                          (SortedSet) it, collector);
-        return new LazySortedSetX<T>(
-                                     Streams.stream(it)
-                                                .collect(collector),
+        return new LazySortedSetX<T>(null,
+                                     ReactiveSeq.fromIterable(it),
                                      collector);
     }
     

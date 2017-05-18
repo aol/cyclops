@@ -204,8 +204,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @return new PVector
      */
     public static <T> VectorX<T> of(final T... values) {
-        return new LazyPVectorX<>(
-                                  TreePVector.from(Arrays.asList(values)));
+        return new LazyPVectorX<>(ReactiveSeq.of(values));
     }
     /**
      * 

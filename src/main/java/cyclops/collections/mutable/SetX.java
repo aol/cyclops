@@ -1,5 +1,6 @@
 package cyclops.collections.mutable;
 
+import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySetX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
@@ -125,11 +126,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
 
     @SafeVarargs
     public static <T> SetX<T> of(final T... values) {
-        final Set<T> res = (Set<T>) defaultCollector().supplier()
-                                                      .get();
-        for (final T v : values)
-            res.add(v);
-        return fromIterable(res);
+      return new LazySetX<T>(null,
+                ReactiveSeq.of(values),
+                defaultCollector());
     }
     public static <T> SetX<T> fromIterator(final Iterator<T> it) {
         return fromIterable(()->it);
@@ -156,9 +155,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
         if (it instanceof Set)
             return new LazySetX<T>(
                                    (Set) it, defaultCollector());
-        return new LazySetX<T>(
-                               Streams.stream(it)
-                                          .collect(defaultCollector()),
+        return new LazySetX<T>(null,ReactiveSeq.fromIterable(it),
                                           defaultCollector());
     }
 

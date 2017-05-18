@@ -1,5 +1,6 @@
 package cyclops.collections.mutable;
 
+import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
@@ -160,11 +161,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
     @SafeVarargs
     public static <T> QueueX<T> of(final T... values) {
-        final Queue<T> res = (Queue<T>) defaultCollector().supplier()
-                                                          .get();
-        for (final T v : values)
-            res.add(v);
-        return fromIterable(res);
+        return new LazyQueueX<T>(null,
+                ReactiveSeq.of(values),
+                defaultCollector());
     }
     /**
      * 
@@ -199,9 +198,8 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         if (it instanceof Queue)
             return new LazyQueueX<T>(
                                      (Queue) it, defaultCollector());
-        return new LazyQueueX<T>(
-                                 Streams.stream(it)
-                                            .collect(defaultCollector()),
+        return new LazyQueueX<T>(null,
+                                 ReactiveSeq.fromIterable(it),
                                             defaultCollector());
     }
 

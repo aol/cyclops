@@ -128,8 +128,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
 
     public static <T> PersistentSetX<T> of(final T... values) {
 
-        return new LazyPSetX<>(
-                               HashTreePSet.from(Arrays.asList(values)));
+        return new LazyPSetX<>(ReactiveSeq.of(values));
     }
 
     public static <T> PersistentSetX<T> empty() {
