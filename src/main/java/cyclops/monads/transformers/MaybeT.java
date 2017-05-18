@@ -178,7 +178,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     									.unwrap()
     									.<Stream<Maybe<Integer>>>unwrap()
     									.map(Maybe::join)
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     	
     	
     	//Maybe.completedMaybe(List[3,4]);
@@ -216,7 +216,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     									.unwrap()
     									.<Stream<Maybe<Integer>>>unwrap()
     									.map(Maybe::join)
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     									
     		//Maybe.completedMaybe(List[3,4,5]);
       }

@@ -185,7 +185,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     									.unwrap()
     									.<Stream<CompletableFuture<Integer>>>unwrap()
     									.map(Future::join)
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     	
     	
     	//Future.completedFuture(List[3,4]);
@@ -223,7 +223,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     									.unwrap()
     									.<Stream<CompletableFuture<Integer>>>unwrap()
     									.map(Future::join)
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     									
     		//Future.completedFuture(List[3,4,5]);
       }

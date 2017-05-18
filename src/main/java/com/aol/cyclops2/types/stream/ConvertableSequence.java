@@ -13,8 +13,8 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
-import cyclops.Reducers;
-import cyclops.Streams;
+import cyclops.companion.Reducers;
+import cyclops.companion.Streams;
 import cyclops.collections.immutable.PBagX;
 import cyclops.collections.immutable.PMapX;
 import cyclops.collections.immutable.POrderedSetX;

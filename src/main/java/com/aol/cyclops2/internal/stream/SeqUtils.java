@@ -20,7 +20,7 @@ public class SeqUtils {
      * 
      * <pre>
      * {@code 
-     * assertThat(StreamUtils.reverse(Stream.of(1,2,3)).collect(Collectors.toList())
+     * assertThat(StreamUtils.reverse(Stream.of(1,2,3)).collect(CyclopsCollectors.toList())
     			,equalTo(Arrays.asList(3,2,1)));
      * }
      * </pre>
@@ -41,7 +41,7 @@ public class SeqUtils {
     			.forEach(System.out::println);
     	
     	
-    	assertThat(StreamUtils.reversedStream(Arrays.asList(1,2,3)).collect(Collectors.toList())
+    	assertThat(StreamUtils.reversedStream(Arrays.asList(1,2,3)).collect(CyclopsCollectors.toList())
     			,equalTo(Arrays.asList(3,2,1)));
      * 
      * }
@@ -61,7 +61,7 @@ public class SeqUtils {
      * <pre>
      * {@code 
      * assertThat(StreamUtils.cycle(3,Streamable.of(1,2,2))
-    							.collect(Collectors.toList()),
+    							.collect(CyclopsCollectors.toList()),
     								equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
      * }
      * </pre>

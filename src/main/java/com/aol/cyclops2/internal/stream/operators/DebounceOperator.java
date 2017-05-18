@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 
 import lombok.AllArgsConstructor;
 

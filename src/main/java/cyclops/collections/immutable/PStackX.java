@@ -1,13 +1,12 @@
 package cyclops.collections.immutable;
 
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPStackX;
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.monads.transformers.ListT;
@@ -30,7 +29,6 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
-import org.pcollections.PVector;
 import org.reactivestreams.Publisher;
 
 import java.util.*;

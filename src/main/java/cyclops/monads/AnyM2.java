@@ -6,7 +6,7 @@ import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.stream.ToStream;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collections.ListX;
 import cyclops.control.*;
@@ -85,8 +85,8 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      *      AnyM<Integer> monad1 = AnyM.fromStream(Stream.of(1,2,3));
      *      AnyM<Integer> monad2 = AnyM.fromOptional(Optional.of(1));
      *
-     *      List<Integer> list1 = monad1.collect(Collectors.toList());
-     *      List<Integer> list2 = monad2.collect(Collectors.toList());
+     *      List<Integer> list1 = monad1.collect(CyclopsCollectors.toList());
+     *      List<Integer> list2 = monad2.collect(CyclopsCollectors.toList());
      *
      * }
      * </pre>

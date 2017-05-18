@@ -2,9 +2,9 @@ package com.aol.cyclops2.functions.collections.extensions;
 
 import java.util.Arrays;
 
+import cyclops.companion.CyclopsCollectors;
 import org.junit.Test;
 
-import cyclops.CyclopsCollectors;
 import cyclops.collections.DequeX;
 import cyclops.collections.ListX;
 import cyclops.collections.QueueX;

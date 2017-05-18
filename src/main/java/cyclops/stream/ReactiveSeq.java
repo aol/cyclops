@@ -18,7 +18,7 @@ import com.aol.cyclops2.types.stream.*;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.*;
 import cyclops.async.adapters.*;
 import cyclops.async.adapters.Queue;
@@ -1031,7 +1031,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *   List<Integer> list = ReactiveSeq.of(1,2,2))
      *                                 .cycle(Reducers.toCountInt(),3)
-     *                                 .collect(Collectors.toList());
+     *                                 .collect(CyclopsCollectors.toList());
      *   //List[3,3,3];
      *   }
      * </pre>
@@ -1055,7 +1055,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * 	MutableInt count = MutableInt.of(0);
      * 	ReactiveSeq.of(1, 2, 2).cycleWhile(next -> count++ < 6)
-     *             .collect(Collectors.toList());
+     *             .collect(CyclopsCollectors.toList());
      *
      * 	// List(1,2,2,1,2,2)
      * }
@@ -1079,7 +1079,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 		ReactiveSeq.of(1,2,2)
      * 		 		.cycleUntil(next -> count.get()>6)
      * 		 		.peek(i-> count.mutate(i->i+1))
-     * 		 		.collect(Collectors.toList());
+     * 		 		.collect(CyclopsCollectors.toList());
      *
      * 		//List[1,2,2,1,2,2,1]
      * }
@@ -1128,7 +1128,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<Tuple3<Integer, Integer, Character>> list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(Collectors.toList());
+     *  List<Tuple3<Integer, Integer, Character>> list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(CyclopsCollectors.toList());
      *
      *  // [[1,100,'a'],[2,200,'b'],[3,300,'c']]
      * }
@@ -1144,7 +1144,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *  List<Tuple4<Integer, Integer, Character, String>> list = of(1, 2, 3, 4, 5, 6).zip4(of(100, 200, 300, 400), of('a', 'b', 'c'), of("hello", "world"))
-     *          .collect(Collectors.toList());
+     *          .collect(CyclopsCollectors.toList());
      *
      * }
      * // [[1,100,'a',"hello"],[2,200,'b',"world"]]
@@ -1221,7 +1221,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(CyclopsCollectors.toList());
      *
      *  assertThat(list.get(0), hasItems(1, 2));
      *  assertThat(list.get(1), hasItems(2, 3));
@@ -1244,7 +1244,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(CyclopsCollectors.toList());
      *
      *  assertThat(list.get(0), hasItems(1, 2, 3));
      *  assertThat(list.get(1), hasItems(3, 4, 5));
@@ -1267,7 +1267,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
+     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).grouped(3).collect(CyclopsCollectors.toList());
      *
      *  assertThat(list.get(0), hasItems(1, 2, 3));
      *  assertThat(list.get(1), hasItems(4, 5, 6));
@@ -1367,8 +1367,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * assertThat(ReactiveSeq.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
-     * assertThat(ReactiveSeq.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),greaterThan(5));
+     * assertThat(ReactiveSeq.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.SECONDS).collect(CyclopsCollectors.toList()).size(),is(1));
+     * assertThat(ReactiveSeq.of(1,2,3,4,5,6).batchByTime(1,TimeUnit.NANOSECONDS).collect(CyclopsCollectors.toList()).size(),greaterThan(5));
      * }
      * </pre>
      *
@@ -1556,7 +1556,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Return the distinct Stream of elements
      *
      * <pre> {@code List<Integer> list = ReactiveSeq.of(1,2,2,2,5,6) .distinct()
-     * .collect(Collectors.toList()); }</pre>
+     * .collect(CyclopsCollectors.toList()); }</pre>
      */
     @Override
     ReactiveSeq<T> distinct();
@@ -2266,21 +2266,21 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return the result of the reduction
      * @apiNote The following will accumulate strings into an ArrayList:
      * <pre>{@code
-     *     List<String> asList = stringStream.collect(Collectors.toList());
+     *     List<String> asList = stringStream.collect(CyclopsCollectors.toList());
      * }</pre>
      * <p>
      * <p>The following will classify {@code Person} objects by city:
      * <pre>{@code
      *     Map<String, List<Person>> peopleByCity
-     *         = personStream.collect(Collectors.groupingBy(Person::getCity));
+     *         = personStream.collect(CyclopsCollectors.groupingBy(Person::getCity));
      * }</pre>
      * <p>
      * <p>The following will classify {@code Person} objects by state and city,
      * cascading two {@code Collector}s together:
      * <pre>{@code
      *     Map<String, Map<String, List<Person>>> peopleByStateAndCity
-     *         = personStream.collect(Collectors.groupingBy(Person::getState,
-     *                                                      Collectors.groupingBy(Person::getCity)));
+     *         = personStream.collect(CyclopsCollectors.groupingBy(Person::getState,
+     *                                                      CyclopsCollectors.groupingBy(Person::getCity)));
      * }</pre>
      * @see #collect(Supplier, BiConsumer, BiConsumer)
      * @see Collectors
@@ -2735,7 +2735,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  List<String> result = ReactiveSeq.of(1, 2, 3)
      *                                   .prependS(of(100, 200, 300))
      *                                   .map(it -> it + "!!")
-     *                                   .collect(Collectors.toList());
+     *                                   .collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!", "1!!", "2!!", "3!!")));
      * }
@@ -2752,7 +2752,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).map(it -> it + "!!").collect(Collectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
      * </pre>
@@ -2777,7 +2777,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * List<String> result = 	ReactiveSeq.of(1,2,3)
      * 									 .prepend(100,200,300)
      * 										 .map(it ->it+"!!")
-     * 										 .collect(Collectors.toList());
+     * 										 .collect(CyclopsCollectors.toList());
      *
      * 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
@@ -2792,7 +2792,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).map(it -> it + "!!").collect(Collectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));     *
      * }
@@ -2830,7 +2830,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).map(it -> it + "!!").collect(Collectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "5!!", "6!!")));     * }
      * </pre>
@@ -2862,7 +2862,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).map(it -> it + "!!").collect(Collectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
      * }
@@ -2967,7 +2967,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * assertThat(ReactiveSeq.of(1,2,3,4,5) .skipLast(2)
-     * .collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
+     * .collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,3)));
      *
      * @param num
      * @return
@@ -2982,7 +2982,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      * 	assertThat(ReactiveSeq.of(1,2,3,4,5)
      * 							.limitLast(2)
-     * 							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
+     * 							.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(4,5)));
      *
      * }
      *
@@ -3669,7 +3669,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 	SimpleTimer timer = new SimpleTimer();
      * 	ReactiveSeq.of(1, 2, 3, 4, 5, 6)
      *             .xPer(6, 100000000, TimeUnit.NANOSECONDS)
-     *             .collect(Collectors.toList())
+     *             .collect(CyclopsCollectors.toList())
      *             .size();
      * //6
      *
@@ -3734,7 +3734,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 	SimpleTimer timer = new SimpleTimer();
      * 	ReactiveSeq.of(1, 2, 3, 4, 5, 6)
      *             .fixedDelay(10000, TimeUnit.NANOSECONDS)
-     *             .collect(Collectors.toList())
+     *             .collect(CyclopsCollectors.toList())
      *             .size();
      *  //6
      * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(60000l));
@@ -3757,7 +3757,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * 	SimpleTimer timer = new SimpleTimer();
      * 	ReactiveSeq.of(1, 2, 3, 4, 5, 6)
      *             .jitter(10000)
-     *             .collect(Collectors.toList());
+     *             .collect(CyclopsCollectors.toList());
      *
      * 	assertThat(timer.getElapsedNanoseconds(), greaterThan(20000l));
      * }
@@ -4436,7 +4436,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).appendStream(ReactiveSeq.of(100, 200, 300)).map(it -> it + "!!").collect(Collectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).appendStream(ReactiveSeq.of(100, 200, 300)).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
      * </pre>
@@ -4464,7 +4464,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      * 		ReactiveSeq.of(1,2,2)
      * 								.cycle(3)
-     * 								.collect(Collectors.toList());
+     * 								.collect(CyclopsCollectors.toList());
      *
      * 		//List[1,2,2,1,2,2,1,2,2]
      *

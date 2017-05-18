@@ -267,8 +267,8 @@ public class StreamSource {
         ReactiveSeq<Integer> seq = multi.reactiveSeq();
         multi.getInput().offer(100);
         multi.getInput().close();
-        pushable.collect(Collectors.toList()); //[100]
-        seq.collect(Collectors.toList()); //[100]     
+        pushable.collect(CyclopsCollectors.toList()); //[100]
+        seq.collect(CyclopsCollectors.toList()); //[100]
      * 
      * }
      * </pre>
@@ -421,7 +421,7 @@ public class StreamSource {
         pushable.getInput().close();
         
         
-        assertThat(pushable.getStream().collect(Collectors.toList()),
+        assertThat(pushable.getStream().collect(CyclopsCollectors.toList()),
                 hasItem(100));
      * 
      * 
@@ -453,7 +453,7 @@ public class StreamSource {
         pushable.getInput().close();
         
         
-        assertThat(pushable.getStream().collect(Collectors.toList()),
+        assertThat(pushable.getStream().collect(CyclopsCollectors.toList()),
                 hasItem(100));
      * 
      * 
@@ -481,7 +481,7 @@ public class StreamSource {
         pushable.getInput()
                 .close();
         
-        pushable.getStream().collect(Collectors.toList()) //[10]
+        pushable.getStream().collect(CyclopsCollectors.toList()) //[10]
                
      * 
      * }
@@ -509,7 +509,7 @@ public class StreamSource {
         
         //on another thread
         pushable.getStream()
-                .collect(Collectors.toList()) //[10]
+                .collect(CyclopsCollectors.toList()) //[10]
               
      * 
      * }
@@ -557,7 +557,7 @@ public class StreamSource {
         signal.set(100);
         signal.close();
         
-        assertThat(pushable.collect(Collectors.toList()), hasItem(100));
+        assertThat(pushable.collect(CyclopsCollectors.toList()), hasItem(100));
      * }
      * </pre>
      * 

@@ -3,8 +3,8 @@ package cyclops.collections;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.CyclopsCollectors;
-import cyclops.Streams;
+import cyclops.companion.CyclopsCollectors;
+import cyclops.companion.Streams;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
@@ -41,7 +40,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     static <T> Collector<T, ?, Queue<T>> defaultCollector() {
-        return Collectors.toCollection(() -> new LinkedList<>());
+        return java.util.stream.Collectors.toCollection(() -> new LinkedList<>());
     }
 
     /**

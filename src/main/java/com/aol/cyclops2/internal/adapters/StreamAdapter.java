@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.adapters;
 
 import static cyclops.monads.AnyM.fromStream;
-import static cyclops.Streams.zipSequence;
+import static cyclops.companion.Streams.zipSequence;
 import static cyclops.monads.Witness.stream;
 
 import java.util.Iterator;
@@ -13,11 +13,9 @@ import java.util.stream.Stream;
 import cyclops.monads.AnyM;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.monads.Witness;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
-
-import lombok.AllArgsConstructor;
 
 
 public class StreamAdapter<W extends Witness.StreamWitness<W>> extends  AbstractFunctionalAdapter<W> {

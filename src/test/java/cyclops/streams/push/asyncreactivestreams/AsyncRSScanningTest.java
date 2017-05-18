@@ -1,13 +1,12 @@
 package cyclops.streams.push.asyncreactivestreams;
 
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
 import static java.util.Arrays.asList;

@@ -1,7 +1,7 @@
 package com.aol.cyclops2.control;
 
-import cyclops.Monoids;
-import cyclops.Semigroups;
+import cyclops.companion.Monoids;
+import cyclops.companion.Semigroups;
 import cyclops.collections.immutable.PStackX;
 import cyclops.collections.ListX;
 import cyclops.control.Xor;

@@ -25,7 +25,7 @@ import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
 import cyclops.control.lazy.Maybe;
 import com.aol.cyclops2.types.anyM.AnyMSeq;

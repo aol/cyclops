@@ -42,7 +42,7 @@ public class SyncZippingTest {
 		/**
 		 List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6).limit(6)
 		 .zip( of(100,200,300,400).limit(4))
-		 .collect(Collectors.toList());**/
+		 .collect(CyclopsCollectors.toList());**/
 
 		assertThat(list.get(0).v1,is(1));
 		assertThat(list.get(0).v2,is(100));

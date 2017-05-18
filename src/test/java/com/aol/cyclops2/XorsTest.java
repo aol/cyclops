@@ -1,8 +1,8 @@
 package com.aol.cyclops2;
 
+import cyclops.companion.Xors;
 import cyclops.async.adapters.Adapter;
 import cyclops.async.QueueFactories;
-import cyclops.Matchables;
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class MatchablesTest {
+public class XorsTest {
 
     
     private String loadData(){
@@ -32,7 +32,7 @@ public class MatchablesTest {
 	    Adapter<Integer> adapter = QueueFactories.<Integer>unboundedQueue()
 	                                                        .build();
 	                                                         
-	        String result =   Matchables.adapter(adapter)
+	        String result =   Xors.adapter(adapter)
 	                                          .visit(queue->"we have a queue",topic->"we have a topic");
 	        assertThat(result,equalTo("we have a queue"));
 	        
@@ -41,12 +41,12 @@ public class MatchablesTest {
 	
 	@Test
 	public void nonBlocking(){
-	    assertThat(Matchables.blocking(new ManyToManyConcurrentArrayQueue(10))
+	    assertThat(Xors.blocking(new ManyToManyConcurrentArrayQueue(10))
 	                                  .visit(c->"blocking", c->"not"),equalTo("not"));
 	}
 	@Test
     public void blocking(){
-        assertThat(Matchables.blocking(new LinkedBlockingQueue(10))
+        assertThat(Xors.blocking(new LinkedBlockingQueue(10))
                                       .visit(c->"blocking", c->"not"),equalTo("blocking"));
     }
 

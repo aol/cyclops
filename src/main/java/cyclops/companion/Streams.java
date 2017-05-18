@@ -1,8 +1,7 @@
-package cyclops;
+package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.spliterators.*;
-import cyclops.collections.box.LazyImmutable;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
@@ -108,7 +107,7 @@ public class Streams {
      *  <pre>
      * {@code
      *
-     *   import static cyclops.Streams.forEach4;
+     *   import static cyclops.companion.Streams.forEach4;
      *
           forEach4(IntStream.range(1,10).boxed(),
                    a-> Stream.iterate(a,i->i+1).limit(10),
@@ -390,7 +389,7 @@ public class Streams {
      */
     public final static <T> Optional<ListX<T>> streamToOptional(final Stream<T> stream) {
         
-        final List<T> collected = stream.collect(Collectors.toList());
+        final List<T> collected = stream.collect(java.util.stream.Collectors.toList());
         if (collected.size() == 0)
             return Optional.empty();
         return Optional.of(ListX.fromIterable(collected));
@@ -929,7 +928,7 @@ public class Streams {
      * {@code 
      * List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
     									.map(it ->it+"!!")
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
      * }
@@ -948,7 +947,7 @@ public class Streams {
      * <pre>
      * {@code 
      * List<String> result = of(1,2,3).prependStream(of(100,200,300))
-    			.map(it ->it+"!!").collect(Collectors.toList());
+    			.map(it ->it+"!!").collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * 
@@ -969,7 +968,7 @@ public class Streams {
      * {@code 
      * List<String> result = 	of(1,2,3).append(100,200,300)
     									.map(it ->it+"!!")
-    									.collect(Collectors.toList());
+    									.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
      * }
@@ -986,7 +985,7 @@ public class Streams {
      * <pre>
      * {@code 
      * List<String> result = 	of(1,2,3).prepend(100,200,300)
-    			.map(it ->it+"!!").collect(Collectors.toList());
+    			.map(it ->it+"!!").collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
@@ -1002,7 +1001,7 @@ public class Streams {
      * <pre>
      * {@code 
      * List<String> result = 	of(1,2,3).insertAt(1,100,200,300)
-    			.map(it ->it+"!!").collect(Collectors.toList());
+    			.map(it ->it+"!!").collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
      * 
@@ -1023,7 +1022,7 @@ public class Streams {
      * {@code 
      * List<String> result = 	Streams.deleteBetween(Stream.of(1,2,3,4,5,6),2,4)
     										.map(it ->it+"!!")
-    										.collect(Collectors.toList());
+    										.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
      * }
@@ -1043,7 +1042,7 @@ public class Streams {
      * {@code 
      * List<String> result = 	Streams.insertAtS(Stream.of(1,2,3),1,of(100,200,300))
     										.map(it ->it+"!!")
-    										.collect(Collectors.toList());
+    										.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
      * }
@@ -1066,7 +1065,7 @@ public class Streams {
      * {@code 
      *   		List<Integer> list = Streams.cycle(Stream.of(1,2,2),Reducers.toCountInt(),3)
      * 										.
-     * 										.collect(Collectors.toList());
+     * 										.collect(CyclopsCollectors.toList());
      * 	//is asList(3,3,3);
      *   }
      * </pre>
@@ -1108,7 +1107,7 @@ public class Streams {
     /**
      * skip elements in Stream until Predicate holds true
      * 	<pre>
-     * {@code  Streams.skipUntil(Stream.of(4,3,6,7),i->i==6).collect(Collectors.toList())
+     * {@code  Streams.skipUntil(Stream.of(4,3,6,7),i->i==6).collect(CyclopsCollectors.toList())
      *  // [6,7]
      *  }</pre>
     
@@ -1143,7 +1142,7 @@ public class Streams {
      * 
      * <pre>
      * 
-     * {@code  Streams.skipWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(Collectors.toList())
+     * {@code  Streams.skipWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(CyclopsCollectors.toList())
      *  // [6,7]
      *  }</pre>
      * @param stream
@@ -1242,7 +1241,7 @@ public class Streams {
     /**
      * Take elements from a reactiveStream while the predicates hold
      * <pre>
-     * {@code Streams.limitWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(Collectors.toList());
+     * {@code Streams.limitWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(CyclopsCollectors.toList());
      * //[4,3]
      * }
      * </pre>
@@ -1257,7 +1256,7 @@ public class Streams {
     /**
      * Take elements from a Stream until the predicate holds
      *  <pre>
-     * {@code Streams.limitUntil(Stream.of(4,3,6,7),i->i==6).collect(Collectors.toList());
+     * {@code Streams.limitUntil(Stream.of(4,3,6,7),i->i==6).collect(CyclopsCollectors.toList());
      * //[4,3]
      * }
      * </pre>
@@ -1275,7 +1274,7 @@ public class Streams {
      * 
      * <pre>
      * {@code 
-     * assertThat(Streams.reverse(Stream.of(1,2,3)).collect(Collectors.toList())
+     * assertThat(Streams.reverse(Stream.of(1,2,3)).collect(CyclopsCollectors.toList())
     			,equalTo(Arrays.asList(3,2,1)));
      * }
      * </pre>
@@ -1284,7 +1283,7 @@ public class Streams {
      * @return Reversed reactiveStream
      */
     public static <U> Stream<U> reverse(final Stream<U> stream) {
-        return ReactiveSeq.of(1).flatMap(i->reversedStream(stream.collect(Collectors.toList())));
+        return ReactiveSeq.of(1).flatMap(i->reversedStream(stream.collect(java.util.stream.Collectors.toList())));
 
     }
 
@@ -1297,7 +1296,7 @@ public class Streams {
     			.forEach(System.out::println);
     	
     	
-    	assertThat(Streams.reversedStream(Arrays.asList(1,2,3)).collect(Collectors.toList())
+    	assertThat(Streams.reversedStream(Arrays.asList(1,2,3)).collect(CyclopsCollectors.toList())
     			,equalTo(Arrays.asList(3,2,1)));
      * 
      * }
@@ -1318,7 +1317,7 @@ public class Streams {
      * {@code 		
      * assertThat(Streams.cycle(Stream.of(1,2,3))
      * 						.limit(6)
-     * 						.collect(Collectors.toList()),
+     * 						.collect(CyclopsCollectors.toList()),
      * 								equalTo(Arrays.asList(1,2,3,1,2,3)));
     	}
      * </pre>
@@ -1345,7 +1344,7 @@ public class Streams {
      * <pre>
      * {@code 
      * assertThat(Streams.cycle(3,Streamable.of(1,2,2))
-    							.collect(Collectors.toList()),
+    							.collect(CyclopsCollectors.toList()),
     								equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
      * }
      * </pre>
@@ -1363,7 +1362,7 @@ public class Streams {
      * <pre>
      * {@code 
      * 	assertThat(Streams.reactiveStream(Arrays.asList(1,2,3))
-     * 								.collect(Collectors.toList()),
+     * 								.collect(CyclopsCollectors.toList()),
      * 									equalTo(Arrays.asList(1,2,3)));
     
      * 
@@ -1385,7 +1384,7 @@ public class Streams {
      * <pre>
      * {@code 
      * 	assertThat(Streams.reactiveStream(Arrays.asList(1,2,3).iterator())
-     * 							.collect(Collectors.toList()),
+     * 							.collect(CyclopsCollectors.toList()),
      * 								equalTo(Arrays.asList(1,2,3)));
     
      * }
@@ -1427,7 +1426,7 @@ public class Streams {
      * {@code 
      * 	Map<String,String> map = new HashMap<>();
     	map.put("hello","world");
-    	assertThat(Streams.reactiveStream(map).collect(Collectors.toList()),equalTo(Arrays.asList(new AbstractMap.SimpleEntry("hello","world"))));
+    	assertThat(Streams.reactiveStream(map).collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(new AbstractMap.SimpleEntry("hello","world"))));
     
      * }</pre>
      * 
@@ -1489,7 +1488,7 @@ public class Streams {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static <R> ListX<R> reduce(final Stream<R> stream, final Stream<? extends Monoid<R>> reducers) {
-        return reduce(stream, ListX.fromIterable((List) reducers.collect(Collectors.toList())));
+        return reduce(stream, ListX.fromIterable((List) reducers.collect(java.util.stream.Collectors.toList())));
 
     }
 
@@ -1501,7 +1500,7 @@ public class Streams {
      *  
     	assertThat(Streams.cycleWhile(Stream.of(1,2,2)
     										,next -> count++<6 )
-    										.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
+    										.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
      * }
      * </pre>
      * @param predicate
@@ -1520,7 +1519,7 @@ public class Streams {
      * 	count =0;
     	assertThat(Streams.cycleUntil(Stream.of(1,2,2,3)
     										,next -> count++>10 )
-    										.collect(Collectors.toList()),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
+    										.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
     
      * }
      * </pre>
@@ -1542,7 +1541,7 @@ public class Streams {
     												(a,b) -> Arrays.asList(a,b));
     	
     	
-    	List<Integer> zip = zipped.collect(Collectors.toList()).get(1);
+    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).get(1);
     	assertThat(zip.get(0),equalTo(2));
     	assertThat(zip.get(1),equalTo(3));
      * }
@@ -1583,7 +1582,7 @@ public class Streams {
     										(a,b) -> Arrays.asList(a,b));
     	
     	
-    	List<Integer> zip = zipped.collect(Collectors.toList()).get(0);
+    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).get(0);
     	assertThat(zip.get(0),equalTo(1));
     	assertThat(zip.get(1),equalTo(2));
      * 
@@ -1606,7 +1605,7 @@ public class Streams {
     												(a,b) -> Arrays.asList(a,b));
     	
     	
-    	List<Integer> zip = zipped.collect(Collectors.toList()).get(1);
+    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).get(1);
     	assertThat(zip.get(0),equalTo(2));
     	assertThat(zip.get(1),equalTo(3));
        }
@@ -1644,7 +1643,7 @@ public class Streams {
      * {@code 
      * List<List<Integer>> list = Streams.sliding(Stream.of(1,2,3,4,5,6)
     											,2,1)
-    								.collect(Collectors.toList());
+    								.collect(CyclopsCollectors.toList());
     	
     
     	assertThat(list.get(0),hasItems(1,2));
@@ -1666,7 +1665,7 @@ public class Streams {
      * {@code 
      * List<List<Integer>> list = Streams.sliding(Stream.of(1,2,3,4,5,6)
     											,2,1)
-    								.collect(Collectors.toList());
+    								.collect(CyclopsCollectors.toList());
     	
     
     	assertThat(list.get(0),hasItems(1,2));
@@ -1712,7 +1711,7 @@ public class Streams {
      * {@code 
      * List<List<Integer>> list = Streams.sliding(Stream.of(1,2,3,4,5,6)
     											,2)
-    								.collect(Collectors.toList());
+    								.collect(CyclopsCollectors.toList());
     	
     
     	assertThat(list.get(0),hasItems(1,2));
@@ -1736,7 +1735,7 @@ public class Streams {
        {@code 
      *  List<List<Integer>> list = Streams.grouped(Stream.of(1,2,3,4,5,6)
                                                         ,3)
-                                                    .collect(Collectors.toList());
+                                                    .collect(CyclopsCollectors.toList());
         
         
         assertThat(list.get(0),hasItems(1,2,3));
@@ -1763,7 +1762,7 @@ public class Streams {
        {@code 
      *  List<SetX<Integer>> list = Streams.grouped(Stream.of(1,2,3,4,5,6)
                                                         ,3,()->SetX.empty())
-                                                    .collect(Collectors.toList());
+                                                    .collect(CyclopsCollectors.toList());
         
         
         assertThat(list.get(0),hasItems(1,2,3));
@@ -1785,7 +1784,7 @@ public class Streams {
     }
 
     public final static <T> Streamable<T> shuffle(final Stream<T> stream) {
-        final List<T> list = stream.collect(Collectors.toList());
+        final List<T> list = stream.collect(java.util.stream.Collectors.toList());
         Collections.shuffle(list);
         return Streamable.fromIterable(list);
     }
@@ -1812,7 +1811,7 @@ public class Streams {
      * 
      * 	assertEquals(asList("", "a", "ab", "abc"),
      * 					Streams.scanLeft(Stream.of("a", "b", "c"),Reducers.toString(""))
-     * 			.collect(Collectors.toList());
+     * 			.collect(CyclopsCollectors.toList());
      *         
      *         }
      * </pre>
@@ -1862,7 +1861,7 @@ public class Streams {
     public static <T> boolean xMatch(final Stream<T> stream, final int num, final Predicate<? super T> c) {
 
         return stream.filter(t -> c.test(t))
-                     .collect(Collectors.counting()) == num;
+                     .collect(java.util.stream.Collectors.counting()) == num;
     }
 
     /**
@@ -1879,17 +1878,17 @@ public class Streams {
 
     public final static <T> String join(final Stream<T> stream) {
         return stream.map(t -> t.toString())
-                     .collect(Collectors.joining());
+                     .collect(java.util.stream.Collectors.joining());
     }
 
     public final static <T> String join(final Stream<T> stream, final String sep) {
         return stream.map(t -> t.toString())
-                     .collect(Collectors.joining(sep));
+                     .collect(java.util.stream.Collectors.joining(sep));
     }
 
     public final static <T> String join(final Stream<T> stream, final String sep, final String start, final String end) {
         return stream.map(t -> t.toString())
-                     .collect(Collectors.joining(sep, start, end));
+                     .collect(java.util.stream.Collectors.joining(sep, start, end));
     }
 
     public final static <T, C extends Comparable<? super C>> Optional<T> minBy(final Stream<T> stream, final Function<? super T, ? extends C> f) {
@@ -1900,7 +1899,7 @@ public class Streams {
     }
 
     public final static <T> Optional<T> min(final Stream<T> stream, final Comparator<? super T> comparator) {
-        return stream.collect(Collectors.minBy(comparator));
+        return stream.collect(java.util.stream.Collectors.minBy(comparator));
     }
 
     public final static <T, C extends Comparable<? super C>> Optional<T> maxBy(final Stream<T> stream, final Function<? super T, ? extends C> f) {
@@ -1911,7 +1910,7 @@ public class Streams {
     }
 
     public final static <T> Optional<T> max(final Stream<T> stream, final Comparator<? super T> comparator) {
-        return stream.collect(Collectors.maxBy(comparator));
+        return stream.collect(java.util.stream.Collectors.maxBy(comparator));
     }
 
     /**
@@ -1990,7 +1989,7 @@ public class Streams {
      * @return This monad converted to a set
      */
     public final static <T> Set<T> toSet(final Stream<T> stream) {
-        return stream.collect(Collectors.toSet());
+        return stream.collect(java.util.stream.Collectors.toSet());
     }
 
     /**
@@ -1998,7 +1997,7 @@ public class Streams {
      */
     public final static <T> List<T> toList(final Stream<T> stream) {
 
-        return stream.collect(Collectors.toList());
+        return stream.collect(java.util.stream.Collectors.toList());
     }
 
     /**
@@ -2163,7 +2162,7 @@ public class Streams {
      * <pre>
      * {@code 
      * 	assertThat(Streams.flatMapCollection(Stream.of(20),i->Arrays.asList(1,2,i))
-     * 								.collect(Collectors.toList()),
+     * 								.collect(CyclopsCollectors.toList()),
      * 								equalTo(Arrays.asList(1,2,20)));
     
      * }
@@ -2179,7 +2178,7 @@ public class Streams {
      * <pre>
      * {@code 
      * 	assertThat(Streams.flatMapStream(Stream.of(1,2,3),
-     * 							i->Stream.of(i)).collect(Collectors.toList()),
+     * 							i->Stream.of(i)).collect(CyclopsCollectors.toList()),
      * 							equalTo(Arrays.asList(1,2,3)));
     
      * 
@@ -2204,7 +2203,7 @@ public class Streams {
      * {@code 
      * 	 assertThat(Streams.flatMapOptional(Stream.of(1,2,3,null),
      * 										Optional::ofNullable)
-     * 										.collect(Collectors.toList()),
+     * 										.collect(CyclopsCollectors.toList()),
      * 										equalTo(Arrays.asList(1,2,3)));
     
      * }
@@ -2224,7 +2223,7 @@ public class Streams {
      * {@code 
      * 	assertThat(Streams.flatMapCompletableFuture(Stream.of(1,2,3),
      * 								i->CompletableFuture.completedFuture(i+2))
-     * 								.collect(Collectors.toList()),
+     * 								.collect(CyclopsCollectors.toList()),
      * 								equalTo(Arrays.asList(3,4,5)));
     
      * }
@@ -2293,7 +2292,7 @@ public class Streams {
      * {@code 
      * List<String> result = Streams.liftAndBindURL(Stream.of("input.file")
     							,getClass().getClassLoader()::getResource)
-    							.collect(Collectors.toList();
+    							.collect(CyclopsCollectors.toList();
     	
     	assertThat(result,equalTo(Arrays.asList("hello","world")));
      * 
@@ -2324,7 +2323,7 @@ public class Streams {
     							.map(getClass().getClassLoader()::getResourceAsStream)
     							.map(InputStreamReader::new)
     							,BufferedReader::new)
-    							.collect(Collectors.toList();
+    							.collect(CyclopsCollectors.toList();
     	
     	assertThat(result,equalTo(Arrays.asList("hello","world")));
      * 

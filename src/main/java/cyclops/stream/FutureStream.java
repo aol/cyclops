@@ -27,11 +27,11 @@ import com.aol.cyclops2.types.FoldableTraversable;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.futurestream.*;
 import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
-import cyclops.*;
 import cyclops.async.*;
 import cyclops.async.adapters.Adapter;
 import cyclops.async.adapters.Queue;
 import cyclops.collections.immutable.PVectorX;
+import cyclops.companion.*;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.lazy.Either;
@@ -391,7 +391,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * <pre>
      * {@code
      * assertThat(FutureStream.of(1,2,2).cycle(3)
-    .collect(Collectors.toList()),
+    .collect(CyclopsCollectors.toList()),
     equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
      * }
      * </pre>
@@ -944,7 +944,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                        .limit(100)
                         .withQueueFactory(QueueFactories.boundedQueue(10))
                         .toQueue();
-         q.reactiveStream().collect(Collectors.toList())
+         q.reactiveStream().collect(CyclopsCollectors.toList())
                    .size()
     
         //100
@@ -2088,7 +2088,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * //futureStream of [1,2,3,4,5,6]
      *
      * List<List<Integer>> list = futureStream.sliding(2)
-                                    .collect(Collectors.toList());
+                                    .collect(CyclopsCollectors.toList());
     
     
         assertThat(list.get(0),hasItems(1,2));
@@ -2114,7 +2114,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * //futureStream of [1,2,3,4,5,6,7,8]
      *
      * List<List<Integer>> list = futureStream.sliding(3,2)
-                                    .collect(Collectors.toList());
+                                    .collect(CyclopsCollectors.toList());
     
     
         assertThat(list.get(0),hasItems(1,2,3));
@@ -2517,7 +2517,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * <pre>
      * {@code
      * assertThat(FutureStream.of(1,2,2).cycle().limit(6)
-                                .collect(Collectors.toList()),
+                                .collect(CyclopsCollectors.toList()),
                                     equalTo(Arrays.asList(1,2,2,1,2,2));
      * }
      * </pre>
@@ -2539,7 +2539,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *  int count =0;
      *
         assertThat(FutureStream.of(1,2,2).cycleWhile(next -> count++<6 )
-                                            .collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
+                                            .collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
      * }
      * </pre>
      * @param predicate
@@ -2558,7 +2558,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * {@code
      * 	count =0;
         assertThat(FutureStream.of(1,2,2,3).cycleUntil(next -> count++>10 )
-                                            .collect(Collectors.toList()),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
+                                            .collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
     
      * }
      * </pre>

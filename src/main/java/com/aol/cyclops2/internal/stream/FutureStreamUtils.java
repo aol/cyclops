@@ -7,11 +7,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple3;
 import org.reactivestreams.Subscription;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 
 public class FutureStreamUtils {
     /**

@@ -2,7 +2,7 @@ package com.aol.cyclops2.internal.adapters;
 
 import static cyclops.monads.AnyM.fromOptional;
 import static cyclops.monads.Witness.optional;
-import static cyclops.Optionals.combine;
+import static cyclops.companion.Optionals.combine;
 
 import java.util.Iterator;
 import java.util.Optional;
@@ -16,7 +16,7 @@ import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.monads.Witness;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 import com.aol.cyclops2.types.extensability.ValueAdapter;
-import cyclops.Optionals;
+import cyclops.companion.Optionals;
 
 import lombok.AllArgsConstructor;
 
