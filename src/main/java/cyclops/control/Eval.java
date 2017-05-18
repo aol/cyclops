@@ -5,9 +5,9 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.*;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.DequeX;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.DequeX;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -306,8 +306,8 @@ public interface Eval<T> extends    To<Eval<T>>,
      * 
      * <pre>
      * {@code 
-     *   Eval<PSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPSetX());
-         //Eval.now(PSetX.of(10,1)))
+     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPSetX());
+         //Eval.now(PersistentSetX.of(10,1)))
      * }
      * </pre>
      * 
@@ -384,8 +384,8 @@ public interface Eval<T> extends    To<Eval<T>>,
     @Override
     public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
-    default PVectorX<Function<Object, Object>> steps() {
-        return PVectorX.of(__ -> get());
+    default VectorX<Function<Object, Object>> steps() {
+        return VectorX.of(__ -> get());
     }
 
     /* (non-Javadoc)
@@ -721,10 +721,10 @@ public interface Eval<T> extends    To<Eval<T>>,
         public static class Later<T> extends Rec<T> implements Eval<T> {
 
             Later(final Function<Object, ? extends T> s) {
-                super(PVectorX.of(Rec.raw(Memoize.memoizeFunction(s))));
+                super(VectorX.of(Rec.raw(Memoize.memoizeFunction(s))));
             }
 
-            Later(final PVectorX<Function<Object, Object>> s) {
+            Later(final VectorX<Function<Object, Object>> s) {
                 super(s);
 
             }
@@ -741,7 +741,7 @@ public interface Eval<T> extends    To<Eval<T>>,
                 final RecFunction s = __ -> asEval(mapper.apply(super.applyRec())).steps();
 
                 return new Later<R>(
-                                    PVectorX.of(s));
+                                    VectorX.of(s));
 
             }
 
@@ -794,10 +794,10 @@ public interface Eval<T> extends    To<Eval<T>>,
         public static class Always<T> extends Rec<T>implements Eval<T> {
 
             Always(final Function<Object, ? extends T> s) {
-                super(PVectorX.of(Rec.raw(s)));
+                super(VectorX.of(Rec.raw(s)));
             }
 
-            Always(final PVectorX<Function<Object, Object>> s) {
+            Always(final VectorX<Function<Object, Object>> s) {
                 super(s);
 
             }
@@ -815,7 +815,7 @@ public interface Eval<T> extends    To<Eval<T>>,
                 final RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
 
                 return new Always<R>(
-                                     PVectorX.of(s));
+                                     VectorX.of(s));
             }
 
             @Override
@@ -1058,10 +1058,10 @@ public interface Eval<T> extends    To<Eval<T>>,
         }
 
         private static class Rec<T> {
-            final PVectorX<Function<Object, Object>> fns;
+            final VectorX<Function<Object, Object>> fns;
             private final static Object VOID = new Object();
 
-            Rec(final PVectorX<Function<Object, Object>> s) {
+            Rec(final VectorX<Function<Object, Object>> s) {
                 fns = s;
             }
 
@@ -1073,7 +1073,7 @@ public interface Eval<T> extends    To<Eval<T>>,
 
             }
 
-            public PVectorX<Function<Object, Object>> steps() {
+            public VectorX<Function<Object, Object>> steps() {
                 return fns;
             }
 

@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;

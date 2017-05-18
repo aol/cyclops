@@ -10,7 +10,7 @@ import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.monads.WitnessType;
 import cyclops.companion.Streams;

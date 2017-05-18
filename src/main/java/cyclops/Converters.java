@@ -1,8 +1,8 @@
 package cyclops;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.*;
 import cyclops.collections.immutable.*;
+import cyclops.collections.mutable.MapX;
 import cyclops.companion.Reducers;
 import org.pcollections.*;
 
@@ -47,8 +47,8 @@ public interface Converters {
         return vec.unwrapIfInstance(PBag.class,
                 ()->Reducers.<T>toPBag().mapReduce(vec.stream()));
     }
-    public static <K,V> PMap<K,V> PMap(PMapX<K,V> vec){
-        return vec.unwrapIfInstance(PMapX.class,
+    public static <K,V> PMap<K,V> PMap(PersistentMapX<K,V> vec){
+        return vec.unwrapIfInstance(PersistentMapX.class,
                 ()-> Reducers.<K,V>toPMap().mapReduce(vec.stream()));
     }
     public static <T> POrderedSet<T> POrderedSet(CollectionX<T> vec){

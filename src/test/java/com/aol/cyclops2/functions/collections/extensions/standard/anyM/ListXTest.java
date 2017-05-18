@@ -7,7 +7,7 @@ import cyclops.monads.Witness;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 public class ListXTest extends AbstractAnyMSeqOrderedDependentTest<Witness.list>{

@@ -2,7 +2,7 @@ package com.aol.cyclops2.functions.collections.extensions;
 
 import cyclops.companion.Semigroups;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.stream.HeadAndTail;

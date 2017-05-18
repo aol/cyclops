@@ -1,6 +1,6 @@
 package cyclops.monads;
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Xor;
 import cyclops.monads.Witness.stream;
 import cyclops.monads.Witness.reactiveSeq;
@@ -12,7 +12,6 @@ import org.junit.Test;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static cyclops.monads.Kleisli.kleisli;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.*;
 

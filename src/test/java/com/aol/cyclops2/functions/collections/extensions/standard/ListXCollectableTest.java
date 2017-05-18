@@ -2,7 +2,7 @@ package com.aol.cyclops2.functions.collections.extensions.standard;
 
 import org.jooq.lambda.Collectable;
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.react.lazy.sequence.CollectableTest;
 
 public class ListXCollectableTest extends CollectableTest {

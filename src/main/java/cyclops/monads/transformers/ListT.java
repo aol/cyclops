@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import com.aol.cyclops2.types.FoldableTraversable;
 import cyclops.function.Fn3;
@@ -23,8 +24,7 @@ import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
-import cyclops.collections.immutable.PVectorX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.To;
 import com.aol.cyclops2.types.Traversable;
 import cyclops.monads.Witness;
@@ -412,18 +412,18 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @see cyclops2.monads.transformers.values.ListT#sliding(int)
      */
     @Override
-    public ListT<W,PVectorX<T>> sliding(final int windowSize) {
+    public ListT<W,VectorX<T>> sliding(final int windowSize) {
 
-        return (ListT<W,PVectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize);
+        return (ListT<W,VectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize);
     }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ListT#sliding(int, int)
      */
     @Override
-    public ListT<W,PVectorX<T>> sliding(final int windowSize, final int increment) {
+    public ListT<W,VectorX<T>> sliding(final int windowSize, final int increment) {
 
-        return (ListT<W,PVectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
+        return (ListT<W,VectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
     }
 
     /* (non-Javadoc)

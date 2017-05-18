@@ -27,9 +27,9 @@ import org.junit.Test;
 import cyclops.monads.AnyM;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.collections.ListX;
-import cyclops.collections.QueueX;
-import cyclops.collections.SetX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.QueueX;
+import cyclops.collections.mutable.SetX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 
 import reactor.core.publisher.Flux;

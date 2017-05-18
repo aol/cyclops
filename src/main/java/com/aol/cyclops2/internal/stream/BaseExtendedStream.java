@@ -6,7 +6,7 @@ import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.companion.Streams;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;

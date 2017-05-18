@@ -5,8 +5,8 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 import cyclops.async.Future;
 import cyclops.async.SimpleReact;
-import cyclops.collections.*;
 import cyclops.collections.immutable.*;
+import cyclops.collections.mutable.*;
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
@@ -145,45 +145,45 @@ public interface Monoids {
     }
 
     /**
-     * @return A combiner for PStackX (concatenates two PStackX into a single PStackX)
+     * @return A combiner for LinkedListX (concatenates two LinkedListX into a single LinkedListX)
      */
-    static <T> Monoid<PStackX<T>> pStackXConcat() {
-        return Monoid.of(PStackX.empty(),Semigroups.collectionXConcat());
+    static <T> Monoid<LinkedListX<T>> pStackXConcat() {
+        return Monoid.of(LinkedListX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for PVectorX (concatenates two PVectorX into a single PVectorX)
+     * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
      */
-    static <T> Monoid<PVectorX<T>> pVectorXConcat() {
-        return Monoid.of(PVectorX.empty(),Semigroups.collectionXConcat());
+    static <T> Monoid<VectorX<T>> pVectorXConcat() {
+        return Monoid.of(VectorX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for PSetX (concatenates two PSetX into a single PSetX)
+     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
      */
-    static <T> Monoid<PSetX<T>> pSetXConcat() {
-        return Monoid.of(PSetX.empty(),Semigroups.collectionXConcat());
+    static <T> Monoid<PersistentSetX<T>> pSetXConcat() {
+        return Monoid.of(PersistentSetX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for POrderedSetX (concatenates two POrderedSetX into a single POrderedSetX)
+     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
      */
-    static <T> Monoid<POrderedSetX<T>> pOrderedSetXConcat() {
-        return Monoid.of(POrderedSetX.empty(),Semigroups.collectionXConcat());
+    static <T> Monoid<OrderedSetX<T>> pOrderedSetXConcat() {
+        return Monoid.of(OrderedSetX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for PQueueX (concatenates two PQueueX into a single PQueueX)
+     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
      */
-    static <T> Monoid<PQueueX<T>> pQueueXConcat() {
-        return Monoid.of(PQueueX.empty(),Semigroups.collectionXConcat());
+    static <T> Monoid<PersistentQueueX<T>> pQueueXConcat() {
+        return Monoid.of(PersistentQueueX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for PBagX (concatenates two PBagX into a single PBagX)
+     * @return A combiner for BagX (concatenates two BagX into a single BagX)
      */
-    static <T> Monoid<PBagX<T>> pBagXConcat() {
-        return Monoid.of(PBagX.empty(),Semigroups.collectionXConcat());
+    static <T> Monoid<BagX<T>> pBagXConcat() {
+        return Monoid.of(BagX.empty(),Semigroups.collectionXConcat());
     }
 
     /**

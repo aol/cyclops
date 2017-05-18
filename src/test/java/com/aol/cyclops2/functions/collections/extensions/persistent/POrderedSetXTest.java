@@ -9,26 +9,26 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+import cyclops.collections.immutable.OrderedSetX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.immutable.POrderedSetX;
 import com.aol.cyclops2.functions.collections.extensions.AbstractCollectionXTest;
 
 public class POrderedSetXTest extends AbstractCollectionXTest{
 
 	@Override
 	public <T> FluentCollectionX<T> of(T... values) {
-		return POrderedSetX.of(values);
+		return OrderedSetX.of(values);
 	}
 	@Test
     public void onEmptySwitch(){
-            assertThat(POrderedSetX.empty().onEmptySwitch(()->POrderedSetX.of(1,2,3)),equalTo(POrderedSetX.of(1,2,3)));
+            assertThat(OrderedSetX.empty().onEmptySwitch(()-> OrderedSetX.of(1,2,3)),equalTo(OrderedSetX.of(1,2,3)));
     }
 	@Test
     public void coflatMap(){
-       assertThat(POrderedSetX.of(1,2,3)
+       assertThat(OrderedSetX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
                    .single(),equalTo(6));
         
@@ -38,7 +38,7 @@ public class POrderedSetXTest extends AbstractCollectionXTest{
 	 */
 	@Override
 	public <T> FluentCollectionX<T> empty() {
-		return POrderedSetX.empty();
+		return OrderedSetX.empty();
 	}
 	
     @Test
@@ -53,22 +53,22 @@ public class POrderedSetXTest extends AbstractCollectionXTest{
 	
 	 @Override
 	    public FluentCollectionX<Integer> range(int start, int end) {
-	        return POrderedSetX.range(start, end);
+	        return OrderedSetX.range(start, end);
 	    }
 	    @Override
 	    public FluentCollectionX<Long> rangeLong(long start, long end) {
-	        return POrderedSetX.rangeLong(start, end);
+	        return OrderedSetX.rangeLong(start, end);
 	    }
 	    @Override
 	    public <T> FluentCollectionX<T> iterate(int times, T seed, UnaryOperator<T> fn) {
-	       return POrderedSetX.iterate(times, seed, fn);
+	       return OrderedSetX.iterate(times, seed, fn);
 	    }
 	    @Override
 	    public <T> FluentCollectionX<T> generate(int times,  Supplier<T> fn) {
-	       return POrderedSetX.generate(times, fn);
+	       return OrderedSetX.generate(times, fn);
 	    }
 	    @Override
 	    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
-	       return POrderedSetX.unfold(seed, unfolder);
+	       return OrderedSetX.unfold(seed, unfolder);
 	    }
 }

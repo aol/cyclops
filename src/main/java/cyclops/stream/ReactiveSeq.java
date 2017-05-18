@@ -22,9 +22,9 @@ import cyclops.companion.Streams;
 import cyclops.async.*;
 import cyclops.async.adapters.*;
 import cyclops.async.adapters.Queue;
-import cyclops.collections.ListX;
-import cyclops.collections.MapX;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.MapX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.lazy.Either;
@@ -1235,7 +1235,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with sliding view
      */
     @Override
-    default ReactiveSeq<PVectorX<T>> sliding(int windowSize){
+    default ReactiveSeq<VectorX<T>> sliding(int windowSize){
         return sliding(windowSize,1);
     }
 
@@ -1260,7 +1260,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with sliding view
      */
     @Override
-    ReactiveSeq<PVectorX<T>> sliding(int windowSize, int increment);
+    ReactiveSeq<VectorX<T>> sliding(int windowSize, int increment);
 
     /**
      * Group elements in a Stream

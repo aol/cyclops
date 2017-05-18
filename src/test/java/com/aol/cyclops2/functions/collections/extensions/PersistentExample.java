@@ -1,19 +1,15 @@
 package com.aol.cyclops2.functions.collections.extensions;
 
+import cyclops.collections.immutable.*;
 import org.junit.Test;
 
-import cyclops.collections.immutable.PBagX;
-import cyclops.collections.immutable.POrderedSetX;
-import cyclops.collections.immutable.PQueueX;
-import cyclops.collections.immutable.PSetX;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.BagX;
 
 public class PersistentExample {
 
 	@Test
 	public void list(){
-		PVectorX.of(1,2,3)
+		VectorX.of(1,2,3)
 			.map(i->i+2)
 			.plus(5)
 			.map(i->"hello" + i)
@@ -22,7 +18,7 @@ public class PersistentExample {
 	}
 	@Test
 	public void stack(){
-		PStackX.of(1,2,3)
+		LinkedListX.of(1,2,3)
 			.map(i->i+2)
 			.plus(5)
 			.map(i->"hello" + i)
@@ -32,7 +28,7 @@ public class PersistentExample {
 	
 	@Test
 	public void set(){
-		PSetX.of(1,2,3)
+		PersistentSetX.of(1,2,3)
 			  .map(i->i+2)
 		      .plus(5)
 		      .map(i->"hello" + i)
@@ -40,7 +36,7 @@ public class PersistentExample {
 	}
 	@Test
 	public void bag(){
-		PBagX.of(1,2,3)
+		BagX.of(1,2,3)
 			  .map(i->i+2)
 		      .plus(5)
 		      .map(i->"hello" + i)
@@ -48,7 +44,7 @@ public class PersistentExample {
 	}
 	@Test
 	public void orderedSet(){
-		POrderedSetX.of(1,2,3)
+		OrderedSetX.of(1,2,3)
 			  .map(i->i+2)
 		      .plus(5)
 		      .map(i->"hello" + i)
@@ -56,7 +52,7 @@ public class PersistentExample {
 	}
 	@Test
 	public void queue(){
-		PQueueX.of(1,2,3)
+		PersistentQueueX.of(1,2,3)
 			  .map(i->i+2)
 		      .plus(5)
 		      .map(i->"hello" + i)

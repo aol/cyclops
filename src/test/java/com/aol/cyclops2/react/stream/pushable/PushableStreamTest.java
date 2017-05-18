@@ -23,9 +23,9 @@ import cyclops.stream.StreamSource;
 import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Signal;
-import cyclops.collections.immutable.PSetX;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.SetX;
+import cyclops.collections.immutable.PersistentSetX;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.mutable.SetX;
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.util.stream.pushable.MultipleStreamSource;
 import com.aol.cyclops2.util.stream.pushable.PushableFutureStream;
@@ -40,11 +40,11 @@ public class PushableStreamTest {
     @Test
     public void pipes() throws InterruptedException{
         
-        Flux.from(PStackX.of(10,20,30));
+        Flux.from(LinkedListX.of(10,20,30));
         
         SetX.fromPublisher(Flux.just(10,20,30));
         
-        PSetX.of(1,2,3)
+        PersistentSetX.of(1,2,3)
              .flatMapP(i->Flux.just(i,i*10))
              .toPVectorX();
         

@@ -1,7 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.filter;
 
 
-import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.reactivestreams.Publisher;

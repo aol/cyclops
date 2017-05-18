@@ -9,10 +9,10 @@ import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.QueueFactory;
 import cyclops.async.adapters.Signal;
-import cyclops.collections.ListX;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.stream.publisher.PublisherIterable;
 import com.aol.cyclops2.internal.stream.spliterators.*;
-import cyclops.collections.immutable.PVectorX;
 import cyclops.companion.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
@@ -181,7 +181,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     @Override
-    public final ReactiveSeq<PVectorX<T>> sliding(final int windowSize, final int increment) {
+    public final ReactiveSeq<VectorX<T>> sliding(final int windowSize, final int increment) {
         return createSeq(new SlidingSpliterator<>(get(),Function.identity(), windowSize,increment), reversible);
     }
 

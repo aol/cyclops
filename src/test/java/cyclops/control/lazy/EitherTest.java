@@ -1,14 +1,14 @@
 package com.aol.cyclops2.sum.types;
 
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PSetX;
-import cyclops.collections.immutable.PStackX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Either;
 import cyclops.control.lazy.Either.CompletableEither;
@@ -187,8 +187,8 @@ public class EitherTest {
 
     @Test
     public void testAccumulateSecondary2() {
-        Xor<?,PSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Either.right(1)),Reducers.<String>toPSetX());
-        assertThat(xors,equalTo(Either.right(PSetX.of("none"))));
+        Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Either.right(1)),Reducers.<String>toPSetX());
+        assertThat(xors,equalTo(Either.right(PersistentSetX.of("none"))));
     }
 
     @Test
@@ -276,8 +276,8 @@ public class EitherTest {
     }
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-        Xor<?,PSetX<Integer>> maybes =Xor.accumulatePrimary(ListX.of(just,none,Either.right(1)),Reducers.toPSetX());
-        assertThat(maybes,equalTo(Either.right(PSetX.of(10,1))));
+        Xor<?,PersistentSetX<Integer>> maybes =Xor.accumulatePrimary(ListX.of(just,none,Either.right(1)),Reducers.toPSetX());
+        assertThat(maybes,equalTo(Either.right(PersistentSetX.of(10,1))));
     }
 
     @Test
@@ -507,7 +507,7 @@ public class EitherTest {
 
     @Test
     public void testMapReduceReducerOfR() {
-        assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(PStackX.fromIterable(just)));
+        assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(LinkedListX.fromIterable(just)));
     }
 
     @Test
@@ -561,7 +561,7 @@ public class EitherTest {
 
     @Test
     public void testFoldRightMapToType() {
-        assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(PStackX.fromIterable(just)));
+        assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(LinkedListX.fromIterable(just)));
     }
 
     

@@ -1,7 +1,7 @@
 package cyclops.streams.push.syncflux;
 
 import com.aol.cyclops2.util.SimpleTimer;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import lombok.Value;

@@ -3,7 +3,7 @@ package cyclops.function;
 import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.Value;
 
 import java.util.*;

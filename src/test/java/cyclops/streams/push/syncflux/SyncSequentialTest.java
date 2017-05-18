@@ -2,7 +2,7 @@ package cyclops.streams.push.syncflux;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
 import cyclops.async.adapters.Topic;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;

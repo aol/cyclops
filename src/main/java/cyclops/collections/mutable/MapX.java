@@ -1,4 +1,4 @@
-package cyclops.collections;
+package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.standard.MapXImpl;
 import cyclops.stream.ReactiveSeq;

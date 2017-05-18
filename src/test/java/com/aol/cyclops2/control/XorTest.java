@@ -1,9 +1,9 @@
 package com.aol.cyclops2.control;
 
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Xor;
 import org.junit.Test;
 
@@ -61,14 +61,14 @@ public class XorTest {
 	@Test
     public void applicativeColleciton(){
         Xor<String,String> fail1 =  Xor.secondary("failed1");
-        Xor<PStackX<String>,String> result = fail1.list().combine(Xor.secondary("failed2").list(), Semigroups.collectionXConcat(),(a,b)->a+b);
-        assertThat(result.secondaryGet(),equalTo(PStackX.of("failed1","failed2")));
+        Xor<LinkedListX<String>,String> result = fail1.list().combine(Xor.secondary("failed2").list(), Semigroups.collectionXConcat(),(a, b)->a+b);
+        assertThat(result.secondaryGet(),equalTo(LinkedListX.of("failed1","failed2")));
     }
 	@Test
     public void applicativePStack(){
         Xor<String,String> fail1 =  Xor.secondary("failed1");
-        Xor<PStackX<String>,String> result = fail1.combineToList(Xor.<String,String>secondary("failed2"),(a,b)->a+b);
-        assertThat(result.secondaryGet(),equalTo(PStackX.of("failed1","failed2")));
+        Xor<LinkedListX<String>,String> result = fail1.combineToList(Xor.<String,String>secondary("failed2"),(a, b)->a+b);
+        assertThat(result.secondaryGet(),equalTo(LinkedListX.of("failed1","failed2")));
     }
 	
 

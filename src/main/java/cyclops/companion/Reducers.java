@@ -2,6 +2,7 @@ package cyclops.companion;
 
 import java.util.List;
 
+import cyclops.collections.immutable.*;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import org.pcollections.AmortizedPQueue;
@@ -19,13 +20,7 @@ import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import cyclops.collections.immutable.PBagX;
-import cyclops.collections.immutable.PMapX;
-import cyclops.collections.immutable.POrderedSetX;
-import cyclops.collections.immutable.PQueueX;
-import cyclops.collections.immutable.PSetX;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.BagX;
 import com.aol.cyclops2.types.mixins.TupleWrapper;
 
 import lombok.experimental.UtilityClass;
@@ -38,7 +33,7 @@ import lombok.experimental.UtilityClass;
  * e.g.
  * <pre>
  * {@code 
- * PQueueX<Integer> q = Reducers.<Integer>toPQueueX()
+ * PersistentQueueX<Integer> q = Reducers.<Integer>toPQueueX()
                                 .mapReduce(Stream.of(1,2,3,4));
  * 
  * }
@@ -64,88 +59,88 @@ public class Reducers {
      * 
      * <pre>
      * {@code 
-     * PQueueX<Integer> q = Reducers.<Integer>toPQueueX()
+     * PersistentQueueX<Integer> q = Reducers.<Integer>toPQueueX()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
-     * @return Reducer to PQueueX types
+     * @return Reducer to PersistentQueueX types
      */
-    public static <T> Reducer<PQueueX<T>> toPQueueX() {
+    public static <T> Reducer<PersistentQueueX<T>> toPQueueX() {
         
-        return Reducer.<PQueueX<T>> of(PQueueX.empty(), (final PQueueX<T> a) -> b -> a.plusAll(b), (final T x) -> PQueueX.singleton(x));
+        return Reducer.<PersistentQueueX<T>> of(PersistentQueueX.empty(), (final PersistentQueueX<T> a) -> b -> a.plusAll(b), (final T x) -> PersistentQueueX.singleton(x));
     }
 
     /**
      * <pre>
      * {@code 
-     * POrderedSetX<Integer> q = Reducers.<Integer>toPOrderedSetX()
+     * OrderedSetX<Integer> q = Reducers.<Integer>toPOrderedSetX()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
-     * @return Reducer to POrderedSetX
+     * @return Reducer to OrderedSetX
      */
-    public static <T> Reducer<POrderedSetX<T>> toPOrderedSetX() {
-        return Reducer.<POrderedSetX<T>> of(POrderedSetX.<T> empty(), (final POrderedSetX<T> a) -> b -> a.plusAll(b),
-                                            (final T x) -> POrderedSetX.singleton(x));
+    public static <T> Reducer<OrderedSetX<T>> toPOrderedSetX() {
+        return Reducer.<OrderedSetX<T>> of(OrderedSetX.<T> empty(), (final OrderedSetX<T> a) -> b -> a.plusAll(b),
+                                            (final T x) -> OrderedSetX.singleton(x));
     }
 
     /**
      * <pre>
      * {@code 
-     * PSetX<Integer> q = Reducers.<Integer>toPSetX()
+     * PersistentSetX<Integer> q = Reducers.<Integer>toPSetX()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
-     * @return Reducer for PSetX
+     * @return Reducer for PersistentSetX
      */
-    public static <T> Reducer<PSetX<T>> toPSetX() {
-        return Reducer.<PSetX<T>> of(PSetX.empty(), (final PSetX<T> a) -> b -> a.plusAll(b), (final T x) -> PSetX.singleton(x));
+    public static <T> Reducer<PersistentSetX<T>> toPSetX() {
+        return Reducer.<PersistentSetX<T>> of(PersistentSetX.empty(), (final PersistentSetX<T> a) -> b -> a.plusAll(b), (final T x) -> PersistentSetX.singleton(x));
     }
 
     /**
      * <pre>
      * {@code 
-     * PStackX<Integer> q = Reducers.<Integer>toPStackX()
+     * LinkedListX<Integer> q = Reducers.<Integer>toPStackX()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
-     * @return Reducer for PStackX
+     * @return Reducer for LinkedListX
      */
-    public static <T> Reducer<PStackX<T>> toPStackX() {
-        return Reducer.<PStackX<T>> of(PStackX.empty(), (final PStackX<T> a) -> b -> a.plusAll(b), (final T x) -> PStackX.singleton(x));
+    public static <T> Reducer<LinkedListX<T>> toPStackX() {
+        return Reducer.<LinkedListX<T>> of(LinkedListX.empty(), (final LinkedListX<T> a) -> b -> a.plusAll(b), (final T x) -> LinkedListX.singleton(x));
     }
 
     /**
      * <pre>
      * {@code 
-     * PVectorX<Integer> q = Reducers.<Integer>toPVectorX()
+     * VectorX<Integer> q = Reducers.<Integer>toPVectorX()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
-     * @return Reducer for PVectorX
+     * @return Reducer for VectorX
      */
-    public static <T> Reducer<PVectorX<T>> toPVectorX() {
-        return Reducer.<PVectorX<T>> of(PVectorX.empty(), (final PVectorX<T> a) -> b -> a.plusAll(b), (final T x) -> PVectorX.singleton(x));
+    public static <T> Reducer<VectorX<T>> toPVectorX() {
+        return Reducer.<VectorX<T>> of(VectorX.empty(), (final VectorX<T> a) -> b -> a.plusAll(b), (final T x) -> VectorX.singleton(x));
     }
 
 
     /**
      * <pre>
      * {@code 
-     * PBagX<Integer> q = Reducers.<Integer>toPBagX()
+     * BagX<Integer> q = Reducers.<Integer>toPBagX()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
-     * @return Reducer for PBagX
+     * @return Reducer for BagX
      */
-    public static <T> Reducer<PBagX<T>> toPBagX() {
-        return Reducer.<PBagX<T>> of(PBagX.empty(), (final PBagX<T> a) -> b -> a.plusAll(b), (final T x) -> PBagX.singleton(x));
+    public static <T> Reducer<BagX<T>> toPBagX() {
+        return Reducer.<BagX<T>> of(BagX.empty(), (final BagX<T> a) -> b -> a.plusAll(b), (final T x) -> BagX.singleton(x));
     }
 
     private static <T> PQueue<T> queueSingleton(final T value) {
@@ -265,17 +260,17 @@ public class Reducers {
     /**
      * <pre>
      * {@code 
-     * PMapX<Integer,String> q = Reducers.<Integer,String>toPMapX()
+     * PersistentMapX<Integer,String> q = Reducers.<Integer,String>toPMapX()
                                         .mapReduce(Stream.of(Arrays.asList("hello",1),Arrays.asList("world",2)));
      * 
      * }
      * </pre>
-     * @return Reducer for PMapX
+     * @return Reducer for PersistentMapX
      */
-    public static <K, V> Reducer<PMapX<K, V>> toPMapX() {
-        return Reducer.<PMapX<K, V>> of(PMapX.empty(), (final PMapX<K, V> a) -> b -> a.plusAll(b), (in) -> {
+    public static <K, V> Reducer<PersistentMapX<K, V>> toPMapX() {
+        return Reducer.<PersistentMapX<K, V>> of(PersistentMapX.empty(), (final PersistentMapX<K, V> a) -> b -> a.plusAll(b), (in) -> {
             final List w = ((TupleWrapper) () -> in).values();
-            return PMapX.singleton((K) w.get(0), (V) w.get(1));
+            return PersistentMapX.singleton((K) w.get(0), (V) w.get(1));
         });
     }
 

@@ -1,11 +1,11 @@
-package cyclops.collections;
+package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.companion.Streams;
-import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -563,13 +563,13 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     @Override
-    default QueueX<PVectorX<T>> sliding(final int windowSize) {
-        return (QueueX<PVectorX<T>>) MutableCollectionX.super.sliding(windowSize);
+    default QueueX<VectorX<T>> sliding(final int windowSize) {
+        return (QueueX<VectorX<T>>) MutableCollectionX.super.sliding(windowSize);
     }
 
     @Override
-    default QueueX<PVectorX<T>> sliding(final int windowSize, final int increment) {
-        return (QueueX<PVectorX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
+    default QueueX<VectorX<T>> sliding(final int windowSize, final int increment) {
+        return (QueueX<VectorX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override

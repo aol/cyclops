@@ -1,14 +1,14 @@
 package com.aol.cyclops2.sum.types;
 
 
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PStackX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Either;
 import cyclops.control.lazy.Either3;
@@ -459,7 +459,7 @@ public class Either3Test {
 
     @Test
     public void testMapReduceReducerOfR() {
-        assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(PStackX.fromIterable(just)));
+        assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(LinkedListX.fromIterable(just)));
     }
 
     @Test
@@ -513,7 +513,7 @@ public class Either3Test {
 
     @Test
     public void testFoldRightMapToType() {
-        assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(PStackX.fromIterable(just)));
+        assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(LinkedListX.fromIterable(just)));
     }
 
     

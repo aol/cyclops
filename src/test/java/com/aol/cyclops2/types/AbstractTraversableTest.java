@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import cyclops.companion.CyclopsCollectors;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -37,7 +37,7 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 
 
 public abstract class AbstractTraversableTest {
@@ -620,7 +620,7 @@ public abstract class AbstractTraversableTest {
           
             @Test
             public void slidingNoOrder() {
-                ListX<PVectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).stream().toListX();
+                ListX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).stream().toListX();
 
                 System.out.println(list);
                 assertThat(list.get(0).size(), equalTo(2));

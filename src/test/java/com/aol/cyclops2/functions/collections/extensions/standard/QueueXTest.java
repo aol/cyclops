@@ -12,8 +12,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.ListX;
-import cyclops.collections.QueueX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.QueueX;
 import com.aol.cyclops2.functions.collections.extensions.CollectionXTestsWithNulls;
 
 public class QueueXTest extends CollectionXTestsWithNulls {

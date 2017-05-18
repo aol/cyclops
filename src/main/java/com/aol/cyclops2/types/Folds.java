@@ -16,8 +16,8 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.stream.Streamable;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
-import cyclops.collections.MapX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.MapX;
 import com.aol.cyclops2.types.stream.HotStream;
 
 /**

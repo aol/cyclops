@@ -5,8 +5,8 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.futurestream.EagerFutureStreamFunctions;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 import cyclops.async.Future;
-import cyclops.collections.*;
 import cyclops.collections.immutable.*;
+import cyclops.collections.mutable.*;
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
@@ -149,44 +149,44 @@ public interface Semigroups {
     }
 
     /**
-     * @return A combiner for PStackX (concatenates two PStackX into a single PStackX)
+     * @return A combiner for LinkedListX (concatenates two LinkedListX into a single LinkedListX)
      */
-    static <T> Semigroup<PStackX<T>> pStackXConcat() {
+    static <T> Semigroup<LinkedListX<T>> pStackXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for PVectorX (concatenates two PVectorX into a single PVectorX)
+     * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
      */
-    static <T> Semigroup<PVectorX<T>> pVectorXConcat() {
+    static <T> Semigroup<VectorX<T>> pVectorXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for PSetX (concatenates two PSetX into a single PSetX)
+     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
      */
-    static <T> Semigroup<PSetX<T>> pSetXConcat() {
+    static <T> Semigroup<PersistentSetX<T>> pSetXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for POrderedSetX (concatenates two POrderedSetX into a single POrderedSetX)
+     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
      */
-    static <T> Semigroup<POrderedSetX<T>> pOrderedSetXConcat() {
+    static <T> Semigroup<OrderedSetX<T>> pOrderedSetXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for PQueueX (concatenates two PQueueX into a single PQueueX)
+     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
      */
-    static <T> Semigroup<PQueueX<T>> pQueueXConcat() {
+    static <T> Semigroup<PersistentQueueX<T>> pQueueXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for PBagX (concatenates two PBagX into a single PBagX)
+     * @return A combiner for BagX (concatenates two BagX into a single BagX)
      */
-    static <T> Semigroup<PBagX<T>> pBagXConcat() {
+    static <T> Semigroup<BagX<T>> pBagXConcat() {
         return Semigroups.collectionXConcat();
     }
 

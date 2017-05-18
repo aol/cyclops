@@ -1,7 +1,7 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
-import cyclops.collections.QueueX;
+import cyclops.collections.mutable.QueueX;
 import cyclops.stream.ReactiveSeq;
 
 import java.util.*;

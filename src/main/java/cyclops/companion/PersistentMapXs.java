@@ -1,50 +1,50 @@
-package cyclops.collections;
+package cyclops.companion;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import cyclops.collections.immutable.PersistentMapX;
 import org.jooq.lambda.tuple.Tuple2;
 
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
-import cyclops.collections.immutable.PMapX;
 
-public class MapXs {
+public class PersistentMapXs {
 
-    public static <K, V> MapX<K, V> of() {
-        return MapX.fromMap(new HashMap<>());
+    public static <K, V> PersistentMapX<K, V> of() {
+        return PersistentMapX.fromMap(new HashMap<>());
     }
 
-    public static <K, V> MapX<K, V> of(final K key, final V value) {
-        return MapX.fromMap(new Builder<K, V>(
-                                              key, value).build());
+    public static <K, V> PersistentMapX<K, V> of(final K key, final V value) {
+        return PersistentMapX.fromMap(new Builder<K, V>(
+                                               key, value).build());
     }
 
-    public static <K, V> MapX<K, V> of(final K key, final V value, final K key1, final V value1) {
-        return MapX.fromMap(new Builder<K, V>(
-                                              key, value).put(key1, value1)
-                                                         .build());
+    public static <K, V> PersistentMapX<K, V> of(final K key, final V value, final K key1, final V value1) {
+        return PersistentMapX.fromMap(new Builder<K, V>(
+                                               key, value).put(key1, value1)
+                                                          .build());
     }
 
-    public static <K, V> MapX<K, V> of(final K key, final V value, final K key1, final V value1, final K key2, final V value2) {
-        return MapX.fromMap(new Builder<K, V>(
-                                              key, value).put(key, value, key1, value1, key2, value2)
-                                                         .build());
+    public static <K, V> PersistentMapX<K, V> of(final K key, final V value, final K key1, final V value1, final K key2, final V value2) {
+        return PersistentMapX.fromMap(new Builder<K, V>(
+                                               key, value).put(key, value, key1, value1, key2, value2)
+                                                          .build());
     }
 
-    public static <K, V> MapX<K, V> of(final K key, final V value, final K key1, final V value1, final K key2, final V value2, final K key3,
-            final V value3) {
-        return MapX.fromMap(new Builder<K, V>(
-                                              key, value).put(key, value, key1, value1, key2, value2, key3, value3)
-                                                         .build());
+    public static <K, V> PersistentMapX<K, V> of(final K key, final V value, final K key1, final V value1, final K key2, final V value2, final K key3,
+                                                 final V value3) {
+        return PersistentMapX.fromMap(new Builder<K, V>(
+                                               key, value).put(key, value, key1, value1, key2, value2, key3, value3)
+                                                          .build());
     }
 
-    public static <K, V> PMapX<K, V> toPMapX(final Stream<Tuple2<K, V>> stream) {
-        return (PMapX<K, V>) toPMapX().mapReduce(stream);
+    public static <K, V> PersistentMapX<K, V> toPMapX(final Stream<Tuple2<K, V>> stream) {
+        return (PersistentMapX<K, V>) toPMapX().mapReduce(stream);
     }
 
-    public static <K, V> Reducer<PMapX<K, V>> toPMapX() {
+    public static <K, V> Reducer<PersistentMapX<K, V>> toPMapX() {
         return Reducers.toPMapX();
     }
 
@@ -120,8 +120,8 @@ public class MapXs {
             return this;
         }
 
-        public MapX<K, V> build() {
-            return MapX.fromMap(build);
+        public PersistentMapX<K, V> build() {
+            return PersistentMapX.fromMap(build);
         }
     }
 

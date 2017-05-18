@@ -1,9 +1,9 @@
 package com.aol.cyclops2.control;
 
 import cyclops.collections.box.Mutable;
-import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.async.Future;
 import cyclops.companion.*;
 import cyclops.control.*;
@@ -262,13 +262,13 @@ public class FutureTest {
     }
     @Test
     public void testAccumulateSuccess() {
-        Future<PSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofResult(1)), Reducers.toPSetX());
+        Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofResult(1)), Reducers.toPSetX());
         
-        assertThat(maybes.get(),equalTo(PSetX.of(10,1)));
+        assertThat(maybes.get(),equalTo(PersistentSetX.of(10,1)));
     }
     @Test @Ignore
     public void testAccumulateJNonBlocking() {
-        Future<PSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofSupplier(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)), Future.ofResult(1)),Reducers.toPSetX());
+        Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofSupplier(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)), Future.ofResult(1)),Reducers.toPSetX());
         System.out.println("not blocked");
        
     }

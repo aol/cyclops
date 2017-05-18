@@ -1,11 +1,11 @@
 package com.aol.cyclops2.data.collections.extensions;
 
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
-import cyclops.collections.ListX;
-import cyclops.collections.MapX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.MapX;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 import cyclops.function.Fn3;
@@ -478,13 +478,13 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * @see com.aol.cyclops2.types.Traversable#sliding(int)
      */
     @Override
-    CollectionX<PVectorX<T>> sliding(int windowSize);
+    CollectionX<VectorX<T>> sliding(int windowSize);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Traversable#sliding(int, int)
      */
     @Override
-    CollectionX<PVectorX<T>> sliding(int windowSize, int increment);
+    CollectionX<VectorX<T>> sliding(int windowSize, int increment);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Traversable#scanLeft(cyclops2.function.Monoid)

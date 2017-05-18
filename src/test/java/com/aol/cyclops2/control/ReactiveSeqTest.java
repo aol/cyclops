@@ -3,13 +3,13 @@ package com.aol.cyclops2.control;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.util.SimpleTimer;
 import com.google.common.collect.Lists;
+import cyclops.collections.immutable.BagX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
-import cyclops.collections.immutable.PBagX;
 import cyclops.control.Eval;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
@@ -115,7 +115,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void cycleUntil(){
-        System.out.println("List " + PBagX.of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());
+        System.out.println("List " + BagX.of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());
     }
 
     @Test

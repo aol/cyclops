@@ -8,6 +8,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 
 import cyclops.async.Future;
 import cyclops.async.QueueFactories;
+import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.companion.Streams;
 import cyclops.async.adapters.Queue;
@@ -15,8 +16,7 @@ import cyclops.async.adapters.QueueFactory;
 import cyclops.async.adapters.Signal;
 import cyclops.async.adapters.Topic;
 import cyclops.async.wait.DirectWaitStrategy;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.lazy.Either;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
@@ -242,7 +242,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
     @Override
-    public final ReactiveSeq<PVectorX<T>> sliding(final int windowSize, final int increment) {
+    public final ReactiveSeq<VectorX<T>> sliding(final int windowSize, final int increment) {
         return createSeq(new SlidingOperator<>( source,Function.identity(), windowSize,increment));
     }
 

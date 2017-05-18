@@ -1,8 +1,9 @@
 package cyclops;
 
-import cyclops.collections.*;
 import cyclops.collections.immutable.*;
-import cyclops.stream.ReactiveSeq;
+import cyclops.collections.mutable.*;
+import cyclops.companion.MapXs;
+import cyclops.companion.PersistentMapXs;
 import org.junit.Test;
 import org.pcollections.*;
 
@@ -27,13 +28,13 @@ public class ConvertersTest {
         assertThat(list1,equalTo(list2));
         assertThat(list1,equalTo(ListX.of(1,2,3)));
 
-        PStack<Integer> pstack = PStackX.of(1,2,3).to(Converters::PStack);
-        PVector<Integer> pvector = PVectorX.of(1,2,3).to(Converters::PVector);
-        PSet<Integer> pset = PSetX.of(1,2,3).to(Converters::PSet);
-        POrderedSet<Integer> pOrderedSet = POrderedSetX.of(1,2,3).to(Converters::POrderedSet);
-        PBag<Integer> pBag = PBagX.of(1,2,3).to(Converters::PBag);
-        PQueue<Integer> pQueue = PQueueX.of(1,2,3).to(Converters::PQueue);
-        PMap<Integer,Integer> pMap = PMapXs.of(1,2).to(Converters::PMap);
+        PStack<Integer> pstack = LinkedListX.of(1,2,3).to(Converters::PStack);
+        PVector<Integer> pvector = VectorX.of(1,2,3).to(Converters::PVector);
+        PSet<Integer> pset = PersistentSetX.of(1,2,3).to(Converters::PSet);
+        POrderedSet<Integer> pOrderedSet = OrderedSetX.of(1,2,3).to(Converters::POrderedSet);
+        PBag<Integer> pBag = BagX.of(1,2,3).to(Converters::PBag);
+        PQueue<Integer> pQueue = PersistentQueueX.of(1,2,3).to(Converters::PQueue);
+        PMap<Integer,Integer> pMap = PersistentMapXs.of(1,2).to(Converters::PMap);
 
         HashSet<Integer> set = SetX.of(1,2,3).to(Converters::HashSet);
         ArrayDeque<Integer> deque = DequeX.of(1,2,3).to(Converters::ArrayDeque);

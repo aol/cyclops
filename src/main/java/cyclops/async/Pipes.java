@@ -4,8 +4,8 @@ import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.async.adapters.Adapter;
 import cyclops.collections.box.LazyImmutable;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PMapX;
+import cyclops.collections.immutable.PersistentMapX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
@@ -88,8 +88,8 @@ public class Pipes<K, V> {
     /**
      * @return Persistent map of all registered adapters
      */
-    public PMapX<K, Adapter<V>> registered() {
-        return PMapX.fromMap(registered);
+    public PersistentMapX<K, Adapter<V>> registered() {
+        return PersistentMapX.fromMap(registered);
     }
 
     /**

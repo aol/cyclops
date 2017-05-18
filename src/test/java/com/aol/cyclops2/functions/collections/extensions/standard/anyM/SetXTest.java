@@ -4,7 +4,7 @@ import cyclops.monads.Witness;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
-import cyclops.collections.SetX;
+import cyclops.collections.mutable.SetX;
 import com.aol.cyclops2.functions.collections.extensions.AbstractAnyMSeqTest;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 

@@ -35,7 +35,7 @@ import cyclops.monads.function.AnyMFn2;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
-import cyclops.collections.SetX;
+import cyclops.collections.mutable.SetX;
 import com.aol.cyclops2.types.*;
 import cyclops.async.Future;
 import cyclops.function.*;
@@ -49,7 +49,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops2.internal.monads.AnyMValueImpl;
 

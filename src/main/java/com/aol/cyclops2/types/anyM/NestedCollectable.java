@@ -15,8 +15,8 @@ import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
-import cyclops.collections.ListX;
-import cyclops.collections.SetX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
 import com.aol.cyclops2.types.stream.CyclopsCollectable;
 
 /**

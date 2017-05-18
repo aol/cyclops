@@ -1,9 +1,9 @@
 package com.aol.cyclops2.control;
 
 import cyclops.collections.box.Mutable;
-import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.async.Future;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
@@ -62,8 +62,8 @@ public class Xor2Test {
 
     @Test
     public void testAccumulateSecondary2() {
-        Xor<?,PSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPSetX());
-        assertThat(xors,equalTo(Xor.primary(PSetX.of("none"))));
+        Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPSetX());
+        assertThat(xors,equalTo(Xor.primary(PersistentSetX.of("none"))));
     }
 
     @Test
@@ -135,8 +135,8 @@ public class Xor2Test {
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Xor<?,PSetX<Integer>> maybes =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPSetX());
-		assertThat(maybes,equalTo(Xor.primary(PSetX.of(10,1))));
+		Xor<?,PersistentSetX<Integer>> maybes =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPSetX());
+		assertThat(maybes,equalTo(Xor.primary(PersistentSetX.of(10,1))));
 	}
 
 	@Test

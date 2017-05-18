@@ -6,18 +6,17 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.*;
-import cyclops.collections.DequeX;
+import cyclops.collections.mutable.DequeX;
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 
-import cyclops.collections.QueueX;
+import cyclops.collections.mutable.QueueX;
 
-import cyclops.collections.SetX;
+import cyclops.collections.mutable.SetX;
 
-import cyclops.collections.SortedSetX;
+import cyclops.collections.mutable.SortedSetX;
 
 
 /**

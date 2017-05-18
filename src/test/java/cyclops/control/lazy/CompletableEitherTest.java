@@ -1,13 +1,13 @@
 package cyclops.control.lazy;
 
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PStackX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Either.CompletableEither;
 import cyclops.function.Monoid;
@@ -416,7 +416,7 @@ public class CompletableEitherTest {
 
     @Test
     public void testMapReduceReducerOfR() {
-        assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(PStackX.fromIterable(just)));
+        assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(LinkedListX.fromIterable(just)));
     }
 
     @Test
@@ -470,7 +470,7 @@ public class CompletableEitherTest {
 
     @Test
     public void testFoldRightMapToType() {
-        assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(PStackX.fromIterable(just)));
+        assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(LinkedListX.fromIterable(just)));
     }
 
     

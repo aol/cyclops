@@ -1,11 +1,11 @@
 package cyclops.control;
 
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Semigroups;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.monads.Witness;
@@ -557,8 +557,8 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
         
-     *  Xor<?,PSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPSetX());
-      //Xor.primary(PSetX.of("none"))));
+     *  Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPSetX());
+      //Xor.primary(PersistentSetX.of("none"))));
       * }
      * </pre>
      * @param xors Collection of Iors to accumulate secondary values
@@ -630,8 +630,8 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
      * 
-     *  Xor<?,PSetX<Integer>> xors =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPSetX());
-        //Xor.primary(PSetX.of(10,1))));
+     *  Xor<?,PersistentSetX<Integer>> xors =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPSetX());
+        //Xor.primary(PersistentSetX.of(10,1))));
      * }
      * </pre>
      * @param Xors Collection of Iors to accumulate primary values
@@ -861,19 +861,19 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     /**
      * @return An Xor with the secondary type converted to a persistent list, for use with accumulating app function  {@link Xor#combine(Xor,BiFunction)}
      */
-    default Xor<PStackX<ST>, PT> list() {
-        return secondaryMap(PStackX::of);
+    default Xor<LinkedListX<ST>, PT> list() {
+        return secondaryMap(LinkedListX::of);
     }
 
     /**
-     * Accumulate secondarys into a PStackX (extended Persistent List) and Primary with the supplied combiner function
+     * Accumulate secondarys into a LinkedListX (extended Persistent List) and Primary with the supplied combiner function
      * Primary accumulation only occurs if all phases are primary
      * 
      * @param app Value to combine with
      * @param fn Combiner function for primary values
      * @return Combined Xor
      */
-    default <T2, R> Xor<PStackX<ST>, R> combineToList(final Xor<ST, ? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
+    default <T2, R> Xor<LinkedListX<ST>, R> combineToList(final Xor<ST, ? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
         return list().combine(app.list(), Semigroups.collectionXConcat(), fn);
     }
 
@@ -884,9 +884,9 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * <pre>
      * {@code 
      *  Xor<String,String> fail1 =  Xor.secondary("failed1");
-        Xor<PStackX<String>,String> result = fail1.list().combine(Xor.secondary("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
+        Xor<LinkedListX<String>,String> result = fail1.list().combine(Xor.secondary("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
         
-        //Secondary of [PStackX.of("failed1","failed2")))]
+        //Secondary of [LinkedListX.of("failed1","failed2")))]
      * }
      * </pre>
      * 

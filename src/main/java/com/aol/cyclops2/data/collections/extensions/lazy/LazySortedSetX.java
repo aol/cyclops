@@ -1,7 +1,7 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
-import cyclops.collections.SortedSetX;
+import cyclops.collections.mutable.SortedSetX;
 import cyclops.stream.ReactiveSeq;
 
 import java.util.*;

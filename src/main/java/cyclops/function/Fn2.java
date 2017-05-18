@@ -6,15 +6,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.monads.function.AnyMFn2;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.immutable.PVectorX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.monads.WitnessType;
 import cyclops.async.Future;
 import cyclops.monads.AnyM;
@@ -140,14 +140,14 @@ public interface Fn2<T1, T2, R> extends BiFunction<T1,T2,R> {
         default Fn2<ListX<T1>,ListX<T2>, ListX<R>> listXM() {
             return (a,b) -> a.forEach2(x->b,this);
         }
-        default Fn2<PStackX<T1>,PStackX<T2>, PStackX<R>> pstackXZip() {
+        default Fn2<LinkedListX<T1>,LinkedListX<T2>, LinkedListX<R>> pstackXZip() {
             return (a,b) -> a.zip(b,this);
         }
 
-        default Fn2<PStackX<T1>,PStackX<T2>, PStackX<R>> pstackXM() {
+        default Fn2<LinkedListX<T1>,LinkedListX<T2>, LinkedListX<R>> pstackXM() {
             return (a,b) -> a.forEach2(x->b,this);
         }
-        default Fn2<PVectorX<T1>,PVectorX<T2>, PVectorX<R>> pvectorXZip() {
+        default Fn2<VectorX<T1>,VectorX<T2>, VectorX<R>> pvectorXZip() {
             return (a,b) -> a.zip(b,this);
         }
 

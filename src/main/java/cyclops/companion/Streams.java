@@ -2,14 +2,14 @@ package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.spliterators.*;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import cyclops.collections.box.Mutable;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.stream.*;
 import com.aol.cyclops2.internal.stream.operators.*;
 import cyclops.monads.Witness;
@@ -1654,7 +1654,7 @@ public class Streams {
      *            Size of sliding window
      * @return Stream with sliding view 
      */
-    public final static <T> Stream<PVectorX<T>> sliding(final Stream<T> stream, final int windowSize, final int increment) {
+    public final static <T> Stream<VectorX<T>> sliding(final Stream<T> stream, final int windowSize, final int increment) {
         return StreamSupport.stream(new SlidingSpliterator<>(stream.spliterator(),Function.identity(),
                 windowSize,increment),stream.isParallel());
     }
@@ -1723,7 +1723,7 @@ public class Streams {
      * @param windowSize size of window
      * @return
      */
-    public final static <T> Stream<PVectorX<T>> sliding(final Stream<T> stream, final int windowSize) {
+    public final static <T> Stream<VectorX<T>> sliding(final Stream<T> stream, final int windowSize) {
         return sliding(stream, windowSize, 1);
     }
 

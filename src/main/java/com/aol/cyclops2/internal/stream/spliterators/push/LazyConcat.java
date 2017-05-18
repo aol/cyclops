@@ -2,13 +2,12 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 
 
 import cyclops.async.adapters.Queue;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;

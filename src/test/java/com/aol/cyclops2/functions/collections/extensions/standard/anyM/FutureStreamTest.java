@@ -9,15 +9,13 @@ import java.util.Date;
 import com.aol.cyclops2.react.ThreadPools;
 import cyclops.async.LazyReact;
 import cyclops.monads.Witness;
-import cyclops.stream.FutureStream;
 import org.junit.Test;
 import java.util.stream.Stream;
 
 import cyclops.monads.AnyM;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 
 public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<Witness.reactiveSeq>{
    
