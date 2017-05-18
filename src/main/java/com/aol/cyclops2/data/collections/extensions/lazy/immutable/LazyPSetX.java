@@ -71,10 +71,13 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
         return this;
     }
 
-  
 
+    @Override
+    public PersistentSetX<T> type(Reducer<? extends PSet<T>> reducer) {
+        return new LazyPSetX<T>(list,seq.get(),Reducer.narrow(reducer));
+    }
 
-  //  @Override
+    //  @Override
     public <X> LazyPSetX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyPSetX<X>((PSet)getList(),ReactiveSeq.fromStream(stream));

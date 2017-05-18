@@ -36,12 +36,12 @@ public class PBagsTest {
 	}
 	@Test
 	public void testFromCollection() {
-		assertThat(BagX.fromCollection(Arrays.asList("a","b","c")).stream()
+		assertThat(BagX.fromIterable(Arrays.asList("a","b","c")).stream()
 				.collect(Collectors.toList()),hasItems("a","b","c"));
 	}
 	@Test
 	public void testToPBagXtreamOfT() {
-		assertThat(BagX.persistentBag(ReactiveSeq.of("a","b","c")).stream()
+		assertThat(BagX.bagX(ReactiveSeq.of("a","b","c")).stream()
 				.collect(Collectors.toList()),
 						hasItems("a","b","c"));
 	}

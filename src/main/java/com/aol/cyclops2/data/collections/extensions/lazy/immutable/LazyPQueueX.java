@@ -71,10 +71,13 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
         return this;
     }
 
-  
 
+    @Override
+    public PersistentQueueX<T> type(Reducer<? extends PQueue<T>> reducer) {
+        return new LazyPQueueX<T>(list,seq.get(),Reducer.narrow(reducer));
+    }
 
-  //  @Override
+    //  @Override
     public <X> LazyPQueueX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyPQueueX<X>((PQueue)getList(),ReactiveSeq.fromStream(stream));

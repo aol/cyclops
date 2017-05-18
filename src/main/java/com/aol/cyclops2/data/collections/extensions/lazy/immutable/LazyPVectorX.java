@@ -67,10 +67,13 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
         return this;
     }
 
-  
 
+    @Override
+    public VectorX<T> type(Reducer<? extends PVector<T>> reducer) {
+        return new LazyPVectorX<T>(list,seq.get(),Reducer.narrow(reducer));
+    }
 
-  //  @Override
+    //  @Override
     public <X> LazyPVectorX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyPVectorX<X>((PVector)getList(),ReactiveSeq.fromStream(stream));

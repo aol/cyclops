@@ -36,12 +36,12 @@ public class POrderedSetsTest {
 	}
 	@Test
 	public void testFromCollection() {
-		assertThat(OrderedSetX.fromCollection(Arrays.asList("a","b","c")).stream()
+		assertThat(OrderedSetX.fromIterable(Arrays.asList("a","b","c")).stream()
 				.collect(Collectors.toList()),hasItems("a","b","c"));
 	}
 	@Test
 	public void testToPOrderedSetstreamOfT() {
-		assertThat(OrderedSetX.orderedSet(ReactiveSeq.of("a","b","c")).stream()
+		assertThat(OrderedSetX.orderedSetX(ReactiveSeq.of("a","b","c")).stream()
 				.collect(Collectors.toList()),
 						hasItems("a","b","c"));
 	}
