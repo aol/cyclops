@@ -1,6 +1,6 @@
 package com.aol.cyclops2.sum.types;
 
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import org.junit.Test;
 
 public class MaybeTest {

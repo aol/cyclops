@@ -12,9 +12,9 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.control.Ior;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;
 import cyclops.control.Xor;

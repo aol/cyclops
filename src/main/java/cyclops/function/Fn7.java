@@ -4,9 +4,9 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.async.Future;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.Try;
 
 public interface Fn7<T1, T2, T3, T4, T5, T6, T7, R> extends Fn1<T1, Fn1<T2, Fn1<T3,Fn1<T4,Fn1<T5,Fn1<T6, Fn1<T7,R>>>>>>>{

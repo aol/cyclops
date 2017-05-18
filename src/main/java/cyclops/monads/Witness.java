@@ -9,10 +9,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.internal.adapters.*;
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.control.Ior;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.lazy.Either;
 import cyclops.control.lazy.Either3;
 import cyclops.control.lazy.Either4;

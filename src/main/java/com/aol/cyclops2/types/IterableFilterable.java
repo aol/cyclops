@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.companion.Streams;
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 
 /**
  * An interface that represents a non-scalar Filters

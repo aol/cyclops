@@ -25,7 +25,7 @@ import cyclops.async.adapters.Queue;
 import cyclops.collections.ListX;
 import cyclops.collections.MapX;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.lazy.Either;
 import cyclops.function.Fn3;

@@ -1,6 +1,6 @@
 package com.aol.cyclops2.types;
 
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;

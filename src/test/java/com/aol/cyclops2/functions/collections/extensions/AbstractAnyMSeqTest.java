@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.async.LazyReact;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.monads.WitnessType;
 import cyclops.monads.AnyM;

@@ -189,6 +189,8 @@ public interface Spouts {
         return new ReactiveStreamX<>(new ArrayOfValuesOperator<T>(values));
     }
     public static  <T> ReactiveSeq<T> fromIterable(Iterable<T> iterable){
+        if(iterable instanceof ReactiveStreamX)
+            return (ReactiveSeq<T>)iterable;
         return new ReactiveStreamX<>(new IterableSourceOperator<T>(iterable));
     }
     public static  <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
@@ -202,6 +204,8 @@ public interface Spouts {
 
     }
     static <T> ReactiveSeq<T> from(Publisher<? extends T> pub){
+        if(pub instanceof ReactiveSeq)
+            return (ReactiveSeq<T>)pub;
         return new ReactiveStreamX<T>(new PublisherToOperator<T>((Publisher<T>)pub), Type.BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> merge(Publisher<? extends Publisher<T>> publisher){

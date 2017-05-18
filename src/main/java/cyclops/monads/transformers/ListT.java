@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import com.aol.cyclops2.types.FoldableTraversable;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;

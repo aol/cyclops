@@ -1,4 +1,4 @@
-package cyclops.control.lazy;
+package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
@@ -8,7 +8,6 @@ import cyclops.collections.box.Mutable;
 import cyclops.collections.DequeX;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.Trampoline;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;

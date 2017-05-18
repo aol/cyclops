@@ -4,7 +4,7 @@ package cyclops.streams.push.reactivestreamspath;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.collections.ListX;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;

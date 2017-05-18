@@ -2,7 +2,7 @@ package cyclops.monads.transformers;
 
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.control.Trampoline;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
