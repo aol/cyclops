@@ -242,7 +242,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * {@code
      *  import static cyclops.stream.ReactiveSeq.range;
      *
-     *  DequeX<Integer> bag = dequeX(range(10,20));
+     *  DequeX<Integer> deque = dequeX(range(10,20));
      *
      * }
      * </pre>

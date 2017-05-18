@@ -1,6 +1,7 @@
 package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
+import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
@@ -189,6 +190,26 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     public static <T> QueueX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher)
                           .toQueueX();
+    }
+
+    /**
+     *
+     * <pre>
+     * {@code
+     *  import static cyclops.stream.ReactiveSeq.range;
+     *
+     *  QueueX<Integer> queue = queueX(range(10,20));
+     *
+     * }
+     * </pre>
+     * @param stream To create QueueX from
+     * @param <T> QueueX generated from Stream
+     * @return
+     */
+    public static <T> QueueX<T> listX(ReactiveSeq<T> stream){
+        return new LazyQueueX<T>(null,
+                stream,
+                defaultCollector());
     }
 
     public static <T> QueueX<T> fromIterable(final Iterable<T> it) {

@@ -1,6 +1,7 @@
 package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
+import com.aol.cyclops2.data.collections.extensions.lazy.LazySetX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySortedSetX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
@@ -162,7 +163,25 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         return Spouts.from((Publisher<T>) publisher)
                           .toSortedSetX();
     }
-
+    /**
+     *
+     * <pre>
+     * {@code
+     *  import static cyclops.stream.ReactiveSeq.range;
+     *
+     *  SortedSetX<Integer> sortedSet = sortedSetX(range(10,20));
+     *
+     * }
+     * </pre>
+     * @param stream To create SortedSetX from
+     * @param <T> SortedSetX generated from Stream
+     * @return
+     */
+    public static <T> SortedSetX<T> sortedSetX(ReactiveSeq<T> stream){
+        return new LazySortedSetX<T>(null,
+                stream,
+                defaultCollector());
+    }
     public static <T> SortedSetX<T> fromIterable(final Iterable<T> it) {
         if (it instanceof SortedSetX)
             return (SortedSetX<T>) it;

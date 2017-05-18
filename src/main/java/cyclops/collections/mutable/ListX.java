@@ -602,6 +602,25 @@ public interface ListX<T> extends To<ListX<T>>,
         return Spouts.from((Publisher<T>) publisher)
                           .toListX();
     }
+    /**
+     *
+     * <pre>
+     * {@code
+     *  import static cyclops.stream.ReactiveSeq.range;
+     *
+     *  ListX<Integer> list = listX(range(10,20));
+     *
+     * }
+     * </pre>
+     * @param stream To create ListX from
+     * @param <T> ListX generated from Stream
+     * @return
+     */
+    public static <T> ListX<T> listX(ReactiveSeq<T> stream){
+        return new LazyListX<T>(null,
+                stream,
+                defaultCollector());
+    }
 
     public static <T> ListX<T> fromIterable(final Iterable<T> it) {
         if (it instanceof ListX)

@@ -1,6 +1,7 @@
 package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
+import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySetX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
@@ -148,7 +149,25 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
         return Spouts.from((Publisher<T>) publisher)
                           .toSetX();
     }
-
+    /**
+     *
+     * <pre>
+     * {@code
+     *  import static cyclops.stream.ReactiveSeq.range;
+     *
+     *  SetX<Integer> set = setX(range(10,20));
+     *
+     * }
+     * </pre>
+     * @param stream To create SetX from
+     * @param <T> SetX generated from Stream
+     * @return
+     */
+    public static <T> SetX<T> setX(ReactiveSeq<T> stream){
+        return new LazySetX<T>(null,
+                stream,
+                defaultCollector());
+    }
     public static <T> SetX<T> fromIterable(final Iterable<T> it) {
         if (it instanceof SetX)
             return (SetX) it;
