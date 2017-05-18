@@ -8,16 +8,13 @@ import cyclops.Semigroups;
 import cyclops.collections.ListX;
 
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
-import cyclops.Semigroups;
 import cyclops.async.Future;
-import cyclops.collections.ListX;
 import cyclops.collections.immutable.PBagX;
-import cyclops.control.Eval;
+import cyclops.control.lazy.Eval;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
-import org.jooq.lambda.tuple.Tuple;
 import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;

@@ -6,11 +6,9 @@ import com.aol.cyclops2.types.To;
 import com.aol.cyclops2.types.Traversable;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
 import com.aol.cyclops2.types.stream.CyclopsCollectable;
-import cyclops.collections.DequeX;
 import cyclops.collections.ListX;
-import cyclops.collections.immutable.PStackX;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
@@ -48,18 +46,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     
    
 
-    public <R> AnyM<W, R> visit(Function<? super ReactiveSeq<T>, ? extends R> rsFn,
-                                Function<? super Stream<T>, ? extends R> sFn) {
 
-        return this.transformerStream()
-                   .map(t -> {
-                       if (t instanceof ReactiveSeq)
-                           return rsFn.apply((ReactiveSeq<T>) t);
-                        else
-                           return sFn.apply((Stream<T>)t);
-
-                   });
-    }
 
     /**
      * @return The wrapped AnyM
@@ -238,10 +225,10 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectable()
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectionOperations()
      
     @Override
-    public Collectable<T> collectable() {
+    public Collectable<T> collectionOperations() {
        return this;
     } */
     @Override

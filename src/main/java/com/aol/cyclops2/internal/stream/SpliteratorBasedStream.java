@@ -8,15 +8,15 @@ import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
 import cyclops.*;
 import cyclops.async.QueueFactories;
-import cyclops.async.QueueFactory;
-import cyclops.async.Signal;
+import cyclops.async.adapters.QueueFactory;
+import cyclops.async.adapters.Signal;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.internal.stream.publisher.PublisherIterable;
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.control.either.Either;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Either;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.monads.Witness;
@@ -383,7 +383,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
-     * method to subscribeAll asynchronously also. A default limit of 10k active publishers is enforced, along with a default limit of 5k queued values before
+     * method to forEachAsync asynchronously also. A default limit of 10k active publishers is enforced, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param mapper
@@ -396,7 +396,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
-     * method to subscribeAll asynchronously also. Active publishers are limited by the maxConcurrency parameter, along with a default limit of 5k queued values before
+     * method to forEachAsync asynchronously also. Active publishers are limited by the maxConcurrency parameter, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param mapper
@@ -505,7 +505,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     public ReactiveSeq<T> changes(){
 
-            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+            cyclops.async.adapters.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
 
 
@@ -795,7 +795,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public Collectable<T> collectable() {
+    public Collectable<T> collectionOperations() {
         return Seq.seq(copy());
     }
 

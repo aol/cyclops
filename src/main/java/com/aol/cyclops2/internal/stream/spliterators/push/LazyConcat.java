@@ -1,6 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.async.Queue;
+
+import cyclops.async.adapters.Queue;
 import cyclops.collections.ListX;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.reactivestreams.Publisher;

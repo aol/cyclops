@@ -1,9 +1,9 @@
 package cyclops.streams.push.syncflux;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
-import cyclops.async.Topic;
+import cyclops.async.adapters.Topic;
 import cyclops.collections.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
@@ -123,7 +123,7 @@ public class SyncSequentialTest extends BaseSequentialTest {
 
     @Test
     public void testCycleAsync() {
-      //  of(1, 2).collectAll(CyclopsCollectors.toListX())
+      //  of(1, 2).collectStream(CyclopsCollectors.toListX())
         //        .flatMapI(i->i.cycle(3)).printOut();
 
        // of(1, 2).cycle().limit(6).forEach(n->System.out.println("Next " + n));

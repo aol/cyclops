@@ -6,6 +6,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.FoldableTraversable;
 import cyclops.CyclopsCollectors;
+import cyclops.Reducers;
 import cyclops.collections.immutable.PVectorX;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
@@ -25,9 +26,12 @@ import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.pcollections.PVector;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
@@ -50,6 +54,8 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
     public static class µ {
     }
+
+
     /**
      * Widen a DequeType nested inside another HKT encoded type
      *

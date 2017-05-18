@@ -7,22 +7,12 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.IntStream;
 
-import com.aol.cyclops2.react.ThreadPools;
-import com.aol.cyclops2.react.async.subscription.Subscription;
 import com.aol.cyclops2.types.mixins.Printable;
-import cyclops.async.Queue;
-import cyclops.async.QueueFactories;
-import cyclops.collections.immutable.PStackX;
-import cyclops.stream.FutureStream;
-import cyclops.stream.StreamSource;
 import org.junit.Test;
 
 import cyclops.Semigroups;

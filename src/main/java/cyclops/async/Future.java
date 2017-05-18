@@ -5,6 +5,8 @@ import com.aol.cyclops2.types.*;
 import cyclops.Monoids;
 import cyclops.collections.box.Mutable;
 import cyclops.control.*;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.transformers.FutureT;
@@ -30,7 +32,6 @@ import cyclops.typeclasses.monad.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -62,7 +63,6 @@ import java.util.stream.Stream;
         */
 @AllArgsConstructor
 @EqualsAndHashCode
-@Slf4j
 public class Future<T> implements To<Future<T>>,
                                   MonadicValue<T>,
                                   Completable<T>,
@@ -198,20 +198,51 @@ public class Future<T> implements To<Future<T>>,
      * @param breakout Predicate that determines whether the block should be
      *            continued or removed
      * @param fts FutureWs to  wait on results from
+     * @param errorHandler Consumer to handle any exceptions thrown
      * @return Future which will be populated with a Quorum of results
      */
     @SafeVarargs
-    public static <T> Future<ListX<T>> quorum(Predicate<Status<T>> breakout, Future<T>... fts) {
+    public static <T> Future<ListX<T>> quorum(Predicate<Status<T>> breakout,Consumer<Throwable> errorHandler, Future<T>... fts) {
         
         List<CompletableFuture<?>> list = Stream.of(fts)
                                                 .map(Future::getFuture)
                                                 .collect(Collectors.toList());
         
-        return Future.of(new Blocker<T>(list, Optional.of(e-> {
-                    log.error(e.getMessage(), e);
-                })).nonBlocking(breakout));
+        return Future.of(new Blocker<T>(list, Optional.of(errorHandler)).nonBlocking(breakout));
                 
        
+    }
+    /**
+     * Block until a Quorum of results have returned as determined by the provided Predicate
+     *
+     * <pre>
+     * {@code
+     *
+     * Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.ofSupplier(()->1),Future.future(),Future.future());
+
+
+    strings.get().size()
+    //1
+     *
+     * }
+     * </pre>
+     *
+     *
+     * @param breakout Predicate that determines whether the block should be
+     *            continued or removed
+     * @param fts FutureWs to  wait on results from
+     * @return Future which will be populated with a Quorum of results
+     */
+    @SafeVarargs
+    public static <T> Future<ListX<T>> quorum(Predicate<Status<T>> breakout,Future<T>... fts) {
+
+        List<CompletableFuture<?>> list = Stream.of(fts)
+                .map(Future::getFuture)
+                .collect(Collectors.toList());
+
+        return Future.of(new Blocker<T>(list, Optional.empty()).nonBlocking(breakout));
+
+
     }
     /**
      * Select the first Future to return with a successful result
@@ -383,7 +414,7 @@ public class Future<T> implements To<Future<T>>,
      * Construct a Future syncrhonously from the Supplied Try
      * 
      * @param value Try to populate Future from
-     * @return Future populated with either the value or error in provided Try
+     * @return Future populated with lazy the value or error in provided Try
      */
     public static <T, X extends Throwable> Future<T> fromTry(final Try<T, X> value) {
         return Future.ofSupplier(value);

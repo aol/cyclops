@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.CompletableFutures;
 import cyclops.CompletableFutures.CompletableFutureKind;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;

@@ -1,11 +1,10 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;

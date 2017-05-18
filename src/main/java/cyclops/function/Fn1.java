@@ -7,6 +7,8 @@ import java.util.function.Function;
 
 import cyclops.control.*;
 
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.monads.function.AnyMFn1;
 
 import cyclops.monads.transformers.FutureT;

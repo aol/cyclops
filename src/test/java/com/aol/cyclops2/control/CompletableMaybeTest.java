@@ -12,7 +12,9 @@ import cyclops.collections.box.Mutable;
 import cyclops.collections.ListX;
 import cyclops.collections.immutable.PSetX;
 import cyclops.control.*;
-import cyclops.control.Maybe.CompletableMaybe;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Maybe.CompletableMaybe;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -62,7 +64,7 @@ public class CompletableMaybeTest implements Printable {
     public void completableTest(){
         CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
         Maybe<Integer> mapped = completable.map(i->i*2)
-                                          .flatMap(i->Eval.later(()->i+1));
+                                          .flatMap(i-> Eval.later(()->i+1));
 
         completable.complete(5);
         System.out.println(mapped.getClass());
@@ -104,7 +106,7 @@ public class CompletableMaybeTest implements Printable {
               .map(i->i*2))
                 .peek(System.out::println)
                 .map(i->i*100)
-                .subscribeAll(e->result.complete(e));
+                .forEachAsync(e->result.complete(e));
 
 
         assertFalse(result.isDone());

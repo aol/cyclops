@@ -17,18 +17,17 @@ import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.*;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
-import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.Streams;
 import cyclops.async.*;
-import cyclops.async.Queue;
+import cyclops.async.adapters.*;
+import cyclops.async.adapters.Queue;
 import cyclops.collections.ListX;
 import cyclops.collections.MapX;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Trampoline;
-import cyclops.control.either.Either;
+import cyclops.control.lazy.Either;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
@@ -165,7 +164,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         sub.accept(s);
         return s.reactiveSeq();
     }
-    static <T> ReactiveSeq<T> enqueued(QueueFactory<T> factory,Consumer<? super Subscriber<T>>... subs){
+    static <T> ReactiveSeq<T> enqueued(QueueFactory<T> factory, Consumer<? super Subscriber<T>>... subs){
         final Counter c = new Counter();
         c.active.set(subs.length);
         QueueBasedSubscriber<T> s = QueueBasedSubscriber.subscriber(factory,c,subs.length);
@@ -725,7 +724,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Continuation cont =
                 new Continuation(()->{
                     if(it[0]==null)
-                        it[0] = stream.apply(0l);
+                        it[0] = stream.asFunction().apply(0l);
                     Iterator<R> local = it[0];
                     try {
                         if (!local.hasNext()) {
@@ -761,7 +760,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         Continuation cont =
                 new Continuation(()->{
                     if(it[0]==null)
-                        it[0] = stream.apply(0l);
+                        it[0] = stream.asFunction().apply(0l);
                     Iterator<R> local = it[0];
                     try {
                         if (!local.hasNext()) {
@@ -790,7 +789,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R> R foldParallel(Function<? super Stream<T>,? extends R> fn){
 
 
-        cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue().build().withTimeout(1);
+        Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue().build().withTimeout(1);
 
 
         AtomicReference<Continuation> ref = new AtomicReference<>(null);
@@ -1763,7 +1762,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Performs an action for each element of this Stream.
      *
-     * For potentially non-blocking analogs see {@link ReactiveSeq#subscribeAll(Consumer)}   and forEach overloads
+     * For potentially non-blocking analogs see {@link ReactiveSeq#forEachAsync(Consumer)}   and forEach overloads
      * such as {@link ReactiveSeq#forEach(Consumer, Consumer)} and {@link ReactiveSeq#forEach(Consumer, Consumer,Runnable)}
      *
      * This method overrides the JDK {@link java.util.stream.Stream#forEach(Consumer)}  and maintains it's blocking
@@ -1794,7 +1793,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param action a <a href="package-summary.html#NonInterference">
      *               non-interfering</a> action to perform on the elements
      */
-    default void subscribeAll(final Consumer<? super T> action){
+    default void forEachAsync(final Consumer<? super T> action){
         forEach(action);
     }
     /**
@@ -2235,7 +2234,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return seq().collect(supplier,accumulator,combiner);
     }
 
-    default <R, A> ReactiveSeq<R> collectAll(Collector<? super T, A, R> collector){
+    default <R, A> ReactiveSeq<R> collectStream(Collector<? super T, A, R> collector){
         return coflatMap(s->s.collect(collector));
     }
     /**
@@ -2249,7 +2248,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <p>
      * <p>If the reactiveStream is parallel, and the {@code Collector}
      * is {@link Collector.Characteristics#CONCURRENT concurrent}, and
-     * either the reactiveStream is unordered or the collector is
+     * lazy the reactiveStream is unordered or the collector is
      * {@link Collector.Characteristics#UNORDERED unordered},
      * apply a concurrent reduction will be performed (see {@link Collector} for
      * details on concurrent reduction.)
@@ -2411,14 +2410,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * @return This Stream converted to a set
      */
-    @Override
-    public Set<T> toSet();
+    default Set<T> toSet(){
+        return collect(Collectors.toSet());
+    }
 
     /**
      * @return this Stream converted to a list
      */
-    @Override
-    public List<T> toList();
+    default List<T> toList(){
+        return collect(Collectors.toList());
+    }
 
     /*
      * (non-Javadoc)
@@ -4567,7 +4568,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#mergePublisher(Collection, QueueFactory)}
-     * method to subscribeAll asynchronously also. Max concurrency is determined by the publishers collection size, along with a default limit of 5k queued values before
+     * method to forEachAsync asynchronously also. Max concurrency is determined by the publishers collection size, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param publishers Publishers to merge
@@ -4818,7 +4819,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> changes();
 
     default Topic<T> broadcast(){
-        cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+        Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                                                     .build()
                                                     .withTimeout(1);
 

@@ -1,6 +1,7 @@
 package cyclops.control;
 
-import cyclops.control.Maybe.Nothing;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Maybe.Nothing;
 import cyclops.typeclasses.free.Free;
 import cyclops.function.*;
 import lombok.AccessLevel;
@@ -30,7 +31,7 @@ public final class State<S, T> {
     }
 
     public static <S> State<S, Nothing> transition(Function<? super S,? extends S> f) {
-        return state(s -> Tuple.tuple(f.apply(s),(Nothing)Maybe.none()));
+        return state(s -> Tuple.tuple(f.apply(s),(Nothing) Maybe.none()));
     }
 
     public static <S, T> State<S, T> transition(Function<? super S,? extends S> f, T value) {

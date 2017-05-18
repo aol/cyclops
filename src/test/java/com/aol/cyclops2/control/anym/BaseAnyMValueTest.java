@@ -4,6 +4,8 @@ import com.aol.cyclops2.Matchers;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import cyclops.control.*;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.Reducers;
 import cyclops.Semigroups;

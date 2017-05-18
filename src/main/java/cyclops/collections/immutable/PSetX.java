@@ -19,6 +19,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.HashTreePSet;
 import org.pcollections.PSet;
+import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
@@ -29,6 +30,8 @@ import java.util.stream.Stream;
 
 
 public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
+
+
     /**
      * Narrow a covariant PSetX
      * 
@@ -339,9 +342,7 @@ public interface PSetX<T> extends To<PSetX<T>>,PSet<T>, PersistentCollectionX<T>
         return ReactiveSeq.fromIterable(this);
     }
 
-    default PSet<T> toPSet() {
-        return this;
-    }
+
 
     @Override
     default <X> PSetX<X> from(final Collection<X> col) {

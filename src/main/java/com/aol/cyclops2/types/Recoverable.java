@@ -1,8 +1,6 @@
 package com.aol.cyclops2.types;
 
 
-import cyclops.control.Maybe;
-
 import java.util.function.Function;
 import java.util.function.Supplier;
 

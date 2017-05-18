@@ -35,7 +35,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
     @Test
     public void forEach2OD() {
 
-        assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), (a , b) -> a + b).toList(),
+        assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), (a , b) -> a + b).toListX(),
                 equalTo(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 3, 4, 5, 6, 7, 8,
                         9, 10, 11, 12)));
     }
@@ -44,7 +44,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
     public void forEach2FilterOD() {
 
         assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), (a , b) -> a > 2 && b < 8,
-                (a ,b) -> a + b).toList(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10)));
+                (a ,b) -> a + b).toListX(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10)));
     }
         
     @Test
@@ -60,28 +60,28 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
     }
     @Test
     public void takeRight(){
-        assertThat(of(1,2,3).takeRight(1).toList(),hasItems(3));
+        assertThat(of(1,2,3).takeRight(1).toListX(),hasItems(3));
     }
     @Test
     public void takeRightEmpty(){
-        assertThat(of().takeRight(1).toList(),equalTo(Arrays.asList()));
+        assertThat(of().takeRight(1).toListX(),equalTo(Arrays.asList()));
     }
     
     @Test
     public void takeUntil(){
-        assertThat(of(1,2,3,4,5).takeUntil(p->p==2).toList().size(),greaterThan(0));
+        assertThat(of(1,2,3,4,5).takeUntil(p->p==2).toListX().size(),greaterThan(0));
     }
     @Test
     public void takeUntilEmpty(){
-        assertThat(of().takeUntil(p->true).toList(),equalTo(Arrays.asList()));
+        assertThat(of().takeUntil(p->true).toListX(),equalTo(Arrays.asList()));
     }
     @Test
     public void takeWhile(){
-        assertThat(of(1,2,3,4,5).takeWhile(p->p<6).toList().size(),greaterThan(1));
+        assertThat(of(1,2,3,4,5).takeWhile(p->p<6).toListX().size(),greaterThan(1));
     }
     @Test
     public void takeWhileEmpty(){
-        assertThat(of().takeWhile(p->true).toList(),equalTo(Arrays.asList()));
+        assertThat(of().takeWhile(p->true).toListX(),equalTo(Arrays.asList()));
     } 
     
     @Test
@@ -150,7 +150,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
     public void groupedFunction(){
         assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").count(),equalTo((2L)));
         assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").filter(t->t.v1.equals("a"))
-                        .map(t->t.v2).map(s->s.toList()).single(),
+                        .map(t->t.v2).map(s->s.toListX()).single(),
                             equalTo((Arrays.asList(1,2))));
     }
     @Test
@@ -253,36 +253,36 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 
 	@Test
     public void allCombinations3() {
-        assertThat(of(1, 2, 3).combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
+        assertThat(of(1, 2, 3).combinations().map(s->s.toListX()).toListX(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
         		Arrays.asList(3), Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3), Arrays.asList(1, 2, 3))));
     }
 
 	@Test
 	public void emptyAllCombinations() {
-		assertThat(of().combinations().map(s -> s.toList()).toList(), equalTo(Arrays.asList(Arrays.asList())));
+		assertThat(of().combinations().map(s -> s.toListX()).toListX(), equalTo(Arrays.asList(Arrays.asList())));
 	}
 	
 	@Test
     public void emptyPermutations() {
-        assertThat(of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
+        assertThat(of().permutations().map(s->s.toListX()).toListX(),equalTo(Arrays.asList()));
     }
 
     @Test
     public void permuations3() {
-    	System.out.println(of(1, 2, 3).permutations().map(s->s.toList()).toList());
-        assertThat(of(1, 2, 3).permutations().map(s->s.toList()).toList(),
+    	System.out.println(of(1, 2, 3).permutations().map(s->s.toListX()).toListX());
+        assertThat(of(1, 2, 3).permutations().map(s->s.toListX()).toListX(),
         		equalTo(of(of(1, 2, 3),
-        		of(1, 3, 2), of(2, 1, 3), of(2, 3, 1), of(3, 1, 2), of(3, 2, 1)).peek(i->System.out.println("peek - " + i)).map(s->s.toList()).toList()));
+        		of(1, 3, 2), of(2, 1, 3), of(2, 3, 1), of(3, 1, 2), of(3, 2, 1)).peek(i->System.out.println("peek - " + i)).map(s->s.toListX()).toListX()));
     }
 
 	@Test
 	public void emptyCombinations() {
-		assertThat(of().combinations(2).map(s -> s.toList()).toList(), equalTo(Arrays.asList()));
+		assertThat(of().combinations(2).map(s -> s.toListX()).toListX(), equalTo(Arrays.asList()));
 	}
 	   
 	 @Test
 	public void combinations2() {
-	        assertThat(of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
+	        assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX(),
 	                equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
 	    }	
 
@@ -307,7 +307,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 	} 
 	@Test
     public void testScanLeftStringConcat() {
-        assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().size(),
+        assertThat(of("a", "b", "c").scanLeft("", String::concat).toListX().size(),
         		is(4));
     }
 	@Test
@@ -318,7 +318,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 	@Test
 	public void testReverse() {
 		
-		assertThat(of(1, 2, 3).reverse().toList(), equalTo(asList(3, 2, 1)));
+		assertThat(of(1, 2, 3).reverse().toListX(), equalTo(asList(3, 2, 1)));
 	}
 
 	@Test

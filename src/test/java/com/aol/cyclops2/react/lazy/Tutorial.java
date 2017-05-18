@@ -18,7 +18,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import cyclops.async.*;
-import cyclops.control.Eval;
+import cyclops.async.adapters.Queue;
+import cyclops.control.lazy.Eval;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -29,7 +30,6 @@ import com.aol.cyclops2.react.SimpleReactFailedStageException;
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import cyclops.stream.FutureStream;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
-import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -179,15 +179,10 @@ public class Tutorial {
 
 	@Test
 	public void errorHandling() {
-		AsyncRetryExecutor retrier = new AsyncRetryExecutor(
-				Executors.newScheduledThreadPool(Runtime.getRuntime()
-						.availableProcessors())).retryOn(Throwable.class)
-				.withMaxDelay(1_000). // 1 seconds
-				withUniformJitter(). // add between +/- 100 ms randomly
-				withMaxRetries(1);
+
 
 		List<String> results = LazyReact.sequentialCommonBuilder()
-				.withRetrier(retrier)
+
 				.ofAsync(() -> "new event1", () -> "new event2")
 				.retry(this::unreliable).onFail(e -> "default")
 				.peek(System.out::println).capture(Throwable::printStackTrace)

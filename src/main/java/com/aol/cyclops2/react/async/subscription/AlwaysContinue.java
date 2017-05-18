@@ -1,6 +1,6 @@
 package com.aol.cyclops2.react.async.subscription;
 
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 
 public class AlwaysContinue implements Continueable {
 

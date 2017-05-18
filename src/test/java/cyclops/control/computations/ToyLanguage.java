@@ -1,11 +1,10 @@
 package cyclops.control.computations;
 
 import com.aol.cyclops2.types.Transformable;
-import cyclops.control.Computations;
-import cyclops.control.either.Either3;
+import cyclops.control.Unrestricted;
+import cyclops.control.lazy.Either3;
 import cyclops.function.Fn1;
 import cyclops.function.Fn2;
-import cyclops.typeclasses.free.Free;
 
 import java.util.function.Function;
 
@@ -19,20 +18,20 @@ abstract class ToyLanguage<A> implements Transformable<A> {
         return (ToyLanguage<T>)wide;
     }
 
-    public final static <T> Function<Transformable<Computations<T>>,ToyLanguage<Computations<T>>> decoder() {
-        return c->(ToyLanguage<Computations<T>>)c;
+    public final static <T> Function<Transformable<Unrestricted<T>>,ToyLanguage<Unrestricted<T>>> decoder() {
+        return c->(ToyLanguage<Unrestricted<T>>)c;
     }
-    public static Computations<String> output(final char a){
-        return Computations.liftF(new Output<>(a, null));
+    public static Unrestricted<String> output(final char a){
+        return Unrestricted.liftF(new Output<>(a, null));
     }
-    public static Computations<Void> bell(){
-        return Computations.liftF(new Bell<>(null));
+    public static Unrestricted<Void> bell(){
+        return Unrestricted.liftF(new Bell<>(null));
     }
-    public static Computations<Void> done(){
-        return Computations.liftF(new Done<Void>());
+    public static Unrestricted<Void> done(){
+        return Unrestricted.liftF(new Done<Void>());
     }
-    public static <A> Computations<A> pointed(final A a){
-        return Computations.done(a);
+    public static <A> Unrestricted<A> pointed(final A a){
+        return Unrestricted.done(a);
     }
 
 

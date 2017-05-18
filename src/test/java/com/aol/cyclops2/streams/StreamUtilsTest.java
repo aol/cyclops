@@ -38,9 +38,10 @@ public class StreamUtilsTest {
 
 	@Test
 	public void iterate(){
+
 		ReactiveSeq<Integer> s = ReactiveSeq.iterate(1,i->i+1);
-		assertThat(s.limit(10).takeRight(1).apply(0l),equalTo(10));
-		assertThat(s.limit(10).takeRight(1).apply(0l),equalTo(10));
+		assertThat(s.limit(10).takeRight(1).asFunction().apply(0l),equalTo(10));
+		assertThat(s.limit(10).takeRight(1).asFunction().apply(0l),equalTo(10));
 
 
 	}
@@ -50,7 +51,7 @@ public class StreamUtilsTest {
         List<Integer> rs = Streams.debounce(
                 Streams.schedule(
                         Stream.of(1,2,3,4,5).peek(x->System.out.println("utilPeek1:"+x))
-                        , "* * * * * ?", ThreadPools.getStandardRetry()
+                        , "* * * * * ?", ThreadPools.getStandardSchedular()
                 ).connect(), 10, TimeUnit.SECONDS
         ).peek(x -> System.out.println("utilPeek2:"+x)).collect(Collectors.toList());
         System.out.println("utilResultList:" + rs);
@@ -69,7 +70,7 @@ utilResultList:[1]
     public void reactiveSeq(){
         HotStream<String> hotStream = ReactiveSeq.of("a", "b", "c", "d", "e")
                 .peek(x -> System.out.println("peek1:" + x))
-                .schedule("* * * * * ?", ThreadPools.getStandardRetry());
+                .schedule("* * * * * ?", ThreadPools.getStandardSchedular());
     System.out.println("resultList:" + hotStream.connect().debounce(10, TimeUnit.SECONDS).peek(x->System.out.println("peek2:" + x)).toListX() );
     }
 	@Test

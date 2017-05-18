@@ -1,7 +1,7 @@
 package cyclops.function;
 
 import com.aol.cyclops2.util.SimpleTimer;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.types.Value;
@@ -9,7 +9,6 @@ import com.aol.cyclops2.types.Value;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Stream;

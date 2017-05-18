@@ -26,14 +26,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
- * Created by johnmcclean on 14/01/2017.
+ * reactive : is used to denote creational methods for reactive-streams that support non-blocking backpressure
+ * async : is used to denote creational methods for asynchronous streams that do not support backpressure
  */
 
 public interface Spouts {
@@ -88,7 +87,7 @@ public interface Spouts {
      * @param <T>
      * @return
      */
-    static <T> ReactiveSeq<T> observeOn(Stream<T> seq, Executor exec){
+    static <T> ReactiveSeq<T> async(Stream<T> seq, Executor exec){
         Subscriber[] subscriber = {null};
 
         ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
@@ -101,12 +100,12 @@ public interface Spouts {
             subscriber[0]=s;
         });
     }
-    static <T> ReactiveSeq<T> publishOn(Stream<T> seq, Executor exec){
+    static <T> ReactiveSeq<T> reactive(Stream<T> seq, Executor exec){
         Future<Subscriber<T>> subscriber = Future.future();
         Future<Subscription> sub = Future.future();
         ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
             Subscriber<T> local = subscriber.get();
-            sub.complete(t.subscribe(local::onNext,local::onError,local::onComplete));
+            sub.complete(t.forEachSubscribe(local::onNext,local::onError,local::onComplete));
 
             return null;
         });

@@ -26,6 +26,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.AmortizedPQueue;
 import org.pcollections.PQueue;
+import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
@@ -39,8 +40,10 @@ public interface PQueueX<T> extends To<PQueueX<T>>,
                                     OnEmptySwitch<T, PQueue<T>>,
                                     Higher<PQueueX.µ,T>{
 
+
     public static class µ {
     }
+
     /**
      * Narrow a covariant PQueueX
      * 

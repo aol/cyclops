@@ -1,14 +1,13 @@
 package com.aol.cyclops2.control;
 
 import cyclops.async.Future;
-import cyclops.control.Eval;
-import cyclops.control.Eval.CompletableEval;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Eval.CompletableEval;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;

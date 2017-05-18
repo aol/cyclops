@@ -4,8 +4,8 @@ import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
 import cyclops.stream.ReactiveSeq;
-import cyclops.async.Queue;
-import cyclops.async.Topic;
+import cyclops.async.adapters.Queue;
+import cyclops.async.adapters.Topic;
 import cyclops.stream.FutureStream;
 
 /**

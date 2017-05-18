@@ -19,6 +19,9 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.*;
+
+
+import cyclops.async.adapters.QueueFactory;
 import cyclops.collections.DequeX;
 import cyclops.collections.QueueX;
 import cyclops.collections.SetX;
@@ -383,7 +386,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#subscribeAll(org.reactivestreams.Subscriber)
+     * @see com.aol.cyclops2.types.Traversable#forEachAsync(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super T> sub) {
@@ -1162,5 +1165,14 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default POrderedSetX<T> toPOrderedSetX() {
         return FoldableTraversable.super.toPOrderedSetX().materialize();
+    }
+    
+    default AnyMSeq<W,T> mergeP(final QueueFactory<T> factory, final Publisher<T>... publishers) {
+    	ReactiveSeq<T> reactiveSeq = stream().mergeP(factory, publishers);
+    	return (AnyMSeq<W,T>) reactiveSeq.anyM();
+    }
+    
+    default AnyMSeq<W,T> mergeP(final Publisher<T>... publishers) {
+    	return (AnyMSeq<W,T>) stream().mergeP(publishers).anyM();
     }
 }

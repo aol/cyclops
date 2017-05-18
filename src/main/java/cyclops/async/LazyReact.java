@@ -18,6 +18,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import cyclops.async.adapters.Adapter;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -26,19 +27,16 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops2.internal.react.FutureStreamImpl;
 import com.aol.cyclops2.internal.react.stream.InfiniteClosingSpliteratorFromSupplier;
 import com.aol.cyclops2.internal.react.stream.ReactBuilder;
-import com.aol.cyclops2.react.RetryBuilder;
 import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.react.async.subscription.Subscription;
 import com.aol.cyclops2.react.collectors.lazy.MaxActive;
 import cyclops.function.Cacheable;
-import com.nurkiewicz.asyncretry.AsyncRetryExecutor;
-import com.nurkiewicz.asyncretry.RetryExecutor;
+
 
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
@@ -79,8 +77,7 @@ public class LazyReact implements ReactBuilder {
 
     @Getter
     private final Executor executor;
-    @Getter
-    private final RetryExecutor retrier;
+
 
     private final Boolean async;
     @Getter
@@ -164,7 +161,6 @@ public class LazyReact implements ReactBuilder {
     public LazyReact(final Executor executor) {
 
         this.executor = executor;
-        retrier = null;
         async = true;
         maxActive = MaxActive.IO;
 
@@ -183,7 +179,6 @@ public class LazyReact implements ReactBuilder {
     public LazyReact(final int maxActive, final Executor executor) {
 
         this.executor = executor;
-        retrier = null;
         async = true;
         this.maxActive = MaxActive.IO;
 
@@ -205,7 +200,7 @@ public class LazyReact implements ReactBuilder {
     public LazyReact(final int threadPoolSize, final int maxActiveTasks) {
 
         executor = Executors.newFixedThreadPool(threadPoolSize);
-        retrier = new RetryBuilder().parallelism(threadPoolSize);
+
         async = true;
         maxActive = new MaxActive(
                 maxActiveTasks, threadPoolSize);
@@ -568,15 +563,13 @@ public class LazyReact implements ReactBuilder {
 
     /**
      * @param executor Task Executor for concurrent tasks
-     * @param retrier Async Retrier
      * @param async If true each task will be submitted to an executor service
      */
-    public LazyReact(final Executor executor, final RetryExecutor retrier, final Boolean async, final MaxActive maxActive,
+    public LazyReact(final Executor executor, final Boolean async, final MaxActive maxActive,
             final boolean streamOfFutures, final boolean objectPoolingActive, final boolean autoOptimize, final boolean autoMemoize,
             final Cacheable memoizeCache) {
         super();
         this.executor = executor;
-        this.retrier = retrier;
         this.async = Optional.ofNullable(async)
                              .orElse(true);
         this.maxActive = Optional.ofNullable(maxActive)
@@ -592,12 +585,11 @@ public class LazyReact implements ReactBuilder {
 
     /**
      * @param executor Task Executor for concurrent tasks
-     * @param retrier Async Retrier
      * @param async If true each task will be submitted to an executor service
      * @param maxActive2 Max Active Future Tasks
      */
-    public LazyReact(final Executor executor, final AsyncRetryExecutor retrier, final boolean async, final MaxActive maxActive2) {
-        this(executor, retrier, async, maxActive2, false, false, async, false, null);
+    public LazyReact(final Executor executor,  final boolean async, final MaxActive maxActive2) {
+        this(executor,  async, maxActive2, false, false, async, false, null);
     }
 
     /* 
@@ -731,7 +723,6 @@ public class LazyReact implements ReactBuilder {
     public static LazyReact parallelBuilder(final int parallelism) {
         return LazyReact.builder()
                         .executor(Executors.newFixedThreadPool(parallelism))
-                        .retrier(new RetryBuilder().parallelism(parallelism))
                         .build();
     }
 
@@ -745,8 +736,6 @@ public class LazyReact implements ReactBuilder {
     public static LazyReact parallelCommonBuilder() {
         return LazyReact.builder()
                         .executor(ThreadPools.getStandard())
-                        .retrier(RetryBuilder.getDefaultInstance()
-                                             .withScheduler(ThreadPools.getCommonFreeThreadRetry()))
                         .build();
     }
 
@@ -760,8 +749,6 @@ public class LazyReact implements ReactBuilder {
                         .maxActive(MaxActive.CPU)
                         .async(false)
                         .executor(Executors.newFixedThreadPool(1))
-                        .retrier(RetryBuilder.getDefaultInstance()
-                                             .withScheduler(Executors.newScheduledThreadPool(2)))
                         .build();
     }
 
@@ -774,8 +761,6 @@ public class LazyReact implements ReactBuilder {
         return LazyReact.builder()
                         .async(false)
                         .executor(ThreadPools.getCommonFreeThread())
-                        .retrier(RetryBuilder.getDefaultInstance()
-                                             .withScheduler(ThreadPools.getCommonFreeThreadRetry()))
                         .build();
     }
 
@@ -789,8 +774,6 @@ public class LazyReact implements ReactBuilder {
                         .async(false)
                         .maxActive(new MaxActive(1,1))
                         .executor(ThreadPools.getCurrentThreadExecutor())
-                        .retrier(RetryBuilder.getDefaultInstance()
-                                             .withScheduler(ThreadPools.getCommonFreeThreadRetry()))
                         .build();
     }
 

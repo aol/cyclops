@@ -6,7 +6,6 @@ import org.jooq.lambda.Collectable;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
 public class AsyncRSCollectableTest extends CollectableTest {
@@ -16,7 +15,7 @@ public class AsyncRSCollectableTest extends CollectableTest {
 
         return Spouts.from(Flux.just(values)
                 .subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())))
-                .collectable();
+                .collectionOperations();
     }
 
 }

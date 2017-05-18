@@ -11,8 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import com.aol.cyclops2.types.FoldableTraversable;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -24,9 +23,7 @@ import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
-import cyclops.collections.immutable.PStackX;
 import cyclops.collections.immutable.PVectorX;
-import cyclops.collections.DequeX;
 import cyclops.collections.ListX;
 import com.aol.cyclops2.types.To;
 import com.aol.cyclops2.types.Traversable;
@@ -39,6 +36,19 @@ import com.aol.cyclops2.types.stream.CyclopsCollectable;
  * Monad Transformer for Java Lists
  * 
  * ListT allows the deeply wrapped List to be manipulating within it's nested /contained context
+ *
+ * <pre>
+ *     {@code
+ *       ListT<optional,Integer> streamT = ListT.ofList(AnyM.fromOptional(Optional.of(Arrays.asList(10))));
+ *       AnyM<optional, IndexedSequenceX<Integer>> anyM = listT.unwrap();
+ *
+         Optional<IndexedSequenceX<Integer>> opt = Witness.optional(anyM);
+         Optional<LinkedList<Integer>> list = opt.map(s -> s.collection(Converters::LinkedList));
+ *     }
+ *
+ *
+ * </pre>
+ *
  * @author johnmcclean
  *
  * @param <T> Type of data stored inside the nested Lists
@@ -55,65 +65,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
     
    
-    /**
-     * IndexedSequenceX types that are not one of ListX, PStackX, PVectorX are converted to ListX types
-     * 
-     * @param listXFn
-     * @param pListFn
-     * @param vectorFn
-     * @return
-     */
-    public <R> AnyM<W,R> visit(Function<? super ListX<T>,? extends R> listXFn,
-                       Function<? super PStackX<T>, ? extends R> pListFn,
-                       Function<? super PVectorX<T>, ? extends R> vectorFn){
 
-        return this.transformerStream().map(t->{
-           if(t instanceof PStackX){
-               return pListFn.apply((PStackX<T>)t);
-           }
-           else if(t instanceof PVectorX){
-               return vectorFn.apply((PVectorX<T>)t);
-           }
-           else if(t instanceof ListX){
-               return listXFn.apply((ListX<T>)t);
-           }
-           return listXFn.apply(ListX.fromIterable(t));
-        });
-    }
-
-    public <R> AnyM<W, R> visit(Function<? super ListX<T>, ? extends R> listXFn,
-                                Function<? super DequeX<T>, ? extends R> dequeXFn,
-                                    Function<? super PStackX<T>, ? extends R> pListFn, 
-                                    Function<? super PVectorX<T>, ? extends R> vectorFn) {
-
-        return this.transformerStream()
-                   .map(t -> {
-                       if (t instanceof PStackX) {
-                           return pListFn.apply((PStackX<T>) t);
-                       } else if (t instanceof PVectorX) {
-                           return vectorFn.apply((PVectorX<T>) t);
-                       } else if (t instanceof DequeX) {
-                           return dequeXFn.apply((DequeX<T>) t);
-                       } else if (t instanceof ListX) {
-                           return listXFn.apply((ListX<T>) t);
-                       }
-                       return listXFn.apply(ListX.fromIterable(t));
-                   });
-    }
-
-    public <R> AnyM<W, R> visit(Function<? super ListX<T>, ? extends R> listXFn,
-                                Function<? super PVectorX<T>, ? extends R> vectorFn) {
-
-        return this.transformerStream()
-                   .map(t -> {
-                       if (t instanceof PVectorX) {
-                           return vectorFn.apply((PVectorX<T>) t);
-                       } else if (t instanceof ListX) {
-                           return listXFn.apply((ListX<T>) t);
-                       }
-                       return listXFn.apply(ListX.fromIterable(t));
-                   });
-    }
 
     /**
      * @return The wrapped AnyM
@@ -289,10 +241,10 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectable()
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectionOperations()
      
     @Override
-    public Collectable<T> collectable() {
+    public Collectable<T> collectionOperations() {
        return this;
     } */
     @Override

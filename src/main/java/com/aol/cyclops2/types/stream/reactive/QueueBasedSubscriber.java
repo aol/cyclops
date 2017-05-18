@@ -18,11 +18,11 @@ import cyclops.stream.FutureStream;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.control.Eval;
+import cyclops.control.lazy.Eval;
 import cyclops.stream.ReactiveSeq;
-import cyclops.async.Queue;
-import cyclops.async.Queue.ClosedQueueException;
-import cyclops.async.QueueFactory;
+import cyclops.async.adapters.Queue;
+import cyclops.async.adapters.Queue.ClosedQueueException;
+import cyclops.async.adapters.QueueFactory;
 import cyclops.collections.QueueX;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 import com.aol.cyclops2.types.futurestream.Continuation;
