@@ -2,11 +2,7 @@ package com.aol.cyclops2.types.anyM;
 
 import static com.aol.cyclops2.internal.Utils.firstOrNull;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -21,12 +17,15 @@ import java.util.stream.Stream;
 import com.aol.cyclops2.types.*;
 
 
+import com.aol.cyclops2.types.futurestream.SimpleReactStream;
+import cyclops.async.LazyReact;
+import cyclops.async.SimpleReact;
 import cyclops.async.adapters.QueueFactory;
-import cyclops.collections.mutable.DequeX;
-import cyclops.collections.mutable.QueueX;
-import cyclops.collections.mutable.SetX;
+import cyclops.collections.mutable.*;
 import cyclops.collections.immutable.*;
 import cyclops.monads.WitnessType;
+import cyclops.stream.FutureStream;
+import cyclops.stream.Streamable;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -39,7 +38,6 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
-import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import cyclops.function.Predicates;
 import cyclops.function.Fn4;
@@ -1135,36 +1133,36 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
     @Override
     default ListX<T> toListX() {
-        return FoldableTraversable.super.toListX().materialize();
+        return ListX.fromIterable(traversable());
     }
 
     @Override
     default LinkedListX<T> toPStackX() {
-        return FoldableTraversable.super.toPStackX().materialize();
+        return LinkedListX.fromIterable(traversable());
     }
 
     @Override
     default VectorX<T> toPVectorX() {
-        return FoldableTraversable.super.toPVectorX().materialize();
+            return VectorX.fromIterable(traversable());
     }
 
     @Override
     default PersistentQueueX<T> toPQueueX() {
-        return FoldableTraversable.super.toPQueueX().materialize();
+        return PersistentQueueX.fromIterable(traversable());
     }
     @Override
     default BagX<T> toPBagX() {
-        return FoldableTraversable.super.toPBagX().materialize();
+        return BagX.fromIterable((traversable()));
     }
 
     @Override
     default PersistentSetX<T> toPSetX() {
-        return FoldableTraversable.super.toPSetX().materialize();
+        return PersistentSetX.fromIterable(traversable());
     }
 
     @Override
     default OrderedSetX<T> toPOrderedSetX() {
-        return FoldableTraversable.super.toPOrderedSetX().materialize();
+        return OrderedSetX.fromIterable(traversable());
     }
     
     default AnyMSeq<W,T> mergeP(final QueueFactory<T> factory, final Publisher<T>... publishers) {
@@ -1175,4 +1173,36 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     default AnyMSeq<W,T> mergeP(final Publisher<T>... publishers) {
     	return (AnyMSeq<W,T>) stream().mergeP(publishers).anyM();
     }
+
+
+    @Override
+    default FutureStream<T> toFutureStream(final LazyReact reactor) {
+        return reactor.fromIterable(traversable());
+    }
+
+    @Override
+    default FutureStream<T> toFutureStream() {
+        return FutureStream.builder().fromIterable(traversable());
+    }
+
+    @Override
+    default SimpleReactStream<T> toSimpleReact(final SimpleReact reactor) {
+        return reactor.fromIterable(traversable());
+    }
+
+    @Override
+    default SimpleReactStream<T> toSimpleReact() {
+        return new SimpleReact().fromIterable(traversable());
+    }
+
+    @Override
+    default Streamable<T> toStreamable() {
+        return Streamable.fromIterable(traversable());
+    }
+
+    @Override
+    default SortedSetX<T> toSortedSetX() {
+        return SortedSetX.fromIterable(traversable());
+    }
+
 }

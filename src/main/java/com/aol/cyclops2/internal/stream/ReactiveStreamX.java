@@ -45,6 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -1141,11 +1142,13 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public ReactiveSeq<T> cycle() {
 
-        ReactiveSeq<T> cycling =  collectStream(CyclopsCollectors.toListX())
-                                    .map(s -> s.stream().cycle(Long.MAX_VALUE))
+        ReactiveSeq<T> cycling =  collectStream(Collectors.toList())
+                                    .map(s -> ReactiveSeq.fromIterable(s).cycle(Long.MAX_VALUE))
                                     .flatMap(i->i);
         return createSeq(new IterableSourceOperator<T>(cycling),Type.SYNC);
-
+ /**
+        return ReactiveSeq.fromIterator(this.iterator()).cycle();
+  **/
 
     }
 
