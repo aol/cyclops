@@ -78,6 +78,11 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<Wit
     }
 	@Test
     public void whenGreaterThan2(){
+        System.out.println("Value = "+Spouts.of(5,2,3).visit((x,xs)->{
+            System.out.println("X is " + x);
+            System.out.println("XS " + xs.toList());
+                  return   xs.join(x>2? "hello" : "world");
+        },()->"boo!") );
         String res= of(5,2,3).visit((x,xs)->
                                 xs.join(x>2? "hello" : "world"),()->"boo!");
                 
