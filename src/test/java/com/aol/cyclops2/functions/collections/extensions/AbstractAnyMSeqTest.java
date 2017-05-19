@@ -713,7 +713,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 		
 		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
 											.zip(of(100,200,300,400))
-											.toListX();
+											.toListX().materialize();
 
 				
 

@@ -78,14 +78,19 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
         count =0;
         System.out.println("Cycle until!");
         ListX<Integer> a =Spouts.of(1,2,3).cycleUntil(next->count++==6).toListX();
+        count =0;
         ListX<Integer> b= of(1, 2, 3).cycleUntil(next->count++==6).toListX();
+        count =0;
         ListX<Integer> c= of(1, 2, 3).cycleUntil(next->count++==6).toListX();
+        count =0;
         System.out.println("A " + a);
+        count =0;
         System.out.println("C " + c);
-
+        count =0;
 
 
         System.out.println("Cycle"  +Spouts.of(1,2,3).cycleUntil(next->count++==6).toListX());
+        count =0;
         System.out.println("Print!");
       //  of(1, 2, 3).cycleUntil(next->count++==6).printOut();
 
