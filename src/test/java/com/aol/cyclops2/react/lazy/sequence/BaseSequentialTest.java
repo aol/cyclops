@@ -103,31 +103,31 @@ public class BaseSequentialTest {
 	    @Test
 	    public void takeWhileEmpty(){
 	        assertThat(of().takeWhile(p->true).toList(),equalTo(Arrays.asList()));
-	    } 
-	    
-	    @Test
-	    public void presentConvert(){
-
-	        assertTrue(of(1).toOptional().isPresent());
-	        assertTrue(of(1).toListX().size()>0);
-	        assertTrue(of(1).toDequeX().size()>0);
-	        assertTrue(of(1).toPStackX().size()>0);
-	        assertTrue(of(1).toQueueX().size()>0);
-	        assertTrue(of(1).toPVectorX().size()>0);
-	        assertTrue(of(1).toPQueueX().size()>0);
-	        assertTrue(of(1).toSetX().size()>0);
-	        assertTrue(of(1).toSortedSetX().size()>0);
-	        assertTrue(of(1).toPOrderedSetX().size()>0);
-	        assertTrue(of(1).toPBagX().size()>0);
-	        assertTrue(of(1).toPMapX(t->t,t->t).size()>0);
-	        assertTrue(of(1).toMapX(t->t,t->t).size()>0);
-
-	        assertTrue(of(1).toSet().size()>0);
-	        assertTrue(of(1).toList().size()>0);
-	        assertTrue(of(1).toStreamable().size()>0);
-	        
-	        
 	    }
+
+	@Test
+	public void presentConvert(){
+
+		assertTrue(of(1).to().optional().isPresent());
+		assertTrue(of(1).toListX().size()>0);
+		assertTrue(of(1).to().dequeX().size()>0);
+		assertTrue(of(1).to().linkedListX().size()>0);
+		assertTrue(of(1).to().queueX().size()>0);
+		assertTrue(of(1).to().vectorX().size()>0);
+		assertTrue(of(1).to().persistentQueueX().size()>0);
+		assertTrue(of(1).toSetX().size()>0);
+		assertTrue(of(1).to().sortedSetX().size()>0);
+		assertTrue(of(1).to().orderedSetX().size()>0);
+		assertTrue(of(1).to().bagX().size()>0);
+		assertTrue(of(1).to().persistentMapX(t->t, t->t).size()>0);
+		assertTrue(of(1).to().toMapX(t->t,t->t).size()>0);
+
+		assertTrue(of(1).toSet().size()>0);
+		assertTrue(of(1).toList().size()>0);
+		assertTrue(of(1).to().toStreamable().size()>0);
+
+
+	}
 	Integer value2() {
 		return 5;
 	}

@@ -1240,7 +1240,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Convertable#toOptional()
+     * @see com.aol.cyclops2.types.Convertable#optional()
      */
     @Override
     public Optional<T> toOptional() {

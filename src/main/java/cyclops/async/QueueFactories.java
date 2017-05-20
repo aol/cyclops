@@ -80,7 +80,7 @@ public class QueueFactories {
      * {@code 
      *   ReactiveSeq.of(1,2,3)
                     .flatMapP(i->ReactiveSeq.range(i,1500),1000,QueueFactories.unboundedQueue())
-                    .toListX()
+                    .listX()
      * }
      * </pre>
      * 

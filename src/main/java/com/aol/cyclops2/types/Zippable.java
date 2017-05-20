@@ -28,7 +28,7 @@ import cyclops.stream.ReactiveSeq;
  *
  * @param <T> Data type of element(s) of this Zippable
  */
-public interface Zippable<T> extends Iterable<T>, Transformable<T>, ToStream<T> {
+public interface Zippable<T> extends Iterable<T>, Transformable<T> {
 
     /**
      * Combine two applicatives together using the provided BinaryOperator (Semigroup, Monoid and Reducer all

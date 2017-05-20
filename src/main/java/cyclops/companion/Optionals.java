@@ -340,7 +340,7 @@ public class Optionals {
      * @return  Maybe with a List of values
      */
     public static <T> Optional<ListX<T>> sequence(final CollectionX<Optional<T>> opts) {
-        return sequence(opts.stream()).map(s -> s.to().toListX());
+        return sequence(opts.stream()).map(s -> s.to().listX());
 
     }
     /**
@@ -362,7 +362,7 @@ public class Optionals {
      * @return Optional with a List of values
      */
     public static <T> Optional<ListX<T>> sequencePresent(final CollectionX<Optional<T>> opts) {
-       return sequence(opts.stream().filter(Optional::isPresent)).map(s->s.to().toListX());
+       return sequence(opts.stream().filter(Optional::isPresent)).map(s->s.to().listX());
     }
     /**
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection

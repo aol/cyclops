@@ -48,7 +48,7 @@ public interface PersistentMapX<K, V>
     }
 
     default PersistentMapX<K, V> fromStream(final ReactiveSeq<Tuple2<K, V>> stream) {
-        return stream.to().toPersistentMapX(k -> k.v1, v -> v.v2);
+        return stream.to().persistentMapX(k -> k.v1, v -> v.v2);
     }
 
     @Override
@@ -101,7 +101,7 @@ public interface PersistentMapX<K, V>
     @Override
     default <R> PersistentMapX<K, R> map(final Function<? super V, ? extends R> fn) {
         return stream().map(t -> t.map2(v -> fn.apply(v))).to()
-                       .toPersistentMapX(t -> t.v1, t -> t.v2);
+                       .persistentMapX(t -> t.v1, t -> t.v2);
     }
 
     /* (non-Javadoc)
@@ -112,7 +112,7 @@ public interface PersistentMapX<K, V>
 
         return stream().map(t -> t.map2(v -> fn2.apply(v))
                                   .map1(k -> fn1.apply(k))).to()
-                .toPersistentMapX(t -> t.v1, t -> t.v2);
+                .persistentMapX(t -> t.v1, t -> t.v2);
     }
 
     /* (non-Javadoc)
@@ -176,7 +176,7 @@ public interface PersistentMapX<K, V>
     @Override
     default PersistentMapX<K, V> filter(final Predicate<? super Tuple2<K, V>> fn) {
         return stream().filter(fn).to()
-                .toPersistentMapX(t -> t.v1, t -> t.v2);
+                .persistentMapX(t -> t.v1, t -> t.v2);
     }
 
     /* (non-Javadoc)
@@ -316,7 +316,7 @@ public interface PersistentMapX<K, V>
      */
     default <T> PersistentSetX<T> toPSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return PersistentSetX.narrow(stream().map(fn).to()
-                .toPersistentSetX());
+                .persistentSetX());
     }
 
     /**
@@ -326,7 +326,7 @@ public interface PersistentMapX<K, V>
      * @return OrderedSetX of transformed values
      */
     default <T> OrderedSetX<T> toPOrderedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return OrderedSetX.narrow(stream().map(fn).to().toOrderedSetX());
+        return OrderedSetX.narrow(stream().map(fn).to().orderedSetX());
     }
 
     /**
@@ -336,7 +336,7 @@ public interface PersistentMapX<K, V>
      * @return QueueX of transformed values
      */
     default <T> PersistentQueueX<T> toPQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return PersistentQueueX.narrow(stream().map(fn).to().toPersistentQueueX());
+        return PersistentQueueX.narrow(stream().map(fn).to().persistentQueueX());
     }
 
     /**
@@ -346,7 +346,7 @@ public interface PersistentMapX<K, V>
      * @return LinkedListX of transformed values
      */
     default <T> LinkedListX<T> toPStackX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return LinkedListX.narrow(stream().map(fn).to().toLinkedListX());
+        return LinkedListX.narrow(stream().map(fn).to().linkedListX());
 
     }
     /**
@@ -356,7 +356,7 @@ public interface PersistentMapX<K, V>
      * @return VectorX of transformed values
      */
     default <T> VectorX<T> toPVectorX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return VectorX.narrow(stream().map(fn).to().toVectorX());
+        return VectorX.narrow(stream().map(fn).to().vectorX());
     }
     /**
      * Convert this MapX to a BagX via the provided transformation function
@@ -365,7 +365,7 @@ public interface PersistentMapX<K, V>
      * @return BagX of transformed values
      */
     default <T> BagX<T> toPBagX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return BagX.narrow(stream().map(fn).to().toBagX());
+        return BagX.narrow(stream().map(fn).to().bagX());
     }
 
 }

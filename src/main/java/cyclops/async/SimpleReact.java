@@ -13,7 +13,6 @@ import org.reactivestreams.Publisher;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
 import java.util.stream.*;
@@ -170,7 +169,7 @@ public class SimpleReact implements ReactBuilder {
         Objects.requireNonNull(publisher);
         Publisher<T> narrowed = (Publisher<T>)publisher;
         return Spouts.from(narrowed).to()
-                     .toSimpleReact(this);
+                     .simpleReact(this);
     }
 
     /**

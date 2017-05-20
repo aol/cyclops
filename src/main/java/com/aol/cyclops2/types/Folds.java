@@ -14,6 +14,7 @@ import com.aol.cyclops2.types.stream.ToStream;
 
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
+import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
@@ -27,9 +28,10 @@ import com.aol.cyclops2.types.stream.HotStream;
  *
  * @param <T> Data type of element(s) in this Folds
  */
-public interface Folds<T> extends ToStream<T> {
+public interface Folds<T> {
 
 
+    ReactiveSeq<T> stream();
 
     
 
@@ -472,68 +474,8 @@ public interface Folds<T> extends ToStream<T> {
         return stream().endsWith(stream);
     }
 
-    /**
-     * Lazily converts this SequenceM into a Collection. This does not trigger
-     * the Stream. E.g. Collection is not thread safe on the first iteration.
-     * 
-     * <pre>
-     * {@code 
-     *  
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toLazyCollection();
-     * 
-     *  col.forEach(System.out::println);
-     * }
-     * 
-     * // Will print out &quot;first!&quot; before anything else
-     * </pre>
-     * 
-     * @return Lazy Collection
-     */
-    default CollectionX<T> toLazyCollection() {
-        return stream().toLazyCollection();
-    }
 
-    /**
-     * Lazily converts this SequenceM into a Collection. This does not trigger
-     * the Stream. E.g.
-     * 
-     * <pre>
-     * {@code
-     *  
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
-     *                                       .peek(System.out::println).toConcurrentLazyCollection();
-     * 
-     *  col.forEach(System.out::println);
-     * }
-     * 
-     * // Will print out "first!" before anything else
-     * </pre>
-     * 
-     * @return Concurrent Lazy Collection
-     */
-    default CollectionX<T> toConcurrentLazyCollection() {
-        return stream().toConcurrentLazyCollection();
-    }
 
-    /**
-     * <pre>
-     * {@code
-     *  
-     *  Streamable<Integer> repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6)
-     *                                          .map(i ->; i + 2)
-     *                                          .toConcurrentLazyStreamable();
-     * 
-     *  assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     *  assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     * }
-     * </pre>
-     * 
-     * @return Streamable that replay this SequenceM, populated lazily and can
-     *         be populated across threads
-     */
-    default Streamable<T> toConcurrentLazyStreamable() {
-        return stream().toConcurrentLazyStreamable();
-    }
 
     /**
      * <pre>

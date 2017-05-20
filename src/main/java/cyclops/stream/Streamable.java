@@ -148,10 +148,10 @@ public interface Streamable<T> extends  To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectionOperations()
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectors()
      */
     @Override
-    default Collectable<T> collectionOperations() {
+    default Collectable<T> collectors() {
 
         return Seq.seq((Stream<T>)stream());
     }
@@ -633,27 +633,6 @@ public interface Streamable<T> extends  To<Streamable<T>>,
         return reactiveSeq().collect(collector);
     }
 
-    /**
-     * Add the contents of this Stream to the mutable collection supplied by 
-     * the provided collectionFactory
-     * 
-     * <pre>
-     * {@code 
-     *   Streamable.of(1,2,3).toCollection( ()->new ArrayList());
-     *   
-     *   //ArrayList[1,2,3]
-     * }
-     * </pre>
-     * 
-     * @param collectionFactory
-     * @return contents of this Stream in a mutable collection
-     */
-    @Override
-    default <C extends Collection<T>> C toCollection(final Supplier<C> collectionFactory) {
-
-        return reactiveSeq().toCollection(collectionFactory);
-    }
-
   
 
     /**
@@ -798,7 +777,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * <pre>
      * {@code 
      * Optional<List<String>> reactiveStream = Streamable.of("hello","world")
-    											.toOptional();
+    											.optional();
     											
     	assertThat(reactiveStream.get(),equalTo(Arrays.asList("hello","world")));
      * }
@@ -807,8 +786,8 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * @return this Streamable converted to an Optional List
 
     @Override
-    default Optional<ListX<T>> toOptional() {
-        return reactiveSeq().toOptional();
+    default Optional<ListX<T>> optional() {
+        return reactiveSeq().optional();
     }
      */
 
@@ -1870,47 +1849,6 @@ public interface Streamable<T> extends  To<Streamable<T>>,
         return fromStream(reactiveSeq().cast(type));
     }
 
-    /**
-     * Lazily converts this Streamable into a Collection. This does not trigger the Stream. E.g.
-     * Collection is not thread safe on the first iteration.
-     * <pre>
-     * {@code 
-     * Collection<Integer> col = Streamable.of(1,2,3,4,5)
-    										.peek(System.out::println)
-    										.toLazyCollection();
-    	System.out.println("first!");
-    	col.forEach(System.out::println);
-     * }
-     * 
-     * //Will print out "first!" before anything else
-     * </pre>
-     * @return
-     */
-    @Override
-    default CollectionX<T> toLazyCollection() {
-        return reactiveSeq().toLazyCollection();
-    }
-
-    /**
-     * Lazily converts this Streamable into a Collection. This does not trigger the Stream. E.g.
-     * 
-     * <pre>
-     * {@code 
-     * Collection<Integer> col = Streamable.of(1,2,3,4,5)
-    										.peek(System.out::println)
-    										.toConcurrentLazyCollection();
-    	System.out.println("first!");
-    	col.forEach(System.out::println);
-     * }
-     * 
-     * //Will print out "first!" before anything else
-     * </pre>
-     * @return
-     */
-    @Override
-    default CollectionX<T> toConcurrentLazyCollection() {
-        return reactiveSeq().toConcurrentLazyCollection();
-    }
 
     /* 
      * Potentially efficient Sequence reversal. Is efficient if
@@ -2944,7 +2882,7 @@ public interface Streamable<T> extends  To<Streamable<T>>,
 
     @Override
     default ReactiveSeq<T> stream() {
-        return FoldableTraversable.super.reactiveSeq();
+        return ReactiveSeq.fromIterable(this);
     }
 
     @Override

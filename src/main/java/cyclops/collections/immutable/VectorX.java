@@ -103,7 +103,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static VectorX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                          .toVectorX();
+                          .vectorX();
     }
 
     /**
@@ -117,7 +117,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static VectorX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .toVectorX();
+                          .vectorX();
     }
 
     /**
@@ -137,7 +137,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     static <U, T> VectorX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .toVectorX();
+                          .vectorX();
     }
 
     /**
@@ -151,7 +151,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .toVectorX();
+                          .vectorX();
     }  
     /**
      * Generate a VectorX from the provided value up to the provided limit number of times
@@ -164,7 +164,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                          .toVectorX();
+                          .vectorX();
     }
 
     /**
@@ -178,7 +178,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     public static <T> VectorX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .toVectorX();
+                          .vectorX();
 
     }
 
@@ -261,7 +261,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                          .toVectorX();
+                          .vectorX();
     }
 
     public static <T> VectorX<T> fromIterable(final Iterable<T> iterable) {
@@ -325,7 +325,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     * {@code 
     *  VectorX.of(1,1,2,3)
                  .combine((a, b)->a.equals(b),Semigroups.intSum)
-                 .toListX()
+                 .listX()
                  
     *  //ListX(3,4) 
     * }</pre>

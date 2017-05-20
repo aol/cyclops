@@ -277,7 +277,7 @@ public interface Eval<T> extends    To<Eval<T>>,
      * @return  Eval with a  list of values
      */
     public static <T> Eval<ListX<T>> sequence(final CollectionX<Eval<T>> evals) {
-        return sequence(evals.stream()).map(s -> s.to().toListX());
+        return sequence(evals.stream()).map(s -> s.to().listX());
 
     }
 
@@ -887,15 +887,7 @@ public interface Eval<T> extends    To<Eval<T>>,
                 return new FutureAlways<R>(input.map(e->e.flatMap(mapper)));
             }
 
-            @Override
-            public ReactiveSeq<T> reactiveSeq() {
-                return Spouts.from(input).map(Eval::get);
-            }
 
-            @Override
-            public ReactiveSeq<T> reveresedStream() {
-                return Spouts.from(input).map(Eval::get);
-            }
 
             @Override
             public ReactiveSeq<T> iterate(UnaryOperator<T> fn) {

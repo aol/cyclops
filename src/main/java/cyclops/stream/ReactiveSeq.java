@@ -2406,21 +2406,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return collect(Collectors.toList());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#toCollection(java.util.function.Supplier)
-     */
-    @Override
-    public <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory);
 
-    /**
-     * Convert this ReactiveSeq into a Stream
-     *
-     * @return calls to reactiveStream() but more flexible on type for inferencing
-     *         purposes.
-     */
-    public <T> Stream<T> toStream();
 
     /**
      * Convert this ReactiveSeq into a Stream
@@ -2629,61 +2615,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<U>)FoldableTraversable.super.cast(type);
     }
 
-    /**
-     * Lazily converts this ReactiveSeq into a Collection. This does not trigger
-     * the Stream. E.g. Collection is not thread safe on the first iteration.
-     *
-     * <pre>
-     * {@code
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
-     *                                       .peek(System.out::println)
-     *                                       .toLazyCollection();
-     *
-     *  col.forEach(System.out::println);
-     * }
-     *
-     * // Will print out "first!" before anything else
-     * </pre>
-     *
-     * @return
-     */
-    @Override
-    CollectionX<T> toLazyCollection();
 
-    /**
-     * Lazily converts this ReactiveSeq into a Collection. This does not trigger
-     * the Stream. E.g.
-     *
-     * <pre>
-     * {@code
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toConcurrentLazyCollection();
-     *
-     *  col.forEach(System.out::println);
-     * }
-     *
-     * // Will print out "first!" before anything else
-     * </pre>
-     *
-     * @return
-     */
-    @Override
-    CollectionX<T> toConcurrentLazyCollection();
-
-    /**
-     * <pre>
-     * {@code
-     *  Streamable<Integer> repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -> i + 2).toConcurrentLazyStreamable();
-     *
-     *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     * }
-     * </pre>
-     *
-     * @return Streamable that replay this ReactiveSeq, populated lazily and can
-     *         be populated across threads
-     */
-    @Override
-    public Streamable<T> toConcurrentLazyStreamable();
 
     /*
      * Potentially efficient Sequence reversal. Is efficient if

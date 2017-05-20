@@ -426,7 +426,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Convertable#toOptional()
+     * @see com.aol.cyclops2.types.Convertable#optional()
      */
     @Override
     default Optional<PT> toOptional() {

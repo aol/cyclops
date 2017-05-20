@@ -2698,10 +2698,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /* Optional empty, if empty Stream. Otherwise collects to a List
      *	@return this Stream as an Optional
-     * @see cyclops2.reactiveStream.ReactiveSeq#toOptional()
+     * @see cyclops2.reactiveStream.ReactiveSeq#optional()
 
     @Override
-    default Optional<ListX<U>> toOptional() {
+    default Optional<ListX<U>> optional() {
         return Optional.of(block())
                        .flatMap(list -> list.size() == 0 ? Optional.<ListX<U>> empty() : Optional.of(list));
     }
@@ -2846,13 +2846,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return collect(Collectors.toList());
     }
 
-    /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#toCollection(java.util.function.Supplier)
-     */
-    @Override
-    default <C extends Collection<U>> C toCollection(final Supplier<C> collectionFactory) {
-        return collect(Collectors.toCollection(collectionFactory));
-    }
+
 
     /*
      * @see cyclops2.reactiveStream.ReactiveSeq#distinct(java.util.function.Function)
@@ -3046,13 +3040,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
 
-    /*
-         * @see cyclops2.reactiveStream.ReactiveSeq#toStream()
-         */
-    @Override
-    default <U> Stream<U> toStream() {
-        return (Stream<U>) stream();
-    }
 
     /*
      * @see cyclops2.reactiveStream.ReactiveSeq#startsWith(java.lang.Iterable)
@@ -3144,32 +3131,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                      .flatMapStream(fn));
     }
 
-    /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#toLazyCollection()
-     */
-    @Override
-    default CollectionX<U> toLazyCollection() {
-        return ReactiveSeq.oneShotStream(stream())
-                          .toLazyCollection();
-    }
-
-    /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#toConcurrentLazyCollection()
-     */
-    @Override
-    default CollectionX<U> toConcurrentLazyCollection() {
-        return ReactiveSeq.oneShotStream(stream())
-                          .toConcurrentLazyCollection();
-    }
-
-    /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#toConcurrentLazyStreamable()
-     */
-    @Override
-    default Streamable<U> toConcurrentLazyStreamable() {
-        return ReactiveSeq.oneShotStream(stream())
-                          .toConcurrentLazyStreamable();
-    }
 
 
     /*

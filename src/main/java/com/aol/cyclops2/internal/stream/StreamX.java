@@ -136,7 +136,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     public Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return new Tuple2(
-                Tuple2.v1.to().toOptional()
+                Tuple2.v1.to().optional()
                         .flatMap(l -> l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty()),
                 Tuple2.v2);
     }

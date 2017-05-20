@@ -80,7 +80,7 @@ public interface Traversable<T> extends Publisher<T>,
      * {@code 
      *  ReactiveSeq.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .toListX()
+                   .listX()
                    
      *  //ListX(3,4) 
      * }</pre>
@@ -102,7 +102,7 @@ public interface Traversable<T> extends Publisher<T>,
      * {@code
      *  ReactiveSeq.of(1,1,2,3)
                   .combine(Monoids.intMult,(a, b)->a.equals(b))
-                  .toListX()
+                  .listX()
 
      *  //ListX(1)
      * }</pre>

@@ -75,7 +75,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     */
     public static QueueX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                          .toQueueX();
+                          .queueX();
     }
 
     /**
@@ -89,7 +89,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     public static QueueX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .toQueueX();
+                          .queueX();
     }
 
     /**
@@ -109,7 +109,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     static <U, T> QueueX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .toQueueX();
+                          .queueX();
     }
 
     /**
@@ -123,7 +123,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .toQueueX();
+                          .queueX();
     }
     /**
      * Generate a QueueX from the provided value up to the provided limit number of times
@@ -136,7 +136,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                          .toQueueX();
+                          .queueX();
     }
     /**
      * Create a QueueX by iterative application of a function to an initial element up to the supplied limit number of times
@@ -149,7 +149,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     public static <T> QueueX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .toQueueX();
+                          .queueX();
 
     }
 
@@ -189,7 +189,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     public static <T> QueueX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                          .toQueueX();
+                          .queueX();
     }
 
     public static <T> QueueX<T> fromIterable(final Iterable<T> it) {
@@ -349,7 +349,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * {@code 
      *  QueueX.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .toListX()
+                   .listX()
                    
      *  //ListX(3,4) 
      * }</pre>

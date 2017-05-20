@@ -272,7 +272,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     @Override
     default MapX<K, V> filter(final Predicate<? super Tuple2<K, V>> fn) {
         return stream().filter(fn).to()
-                       .toMapX(t -> t.v1, t -> t.v2);
+                       .mapX(t -> t.v1, t -> t.v2);
     }
 
     /* (non-Javadoc)
@@ -430,7 +430,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     default <T> ListX<T> toListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return ListX.narrow(stream().map(fn).to()
-                                    .toListX());
+                                    .listX());
     }
 
     /**
@@ -441,7 +441,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     default <T> SetX<T> toSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return SetX.narrow(stream().map(fn).to()
-                                   .toSetX());
+                                   .setX());
     }
 
     /**
@@ -452,7 +452,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     default <T> SortedSetX<T> toSortedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return SortedSetX.narrow(stream().map(fn).to()
-                                         .toSortedSetX());
+                                         .sortedSetX());
     }
 
     /**
@@ -463,7 +463,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     default <T> QueueX<T> toQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return QueueX.narrow(stream().map(fn).to()
-                                     .toQueueX());
+                                     .queueX());
     }
 
     /**
@@ -474,7 +474,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     default <T> DequeX<T> toDequeX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return DequeX.narrow(stream().map(fn).to()
-                                     .toDequeX());
+                                     .dequeX());
     }
 
 }

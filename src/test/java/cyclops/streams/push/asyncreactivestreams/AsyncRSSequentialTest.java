@@ -129,7 +129,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
 
     @Test
     public void testCycleAsync() {
-      //  of(1, 2).collectStream(CyclopsCollectors.toListX())
+      //  of(1, 2).collectStream(CyclopsCollectors.listX())
         //        .flatMapI(i->i.cycle(3)).printOut();
 
        // of(1, 2).cycle().limit(6).forEach(n->System.out.println("Next " + n));
@@ -264,11 +264,11 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Test
     public void skipLimitDuplicateLimitSkip() {
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup = of(1, 2, 3).triplicate();
-        Optional<Integer> head1 = dup.v1.limit(1).toOptional().flatMap(l -> {
+        Optional<Integer> head1 = dup.v1.limit(1).to().optional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup2 = dup.v2.skip(1).triplicate();
-        Optional<Integer> head2 = dup2.v1.limit(1).toOptional().flatMap(l -> {
+        Optional<Integer> head2 = dup2.v1.limit(1).to().optional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
        assertThat(dup2.v2.skip(1).toListX(),equalTo(ListX.of(3)));
@@ -279,8 +279,8 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
 
     @Test
     public void splitThenSplit(){
-        assertThat(of(1,2,3).toOptional(),equalTo(Optional.of(ListX.of(1,2,3))));
-       // System.out.println(of(1, 2, 3).splitAtHead().v2.toListX());
+        assertThat(of(1,2,3).to().optional(),equalTo(Optional.of(ListX.of(1,2,3))));
+       // System.out.println(of(1, 2, 3).splitAtHead().v2.listX());
         System.out.println("split " + of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toListX());
         assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
     }

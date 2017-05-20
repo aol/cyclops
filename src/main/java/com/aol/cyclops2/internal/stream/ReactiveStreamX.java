@@ -9,7 +9,6 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.async.QueueFactories;
 import cyclops.collections.immutable.VectorX;
-import cyclops.companion.CyclopsCollectors;
 import cyclops.companion.Streams;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.QueueFactory;
@@ -1266,7 +1265,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return new Tuple2(
-                Tuple2.v1.to().toOptional()
+                Tuple2.v1.to().optional()
                         .flatMap(l -> {
                             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
                         }),

@@ -345,7 +345,7 @@ public class ExtensionOperatorsTest {
 	@Test
 	public void streamable(){
 		Streamable<Integer> repeat = Spouts.of(1,2,3,4,5,6)
-												.map(i->i*2)
+												.map(i->i*2).to()
 												.toStreamable();
 		
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));

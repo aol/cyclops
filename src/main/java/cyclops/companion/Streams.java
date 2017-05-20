@@ -254,7 +254,7 @@ public class Streams {
               (a,b) -> Stream.<Integer>of(a+b),
               (a,b,c) ->a+b+c<10,
               Tuple::tuple)
-                .toListX();
+                .listX();
      * }
      * </pre>
      *

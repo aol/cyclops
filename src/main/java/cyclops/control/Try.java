@@ -1215,7 +1215,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return Optional of current value
-         * @see com.aol.cyclops2.trycatch.Try#toOptional()
+         * @see com.aol.cyclops2.trycatch.Try#optional()
          */
         @Override
         public Optional<T> toOptional() {
@@ -1500,7 +1500,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /* 
          *	@return Optional.empty()
-         * @see com.aol.cyclops2.trycatch.Try#toOptional()
+         * @see com.aol.cyclops2.trycatch.Try#optional()
          */
         @Override
         public Optional<T> toOptional() {

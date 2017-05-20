@@ -42,23 +42,23 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
     /**
     @Override
-    default DequeX<T> toDequeX() {
-        return ConvertableSequence.super.toDequeX().materialize();
+    default DequeX<T> dequeX() {
+        return ConvertableSequence.super.dequeX().materialize();
     }
 
     @Override
-    default QueueX<T> toQueueX() {
-        return ConvertableSequence.super.toQueueX().materialize();
+    default QueueX<T> queueX() {
+        return ConvertableSequence.super.queueX().materialize();
     }
 
     @Override
-    default SetX<T> toSetX() {
-        return ConvertableSequence.super.toSetX().materialize();
+    default SetX<T> setX() {
+        return ConvertableSequence.super.setX().materialize();
     }
 
     @Override
-    default ListX<T> toListX() {
-        return ConvertableSequence.super.toListX().materialize();
+    default ListX<T> listX() {
+        return ConvertableSequence.super.listX().materialize();
     }
 
     @Override

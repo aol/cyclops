@@ -46,7 +46,7 @@ public class PushableStreamTest {
         
         PersistentSetX.of(1,2,3)
              .flatMapP(i->Flux.just(i,i*10))
-             .toPVectorX();
+             .to().vectorX();
         
         /**
         Pipes<String, Integer> bus = Pipes.of();

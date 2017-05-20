@@ -60,9 +60,9 @@ public class PStackXTest extends CollectionXTestsWithNulls{
 				.plus(5)
 				.map(i -> "connect to Akka, RxJava and more with reactive-streams" + i));
 	    
-	   PersistentSetX<String> setX =  seq.toFutureStream()
+	   PersistentSetX<String> setX =  seq.to().futureStream()
 	                                   .map(data->"fan out across threads with futureStreams" + data)
-	                                   .toPSetX();
+	                                   .to().persistentSetX();
 	    
 	                        
 	                             

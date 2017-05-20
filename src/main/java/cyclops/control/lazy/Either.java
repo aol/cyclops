@@ -346,7 +346,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      */
     public static <LT1, PT> Either<ListX<LT1>,ListX<PT>> sequenceRight(final CollectionX<Either<LT1, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(Either::isRight).map(AnyM::fromEither).to().toListX(),Witness.either.INSTANCE)
+        return AnyM.sequence(xors.stream().filter(Either::isRight).map(AnyM::fromEither).to().listX(),Witness.either.INSTANCE)
                 .to(Witness::either);
     }
     public static <LT1, PT> Either<ListX<LT1>,ListX<PT>> sequenceLeft(final CollectionX<Either<LT1, PT>> xors) {
@@ -354,7 +354,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         Either<ListX<PT>,ListX<LT1>> res = AnyM.sequence(xors.stream()
                                  .filter(Either::isRight)
                                  .map(i->AnyM.fromEither(i.swap())).to()
-                                 .toListX(),
+                                 .listX(),
                                 Witness.either.INSTANCE)
                     .to(Witness::either);
         return res.swap();
@@ -703,7 +703,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      * 
-     * @see com.aol.cyclops2.types.Convertable#toOptional()
+     * @see com.aol.cyclops2.types.Convertable#optional()
      */
     @Override
     default Optional<RT> toOptional() {

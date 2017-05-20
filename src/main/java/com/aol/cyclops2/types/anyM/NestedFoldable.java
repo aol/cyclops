@@ -7,6 +7,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.*;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.stream.ConvertableSequence;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
@@ -429,69 +430,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     default AnyM<W,Boolean> endsWith(final Stream<T> stream) {
         return nestedFoldables().map(s -> s.endsWith(stream));
     }
-
-    /**
-     * Lazily converts this NestedFoldable into a Collection. This does not trigger
-     * the Stream. E.g. Collection is not thread safe on the first iteration.
-     * 
-     * <pre>
-     * {@code
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
-     *                                       .peek(System.out::println)
-     *                                       .toLazyCollection();
-     * 
-     *  col.forEach(System.out::println);
-     * }
-     * 
-     * // Will print out &quot;first!&quot; before anything else
-     * </pre>
-     * 
-     * @return
-     */
-    default AnyM<W,CollectionX<T>> toLazyCollection() {
-        return nestedFoldables().map(s -> s.toLazyCollection());
-    }
-
-    /**
-     * Lazily converts this SequenceM into a Collection. This does not trigger
-     * the Stream. E.g.
-     * 
-     * <pre>
-     * {@code
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
-     *                                       .peek(System.out::println)
-     *                                       .toConcurrentLazyCollection();
-     * 
-     *  col.forEach(System.out::println);
-     * }
-     * 
-     * // Will print out &quot;first!&quot; before anything else
-     * </pre>
-     * 
-     * @return
-     */
-    default AnyM<W,CollectionX<T>> toConcurrentLazyCollection() {
-        return nestedFoldables().map(s -> s.toConcurrentLazyCollection());
-    }
-
-    /**
-     * <pre>
-     * {@code
-     *  Streamable<Integer> repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6)
-     *                                          .map(i -> i + 2)
-     *                                          .toConcurrentLazyStreamable();
-     * 
-     *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     * }
-     * </pre>
-     * 
-     * @return Streamable that replay this SequenceM, populated lazily and can
-     *         be populated across threads
-     */
-    default AnyM<W,Streamable<T>>  toConcurrentLazyStreamable() {
-        return nestedFoldables().map(s -> s.toConcurrentLazyStreamable());
-
+    default AnyM<W,ConvertableSequence<T>> to() {
+        return nestedFoldables().map(s -> s.to());
     }
 
     /**

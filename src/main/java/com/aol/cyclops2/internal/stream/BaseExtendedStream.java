@@ -188,16 +188,6 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return collect(Collectors.toList());
     }
 
-    @Override
-    public final <C extends Collection<T>> C toCollection(final Supplier<C> collectionFactory) {
-
-        return collect(Collectors.toCollection(collectionFactory));
-    }
-
-    @Override
-    public final <T> Stream<T> toStream() {
-        return (Stream<T>) this.unwrapStream();
-    }
 
     @Override
     public final ReactiveSeq<T> stream() {
@@ -316,25 +306,9 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
 
-    @Override
-    public CollectionX<T> toLazyCollection() {
-        return Streams.toLazyCollection(this);
-    }
 
-    @Override
-    public CollectionX<T> toConcurrentLazyCollection() {
-        return Streams.toConcurrentLazyCollection(this);
-    }
 
-    public Streamable<T> toLazyStreamable() {
-        return Streams.toLazyStreamable(this);
-    }
 
-    @Override
-    public Streamable<T> toConcurrentLazyStreamable() {
-        return Streams.toConcurrentLazyStreamable(this);
-
-    }
 
 
     @Override

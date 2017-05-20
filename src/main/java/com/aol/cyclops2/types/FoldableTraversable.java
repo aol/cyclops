@@ -28,15 +28,13 @@ public interface FoldableTraversable<T> extends
                                                 ExtendedTraversable<T>{
 
 
-    default ConvertableSequence<T> to(){
-        return new ConvertableSequence<>(this);
-    }
+
 
     default ListX<T> toListX(){
-        return to().toListX();
+        return to().listX();
     }
     default SetX<T> toSetX(){
-        return to().toSetX();
+        return to().setX();
     }
     /**
      * Perform an async fold on the provided executor

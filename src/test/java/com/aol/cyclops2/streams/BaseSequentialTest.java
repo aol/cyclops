@@ -197,11 +197,11 @@ public class BaseSequentialTest {
     @Test
     public void skipLimitDuplicateLimitSkip() {
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = of(1, 2, 3).triplicate();
-        Optional<Integer> head1 = dup.v1.limit(1).toOptional().flatMap(l -> {
+        Optional<Integer> head1 = dup.v1.limit(1).to().optional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup2 = dup.v2.skip(1).triplicate();
-        Optional<Integer> head2 = dup2.v1.limit(1).toOptional().flatMap(l -> {
+        Optional<Integer> head2 = dup2.v1.limit(1).to().optional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
         assertThat(dup2.v2.skip(1).toListX(), equalTo(ListX.of(3)));
@@ -212,8 +212,8 @@ public class BaseSequentialTest {
 
     @Test
     public void splitThenSplit() {
-        assertThat(of(1, 2, 3).toOptional(), equalTo(Optional.of(ListX.of(1, 2, 3))));
-        // System.out.println(of(1, 2, 3).splitAtHead().v2.toListX());
+        assertThat(of(1, 2, 3).to().optional(), equalTo(Optional.of(ListX.of(1, 2, 3))));
+        // System.out.println(of(1, 2, 3).splitAtHead().v2.listX());
         System.out.println("split " + of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toListX());
         assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
     }
@@ -638,26 +638,27 @@ public class BaseSequentialTest {
         assertThat(of().takeWhile(p -> true).toList(), equalTo(Arrays.asList()));
     }
 
+
     @Test
-    public void presentConvert() {
+    public void presentConvert(){
 
-        assertTrue(of(1).toOptional().isPresent());
-        assertTrue(of(1).toListX().size() > 0);
-        assertTrue(of(1).toDequeX().size() > 0);
-        assertTrue(of(1).toPStackX().size() > 0);
-        assertTrue(of(1).toQueueX().size() > 0);
-        assertTrue(of(1).toPVectorX().size() > 0);
-        assertTrue(of(1).toPQueueX().size() > 0);
-        assertTrue(of(1).toSetX().size() > 0);
-        assertTrue(of(1).toSortedSetX().size() > 0);
-        assertTrue(of(1).toPOrderedSetX().size() > 0);
-        assertTrue(of(1).toPBagX().size() > 0);
-        assertTrue(of(1).toPMapX(t -> t, t -> t).size() > 0);
-        assertTrue(of(1).toMapX(t -> t, t -> t).size() > 0);
+        assertTrue(of(1).to().optional().isPresent());
+        assertTrue(of(1).toListX().size()>0);
+        assertTrue(of(1).to().dequeX().size()>0);
+        assertTrue(of(1).to().linkedListX().size()>0);
+        assertTrue(of(1).to().queueX().size()>0);
+        assertTrue(of(1).to().vectorX().size()>0);
+        assertTrue(of(1).to().persistentQueueX().size()>0);
+        assertTrue(of(1).toSetX().size()>0);
+        assertTrue(of(1).to().sortedSetX().size()>0);
+        assertTrue(of(1).to().orderedSetX().size()>0);
+        assertTrue(of(1).to().bagX().size()>0);
+        assertTrue(of(1).to().persistentMapX(t->t, t->t).size()>0);
+        assertTrue(of(1).to().toMapX(t->t,t->t).size()>0);
 
-        assertTrue(of(1).toSet().size() > 0);
-        assertTrue(of(1).toList().size() > 0);
-        assertTrue(of(1).toStreamable().size() > 0);
+        assertTrue(of(1).toSet().size()>0);
+        assertTrue(of(1).toList().size()>0);
+        assertTrue(of(1).to().toStreamable().size()>0);
 
 
     }
@@ -665,33 +666,33 @@ public class BaseSequentialTest {
     @Test
     public void optionalConvert() {
         for (int i = 0; i < 10; i++) {
-            assertThat(of(1, 2, 3).toOptional(), equalTo(Optional.of(ListX.of(1, 2, 3))));
+            assertThat(of(1, 2, 3).to().optional(), equalTo(Optional.of(ListX.of(1, 2, 3))));
         }
     }
 
     @Test
     public void presentConvert2() {
 
-        assertTrue(of(1, 2).toOptional().isPresent());
-        Optional<ListX<Integer>> opt = of(1, 2).toOptional();
+        assertTrue(of(1, 2).to().optional().isPresent());
+        Optional<ListX<Integer>> opt = of(1, 2).to().optional();
         assertThat(opt, equalTo(Optional.of(ListX.of(1, 2))));
 
         assertTrue(of(1, 2).toListX().size() == 2);
-        assertTrue(of(1, 2).toDequeX().size() == 2);
-        assertTrue(of(1, 2).toPStackX().size() == 2);
-        assertTrue(of(1, 2).toQueueX().size() == 2);
-        assertTrue(of(1, 2).toPVectorX().size() == 2);
-        assertTrue(of(1, 2).toPQueueX().size() == 2);
+        assertTrue(of(1, 2).to().dequeX().size() == 2);
+        assertTrue(of(1, 2).to().linkedListX().size() == 2);
+        assertTrue(of(1, 2).to().queueX().size() == 2);
+        assertTrue(of(1, 2).to().vectorX().size() == 2);
+        assertTrue(of(1, 2).to().persistentQueueX().size() == 2);
         assertTrue(of(1, 2).toSetX().size() == 2);
-        assertTrue(of(1, 2).toSortedSetX().size() == 2);
-        assertTrue(of(1, 2).toPOrderedSetX().size() == 2);
-        assertTrue(of(1, 2).toPBagX().size() == 2);
-        assertTrue(of(1, 2).toPMapX(t -> t, t -> t).size() == 2);
-        assertTrue(of(1, 2).toMapX(t -> t, t -> t).size() == 2);
+        assertTrue(of(1, 2).to().sortedSetX().size() == 2);
+        assertTrue(of(1, 2).to().orderedSetX().size() == 2);
+        assertTrue(of(1, 2).to().bagX().size() == 2);
+        assertTrue(of(1, 2).to().persistentMapX(t -> t, t -> t).size() == 2);
+        assertTrue(of(1, 2).to().toMapX(t -> t, t -> t).size() == 2);
 
         assertTrue(of(1, 2).toSet().size() == 2);
         assertTrue(of(1, 2).toList().size() == 2);
-        assertTrue(of(1, 2).toStreamable().size() == 2);
+        assertTrue(of(1, 2).to().toStreamable().size() == 2);
 
 
     }

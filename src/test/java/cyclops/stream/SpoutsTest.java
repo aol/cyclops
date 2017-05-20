@@ -218,9 +218,9 @@ public class SpoutsTest {
         }
 
         //    assertThat(Monoids.<Integer>amb()
-       //         .apply(nextAsync(),Spouts.of(100,200,300)).toListX(),equalTo(ListX.of(100,200,300)));
-     //   assertThat(Monoids.<Integer>amb().reduce(Stream.of((nextAsync()),Spouts.of(100,200,300))).toListX(),equalTo(ListX.of(100,200,300)));
-       // assertThat(Spouts.amb(ListX.of(nextAsync(),Spouts.of(100,200,300))).toListX(),equalTo(ListX.of(100,200,300)));
+       //         .apply(nextAsync(),Spouts.of(100,200,300)).listX(),equalTo(ListX.of(100,200,300)));
+     //   assertThat(Monoids.<Integer>amb().reduce(Stream.of((nextAsync()),Spouts.of(100,200,300))).listX(),equalTo(ListX.of(100,200,300)));
+       // assertThat(Spouts.amb(ListX.of(nextAsync(),Spouts.of(100,200,300))).listX(),equalTo(ListX.of(100,200,300)));
     }
 
     @Test
@@ -377,9 +377,9 @@ public class SpoutsTest {
 **/
  /**
         assertThat(Semigroups.<Integer>amb()
-                .apply(Spouts.of(100,200,300),nextAsyncRS()).toListX(),equalTo(ListX.of(100,200,300)));
+                .apply(Spouts.of(100,200,300),nextAsyncRS()).listX(),equalTo(ListX.of(100,200,300)));
         assertThat(Semigroups.<Integer>amb()
-                .apply(nextAsyncRS(),Spouts.of(100,200,300)).toListX(),equalTo(ListX.of(100,200,300)));
+                .apply(nextAsyncRS(),Spouts.of(100,200,300)).listX(),equalTo(ListX.of(100,200,300)));
 **/
     }
     AtomicInteger start= new AtomicInteger(0);
