@@ -276,7 +276,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      */
     public static <LT1,LT2,LT3, PT> Either4<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<PT>> sequence(final CollectionX<Either4<LT1, LT2, LT3, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(Either4::isRight).map(AnyM::fromEither4).toListX(),Witness.either4.INSTANCE)
+        return AnyM.sequence(xors.stream().filter(Either4::isRight).map(AnyM::fromEither4).to().toListX(),Witness.either4.INSTANCE)
                 .to(Witness::either4);
     }
     /**

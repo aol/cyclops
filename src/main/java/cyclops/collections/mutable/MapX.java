@@ -271,7 +271,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     @Override
     default MapX<K, V> filter(final Predicate<? super Tuple2<K, V>> fn) {
-        return stream().filter(fn)
+        return stream().filter(fn).to()
                        .toMapX(t -> t.v1, t -> t.v2);
     }
 
@@ -429,7 +429,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      * @return ListX of transformed values
      */
     default <T> ListX<T> toListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return ListX.narrow(stream().map(fn)
+        return ListX.narrow(stream().map(fn).to()
                                     .toListX());
     }
 
@@ -440,7 +440,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      * @return SetX of transformed values
      */
     default <T> SetX<T> toSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return SetX.narrow(stream().map(fn)
+        return SetX.narrow(stream().map(fn).to()
                                    .toSetX());
     }
 
@@ -451,7 +451,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      * @return SortedSetX of transformed values
      */
     default <T> SortedSetX<T> toSortedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return SortedSetX.narrow(stream().map(fn)
+        return SortedSetX.narrow(stream().map(fn).to()
                                          .toSortedSetX());
     }
 
@@ -462,7 +462,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      * @return QueueX of transformed values
      */
     default <T> QueueX<T> toQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return QueueX.narrow(stream().map(fn)
+        return QueueX.narrow(stream().map(fn).to()
                                      .toQueueX());
     }
 
@@ -473,7 +473,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      * @return DequeX of transformed values
      */
     default <T> DequeX<T> toDequeX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return DequeX.narrow(stream().map(fn)
+        return DequeX.narrow(stream().map(fn).to()
                                      .toDequeX());
     }
 

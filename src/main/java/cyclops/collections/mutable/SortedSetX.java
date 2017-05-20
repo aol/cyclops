@@ -2,6 +2,8 @@ package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySortedSetX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.function.Monoid;
@@ -26,6 +28,8 @@ import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.aol.cyclops2.types.stream.ConvertableSequence.Conversion.LAZY;
 
 public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCollectionX<T>, OnEmptySwitch<T, SortedSet<T>> {
 
@@ -53,6 +57,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     */
     public static SortedSetX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end)
+                          .to()
                           .toSortedSetX();
     }
 
@@ -67,6 +72,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
      */
     public static SortedSetX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end)
+                          .to()
                           .toSortedSetX();
     }
 
@@ -87,6 +93,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
      */
     static <U, T> SortedSetX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
+                          .to()
                           .toSortedSetX();
     }
 
@@ -101,6 +108,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
 
         return ReactiveSeq.generate(s)
                           .limit(limit)
+                          .to()
                           .toSortedSetX();
     }
 
@@ -115,6 +123,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     public static <T> SortedSetX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
+                          .to()
                           .toSortedSetX();
 
     }
@@ -161,6 +170,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
      */
     public static <T> SortedSetX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher)
+                          .to()
                           .toSortedSetX();
     }
 
@@ -285,13 +295,6 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         return (SortedSetX)MutableCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.sequence.traits.ConvertableSequence#toListX()
-     */
-    @Override
-    default SortedSetX<T> toSortedSetX() {
-        return this;
-    }
 
     /**
      * Combine two adjacent elements in a SortedSetX using the supplied BinaryOperator
@@ -576,7 +579,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
 
         return this.stream()
                    .cycle(times)
-                   .toListX();
+                   .to().toListX(LAZY);
     }
 
     /* (non-Javadoc)
@@ -587,7 +590,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
 
         return this.stream()
                    .cycle(m, times)
-                   .toListX();
+                   .to().toListX(LAZY);
     }
 
     /* (non-Javadoc)
@@ -598,7 +601,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
 
         return this.stream()
                    .cycleWhile(predicate)
-                   .toListX();
+                   .to().toListX(LAZY);
     }
 
     /* (non-Javadoc)
@@ -609,7 +612,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
 
         return this.stream()
                    .cycleUntil(predicate)
-                   .toListX();
+                   .to().toListX(LAZY);
     }
 
     /* (non-Javadoc)

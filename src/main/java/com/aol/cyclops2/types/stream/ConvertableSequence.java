@@ -8,8 +8,10 @@ import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
 import cyclops.collections.immutable.*;
 import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
+import lombok.AllArgsConstructor;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -34,102 +36,183 @@ import com.aol.cyclops2.types.futurestream.SimpleReactStream;
  *
  * @param <T> Data types of elements in this ConvertableSequence
  */
-public interface ConvertableSequence<T> extends Iterable<T> {
+@AllArgsConstructor
+public class  ConvertableSequence<T> {
+    Iterable<T> iterable;
 
-    default ReactiveSeq<T> stream() {
-        return ReactiveSeq.fromIterable(this);
+    enum Conversion { MATERIALIZED, LAZY }
+    public ReactiveSeq<T> stream() {
+        return ReactiveSeq.fromIterable(iterable);
     }
 
-    default Seq<T> seq() {
-        return Seq.seq(this);
+    public Seq<T> seq() {
+        if(iterable instanceof Seq){
+            return (Seq<T>)iterable;
+        }
+        return Seq.seq(iterable);
     }
 
-    default FutureStream<T> toFutureStream(final LazyReact reactor) {
-        return reactor.fromIterable(this);
+    public FutureStream<T> toFutureStream(final LazyReact reactor) {
+        return reactor.fromIterable(iterable);
     }
 
-    default FutureStream<T> toFutureStream() {
-        return new LazyReact().fromIterable(this);
+    public FutureStream<T> toFutureStream() {
+        return toFutureStream(new LazyReact());
     }
 
-    default SimpleReactStream<T> toSimpleReact(final SimpleReact reactor) {
-        return reactor.fromIterable(this);
+    public SimpleReactStream<T> toSimpleReact(final SimpleReact reactor) {
+
+        return reactor.fromIterable(iterable);
     }
 
-    default SimpleReactStream<T> toSimpleReact() {
-        return new SimpleReact().fromIterable(this);
+    public SimpleReactStream<T> toSimpleReact() {
+        return toSimpleReact(new SimpleReact());
     }
 
-    default Streamable<T> toStreamable() {
-        return stream().toStreamable();
+    public Streamable<T> toStreamable() {
+
+        return Streamable.fromIterable(iterable);
+    }
+    public PersistentQueueX<T> toPersistentQueueX(){
+        return toPersistentQueueX(Conversion.LAZY);
+    }
+    public PersistentQueueX<T> toPersistentQueueX(Conversion c) {
+        PersistentQueueX<T> res = PersistentQueueX.fromIterable(iterable);
+        if(c==Conversion.MATERIALIZED)
+            return res.materialize();
+        return res;
     }
 
-    default DequeX<T> toDequeX() {
-        return DequeX.fromIterable(this);
+    public PersistentSetX<T> toPersistentSetX(){
+        return toPersistentSetX(Conversion.LAZY);
     }
 
-    default QueueX<T> toQueueX() {
-        return QueueX.fromIterable(this);
+    public PersistentSetX<T> toPersistentSetX(Conversion c) {
+        PersistentSetX<T> res = PersistentSetX.fromIterable(iterable);
+        if(c==Conversion.MATERIALIZED)
+            return res.materialize();
+        return res;
     }
 
-    default SetX<T> toSetX() {
-        return SetX.fromIterable(this);
-
+    public OrderedSetX<T> toOrderedSetX(){
+        return toOrderedSetX(Conversion.LAZY);
+    }
+    public OrderedSetX<T> toOrderedSetX(Conversion c) {
+        OrderedSetX<T> res = OrderedSetX.fromIterable(iterable);
+        if(c==Conversion.MATERIALIZED)
+            return res.materialize();
+        return res;
     }
 
-    default SortedSetX<T> toSortedSetX() {
-        return SortedSetX.fromIterable(this);
+    public BagX<T> toBagX(){
+        return toBagX(Conversion.LAZY);
+    }
+    public BagX<T> toBagX(Conversion c) {
+        BagX<T> res = BagX.fromIterable(iterable);
+        if(c==Conversion.MATERIALIZED)
+            return res.materialize();
+        return res;
     }
 
-    default ListX<T> toListX() {
-        return ListX.fromIterable(this);
+    public VectorX<T> toVectorX(){
+        return toVectorX(Conversion.LAZY);
+    }
+    public VectorX<T> toVectorX(Conversion c) {
+        VectorX<T> res = VectorX.fromIterable(iterable);
+        if(c==Conversion.MATERIALIZED)
+            return res.materialize();
+        return res;
     }
 
-    default <K, V> PersistentMapX<K, V> toPMapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
+    public LinkedListX<T> toLinkedListX(){
+        return toLinkedListX(Conversion.LAZY);
+    }
+    public LinkedListX<T> toLinkedListX(Conversion c) {
+        LinkedListX<T> res = LinkedListX.fromIterable(iterable);
+        if(c==Conversion.MATERIALIZED)
+            return res.materialize();
+        return res;
+    }
+
+    public DequeX<T> toDequeX(){
+        return toDequeX(Conversion.LAZY);
+    }
+    public DequeX<T> toDequeX(Conversion c) {
+        DequeX<T> res = DequeX.fromIterable(iterable);
+        if(c==Conversion.MATERIALIZED)
+            return res.materialize();
+        return res;
+    }
+    public SortedSetX<T> toSortedSetX() {
+        return toSortedSetX(Conversion.LAZY);
+    }
+    public SortedSetX<T> toSortedSetX(Conversion c) {
+        SortedSetX<T> res = SortedSetX.fromIterable(iterable);
+        if(c==Conversion.MATERIALIZED)
+            return res.materialize();
+        return res;
+    }
+
+    public SetX<T> toSetX(){
+        return toSetX(Conversion.LAZY);
+    }
+    public SetX<T> toSetX(Conversion c) {
+        SetX<T> res = SetX.fromIterable(iterable);
+        if(c==Conversion.MATERIALIZED)
+            return res.materialize();
+        return res;
+    }
+
+    public ListX<T> toListX(){
+        return toListX(Conversion.LAZY);
+    }
+    public ListX<T> toListX(Conversion c) {
+        ListX<T> res = ListX.fromIterable(iterable);
+        if(c==Conversion.MATERIALIZED)
+            return res.materialize();
+        return res;
+    }
+
+    public QueueX<T> toQueueX(){
+        return toQueueX(Conversion.LAZY);
+    }
+    public QueueX<T> toQueueX(Conversion c) {
+        QueueX<T> res = QueueX.fromIterable(iterable);
+        if(c==Conversion.MATERIALIZED)
+            return res.materialize();
+        return res;
+    }
+
+
+
+    public <K, V> PersistentMapX<K, V> toPersistentMapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
 
         final ReactiveSeq<Tuple2<K, V>> stream = stream().map(t -> Tuple.tuple(keyMapper.apply(t), valueMapper.apply(t)));
         return stream.mapReduce(Reducers.toPMapX());
     }
 
-    default <K, V> MapX<K, V> toMapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
+    public <K, V> MapX<K, V> toMapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
         return MapX.fromMap(stream().toMap(keyMapper, valueMapper));
     }
+    public Maybe<ListX<T>> maybe() {
+        return toValue().toMaybe();
 
-    default LinkedListX<T> toPStackX() {
-        return LinkedListX.fromIterable(this);
-    }
-
-    default VectorX<T> toPVectorX() {
-        return VectorX.fromIterable(this);
-    }
-
-    default PersistentQueueX<T> toPQueueX() {
-        return PersistentQueueX.fromIterable(this);
-    }
-
-    default BagX<T> toPBagX() {
-        return BagX.fromIterable(this);
-    }
-
-    default PersistentSetX<T> toPSetX() {
-        return PersistentSetX.fromIterable(this);
-    }
-
-    default OrderedSetX<T> toPOrderedSetX() {
-        return OrderedSetX.fromIterable(this);
     }
 
 
-    default Optional<ListX<T>> toOptional() {
+    public Optional<ListX<T>> toOptional() {
         final ListX<T> list = toListX();
         if (list.size() == 0)
             return Optional.empty();
         return Optional.of(list);
     }
 
-    default Value<ListX<T>> toValue() {
-        return Eval.later(() -> ListX.fromIterable(Streams.stream(this)
-                                                              .collect(Collectors.toList())));
+    public Value<ListX<T>> toValue() {
+        return Eval.later(() -> toListX());
+    }
+    public Maybe<T> firstValue() {
+        return Eval.later(() -> toListX(Conversion.LAZY)).toMaybe()
+                                       .flatMap(l->l.size()==0? Maybe.none() : Maybe.just(l.firstValue()));
     }
 
 

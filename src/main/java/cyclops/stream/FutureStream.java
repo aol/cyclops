@@ -26,6 +26,7 @@ import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException
 import com.aol.cyclops2.types.FoldableTraversable;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.futurestream.*;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
 import cyclops.async.*;
 import cyclops.async.adapters.Adapter;
@@ -2698,13 +2699,13 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /* Optional empty, if empty Stream. Otherwise collects to a List
      *	@return this Stream as an Optional
      * @see cyclops2.reactiveStream.ReactiveSeq#toOptional()
-     */
+
     @Override
     default Optional<ListX<U>> toOptional() {
         return Optional.of(block())
                        .flatMap(list -> list.size() == 0 ? Optional.<ListX<U>> empty() : Optional.of(list));
     }
-
+*/
     /*
      * <pre>
      * {@code
@@ -3043,18 +3044,11 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                      .scanLeft(monoid));
     }
 
-    /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#toStreamable()
-     */
-    @Override
-    default Streamable<U> toStreamable() {
-        return ReactiveSeq.oneShotStream(stream())
-                          .toStreamable();
-    }
+
 
     /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#toStream()
-     */
+         * @see cyclops2.reactiveStream.ReactiveSeq#toStream()
+         */
     @Override
     default <U> Stream<U> toStream() {
         return (Stream<U>) stream();

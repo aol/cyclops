@@ -169,7 +169,7 @@ public class SimpleReact implements ReactBuilder {
     public <T> SimpleReactStream<T> fromPublisher(final Publisher<? extends T> publisher) {
         Objects.requireNonNull(publisher);
         Publisher<T> narrowed = (Publisher<T>)publisher;
-        return Spouts.from(narrowed)
+        return Spouts.from(narrowed).to()
                      .toSimpleReact(this);
     }
 
@@ -351,6 +351,9 @@ public class SimpleReact implements ReactBuilder {
      */
     @SuppressWarnings("unchecked")
     public <U> SimpleReactStream<U> fromIterable(final Iterable<U> iter) {
+        if(iter instanceof SimpleReactStream){
+            return (SimpleReactStream<U>)iter;
+        }
         return this.from(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iter.iterator(), Spliterator.ORDERED), false));
 
     }

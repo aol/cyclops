@@ -18,6 +18,7 @@ import com.aol.cyclops2.types.*;
 
 
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
 import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
 import cyclops.async.adapters.QueueFactory;
@@ -1115,56 +1116,11 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     ReactiveSeq<T> stream();
 
-
     @Override
-    default DequeX<T> toDequeX() {
-        return FoldableTraversable.super.toDequeX().materialize();
+    default ConvertableSequence<T> to() {
+        return new ConvertableSequence<>(traversable());
     }
 
-    @Override
-    default QueueX<T> toQueueX() {
-        return FoldableTraversable.super.toQueueX().materialize();
-    }
-
-    @Override
-    default SetX<T> toSetX() {
-        return FoldableTraversable.super.toSetX().materialize();
-    }
-
-    @Override
-    default ListX<T> toListX() {
-        return ListX.fromIterable(traversable());
-    }
-
-    @Override
-    default LinkedListX<T> toPStackX() {
-        return LinkedListX.fromIterable(traversable());
-    }
-
-    @Override
-    default VectorX<T> toPVectorX() {
-            return VectorX.fromIterable(traversable());
-    }
-
-    @Override
-    default PersistentQueueX<T> toPQueueX() {
-        return PersistentQueueX.fromIterable(traversable());
-    }
-    @Override
-    default BagX<T> toPBagX() {
-        return BagX.fromIterable((traversable()));
-    }
-
-    @Override
-    default PersistentSetX<T> toPSetX() {
-        return PersistentSetX.fromIterable(traversable());
-    }
-
-    @Override
-    default OrderedSetX<T> toPOrderedSetX() {
-        return OrderedSetX.fromIterable(traversable());
-    }
-    
     default AnyMSeq<W,T> mergeP(final QueueFactory<T> factory, final Publisher<T>... publishers) {
     	ReactiveSeq<T> reactiveSeq = stream().mergeP(factory, publishers);
     	return (AnyMSeq<W,T>) reactiveSeq.anyM();
@@ -1175,34 +1131,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
 
-    @Override
-    default FutureStream<T> toFutureStream(final LazyReact reactor) {
-        return reactor.fromIterable(traversable());
-    }
 
-    @Override
-    default FutureStream<T> toFutureStream() {
-        return FutureStream.builder().fromIterable(traversable());
-    }
-
-    @Override
-    default SimpleReactStream<T> toSimpleReact(final SimpleReact reactor) {
-        return reactor.fromIterable(traversable());
-    }
-
-    @Override
-    default SimpleReactStream<T> toSimpleReact() {
-        return new SimpleReact().fromIterable(traversable());
-    }
-
-    @Override
-    default Streamable<T> toStreamable() {
-        return Streamable.fromIterable(traversable());
-    }
-
-    @Override
-    default SortedSetX<T> toSortedSetX() {
-        return SortedSetX.fromIterable(traversable());
-    }
 
 }

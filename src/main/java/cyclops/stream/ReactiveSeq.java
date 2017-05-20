@@ -109,12 +109,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         OnEmptySwitch<T, Stream<T>>,
                                         FoldableTraversable<T>,
                                         Unit<T>,
-                                        ConvertableSequence<T>,
+
                                         Higher<ReactiveSeq.µ,T> {
 
 
     public static class µ {
     }
+
+
 
 
 
@@ -2389,23 +2391,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     public <T> T foldRightMapToType(Reducer<T> reducer);
 
-    /**
-     * <pre>
-     * {@code
-     * 	Streamable<Integer> repeat = ReactiveSeq.of(1,2,3,4,5,6)
-     * 												.map(i->i*2)
-     * 												.toStreamable();
-     *
-     * 		repeat.reactiveStream().toList(); //Arrays.asList(2,4,6,8,10,12));
-     * 		repeat.reactiveStream().toList() //Arrays.asList(2,4,6,8,10,12));
-     *
-     * }
-     *
-     * @return Lazily Convert to a repeatable Streamable
-     *
-     */
-    @Override
-    public Streamable<T> toStreamable();
 
     /**
      * @return This Stream converted to a set

@@ -212,7 +212,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
      */
     public static <LT1,LT2, PT> Either3<ListX<LT1>,ListX<LT2>,ListX<PT>> sequence(final CollectionX<Either3<LT1, LT2, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(Either3::isRight).map(AnyM::fromEither3).toListX(),Witness.either3.INSTANCE)
+        return AnyM.sequence(xors.stream().filter(Either3::isRight).map(AnyM::fromEither3).to().toListX(),Witness.either3.INSTANCE)
                 .to(Witness::either3);
     }
     /**

@@ -82,6 +82,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      */
     public static DequeX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end)
+                          .to()
                           .toDequeX();
     }
 
@@ -96,6 +97,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      */
     public static DequeX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end)
+                          .to()
                           .toDequeX();
     }
 
@@ -116,6 +118,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      */
     static <U, T> DequeX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
+                          .to()
                           .toDequeX();
     }
     /**
@@ -129,6 +132,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit)
+                          .to()
                           .toDequeX();
     }
 
@@ -143,6 +147,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit)
+                          .to()
                           .toDequeX();
     }
 
@@ -157,6 +162,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static <T> DequeX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
+                          .to()
                           .toDequeX();
 
     }
@@ -234,6 +240,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      */
     public static <T> DequeX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher)
+                          .to()
                           .toDequeX();
     }
 
@@ -350,13 +357,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         
         return (DequeX)MutableCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.sequence.traits.ConvertableSequence#toListX()
-     */
-    @Override
-    default DequeX<T> toDequeX() {
-        return this;
-    }
+
 
     /**
      * @return The collector for this DequeX

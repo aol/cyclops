@@ -43,9 +43,8 @@ public interface Streamable<T> extends  To<Streamable<T>>,
                                         ToStream<T>,
                                         FoldableTraversable<T>,
                                         CyclopsCollectable<T>,
-                                        ConvertableSequence<T>,
-        Transformable<T>,
-        Filters<T>,
+                                        Transformable<T>,
+                                        Filters<T>,
                                         Traversable<T>,
                                         Unit<T>,
                                         Zippable<T> {
@@ -806,12 +805,12 @@ public interface Streamable<T> extends  To<Streamable<T>>,
      * 
      * </pre>
      * @return this Streamable converted to an Optional List
-     */
+
     @Override
     default Optional<ListX<T>> toOptional() {
         return reactiveSeq().toOptional();
     }
-
+     */
 
     /**
      * Convert to a Stream with the values repeated specified times

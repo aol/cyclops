@@ -290,7 +290,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      */
     public static <LT1,LT2,LT3,LT4,PT> Either5<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<LT4>,ListX<PT>> sequence(final CollectionX<Either5<LT1, LT2, LT3, LT4, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(Either5::isRight).map(AnyM::fromEither5).toListX(),Witness.either5.INSTANCE)
+        return AnyM.sequence(xors.stream().filter(Either5::isRight).map(AnyM::fromEither5).to().toListX(),Witness.either5.INSTANCE)
                 .to(Witness::either5);
     }
     /**

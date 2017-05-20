@@ -355,7 +355,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
    
     public static <T> ListX<T> fromStreamS(Stream<T> s){
-        return ReactiveSeq.fromStream(s).toListX();
+        return ReactiveSeq.fromStream(s).to().toListX();
     }
    
 
@@ -369,7 +369,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @return Range ListX
      */
     public static ListX<Integer> range(final int start, final int end) {
-        return ReactiveSeq.range(start, end)
+        return ReactiveSeq.range(start, end).to()
                           .toListX();
     }
 
@@ -383,7 +383,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @return Range ListX
      */
     public static ListX<Long> rangeLong(final long start, final long end) {
-        return ReactiveSeq.rangeLong(start, end)
+        return ReactiveSeq.rangeLong(start, end).to()
                           .toListX();
     }
 
@@ -404,6 +404,7 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     static <U, T> ListX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
+                          .to()
                           .toListX();
     }
     /**
@@ -417,6 +418,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit)
+                          .to()
                           .toListX();
     }
 
@@ -431,6 +433,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit)
+                          .to()
                           .toListX();
     }
 
@@ -445,6 +448,7 @@ public interface ListX<T> extends To<ListX<T>>,
     public static <T> ListX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
+                          .to()
                           .toListX();
 
     }
@@ -522,14 +526,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX)MutableCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.sequence.traits.ConvertableSequence#toListX()
-     */
-    @Override
-    default ListX<T> toListX() {
-        return this;
-    }
+
 
     /**
      * @return A JDK 8 Collector for converting Streams into ListX instances
@@ -601,7 +598,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @return ListX
      */
     public static <T> ListX<T> fromPublisher(final Publisher<? extends T> publisher) {
-        return Spouts.from((Publisher<T>) publisher)
+        return Spouts.from((Publisher<T>) publisher).to()
                           .toListX();
     }
 

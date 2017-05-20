@@ -411,7 +411,7 @@ public class LazyReact implements ReactBuilder {
     public <T> FutureStream<T> fromPublisher(final Publisher<? extends T> publisher) {
         Objects.requireNonNull(publisher);
         Publisher<T> narrowed = (Publisher<T>)publisher;
-        return Spouts.from(narrowed).toFutureStream(this);
+        return Spouts.from(narrowed).to().toFutureStream(this);
     }
 
     /* 
@@ -614,6 +614,9 @@ public class LazyReact implements ReactBuilder {
      * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#ofIterable(java.lang.Iterable)
      */
     public <U> FutureStream<U> fromIterable(final Iterable<U> iter) {
+        if(iter instanceof FutureStream){
+            return (FutureStream<U>)iter;
+        }
         final ReactiveSeq<U> seq = iter instanceof List ? ReactiveSeq.fromList((List) iter) : ReactiveSeq.fromIterable(iter);
         return this.fromStream(seq);
     }

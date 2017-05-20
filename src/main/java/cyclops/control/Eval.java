@@ -277,7 +277,7 @@ public interface Eval<T> extends    To<Eval<T>>,
      * @return  Eval with a  list of values
      */
     public static <T> Eval<ListX<T>> sequence(final CollectionX<Eval<T>> evals) {
-        return sequence(evals.stream()).map(s -> s.toListX());
+        return sequence(evals.stream()).map(s -> s.to().toListX());
 
     }
 

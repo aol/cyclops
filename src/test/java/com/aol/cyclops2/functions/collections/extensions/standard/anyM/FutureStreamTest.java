@@ -10,6 +10,7 @@ import java.util.Date;
 
 import com.aol.cyclops2.react.ThreadPools;
 import cyclops.async.LazyReact;
+import cyclops.control.Maybe;
 import cyclops.monads.Witness;
 import org.junit.Test;
 import java.util.stream.Stream;

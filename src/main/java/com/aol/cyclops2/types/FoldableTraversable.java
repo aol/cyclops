@@ -1,5 +1,7 @@
 package com.aol.cyclops2.types;
 
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
 import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.stream.ReactiveSeq;
@@ -23,12 +25,19 @@ import java.util.function.Supplier;
 public interface FoldableTraversable<T> extends
                                                 Traversable<T>,
                                                 CyclopsCollectable<T>,
-                                                ConvertableSequence<T>,
                                                 ExtendedTraversable<T>{
 
 
+    default ConvertableSequence<T> to(){
+        return new ConvertableSequence<>(this);
+    }
 
-
+    default ListX<T> toListX(){
+        return to().toListX();
+    }
+    default SetX<T> toSetX(){
+        return to().toSetX();
+    }
     /**
      * Perform an async fold on the provided executor
      *
@@ -105,7 +114,7 @@ public interface FoldableTraversable<T> extends
 
     @Override
     ReactiveSeq<T> stream();
-    @Override
+
     default Seq<T> seq(){
         return Seq.seq(this);
     }
