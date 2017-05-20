@@ -38,7 +38,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
                                                                     Publisher<T> {
 
     default ConvertableSequence<T> to(){
-        return ()->iterator();
+        return new ConvertableSequence<>(this);
     }
     /**
     @Override

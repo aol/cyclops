@@ -54,6 +54,7 @@ public class ReactiveSeqTest {
     @Test
     public void testCombineMonoid(){
 
+        ReactiveSeq.of(1,2,3).
         assertThat(ReactiveSeq.of(1,1,2,3)
                 .combine(Monoids.intMult,(a, b)->a.equals(b))
                 .findFirst().get()

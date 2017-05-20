@@ -3,7 +3,7 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySortedSetX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops2.types.stream.ConvertableSequence;
-import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
+
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.function.Monoid;
@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.aol.cyclops2.types.stream.ConvertableSequence.Conversion.LAZY;
+
 
 public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCollectionX<T>, OnEmptySwitch<T, SortedSet<T>> {
 

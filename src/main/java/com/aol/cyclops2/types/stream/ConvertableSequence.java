@@ -40,7 +40,7 @@ import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 public class  ConvertableSequence<T> {
     Iterable<T> iterable;
 
-    enum Conversion { MATERIALIZED, LAZY }
+    public static enum Conversion { MATERIALIZED, LAZY }
     public ReactiveSeq<T> stream() {
         return ReactiveSeq.fromIterable(iterable);
     }

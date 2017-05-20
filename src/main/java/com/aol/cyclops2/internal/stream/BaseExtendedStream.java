@@ -175,10 +175,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return reducer.mapReduce(reverse());
     }
 
-    @Override
-    public final Streamable<T> toStreamable() {
-        return Streamable.fromStream(stream());
-    }
+
 
     @Override
     public final Set<T> toSet() {
