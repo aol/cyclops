@@ -1,6 +1,7 @@
 package cyclops.companion;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import cyclops.collections.immutable.*;
 import cyclops.function.Monoid;
@@ -33,7 +34,7 @@ import lombok.experimental.UtilityClass;
  * e.g.
  * <pre>
  * {@code 
- * PersistentQueueX<Integer> q = Reducers.<Integer>toPQueueX()
+ * PersistentQueueX<Integer> q = Reducers.<Integer>toPersistentQueueX()
                                 .mapReduce(Stream.of(1,2,3,4));
  * 
  * }
@@ -59,14 +60,14 @@ public class Reducers {
      * 
      * <pre>
      * {@code 
-     * PersistentQueueX<Integer> q = Reducers.<Integer>toPQueueX()
+     * PersistentQueueX<Integer> q = Reducers.<Integer>toPersistentQueueX()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
      * @return Reducer toNested PersistentQueueX types
      */
-    public static <T> Reducer<PersistentQueueX<T>> toPQueueX() {
+    public static <T> Reducer<PersistentQueueX<T>> toPersistentQueueX() {
         
         return Reducer.<PersistentQueueX<T>> of(PersistentQueueX.empty(), (final PersistentQueueX<T> a) -> b -> a.plusAll(b), (final T x) -> PersistentQueueX.singleton(x));
     }
@@ -74,14 +75,14 @@ public class Reducers {
     /**
      * <pre>
      * {@code 
-     * OrderedSetX<Integer> q = Reducers.<Integer>toPOrderedSetX()
+     * OrderedSetX<Integer> q = Reducers.<Integer>toOrderedSetX()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
      * @return Reducer toNested OrderedSetX
      */
-    public static <T> Reducer<OrderedSetX<T>> toPOrderedSetX() {
+    public static <T> Reducer<OrderedSetX<T>> toOrderedSetX() {
         return Reducer.<OrderedSetX<T>> of(OrderedSetX.<T> empty(), (final OrderedSetX<T> a) -> b -> a.plusAll(b),
                                             (final T x) -> OrderedSetX.singleton(x));
     }
@@ -89,42 +90,42 @@ public class Reducers {
     /**
      * <pre>
      * {@code 
-     * PersistentSetX<Integer> q = Reducers.<Integer>toPSetX()
+     * PersistentSetX<Integer> q = Reducers.<Integer>toPersistentSetX()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
      * @return Reducer for PersistentSetX
      */
-    public static <T> Reducer<PersistentSetX<T>> toPSetX() {
+    public static <T> Reducer<PersistentSetX<T>> toPersistentSetX() {
         return Reducer.<PersistentSetX<T>> of(PersistentSetX.empty(), (final PersistentSetX<T> a) -> b -> a.plusAll(b), (final T x) -> PersistentSetX.singleton(x));
     }
 
     /**
      * <pre>
      * {@code 
-     * LinkedListX<Integer> q = Reducers.<Integer>toPStackX()
+     * LinkedListX<Integer> q = Reducers.<Integer>toLinkedListX()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
      * @return Reducer for LinkedListX
      */
-    public static <T> Reducer<LinkedListX<T>> toPStackX() {
+    public static <T> Reducer<LinkedListX<T>> toLinkedListX() {
         return Reducer.<LinkedListX<T>> of(LinkedListX.empty(), (final LinkedListX<T> a) -> b -> a.plusAll(b), (final T x) -> LinkedListX.singleton(x));
     }
 
     /**
      * <pre>
      * {@code 
-     * VectorX<Integer> q = Reducers.<Integer>toPVectorX()
+     * VectorX<Integer> q = Reducers.<Integer>toVectorX()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
      * @return Reducer for VectorX
      */
-    public static <T> Reducer<VectorX<T>> toPVectorX() {
+    public static <T> Reducer<VectorX<T>> toVectorX() {
         return Reducer.<VectorX<T>> of(VectorX.empty(), (final VectorX<T> a) -> b -> a.plusAll(b), (final T x) -> VectorX.singleton(x));
     }
 
@@ -132,14 +133,14 @@ public class Reducers {
     /**
      * <pre>
      * {@code 
-     * BagX<Integer> q = Reducers.<Integer>toPBagX()
+     * BagX<Integer> q = Reducers.<Integer>toBagX()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
      * @return Reducer for BagX
      */
-    public static <T> Reducer<BagX<T>> toPBagX() {
+    public static <T> Reducer<BagX<T>> toBagX() {
         return Reducer.<BagX<T>> of(BagX.empty(), (final BagX<T> a) -> b -> a.plusAll(b), (final T x) -> BagX.singleton(x));
     }
 

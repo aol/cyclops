@@ -5,6 +5,8 @@ import com.aol.cyclops2.functions.collections.extensions.CollectionXTestsWithNul
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.ListX;
+import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
@@ -14,8 +16,10 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class PStackXTest extends CollectionXTestsWithNulls{

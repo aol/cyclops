@@ -7,7 +7,6 @@ import cyclops.stream.ReactiveSeq;
 import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -129,7 +128,7 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
     }
 
     @Override
-    public <X> LazyListX<X> fromStream(Stream<X> stream) {
+    public <X> LazyListX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyListX<X>((List)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
     }

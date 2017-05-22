@@ -54,6 +54,15 @@ public abstract class AbstractCollectionXTest {
 	int captured=-1;
 
 	static Executor ex = Executors.newFixedThreadPool(1);
+    boolean set = false;
+    @Test
+    public void isLazy(){
+        of(1,2,3).filterNot(i->{
+            set = true;
+            return i==1;
+        });
+        assertFalse(set);
+    }
     @Test
     public void foldFuture(){
         assertThat(of(1,2,3).foldFuture(ex, l->l.reduce(Monoids.intSum)).get(),equalTo(6));

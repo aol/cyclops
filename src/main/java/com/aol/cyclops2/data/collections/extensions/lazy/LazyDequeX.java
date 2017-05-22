@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 
 import java.util.*;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -54,7 +53,7 @@ public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements
     }
 
     @Override
-    public LazyDequeX<T> withCollector(Collector<T, ?, Deque<T>> collector){
+    public LazyDequeX<T> type(Collector<T, ?, Deque<T>> collector){
         return (LazyDequeX)new LazyDequeX<T>(this.getList(),this.getSeq().get(),collector);
     }
     //@Override
@@ -71,7 +70,7 @@ public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements
 
 
     @Override
-    public <X> LazyDequeX<X> fromStream(Stream<X> stream) {
+    public <X> LazyDequeX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyDequeX<X>((Deque)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
     }

@@ -412,7 +412,7 @@ public class Either4Test {
 
     @Test
     public void testMapReduceReducerOfR() {
-        assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(LinkedListX.fromIterable(just)));
+        assertThat(just.mapReduce(Reducers.toLinkedListX()),equalTo(LinkedListX.fromIterable(just)));
     }
 
     @Test
@@ -466,7 +466,7 @@ public class Either4Test {
 
     @Test
     public void testFoldRightMapToType() {
-        assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(LinkedListX.fromIterable(just)));
+        assertThat(just.foldRightMapToType(Reducers.toLinkedListX()),equalTo(LinkedListX.fromIterable(just)));
     }
 
     

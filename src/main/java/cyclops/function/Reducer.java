@@ -1,5 +1,7 @@
 package cyclops.function;
 
+import org.pcollections.PBag;
+
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -88,5 +90,9 @@ public interface Reducer<T> extends Monoid<T> {
                 return stream.map(mapToType);
             }
         };
+    }
+
+    static <T> Reducer<T> narrow(Reducer<? extends T> reducer) {
+        return (Reducer<T>)reducer;
     }
 }

@@ -2,7 +2,7 @@ package cyclops.collections.immutable;
 
 
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPStackX;
-import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
+import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
@@ -41,7 +41,7 @@ import java.util.stream.Stream;
 
 public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                     PStack<T>,
-                                    PersistentCollectionX<T>,
+                                    LazyCollectionX<T>,
                                     IndexedSequenceX<T>,
                                     OnEmptySwitch<T, PStack<T>>,
                                     Higher<LinkedListX.µ,T> {
@@ -181,16 +181,37 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 .linkedListX(Conversion.LAZY);
     }
 
+
+    LinkedListX<T> type(Reducer<? extends PStack<T>> reducer);
+
     /**
-     * Construct a PStack from the provided values 
+     *
+     * <pre>
+     * {@code
+     *  import static cyclops.stream.ReactiveSeq.range;
+     *
+     *  LinkedListX<Integer> bag = linkedListX(range(10,20));
+     *
+     * }
+     * </pre>
+     * @param stream To create LinkedListX from
+     * @param <T> LinkedListX generated from Stream
+     * @return
+     */
+    public static <T> LinkedListX<T> linkedListX(ReactiveSeq<T> stream) {
+        return new LazyPStackX<T>(stream,true);
+    }
+
+    /**
+     * Construct a Persistent LinkedList from the provided values
      * 
      * <pre>
      * {@code 
-     *  List<String> list = PStacks.of("a","b","c");
+     *  List<String> list = LinkedListX.of("a","b","c");
      *  
      *  // or
      *  
-     *  PStack<String> list = PStacks.of("a","b","c");
+     *  PStack<String> list = LinkedListX.of("a","b","c");
      *  
      *  
      * }
@@ -203,7 +224,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @SafeVarargs
     public static <T> LinkedListX<T> of(final T... values) {
         return new LazyPStackX<>(
-                                 ConsPStack.from(Arrays.asList(values)), true);
+                                 ReactiveSeq.of(values), true);
     }
     /**
      * 
@@ -232,49 +253,14 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return (LinkedListX) iterable;
         if (iterable instanceof PStack)
             return new LazyPStackX<T>(
-                                     (PStack) iterable, true);
+                    (PStack) iterable, true);
 
-        PStack<T> res = ConsPStack.<T> empty();
 
-        final Iterator<T> it = iterable.iterator();
+        return new LazyPStackX<>(ReactiveSeq.fromIterable(iterable), true);
 
-        while (it.hasNext())
-            res = res.plus(it.next());
-
-        return new LazyPStackX<>(
-                                 res, true);
-
-/**
-        return new LazyPStackX<T>(null,
-                ReactiveSeq.fromIterable(iterable),false,
-                Reducers.toPStack());
-**/
     }
 
-    /**
-     * <pre>
-     * {@code 
-     *  List<String> list = PStacks.of(Arrays.asList("a","b","c"));
-     *  
-     *  // or
-     *  
-     *  PStack<String> list = PStacks.of(Arrays.asList("a","b","c"));
-     *  
-     *  
-     * }
-     * 
-     * @param values To add toNested PStack
-     * @return
-     */
-    public static <T> LinkedListX<T> fromCollection(final Collection<T> values) {
-        if (values instanceof LinkedListX)
-            return (LinkedListX) values;
-        if (values instanceof PStack)
-            return new LazyPStackX<>(
-                                     (PStack) values, true);
-        return new LazyPStackX<>(
-                                 ConsPStack.from(values), true);
-    }
+
 
     /**
      * <pre>
@@ -308,7 +294,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @param value Single value for PVector
      * @return PVector with a single value
      */
-    public static <T> LinkedListX<T> singleton(final T value) {
+    public static <T> LinkedListX<T> singleton(final T value){
         return new LazyPStackX<>(
                                  ConsPStack.singleton(value), true);
     }
@@ -329,15 +315,15 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @param stream toNested convert toNested a PVector
      * @return
      */
-    public static <T> LinkedListX<T> fromStream(final Stream<T> stream) {
-        return Reducers.<T> toPStackX()
+    default <T> LinkedListX<T> fromStream(final ReactiveSeq<T> stream) {
+        return Reducers.<T>toLinkedListX()
                        .mapReduce(stream)
                        .efficientOpsOff();
     }
 
     @Override
     default LinkedListX<T> materialize() {
-        return (LinkedListX<T>)PersistentCollectionX.super.materialize();
+        return (LinkedListX<T>)LazyCollectionX.super.materialize();
     }
 
     /* (non-Javadoc)
@@ -349,7 +335,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                                     Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
                                                     Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
-        return (LinkedListX)PersistentCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
+        return (LinkedListX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -362,7 +348,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                                     Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                                                     Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
-        return (LinkedListX)PersistentCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
+        return (LinkedListX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -373,7 +359,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                                 BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
                                                 Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
-        return (LinkedListX)PersistentCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
+        return (LinkedListX)LazyCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -385,7 +371,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                                 Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
                                                 Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
-        return (LinkedListX)PersistentCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
+        return (LinkedListX)LazyCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -395,7 +381,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     default <R1, R> LinkedListX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
                                             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         
-        return (LinkedListX)PersistentCollectionX.super.forEach2(stream1, yieldingFunction);
+        return (LinkedListX)LazyCollectionX.super.forEach2(stream1, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -406,7 +392,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                             BiFunction<? super T, ? super R1, Boolean> filterFunction,
                                             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         
-        return (LinkedListX)PersistentCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+        return (LinkedListX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     
     @Override
@@ -461,12 +447,12 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     */
     @Override
     default LinkedListX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
-        return (LinkedListX<T>) PersistentCollectionX.super.combine(predicate, op);
+        return (LinkedListX<T>) LazyCollectionX.super.combine(predicate, op);
     }
 
     @Override
     default LinkedListX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
-        return (LinkedListX<T>)PersistentCollectionX.super.combine(op,predicate);
+        return (LinkedListX<T>)LazyCollectionX.super.combine(op,predicate);
     }
     
 
@@ -474,8 +460,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @Override
     default <R> LinkedListX<R> unit(final Collection<R> col) {
         if (isEfficientOps())
-            return fromCollection(col);
-        return fromCollection(col).efficientOpsOff();
+            return fromIterable(col);
+        return fromIterable(col).efficientOpsOff();
     }
 
     @Override
@@ -488,7 +474,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         return fromIterable(() -> it);
     }
 
-    @Override
+    //@Override
     default <R> LinkedListX<R> emptyUnit() {
         if (isEfficientOps())
             return empty();
@@ -514,11 +500,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @Override
     default <X> LinkedListX<X> from(final Collection<X> col) {
         if (isEfficientOps())
-            return fromCollection(col);
-        return fromCollection(col).efficientOpsOff();
+            return fromIterable(col);
+        return fromIterable(col).efficientOpsOff();
     }
 
-    @Override
+    //@Override
     default <T> Reducer<PStack<T>> monoid() {
         if (isEfficientOps())
             return Reducers.toPStackReversed();
@@ -527,7 +513,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#reverse()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#reverse()
      */
     @Override
     default LinkedListX<T> reverse() {
@@ -535,7 +521,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         final Iterator<T> it = iterator();
         while (it.hasNext())
             reversed = reversed.plus(0, it.next());
-        return fromCollection(reversed);
+        return fromIterable(reversed);
     }
 
     LinkedListX<T> efficientOpsOn();
@@ -545,116 +531,116 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     boolean isEfficientOps();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#filter(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> filter(final Predicate<? super T> pred) {
-        return (LinkedListX<T>) PersistentCollectionX.super.filter(pred);
+        return (LinkedListX<T>) LazyCollectionX.super.filter(pred);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#map(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#map(java.util.function.Function)
      */
     @Override
     default <R> LinkedListX<R> map(final Function<? super T, ? extends R> mapper) {
-        return (LinkedListX<R>) PersistentCollectionX.super.map(mapper);
+        return (LinkedListX<R>) LazyCollectionX.super.map(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
     default <R> LinkedListX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (LinkedListX) PersistentCollectionX.super.flatMap(mapper);
+        return (LinkedListX) LazyCollectionX.super.flatMap(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limit(long)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limit(long)
      */
     @Override
     default LinkedListX<T> limit(final long num) {
 
-        return (LinkedListX) PersistentCollectionX.super.limit(num);
+        return (LinkedListX) LazyCollectionX.super.limit(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skip(long)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skip(long)
      */
     @Override
     default LinkedListX<T> skip(final long num) {
 
-        return (LinkedListX) PersistentCollectionX.super.skip(num);
+        return (LinkedListX) LazyCollectionX.super.skip(num);
     }
 
     @Override
     default LinkedListX<T> takeRight(final int num) {
-        return (LinkedListX<T>) PersistentCollectionX.super.takeRight(num);
+        return (LinkedListX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     @Override
     default LinkedListX<T> dropRight(final int num) {
-        return (LinkedListX<T>) PersistentCollectionX.super.dropRight(num);
+        return (LinkedListX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#takeWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#takeWhile(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> takeWhile(final Predicate<? super T> p) {
 
-        return (LinkedListX) PersistentCollectionX.super.takeWhile(p);
+        return (LinkedListX) LazyCollectionX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#dropWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#dropWhile(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> dropWhile(final Predicate<? super T> p) {
 
-        return (LinkedListX) PersistentCollectionX.super.dropWhile(p);
+        return (LinkedListX) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#takeUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#takeUntil(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> takeUntil(final Predicate<? super T> p) {
 
-        return (LinkedListX) PersistentCollectionX.super.takeUntil(p);
+        return (LinkedListX) LazyCollectionX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#dropUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#dropUntil(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> dropUntil(final Predicate<? super T> p) {
-        return (LinkedListX) PersistentCollectionX.super.dropUntil(p);
+        return (LinkedListX) LazyCollectionX.super.dropUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#trampoline(java.util.function.Function)
      */
     @Override
     default <R> LinkedListX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (LinkedListX) PersistentCollectionX.super.trampoline(mapper);
+        return (LinkedListX) LazyCollectionX.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#slice(long, long)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#slice(long, long)
      */
     @Override
     default LinkedListX<T> slice(final long from, final long to) {
-        return (LinkedListX) PersistentCollectionX.super.slice(from, to);
+        return (LinkedListX) LazyCollectionX.super.slice(from, to);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#sorted(java.util.function.Function)
      */
     @Override
     default <U extends Comparable<? super U>> LinkedListX<T> sorted(final Function<? super T, ? extends U> function) {
-        return (LinkedListX) PersistentCollectionX.super.sorted(function);
+        return (LinkedListX) LazyCollectionX.super.sorted(function);
     }
 
     @Override
@@ -709,272 +695,272 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
     @Override
     default LinkedListX<ListX<T>> grouped(final int groupSize) {
-        return (LinkedListX<ListX<T>>) PersistentCollectionX.super.grouped(groupSize);
+        return (LinkedListX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
     @Override
     default <K, A, D> LinkedListX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
-        return (LinkedListX) PersistentCollectionX.super.grouped(classifier, downstream);
+        return (LinkedListX) LazyCollectionX.super.grouped(classifier, downstream);
     }
 
     @Override
     default <K> LinkedListX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return (LinkedListX) PersistentCollectionX.super.grouped(classifier);
+        return (LinkedListX) LazyCollectionX.super.grouped(classifier);
     }
 
     @Override
     default <U> LinkedListX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return (LinkedListX) PersistentCollectionX.super.zip(other);
+        return (LinkedListX) LazyCollectionX.super.zip(other);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> LinkedListX<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (LinkedListX<R>) PersistentCollectionX.super.zip(other, zipper);
+        return (LinkedListX<R>) LazyCollectionX.super.zip(other, zipper);
     }
 
 
     @Override
     default <U, R> LinkedListX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (LinkedListX<R>) PersistentCollectionX.super.zipS(other, zipper);
+        return (LinkedListX<R>) LazyCollectionX.super.zipS(other, zipper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#permutations()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#permutations()
      */
     @Override
     default LinkedListX<ReactiveSeq<T>> permutations() {
 
-        return (LinkedListX<ReactiveSeq<T>>) PersistentCollectionX.super.permutations();
+        return (LinkedListX<ReactiveSeq<T>>) LazyCollectionX.super.permutations();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#combinations(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#combinations(int)
      */
     @Override
     default LinkedListX<ReactiveSeq<T>> combinations(final int size) {
 
-        return (LinkedListX<ReactiveSeq<T>>) PersistentCollectionX.super.combinations(size);
+        return (LinkedListX<ReactiveSeq<T>>) LazyCollectionX.super.combinations(size);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#combinations()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#combinations()
      */
     @Override
     default LinkedListX<ReactiveSeq<T>> combinations() {
 
-        return (LinkedListX<ReactiveSeq<T>>) PersistentCollectionX.super.combinations();
+        return (LinkedListX<ReactiveSeq<T>>) LazyCollectionX.super.combinations();
     }
 
     @Override
     default LinkedListX<VectorX<T>> sliding(final int windowSize) {
-        return (LinkedListX<VectorX<T>>) PersistentCollectionX.super.sliding(windowSize);
+        return (LinkedListX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize);
     }
 
     @Override
     default LinkedListX<VectorX<T>> sliding(final int windowSize, final int increment) {
-        return (LinkedListX<VectorX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
+        return (LinkedListX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override
     default <U> LinkedListX<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
-        return (LinkedListX<U>) PersistentCollectionX.super.scanLeft(seed, function);
+        return (LinkedListX<U>) LazyCollectionX.super.scanLeft(seed, function);
     }
 
     @Override
     default <U> LinkedListX<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
-        return (LinkedListX<U>) PersistentCollectionX.super.scanRight(identity, combiner);
+        return (LinkedListX<U>) LazyCollectionX.super.scanRight(identity, combiner);
     }
 
     @Override
     default LinkedListX<T> scanLeft(final Monoid<T> monoid) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.scanLeft(monoid);
+        return (LinkedListX<T>) LazyCollectionX.super.scanLeft(monoid);
 
     }
 
     @Override
     default LinkedListX<T> scanRight(final Monoid<T> monoid) {
-        return (LinkedListX<T>) PersistentCollectionX.super.scanRight(monoid);
+        return (LinkedListX<T>) LazyCollectionX.super.scanRight(monoid);
 
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#cycle(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cycle(int)
      */
     @Override
     default LinkedListX<T> cycle(final long times) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.cycle(times);
+        return (LinkedListX<T>) LazyCollectionX.super.cycle(times);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#cycle(com.aol.cyclops2.sequence.Monoid, int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cycle(com.aol.cyclops2.sequence.Monoid, int)
      */
     @Override
     default LinkedListX<T> cycle(final Monoid<T> m, final long times) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.cycle(m, times);
+        return (LinkedListX<T>) LazyCollectionX.super.cycle(m, times);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#cycleWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cycleWhile(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> cycleWhile(final Predicate<? super T> predicate) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.cycleWhile(predicate);
+        return (LinkedListX<T>) LazyCollectionX.super.cycleWhile(predicate);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#cycleUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cycleUntil(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> cycleUntil(final Predicate<? super T> predicate) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.cycleUntil(predicate);
+        return (LinkedListX<T>) LazyCollectionX.super.cycleUntil(predicate);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zipStream(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zipStream(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> LinkedListX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return (LinkedListX) PersistentCollectionX.super.zipS(other);
+        return (LinkedListX) LazyCollectionX.super.zipS(other);
     }
 
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <S, U> LinkedListX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
-        return (LinkedListX) PersistentCollectionX.super.zip3(second, third);
+        return (LinkedListX) LazyCollectionX.super.zip3(second, third);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <T2, T3, T4> LinkedListX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
                                                                  final Iterable<? extends T4> fourth) {
 
-        return (LinkedListX) PersistentCollectionX.super.zip4(second, third, fourth);
+        return (LinkedListX) LazyCollectionX.super.zip4(second, third, fourth);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zipWithIndex()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zipWithIndex()
      */
     @Override
     default LinkedListX<Tuple2<T, Long>> zipWithIndex() {
 
-        return (LinkedListX<Tuple2<T, Long>>) PersistentCollectionX.super.zipWithIndex();
+        return (LinkedListX<Tuple2<T, Long>>) LazyCollectionX.super.zipWithIndex();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#distinct()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#distinct()
      */
     @Override
     default LinkedListX<T> distinct() {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.distinct();
+        return (LinkedListX<T>) LazyCollectionX.super.distinct();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#sorted()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#sorted()
      */
     @Override
     default LinkedListX<T> sorted() {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.sorted();
+        return (LinkedListX<T>) LazyCollectionX.super.sorted();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.Comparator)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#sorted(java.util.Comparator)
      */
     @Override
     default LinkedListX<T> sorted(final Comparator<? super T> c) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.sorted(c);
+        return (LinkedListX<T>) LazyCollectionX.super.sorted(c);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skipWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> skipWhile(final Predicate<? super T> p) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.skipWhile(p);
+        return (LinkedListX<T>) LazyCollectionX.super.skipWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skipUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> skipUntil(final Predicate<? super T> p) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.skipUntil(p);
+        return (LinkedListX<T>) LazyCollectionX.super.skipUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limitWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> limitWhile(final Predicate<? super T> p) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.limitWhile(p);
+        return (LinkedListX<T>) LazyCollectionX.super.limitWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limitUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> limitUntil(final Predicate<? super T> p) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.limitUntil(p);
+        return (LinkedListX<T>) LazyCollectionX.super.limitUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#intersperse(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#intersperse(java.lang.Object)
      */
     @Override
     default LinkedListX<T> intersperse(final T value) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.intersperse(value);
+        return (LinkedListX<T>) LazyCollectionX.super.intersperse(value);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#shuffle()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#shuffle()
      */
     @Override
     default LinkedListX<T> shuffle() {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.shuffle();
+        return (LinkedListX<T>) LazyCollectionX.super.shuffle();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skipLast(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skipLast(int)
      */
     @Override
     default LinkedListX<T> skipLast(final int num) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.skipLast(num);
+        return (LinkedListX<T>) LazyCollectionX.super.skipLast(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limitLast(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limitLast(int)
      */
     @Override
     default LinkedListX<T> limitLast(final int num) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.limitLast(num);
+        return (LinkedListX<T>) LazyCollectionX.super.limitLast(num);
     }
 
     /* (non-Javadoc)
@@ -988,246 +974,246 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#onEmpty(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmpty(java.lang.Object)
      */
     @Override
     default LinkedListX<T> onEmpty(final T value) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.onEmpty(value);
+        return (LinkedListX<T>) LazyCollectionX.super.onEmpty(value);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#onEmptyGet(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default LinkedListX<T> onEmptyGet(final Supplier<? extends T> supplier) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.onEmptyGet(supplier);
+        return (LinkedListX<T>) LazyCollectionX.super.onEmptyGet(supplier);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
     default <X extends Throwable> LinkedListX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.onEmptyThrow(supplier);
+        return (LinkedListX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#shuffle(java.util.Random)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#shuffle(java.util.Random)
      */
     @Override
     default LinkedListX<T> shuffle(final Random random) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.shuffle(random);
+        return (LinkedListX<T>) LazyCollectionX.super.shuffle(random);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#ofType(java.lang.Class)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#ofType(java.lang.Class)
      */
     @Override
     default <U> LinkedListX<U> ofType(final Class<? extends U> type) {
 
-        return (LinkedListX<U>) PersistentCollectionX.super.ofType(type);
+        return (LinkedListX<U>) LazyCollectionX.super.ofType(type);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#filterNot(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> filterNot(final Predicate<? super T> fn) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.filterNot(fn);
+        return (LinkedListX<T>) LazyCollectionX.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#notNull()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#notNull()
      */
     @Override
     default LinkedListX<T> notNull() {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.notNull();
+        return (LinkedListX<T>) LazyCollectionX.super.notNull();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     default LinkedListX<T> removeAllS(final Stream<? extends T> stream) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.removeAllS(stream);
+        return (LinkedListX<T>) LazyCollectionX.super.removeAllS(stream);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
      */
     @Override
     default LinkedListX<T> removeAllI(final Iterable<? extends T> it) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.removeAllI(it);
+        return (LinkedListX<T>) LazyCollectionX.super.removeAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default LinkedListX<T> removeAll(final T... values) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.removeAll(values);
+        return (LinkedListX<T>) LazyCollectionX.super.removeAll(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllI(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
     default LinkedListX<T> retainAllI(final Iterable<? extends T> it) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.retainAllI(it);
+        return (LinkedListX<T>) LazyCollectionX.super.retainAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default LinkedListX<T> retainAllS(final Stream<? extends T> seq) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.retainAllS(seq);
+        return (LinkedListX<T>) LazyCollectionX.super.retainAllS(seq);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllI(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Object[])
      */
     @Override
     default LinkedListX<T> retainAll(final T... values) {
 
-        return (LinkedListX<T>) PersistentCollectionX.super.retainAll(values);
+        return (LinkedListX<T>) LazyCollectionX.super.retainAll(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cast(java.lang.Class)
      */
     @Override
     default <U> LinkedListX<U> cast(final Class<? extends U> type) {
 
-        return (LinkedListX<U>) PersistentCollectionX.super.cast(type);
+        return (LinkedListX<U>) LazyCollectionX.super.cast(type);
     }
 
 
     @Override
     default <C extends Collection<? super T>> LinkedListX<C> grouped(final int size, final Supplier<C> supplier) {
 
-        return (LinkedListX<C>) PersistentCollectionX.super.grouped(size, supplier);
+        return (LinkedListX<C>) LazyCollectionX.super.grouped(size, supplier);
     }
 
     @Override
     default LinkedListX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
 
-        return (LinkedListX<ListX<T>>) PersistentCollectionX.super.groupedUntil(predicate);
+        return (LinkedListX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
     @Override
     default LinkedListX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (LinkedListX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyUntil(predicate);
+        return (LinkedListX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override
     default LinkedListX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
 
-        return (LinkedListX<ListX<T>>) PersistentCollectionX.super.groupedWhile(predicate);
+        return (LinkedListX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }
 
     @Override
     default <C extends Collection<? super T>> LinkedListX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return (LinkedListX<C>) PersistentCollectionX.super.groupedWhile(predicate, factory);
+        return (LinkedListX<C>) LazyCollectionX.super.groupedWhile(predicate, factory);
     }
 
     @Override
     default <C extends Collection<? super T>> LinkedListX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return (LinkedListX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
+        return (LinkedListX<C>) LazyCollectionX.super.groupedUntil(predicate, factory);
     }
 
     @Override
     default <R> LinkedListX<R> retry(final Function<? super T, ? extends R> fn) {
-        return (LinkedListX<R>)PersistentCollectionX.super.retry(fn);
+        return (LinkedListX<R>)LazyCollectionX.super.retry(fn);
     }
 
     @Override
     default <R> LinkedListX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (LinkedListX<R>)PersistentCollectionX.super.retry(fn);
+        return (LinkedListX<R>)LazyCollectionX.super.retry(fn);
     }
 
     @Override
     default <R> LinkedListX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (LinkedListX<R>)PersistentCollectionX.super.flatMapS(fn);
+        return (LinkedListX<R>)LazyCollectionX.super.flatMapS(fn);
     }
 
     @Override
     default <R> LinkedListX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (LinkedListX<R>)PersistentCollectionX.super.flatMapP(fn);
+        return (LinkedListX<R>)LazyCollectionX.super.flatMapP(fn);
     }
 
     @Override
     default LinkedListX<T> prependS(Stream<? extends T> stream) {
-        return (LinkedListX<T>)PersistentCollectionX.super.prependS(stream);
+        return (LinkedListX<T>)LazyCollectionX.super.prependS(stream);
     }
 
     @Override
     default LinkedListX<T> append(T... values) {
-        return (LinkedListX<T>)PersistentCollectionX.super.append(values);
+        return (LinkedListX<T>)LazyCollectionX.super.append(values);
     }
 
     @Override
     default LinkedListX<T> append(T value) {
-        return (LinkedListX<T>)PersistentCollectionX.super.append(value);
+        return (LinkedListX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override
     default LinkedListX<T> prepend(T value) {
-        return (LinkedListX<T>)PersistentCollectionX.super.prepend(value);
+        return (LinkedListX<T>)LazyCollectionX.super.prepend(value);
     }
 
     @Override
     default LinkedListX<T> prepend(T... values) {
-        return (LinkedListX<T>)PersistentCollectionX.super.prepend(values);
+        return (LinkedListX<T>)LazyCollectionX.super.prepend(values);
     }
 
     @Override
     default LinkedListX<T> insertAt(int pos, T... values) {
-        return (LinkedListX<T>)PersistentCollectionX.super.insertAt(pos,values);
+        return (LinkedListX<T>)LazyCollectionX.super.insertAt(pos,values);
     }
 
     @Override
     default LinkedListX<T> deleteBetween(int start, int end) {
-        return (LinkedListX<T>)PersistentCollectionX.super.deleteBetween(start,end);
+        return (LinkedListX<T>)LazyCollectionX.super.deleteBetween(start,end);
     }
 
     @Override
     default LinkedListX<T> insertAtS(int pos, Stream<T> stream) {
-        return (LinkedListX<T>)PersistentCollectionX.super.insertAtS(pos,stream);
+        return (LinkedListX<T>)LazyCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override
     default LinkedListX<T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return (LinkedListX<T>)PersistentCollectionX.super.recover(fn);
+        return (LinkedListX<T>)LazyCollectionX.super.recover(fn);
     }
 
     @Override
     default <EX extends Throwable> LinkedListX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return (LinkedListX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
+        return (LinkedListX<T>)LazyCollectionX.super.recover(exceptionClass,fn);
     }
 
     @Override
     default LinkedListX<T> plusLoop(int max, IntFunction<T> value) {
-        return (LinkedListX<T>)PersistentCollectionX.super.plusLoop(max,value);
+        return (LinkedListX<T>)LazyCollectionX.super.plusLoop(max,value);
     }
 
     @Override
     default LinkedListX<T> plusLoop(Supplier<Optional<T>> supplier) {
-        return (LinkedListX<T>)PersistentCollectionX.super.plusLoop(supplier);
+        return (LinkedListX<T>)LazyCollectionX.super.plusLoop(supplier);
     }
     /**
      * Companion class for creating Type Class instances for working with PStacks

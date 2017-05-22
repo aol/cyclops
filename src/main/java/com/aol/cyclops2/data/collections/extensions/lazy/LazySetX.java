@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 /**
  * An extended Set type {@see java.util.List}
@@ -71,7 +70,7 @@ public class LazySetX<T> extends AbstractLazyCollection<T,Set<T>> implements Set
 
 
     @Override
-    public <X> LazySetX<X> fromStream(Stream<X> stream) {
+    public <X> LazySetX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazySetX<X>((Set)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
     }

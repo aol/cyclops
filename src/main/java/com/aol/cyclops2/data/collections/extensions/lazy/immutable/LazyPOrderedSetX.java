@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -72,11 +71,14 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
         return this;
     }
 
-  
 
+    @Override
+    public OrderedSetX<T> type(Reducer<? extends POrderedSet<T>> reducer) {
+        return new LazyPOrderedSetX<T>(list,seq.get(),Reducer.narrow(reducer));
+    }
 
-  //  @Override
-    private <X> LazyPOrderedSetX<X> fromStream(Stream<X> stream) {
+    //  @Override
+    public <X> LazyPOrderedSetX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyPOrderedSetX<X>((POrderedSet)getList(),ReactiveSeq.fromStream(stream));
     }

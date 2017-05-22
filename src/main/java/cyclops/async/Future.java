@@ -545,9 +545,15 @@ public class Future<T> implements To<Future<T>>,
      *
      * Future<Integer> just =Future.of(CompletableFuture.completedFuture(10));
        Future<Integer> none = Future.ofError(new NoSuchElementException());
+<<<<<<< HEAD
 
      * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPSetX());
 
+=======
+       
+     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPersistentSetX());
+       
+>>>>>>> master
        //Future[PersistentSetX[10,1]]
      *  }
      *  </pre>
@@ -566,9 +572,15 @@ public class Future<T> implements To<Future<T>>,
      *
      * Future<Integer> just =Future.of(CompletableFuture.completedFuture(10));
        Future<Integer> none = Future.ofError(new NoSuchElementException());
+<<<<<<< HEAD
 
      * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPSetX());
 
+=======
+       
+     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPersistentSetX());
+       
+>>>>>>> master
        //Future[PersistentSetX[10,1]]
      *  }
      *  </pre>

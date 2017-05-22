@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -72,11 +71,14 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
         return this;
     }
 
-  
 
+    @Override
+    public PersistentQueueX<T> type(Reducer<? extends PQueue<T>> reducer) {
+        return new LazyPQueueX<T>(list,seq.get(),Reducer.narrow(reducer));
+    }
 
-  //  @Override
-    private <X> LazyPQueueX<X> fromStream(Stream<X> stream) {
+    //  @Override
+    public <X> LazyPQueueX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyPQueueX<X>((PQueue)getList(),ReactiveSeq.fromStream(stream));
     }

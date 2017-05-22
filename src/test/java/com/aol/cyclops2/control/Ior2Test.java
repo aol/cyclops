@@ -130,7 +130,7 @@ public class Ior2Test {
 
 	@Test
     public void testAccumulateSecondary() {
-        Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)), Reducers.<String>toPSetX());
+        Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)), Reducers.<String>toPersistentSetX());
         assertThat(iors,equalTo(Ior.primary(PersistentSetX.of("none"))));
     }
 
@@ -152,7 +152,7 @@ public class Ior2Test {
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Ior<?,PersistentSetX<Integer>> maybes =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPSetX());
+		Ior<?,PersistentSetX<Integer>> maybes =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPersistentSetX());
 		assertThat(maybes,equalTo(Ior.primary(PersistentSetX.of(10,1))));
 	}
 

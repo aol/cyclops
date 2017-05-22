@@ -10,12 +10,12 @@ import java.util.stream.Stream;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
+import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class CollectionXImpl<T> implements MutableCollectionX<T> {
+public class CollectionXImpl<T> implements LazyCollectionX<T> {
 
     private final Collection<T> delegate;
 
@@ -240,10 +240,10 @@ public class CollectionXImpl<T> implements MutableCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#fromStream(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#fromStream(java.util.reactiveStream.Stream)
      */
     @Override
-    public <X> MutableCollectionX<X> fromStream(final Stream<X> stream) {
+    public <X> LazyCollectionX<X> fromStream(final ReactiveSeq<X> stream) {
         return ListX.fromIterable(stream.collect(Collectors.toList()));
     }
 

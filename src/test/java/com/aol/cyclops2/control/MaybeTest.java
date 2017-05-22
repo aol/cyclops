@@ -305,7 +305,7 @@ public class MaybeTest implements Printable {
 
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-        Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPSetX());
+        Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPersistentSetX());
         assertThat(maybes, equalTo(Maybe.of(PersistentSetX.of(10, 1))));
     }
 

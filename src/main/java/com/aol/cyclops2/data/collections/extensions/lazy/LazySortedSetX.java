@@ -6,7 +6,6 @@ import cyclops.stream.ReactiveSeq;
 
 import java.util.*;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 /**
  * An extended Set type {@see java.util.List}
@@ -69,7 +68,7 @@ public class LazySortedSetX<T> extends AbstractLazyCollection<T,SortedSet<T>> im
 
 
     @Override
-    public <X> LazySortedSetX<X> fromStream(Stream<X> stream) {
+    public <X> LazySortedSetX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazySortedSetX<X>((SortedSet)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
     }

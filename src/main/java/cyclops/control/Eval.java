@@ -305,8 +305,13 @@ public interface Eval<T> extends    To<Eval<T>>,
      * Sequence and reduce a CollectionX of Evals into an Eval with a reduced value
      *
      * <pre>
+<<<<<<< HEAD
      * {@code
      *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPSetX());
+=======
+     * {@code 
+     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPersistentSetX());
+>>>>>>> master
          //Eval.now(PersistentSetX.of(10,1)))
      * }
      * </pre>

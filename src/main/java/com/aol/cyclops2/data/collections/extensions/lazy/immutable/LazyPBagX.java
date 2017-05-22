@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -80,11 +79,16 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
         return this;
     }
 
-  
+    public BagX<T> type(Reducer<? extends PBag<T>> reducer){
+        Reducer<PBag<T>> narrow = Reducer.narrow(reducer);
+        return new LazyPBagX<T>(list,seq.get(),narrow);
+    }
 
 
-  //  @Override
-    private <X> LazyPBagX<X> fromStream(Stream<X> stream) {
+
+
+    @Override
+    public <X> LazyPBagX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyPBagX<X>((PBag)getList(),ReactiveSeq.fromStream(stream));
     }

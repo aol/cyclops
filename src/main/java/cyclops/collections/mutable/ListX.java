@@ -1,7 +1,8 @@
 package cyclops.collections.mutable;
 
+import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
-import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
+import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.OnEmptySwitch;
@@ -47,7 +48,7 @@ import static cyclops.monads.Witness.list;
  */
 public interface ListX<T> extends To<ListX<T>>,
                                   List<T>,
-                                  MutableCollectionX<T>,
+        LazyCollectionX<T>,
                                   MutableSequenceX<T>,
                                   Comparable<T>,
                                   OnEmptySwitch<T, List<T>>,
@@ -456,7 +457,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
     @Override
     default ListX<T> materialize() {
-        return (ListX<T>)MutableCollectionX.super.materialize();
+        return (ListX<T>)LazyCollectionX.super.materialize();
     }
 
     /* (non-Javadoc)
@@ -468,7 +469,7 @@ public interface ListX<T> extends To<ListX<T>>,
             Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
             Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
-        return (ListX)MutableCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
+        return (ListX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -481,7 +482,7 @@ public interface ListX<T> extends To<ListX<T>>,
             Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
             Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
-        return (ListX)MutableCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
+        return (ListX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -492,7 +493,7 @@ public interface ListX<T> extends To<ListX<T>>,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
-        return (ListX)MutableCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
+        return (ListX)LazyCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -504,7 +505,7 @@ public interface ListX<T> extends To<ListX<T>>,
             Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
-        return (ListX)MutableCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
+        return (ListX)LazyCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -514,7 +515,7 @@ public interface ListX<T> extends To<ListX<T>>,
     default <R1, R> ListX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         
-        return (ListX)MutableCollectionX.super.forEach2(stream1, yieldingFunction);
+        return (ListX)LazyCollectionX.super.forEach2(stream1, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -525,7 +526,7 @@ public interface ListX<T> extends To<ListX<T>>,
             BiFunction<? super T, ? super R1, Boolean> filterFunction,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         
-        return (ListX)MutableCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+        return (ListX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     
 
@@ -577,12 +578,9 @@ public interface ListX<T> extends To<ListX<T>>,
     @SafeVarargs
     public static <T> ListX<T> of(final T... values) {
 
-        final List<T> res = (List<T>) defaultCollector().supplier()
-                .get();
-        for (final T v : values)
-            res.add(v);
-
-        return fromIterable(res);
+        return new LazyListX<T>(null,
+                ReactiveSeq.of(values),
+                defaultCollector());
     }
     public static <T> ListX<T> fromIterator(final Iterator<T> it) {
         return fromIterable(()->it);
@@ -602,6 +600,25 @@ public interface ListX<T> extends To<ListX<T>>,
     public static <T> ListX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
                           .listX(Conversion.LAZY);
+    }
+    /**
+     *
+     * <pre>
+     * {@code
+     *  import static cyclops.stream.ReactiveSeq.range;
+     *
+     *  ListX<Integer> list = listX(range(10,20));
+     *
+     * }
+     * </pre>
+     * @param stream To create ListX from
+     * @param <T> ListX generated from Stream
+     * @return
+     */
+    public static <T> ListX<T> listX(ReactiveSeq<T> stream){
+        return new LazyListX<T>(null,
+                stream,
+                defaultCollector());
     }
 
     public static <T> ListX<T> fromIterable(final Iterable<T> it) {
@@ -629,12 +646,12 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> take(final long num) {
 
-        return (ListX<T>) MutableCollectionX.super.limit(num);
+        return (ListX<T>) LazyCollectionX.super.limit(num);
     }
     @Override
     default ListX<T> drop(final long num) {
 
-        return (ListX<T>) MutableCollectionX.super.skip(num);
+        return (ListX<T>) LazyCollectionX.super.skip(num);
     }
     ListX<T> withCollector(Collector<T, ?, List<T>> collector);
 
@@ -709,17 +726,17 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     @Override
-    default <X> ListX<X> fromStream(final Stream<X> stream) {
+    default <X> ListX<X> fromStream(final ReactiveSeq<X> stream) {
         return new LazyListX<>(null,ReactiveSeq.fromStream(stream), getCollector());
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#reverse()
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#reverse()
      */
     @Override
     default ListX<T> reverse() {
 
-        return (ListX<T>) MutableCollectionX.super.reverse();
+        return (ListX<T>) LazyCollectionX.super.reverse();
     }
 
     /**
@@ -741,229 +758,229 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     @Override
     default ListX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
-        return (ListX<T>) MutableCollectionX.super.combine(predicate, op);
+        return (ListX<T>) LazyCollectionX.super.combine(predicate, op);
     }
 
     @Override
     default ListX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
-        return (ListX<T>)MutableCollectionX.super.combine(op,predicate);
+        return (ListX<T>)LazyCollectionX.super.combine(op,predicate);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#filter(java.util.function.Predicate)
      */
     @Override
     default ListX<T> filter(final Predicate<? super T> pred) {
 
-        return (ListX<T>) MutableCollectionX.super.filter(pred);
+        return (ListX<T>) LazyCollectionX.super.filter(pred);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#map(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#map(java.util.function.Function)
      */
     @Override
     default <R> ListX<R> map(final Function<? super T, ? extends R> mapper) {
 
-        return (ListX<R>) MutableCollectionX.super.<R> map(mapper);
+        return (ListX<R>) LazyCollectionX.super.<R> map(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#flatMap(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
     default <R> ListX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (ListX<R>) MutableCollectionX.super.<R> flatMap(mapper);
+        return (ListX<R>) LazyCollectionX.super.<R> flatMap(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#limit(long)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#limit(long)
      */
     @Override
     default ListX<T> limit(final long num) {
 
-        return (ListX<T>) MutableCollectionX.super.limit(num);
+        return (ListX<T>) LazyCollectionX.super.limit(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#skip(long)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#skip(long)
      */
     @Override
     default ListX<T> skip(final long num) {
 
-        return (ListX<T>) MutableCollectionX.super.skip(num);
+        return (ListX<T>) LazyCollectionX.super.skip(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#takeRight(int)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#takeRight(int)
      */
     @Override
     default ListX<T> takeRight(final int num) {
-        return (ListX<T>) MutableCollectionX.super.takeRight(num);
+        return (ListX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#dropRight(int)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#dropRight(int)
      */
     @Override
     default ListX<T> dropRight(final int num) {
-        return (ListX<T>) MutableCollectionX.super.dropRight(num);
+        return (ListX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#takeWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#takeWhile(java.util.function.Predicate)
      */
     @Override
     default ListX<T> takeWhile(final Predicate<? super T> p) {
 
-        return (ListX<T>) MutableCollectionX.super.takeWhile(p);
+        return (ListX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#dropWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#dropWhile(java.util.function.Predicate)
      */
     @Override
     default ListX<T> dropWhile(final Predicate<? super T> p) {
 
-        return (ListX<T>) MutableCollectionX.super.dropWhile(p);
+        return (ListX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#takeUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#takeUntil(java.util.function.Predicate)
      */
     @Override
     default ListX<T> takeUntil(final Predicate<? super T> p) {
 
-        return (ListX<T>) MutableCollectionX.super.takeUntil(p);
+        return (ListX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#dropUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#dropUntil(java.util.function.Predicate)
      */
     @Override
     default ListX<T> dropUntil(final Predicate<? super T> p) {
-        return (ListX<T>) MutableCollectionX.super.dropUntil(p);
+        return (ListX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#trampoline(java.util.function.Function)
      */
     @Override
     default <R> ListX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (ListX<R>) MutableCollectionX.super.<R> trampoline(mapper);
+        return (ListX<R>) LazyCollectionX.super.<R> trampoline(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#slice(long, long)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#slice(long, long)
      */
     @Override
     default ListX<T> slice(final long from, final long to) {
-        return (ListX<T>) MutableCollectionX.super.slice(from, to);
+        return (ListX<T>) LazyCollectionX.super.slice(from, to);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#sorted(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#sorted(java.util.function.Function)
      */
     @Override
     default <U extends Comparable<? super U>> ListX<T> sorted(final Function<? super T, ? extends U> function) {
 
-        return (ListX<T>) MutableCollectionX.super.sorted(function);
+        return (ListX<T>) LazyCollectionX.super.sorted(function);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(int)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#grouped(int)
      */
     @Override
     default ListX<ListX<T>> grouped(final int groupSize) {
-        return (ListX<ListX<T>>) MutableCollectionX.super.grouped(groupSize);
+        return (ListX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function, java.util.reactiveStream.Collector)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#grouped(java.util.function.Function, java.util.reactiveStream.Collector)
      */
     @Override
     default <K, A, D> ListX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
-        return (ListX) MutableCollectionX.super.grouped(classifier, downstream);
+        return (ListX) LazyCollectionX.super.grouped(classifier, downstream);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(java.util.function.Function)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#grouped(java.util.function.Function)
      */
     @Override
     default <K> ListX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return (ListX) MutableCollectionX.super.grouped(classifier);
+        return (ListX) LazyCollectionX.super.grouped(classifier);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#zip(java.lang.Iterable)
      */
     @Override
     default <U> ListX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return (ListX) MutableCollectionX.super.zip(other);
+        return (ListX) LazyCollectionX.super.zip(other);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> ListX<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (ListX<R>) MutableCollectionX.super.zip(other, zipper);
+        return (ListX<R>) LazyCollectionX.super.zip(other, zipper);
     }
 
 
     @Override
     default <U, R> ListX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (ListX<R>) MutableCollectionX.super.zipS(other, zipper);
+        return (ListX<R>) LazyCollectionX.super.zipS(other, zipper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#sliding(int)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#sliding(int)
      */
     @Override
     default ListX<VectorX<T>> sliding(final int windowSize) {
-        return (ListX<VectorX<T>>) MutableCollectionX.super.sliding(windowSize);
+        return (ListX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#sliding(int, int)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#sliding(int, int)
      */
     @Override
     default ListX<VectorX<T>> sliding(final int windowSize, final int increment) {
-        return (ListX<VectorX<T>>) MutableCollectionX.super.sliding(windowSize, increment);
+        return (ListX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize, increment);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#scanLeft(cyclops2.function.Monoid)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#scanLeft(cyclops2.function.Monoid)
      */
     @Override
     default ListX<T> scanLeft(final Monoid<T> monoid) {
-        return (ListX<T>) MutableCollectionX.super.scanLeft(monoid);
+        return (ListX<T>) LazyCollectionX.super.scanLeft(monoid);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     default <U> ListX<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
-        return (ListX<U>) MutableCollectionX.super.scanLeft(seed, function);
+        return (ListX<U>) LazyCollectionX.super.scanLeft(seed, function);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#scanRight(cyclops2.function.Monoid)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#scanRight(cyclops2.function.Monoid)
      */
     @Override
     default ListX<T> scanRight(final Monoid<T> monoid) {
-        return (ListX<T>) MutableCollectionX.super.scanRight(monoid);
+        return (ListX<T>) LazyCollectionX.super.scanRight(monoid);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     default <U> ListX<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
-        return (ListX<U>) MutableCollectionX.super.scanRight(identity, combiner);
+        return (ListX<U>) LazyCollectionX.super.scanRight(identity, combiner);
     }
 
     /* Makes a defensive copy of this ListX replacing the value at i with the specified element
@@ -984,7 +1001,7 @@ public interface ListX<T> extends To<ListX<T>>,
     public ListX<T> subList(int start, int end);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#plus(java.lang.Object)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#plus(java.lang.Object)
      */
     @Override
     default ListX<T> plus(final T e) {
@@ -993,7 +1010,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#plusAll(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#plusAll(java.util.Collection)
      */
     @Override
     default ListX<T> plusAll(final Collection<? extends T> list) {
@@ -1011,7 +1028,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#minus(java.lang.Object)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#minus(java.lang.Object)
      */
     @Override
     default ListX<T> minus(final Object e) {
@@ -1020,7 +1037,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#minusAll(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#minusAll(java.util.Collection)
      */
     @Override
     default ListX<T> minusAll(final Collection<?> list) {
@@ -1064,7 +1081,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> peek(final Consumer<? super T> c) {
 
-        return (ListX<T>) MutableCollectionX.super.peek(c);
+        return (ListX<T>) LazyCollectionX.super.peek(c);
     }
 
     /* (non-Javadoc)
@@ -1073,7 +1090,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> cycle(final long times) {
 
-        return (ListX<T>) MutableCollectionX.super.cycle(times);
+        return (ListX<T>) LazyCollectionX.super.cycle(times);
     }
 
     /* (non-Javadoc)
@@ -1082,7 +1099,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> cycle(final Monoid<T> m, final long times) {
 
-        return (ListX<T>) MutableCollectionX.super.cycle(m, times);
+        return (ListX<T>) LazyCollectionX.super.cycle(m, times);
     }
 
     /* (non-Javadoc)
@@ -1091,7 +1108,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> cycleWhile(final Predicate<? super T> predicate) {
 
-        return (ListX<T>) MutableCollectionX.super.cycleWhile(predicate);
+        return (ListX<T>) LazyCollectionX.super.cycleWhile(predicate);
     }
 
     /* (non-Javadoc)
@@ -1099,7 +1116,7 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     @Override
     default ListX<T> cycleUntil(final Predicate<? super T> predicate) {
-        return (ListX<T>) MutableCollectionX.super.cycleUntil(predicate);
+        return (ListX<T>) LazyCollectionX.super.cycleUntil(predicate);
     }
 
     /* (non-Javadoc)
@@ -1108,7 +1125,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default <U> ListX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return (ListX) MutableCollectionX.super.zipS(other);
+        return (ListX) LazyCollectionX.super.zipS(other);
     }
 
 
@@ -1118,7 +1135,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default <S, U> ListX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
-        return (ListX) MutableCollectionX.super.zip3(second, third);
+        return (ListX) LazyCollectionX.super.zip3(second, third);
     }
 
     /* (non-Javadoc)
@@ -1128,7 +1145,7 @@ public interface ListX<T> extends To<ListX<T>>,
     default <T2, T3, T4> ListX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
             final Iterable<? extends T4> fourth) {
 
-        return (ListX) MutableCollectionX.super.zip4(second, third, fourth);
+        return (ListX) LazyCollectionX.super.zip4(second, third, fourth);
     }
 
     /* (non-Javadoc)
@@ -1137,7 +1154,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<Tuple2<T, Long>> zipWithIndex() {
 
-        return (ListX<Tuple2<T, Long>>) MutableCollectionX.super.zipWithIndex();
+        return (ListX<Tuple2<T, Long>>) LazyCollectionX.super.zipWithIndex();
     }
 
     /* (non-Javadoc)
@@ -1146,7 +1163,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> sorted() {
 
-        return (ListX<T>) MutableCollectionX.super.sorted();
+        return (ListX<T>) LazyCollectionX.super.sorted();
     }
 
     /* (non-Javadoc)
@@ -1155,7 +1172,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> sorted(final Comparator<? super T> c) {
 
-        return (ListX<T>) MutableCollectionX.super.sorted(c);
+        return (ListX<T>) LazyCollectionX.super.sorted(c);
     }
 
     /* (non-Javadoc)
@@ -1164,7 +1181,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> skipWhile(final Predicate<? super T> p) {
 
-        return (ListX<T>) MutableCollectionX.super.skipWhile(p);
+        return (ListX<T>) LazyCollectionX.super.skipWhile(p);
     }
 
     /* (non-Javadoc)
@@ -1173,7 +1190,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> skipUntil(final Predicate<? super T> p) {
 
-        return (ListX<T>) MutableCollectionX.super.skipUntil(p);
+        return (ListX<T>) LazyCollectionX.super.skipUntil(p);
     }
 
     /* (non-Javadoc)
@@ -1182,7 +1199,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> shuffle() {
 
-        return (ListX<T>) MutableCollectionX.super.shuffle();
+        return (ListX<T>) LazyCollectionX.super.shuffle();
     }
 
     /* (non-Javadoc)
@@ -1191,7 +1208,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> skipLast(final int num) {
 
-        return (ListX<T>) MutableCollectionX.super.skipLast(num);
+        return (ListX<T>) LazyCollectionX.super.skipLast(num);
     }
 
     /* (non-Javadoc)
@@ -1200,7 +1217,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> shuffle(final Random random) {
 
-        return (ListX<T>) MutableCollectionX.super.shuffle(random);
+        return (ListX<T>) LazyCollectionX.super.shuffle(random);
     }
 
     /* (non-Javadoc)
@@ -1209,7 +1226,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<ReactiveSeq<T>> permutations() {
 
-        return (ListX<ReactiveSeq<T>>) MutableCollectionX.super.permutations();
+        return (ListX<ReactiveSeq<T>>) LazyCollectionX.super.permutations();
     }
 
     /* (non-Javadoc)
@@ -1218,7 +1235,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<ReactiveSeq<T>> combinations(final int size) {
 
-        return (ListX<ReactiveSeq<T>>) MutableCollectionX.super.combinations(size);
+        return (ListX<ReactiveSeq<T>>) LazyCollectionX.super.combinations(size);
     }
 
     /* (non-Javadoc)
@@ -1227,7 +1244,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<ReactiveSeq<T>> combinations() {
 
-        return (ListX<ReactiveSeq<T>>) MutableCollectionX.super.combinations();
+        return (ListX<ReactiveSeq<T>>) LazyCollectionX.super.combinations();
     }
 
     /* (non-Javadoc)
@@ -1236,214 +1253,214 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default <U> ListX<U> cast(final Class<? extends U> type) {
 
-        return (ListX<U>) MutableCollectionX.super.cast(type);
+        return (ListX<U>) LazyCollectionX.super.cast(type);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#distinct()
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#distinct()
      */
     @Override
     default ListX<T> distinct() {
 
-        return (ListX<T>) MutableCollectionX.super.distinct();
+        return (ListX<T>) LazyCollectionX.super.distinct();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#limitWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
     @Override
     default ListX<T> limitWhile(final Predicate<? super T> p) {
 
-        return (ListX<T>) MutableCollectionX.super.limitWhile(p);
+        return (ListX<T>) LazyCollectionX.super.limitWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#limitUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
     @Override
     default ListX<T> limitUntil(final Predicate<? super T> p) {
 
-        return (ListX<T>) MutableCollectionX.super.limitUntil(p);
+        return (ListX<T>) LazyCollectionX.super.limitUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#intersperse(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#intersperse(java.lang.Object)
      */
     @Override
     default ListX<T> intersperse(final T value) {
 
-        return (ListX<T>) MutableCollectionX.super.intersperse(value);
+        return (ListX<T>) LazyCollectionX.super.intersperse(value);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#limitLast(int)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#limitLast(int)
      */
     @Override
     default ListX<T> limitLast(final int num) {
 
-        return (ListX<T>) MutableCollectionX.super.limitLast(num);
+        return (ListX<T>) LazyCollectionX.super.limitLast(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#onEmpty(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#onEmpty(java.lang.Object)
      */
     @Override
     default ListX<T> onEmpty(final T value) {
 
-        return (ListX<T>) MutableCollectionX.super.onEmpty(value);
+        return (ListX<T>) LazyCollectionX.super.onEmpty(value);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#onEmptyGet(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default ListX<T> onEmptyGet(final Supplier<? extends T> supplier) {
 
-        return (ListX<T>) MutableCollectionX.super.onEmptyGet(supplier);
+        return (ListX<T>) LazyCollectionX.super.onEmptyGet(supplier);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
     default <X extends Throwable> ListX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return (ListX<T>) MutableCollectionX.super.onEmptyThrow(supplier);
+        return (ListX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#ofType(java.lang.Class)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#ofType(java.lang.Class)
      */
     @Override
     default <U> ListX<U> ofType(final Class<? extends U> type) {
 
-        return (ListX<U>) MutableCollectionX.super.ofType(type);
+        return (ListX<U>) LazyCollectionX.super.ofType(type);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#filterNot(java.util.function.Predicate)
      */
     @Override
     default ListX<T> filterNot(final Predicate<? super T> fn) {
 
-        return (ListX<T>) MutableCollectionX.super.filterNot(fn);
+        return (ListX<T>) LazyCollectionX.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#notNull()
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#notNull()
      */
     @Override
     default ListX<T> notNull() {
 
-        return (ListX<T>) MutableCollectionX.super.notNull();
+        return (ListX<T>) LazyCollectionX.super.notNull();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     default ListX<T> removeAllS(final Stream<? extends T> stream) {
 
-        return (ListX<T>) MutableCollectionX.super.removeAllS(stream);
+        return (ListX<T>) LazyCollectionX.super.removeAllS(stream);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Iterable)
      */
     @Override
     default ListX<T> removeAllI(final Iterable<? extends T> it) {
 
-        return (ListX<T>) MutableCollectionX.super.removeAllI(it);
+        return (ListX<T>) LazyCollectionX.super.removeAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default ListX<T> removeAll(final T... values) {
 
-        return (ListX<T>) MutableCollectionX.super.removeAll(values);
+        return (ListX<T>) LazyCollectionX.super.removeAll(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllI(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
     default ListX<T> retainAllI(final Iterable<? extends T> it) {
 
-        return (ListX<T>) MutableCollectionX.super.retainAllI(it);
+        return (ListX<T>) LazyCollectionX.super.retainAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default ListX<T> retainAllS(final Stream<? extends T> seq) {
 
-        return (ListX<T>) MutableCollectionX.super.retainAllS(seq);
+        return (ListX<T>) LazyCollectionX.super.retainAllS(seq);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllI(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Object[])
      */
     @Override
     default ListX<T> retainAll(final T... values) {
 
-        return (ListX<T>) MutableCollectionX.super.retainAll(values);
+        return (ListX<T>) LazyCollectionX.super.retainAll(values);
     }
 
     /* (non-Javadoc)
-    * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#grouped(int, java.util.function.Supplier)
+    * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#grouped(int, java.util.function.Supplier)
     */
     @Override
     default <C extends Collection<? super T>> ListX<C> grouped(final int size, final Supplier<C> supplier) {
 
-        return (ListX<C>) MutableCollectionX.super.grouped(size, supplier);
+        return (ListX<C>) LazyCollectionX.super.grouped(size, supplier);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#groupedUntil(java.util.function.Predicate)
      */
     @Override
     default ListX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
 
-        return (ListX<ListX<T>>) MutableCollectionX.super.groupedUntil(predicate);
+        return (ListX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#groupedWhile(java.util.function.Predicate)
      */
     @Override
     default ListX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
 
-        return (ListX<ListX<T>>) MutableCollectionX.super.groupedWhile(predicate);
+        return (ListX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<? super T>> ListX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return (ListX<C>) MutableCollectionX.super.groupedWhile(predicate, factory);
+        return (ListX<C>) LazyCollectionX.super.groupedWhile(predicate, factory);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<? super T>> ListX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return (ListX<C>) MutableCollectionX.super.groupedUntil(predicate, factory);
+        return (ListX<C>) LazyCollectionX.super.groupedUntil(predicate, factory);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
     default ListX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (ListX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
+        return (ListX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
 
@@ -1491,82 +1508,82 @@ public interface ListX<T> extends To<ListX<T>>,
 
     @Override
     default <R> ListX<R> retry(final Function<? super T, ? extends R> fn) {
-        return (ListX<R>)MutableCollectionX.super.retry(fn);
+        return (ListX<R>)LazyCollectionX.super.retry(fn);
     }
 
     @Override
     default <R> ListX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (ListX<R>)MutableCollectionX.super.retry(fn);
+        return (ListX<R>)LazyCollectionX.super.retry(fn);
     }
 
     @Override
     default <R> ListX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (ListX<R>)MutableCollectionX.super.flatMapS(fn);
+        return (ListX<R>)LazyCollectionX.super.flatMapS(fn);
     }
 
     @Override
     default <R> ListX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (ListX<R>)MutableCollectionX.super.flatMapP(fn);
+        return (ListX<R>)LazyCollectionX.super.flatMapP(fn);
     }
 
     @Override
     default ListX<T> prependS(Stream<? extends T> stream) {
-        return (ListX<T>)MutableCollectionX.super.prependS(stream);
+        return (ListX<T>)LazyCollectionX.super.prependS(stream);
     }
 
     @Override
     default ListX<T> append(T... values) {
-        return (ListX<T>)MutableCollectionX.super.append(values);
+        return (ListX<T>)LazyCollectionX.super.append(values);
     }
 
     @Override
     default ListX<T> append(T value) {
-        return (ListX<T>)MutableCollectionX.super.append(value);
+        return (ListX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override
     default ListX<T> prepend(T value) {
-        return (ListX<T>)MutableCollectionX.super.prepend(value);
+        return (ListX<T>)LazyCollectionX.super.prepend(value);
     }
 
     @Override
     default ListX<T> prepend(T... values) {
-        return (ListX<T>)MutableCollectionX.super.prepend(values);
+        return (ListX<T>)LazyCollectionX.super.prepend(values);
     }
 
     @Override
     default ListX<T> insertAt(int pos, T... values) {
-        return (ListX<T>)MutableCollectionX.super.insertAt(pos,values);
+        return (ListX<T>)LazyCollectionX.super.insertAt(pos,values);
     }
 
     @Override
     default ListX<T> deleteBetween(int start, int end) {
-        return (ListX<T>)MutableCollectionX.super.deleteBetween(start,end);
+        return (ListX<T>)LazyCollectionX.super.deleteBetween(start,end);
     }
 
     @Override
     default ListX<T> insertAtS(int pos, Stream<T> stream) {
-        return (ListX<T>)MutableCollectionX.super.insertAtS(pos,stream);
+        return (ListX<T>)LazyCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override
     default ListX<T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return (ListX<T>)MutableCollectionX.super.recover(fn);
+        return (ListX<T>)LazyCollectionX.super.recover(fn);
     }
 
     @Override
     default <EX extends Throwable> ListX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return (ListX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
+        return (ListX<T>)LazyCollectionX.super.recover(exceptionClass,fn);
     }
 
     @Override
     default ListX<T> plusLoop(int max, IntFunction<T> value) {
-        return (ListX<T>)MutableCollectionX.super.plusLoop(max,value);
+        return (ListX<T>)LazyCollectionX.super.plusLoop(max,value);
     }
 
     @Override
     default ListX<T> plusLoop(Supplier<Optional<T>> supplier) {
-        return (ListX<T>)MutableCollectionX.super.plusLoop(supplier);
+        return (ListX<T>)LazyCollectionX.super.plusLoop(supplier);
     }
 
 
