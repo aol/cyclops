@@ -1,11 +1,16 @@
 package com.aol.cyclops2.functions.collections.extensions.standard.anyM;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.stream.Stream;
 
+import cyclops.collections.mutable.ListX;
 import cyclops.monads.Witness;
+import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -24,6 +29,18 @@ public class StreamTest extends AbstractAnyMSeqOrderedDependentTest<Witness.stre
 	public <T> AnyMSeq<Witness.stream,T> empty() {
 		return AnyM.fromStream(Stream.empty());
 	}
+
+	int count = 0;
+    @Test
+    public void testCycleUntil2() {
+        count =0;
+        System.out.println("Cycle until!");
+        count =0;
+        ListX<Integer> b= of(1, 2, 3).peek(System.out::println)
+                            .cycleUntil(next->count++==6).toListX();
+        System.out.println("2 " + b);
+
+    }
 	@Test
     public void when(){
         

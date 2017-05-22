@@ -86,7 +86,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return Streamable.fromIterable(iterable);
     }
     public PersistentQueueX<T> persistentQueueX(){
-        return persistentQueueX(Conversion.LAZY);
+        return persistentQueueX(Conversion.MATERIALIZED);
     }
     public PersistentQueueX<T> persistentQueueX(Conversion c) {
         PersistentQueueX<T> res = PersistentQueueX.fromIterable(iterable);
@@ -96,7 +96,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
 
     public PersistentSetX<T> persistentSetX(){
-        return persistentSetX(Conversion.LAZY);
+        return persistentSetX(Conversion.MATERIALIZED);
     }
 
     public PersistentSetX<T> persistentSetX(Conversion c) {
@@ -107,7 +107,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
 
     public OrderedSetX<T> orderedSetX(){
-        return orderedSetX(Conversion.LAZY);
+        return orderedSetX(Conversion.MATERIALIZED);
     }
     public OrderedSetX<T> orderedSetX(Conversion c) {
         OrderedSetX<T> res = OrderedSetX.fromIterable(iterable);
@@ -127,7 +127,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
 
     public VectorX<T> vectorX(){
-        return vectorX(Conversion.LAZY);
+        return vectorX(Conversion.MATERIALIZED);
     }
     public VectorX<T> vectorX(Conversion c) {
         VectorX<T> res = VectorX.fromIterable(iterable);
@@ -137,7 +137,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
 
     public LinkedListX<T> linkedListX(){
-        return linkedListX(Conversion.LAZY);
+        return linkedListX(Conversion.MATERIALIZED);
     }
     public LinkedListX<T> linkedListX(Conversion c) {
         LinkedListX<T> res = LinkedListX.fromIterable(iterable);
@@ -147,7 +147,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
 
     public DequeX<T> dequeX(){
-        return dequeX(Conversion.LAZY);
+        return dequeX(Conversion.MATERIALIZED);
     }
     public DequeX<T> dequeX(Conversion c) {
         DequeX<T> res = DequeX.fromIterable(iterable);
@@ -156,7 +156,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return res;
     }
     public SortedSetX<T> sortedSetX() {
-        return sortedSetX(Conversion.LAZY);
+        return sortedSetX(Conversion.MATERIALIZED);
     }
     public SortedSetX<T> sortedSetX(Conversion c) {
         SortedSetX<T> res = SortedSetX.fromIterable(iterable);
@@ -166,7 +166,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
 
     public SetX<T> setX(){
-        return setX(Conversion.LAZY);
+        return setX(Conversion.MATERIALIZED);
     }
     public SetX<T> setX(Conversion c) {
         SetX<T> res = SetX.fromIterable(iterable);
@@ -176,17 +176,21 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
 
     public ListX<T> listX(){
-        return listX(Conversion.LAZY);
+        return listX(Conversion.MATERIALIZED);
     }
     public ListX<T> listX(Conversion c) {
+        System.out.println("Iterable " + iterable.getClass());
+        System.out.println("C " + c);
         ListX<T> res = ListX.fromIterable(iterable);
-        if(c==Conversion.MATERIALIZED)
+        if(Conversion.MATERIALIZED==c) {
+            System.out.println("Calling materialized");
             return res.materialize();
+        }
         return res;
     }
 
     public QueueX<T> queueX(){
-        return queueX(Conversion.LAZY);
+        return queueX(Conversion.MATERIALIZED);
     }
     public QueueX<T> queueX(Conversion c) {
         QueueX<T> res = QueueX.fromIterable(iterable);

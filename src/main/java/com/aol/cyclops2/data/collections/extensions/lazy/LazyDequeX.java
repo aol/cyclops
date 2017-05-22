@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  * @param <T> the type of elements held in this collection
  */
 @EqualsAndHashCode(of = { "deque" })
-public class LazyDequeX<T> extends AbstractLazyMutableCollection<T,Deque<T>> implements DequeX<T> {
+public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements DequeX<T> {
 
 
     public LazyDequeX(Deque<T> list, ReactiveSeq<T> seq, Collector<T, ?, Deque<T>> collector) {

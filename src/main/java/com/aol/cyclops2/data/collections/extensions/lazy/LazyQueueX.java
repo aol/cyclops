@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyQueueX<T> extends AbstractLazyMutableCollection<T,Queue<T>> implements QueueX<T> {
+public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements QueueX<T> {
 
 
     public LazyQueueX(Queue<T> list, ReactiveSeq<T> seq, Collector<T, ?, Queue<T>> collector) {

@@ -51,6 +51,17 @@ import static org.junit.Assert.fail;
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
+
+    @Test
+    public void cycleWhile(){
+        count =0;
+        ListX<Integer> b= ReactiveSeq.fromStream(Stream.of(1, 2, 3)).peek(System.out::println)
+                .cycleUntil(next->count++==6).toListX();
+
+        System.out.println("B " + b);
+        assertEquals(asList(1, 2,3, 1, 2,3),b);
+    }
+
     @Test
     public void testCombineMonoid(){
         ReactiveSeq.of(1,2).to();

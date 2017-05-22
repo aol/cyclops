@@ -3285,6 +3285,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     }
 
+    default boolean isReplayable(){
+        return getClass()!=OneShotStreamX.class;
+    }
+
     /**
      * Construct a ReactiveSeq from a Stream
      *

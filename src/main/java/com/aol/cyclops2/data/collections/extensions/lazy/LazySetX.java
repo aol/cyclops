@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazySetX<T> extends AbstractLazyMutableCollection<T,Set<T>> implements SetX<T> {
+public class LazySetX<T> extends AbstractLazyCollection<T,Set<T>> implements SetX<T> {
 
 
     public LazySetX(Set<T> list, ReactiveSeq<T> seq, Collector<T, ?, Set<T>> collector) {

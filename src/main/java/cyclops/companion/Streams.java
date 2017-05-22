@@ -2080,10 +2080,10 @@ public class Streams {
     public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<? super T> stream, final Optional<ReversableSpliterator> rev) {
         if (stream instanceof ReactiveSeq)
             return (ReactiveSeq) stream;
-        
-            return new StreamX<T>((Stream<T>)
-                                          stream, rev);
 
+          //  return new StreamX<T>((Stream<T>)
+            //                              stream, rev);
+        return oneShotStream((Stream<T>)stream);
     }
     public final static <T> ReactiveSeq<T> reactiveSeq(final Iterable<T> iterable){
         return ReactiveSeq.fromIterable(iterable);
