@@ -3,6 +3,8 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.companion.Streams;
@@ -75,7 +77,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     */
     public static QueueX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                          .queueX();
+                          .queueX(Conversion.LAZY);
     }
 
     /**
@@ -89,7 +91,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     public static QueueX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .queueX();
+                          .queueX(Conversion.LAZY);
     }
 
     /**
@@ -109,7 +111,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     static <U, T> QueueX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .queueX();
+                          .queueX(Conversion.LAZY);
     }
 
     /**
@@ -123,7 +125,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .queueX();
+                          .queueX(Conversion.LAZY);
     }
     /**
      * Generate a QueueX from the provided value up toNested the provided limit number of times
@@ -136,7 +138,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                          .queueX();
+                          .queueX(Conversion.LAZY);
     }
     /**
      * Create a QueueX by iterative application of a function toNested an initial element up toNested the supplied limit number of times
@@ -149,7 +151,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     public static <T> QueueX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .queueX();
+                          .queueX(Conversion.LAZY);
 
     }
 
@@ -189,7 +191,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     public static <T> QueueX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                          .queueX();
+                          .queueX(Conversion.LAZY);
     }
 
     public static <T> QueueX<T> fromIterable(final Iterable<T> it) {

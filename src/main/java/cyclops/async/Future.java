@@ -741,6 +741,18 @@ public class Future<T> implements To<Future<T>>,
     }
 
 
+
+    @Override
+    public Eval<T> toEvalAlways() {
+        return Eval.fromFuture(this);
+    }
+
+    @Override
+    public Maybe<T> toMaybe() {
+
+        return Maybe.fromFuture(this);
+    }
+
     private final CompletableFuture<T> future;
 
     /**

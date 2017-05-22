@@ -2,6 +2,8 @@ package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySetX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.function.Monoid;
@@ -41,7 +43,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
 
         return ReactiveSeq.range(start, end)
                           .to()
-                          .setX();
+                          .setX(Conversion.LAZY);
     }
 
     /**
@@ -55,7 +57,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
      */
     public static SetX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .setX();
+                          .setX(Conversion.LAZY);
     }
 
     /**
@@ -75,7 +77,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
      */
     static <U, T> SetX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .setX();
+                          .setX(Conversion.LAZY);
     }
 
     /**
@@ -89,7 +91,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .setX();
+                          .setX(Conversion.LAZY);
     }
 
     /**
@@ -103,7 +105,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
     public static <T> SetX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .setX();
+                          .setX(Conversion.LAZY);
 
     }
 
@@ -149,7 +151,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
      */
     public static <T> SetX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                          .setX();
+                          .setX(Conversion.LAZY);
     }
 
     public static <T> SetX<T> fromIterable(final Iterable<T> it) {
@@ -293,7 +295,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
      * {@code 
      *  SetX.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .listX()
+                   .listX(Conversion.LAZY)
                    
      *  //ListX(3,4) 
      * }</pre>
@@ -569,7 +571,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
         return this.stream()
                    .cycle(times)
                    .to()
-                   .listX();
+                   .listX(Conversion.LAZY);
     }
 
     /* (non-Javadoc)
@@ -581,7 +583,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
         return this.stream()
                    .cycle(m, times)
                    .to()
-                   .listX();
+                   .listX(Conversion.LAZY);
     }
 
     /* (non-Javadoc)
@@ -593,7 +595,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
         return this.stream()
                    .cycleWhile(predicate)
                    .to()
-                   .listX();
+                   .listX(Conversion.LAZY);
     }
 
     /* (non-Javadoc)
@@ -605,7 +607,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, MutableCollectionX<T>, OnEm
         return this.stream()
                    .cycleUntil(predicate)
                    .to()
-                   .listX();
+                   .listX(Conversion.LAZY);
     }
 
     /* (non-Javadoc)

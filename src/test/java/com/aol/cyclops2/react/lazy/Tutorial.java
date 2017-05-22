@@ -184,7 +184,7 @@ public class Tutorial {
 		List<String> results = LazyReact.sequentialCommonBuilder()
 
 				.ofAsync(() -> "new event1", () -> "new event2")
-				.retry(this::unreliable).onFail(e -> "default")
+				.retry(this::unreliable,2,1,TimeUnit.MILLISECONDS).onFail(e -> "default")
 				.peek(System.out::println).capture(Throwable::printStackTrace)
 				.block();
 

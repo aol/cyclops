@@ -179,11 +179,8 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return listX(Conversion.MATERIALIZED);
     }
     public ListX<T> listX(Conversion c) {
-        System.out.println("Iterable " + iterable.getClass());
-        System.out.println("C " + c);
         ListX<T> res = ListX.fromIterable(iterable);
         if(Conversion.MATERIALIZED==c) {
-            System.out.println("Calling materialized");
             return res.materialize();
         }
         return res;

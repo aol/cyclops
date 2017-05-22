@@ -457,9 +457,10 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     }
     @Test
     public void combineTwo() {
-        assertThat(ofWait(1, 2)
-                .combine((a, b) -> a < 5, Semigroups.intSum)
-                .findOne(), Matchers.equalTo(Maybe.of(3)));
+
+            assertThat(ofWait(1, 2)
+                    .combine((a, b) -> a < 5, Semigroups.intSum)
+                    .findOne(), Matchers.equalTo(Maybe.of(3)));
     }
 
     @Test
@@ -474,6 +475,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         return Spouts.async(s->{
 
             new Thread(()-> {
+                System.out.println("Pushing data from " + Thread.currentThread().getId());
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {

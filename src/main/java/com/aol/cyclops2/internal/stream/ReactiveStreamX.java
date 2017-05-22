@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -143,10 +144,40 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     static final Object UNSET = new Object();
     @Override
     public Maybe<T> findOne(){
+        if(async==Type.NO_BACKPRESSURE){
+            Future<T> result = Future.future();
+            source.subscribeAll(e->{
+                result.complete(e);
+                throw new Queue.ClosedQueueException();
+            },t->{
+                result.completeExceptionally(t);
+            },()->{
+                if(!result.isDone()) {
+                    result.complete(null);
+                }
+            });
+            T value = result.get();
+            return result.toMaybe();
+        }
         return Maybe.fromPublisher(this);
     }
     @Override
     public Either<Throwable,T> findFirstOrError(){
+        if(async==Type.NO_BACKPRESSURE){
+            Future<T> result = Future.future();
+            source.subscribeAll(e->{
+                result.complete(e);
+                throw new Queue.ClosedQueueException();
+            },t->{
+                result.completeExceptionally(t);
+            },()->{
+                if(!result.isDone()) {
+                    result.complete(null);
+                }
+            });
+            T value = result.get();
+            return Either.fromFuture(result);
+        }
         return Either.fromPublisher(this);
     }
     @Override
@@ -673,8 +704,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             //if this Stream is not backpressure-aware demand requests / cancel requests are ignored.
             sub.onSubscribe(new StreamSubscription() {
                 boolean requested =false;
+                volatile boolean active = false;
                 volatile boolean completed = false;
-                ManyToOneConcurrentArrayQueue<T> data = new ManyToOneConcurrentArrayQueue<T>(1024*10);
+                OneToOneConcurrentArrayQueue<T> data = new OneToOneConcurrentArrayQueue<T>(1024*10);
                 @Override
                 public void request(long n) {
                    // System.out.println("Request for "+ n);
@@ -685,7 +717,11 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                             }
                         }, sub::onError, ()-> {
                             completed = true;
+
                             if(data.size()==0){
+                                while(active){
+                                    Thread.yield();
+                                }
                                 sub.onComplete();
                             }
                         });
@@ -699,7 +735,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                                 long sent = 0;
                                 //System.out.println("Requesting " + x);
                                 boolean completeSent = false;
-
+                                active=true;
                                 Object res = data.poll();
                                 if (res != null) {
                                     sub.onNext((nilsafeOut(res)));
@@ -712,6 +748,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                                 }else {
                                     Thread.yield();
                                 }
+                                active=false;
 
                            //  System.out.println("Sent " + sent + " x " + super.requested.get() + " " + completed + "  sent ? " + completeSent + " size " + data.size());
                         }

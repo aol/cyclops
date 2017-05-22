@@ -3,6 +3,8 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySortedSetX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
 
+import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.function.Monoid;
@@ -58,7 +60,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     public static SortedSetX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end)
                           .to()
-                          .sortedSetX();
+                          .sortedSetX(Conversion.LAZY);
     }
 
     /**
@@ -73,7 +75,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     public static SortedSetX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end)
                           .to()
-                          .sortedSetX();
+                          .sortedSetX(Conversion.LAZY);
     }
 
     /**
@@ -94,7 +96,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     static <U, T> SortedSetX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
                           .to()
-                          .sortedSetX();
+                          .sortedSetX(Conversion.LAZY);
     }
 
     /**
@@ -109,7 +111,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         return ReactiveSeq.generate(s)
                           .limit(limit)
                           .to()
-                          .sortedSetX();
+                          .sortedSetX(Conversion.LAZY);
     }
 
     /**
@@ -124,7 +126,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
                           .to()
-                          .sortedSetX();
+                          .sortedSetX(Conversion.LAZY);
 
     }
 
@@ -171,7 +173,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     public static <T> SortedSetX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher)
                           .to()
-                          .sortedSetX();
+                          .sortedSetX(Conversion.LAZY);
     }
 
     public static <T> SortedSetX<T> fromIterable(final Iterable<T> it) {
@@ -304,7 +306,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
      * {@code 
      *  SortedSetX.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .listX()
+                   .listX(Conversion.LAZY)
                    
      *  //ListX(3,4) 
      * }</pre>

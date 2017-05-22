@@ -5,6 +5,8 @@ import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -103,7 +105,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static VectorX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                          .vectorX();
+                          .vectorX(Conversion.LAZY);
     }
 
     /**
@@ -117,7 +119,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static VectorX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .vectorX();
+                          .vectorX(Conversion.LAZY);
     }
 
     /**
@@ -137,7 +139,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     static <U, T> VectorX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .vectorX();
+                          .vectorX(Conversion.LAZY);
     }
 
     /**
@@ -151,7 +153,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .vectorX();
+                          .vectorX(Conversion.LAZY);
     }  
     /**
      * Generate a VectorX from the provided value up toNested the provided limit number of times
@@ -164,7 +166,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                          .vectorX();
+                          .vectorX(Conversion.LAZY);
     }
 
     /**
@@ -178,7 +180,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     public static <T> VectorX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .vectorX();
+                          .vectorX(Conversion.LAZY);
 
     }
 
@@ -261,7 +263,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                          .vectorX();
+                          .vectorX(Conversion.LAZY);
     }
 
     public static <T> VectorX<T> fromIterable(final Iterable<T> iterable) {
