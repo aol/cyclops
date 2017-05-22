@@ -56,6 +56,7 @@ public class LazyConcat<IN> {
     public void request(long n) {
 
 
+
         if(!sub.isOpen){
             return;
         }
@@ -63,25 +64,28 @@ public class LazyConcat<IN> {
             return;
         }
         if(wip.compareAndSet(0,1)){
+            
             //if processAll the demand is self-sustaining, passed on in onComplete
             if (n == Long.MAX_VALUE || sub.requested.get() == Long.MAX_VALUE) {
                 processAll = true;
 
                 Subscription sa = null;
                 Subscription nextLocal = null;
-                while(sa==null && nextLocal==null && !complete) {
+              //  System.out.println("Waiting..");
+                do {
                     sa = active.get();
                     if (sa != null) {
-                       // System.out.println("Setting requests to MAX!");
+                //       System.out.println("Setting requests to MAX!");
                         sa.request(Long.MAX_VALUE);
                     }
                     nextLocal = next.get();
                     if (nextLocal != null) {
-                      //  System.out.println("Setting NEXT requests to MAX!");
+              //          System.out.println("Setting NEXT requests to MAX!");
                         nextLocal.request(Long.MAX_VALUE);
 
                     }
-                }
+                }while(sa==null && nextLocal==null && !complete);
+              //  System.out.println("Returning..");
                 return;
             }
             requested.accumulateAndGet(n,(a,b)->a+b);
@@ -91,7 +95,6 @@ public class LazyConcat<IN> {
                 addMissingRequests();
             }
             if(local!=null) {
-               // System.out.println("Request local " + n);
                 local.request(n);
             }
 
@@ -152,7 +155,7 @@ public class LazyConcat<IN> {
         }while(missed!=0);
 
         if(toRequest>0) {
-           // System.out.println("Adding " + toRequest);
+
             active.get().request(toRequest);
         }
 
@@ -280,7 +283,7 @@ public class LazyConcat<IN> {
 
         Subscription local = op.subscribe(this::onNext ,this::onError,this::onComplete);
         if(processAll){
-           // System.out.println("Request ALL!");
+
             local.request(Long.MAX_VALUE);
             active.set(local);
             return;
@@ -294,7 +297,6 @@ public class LazyConcat<IN> {
             }
 
             if(r>0) {
-            //    System.out.println("Requesting " + r);
                 local.request(r);
             }
             return;
