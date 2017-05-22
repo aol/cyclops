@@ -26,7 +26,7 @@ public class NQueensPStackTest {
         if (k == 0)
             return LinkedListX.of(LinkedListX.empty());
         else {
-            return placeQueens(k - 1).forEach2(queens -> range(1, num + 1).materialize(),
+            return placeQueens(k - 1).forEach2(queens -> range(1, num + 1),
                                                (queens, column) -> isSafe(column, queens, 1),
                                                (queens, column) -> queens.plus(column));
         }
@@ -46,7 +46,7 @@ public class NQueensPStackTest {
         solutions.forEach(solution->{
             System.out.println("----Solution----");
             solution.forEach(col->{
-                System.out.println(VectorX.range(0,solution.size()).materialize()
+                System.out.println(VectorX.range(0,solution.size())
                                            .map(i->"*")
                                            .with(col-1, "X")
                                            .join(" "));

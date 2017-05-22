@@ -4,8 +4,10 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Reducers;
 import cyclops.function.Reducer;
+import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import lombok.Getter;
+import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
 import java.util.Collection;
@@ -67,7 +69,17 @@ public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>
         this.efficientOps= efficientOps;
 
     }
+    public PStack<T> materializeList(ReactiveSeq<T> toUse){
+        PStack<T> res = ConsPStack.<T> empty();
 
+        final Iterator<T> it = toUse.iterator();
+
+        while (it.hasNext())
+            res = res.plus(it.next());
+
+        return new LazyPStackX<>(
+                res, true);
+    }
 
 
     //@Override

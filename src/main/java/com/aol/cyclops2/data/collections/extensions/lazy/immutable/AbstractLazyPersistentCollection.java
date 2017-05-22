@@ -47,6 +47,9 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
         return (T)get();
     }
 
+    public C materializeList(ReactiveSeq<T> toUse){
+        return collectorInternal.mapReduce(toUse);
+    }
     @Override
     public C get() {
         if (seq.get() != null) {
@@ -54,7 +57,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
                 try{
                     ReactiveSeq<T> toUse = seq.get();
                     if(toUse!=null){//dbl check - as we may pass null check on on thread and set updating false on another
-                        list = collectorInternal.mapReduce(toUse);
+                        list = materializeList(toUse);
                         seq.set(null);
                     }
                 }catch(Throwable t){

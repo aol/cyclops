@@ -224,7 +224,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @SafeVarargs
     public static <T> LinkedListX<T> of(final T... values) {
         return new LazyPStackX<>(
-                                 ReactiveSeq.of(values), true);
+                                 ReactiveSeq.of(values), false);
     }
     /**
      * 
@@ -253,10 +253,10 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return (LinkedListX) iterable;
         if (iterable instanceof PStack)
             return new LazyPStackX<T>(
-                    (PStack) iterable, true);
+                    (PStack) iterable, false);
 
 
-        return new LazyPStackX<>(ReactiveSeq.fromIterable(iterable), true);
+        return new LazyPStackX<>(ReactiveSeq.fromIterable(iterable), false);
 
     }
 
@@ -275,7 +275,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> empty() {
         return new LazyPStackX<>(
-                                 ConsPStack.empty(), true);
+                                 ConsPStack.empty(), false);
     }
 
     /**
