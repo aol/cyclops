@@ -64,28 +64,25 @@ public class LazyConcat<IN> {
             return;
         }
         if(wip.compareAndSet(0,1)){
-            
+
             //if processAll the demand is self-sustaining, passed on in onComplete
             if (n == Long.MAX_VALUE || sub.requested.get() == Long.MAX_VALUE) {
                 processAll = true;
 
                 Subscription sa = null;
                 Subscription nextLocal = null;
-              //  System.out.println("Waiting..");
+
                 do {
                     sa = active.get();
                     if (sa != null) {
-                //       System.out.println("Setting requests to MAX!");
                         sa.request(Long.MAX_VALUE);
                     }
                     nextLocal = next.get();
                     if (nextLocal != null) {
-              //          System.out.println("Setting NEXT requests to MAX!");
                         nextLocal.request(Long.MAX_VALUE);
 
                     }
                 }while(sa==null && nextLocal==null && !complete);
-              //  System.out.println("Returning..");
                 return;
             }
             requested.accumulateAndGet(n,(a,b)->a+b);
