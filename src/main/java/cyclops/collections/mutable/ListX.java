@@ -621,6 +621,7 @@ public interface ListX<T> extends To<ListX<T>>,
                 defaultCollector());
     }
 
+
     public static <T> ListX<T> fromIterable(final Iterable<T> it) {
         if (it instanceof ListX)
             return (ListX<T>) it;

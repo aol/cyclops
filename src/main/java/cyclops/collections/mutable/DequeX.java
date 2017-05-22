@@ -7,6 +7,8 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 
+import cyclops.collections.immutable.BagX;
+
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.function.Monoid;
@@ -245,6 +247,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
                           .to()
                           .dequeX(Conversion.LAZY);
     }
+
     /**
      *
      * <pre>
@@ -377,7 +380,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         
         return (DequeX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+
     }
+
 
 
     /**

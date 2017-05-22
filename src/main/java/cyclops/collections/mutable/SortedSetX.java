@@ -5,6 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.lazy.LazySetX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySortedSetX;
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
+
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
@@ -30,9 +31,7 @@ import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import static com.aol.cyclops2.types.stream.ConvertableSequence.Conversion.LAZY;
-
 
 public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, SortedSet<T>> {
 
@@ -193,6 +192,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
                 stream,
                 defaultCollector());
     }
+
     public static <T> SortedSetX<T> fromIterable(final Iterable<T> it) {
         if (it instanceof SortedSetX)
             return (SortedSetX<T>) it;

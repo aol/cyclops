@@ -627,8 +627,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
 <<<<<<< HEAD
+<<<<<<< HEAD
 
      *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPSetX());
+=======
+        
+     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPersistentSetX());
+>>>>>>> master
 =======
         
      *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPersistentSetX());
@@ -732,8 +737,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
 <<<<<<< HEAD
+<<<<<<< HEAD
      *
      *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPSetX());
+=======
+     * 
+     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPersistentSetX());
+>>>>>>> master
 =======
      * 
      *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPersistentSetX());

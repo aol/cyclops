@@ -3,9 +3,9 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySetX;
-
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
+
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
@@ -173,6 +173,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
                 stream,
                 defaultCollector());
     }
+
+
+
     public static <T> SetX<T> fromIterable(final Iterable<T> it) {
         if (it instanceof SetX)
             return (SetX) it;

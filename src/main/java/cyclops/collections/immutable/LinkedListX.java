@@ -202,6 +202,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         return new LazyPStackX<T>(stream,true);
     }
 
+
+
     /**
      * Construct a Persistent LinkedList from the provided values
      * 
@@ -255,10 +257,12 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return new LazyPStackX<T>(
                     (PStack) iterable, false);
 
-
-        return new LazyPStackX<>(ReactiveSeq.fromIterable(iterable), false);
+        return new LazyPStackX<>(ReactiveSeq.fromIterable(iterable), true);
 
     }
+
+
+
 
 
 

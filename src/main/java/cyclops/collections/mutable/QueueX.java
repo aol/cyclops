@@ -208,11 +208,14 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * @param <T> QueueX generated from Stream
      * @return
      */
-    public static <T> QueueX<T> listX(ReactiveSeq<T> stream){
+    public static <T> QueueX<T> queueX(ReactiveSeq<T> stream){
         return new LazyQueueX<T>(null,
                 stream,
                 defaultCollector());
     }
+
+
+
 
     public static <T> QueueX<T> fromIterable(final Iterable<T> it) {
         

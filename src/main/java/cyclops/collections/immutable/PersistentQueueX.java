@@ -370,7 +370,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
     @Override
     default PersistentQueueX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
-        return (PersistentQueueX<T>)LazyCollectionX.super.combine(op,predicate);
+        return (PersistentQueueX<T>) LazyCollectionX.super.combine(op, predicate);
     }
 
     @Override

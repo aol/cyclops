@@ -306,8 +306,13 @@ public interface Eval<T> extends    To<Eval<T>>,
      *
      * <pre>
 <<<<<<< HEAD
+<<<<<<< HEAD
      * {@code
      *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPSetX());
+=======
+     * {@code 
+     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPersistentSetX());
+>>>>>>> master
 =======
      * {@code 
      *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPersistentSetX());

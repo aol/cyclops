@@ -22,7 +22,6 @@ import java.util.stream.Stream;
  * Created by johnmcclean on 22/12/2016.
  */
 public abstract class AbstractLazyCollection<T, C extends Collection<T>> implements LazyFluentCollection<T, C>, LazyCollectionX<T> {
-
     @Getter(AccessLevel.PROTECTED)
     private volatile C list;
     @Getter(AccessLevel.PROTECTED)

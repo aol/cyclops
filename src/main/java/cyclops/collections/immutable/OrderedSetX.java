@@ -5,6 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPOrderedS
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 
+
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -154,6 +155,8 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
         return new LazyPOrderedSetX<T>(stream);
     }
 
+
+
     /**
      * Reduce a Stream toNested a OrderedSetX,
      * 
@@ -165,12 +168,9 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
      *  //set = [1,2,3]
      * }</pre>
      * 
-     * 
-<<<<<<< HEAD
+     *
      * @param stream toNested convert
-=======
      * @param stream to convert
->>>>>>> master
      * @return
      */
     default <T> OrderedSetX<T> fromStream(final ReactiveSeq<T> stream) {

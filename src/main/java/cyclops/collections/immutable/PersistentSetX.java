@@ -7,6 +7,8 @@ import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 
+import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
+
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
