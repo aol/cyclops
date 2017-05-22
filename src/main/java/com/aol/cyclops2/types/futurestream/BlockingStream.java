@@ -54,8 +54,8 @@ public interface BlockingStream<U> {
 
     /**
      * @param collector
-     *            to perform aggregation / reduction operation on the results
-     *            (e.g. to Collect into a List or String)
+     *            toNested perform aggregation / reduction operation on the results
+     *            (e.g. toNested Collect into a List or String)
      * @return Results of currently active stage in aggregated in form
      *         determined by collector throws
      *         InterruptedException,ExecutionException

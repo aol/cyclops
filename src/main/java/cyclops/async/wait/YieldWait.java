@@ -1,7 +1,7 @@
 package cyclops.async.wait;
 
 /**
- * Repeatedly retry to take or offer element to Queue if full or data unavailable, calling Thread.yield in between attempts
+ * Repeatedly retry toNested take or offer element toNested Queue if full or data unavailable, calling Thread.yield in between attempts
  * @author johnmcclean
  *
  * @param <T> Data type of elements in the async.Queue

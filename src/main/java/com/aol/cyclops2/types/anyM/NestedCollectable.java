@@ -31,7 +31,7 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
 
     
     /**
-     * @return Convert to a List Transformer
+     * @return Convert toNested a List Transformer
      */
     default ListT<W,T> listT(Function<? super Iterable<T>,? extends IndexedSequenceX<T>> toList) {
         if (this instanceof ListT)
@@ -64,8 +64,8 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
     }
 
     /**
-     * Each nested value will be true if predicate matches all elements when Monad converted to a Stream
-     * Nested analog to {@link ReactiveSeq#allMatch}
+     * Each nested value will be true if predicate matches all elements when Monad converted toNested a Stream
+     * Nested analog toNested {@link ReactiveSeq#allMatch}
      * <pre>
      * {@code 
      * assertThat(ReactiveSeq.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
@@ -73,15 +73,15 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
      * </pre>
      * 
      * @param c
-     *            Predicate to check if all match
+     *            Predicate toNested check if all match
      */
     default AnyM<W,Boolean> allMatch(final Predicate<? super T> c) {
         return nestedCollectables().map(s -> s.allMatch(c));
     }
 
     /**
-     * Each nested value will be True if a single element matches when Monad converted to a Stream
-     * Nested analog to {@link ReactiveSeq#anyMatch}
+     * Each nested value will be True if a single element matches when Monad converted toNested a Stream
+     * Nested analog toNested {@link ReactiveSeq#anyMatch}
      * <pre>
      * {@code 
      * assertThat(ReactiveSeq.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
@@ -89,16 +89,16 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
      * </pre>
      * 
      * @param c
-     *            Predicate to check if any match
+     *            Predicate toNested check if any match
      */
     default AnyM<W,Boolean> anyMatch(final Predicate<? super T> c) {
         return nestedCollectables().map(s -> s.anyMatch(c));
     }
 
     /**
-     * Reduce each nested monad to a boolean value - true if the predicates match none of it's elements, otherwise false
+     * Reduce each nested monad toNested a boolean value - true if the predicates match none of it's elements, otherwise false
      * 
-     * @param c  Predicate to check if no match
+     * @param c  Predicate toNested check if no match
      * @return Monad of booleans wrapped inside an AnyM
      */
     default AnyM<W,Boolean> noneMatch(final Predicate<? super T> c) {
@@ -106,7 +106,7 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
     }
 
     /**
-     * @return This monad transformer converted to nested Lists
+     * @return This monad transformer converted toNested nested Lists
      */
     default ListX<ListX<T>> toListOfLists() {
         return nestedCollectables().stream()
@@ -115,7 +115,7 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
     }
 
     /**
-     * @return This monad transformer converted to nested Sets
+     * @return This monad transformer converted toNested nested Sets
      */
     default SetX<SetX<T>> toSetOfSets() {
         return nestedCollectables().stream()
@@ -124,14 +124,14 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
     }
 
     /**
-     * @return This monad transformer converted to a ListX nested in an AnyM
+     * @return This monad transformer converted toNested a ListX nested in an AnyM
      */
     default AnyM<W,ListX<T>> toNestedListX() {
         return nestedCollectables().map(s -> s.collect(ListX.listXCollector()));
     }
 
     /**
-     * @return This monad transformer converted to a SetX nested in an AnyM
+     * @return This monad transformer converted toNested a SetX nested in an AnyM
      */
     default AnyM<W,SetX<T>> toNestedSetX() {
         return nestedCollectables().map(s -> s.collect(SetX.setXCollector()));

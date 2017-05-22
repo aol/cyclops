@@ -25,15 +25,15 @@ import lombok.AllArgsConstructor;
 
 /**
  * A data type that stores at most 1 Values
- * 
+ *
  * @author johnmcclean
  *
  * @param <T> Data type of element in this value
  */
 @FunctionalInterface
 public interface Value<T> extends Folds<T>,
-                                    Convertable<T>, 
-                                    Publisher<T>, 
+                                    Convertable<T>,
+                                    Publisher<T>,
                                     Predicate<T> {
     @Override
     default T apply() {
@@ -124,8 +124,8 @@ public interface Value<T> extends Folds<T>,
     }
 
     /**
-     * Construct a generic Value from the provided Supplier 
-     * 
+     * Construct a generic Value from the provided Supplier
+     *
      * @param supplier Value supplier
      * @return Value wrapping a value that can be generated from the provided Supplier
      */
@@ -163,7 +163,7 @@ public interface Value<T> extends Folds<T>,
 
     /**
      * Use the value stored in this Value to seed a Stream generated from the provided function
-     * 
+     *
      * @param fn Function to generate a Stream
      * @return Stream generated from a seed value (the Value stored in this Value) and the provided function
      */
@@ -192,7 +192,7 @@ public interface Value<T> extends Folds<T>,
 
     /**
      * Convert to an Xor where the secondary value will be used if no primary value is present
-     * 
+     *
     * @param secondary Value to use in case no primary value is present
     * @return Primary Xor with same value as this Value, or a Secondary Xor with the provided Value if this Value is empty
     */
@@ -220,7 +220,7 @@ public interface Value<T> extends Folds<T>,
 
     /**
      * Convert this Value to a Try that will catch the provided exception types on subsequent operations
-     * 
+     *
      * @param classes Exception classes to catch on subsequent operations
      * @return This Value to converted to a Try.
      */
@@ -228,10 +228,10 @@ public interface Value<T> extends Folds<T>,
         return Try.withCatch(() -> get(), classes);
     }
 
-    
+
     /**
      * Return an Ior that can be this object or a Ior.primary or Ior.secondary
-     * @return new Ior 
+     * @return new Ior
      */
     default  Ior<?, T> toIor() {
         if (this instanceof Ior)
@@ -240,7 +240,7 @@ public interface Value<T> extends Folds<T>,
         return o.isPresent() ? Ior.primary(o.get()) : Ior.secondary(null);
     }
 
-    
+
 
     /**
      * Return the value, evaluated right now.
@@ -268,7 +268,7 @@ public interface Value<T> extends Folds<T>,
 
     /**
      * Returns a function result or a supplier result. The first one if the function isn't null and the second one if it is.
-     * @return new Maybe with the result of a function or supplier. 
+     * @return new Maybe with the result of a function or supplier.
      */
     default Maybe<T> toMaybe() {
         return visit(p -> Maybe.ofNullable(p), () -> Maybe.none());

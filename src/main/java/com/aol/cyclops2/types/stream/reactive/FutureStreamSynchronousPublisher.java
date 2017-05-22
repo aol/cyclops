@@ -172,7 +172,7 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
     }
 
     /**
-     * @return An async transfer Queue from which to recieve this Publishers data
+     * @return An async transfer Queue from which toNested recieve this Publishers data
      */
     Queue<T> toQueue();
 

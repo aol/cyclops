@@ -259,7 +259,7 @@ public class StreamableSeqOpertationsTest {
 	    
 	    @Test
 	    public void testIterable() {
-	        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+	        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
 	        for (Integer i :of(1, 2, 3)) {
 	            assertThat(list,hasItem(i));

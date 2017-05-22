@@ -19,7 +19,7 @@ public class EagerFutureStreamFunctions {
     /**
      * Close all queues except the active one
      * 
-     * @param active Queue not to close
+     * @param active Queue not toNested close
      * @param all All queues potentially including the active queue
      */
     static void closeOthers(final Queue active, final List<Queue> all) {
@@ -32,7 +32,7 @@ public class EagerFutureStreamFunctions {
     /**
      * Close all streams except the active one
      * 
-     * @param active Stream not to close
+     * @param active Stream not toNested close
      * @param all  All streams potentially including the active reactiveStream
      */
     static void closeOthers(final SimpleReactStream active, final List<SimpleReactStream> all) {
@@ -54,8 +54,8 @@ public class EagerFutureStreamFunctions {
     /**
      * Return first Stream out of provided Streams that starts emitted results 
      * 
-     * @param futureStreams Streams to race
-     * @return First Stream to skip emitting values
+     * @param futureStreams Streams toNested race
+     * @return First Stream toNested skip emitting values
      */
     @SafeVarargs
     public static <U> SimpleReactStream<U> firstOf(final SimpleReactStream<U>... futureStreams) {
@@ -83,7 +83,7 @@ public class EagerFutureStreamFunctions {
     }
 
     /**
-     * Zip two streams into one using a {@link BiFunction} to produce resulting. 
+     * Zip two streams into one using a {@link BiFunction} toNested produce resulting.
      * values. Uses the latest values from each rather than waiting for both.
      * 
      */
@@ -132,7 +132,7 @@ public class EagerFutureStreamFunctions {
     }
 
     /**
-     * Zip two streams into one using a {@link BiFunction} to produce resulting. 
+     * Zip two streams into one using a {@link BiFunction} toNested produce resulting.
      * values. Uses the latest values from each rather than waiting for both.
      * 
      */

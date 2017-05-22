@@ -120,11 +120,11 @@ public class BaseSequentialTest {
 		assertTrue(of(1).to().orderedSetX().size()>0);
 		assertTrue(of(1).to().bagX().size()>0);
 		assertTrue(of(1).to().persistentMapX(t->t, t->t).size()>0);
-		assertTrue(of(1).to().toMapX(t->t,t->t).size()>0);
+		assertTrue(of(1).to().mapX(t->t,t->t).size()>0);
 
 		assertTrue(of(1).toSet().size()>0);
 		assertTrue(of(1).toList().size()>0);
-		assertTrue(of(1).to().toStreamable().size()>0);
+		assertTrue(of(1).to().streamable().size()>0);
 
 
 	}
@@ -361,7 +361,7 @@ public class BaseSequentialTest {
 	    
 	    @Test
 	    public void testIterable() {
-	        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+	        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
 	        for (Integer i :of(1, 2, 3)) {
 	            assertThat(list,hasItem(i));

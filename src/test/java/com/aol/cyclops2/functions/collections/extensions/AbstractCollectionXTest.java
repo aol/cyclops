@@ -674,7 +674,7 @@ public abstract class AbstractCollectionXTest {
     
     @Test
     public void testIterable() {
-        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
         for (Integer i :of(1, 2, 3)) {
             assertThat(list,hasItem(i));
@@ -1078,7 +1078,7 @@ public abstract class AbstractCollectionXTest {
 		Streamable<Integer> repeat = (of(1,2,3,4,5,6)
 												.map(i->i*2)
 												).to()
-												.toStreamable();
+												.streamable();
 		
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
@@ -1087,8 +1087,8 @@ public abstract class AbstractCollectionXTest {
 	@Test
 	public void concurrentLazyStreamable(){
 		Streamable<Integer> repeat = of(1,2,3,4,5,6)
-												.map(i->i*2)
-												.toConcurrentLazyStreamable();
+												.map(i->i*2).to()
+												.lazyStreamableSynchronized();
 		
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
@@ -1103,8 +1103,8 @@ public abstract class AbstractCollectionXTest {
 	@Test
 	public void testLazy(){
 		Collection<Integer> col = of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toLazyCollection();
+											.peek(System.out::println).to()
+											.lazyCollection();
 		System.out.println("first!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
@@ -1112,8 +1112,8 @@ public abstract class AbstractCollectionXTest {
 	@Test
 	public void testLazyCollection(){
 		Collection<Integer> col = of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toConcurrentLazyCollection();
+											.peek(System.out::println).to()
+											.lazyCollectionSynchronized();
 		System.out.println("first!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
@@ -1362,11 +1362,11 @@ public abstract class AbstractCollectionXTest {
 		assertFalse(empty().to().orderedSetX().size()>0);
 		assertFalse(empty().to().bagX().size()>0);
 		assertFalse(empty().to().persistentMapX(t->t, t->t).size()>0);
-		assertFalse(empty().to().toMapX(t->t,t->t).size()>0);
+		assertFalse(empty().to().mapX(t->t,t->t).size()>0);
 
 		assertFalse(empty().toSet().size()>0);
 		assertFalse(empty().toList().size()>0);
-		assertFalse(empty().to().toStreamable().size()>0);
+		assertFalse(empty().to().streamable().size()>0);
 		
 		
 	}
@@ -1385,11 +1385,11 @@ public abstract class AbstractCollectionXTest {
 		assertTrue(of(1).to().orderedSetX().size()>0);
 		assertTrue(of(1).to().bagX().size()>0);
 		assertTrue(of(1).to().persistentMapX(t->t, t->t).size()>0);
-		assertTrue(of(1).to().toMapX(t->t,t->t).size()>0);
+		assertTrue(of(1).to().mapX(t->t,t->t).size()>0);
 
 		assertTrue(of(1).toSet().size()>0);
 		assertTrue(of(1).toList().size()>0);
-		assertTrue(of(1).to().toStreamable().size()>0);
+		assertTrue(of(1).to().streamable().size()>0);
 		
 		
 	}

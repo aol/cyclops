@@ -58,7 +58,7 @@ public class PushableStreamTest {
         System.out.println(Thread.currentThread().getId());
        System.out.println(bus.futureStream("reactor", new LazyReact(50,50))
             .get()
-           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList());//.forEach(System.out::println);
         
         Thread.sleep(1500);

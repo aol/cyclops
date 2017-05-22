@@ -23,7 +23,7 @@ public class AutoclosingTest {
 	public void autoClosingLimit1() throws InterruptedException{
 		close = new AtomicInteger();
 		added = new AtomicInteger();
-		//subscription fills from outside in (right to left), need to store open / closed for each queue
+		//subscription fills from outside in (right toNested left), need toNested store open / closed for each queue
 		List<String> results = new LazyReact().generateAsync(()->nextValues()).withQueueFactory(()-> eventQueue())
 													  .flatMap(list -> list.stream())
 													  .peek(System.out::println)
@@ -46,7 +46,7 @@ public class AutoclosingTest {
 		added = new AtomicInteger();
 		
 	
-		//subscription fills from outside in (right to left), need to store open / closed for each queue
+		//subscription fills from outside in (right toNested left), need toNested store open / closed for each queue
 		List<String> results = new LazyReact().generateAsync(()->nextValues()).withQueueFactory(()-> eventQueue())
 													  .flatMap(list -> list.stream())
 													  .peek(System.out::println)
@@ -74,7 +74,7 @@ public class AutoclosingTest {
 			
 		
 			System.out.println("test " + i);
-			//subscription fills from outside in (right to left), need to store open / closed for each queue
+			//subscription fills from outside in (right toNested left), need toNested store open / closed for each queue
 			List<String> results = new LazyReact().generateAsync(()->nextValues()).withQueueFactory(()-> eventQueue())
 														  .flatMap(list -> list.stream())
 														  .peek(System.out::println)
@@ -99,7 +99,7 @@ public class AutoclosingTest {
 		System.out.println("Started!");
 		close = new AtomicInteger();
 		added = new AtomicInteger();
-		//subscription fills from outside in (right to left), need to store open / closed for each queue
+		//subscription fills from outside in (right toNested left), need toNested store open / closed for each queue
 		List<Tuple2<List<List<String>>, Integer>> results = new LazyReact().generateAsync(()->nextValues()).withQueueFactory(()-> eventQueue())
 													  .zip(new LazyReact().of(1,2,3))
 													  .collect(Collectors.toList());
@@ -118,7 +118,7 @@ public class AutoclosingTest {
 		for(int i=0;i<1500;i++){
 			close = new AtomicInteger();
 			added = new AtomicInteger();
-			//subscription fills from outside in (right to left), need to store open / closed for each queue
+			//subscription fills from outside in (right toNested left), need toNested store open / closed for each queue
 			List<Tuple2<List<List<String>>, Integer>> results = new LazyReact().generate(()->nextValues()).withQueueFactory(()-> eventQueue())
 														  .zip(new LazyReact().of(1,2,3))
 														  .collect(Collectors.toList());
@@ -141,7 +141,7 @@ public class AutoclosingTest {
 		added = new AtomicInteger();
 		
 	
-		//subscription fills from outside in (right to left), need to store open / closed for each queue
+		//subscription fills from outside in (right toNested left), need toNested store open / closed for each queue
 		List<Integer> results = new LazyReact().iterate(0,val->val+1).withQueueFactory(()-> eventQueueInts())
 													  .flatMap(val -> asList(asList(val,1,2,3)).stream())
 													  .peek(System.out::println)

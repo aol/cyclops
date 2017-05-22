@@ -14,7 +14,7 @@ import cyclops.stream.ReactiveSeq;
 public interface Sequential<T> {
 
     /**
-     * @return This Sequential converted to a Stream (@link {@link ReactiveSeq}
+     * @return This Sequential converted toNested a Stream (@link {@link ReactiveSeq}
      */
     ReactiveSeq<T> stream();
 
@@ -35,7 +35,7 @@ public interface Sequential<T> {
      * </pre>
      * 
      * @param x
-     *            number of elements to emit
+     *            number of elements toNested emit
      * @param time
      *            period
      * @param t

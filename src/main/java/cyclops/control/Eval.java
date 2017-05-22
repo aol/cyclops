@@ -42,19 +42,19 @@ import java.util.stream.Stream;
 
 /**
  * Represents a computation that can be deferred (always), cached (later) or immediate(now).
- * Supports tail recursion via map / flatMap. 
+ * Supports tail recursion via map / flatMap.
  * Unrestricted are always Lazy even when performed against a Now instance.
  * Heavily inspired by Cats Eval @link https://github.com/typelevel/cats/blob/master/core/src/main/scala/cats/Eval.scala
- * 
+ *
  * Tail Recursion example
  * <pre>
- * {@code 
- * 
+ * {@code
+ *
  * public void odd(){
         System.out.println(even(Eval.now(200000)).get());
     }
     public Eval<String> odd(Eval<Integer> n )  {
-       
+
        return n.flatMap(x->even(Eval.now(x-1)));
     }
     public Eval<String> even(Eval<Integer> n )  {
@@ -64,7 +64,7 @@ import java.util.stream.Stream;
      }
  * }
  * </pre>
- * 
+ *
  * @author johnmcclean
  *
  * @param <T> Type of value storable in this Eval
@@ -96,15 +96,15 @@ public interface Eval<T> extends    To<Eval<T>>,
     }
     /**
      * Create an Eval instance from a reactive-streams publisher
-     * 
+     *
      * <pre>
      * {@code
      *    Eval<Integer> e = Eval.fromPublisher(Mono.just(10));
      *    //Eval[10]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param pub Publisher to create the Eval from
      * @return Eval created from Publisher
      */
@@ -191,7 +191,7 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     /**
      * Create an Eval instance from an Iterable
-     * 
+     *
      * <pre>
      * {@code
      *    Eval<Integer> e = Eval.fromIterable(Arrays.asList(10));
@@ -208,13 +208,13 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     /**
      * Create an Eval with the value specified
-     * 
+     *
      * <pre>
      * {@code
      *   Eval<Integer> e = Eval.now(10);
      *   //Eval[10]
      * }</pre>
-     * 
+     *
      * @param value of Eval
      * @return Eval with specified value
      */
@@ -226,15 +226,15 @@ public interface Eval<T> extends    To<Eval<T>>,
     /**
      * Lazily create an Eval from the specified Supplier. Supplier#get will only be called once. Return values of Eval operations will also
      * be cached (later indicates maybe and caching - characteristics can be changed using flatMap).
-     * 
+     *
      * <pre>
      * {@code
      *   Eval<Integer> e = Eval.later(()->10)
      *                         .map(i->i*2);
      *   //Eval[20] - maybe so will not be executed until the value is accessed
      * }</pre>
-     * 
-     * 
+     *
+     *
      * @param value Supplier to (lazily) populate this Eval
      * @return Eval with specified value
      */
@@ -245,15 +245,15 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     /**
      * Lazily create an Eval from the specified Supplier. Supplier#get will only be every time get is called on the resulting Eval.
-     * 
+     *
      * <pre>
      * {@code
      *   Eval<Integer> e = Eval.always(()->10)
      *                         .map(i->i*2);
      *   //Eval[20] - maybe so will not be executed until the value is accessed
      * }</pre>
-     * 
-     * 
+     *
+     *
      * @param value  Supplier to (lazily) populate this Eval
      * @return Eval with specified value
      */
@@ -264,15 +264,15 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     /**
      * Turn a collection of Evals into a single Eval with a List of values.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Eval<ListX<Integer>> maybes =Eval.sequence(ListX.of(Eval.now(10),Eval.now(1)));
         //Eval.now(ListX.of(10,1)));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param evals Collection of evals to convert into a single eval with a List of values
      * @return  Eval with a  list of values
      */
@@ -283,15 +283,15 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     /**
      * Turn a Stream of Evals into a single Eval with a Stream of values.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Eval<ReactiveSeq<Integer>> maybes =Eval.sequence(Stream.of(Eval.now(10),Eval.now(1)));
         //Eval.now(ReactiveSeq.of(10,1)));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param evals Collection of evals to convert into a single eval with a List of values
      * @return  Eval with a  list of values
      */
@@ -303,14 +303,14 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     /**
      * Sequence and reduce a CollectionX of Evals into an Eval with a reduced value
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPSetX());
          //Eval.now(PersistentSetX.of(10,1)))
      * }
      * </pre>
-     * 
+     *
      * @param evals Collection of Evals to accumulate
      * @param reducer Reducer to fold nested values into
      * @return Eval with a value
@@ -321,15 +321,15 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     /**
      * Sequence and reduce a CollectionX of Evals into an Eval with a reduced value
-     * 
+     *
      * <pre>
      * {@code
      *   Eval<String> evals =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
          //Eval.now("101")
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param evals Collection of Evals to accumulate
      * @param mapper Funtion to map Eval contents to type required by Semigroup accumulator
      * @param reducer Combiner function to apply to converted values
@@ -343,16 +343,16 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     /**
      *  Sequence and reduce a CollectionX of Evals into an Eval with a reduced value
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   Eval<Integer> maybes =Eval.accumulate(Monoids.intSum,ListX.of(just,Eval.now(1)));
          //Eval.now(11)
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param evals Collection of Evals to accumulate
      * @param reducer Combiner function to apply to converted values
      * @return Eval with a value
@@ -360,7 +360,7 @@ public interface Eval<T> extends    To<Eval<T>>,
     public static <T> Eval<T> accumulate(final Monoid<T> reducer,final CollectionX<Eval<T>> evals) {
         return sequence(evals).map(s -> s.reduce(reducer));
     }
-   
+
     @Override
     default Maybe<T> toMaybe(){
         return Maybe.fromEvalNullable(this);
@@ -405,7 +405,7 @@ public interface Eval<T> extends    To<Eval<T>>,
                                                             .apply(t1, t2)).orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
 
-    
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#flatMapI(java.util.function.Function)
      */
@@ -518,7 +518,7 @@ public interface Eval<T> extends    To<Eval<T>>,
 
     /**
      * Narrow covariant type parameter
-     * 
+     *
      * @param broad Eval with covariant type parameter
      * @return Narrowed Eval
      */
@@ -546,7 +546,7 @@ public interface Eval<T> extends    To<Eval<T>>,
     }
 
     /* Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
-     * 
+     *
      * (non-Javadoc)
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
@@ -637,8 +637,8 @@ public interface Eval<T> extends    To<Eval<T>>,
     default <R> Eval<R> flatMapS(final Function<? super T, ? extends Stream<? extends R>> mapper) {
         return (Eval<R>)MonadicValue.super.flatMapS(mapper);
     }
-    
-    
+
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
@@ -659,7 +659,7 @@ public interface Eval<T> extends    To<Eval<T>>,
             Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
             Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
             Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (Eval<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
@@ -670,7 +670,7 @@ public interface Eval<T> extends    To<Eval<T>>,
     default <T2, R1, R2, R> Eval<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-      
+
         return (Eval<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
 

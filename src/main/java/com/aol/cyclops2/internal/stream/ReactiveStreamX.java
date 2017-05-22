@@ -60,7 +60,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     final Consumer<? super Throwable> defaultErrorHandler;
 
     @Wither
-    final Type async; //SYNC streams should switch to lazy Backpressured or No backpressure when zip or flatMapP are called
+    final Type async; //SYNC streams should switch toNested lazy Backpressured or No backpressure when zip or flatMapP are called
 
     public Type getType() {
         return async;
@@ -171,7 +171,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
             Subscription sub[] = {null};
-            //may be quicker to use forEachAsync and throw an Exception with fillInStackTrace overriden
+            //may be quicker toNested use forEachAsync and throw an Exception with fillInStackTrace overriden
             sub[0] = source.subscribe(e -> {
 
                     result.complete(e);
@@ -215,7 +215,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
         Subscription sub[] = {null};
-        //may be quicker to use forEachAsync and throw an Exception with fillInStackTrace overriden
+        //may be quicker toNested use forEachAsync and throw an Exception with fillInStackTrace overriden
         sub[0] = stream.source.subscribe(e -> {
 
             result.complete(e);
@@ -1073,7 +1073,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
                     if(wip.compareAndSet(false,true)){
                         try {
-                            //use the first consuming thread to tell this Stream onto the Queue
+                            //use the first consuming thread toNested tell this Stream onto the Queue
                             s.request(1000-queue.size());
                         }finally {
                             wip.set(false);
@@ -1427,7 +1427,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
         Subscription sub[] = {null};
-        //may be quicker to use forEachAsync and throw an Exception with fillInStackTrace overriden
+        //may be quicker toNested use forEachAsync and throw an Exception with fillInStackTrace overriden
         sub[0] = filtered.source.subscribe(e -> {
             result.complete(true);
             sub[0].cancel();

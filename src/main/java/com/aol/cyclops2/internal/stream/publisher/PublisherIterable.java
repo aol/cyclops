@@ -204,7 +204,7 @@ public final class PublisherIterable<T>  implements Publisher<T> {
                 while (e != n) {
                     boolean b;
 
-                    try {//have to check for hasNext before next to handle case of a blocking iterable
+                    try {//have toNested check for hasNext before next toNested handle case of a blocking iterable
                          //index in iterator should not move beyond n in case blocks
                         b = a.hasNext();
                     } catch (Throwable ex) {

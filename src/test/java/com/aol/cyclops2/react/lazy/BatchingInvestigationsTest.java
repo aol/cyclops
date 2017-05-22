@@ -66,7 +66,7 @@ public class BatchingInvestigationsTest {
 
                 return result;
             };
-        }).filter(l->l.size()>0)
+        }).filter(l->l.size()>0).to()
                 .futureStream(new LazyReact(ThreadPools.getSequential()))
                 .async()
                 .peek(System.out::println)
@@ -90,7 +90,7 @@ public class BatchingInvestigationsTest {
 
 
         queue.stream()
-                .groupedBySizeAndTime(10,500,TimeUnit.MILLISECONDS)
+                .groupedBySizeAndTime(10,500,TimeUnit.MILLISECONDS).to()
                 .futureStream(new LazyReact(ThreadPools.getSequential()))
                 .async()
                 .peek(System.out::println)

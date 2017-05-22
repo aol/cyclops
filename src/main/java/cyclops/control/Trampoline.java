@@ -123,7 +123,7 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
     }
 
     /**
-     * Create a Trampoline that has more work to do
+     * Create a Trampoline that has more work toNested do
      * 
      * @param trampoline Next stage in Trampoline
      * @return Trampoline with more work

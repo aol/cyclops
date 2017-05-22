@@ -8,7 +8,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Trampoline;
 
 /**
- * An interface that represents a type that can transform a value from one type to another
+ * An interface that represents a type that can transform a value from one type toNested another
  *
  * @author johnmcclean
  *
@@ -18,7 +18,7 @@ import cyclops.control.Trampoline;
 public interface Transformable<T> {
 
     /**
-     * Cast all elements in a reactiveStream to a given type, possibly throwing a
+     * Cast all elements in a reactiveStream toNested a given type, possibly throwing a
      * {@link ClassCastException}.
      *
      *
@@ -112,7 +112,7 @@ public interface Transformable<T> {
     }
 
     /**
-     * Retry a transformation if it fails. Default settings are to retry up to 7
+     * Retry a transformation if it fails. Default settings are toNested retry up toNested 7
      * times, with an doubling backoff period starting @ 2 seconds delay before
      * retry.
      *
@@ -133,7 +133,7 @@ public interface Transformable<T> {
      * </pre>
      *
      * @param fn
-     *            Function to retry if fails
+     *            Function toNested retry if fails
      *
      */
     default <R> Transformable<R> retry(final Function<? super T, ? extends R> fn) {
@@ -141,7 +141,7 @@ public interface Transformable<T> {
     }
 
     /**
-     * Retry a transformation if it fails. Retries up to <b>retries</b>
+     * Retry a transformation if it fails. Retries up toNested <b>retries</b>
      * times, with an doubling backoff period starting @ <b>delay</b> TimeUnits delay before
      * retry.
      *
@@ -162,13 +162,13 @@ public interface Transformable<T> {
      * </pre>
      *
      * @param fn
-     *            Function to retry if fails
+     *            Function toNested retry if fails
      * @param retries
      *            Number of retries
      * @param delay
      *            Delay in TimeUnits
      * @param timeUnit
-     *            TimeUnit to use for delay
+     *            TimeUnit toNested use for delay
      */
     default <R> Transformable<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
         final Function<T, R> retry = t -> {

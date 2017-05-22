@@ -52,9 +52,9 @@ public interface Fn3<S1, S2, S3, R> extends Fn1<S1,Fn1<S2,Fn1<S3,R>>> {
     }
     /**
      * This methods creates a caching version of this BiFunction, caching is implemented via the Cacheable wrapper,
-     * that can be used to wrap any concrete cache implementation
+     * that can be used toNested wrap any concrete cache implementation
      *
-     * E.g. to use a Guava cache for memoization
+     * E.g. toNested use a Guava cache for memoization
      *
      * <pre>
      * {@code

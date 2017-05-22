@@ -34,7 +34,7 @@ import cyclops.stream.FutureStream;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 
 /**
- * Represents a non-scalar Data Structure that can be converted to other types
+ * Represents a non-scalar Data Structure that can be converted toNested other types
  * 
  * @author johnmcclean
  *
@@ -81,7 +81,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return simpleReact(new SimpleReact());
     }
 
-    public Streamable<T> toStreamable() {
+    public Streamable<T> streamable() {
 
         return Streamable.fromIterable(iterable);
     }
@@ -234,7 +234,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
      * {@code
      *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
      *                                       .peek(System.out::println)
-     *                                       .toLazyCollection();
+     *                                       .lazyCollection();
      *
      *  col.forEach(System.out::println);
      * }
@@ -244,7 +244,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
      *
      * @return
      */
-    public CollectionX<T> toLazyCollection() {
+    public CollectionX<T> lazyCollection() {
         return Streams.toLazyCollection(ReactiveSeq.fromIterable(iterable));
     }
 
@@ -254,7 +254,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
      *
      * <pre>
      * {@code
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toConcurrentLazyCollection();
+     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).lazyCollectionSynchronized();
      *
      *  col.forEach(System.out::println);
      * }
@@ -264,10 +264,10 @@ public class  ConvertableSequence<T> implements ToStream<T> {
      *
      * @return
      */
-    public CollectionX<T> toConcurrentLazyCollection() {
+    public CollectionX<T> lazyCollectionSynchronized() {
         return Streams.toConcurrentLazyCollection(ReactiveSeq.fromIterable(iterable));
     }
-    public Streamable<T> toLazyStreamable() {
+    public Streamable<T> lazyStreamable() {
         return Streams.toLazyStreamable(ReactiveSeq.fromIterable(iterable));
     }
 
@@ -275,7 +275,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     /**
      * <pre>
      * {@code
-     *  Streamable<Integer> repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -> i + 2).toConcurrentLazyStreamable();
+     *  Streamable<Integer> repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -> i + 2).lazyStreamableSynchronized();
      *
      *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
      *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
@@ -285,13 +285,13 @@ public class  ConvertableSequence<T> implements ToStream<T> {
      * @return Streamable that replay this ReactiveSeq, populated lazily and can
      *         be populated across threads
      */
-    public Streamable<T> toConcurrentLazyStreamable() {
+    public Streamable<T> lazyStreamableSynchronized() {
         return Streams.toConcurrentLazyStreamable(ReactiveSeq.fromIterable(iterable));
 
     }
 
 
-    public <C extends Collection<T>> C toCollection(final Supplier<C> factory) {
+    public <C extends Collection<T>> C collection(final Supplier<C> factory) {
         return ReactiveSeq.fromIterable(iterable).collect(Collectors.toCollection(factory));
     }
 

@@ -25,8 +25,8 @@ public abstract class AbstractConvertableSequenceTest {
         assertFalse(empty().orderedSetX().size()>0);
         assertFalse(empty().bagX().size()>0);
         assertFalse(empty().persistentMapX(t->t, t->t).size()>0);
-        assertFalse(empty().toMapX(t->t,t->t).size()>0);
-        assertFalse(empty().toStreamable().size()>0);
+        assertFalse(empty().mapX(t->t,t->t).size()>0);
+        assertFalse(empty().streamable().size()>0);
         
         
     }
@@ -45,8 +45,8 @@ public abstract class AbstractConvertableSequenceTest {
         assertTrue(of(1).orderedSetX().size()>0);
         assertTrue(of(1).bagX().size()>0);
         assertTrue(of(1).persistentMapX(t->t, t->t).size()>0);
-        assertTrue(of(1).toMapX(t->t,t->t).size()>0);
-        assertTrue(of(1).toStreamable().size()>0);
+        assertTrue(of(1).mapX(t->t,t->t).size()>0);
+        assertTrue(of(1).streamable().size()>0);
         
         
     }

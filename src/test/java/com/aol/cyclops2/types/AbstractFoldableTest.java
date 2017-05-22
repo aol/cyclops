@@ -148,8 +148,8 @@ public abstract class AbstractFoldableTest {
     @Test
     public void testLazy(){
         Collection<Integer> col = of(1,2,3,4,5)
-                                           
-                                            .toLazyCollection();
+                                           .to()
+                                            .lazyCollection();
         System.out.println("first!");
         col.forEach(System.out::println);
         assertThat(col.size(),equalTo(5));
@@ -157,8 +157,8 @@ public abstract class AbstractFoldableTest {
     @Test
     public void testLazyCollection(){
         Collection<Integer> col = of(1,2,3,4,5)
-                                            
-                                            .toConcurrentLazyCollection();
+                                            .to()
+                                            .lazyCollectionSynchronized();
         System.out.println("first!");
         col.forEach(System.out::println);
         assertThat(col.size(),equalTo(5));

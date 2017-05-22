@@ -36,8 +36,8 @@ public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{// , __<T1, T2>{
      * }
      * </pre>
      *
-     * @param biFn BiFunction to execute
-     * @param param 1st parameter to pass to BiFunction
+     * @param biFn BiFunction toNested execute
+     * @param param 1st parameter toNested pass toNested BiFunction
      * @return Result of executing the provided BiFunction
      */
     default <T3,R> Higher<T1,R> apply_(BiFunction<? super T3,? super Higher<T1,T2>,? extends Higher<T1,R>> biFn, T3 param ){
@@ -50,8 +50,8 @@ public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{// , __<T1, T2>{
      * Apply the provided BiFunction passing this as the first parameter
      * This allows a fluent api without narrowing or unwrapping simulated Higher Kinded Types
      *
-     * @param biFn BiFunction to execute
-     * @param param 2nd parameter to pass to BiFunction
+     * @param biFn BiFunction toNested execute
+     * @param param 2nd parameter toNested pass toNested BiFunction
      * @return Result of executing the provided BiFunction
      */
     default <T3,R> Higher<T1,R> apply(T3 param,BiFunction<? super Higher<T1,T2>,? super T3,? extends Higher<T1,R>> biFn ){

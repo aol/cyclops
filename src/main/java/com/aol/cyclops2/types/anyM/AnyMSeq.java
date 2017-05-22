@@ -69,13 +69,13 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      *
      * 
      * @param monad1
-     *            Nested Monad to iterate over
+     *            Nested Monad toNested iterate over
      * @param monad2
-     *            Nested Monad to iterate over
+     *            Nested Monad toNested iterate over
      * @param monad3
-     *            Nested Monad to iterate over
+     *            Nested Monad toNested iterate over
      * @param yieldingFunction
-     *            Function with pointers to the current element from both
+     *            Function with pointers toNested the current element from both
      *            Monad that generates the new elements
      * @return AnyMSeq with elements generated via nested iteration
      */
@@ -105,16 +105,16 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
      * 
      * @param monad1
-     *            Nested Monad to iterate over
+     *            Nested Monad toNested iterate over
      * @param monad2
-     *            Nested Monad to iterate over
+     *            Nested Monad toNested iterate over
      * @param monad3
-     *            Nested Monad to iterate over
+     *            Nested Monad toNested iterate over
      * @param filterFunction
-     *            Filter to apply over elements before passing non-filtered
-     *            values to the yielding function
+     *            Filter toNested apply over elements before passing non-filtered
+     *            values toNested the yielding function
      * @param yieldingFunction
-     *            Function with pointers to the current element from both
+     *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
@@ -143,7 +143,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
     /**
      * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
-     * etc to be injected, for example)
+     * etc toNested be injected, for example)
      * 
      * <pre>
      * {@code 
@@ -157,8 +157,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * </pre>
      * 
      * 
-     * @param monad Nested Monad to iterate over
-     * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+     * @param monad Nested Monad toNested iterate over
+     * @param yieldingFunction Function with pointers toNested the current element from both Streams that generates the new elements
      * @return FutureStream with elements generated via nested iteration
      */
     default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad,
@@ -173,7 +173,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
     /**
      * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
-     * etc to be injected, for example)
+     * etc toNested be injected, for example)
      * 
      * <pre>
      * {@code 
@@ -186,9 +186,9 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      *  //AnyM[14,15]
      * }
      * </pre>
-     * @param monad Nested Monad to iterate over
-     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
-     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
+     * @param monad Nested Monad toNested iterate over
+     * @param filterFunction Filter toNested apply over elements before passing non-filtered values toNested the yielding function
+     * @param yieldingFunction Function with pointers toNested the current element from both monads that generates the new elements
      * @return
      */
    default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad, 
@@ -220,10 +220,10 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      *  
      * }
      * </pre> 
-     * @param monad1 Nested monad to flatMap over
-     * @param monad2 Nested monad to flatMap over
-     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
-     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
+     * @param monad1 Nested monad toNested flatMap over
+     * @param monad2 Nested monad toNested flatMap over
+     * @param filterFunction Filter toNested apply over elements before passing non-filtered values toNested the yielding function
+     * @param yieldingFunction Function with pointers toNested the current element from both monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
@@ -260,9 +260,9 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * }
     * </pre> 
      * 
-     * @param monad1 Nested Stream to iterate over
-     * @param monad2 Nested Stream to iterate over
-     * @param yieldingFunction Function with pointers to the current element from both Monads that generates the new elements
+     * @param monad1 Nested Stream toNested iterate over
+     * @param monad2 Nested Stream toNested iterate over
+     * @param yieldingFunction Function with pointers toNested the current element from both Monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
@@ -280,7 +280,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     
     }
     /**
-     * Equivalence test, returns true if this Monad is equivalent to the supplied monad
+     * Equivalence test, returns true if this Monad is equivalent toNested the supplied monad
      * e.g.
      * <pre>
      * {code
@@ -289,7 +289,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * </pre>
      * 
      * 
-     * @param t Monad to compare to
+     * @param t Monad toNested compare toNested
      * @return true if equivalent
      */
     default boolean eqv(final AnyMSeq<?,T> t) {

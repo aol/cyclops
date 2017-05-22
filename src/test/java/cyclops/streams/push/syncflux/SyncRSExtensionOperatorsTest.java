@@ -324,7 +324,7 @@ public class SyncRSExtensionOperatorsTest {
 	public void streamable(){
 		Streamable<Integer> repeat = of(1,2,3,4,5,6)
 												.map(i->i*2).to()
-												.toStreamable();
+												.streamable();
 		
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
@@ -333,8 +333,8 @@ public class SyncRSExtensionOperatorsTest {
 	@Test
 	public void concurrentLazyStreamable(){
 		Streamable<Integer> repeat = of(1,2,3,4,5,6)
-												.map(i->i*2)
-												.toConcurrentLazyStreamable();
+												.map(i->i*2).to()
+												.lazyStreamableSynchronized();
 		
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
@@ -347,8 +347,8 @@ public class SyncRSExtensionOperatorsTest {
 	@Test
 	public void testLazy(){
 		Collection<Integer> col = of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toLazyCollection();
+											.peek(System.out::println).to()
+											.lazyCollection();
 		System.out.println("first!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
@@ -356,8 +356,8 @@ public class SyncRSExtensionOperatorsTest {
 	@Test
 	public void testLazyCollection(){
 		Collection<Integer> col = of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toConcurrentLazyCollection();
+											.peek(System.out::println).to()
+											.lazyCollectionSynchronized();
 		System.out.println("first!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));

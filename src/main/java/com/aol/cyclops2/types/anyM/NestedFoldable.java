@@ -40,8 +40,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
 
     /**
-     * Attempt to map this Sequence to the same type as the supplied Monoid
-     * (Reducer) Then use Monoid to reduce values
+     * Attempt toNested map this Sequence toNested the same type as the supplied Monoid
+     * (Reducer) Then use Monoid toNested reduce values
      * 
      * <pre>
      * {@code 
@@ -52,7 +52,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param reducer
-     *            Monoid to reduce values
+     *            Monoid toNested reduce values
      * @return Reduce result
      */
     default <R> AnyM<W,R> mapReduce(final Reducer<R> reducer) {
@@ -60,8 +60,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid, using
-     * supplied function Then use Monoid to reduce values
+     * Attempt toNested map this Monad toNested the same type as the supplied Monoid, using
+     * supplied function Then use Monoid toNested reduce values
      * 
      * <pre>
      *  {@code
@@ -85,9 +85,9 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param mapper
-     *            Function to map Monad type
+     *            Function toNested map Monad type
      * @param reducer
-     *            Monoid to reduce values
+     *            Monoid toNested reduce values
      * @return Reduce result
      */
     default <R> AnyM<W,R> mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
@@ -104,7 +104,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param reducer
-     *            Use supplied Monoid to reduce values
+     *            Use supplied Monoid toNested reduce values
      * @return reduced values
      */
     default AnyM<W,T> reduce(final Monoid<T> reducer) {
@@ -206,7 +206,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param reducer
-     *            Use supplied Monoid to reduce values starting via foldRight
+     *            Use supplied Monoid toNested reduce values starting via foldRight
      * @return Reduced result
      */
     default AnyM<W,T> foldRight(final Monoid<T> reducer) {
@@ -214,7 +214,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Immutable reduction from right to left
+     * Immutable reduction from right toNested left
      * 
      * <pre>
      * {@code 
@@ -222,7 +222,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * @param identity value that results in the input parameter to the accumulator function being returned.
+     * @param identity value that results in the input parameter toNested the accumulator function being returned.
      *          E.g. for multiplication 1 is the identity value, for addition 0 is the identity value
      * @param accumulator function that combines the accumulated value and the next one
      * @return AnyM containing the results of the nested fold right
@@ -232,13 +232,13 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Immutable reduction from right to left
+     * Immutable reduction from right toNested left
      * <pre>
      * {@code 
      *  assertTrue(ReactiveSeq.of("a","b","c").foldRight("", (a,b)->a+b).equals("cba"));
      * }
      * </pre> * 
-     * @param identity value that results in the input parameter to the accumulator function being returned.
+     * @param identity value that results in the input parameter toNested the accumulator function being returned.
      *          E.g. for multiplication 1 is the identity value, for addition 0 is the identity value
      * @param accumulator function that combines the accumulated value and the next one
      * @return AnyM containing the results of the nested fold right
@@ -248,8 +248,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid (using
-     * mapToType on the monoid interface) Then use Monoid to reduce values
+     * Attempt toNested map this Monad toNested the same type as the supplied Monoid (using
+     * mapToType on the monoid interface) Then use Monoid toNested reduce values
      * 
      * <pre>
      *      {@code
@@ -261,7 +261,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * 
      * 
      * @param reducer
-     *            Monoid to reduce values
+     *            Monoid toNested reduce values
      * @return Reduce result
      */
     default <T> AnyM<W,T> foldRightMapToType(final Reducer<T> reducer) {
@@ -334,7 +334,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Use classifier function to group elements in this Sequence into a Map
+     * Use classifier function toNested group elements in this Sequence into a Map
      * 
      * <pre>
      * {@code
@@ -408,7 +408,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * 
      * }
      * 
-     * @param iterable Values to check
+     * @param iterable Values toNested check
      * @return true if SequenceM ends with values in the supplied iterable
      */
     default AnyM<W,Boolean> endsWithIterable(final Iterable<T> iterable) {
@@ -424,14 +424,14 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param stream
-     *            Values to check
+     *            Values toNested check
      * @return true if SequenceM endswith values in the supplied Stream
      */
     default AnyM<W,Boolean> endsWith(final Stream<T> stream) {
         return nestedFoldables().map(s -> s.endsWith(stream));
     }
-    default AnyM<W,ConvertableSequence<T>> to() {
-        return nestedFoldables().map(s -> s.to());
+    default <R> AnyM<W,R> toNested(Function<? super ConvertableSequence<T>, ? extends R> fn) {
+        return nestedFoldables().map(s -> fn.apply(s.to()));
     }
 
     /**
@@ -509,7 +509,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param index
-     *            to extract element from
+     *            toNested extract element from
      * @return elementAt index
      */
     default AnyM<W,Optional<T>> get(final long index) {
@@ -529,7 +529,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * Connect to the Scheduled Stream
+     * Connect toNested the Scheduled Stream
      * 
      * <pre>
      * {@code
@@ -566,7 +566,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * Connect to the Scheduled Stream
+     * Connect toNested the Scheduled Stream
      * 
      * <pre>
      * {@code
@@ -601,7 +601,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * Connect to the Scheduled Stream
+     * Connect toNested the Scheduled Stream
      * 
      * <pre>
      * {@code

@@ -41,70 +41,70 @@ import java.util.stream.Stream;
  *  
  *  Xor is used to represent values that can be one of two states (for example a validation result, lazy everything is ok - or we have an error).
  *  It can be used to avoid a common design anti-pattern where an Object has two fields one of which is always null (or worse, both are defined as Optionals).
- *  
+ *
  *  <pre>
- *  {@code 
- *     
+ *  {@code
+ *
  *     public class Member{
- *           Xor<SeniorTeam,JuniorTeam> team;      
+ *           Xor<SeniorTeam,JuniorTeam> team;
  *     }
- *     
+ *
  *     Rather than
- *     
+ *
  *     public class Member{
  *           @Setter
  *           SeniorTeam seniorTeam = null;
  *           @Setter
- *           JuniorTeam juniorTeam = null;      
+ *           JuniorTeam juniorTeam = null;
  *     }
  *  }
  *  </pre>
- *  
+ *
  *  Xor's have two states
  *  Primary : Most methods operate naturally on the primary type, if it is present. If it is not, nothing happens.
- *  Secondary : Most methods do nothing to the secondary type if it is present. 
+ *  Secondary : Most methods do nothing to the secondary type if it is present.
  *              To operate on the Secondary type first call swap() or use secondary analogs of the main operators.
- *  
+ *
  *  Instantiating an Xor - Primary
  *  <pre>
- *  {@code 
- *      Xor.primary("hello").map(v->v+" world") 
+ *  {@code
+ *      Xor.primary("hello").map(v->v+" world")
  *    //Xor.primary["hello world"]
  *  }
  *  </pre>
- *  
+ *
  *  Instantiating an Xor - Secondary
  *  <pre>
- *  {@code 
- *      Xor.secondary("hello").map(v->v+" world") 
+ *  {@code
+ *      Xor.secondary("hello").map(v->v+" world")
  *    //Xor.seconary["hello"]
  *  }
  *  </pre>
- *  
+ *
  *  Xor can operate (via map/flatMap) as a Functor / Monad and via combine as an ApplicativeFunctor
- *  
- *   Values can be accumulated via 
+ *
+ *   Values can be accumulated via
  *  <pre>
- *  {@code 
+ *  {@code
  *  Xor.accumulateSecondary(ListX.of(Xor.secondary("failed1"),
                                                     Xor.secondary("failed2"),
                                                     Xor.primary("success")),
                                                     Semigroups.stringConcat)
- *  
+ *
  *  //failed1failed2
- *  
+ *
  *   Xor<String,String> fail1 = Xor.secondary("failed1");
      fail1.swap().combine((a,b)->a+b)
                  .combine(Xor.secondary("failed2").swap())
                  .combine(Xor.<String,String>primary("success").swap())
- *  
+ *
  *  //failed1failed2
  *  }
  *  </pre>
- * 
- * 
+ *
+ *
  * For Inclusive Ors @see Ior
- * 
+ *
  * @author johnmcclean
  *
  * @param <ST> Secondary type
@@ -116,24 +116,24 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
 
     /**
-     * Static method useful as a method reference for fluent consumption of any value type stored in this Either 
+     * Static method useful as a method reference for fluent consumption of any value type stored in this Either
      * (will capture the lowest common type)
-     * 
+     *
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      *   myEither.to(Xor::consumeAny)
                  .accept(System.out::println);
      * }
      * </pre>
-     * 
+     *
      * @param either Xor to consume value for
      * @return Consumer we can apply to consume value
      */
     static <X, LT extends X, M extends X, RT extends X>  Consumer<Consumer<? super X>> consumeAny(Xor<LT,RT> either){
         return in->visitAny(in,either);
     }
-    
+
     static <X, LT extends X, M extends X, RT extends X,R>  Function<Function<? super X, R>,R> applyAny(Xor<LT,RT> either){
         return in->visitAny(either,in);
     }
@@ -141,7 +141,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     static <X, PT extends X, ST extends X,R> R visitAny(Xor<ST,PT> either, Function<? super X, ? extends R> fn){
         return either.visit(fn, fn);
     }
- 
+
     static <X, LT extends X, RT extends X> X visitAny(Consumer<? super X> c,Xor<LT,RT> either){
         Function<? super X, X> fn = x ->{
             c.accept(x);
@@ -152,13 +152,13 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     /**
      * Construct a Primary Xor from the supplied publisher
      * <pre>
-     * {@code 
+     * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
-        
+
          Xor<Throwable,Integer> future = Xor.fromPublisher(reactiveStream);
-        
+
          //Xor[1]
-     * 
+     *
      * }
      * </pre>
      * @param pub Publisher to construct an Xor from
@@ -173,15 +173,15 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     /**
      * Construct a Primary Xor from the supplied Iterable
      * <pre>
-     * {@code 
+     * {@code
      *   List<Integer> list =  Arrays.asList(1,2,3);
-        
+
          Xor<Throwable,Integer> future = Xor.fromPublisher(reactiveStream);
-        
+
          //Xor[1]
-     * 
+     *
      * }
-     * </pre> 
+     * </pre>
      * @param iterable Iterable to construct an Xor from
      * @return Xor constructed from the supplied Iterable
      */
@@ -194,18 +194,18 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     /**
      * Create an instance of the secondary type. Most methods are biased to the primary type,
      * so you will need to use swap() or secondaryXXXX to manipulate the wrapped value
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   Xor.<Integer,Integer>secondary(10).map(i->i+1);
      *   //Xor.secondary[10]
-     *    
+     *
      *    Xor.<Integer,Integer>secondary(10).swap().map(i->i+1);
      *    //Xor.primary[11]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param value to wrap
      * @return Secondary instance of Xor
      */
@@ -217,17 +217,17 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     /**
      * Create an instance of the primary type. Most methods are biased to the primary type,
      * which means, for example, that the map method operates on the primary type but does nothing on secondary Xors
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   Xor.<Integer,Integer>primary(10).map(i->i+1);
      *   //Xor.primary[11]
-     *    
-     *   
+     *
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param value To construct an Xor from
      * @return Primary type instanceof Xor
      */
@@ -312,7 +312,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
             Fn3<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
             Fn4<? super PT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
             Fn4<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (Xor<ST,R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
@@ -323,7 +323,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     default <T2, R1, R2, R> Xor<ST,R> forEach3(Function<? super PT, ? extends MonadicValue<R1>> value1,
             BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
             Fn3<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-      
+
         return (Xor<ST,R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
 
@@ -366,13 +366,13 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     default AnyMValue<Witness.xor,PT> anyM() {
         return AnyM.fromXor(this);
     }
-    
-    
+
+
 
 
     @Override
     default Xor<ST,PT> zip(BinaryOperator<Zippable<PT>> combiner, Zippable<PT> app) {
-       
+
         return (Xor<ST,PT>)MonadicValue.super.zip(combiner, app);
     }
 
@@ -440,9 +440,9 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     Xor<ST, PT> filter(Predicate<? super PT> test);
 
     /**
-     * If this Xor contains the Secondary type, map it's value so that it contains the Primary type 
-     * 
-     * 
+     * If this Xor contains the Secondary type, map it's value so that it contains the Primary type
+     *
+     *
      * @param fn Function to map secondary type to primary
      * @return Xor with secondary type mapped to primary
      */
@@ -450,7 +450,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
     /**
      * Always map the Secondary type of this Xor if it is present using the provided transformation function
-     * 
+     *
      * @param fn Transformation function for Secondary types
      * @return Xor with Secondary type transformed
      */
@@ -464,7 +464,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
     /**
      * Peek at the Secondary type value if present
-     * 
+     *
      * @param action Consumer to peek at the Secondary type value
      * @return Xor with the same values as before
      */
@@ -479,21 +479,21 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     /**
      * Swap types so operations directly affect the current (pre-swap) Secondary type
      *<pre>
-     *  {@code 
-     *    
+     *  {@code
+     *
      *    Xor.secondary("hello")
-     *       .map(v->v+" world") 
+     *       .map(v->v+" world")
      *    //Xor.seconary["hello"]
-     *    
+     *
      *    Xor.secondary("hello")
      *       .swap()
-     *       .map(v->v+" world") 
+     *       .map(v->v+" world")
      *       .swap()
      *    //Xor.seconary["hello world"]
      *  }
      *  </pre>
-     * 
-     * 
+     *
+     *
      * @return Swap the primary and secondary types, allowing operations directly on what was the Secondary type
      */
     Xor<PT, ST> swap();
@@ -530,18 +530,18 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     /**
      *  Turn a collection of Xors into a single Xor with Lists of values.
      *  Primary and secondary types are swapped during this operation.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
      *  Xor<ListX<Integer>,ListX<String>> xors =Xor.sequenceSecondary(ListX.of(just,none,Xor.primary(1)));
         //Xor.primary(ListX.of("none")))
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param xors Xors to sequence
      * @return Xor sequenced and swapped
      */
@@ -551,12 +551,12 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     }
     /**
      * Accumulate the result of the Secondary types in the Collection of Xors provided using the supplied Reducer  {@see cyclops2.Reducers}.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
-        
+
      *  Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPSetX());
       //Xor.primary(PersistentSetX.of("none"))));
       * }
@@ -572,20 +572,20 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * Accumulate the results only from those Xors which have a Secondary type present, using the supplied mapping function to
      * convert the data from each Xor before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }..
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
-        
+
      *  Xor<?,String> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.secondary("1")),i->""+i,Monoids.stringConcat);
         //Xor.primary("none1")
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
-     *  
+     *
+     *
+     *
      * @param xors Collection of Iors to accumulate secondary values
      * @param mapper Mapping function to be applied to the result of each Ior
      * @param reducer Semigroup to combine values from each Ior
@@ -596,25 +596,25 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
         return sequenceSecondary(xors).map(s -> s.map(mapper)
                                                  .reduce(reducer));
     }
-    
-  
+
+
     /**
      *  Turn a collection of Xors into a single Ior with Lists of values.
-     *  
+     *
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      * Xor<String,Integer> just  = Xor.primary(10);
        Xor<String,Integer> none = Xor.secondary("none");
-        
-        
+
+
      * Xor<ListX<String>,ListX<Integer>> xors =Xor.sequencePrimary(ListX.of(just,none,Xor.primary(1)));
        //Xor.primary(ListX.of(10,1)));
-     * 
+     *
      * }</pre>
      *
-     * 
-     * 
+     *
+     *
      * @param iors Xors to sequence
      * @return Xor Sequenced
      */
@@ -626,10 +626,10 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * Accumulate the result of the Primary types in the Collection of Xors provided using the supplied Reducer  {@see cyclops2.Reducers}.
 
      * <pre>
-     * {@code 
+     * {@code
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
-     * 
+     *
      *  Xor<?,PersistentSetX<Integer>> xors =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPSetX());
         //Xor.primary(PersistentSetX.of(10,1))));
      * }
@@ -641,23 +641,23 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     public static <ST, PT, R> Xor<?, R> accumulatePrimary(final CollectionX<Xor<ST, PT>> xors, final Reducer<R> reducer) {
         return sequencePrimary(xors).map(s -> s.mapReduce(reducer));
     }
-    
+
     /**
      * Accumulate the results only from those Iors which have a Primary type present, using the supplied mapping function to
      * convert the data from each Xor before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }..
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
-        
+
      * Xor<?,String> iors = Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),i->""+i,Monoids.stringConcat);
        //Xor.primary("101"));
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param xors Collection of Iors to accumulate primary values
      * @param mapper Mapping function to be applied to the result of each Ior
      * @param reducer Reducer to accumulate results
@@ -671,20 +671,20 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     /**
      *  Accumulate the results only from those Xors which have a Primary type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
-     *  
+     *
      *  Xor<?,Integer> xors XIor.accumulatePrimary(Monoids.intSum,ListX.of(just,none,Ior.primary(1)));
         //Ior.primary(11);
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * @param xors Collection of Xors to accumulate primary values
      * @param reducer  Reducer to accumulate results
      * @return  Xor populated with the accumulate primary operation
@@ -692,35 +692,35 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     public static <ST, PT> Xor<?, PT> accumulatePrimary(final Monoid<PT> reducer,final CollectionX<Xor<ST, PT>> xors) {
         return sequencePrimary(xors).map(s -> s.reduce(reducer));
     }
- 
+
     /**
-     * 
+     *
      * Accumulate the results only from those Xors which have a Secondary type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * <pre>
-     * {@code 
+     * {@code
      * Xor.accumulateSecondary(ListX.of(Xor.secondary("failed1"),
     												Xor.secondary("failed2"),
     												Xor.primary("success")),
     												Semigroups.stringConcat)
-    												
-    												
+
+
      * //Xors.Primary[failed1failed2]
      * }
      * </pre>
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
-        
+
      * Xor<?,Integer> iors = Xor.accumulateSecondary(Monoids.intSum,ListX.of(Xor.both(2, "boo!"),Xor.secondary(1)));
        //Xor.primary(3);  2+1
-     * 
-     * 
+     *
+     *
      * }
      * </pre>
-     * 
+     *
      * @param xors Collection of Xors to accumulate secondary values
      * @param reducer  Semigroup to combine values from each Xor
      * @return Xor populated with the accumulate Secondary operation
@@ -733,23 +733,23 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * Visitor pattern for this Ior.
      * Execute the secondary function if this Xor contains an element of the secondary type
      * Execute the primary function if this Xor contains an element of the primary type
-     * 
-     * 
+     *
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Xor.primary(10)
      *     .visit(secondary->"no", primary->"yes")
      *  //Xor["yes"]
-        
+
         Xor.secondary(90)
            .visit(secondary->"no", primary->"yes")
         //Xor["no"]
-         
- 
-     * 
+
+
+     *
      * }
      * </pre>
-     * 
+     *
      * @param secondary Function to execute if this is a Secondary Xor
      * @param primary Function to execute if this is a Primary Ior
      * @param both Function to execute if this Ior contains both types
@@ -774,7 +774,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      */
     @Override
     default Xor<ST, PT> bipeek(Consumer<? super ST> c1, Consumer<? super PT> c2) {
-        
+
         return (Xor<ST, PT>)BiFunctor.super.bipeek(c1, c2);
     }
 
@@ -783,7 +783,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      */
     @Override
     default <U1, U2> Xor<U1, U2> bicast(Class<U1> type1, Class<U2> type2) {
-        
+
         return (Xor<U1, U2>)BiFunctor.super.bicast(type1, type2);
     }
 
@@ -793,7 +793,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     @Override
     default <R1, R2> Xor<R1, R2> bitrampoline(Function<? super ST, ? extends Trampoline<? extends R1>> mapper1,
             Function<? super PT, ? extends Trampoline<? extends R2>> mapper2) {
-        
+
         return  (Xor<R1, R2>)BiFunctor.super.bitrampoline(mapper1, mapper2);
     }
 
@@ -828,14 +828,14 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     <RT1> Xor<ST, RT1> flatMap(Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper);
     /**
      * Perform a flatMap operation on the Secondary type
-     * 
+     *
      * @param mapper Flattening transformation function
      * @return Xor containing the value inside the result of the transformation function as the Secondary value, if the Secondary type was present
      */
     <LT1> Xor<LT1, PT> secondaryFlatMap(Function<? super ST, ? extends Xor<LT1, PT>> mapper);
     /**
      * A flatMap operation that keeps the Secondary and Primary types the same
-     * 
+     *
      * @param fn Transformation function
      * @return Xor
      */
@@ -868,7 +868,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     /**
      * Accumulate secondarys into a LinkedListX (extended Persistent List) and Primary with the supplied combiner function
      * Primary accumulation only occurs if all phases are primary
-     * 
+     *
      * @param app Value to combine with
      * @param fn Combiner function for primary values
      * @return Combined Xor
@@ -880,16 +880,16 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     /**
      * Accumulate secondary values with the provided BinaryOperator / Semigroup {@link Semigroups}
      * Primary accumulation only occurs if all phases are primary
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Xor<String,String> fail1 =  Xor.secondary("failed1");
         Xor<LinkedListX<String>,String> result = fail1.list().combine(Xor.secondary("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
-        
+
         //Secondary of [LinkedListX.of("failed1","failed2")))]
      * }
      * </pre>
-     * 
+     *
      * @param app Value to combine with
      * @param semigroup to combine secondary types
      * @param fn To combine primary types

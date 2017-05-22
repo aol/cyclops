@@ -239,7 +239,7 @@ public class BaseSequentialTest {
     @Test
     public void publishToAndMerge() {
         for (int k = 0; k < ITERATIONS; k++) {
-            System.out.println("Publish to and product iteration " + k);
+            System.out.println("Publish toNested and product iteration " + k);
             cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
@@ -654,11 +654,11 @@ public class BaseSequentialTest {
         assertTrue(of(1).to().orderedSetX().size()>0);
         assertTrue(of(1).to().bagX().size()>0);
         assertTrue(of(1).to().persistentMapX(t->t, t->t).size()>0);
-        assertTrue(of(1).to().toMapX(t->t,t->t).size()>0);
+        assertTrue(of(1).to().mapX(t->t,t->t).size()>0);
 
         assertTrue(of(1).toSet().size()>0);
         assertTrue(of(1).toList().size()>0);
-        assertTrue(of(1).to().toStreamable().size()>0);
+        assertTrue(of(1).to().streamable().size()>0);
 
 
     }
@@ -688,11 +688,11 @@ public class BaseSequentialTest {
         assertTrue(of(1, 2).to().orderedSetX().size() == 2);
         assertTrue(of(1, 2).to().bagX().size() == 2);
         assertTrue(of(1, 2).to().persistentMapX(t -> t, t -> t).size() == 2);
-        assertTrue(of(1, 2).to().toMapX(t -> t, t -> t).size() == 2);
+        assertTrue(of(1, 2).to().mapX(t -> t, t -> t).size() == 2);
 
         assertTrue(of(1, 2).toSet().size() == 2);
         assertTrue(of(1, 2).toList().size() == 2);
-        assertTrue(of(1, 2).to().toStreamable().size() == 2);
+        assertTrue(of(1, 2).to().streamable().size() == 2);
 
 
     }
@@ -1001,7 +1001,7 @@ public class BaseSequentialTest {
 
     @Test
     public void testIterable() {
-        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
         for (Integer i : of(1, 2, 3)) {
             assertThat(list, hasItem(i));

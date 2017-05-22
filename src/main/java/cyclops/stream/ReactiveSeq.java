@@ -68,7 +68,7 @@ import java.util.stream.*;
  * A powerful extended, sequential Stream type.
  * Extends JDK 8 java.util.reactiveStream.Stream.
  * Implements the reactive-reactiveStream publisher api.
- * Replayable Stream by default, using primitive operators (ints,longs, doubles or jooλ results in conversion to a oneshot Stream
+ * Replayable Stream by default, using primitive operators (ints,longs, doubles or jooλ results in conversion toNested a oneshot Stream
  * (as of 2.0.0-MI1)
  *
  * Features include
@@ -123,7 +123,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
-     * reactive-streams susbscription can be used to determine demand (or ignored and data passed
+     * reactive-streams susbscription can be used toNested determine demand (or ignored and data passed
      * via onNext, onError) excess supply over demand is enqueued
      *
      * <pre>
@@ -179,7 +179,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Construct a ReactiveSeq from a String
      *
-     * @param input String to construct ReactiveSeq from
+     * @param input String toNested construct ReactiveSeq from
      * @return ReactiveSeq from a String
      */
     public static OneShotStreamX<Integer> fromCharSequence(CharSequence input){
@@ -187,7 +187,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * @param values ints to populate Stream from
+     * @param values ints toNested populate Stream from
      * @return ReactiveSeq of multiple Integers
      */
     public static ReactiveSeq<Integer> ofInts(int... values){
@@ -202,7 +202,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     *    import static cyclops.ReactiveSeq.limitInts;
     *
     *    ReactiveSeq.ofInts(1,2,3)
-    *               .to(limitInts(1));
+    *               .toNested(limitInts(1));
     *
     *   //[1]
     *  }
@@ -221,7 +221,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
    *    import static cyclops.ReactiveSeq.skipInts;
    *
    *    ReactiveSeq.ofInts(1,2,3)
-   *               .to(limitInts(1));
+   *               .toNested(limitInts(1));
    *
    *   //[1]
    *  }
@@ -240,7 +240,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.mapInts;
      *
      *    ReactiveSeq.ofInts(1,2,3)
-     *               .to(mapInts(i->i*2));
+     *               .toNested(mapInts(i->i*2));
      *
      *   //[2,4,6]
      *  }
@@ -259,7 +259,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     *    import static cyclops.ReactiveSeq.filterInts;
     *
     *    ReactiveSeq.ofInts(1,2,3)
-    *               .to(filterInts(i->i>2));
+    *               .toNested(filterInts(i->i>2));
     *
     *   //[3]
     *  }
@@ -278,7 +278,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.flatMapInts;
      *
      *    ReactiveSeq.ofInts(1,2,3)
-     *               .to(flatMapInts(i->IntStream.of(i*2)));
+     *               .toNested(flatMapInts(i->IntStream.of(i*2)));
      *
      *   //[2,4,6]
      *  }
@@ -297,7 +297,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.concatInts;
      *
      *    ReactiveSeq.ofInts(1,2,3)
-     *               .to(concatInts(ReactiveSeq.range(5,10)));
+     *               .toNested(concatInts(ReactiveSeq.range(5,10)));
      *
      *   //[1,2,3,5,6,7,8,9]
      *  }
@@ -310,7 +310,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
        /**
      *
-     * @param values longs to populate Stream from
+     * @param values longs toNested populate Stream from
      * @return ReactiveSeq of multiple Longs
      */
     public static ReactiveSeq<Long> ofLongs(long... values){
@@ -326,7 +326,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.limitLongs;
      *
      *    ReactiveSeq.ofLongs(1,2,3)
-     *               .to(limitLongs(1));
+     *               .toNested(limitLongs(1));
      *
      *   //[1]
      *  }
@@ -345,7 +345,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
    *    import static cyclops.ReactiveSeq.skipLongs;
    *
    *    ReactiveSeq.ofLongs(1,2,3)
-   *               .to(limitLongs(1));
+   *               .toNested(limitLongs(1));
    *
    *   //[1l]
    *  }
@@ -364,7 +364,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.mapLongs;
      *
      *    ReactiveSeq.ofLongs(1l,2l,3l)
-     *               .to(mapLongs(i->i*2));
+     *               .toNested(mapLongs(i->i*2));
      *
      *   //[2l,4l,6l]
      *  }
@@ -383,7 +383,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     *    import static cyclops.ReactiveSeq.filterInts;
     *
     *    ReactiveSeq.ofLongs(1l,2l,3l)
-    *               .to(filterLongs(i->i>2));
+    *               .toNested(filterLongs(i->i>2));
     *
     *   //[3l]
     *  }
@@ -402,7 +402,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.flatMapLongs;
      *
      *    ReactiveSeq.ofLongs(1,2,3)
-     *               .to(flatMapLongs(i->LongStream.of(i*2)));
+     *               .toNested(flatMapLongs(i->LongStream.of(i*2)));
      *
      *   //[2l,4l,6l]
      *  }
@@ -421,7 +421,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.concatLongs;
      *
      *    ReactiveSeq.ofLongs(1l,2l,3l)
-     *               .to(concatLongs(ReactiveSeq.ofLongs(5,10)));
+     *               .toNested(concatLongs(ReactiveSeq.ofLongs(5,10)));
      *
      *   //[1l,2l,3l,5l,6l,7l,8l,9l]
      *  }
@@ -434,7 +434,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      *
-     * @param values longs to populate Stream from
+     * @param values longs toNested populate Stream from
      * @return ReactiveSeq of multiple Longs
      */
     public static ReactiveSeq<Double> ofDoubles(double... values){
@@ -449,7 +449,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
  *    import static cyclops.ReactiveSeq.limitDoubles;
  *
  *    ReactiveSeq.ofDoubles(1d,2d,3d)
- *               .to(limitDoubles(1));
+ *               .toNested(limitDoubles(1));
  *
  *   //[1]
  *  }
@@ -468,7 +468,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
    *    import static cyclops.ReactiveSeq.skipDoubles;
    *
    *    ReactiveSeq.ofDoubles(1d,2d,3d)
-   *               .to(limitDoubles(1));
+   *               .toNested(limitDoubles(1));
    *
    *   //[1d]
    *  }
@@ -487,7 +487,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.mapDoubles;
      *
      *    ReactiveSeq.ofDoubles(1d,2d,3d)
-     *               .to(mapDoubles(i->i*2));
+     *               .toNested(mapDoubles(i->i*2));
      *
      *   //[2d,4d,6d]
      *  }
@@ -506,7 +506,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     *    import static cyclops.ReactiveSeq.filterDoubles;
     *
     *    ReactiveSeq.ofDoubles(1d,2d,3d)
-    *               .to(filterDoubles(i->i>2));
+    *               .toNested(filterDoubles(i->i>2));
     *
     *   //[3d]
     *  }
@@ -525,7 +525,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.flatMapDoubles;
      *
      *    ReactiveSeq.ofDoubles(1d,2d,3d)
-     *               .to(flatMapDoubles(i->DoubleStream.of(i*2)));
+     *               .toNested(flatMapDoubles(i->DoubleStream.of(i*2)));
      *
      *   //[2d,4d,6d]
      *  }
@@ -544,7 +544,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    import static cyclops.ReactiveSeq.concatDoubles;
      *
      *    ReactiveSeq.ofDoubles(1d,2d,3d)
-     *               .to(concatDoubles(ReactiveSeq.ofDoubles(5,6,7,8,9)));
+     *               .toNested(concatDoubles(ReactiveSeq.ofDoubles(5,6,7,8,9)));
      *
      *   //[1d,2d,3d,5d,6d,7d,8d,9d]
      *  }
@@ -559,7 +559,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Efficiently construct a ReactiveSeq from a single value
      *
-     * @param value Value to construct ReactiveSeq from
+     * @param value Value toNested construct ReactiveSeq from
      * @return ReactiveSeq of one value
      */
     public static <T> ReactiveSeq<T> of(T value){
@@ -568,7 +568,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Construct a ReactiveSeq from the Supplied Spliterator
      *
-     * @param spliterator Spliterator to construct a Stream from
+     * @param spliterator Spliterator toNested construct a Stream from
      * @return ReactiveSeq created from Spliterator
      */
     public static <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
@@ -577,7 +577,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
-     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
+     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly toNested an IntStream,
      * otherwise the provided conversion function will be used.
      *
      * <pre>
@@ -616,7 +616,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
-     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
+     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly toNested an IntStream,
      * otherwise the provided conversion function will be used.
      *
      * <pre>
@@ -646,7 +646,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Peform intermediate operations on a primitive IntStream (gives improved performance when working with Integers)
-     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly to an IntStream,
+     * If this ReactiveSeq has an OfInt Spliterator it will be converted directly toNested an IntStream,
      * otherwise the provided conversion function will be used.
      *
      * <pre>
@@ -677,17 +677,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Construct a Stream consisting of a single value repeatedly infinitely (use take / drop etc to
-     * switch to a finite Stream)
+     * Construct a Stream consisting of a single value repeatedly infinitely (use take / drop etc toNested
+     * switch toNested a finite Stream)
      *
-     * @param t Value to fill Stream with
+     * @param t Value toNested fill Stream with
      * @return Infinite ReactiveSeq consisting of a single value
      */
     public static <T> ReactiveSeq<T> fill(T t){
         return ReactiveSeq.fromSpliterator(new FillSpliterator<T>(t));
     }
     /**
-     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used toNested perform maybe reductions / collections / folds and other terminal operations
      *
      * <pre>
      * {@code
@@ -800,7 +800,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
                     if(ref.get()==null && ref.compareAndSet(null,Continuation.empty())){
                         try {
-                            //use the first consuming thread to tell this Stream onto the Queue
+                            //use the first consuming thread toNested tell this Stream onto the Queue
                             this.spliterator().forEachRemaining(queue::offer);
                         }finally {
                             queue.close();
@@ -868,7 +868,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *  ReactiveSeq.of(Arrays.asList(1,2))
-     *             .to(ReactiveSeq::flatten));
+     *             .toNested(ReactiveSeq::flatten));
      *
      *  //reactiveStream of (1,  2);
      *
@@ -893,7 +893,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Convert to a Stream with the values infinitely cycled
+     * Convert toNested a Stream with the values infinitely cycled
      *
      * <pre>
      * {@code
@@ -908,7 +908,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Duplicate a Stream, buffers intermediate values, leaders may change
-     * positions so a limit can be safely applied to the leading reactiveStream. Not
+     * positions so a limit can be safely applied toNested the leading reactiveStream. Not
      * thread-safe.
      *
      * <pre>
@@ -929,7 +929,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Triplicates a Stream Buffers intermediate values, leaders may change
-     * positions so a limit can be safely applied to the leading reactiveStream. Not
+     * positions so a limit can be safely applied toNested the leading reactiveStream. Not
      * thread-safe.
      *
      * <pre>
@@ -946,7 +946,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Makes four copies of a Stream Buffers intermediate values, leaders may
-     * change positions so a limit can be safely applied to the leading reactiveStream.
+     * change positions so a limit can be safely applied toNested the leading reactiveStream.
      * Not thread-safe.
      *
      * <pre>
@@ -966,7 +966,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate(Supplier<Deque<T>> bufferFactory);
 
     /**
-     * Split a Stream at it's head (similar to headAndTail)
+     * Split a Stream at it's head (similar toNested headAndTail)
      *
      * <pre>
      * {@code
@@ -1026,7 +1026,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partition(Predicate<? super T> splitter);
 
     /**
-     * Convert to a Stream with the result of a reduction operation repeated
+     * Convert toNested a Stream with the result of a reduction operation repeated
      * specified times
      *
      * <pre>
@@ -1039,7 +1039,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param m
-     *            Monoid to be used in reduction
+     *            Monoid toNested be used in reduction
      * @param times
      *            Number of times value should be repeated
      * @return Stream with reduced values repeated
@@ -1203,7 +1203,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Add an index to the current Stream
+     * Add an index toNested the current Stream
      *
      * <pre>
      * {@code
@@ -1288,7 +1288,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Create ReactiveSeq of ListX where
      * each ListX is populated while the supplied bipredicate holds. The
      * bipredicate recieves the ListX from the last window as well as the
-     * current value and can choose to aggregate the current value or create a
+     * current value and can choose toNested aggregate the current value or create a
      * new window
      *
      * <pre>
@@ -1326,7 +1326,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param size Max size of a batch
-     * @param time (Max) time period to build a single batch in
+     * @param time (Max) time period toNested build a single batch in
      * @param t time unit for batch
      * @return ReactiveSeq batched by size and time
      */
@@ -1348,7 +1348,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param size
      *            Max size of a batch
      * @param time
-     *            (Max) time period to build a single batch in
+     *            (Max) time period toNested build a single batch in
      * @param unit
      *            time unit for batch
      * @param factory
@@ -1375,7 +1375,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param time
-     *            - time period to build a single batch in
+     *            - time period toNested build a single batch in
      * @param t
      *            time unit for batch
      * @return ReactiveSeq batched into lists by time period
@@ -1396,7 +1396,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param time
-     *            - time period to build a single batch in
+     *            - time period toNested build a single batch in
      * @param unit
      *            time unit for batch
      * @param factory
@@ -1536,7 +1536,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Use classifier function to group elements in this Sequence into a Map
+     * Use classifier function toNested group elements in this Sequence into a Map
      *
      * <pre>
      * {@code
@@ -1664,7 +1664,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param c
-     *            Compartor to sort with
+     *            Compartor toNested sort with
      * @return Sorted Stream
      */
     @Override
@@ -1755,7 +1755,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param num
-     *            Number of elemenets to skip
+     *            Number of elemenets toNested skip
      * @return Stream with specified number of elements skipped
      */
     @Override
@@ -1776,14 +1776,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <p>
      * <p>The behavior of this operation is explicitly nondeterministic.
      * For parallel reactiveStream pipelines, this operation does <em>not</em>
-     * guarantee to respect the encounter order of the reactiveStream, as doing so
+     * guarantee toNested respect the encounter order of the reactiveStream, as doing so
      * would sacrifice the benefit of parallelism.  For any given element, the
      * action may be performed at whatever time and in whatever thread the
      * library chooses.  If the action accesses shared state, it is
      * responsible for providing the required synchronization.
      *
      * @param action a <a href="package-summary.html#NonInterference">
-     *               non-interfering</a> action to perform on the elements
+     *               non-interfering</a> action toNested perform on the elements
      */
     @Override
     void forEach(Consumer<? super T> action);
@@ -1793,7 +1793,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * For push based reactive Stream types (created via Spouts or FutureStream)
      *
      * @param action a <a href="package-summary.html#NonInterference">
-     *               non-interfering</a> action to perform on the elements
+     *               non-interfering</a> action toNested perform on the elements
      */
     default void forEachAsync(final Consumer<? super T> action){
         forEach(action);
@@ -1810,7 +1810,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param p
-     *            Predicate to skip while true
+     *            Predicate toNested skip while true
      * @return Stream with elements skipped while predicate holds
      */
     @Override
@@ -1826,7 +1826,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param p
-     *            Predicate to skip until true
+     *            Predicate toNested skip until true
      * @return Stream with elements skipped until predicate holds
      */
     @Override
@@ -1849,8 +1849,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param num
-     *            Limit element size to num
-     * @return Monad converted to Stream with elements up to num
+     *            Limit element size toNested num
+     * @return Monad converted toNested Stream with elements up toNested num
      */
     @Override
     ReactiveSeq<T> limit(long num);
@@ -1900,7 +1900,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> parallel();
 
     /**
-     * True if predicate matches all elements when Monad converted to a Stream
+     * True if predicate matches all elements when Monad converted toNested a Stream
      *
      * <pre>
      * {@code
@@ -1909,13 +1909,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param c
-     *            Predicate to check if all match
+     *            Predicate toNested check if all match
      */
     @Override
     boolean allMatch(Predicate<? super T> c);
 
     /**
-     * True if a single element matches when Monad converted to a Stream
+     * True if a single element matches when Monad converted toNested a Stream
      *
      * <pre>
      * {@code
@@ -1924,7 +1924,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param c
-     *            Predicate to check if any match
+     *            Predicate toNested check if any match
      */
     @Override
     boolean anyMatch(Predicate<? super T> c);
@@ -2012,7 +2012,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Lazy / reactive analogue of findFirst / findAny from JDK
-     * For push based reactive-streams (created via Spouts.XXX) data will be pushed to the returned Maybe on arrival.
+     * For push based reactive-streams (created via Spouts.XXX) data will be pushed toNested the returned Maybe on arrival.
      * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Maybe is first accessed.
      *
      * @return
@@ -2023,7 +2023,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Lazy / reactive look up of first value , capturing the first error, if one occurs. If no values are
      * present a NoSuchElementException is returned.
      *
-     * For push based reactive-streams (created via Spouts.XXX) data will be pushed to the returned Either on arrival.
+     * For push based reactive-streams (created via Spouts.XXX) data will be pushed toNested the returned Either on arrival.
      * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Either is first accessed.
 
      *
@@ -2086,8 +2086,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Attempt to map this Sequence to the same type as the supplied Monoid
-     * (Reducer) Then use Monoid to reduce values
+     * Attempt toNested map this Sequence toNested the same type as the supplied Monoid
+     * (Reducer) Then use Monoid toNested reduce values
      *
      * <pre>
      * {@code
@@ -2098,15 +2098,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param reducer
-     *            Monoid to reduce values
+     *            Monoid toNested reduce values
      * @return Reduce result
      */
     @Override
     <R> R mapReduce(Reducer<R> reducer);
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid, using
-     * supplied function Then use Monoid to reduce values
+     * Attempt toNested map this Monad toNested the same type as the supplied Monoid, using
+     * supplied function Then use Monoid toNested reduce values
      *
      * <pre>
      *  {@code
@@ -2130,9 +2130,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param mapper
-     *            Function to map Monad type
+     *            Function toNested map Monad type
      * @param reducer
-     *            Monoid to reduce values
+     *            Monoid toNested reduce values
      * @return Reduce result
      */
     @Override
@@ -2148,7 +2148,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param reducer
-     *            Use supplied Monoid to reduce values
+     *            Use supplied Monoid toNested reduce values
      * @return reduced values
      */
     @Override
@@ -2188,7 +2188,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * reduction is one in which the reduced value is a mutable result container,
      * such as an {@code ArrayList}, and elements are incorporated by updating
      * the state of the result rather than by replacing the result.  This
-     * produces a result equivalent to:
+     * produces a result equivalent toNested:
      * <pre>{@code
      *     R result = supplier.get();
      *     for (T element : this reactiveStream)
@@ -2216,7 +2216,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *                    compatible with the accumulator function
      * @return the result of the reduction
      * @apiNote There are many existing classes in the JDK whose signatures are
-     * well-suited for use with method references as arguments to {@code collect()}.
+     * well-suited for use with method references as arguments toNested {@code collect()}.
      * For example, the following will accumulate strings into an {@code ArrayList}:
      * <pre>{@code
      *     List<String> asList = stringStream.collect(ArrayList::new, ArrayList::add,
@@ -2243,7 +2243,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Performs a <a href="package-summary.html#MutableReduction">mutable
      * reduction</a> operation on the elements of this reactiveStream using a
      * {@code Collector}.  A {@code Collector}
-     * encapsulates the function used as arguments to
+     * encapsulates the function used as arguments toNested
      * {@link #collect(Supplier, BiConsumer, BiConsumer)}, allowing for reuse of
      * collection strategies and composition of collect operations such as
      * multiple-level grouping or partitioning.
@@ -2259,7 +2259,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * operation</a>.
      * <p>
      * <p>When executed in parallel, multiple intermediate results may be
-     * instantiated, populated, and merged so as to maintain isolation of
+     * instantiated, populated, and merged so as toNested maintain isolation of
      * mutable data structures.  Therefore, even when executed in parallel
      * with non-thread-safe data structures (such as {@code ArrayList}), no
      * additional synchronization is needed for a parallel reduction.
@@ -2352,14 +2352,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param reducer
-     *            Use supplied Monoid to reduce values starting via foldRight
+     *            Use supplied Monoid toNested reduce values starting via foldRight
      * @return Reduced result
      */
     @Override
     T foldRight(Monoid<T> reducer);
 
     /**
-     * Immutable reduction from right to left
+     * Immutable reduction from right toNested left
      *
      * <pre>
      * {@code
@@ -2372,8 +2372,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public T foldRight(T identity, BinaryOperator<T> accumulator);
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid (using
-     * mapToType on the monoid interface) Then use Monoid to reduce values
+     * Attempt toNested map this Monad toNested the same type as the supplied Monoid (using
+     * mapToType on the monoid interface) Then use Monoid toNested reduce values
      *
      * <pre>
      * 		{@code
@@ -2385,7 +2385,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param reducer
-     *            Monoid to reduce values
+     *            Monoid toNested reduce values
      * @return Reduce result
      **/
     @Override
@@ -2393,14 +2393,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * @return This Stream converted to a set
+     * @return This Stream converted toNested a set
      */
     default Set<T> toSet(){
         return collect(Collectors.toSet());
     }
 
     /**
-     * @return this Stream converted to a list
+     * @return this Stream converted toNested a list
      */
     default List<T> toList(){
         return collect(Collectors.toList());
@@ -2440,7 +2440,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     boolean startsWith(Stream<T> stream);
 
     /**
-     * @return this ReactiveSeq converted to AnyM format
+     * @return this ReactiveSeq converted toNested AnyM format
      */
     public AnyMSeq<reactiveSeq,T> anyM();
 
@@ -2478,14 +2478,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param fn
-     *            to be applied
-     * @return new stage in Sequence with flatMap operation to be lazily applied
+     *            toNested be applied
+     * @return new stage in Sequence with flatMap operation toNested be lazily applied
      */
     @Override
     <R> ReactiveSeq<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn);
 
     /**
-     * Allows flatMap return type to be any Monad type
+     * Allows flatMap return type toNested be any Monad type
      *
      * <pre>
      * {@code
@@ -2496,8 +2496,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param fn
-     *            to be applied
-     * @return new stage in Sequence with flatMap operation to be lazily applied
+     *            toNested be applied
+     * @return new stage in Sequence with flatMap operation toNested be lazily applied
      */
     <R> ReactiveSeq<R> flatMapAnyM(Function<? super T, AnyM<Witness.stream,? extends R>> fn);
 
@@ -2536,8 +2536,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param fn
-     *            to be applied
-     * @return new stage in Sequence with flatMap operation to be lazily applied
+     *            toNested be applied
+     * @return new stage in Sequence with flatMap operation toNested be lazily applied
      */
     <R> ReactiveSeq<R> flatMapStream(Function<? super T, BaseStream<? extends R, ?>> fn);
 
@@ -2603,7 +2603,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Cast all elements in a reactiveStream to a given type, possibly throwing a
+     * Cast all elements in a reactiveStream toNested a given type, possibly throwing a
      * {@link ClassCastException}.
      *
      *
@@ -2623,7 +2623,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * - Sequence created via a range - Sequence created via a List - Sequence
      * created via an Array / var args
      *
-     * Otherwise Sequence collected into a Collection prior to reversal
+     * Otherwise Sequence collected into a Collection prior toNested reversal
      *
      * <pre> {@code assertThat( of(1, 2, 3).reverse().toList(),
      * equalTo(asList(3, 2, 1))); } </pre>
@@ -2645,7 +2645,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Prepend Stream to this ReactiveSeq
+     * Prepend Stream toNested this ReactiveSeq
      *
      * <pre>
      * {@code
@@ -2659,13 +2659,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param stream
-     *            to Prepend
+     *            toNested Prepend
      * @return ReactiveSeq with Stream prepended
      */
     ReactiveSeq<T> prependS(Stream<? extends T> stream);
 
     /**
-     * Append values to the take of this ReactiveSeq
+     * Append values toNested the take of this ReactiveSeq
      *
      * <pre>
      * {@code
@@ -2675,7 +2675,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param values
-     *            to append
+     *            toNested append
      * @return ReactiveSeq with appended values
      */
     ReactiveSeq<T> append(T... values);
@@ -2687,7 +2687,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> prepend(T value);
 
     /**
-     * Prepend given values to the skip of the Stream
+     * Prepend given values toNested the skip of the Stream
      *
      * <pre>
      * {@code
@@ -2698,7 +2698,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
-     * @param values to prepend
+     * @param values toNested prepend
      * @return ReactiveSeq with values prepended
      */
 
@@ -2716,9 +2716,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param pos
-     *            to insert data at
+     *            toNested insert data at
      * @param values
-     *            to insert
+     *            toNested insert
      * @return Stream with new data inserted
      */
     default ReactiveSeq<T> insertAt(int pos, T... values){
@@ -2786,9 +2786,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param pos
-     *            to insert Stream at
+     *            toNested insert Stream at
      * @param stream
-     *            to insert
+     *            toNested insert
      * @return newly conjoined ReactiveSeq
      */
     default ReactiveSeq<T> insertAtS(int pos, Stream<T> stream){
@@ -2820,7 +2820,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * }
      *
-     * @param iterable Values to check
+     * @param iterable Values toNested check
      * @return true if ReactiveSeq ends with values in the supplied iterable
      */
     @Override
@@ -2835,7 +2835,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param stream
-     *            Values to check
+     *            Values toNested check
      * @return true if ReactiveSeq endswith values in the supplied Stream
      */
     @Override
@@ -2893,7 +2893,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> skipLast(int num);
 
     /**
-     * Limit results to the last x elements in a ReactiveSeq
+     * Limit results toNested the last x elements in a ReactiveSeq
      *
      * <pre>
      * {@code
@@ -2903,8 +2903,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * }
      *
-     * @param num of elements to return (last elements)
-     * @return ReactiveSeq limited to last num elements
+     * @param num of elements toNested return (last elements)
+     * @return ReactiveSeq limited toNested last num elements
      */
     @Override
     ReactiveSeq<T> limitLast(int num);
@@ -2931,7 +2931,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param e
-     *            Executor to execute this ReactiveSeq on
+     *            Executor toNested execute this ReactiveSeq on
      * @return a Connectable HotStream
      */
     default HotStream<T> hotStream(final Executor e) {
@@ -2941,7 +2941,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Return a HotStream that will skip emitting data when the first connecting Stream connects.
      * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
-     *  For a hotStream that starts to emitted data immediately @see {@link ReactiveSeq#hotStream(Executor)}.
+     *  For a hotStream that starts toNested emitted data immediately @see {@link ReactiveSeq#hotStream(Executor)}.
      * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
      * <pre>
       * <pre>
@@ -2986,7 +2986,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * }
      * </pre>
-     * @param e Executor to execute this ReactiveSeq on
+     * @param e Executor toNested execute this ReactiveSeq on
      * @return a Connectable HotStream
      */
     default PausableHotStream<T> pausableHotStream(Executor e){
@@ -2996,7 +2996,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Return a pausable HotStream that will skip emitting data when the first connecting Stream connects.
      * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
-     *  For a hotStream that starts to emitted data immediately @see {@link ReactiveSeq#pausableHotStream(Executor)}.
+     *  For a hotStream that starts toNested emitted data immediately @see {@link ReactiveSeq#pausableHotStream(Executor)}.
      * The generated HotStream is pausable, for a unpausable HotStream @see {@link ReactiveSeq#primedHotStream(Executor)}.
      * <pre>
       * <pre>
@@ -3111,7 +3111,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param index
-     *            to extract element from
+     *            toNested extract element from
      * @return elementAt index
      */
     @Override
@@ -3134,7 +3134,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param index
-     *            to extract element from
+     *            toNested extract element from
      * @return Element and Sequence
      */
     default Tuple2<T, ReactiveSeq<T>> elementAt(final long index) {
@@ -3155,7 +3155,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * @return Sequence that adds the time between elements in millis to each
+     * @return Sequence that adds the time between elements in millis toNested each
      *         element
      */
     default ReactiveSeq<Tuple2<T, Long>> elapsed() {
@@ -3182,7 +3182,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * </pre>
      *
-     * @return Sequence that adds a timestamp to each element
+     * @return Sequence that adds a timestamp toNested each element
      */
     default ReactiveSeq<Tuple2<T, Long>> timestamp() {
         return zip(ReactiveSeq.generate(() -> System.currentTimeMillis()));
@@ -3252,9 +3252,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * between skip and take
      *
      * @param start
-     *            Number of range to skip from
+     *            Number of range toNested skip from
      * @param end
-     *            Number for range to take at
+     *            Number for range toNested take at
      * @return Range ReactiveSeq
      */
     public static ReactiveSeq<Integer> range(final int start, final int end) {
@@ -3271,9 +3271,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * between skip and take
      *
      * @param start
-     *            Number of range to skip from
+     *            Number of range toNested skip from
      * @param end
-     *            Number for range to take at
+     *            Number for range toNested take at
      * @return Range ReactiveSeq
      */
     public static ReactiveSeq<Long> rangeLong(final long start, final long end) {
@@ -3289,7 +3289,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Construct a ReactiveSeq from a Stream
      *
      * @param stream
-     *            Stream to construct Sequence from
+     *            Stream toNested construct Sequence from
      * @return
      */
     public static <T> ReactiveSeq<T> fromStream(final Stream<T> stream) {
@@ -3309,7 +3309,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Construct a ReactiveSeq from a Stream
      *
      * @param stream
-     *            Stream to construct Sequence from
+     *            Stream toNested construct Sequence from
      * @return
      */
     public static ReactiveSeq<Integer> fromIntStream(final IntStream stream) {
@@ -3322,7 +3322,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Construct a ReactiveSeq from a Stream
      *
      * @param stream
-     *            Stream to construct Sequence from
+     *            Stream toNested construct Sequence from
      * @return
      */
     public static ReactiveSeq<Long> fromLongStream(final LongStream stream) {
@@ -3334,7 +3334,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Construct a ReactiveSeq from a Stream
      *
      * @param stream
-     *            Stream to construct Sequence from
+     *            Stream toNested construct Sequence from
      * @return
      */
     public static ReactiveSeq<Double> fromDoubleStream(final DoubleStream stream) {
@@ -3347,7 +3347,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * list, as it allows more efficient Stream reversal).
      *
      * @param list
-     *            to construct Sequence from
+     *            toNested construct Sequence from
      * @return ReactiveSeq
      */
     public static <T> ReactiveSeq<T> fromList(final List<T> list) {
@@ -3367,7 +3367,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Construct a ReactiveSeq from an Publisher
      *
      * @param publisher
-     *            to construct ReactiveSeq from
+     *            toNested construct ReactiveSeq from
      * @return ReactiveSeq
      */
     public static <T> ReactiveSeq<T> fromPublisher(final Publisher<? extends T> publisher) {
@@ -3382,7 +3382,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Construct a ReactiveSeq from an Iterable
      *
      * @param iterable
-     *            to construct Sequence from
+     *            toNested construct Sequence from
      * @return ReactiveSeq
      */
     public static <T> ReactiveSeq<T> fromIterable(final Iterable<T> iterable) {
@@ -3409,7 +3409,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Construct a ReactiveSeq from an Iterator
      *
      * @param iterator
-     *            to construct Sequence from
+     *            toNested construct Sequence from
      * @return ReactiveSeq
      */
     public static <T> ReactiveSeq<T> fromIterator(final Iterator<T> iterator) {
@@ -3534,7 +3534,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param switchTo
      *            Supplier that will generate the alternative Stream
-     * @return ReactiveSeq that will switch to an alternative Stream if empty
+     * @return ReactiveSeq that will switch toNested an alternative Stream if empty
      */
     @Override
     ReactiveSeq<T> onEmptySwitch(final Supplier<? extends Stream<T>> switchTo) ;
@@ -3594,7 +3594,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param x
-     *            number of elements to emit
+     *            number of elements toNested emit
      * @param time
      *            period
      * @param t
@@ -3637,7 +3637,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * @param time Time to apply debouncing over
+     * @param time Time toNested apply debouncing over
      * @param t Time unit for debounce period
      * @return ReactiveSeq with debouncing applied
      */
@@ -3721,7 +3721,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param exceptionClass
-     *            Type to recover from
+     *            Type toNested recover from
      * @param fn
      *            That accepts an error and returns an alternative value
      * @return ReactiveSeq that can recover from a particular exception
@@ -3729,7 +3729,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     <EX extends Throwable> ReactiveSeq<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn);
 
     /**
-     * Retry a transformation if it fails. Default settings are to retry up to 7
+     * Retry a transformation if it fails. Default settings are toNested retry up toNested 7
      * times, with an doubling backoff period starting @ 2 seconds delay before
      * retry.
      *
@@ -3750,7 +3750,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param fn
-     *            Function to retry if fails
+     *            Function toNested retry if fails
      *
      */
     default <R> ReactiveSeq<R> retry(final Function<? super T, ? extends R> fn) {
@@ -3758,7 +3758,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Retry a transformation if it fails. Retries up to <b>retries</b>
+     * Retry a transformation if it fails. Retries up toNested <b>retries</b>
      * times, with an doubling backoff period starting @ <b>delay</b> TimeUnits delay before
      * retry.
      *
@@ -3779,13 +3779,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param fn
-     *            Function to retry if fails
+     *            Function toNested retry if fails
      * @param retries
      *            Number of retries
      * @param delay
      *            Delay in TimeUnits
      * @param timeUnit
-     *            TimeUnit to use for delay
+     *            TimeUnit toNested use for delay
      */
     default <R> ReactiveSeq<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
         return (ReactiveSeq) FoldableTraversable.super.retry(fn, retries, delay, timeUnit);
@@ -3803,7 +3803,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param t
-     *            element to remove
+     *            element toNested remove
      * @return Filtered Stream / ReactiveSeq
      */
     default ReactiveSeq<T> remove(final T t) {
@@ -3812,7 +3812,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Generate the permutations based on values in the ReactiveSeq Makes use of
-     * Streamable to store intermediate stages in a collection
+     * Streamable toNested store intermediate stages in a collection
      *
      *
      * @return Permutations from this ReactiveSeq
@@ -3914,7 +3914,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * Connect to the Scheduled Stream
+     * Connect toNested the Scheduled Stream
      *
      * <pre>
      * {@code
@@ -3953,7 +3953,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * Connect to the Scheduled Stream
+     * Connect toNested the Scheduled Stream
      *
      * <pre>
      * {@code
@@ -3990,7 +3990,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * Connect to the Scheduled Stream
+     * Connect toNested the Scheduled Stream
      *
      * <pre>
      * {@code
@@ -4013,7 +4013,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * [equivalent to count]
+     * [equivalent toNested count]
      *
      * @return size
      */
@@ -4040,13 +4040,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param stream1
-     *            Nested Stream to iterate over
+     *            Nested Stream toNested iterate over
      * @param stream2
-     *            Nested Stream to iterate over
+     *            Nested Stream toNested iterate over
      * @param stream3
-     *            Nested Stream to iterate over
+     *            Nested Stream toNested iterate over
      * @param yieldingFunction
-     *            Function with pointers to the current element from both
+     *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
@@ -4089,16 +4089,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param stream1
-     *            Nested Stream to iterate over
+     *            Nested Stream toNested iterate over
      * @param stream2
-     *            Nested Stream to iterate over
+     *            Nested Stream toNested iterate over
      * @param stream3
-     *            Nested Stream to iterate over
+     *            Nested Stream toNested iterate over
      * @param filterFunction
-     *            Filter to apply over elements before passing non-filtered
-     *            values to the yielding function
+     *            Filter toNested apply over elements before passing non-filtered
+     *            values toNested the yielding function
      * @param yieldingFunction
-     *            Function with pointers to the current element from both
+     *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
@@ -4143,11 +4143,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param stream1
-     *            Nested Stream to iterate over
+     *            Nested Stream toNested iterate over
      * @param stream2
-     *            Nested Stream to iterate over
+     *            Nested Stream toNested iterate over
      * @param yieldingFunction
-     *            Function with pointers to the current element from both
+     *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
@@ -4188,14 +4188,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param stream1
-     *            Nested Stream to iterate over
+     *            Nested Stream toNested iterate over
      * @param stream2
-     *            Nested Stream to iterate over
+     *            Nested Stream toNested iterate over
      * @param filterFunction
-     *            Filter to apply over elements before passing non-filtered
-     *            values to the yielding function
+     *            Filter toNested apply over elements before passing non-filtered
+     *            values toNested the yielding function
      * @param yieldingFunction
-     *            Function with pointers to the current element from both
+     *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
@@ -4235,9 +4235,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param stream1
-     *            Nested Stream to iterate over
+     *            Nested Stream toNested iterate over
      * @param yieldingFunction
-     *            Function with pointers to the current element from both
+     *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
@@ -4255,7 +4255,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * crossJoin two Streams forming a cartesian product over both
-     * @param other Stream to crossJoin
+     * @param other Stream toNested crossJoin
      * @return Single Stream with each pair across both Streams in a Tuple
      */
     default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(ReactiveSeq<? extends U> other) {
@@ -4279,12 +4279,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param stream1
-     *            Nested Stream to iterate over
+     *            Nested Stream toNested iterate over
      * @param filterFunction
-     *            Filter to apply over elements before passing non-filtered
-     *            values to the yielding function
+     *            Filter toNested apply over elements before passing non-filtered
+     *            values toNested the yielding function
      * @param yieldingFunction
-     *            Function with pointers to the current element from both
+     *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
@@ -4313,7 +4313,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Returns the count of elements in this reactiveStream.  This is a special case of
      * a <a href="package-summary.html#Reduction">reduction</a> and is
-     * equivalent to:
+     * equivalent toNested:
      * <pre>{@code
      *     return mapToLong(e -> 1L).sum();
      * }</pre>
@@ -4349,7 +4349,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Append Stream to this ReactiveSeq
+     * Append Stream toNested this ReactiveSeq
      *
      * <pre>
      * {@code
@@ -4359,7 +4359,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param stream
-     *            to append
+     *            toNested append
      * @return ReactiveSeq with Stream appended
      */
      ReactiveSeq<T> appendS(Stream<? extends T> other);
@@ -4375,7 +4375,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Convert to a Stream with the values repeated specified times
+     * Convert toNested a Stream with the values repeated specified times
      *
      * <pre>
      * {@code
@@ -4484,11 +4484,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     /**
      A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
-     * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#mergePublisher(Collection, QueueFactory)}
-     * method to forEachAsync asynchronously also. Max concurrency is determined by the publishers collection size, along with a default limit of 5k queued values before
+     * are configured toNested publish asynchronously, users can use the overloaded @see {@link IterableFunctor#mergePublisher(Collection, QueueFactory)}
+     * method toNested forEachAsync asynchronously also. Max concurrency is determined by the publishers collection size, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
-     * @param publishers Publishers to merge
+     * @param publishers Publishers toNested merge
      * @return Return Stream of merged data
      */
     default ReactiveSeq<T> mergeP(final Publisher<T>... publishers) {
@@ -4501,8 +4501,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
-     * are configured to publish asynchronously.
-     * The QueueFactory parameter can be used by pull based Streams to control the maximum queued elements @see {@link QueueFactories}
+     * are configured toNested publish asynchronously.
+     * The QueueFactory parameter can be used by pull based Streams toNested control the maximum queued elements @see {@link QueueFactories}
      * Push based reactive-streams signal demand via their subscription.
      *
      *
@@ -4565,7 +4565,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Broadcast the contents of this Stream to multiple downstream Streams (determined by supplier parameter).
+     * Broadcast the contents of this Stream toNested multiple downstream Streams (determined by supplier parameter).
      * For pull based Streams this Stream will be buffered.
      * For push based Streams elements are broadcast downstream on receipt, the emitted downstream Streams remain asynchonous
      *
@@ -4576,7 +4576,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Which buffer all Stream types and produce a synchronous downstream stream.
      *
      *
-     * @param num Number of downstream Streams to multicast to
+     * @param num Number of downstream Streams toNested multicast toNested
      * @return List of Streams that recieve data from this Stream
      */
     default ListX<ReactiveSeq<T>> multicast(int num){
@@ -4751,7 +4751,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                     if(wip.compareAndSet(false,true)){
                         try {
 
-                            //use the first consuming thread to tell this Stream onto the Queue
+                            //use the first consuming thread toNested tell this Stream onto the Queue
                             if(!split.tryAdvance(topic::offer)){
                                 topic.close();
                                 return Continuation.empty();
@@ -4978,7 +4978,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * }
          * </pre>
          *
-         * @param m Monoid to use for combining Lists
+         * @param m Monoid toNested use for combining Lists
          * @return Type class for combining Lists
          */
         public static <T> MonadPlus<µ> monadPlus(Monoid<ReactiveSeq<T>> m){
@@ -5052,7 +5052,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         /**
          * Widen a ReactiveSeq nested inside another HKT encoded type
          *
-         * @param flux HTK encoded type containing  a List to widen
+         * @param flux HTK encoded type containing  a List toNested widen
          * @return HKT encoded type with a widened List
          */
         public static <C2, T> Higher<C2, Higher<ReactiveSeq.µ, T>> widen2(Higher<C2, ReactiveSeq<T>> flux) {
@@ -5069,7 +5069,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         /**
          * Convert the HigherKindedType definition for a List into
          *
-         * @param List Type Constructor to convert back into narrowed type
+         * @param List Type Constructor toNested convert back into narrowed type
          * @return List from Higher Kinded Type
          */
         public static <T> ReactiveSeq<T> narrow(final Higher<ReactiveSeq.µ, T> completableList) {

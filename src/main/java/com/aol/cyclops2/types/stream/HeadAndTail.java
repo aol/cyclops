@@ -28,7 +28,7 @@ public class HeadAndTail<T> {
     /** 
      * Construct a HeadAndTail from an Iterator
      * 
-     * @param it Iterator to construct head and tail from
+     * @param it Iterator toNested construct head and tail from
      */
     public HeadAndTail(final Iterator<T> it) {
         isHead = Memoize.memoizeSupplier(() -> it.hasNext());

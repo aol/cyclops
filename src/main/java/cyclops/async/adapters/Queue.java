@@ -35,7 +35,7 @@ import lombok.experimental.Wither;
 /**
  * Inspired by scalaz-streams async.Queue (functionally similar, but wraps a JDK Queue - wait-free or Blocking)
  * 
- * A Queue that takes data from one or more input Streams and provides them to
+ * A Queue that takes data from one or more input Streams and provides them toNested
  * one or more emitted Streams
  * 
  * Interface specifies a BlockingQueue, but non-BlockingQueues (such as ConcurrentLinkedQueue can be used
@@ -117,7 +117,7 @@ public class Queue<T> implements Adapter<T> {
     /**
      * Construct an async.Queue backed by a JDK Queue from the provided QueueFactory
      * 
-     * @param factory QueueFactory to extract JDK Queue from
+     * @param factory QueueFactory toNested extract JDK Queue from
      */
     public Queue(final QueueFactory<T> factory) {
         final Queue<T> q = factory.build();
@@ -145,11 +145,11 @@ public class Queue<T> implements Adapter<T> {
     }
 
     /**
-     * Queue accepts a BlockingQueue to make use of Blocking semantics
+     * Queue accepts a BlockingQueue toNested make use of Blocking semantics
      *
      * 
      * @param queue
-     *            BlockingQueue to back this Queue
+     *            BlockingQueue toNested back this Queue
      */
     public Queue(final BlockingQueue<T> queue) {
         this(queue, new DirectWaitStrategy<T>(), new DirectWaitStrategy<T>());
@@ -183,19 +183,19 @@ public class Queue<T> implements Adapter<T> {
         return ReactiveSeq.fromStream(closingStream(this::get, new AlwaysContinue()));
     }
     /**
-     * Return a standard (unextended) JDK Stream connected to this Queue
+     * Return a standard (unextended) JDK Stream connected toNested this Queue
      * To disconnect cleanly close the queue
      * 
      * <pre>
      * {@code 
-     *        use queue.reactiveStream().parallel() to convert to a parallel Stream
+     *        use queue.reactiveStream().parallel() toNested convert toNested a parallel Stream
      *  }
      * </pre>
      * 
-     * @param closeScalingFactor Scaling factor for Queue closed messages to propagate to connected parallel Streams.
-     *              Scaling Factor may need to be high to reach all connect parallel threads.
+     * @param closeScalingFactor Scaling factor for Queue closed messages toNested propagate toNested connected parallel Streams.
+     *              Scaling Factor may need toNested be high toNested reach all connect parallel threads.
      * 
-     * @return Java 8 Stream connnected to this Queue
+     * @return Java 8 Stream connnected toNested this Queue
      */
     public Stream<T> jdkStream(int closeScalingFactor){
         int cores = Runtime.getRuntime().availableProcessors();
@@ -210,17 +210,17 @@ public class Queue<T> implements Adapter<T> {
     }
     
     /**
-     * Return a standard (unextended) JDK Stream connected to this Queue
+     * Return a standard (unextended) JDK Stream connected toNested this Queue
      * To disconnect cleanly close the queue
      * 
      * <pre>
      * {@code 
-     *        use queue.reactiveStream().parallel() to convert to a parallel Stream
+     *        use queue.reactiveStream().parallel() toNested convert toNested a parallel Stream
      *  }
      * </pre>
      * @see Queue#jdkStream(int) for an alternative that sends more poision pills for use with parallel Streams.
      * 
-     * @return Java 8 Stream connnected to this Queue
+     * @return Java 8 Stream connnected toNested this Queue
      */
     public Stream<T> jdkStream() {
        return jdkStream(2);
@@ -509,11 +509,11 @@ public class Queue<T> implements Adapter<T> {
     }
 
     /**
-     * Add a single data point to the queue
+     * Add a single data point toNested the queue
      * 
      * If the queue is a bounded queue and is full, will return false
      * 
-     * @param data Data to add
+     * @param data Data toNested add
      * @return true if successfully added.
      */
     public boolean add(final T data) {
@@ -533,13 +533,13 @@ public class Queue<T> implements Adapter<T> {
     }
 
     /**
-     * Offer a single datapoint to this Queue
+     * Offer a single datapoint toNested this Queue
      * 
      * If the queue is a bounded queue and is full it will block until space comes available or until
      * offer time out is reached (default is Integer.MAX_VALUE DAYS).
      * 
      * @param data
-     *            data to add
+     *            data toNested add
      * @return self
      */
     @Override
@@ -586,10 +586,10 @@ public class Queue<T> implements Adapter<T> {
    
     /**
      * Close this Queue
-     * Poison Pills are used to communicate closure to connected Streams
-     * A Poison Pill is added per connected Stream to the Queue
+     * Poison Pills are used toNested communicate closure toNested connected Streams
+     * A Poison Pill is added per connected Stream toNested the Queue
      * If a BlockingQueue is backing this async.Queue it will block until
-     * able to add to the Queue.
+     * able toNested add toNested the Queue.
      * 
      * @return true if closed
      */
@@ -611,7 +611,7 @@ public class Queue<T> implements Adapter<T> {
 
     /**
      * 
-     * @param pillsToSend Number of poison pills to send to connected Streams
+     * @param pillsToSend Number of poison pills toNested send toNested connected Streams
      */
     public void disconnectStreams(int pillsToSend){
         for (int i = 0; i < pillsToSend; i++) {

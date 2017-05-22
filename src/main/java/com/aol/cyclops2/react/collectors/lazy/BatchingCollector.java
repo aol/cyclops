@@ -16,7 +16,7 @@ import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 
 /**
- * This class allows a Batch of completable futures to be processed before collecting their results, to increase
+ * This class allows a Batch of completable futures toNested be processed before collecting their results, toNested increase
  * parallelism.
  * 
  * @author johnmcclean

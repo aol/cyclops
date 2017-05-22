@@ -129,7 +129,7 @@ public class PipesTest {
       System.out.println(Thread.currentThread().getId());
        List<String> res =  bus.futureStream("reactor", new LazyReact())
             .get()
-           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList();
           System.out.println(res);
        
@@ -155,7 +155,7 @@ public class PipesTest {
       System.out.println(Thread.currentThread().getId());
        List<String> res =  bus.futureStream("reactor", new LazyReact(10,10))
             .get()
-           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList();
           System.out.println(res);
        
@@ -181,7 +181,7 @@ public class PipesTest {
       System.out.println(Thread.currentThread().getId());
        List<String> res =  bus.futureStream("reactor", new LazyReact())
             .get()
-           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList();
           System.out.println(res);
        
