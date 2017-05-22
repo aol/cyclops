@@ -10,13 +10,13 @@ public class StreamTSeqConvertableSequenceTest extends AbstractConvertableSequen
 
     @Override
     public <T> ConvertableSequence<T> of(T... elements) {
-        return ReactiveSeq.of(elements).liftM(Witness.list.INSTANCE);
+        return ReactiveSeq.of(elements).liftM(Witness.list.INSTANCE).to();
     }
 
     @Override
     public <T> ConvertableSequence<T> empty() {
 
-        return ReactiveSeq.<T>empty().liftM(Witness.list.INSTANCE);
+        return ReactiveSeq.<T>empty().liftM(Witness.list.INSTANCE).to();
     }
 
 }

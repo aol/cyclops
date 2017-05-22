@@ -24,8 +24,8 @@ public class UnwrapTest {
 	@Test
 	public void unwrapOptional(){
 		Optional<ListX<String>> stream = AnyM.streamOf("hello","world")
-											.stream()
-											.toOptional();
+											.stream().to()
+											.optional();
 		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
 	}
 

@@ -54,7 +54,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
      * </pre>
      * 
      * 
-     * @param t Monad to compare to
+     * @param t Monad toNested compare toNested
      * @return true if equivalent
      */
     default boolean eqv(final AnyMValue<?,T> t) {
@@ -289,7 +289,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
             MonadicValue<T> unwrap = unwrap();
             return AnyM.ofValue(unwrap.flatMap(fn),adapter());
         }
-        return flatMapA(fn.andThen(this::fromIterable));
+        return flatMapA(fn.andThen(a->this.fromIterable(a)));
     }
     @Override
     default T get() {

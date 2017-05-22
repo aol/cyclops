@@ -17,7 +17,7 @@ public class AsyncCollectableTest extends CollectableTest {
                 s.onComplete();
             });
             t.start();
-        }).collectionOperations();
+        }).collectors();
     }
 
 }

@@ -15,7 +15,7 @@ public class AsyncRSCollectableTest extends CollectableTest {
 
         return Spouts.from(Flux.just(values)
                 .subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())))
-                .collectionOperations();
+                .collectors();
     }
 
 }

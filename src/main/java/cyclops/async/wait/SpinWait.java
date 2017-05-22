@@ -3,7 +3,7 @@ package cyclops.async.wait;
 import java.util.concurrent.locks.LockSupport;
 
 /**
- * Repeatedly retry to take or offer element to Queue if full or data unavailable,
+ * Repeatedly retry toNested take or offer element toNested Queue if full or data unavailable,
  * with a wait of 1 nano second between retries
  * 
  * @author johnmcclean

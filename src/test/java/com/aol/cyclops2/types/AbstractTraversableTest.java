@@ -166,7 +166,7 @@ public abstract class AbstractTraversableTest {
     
     @Test
     public void testIterable() {
-        List<Integer> list = of(1, 2, 3).stream().toCollection(LinkedList::new);
+        List<Integer> list = of(1, 2, 3).stream().to().collection(LinkedList::new);
 
         for (Integer i :of(1, 2, 3)) {
             assertThat(list,hasItem(i));
@@ -219,7 +219,8 @@ public abstract class AbstractTraversableTest {
         @Test
         public void zip(){
             List<Tuple2<Integer,Integer>> list =
-                    of(1,2,3,4,5,6).zip(of(100,200,300,400).stream()).stream()
+                    ((Traversable<Tuple2<Integer,Integer>>)of(1,2,3,4,5,6)
+                            .zip(of(100,200,300,400).stream())).stream()
                                                     .peek(it -> System.out.println(it))
                                                     .collect(java.util.stream.Collectors.toList());
             System.out.println("list = " +list);
@@ -314,8 +315,8 @@ public abstract class AbstractTraversableTest {
     @Test
     public void zip2of(){
         
-        List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
-                                            .zip(of(100,200,300,400).stream())
+        List<Tuple2<Integer,Integer>> list =ReactiveSeq.fromIterable(of(1,2,3,4,5,6)
+                                            .zip(of(100,200,300,400).stream()))
                                             .stream().toListX().materialize();
                 
     
@@ -333,9 +334,9 @@ public abstract class AbstractTraversableTest {
     @Test
     public void zipInOrder(){
         
-        List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6)
-                                                    .zip( of(100,200,300,400).stream())
-                                                    .stream().toListX();
+        List<Tuple2<Integer,Integer>> list =  ReactiveSeq.fromIterable(of(1,2,3,4,5,6)
+                                                    .zip( of(100,200,300,400).stream()))
+                                                    .toListX();
         
         assertThat(asList(1,2,3,4,5,6),hasItem(list.get(0).v1));
         assertThat(asList(100,200,300,400),hasItem(list.get(0).v2));
@@ -409,7 +410,9 @@ public abstract class AbstractTraversableTest {
 
     @Test
     public void testZipDifferingLength() {
-        List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d").stream()).stream().toList();
+        List<Tuple2<Integer, String>> list = ReactiveSeq.fromIterable(of(1, 2).zip(of("a", "b", "c", "d").stream())
+
+                ).stream().toList();
 
         assertEquals(2, list.size());
         assertTrue(asList(1, 2).contains(list.get(0).v1));
@@ -444,7 +447,8 @@ public abstract class AbstractTraversableTest {
 
     @Test
     public void testZipDifferingLengthStream() {
-        List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d").stream()).stream().toList();
+        List<Tuple2<Integer, String>> list = ReactiveSeq.fromIterable(of(1, 2)
+                .zip(of("a", "b", "c", "d").stream())).stream().toList();
 
         assertEquals(2, list.size());
         assertTrue(asList(1, 2).contains(list.get(0).v1));

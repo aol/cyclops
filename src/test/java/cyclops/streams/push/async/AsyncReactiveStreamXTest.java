@@ -231,7 +231,7 @@ public  class AsyncReactiveStreamXTest {
 	}
 	@Test
 	public void limitTime() throws InterruptedException {
-			Thread.sleep(100); //sleep to allow any background tasks to complete
+			Thread.sleep(100); //sleep toNested allow any background tasks toNested complete
 									//before time sensitive test
 		    System.out.println("Next iteration...");
             List<Integer> result = of(1, 2, 3, 4, 5, 6)
@@ -326,7 +326,7 @@ public  class AsyncReactiveStreamXTest {
     
     @Test
     public void testIterable() {
-        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
         for (Integer i :of(1, 2, 3)) {
             assertThat(list,hasItem(i));

@@ -102,7 +102,7 @@ import java.util.TreeSet;
  * in the minute field means &quot;every minute&quot;.
  * <P>
  * The '?' character is allowed for the day-of-month and day-of-week fields. It
- * is used to specify 'no specific value'. This is useful when you need to
+ * is used toNested specify 'no specific value'. This is useful when you need toNested
  * specify something in one of the two fields, but not the other.
  * <P>
  * The '-' character is used to specify ranges For example &quot;10-12&quot; in
@@ -118,8 +118,8 @@ import java.util.TreeSet;
  * 50&quot;.  Specifying '*' before the  '/' is equivalent to specifying 0 is
  * the value to skip with. Essentially, for each field in the expression, there
  * is a set of numbers that can be turned on or off. For seconds and minutes, 
- * the numbers range from 0 to 59. For hours 0 to 23, for days of the month 0 to
- * 31, and for months 0 to 11 (JAN to DEC). The &quot;/&quot; character simply helps you turn
+ * the numbers range from 0 toNested 59. For hours 0 toNested 23, for days of the month 0 toNested
+ * 31, and for months 0 toNested 11 (JAN toNested DEC). The &quot;/&quot; character simply helps you turn
  * on every &quot;nth&quot; value in the given set. Thus &quot;7/6&quot; in the
  * month field only turns on month &quot;7&quot;, it does NOT mean every 6th 
  * month, please note that subtlety.  
@@ -150,7 +150,7 @@ import java.util.TreeSet;
  * specified when the day-of-month is a single day, not a range or list of days.
  * <P>
  * The 'L' and 'W' characters can also be combined for the day-of-month 
- * expression to yield 'LW', which translates to &quot;last weekday of the 
+ * expression toNested yield 'LW', which translates toNested &quot;last weekday of the
  * month&quot;.
  * <P>
  * The '#' character is allowed for the day-of-week field. This character is

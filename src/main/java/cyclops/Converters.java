@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
  * <pre>
  *     {@code
  *      LinkedList<Integer> list1 = ListX.of(1,2,3)
- *                                      .to(Converters::LinkedList);
+ *                                      .toNested(Converters::LinkedList);
         ArrayList<Integer> list2 = ListX.of(1,2,3)
-                                        .to(Converters::ArrayList);
+                                        .toNested(Converters::ArrayList);
  *     }
  *
  * </pre>

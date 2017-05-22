@@ -9,7 +9,7 @@ public class ListXCollectableTest extends CollectableTest {
 
     @Override
     public <T> Collectable<T> of(T... values) {
-       return  ListX.of(values).collectionOperations();
+       return  ListX.of(values).collectors();
     }
 
 }

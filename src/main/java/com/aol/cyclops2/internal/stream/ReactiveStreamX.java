@@ -9,7 +9,6 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.async.QueueFactories;
 import cyclops.collections.immutable.VectorX;
-import cyclops.companion.CyclopsCollectors;
 import cyclops.companion.Streams;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.QueueFactory;
@@ -28,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
+import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -45,6 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -60,7 +61,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     final Consumer<? super Throwable> defaultErrorHandler;
 
     @Wither
-    final Type async; //SYNC streams should switch to lazy Backpressured or No backpressure when zip or flatMapP are called
+    final Type async; //SYNC streams should switch toNested lazy Backpressured or No backpressure when zip or flatMapP are called
 
     public Type getType() {
         return async;
@@ -143,10 +144,40 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     static final Object UNSET = new Object();
     @Override
     public Maybe<T> findOne(){
+        if(async==Type.NO_BACKPRESSURE){
+            Future<T> result = Future.future();
+            source.subscribeAll(e->{
+                result.complete(e);
+                throw new Queue.ClosedQueueException();
+            },t->{
+                result.completeExceptionally(t);
+            },()->{
+                if(!result.isDone()) {
+                    result.complete(null);
+                }
+            });
+            T value = result.get();
+            return result.toMaybe();
+        }
         return Maybe.fromPublisher(this);
     }
     @Override
     public Either<Throwable,T> findFirstOrError(){
+        if(async==Type.NO_BACKPRESSURE){
+            Future<T> result = Future.future();
+            source.subscribeAll(e->{
+                result.complete(e);
+                throw new Queue.ClosedQueueException();
+            },t->{
+                result.completeExceptionally(t);
+            },()->{
+                if(!result.isDone()) {
+                    result.complete(null);
+                }
+            });
+            T value = result.get();
+            return Either.fromFuture(result);
+        }
         return Either.fromPublisher(this);
     }
     @Override
@@ -171,7 +202,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
             Subscription sub[] = {null};
-            //may be quicker to use forEachAsync and throw an Exception with fillInStackTrace overriden
+            //may be quicker toNested use forEachAsync and throw an Exception with fillInStackTrace overriden
             sub[0] = source.subscribe(e -> {
 
                     result.complete(e);
@@ -215,7 +246,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
         Subscription sub[] = {null};
-        //may be quicker to use forEachAsync and throw an Exception with fillInStackTrace overriden
+        //may be quicker toNested use forEachAsync and throw an Exception with fillInStackTrace overriden
         sub[0] = stream.source.subscribe(e -> {
 
             result.complete(e);
@@ -673,8 +704,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             //if this Stream is not backpressure-aware demand requests / cancel requests are ignored.
             sub.onSubscribe(new StreamSubscription() {
                 boolean requested =false;
+                volatile boolean active = false;
                 volatile boolean completed = false;
-                ManyToOneConcurrentArrayQueue<T> data = new ManyToOneConcurrentArrayQueue<T>(1024*10);
+                OneToOneConcurrentArrayQueue<T> data = new OneToOneConcurrentArrayQueue<T>(1024*10);
                 @Override
                 public void request(long n) {
                    // System.out.println("Request for "+ n);
@@ -685,7 +717,11 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                             }
                         }, sub::onError, ()-> {
                             completed = true;
+
                             if(data.size()==0){
+                                while(active){
+                                    Thread.yield();
+                                }
                                 sub.onComplete();
                             }
                         });
@@ -699,7 +735,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                                 long sent = 0;
                                 //System.out.println("Requesting " + x);
                                 boolean completeSent = false;
-
+                                active=true;
                                 Object res = data.poll();
                                 if (res != null) {
                                     sub.onNext((nilsafeOut(res)));
@@ -712,6 +748,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                                 }else {
                                     Thread.yield();
                                 }
+                                active=false;
 
                            //  System.out.println("Sent " + sent + " x " + super.requested.get() + " " + completed + "  sent ? " + completeSent + " size " + data.size());
                         }
@@ -1073,7 +1110,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
                     if(wip.compareAndSet(false,true)){
                         try {
-                            //use the first consuming thread to tell this Stream onto the Queue
+                            //use the first consuming thread toNested tell this Stream onto the Queue
                             s.request(1000-queue.size());
                         }finally {
                             wip.set(false);
@@ -1141,11 +1178,13 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public ReactiveSeq<T> cycle() {
 
-        ReactiveSeq<T> cycling =  collectStream(CyclopsCollectors.toListX())
-                                    .map(s -> s.stream().cycle(Long.MAX_VALUE))
+        ReactiveSeq<T> cycling =  collectStream(Collectors.toList())
+                                    .map(s -> ReactiveSeq.fromIterable(s).cycle(Long.MAX_VALUE))
                                     .flatMap(i->i);
         return createSeq(new IterableSourceOperator<T>(cycling),Type.SYNC);
-
+ /**
+        return ReactiveSeq.fromIterator(this.iterator()).cycle();
+  **/
 
     }
 
@@ -1263,7 +1302,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return new Tuple2(
-                Tuple2.v1.toOptional()
+                Tuple2.v1.to().optional()
                         .flatMap(l -> {
                             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
                         }),
@@ -1425,7 +1464,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
         Subscription sub[] = {null};
-        //may be quicker to use forEachAsync and throw an Exception with fillInStackTrace overriden
+        //may be quicker toNested use forEachAsync and throw an Exception with fillInStackTrace overriden
         sub[0] = filtered.source.subscribe(e -> {
             result.complete(true);
             sub[0].cancel();

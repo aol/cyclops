@@ -30,20 +30,20 @@ import java.util.concurrent.Executor;
 /**
  * Pipes : Stores and manages cyclops2-react Adapters for cross-thread communication
  * 
- * Connected Streams will not be able to complete collect or reduce style methods unless the underlying Adapter for data transfer is closed.
- * I.e. connected Streams remain connected until lazy the Adapter is closed, or they disconnect (due to a limit for example).
+ * Connected Streams will not be able toNested complete collect or reduce style methods unless the underlying Adapter for data transfer is closed.
+ * I.e. connected Streams remain connected until lazy the Adapter is closed, or they disconnect (due toNested a limit for example).
  * 
  * <pre>
  * {@close 
  * 
- *      //create a Pipes instance to manage inter-thread communication
+ *      //create a Pipes instance toNested manage inter-thread communication
  *      Pipes<String, Integer> bus = Pipes.of();
  *      
  *      //register a non-blocking queue for data transfer
         bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
                                               .build());
         
-        //publish data to transfer queue
+        //publish data toNested transfer queue
         bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
         
         //close transfer queue - connected Streams will disconnect once all
@@ -53,12 +53,12 @@ import java.util.concurrent.Executor;
         
         //on another thread
        
-       //connect to our transfer queue
+       //connect toNested our transfer queue
        LazyFutureStream<Integer> futureStream =  bus.futureStream("reactor", new LazyReact(10,10)).get();
        
        
        //read data and print it out the console.
-       futureStream.map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+       futureStream.map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
                    .forEach(System.out::println);
  * 
  * }
@@ -100,10 +100,10 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Construct a Pipes instance to manage a predefined Map of Adapaters
+     * Construct a Pipes instance toNested manage a predefined Map of Adapaters
      * 
-     * @param registered Adapters to register
-     * @return Pipes instance to manage provided Adapters
+     * @param registered Adapters toNested register
+     * @return Pipes instance toNested manage provided Adapters
      */
     public static <K, V> Pipes<K, V> of(final Map<K, Adapter<V>> registered) {
         Objects.requireNonNull(registered);
@@ -133,7 +133,7 @@ public class Pipes<K, V> {
      * </pre>
      * 
      * @param key Adapter key
-     * @param value Value to push to Adapter
+     * @param value Value toNested push toNested Adapter
      */
     public void push(final K key, final V value) {
         Optional.ofNullable(registered.get(key))
@@ -182,7 +182,7 @@ public class Pipes<K, V> {
         //on another thread
        List<String> res =  bus.futureStream("reactor")
                               .get()
-                              .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+                              .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
                                .toList();
        System.out.println(res);
        
@@ -220,7 +220,7 @@ public class Pipes<K, V> {
         //on another thread
        List<String> res =  bus.futureStream("reactor", new LazyReact(10,10))
                               .get()
-                              .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+                              .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
                                .toList();
        System.out.println(res);
        
@@ -293,7 +293,7 @@ public class Pipes<K, V> {
      * 
      * 
      * @param key : Adapter identifier
-     * @param x Number of elements to return
+     * @param x Number of elements toNested return
      * @return List of the next x elements from the Adapter identified by the provided key
      */
     public ListX<V> xValues(final K key, final long x) {
@@ -420,7 +420,7 @@ public class Pipes<K, V> {
      * 
      * 
      * @param key : Adapter identifier
-     * @param ex Executor to extract value from Adapter from on
+     * @param ex Executor toNested extract value from Adapter from on
      * @return Future containing lazy next value or NoSuchElementException
      */
     public Future<V> oneOrErrorAsync(final K key, final Executor ex) {
@@ -565,7 +565,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Subscribe synchronously to a pipe
+     * Subscribe synchronously toNested a pipe
      * 
      * @param key for registered simple-react async.Adapter
      * @param subscriber Reactive Streams reactiveSubscriber for data on this pipe
@@ -578,7 +578,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     *  Subscribe asynchronously to a pipe
+     *  Subscribe asynchronously toNested a pipe
      * 
      *  <pre>
      *  {@code 
@@ -605,10 +605,10 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Synchronously publish data to the Adapter specified by the provided Key, blocking the current thread
+     * Synchronously publish data toNested the Adapter specified by the provided Key, blocking the current thread
      * 
      * @param key for registered cylops-react async.Adapter
-     * @param publisher Reactive Streams publisher  to push data onto this pipe
+     * @param publisher Reactive Streams publisher  toNested push data onto this pipe
      */
     public void publishTo(final K key, final Publisher<V> publisher) {
         registered.get(key).fromStream(Spouts.from(publisher));
@@ -616,7 +616,7 @@ public class Pipes<K, V> {
 
     
     /**
-     * Asynchronously publish data to the Adapter specified by the provided Key
+     * Asynchronously publish data toNested the Adapter specified by the provided Key
      * 
      * <pre>
      * {@code 
@@ -637,7 +637,7 @@ public class Pipes<K, V> {
      * 
      * 
      * @param key for registered simple-react async.Adapter
-     * @param publisher Reactive Streams publisher  to push data onto this pipe
+     * @param publisher Reactive Streams publisher  toNested push data onto this pipe
      */
     public void publishToAsync(final K key, final Publisher<V> publisher) {
         SequentialElasticPools.simpleReact.react(er -> er.of(publisher)

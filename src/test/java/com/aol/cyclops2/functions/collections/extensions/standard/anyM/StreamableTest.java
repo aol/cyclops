@@ -24,7 +24,7 @@ public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.streamable,T> empty() {
-		return AnyM.fromStreamable(ListX.empty());
+		return AnyM.fromStreamable(Streamable.empty());
 	}
 
 

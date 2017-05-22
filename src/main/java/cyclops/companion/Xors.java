@@ -38,7 +38,7 @@ public class Xors {
      * } 
      * </pre>
      * 
-     * @param adapter Adapter to match on
+     * @param adapter Adapter toNested match on
      * @return Structural pattern matcher for Adapter types.
      */
     public static <T> Xor<Queue<T>, Topic<T>> adapter(final Adapter<T> adapter) {
@@ -64,7 +64,7 @@ public class Xors {
      * }</pre>
      * 
      * 
-     * @param future Future to match on
+     * @param future Future toNested match on
      * @return Pattern Matcher for CompletableFutures
       USE EITHER HERE
     public static <T1> Xor<T1, Throwable> future(final CompletableFuture<T1> future) {
@@ -98,7 +98,7 @@ public class Xors {
      * 
      * 
      * 
-     * @param future Future to match on
+     * @param future Future toNested match on
      * @return Pattern Matcher for Futures
 
     public static <T1> MXor<T1, Throwable> future(final FutureW<T1> future) {
@@ -138,7 +138,7 @@ USE EITHER
      * }
      * </pre>
      * 
-     * @param queue Queue to pattern match on
+     * @param queue Queue toNested pattern match on
      * @return Pattern matchier on the blocking / non-blocking nature of the supplied Queue
      */
     public static <T> Xor<BlockingQueue<T>, java.util.Queue<T>> blocking(final java.util.Queue<T> queue) {

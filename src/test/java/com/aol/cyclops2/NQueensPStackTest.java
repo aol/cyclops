@@ -1,5 +1,7 @@
 package com.aol.cyclops2;
 
+import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import cyclops.collections.immutable.LinkedListX;
 import org.junit.Test;
 
@@ -34,7 +36,7 @@ public class NQueensPStackTest {
     public Boolean isSafe(int column, LinkedListX<Integer> queens, int delta){
        return  queens.visit((c, rest)-> c != column &&
                                            Math.abs(c - column) != delta &&
-                                           isSafe(column, rest.toPStackX(), delta + 1) ,
+                                           isSafe(column, rest.to().linkedListX(), delta + 1) ,
                             ()->true);
     }
            

@@ -42,7 +42,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     /**
      * Create a QueueBasedSubscriber, backed by a JDK LinkedBlockingQueue
      *
-     * @param counter Counter for tracking connections to the queue and data volumes
+     * @param counter Counter for tracking connections toNested the queue and data volumes
      * @param maxConcurrency Maximum number of subscriptions
      * @return QueueBasedSubscriber
      */
@@ -55,7 +55,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
      * Create a QueueBasedSubscriber, backed by the provided Queue
      *
      * @param q Queue backing the reactiveSubscriber
-     * @param counter Counter for tracking connections to the queue and data volumes
+     * @param counter Counter for tracking connections toNested the queue and data volumes
      * @param maxConcurrency Maximum number of subscriptions
      * @return QueueBasedSubscriber
      */
@@ -68,7 +68,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
      * Create a QueueBasedSubscriber, backed by a Queue that will be created with the provided QueueFactory
      *
      * @param factory QueueFactory
-     * @param counter Counter for tracking connections to the queue and data volumes
+     * @param counter Counter for tracking connections toNested the queue and data volumes
      * @param maxConcurrency Maximum number of subscriptions
      * @return QueueBasedSubscriber
      */

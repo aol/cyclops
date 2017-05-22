@@ -46,7 +46,7 @@ public class PushableStreamTest {
         
         PersistentSetX.of(1,2,3)
              .flatMapP(i->Flux.just(i,i*10))
-             .toPVectorX();
+             .to().vectorX();
         
         /**
         Pipes<String, Integer> bus = Pipes.of();
@@ -58,7 +58,7 @@ public class PushableStreamTest {
         System.out.println(Thread.currentThread().getId());
        System.out.println(bus.futureStream("reactor", new LazyReact(50,50))
             .get()
-           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList());//.forEach(System.out::println);
         
         Thread.sleep(1500);

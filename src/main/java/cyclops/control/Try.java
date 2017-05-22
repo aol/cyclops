@@ -46,9 +46,9 @@ import lombok.val;
  * Fail fast behaviour with more explicit declararions required compared to
  *  with scala.util.Try and javaslang.monad.Try. This is probably closer
  *  to how most Java devs currently handle exceptions.
- * 
+ *
  * Goals / features
- * 
+ *
  * Support for init block / try block  / finally block
  * Try with resources
  * Try with multiple resources
@@ -58,84 +58,84 @@ import lombok.val;
  * Handle exceptions conciously, not coding bugs
  * Fluent step builders
  * Fail fast
- * 
+ *
  * Examples :
- * 
+ *
  * Create a 'successful' value
  * <pre>
- * {@code 
+ * {@code
  *  Try.success("return-value");
  * }
  * </pre>
- * 
+ *
  * Create a failure value
- * 
+ *
  * <pre>
- * {@code 
+ * {@code
  *  Try.failure(new MyException("error details"));
  * }
  * </pre>
- * 
+ *
  * Exceute methods that may throw exceptions
- * 
+ *
  * Non-void methods
  * <pre>
- * {@code 
- * 
+ * {@code
+ *
  * Try.withCatch(()-> exceptional2())
                         .map(i->i+" woo!")
                         .onFail(System.out::println)
                         .orElse("default");
-                        
+
  *  //"hello world woo!"
- * 
+ *
  *  private String exceptional2() throws RuntimeException{
         return "hello world";
     }
  * }
  * </pre>
- * 
+ *
  * Void methods
  * <pre>
- * {@code 
- *   
- *   
+ * {@code
+ *
+ *
  *  //Only catch IOExceptions
- *  
+ *
  *  Try.runWithCatch(this::exceptional,IOException.class)
         .onFail(System.err::println);
-        
+
     private void exceptional() throws IOException{
         throw new IOException();
     }
- * 
+ *
  * }
  * </pre>
- * 
+ *
  * Try with resources
  * <pre>
- * {@code 
- *    
+ * {@code
+ *
  *   Try.catchExceptions(FileNotFoundException.class,IOException.class)
          .init(()->new BufferedReader(new FileReader("file.txt")))
          .tryWithResources(this::read)
          .map(this::processData)
          .recover(e->"default);
- *  
+ *
  * }
  * </pre>
- * 
+ *
  * By default Try does not catch exception within it's operators such as map / flatMap, to catch Exceptions in ongoing operations use @see {@link Try#of(Object, Class...)}
  * <pre>
- * {@code 
+ * {@code
  *  Try.of(2, RuntimeException.class)
        .map(i->{throw new RuntimeException();});
-       
-    //Failure[RuntimeException]   
- * 
+
+    //Failure[RuntimeException]
+ *
  * }
  * </pre>
- * 
+ *
  * @author johnmcclean
  *
  * @param <T> Return type (success)
@@ -145,7 +145,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
                                                         Recoverable<X,T>,
                                                         MonadicValue<T> {
 
-    
+
 
     default Try<T,X> recover(Supplier<? extends T> s){
         return recover(t->s.get());
@@ -154,22 +154,22 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
      * Construct a Try  that contains a single value extracted from the supplied reactive-streams Publisher, will catch any Exceptions
      * of the provided types
      * <pre>
-     * {@code 
+     * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
-        
+
         Try<Integer,Throwable> attempt = Try.fromPublisher(reactiveStream, RuntimeException.class);
-        
+
         //Try[1]
-     * 
+     *
      * }
-     * </pre> 
-     * 
+     * </pre>
+     *
      * @param pub Publisher to extract value from
-     * @return Try populated with first value from Publisher 
+     * @return Try populated with first value from Publisher
      */
     @SafeVarargs
     public static <T, X extends Throwable> Try<T, X> fromPublisher(final Publisher<T> pub, final Class<X>... classes) {
-       
+
         final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
         return sub.toTry(classes);
@@ -177,18 +177,18 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
     /**
      * Construct a Try  that contains a single value extracted from the supplied reactive-streams Publisher
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
-        
+
         Try<Integer,Throwable> attempt = Try.fromPublisher(reactiveStream);
-        
+
         //Try[1]
-     * 
+     *
      * }
-     * </pre> 
-     * 
+     * </pre>
+     *
      * @param pub Publisher to extract value from
      * @return Try populated with first value from Publisher
      */
@@ -199,18 +199,18 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
     /**
      * Construct a Try  that contains a single value extracted from the supplied Iterable
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
-        
+
         Try<Integer,Throwable> attempt = Try.fromIterable(reactiveStream);
-        
+
         //Try[1]
-     * 
+     *
      * }
-     * </pre> 
-     * 
+     * </pre>
+     *
      * @param iterable Iterable to extract value from
      * @return Try populated with first value from Iterable
      */
@@ -294,7 +294,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
             Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
             Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (Try<R,X>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
@@ -305,7 +305,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     default <T2, R1, R2, R> Try<R,X> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-      
+
         return (Try<R,X>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
 
@@ -352,7 +352,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
 
 
-    
+
     /**
      * @return The exception returned in the Failure case, Implementations should throw NoSuchElementException if no failure is present
      */
@@ -390,27 +390,27 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
     /**
      * Combine this Try with another using the supplied Monoid as a combiner
-     * 
+     *
      * <pre>
-     * {@code 
-     *  
+     * {@code
+     *
      *  Try<Integer> just = Try.success(10);
      *  Try<Integer> none = Try.failure(new RuntimeException());
-     *  
+     *
      *  Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
-     *  
-     *  
+     *
+     *
         assertThat(just.combine(add,none),equalTo(Try.success(10)));
-        assertThat(none.combine(add,just),equalTo(Try.success(0))); 
-        assertThat(none.combine(add,none),equalTo(Try.success(0))); 
+        assertThat(none.combine(add,just),equalTo(Try.success(0)));
+        assertThat(none.combine(add,none),equalTo(Try.success(0)));
         assertThat(just.combine(add,Try.success(10)),equalTo(Try.success(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
         assertThat(just.combine(firstNonNull,Try.success(null)),equalTo(just));
-        
+
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param monoid Combiner
      * @param v2 Try to combine with
      * @return Combined Try
@@ -419,7 +419,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         return unit(this.forEach2( t1 -> v2, (t1, t2) -> monoid
                                                             .apply(t1, t2)).orElseGet(() -> this.orElseGet(() -> monoid.zero())));
     }
-    
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops2.types.Applicative)
@@ -475,11 +475,11 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     /**
      * Construct a Failure instance from a throwable (an implementation of Try)
      * <pre>
-     * {@code 
+     * {@code
      *    Failure<Exception> failure = Try.failure(new RuntimeException());
      * }
      * </pre>
-     * 
+     *
      * @param error for Failure
      * @return new Failure with error
      */
@@ -490,13 +490,13 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
     /**
      * Construct a Success instance (an implementation of Try)
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *    Success<Integer> success = Try.success(new RuntimeException());
      * }
      * </pre>
-     * 
+     *
      * @param value Successful value
      * @return new Success with value
      */
@@ -529,17 +529,17 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
     /**
      * Execute one function conditional on Try state (Success / Failure)
-     * 
+     *
      * <pre>
-     * {@code 
-     *    
+     * {@code
+     *
      *     Try<Integer> result = this.execute();
-     *     
+     *
      *     this.logState(result.visit(t->"value is " +t,e->"error is "+e.getMessage());
-     *  
+     *
      * }
      * </pre>
-     * 
+     *
      * @param success Function to execute if this Try is a Success
      * @param failure Funcion to execute if this Try is a Failure
      * @return Result of executed function (one or other depending on case)
@@ -573,7 +573,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     public T orElse(T value);
 
     /**
-     * 
+     *
      * @param value from supplied Supplier if Failure otherwise return Success value
      * @return Success value
      */
@@ -623,7 +623,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
     /**
      * flatMap recovery
-     * 
+     *
      * @param fn Recovery FlatMap function. Map from a failure to a Success
      * @return Success from recovery function
      */
@@ -638,16 +638,16 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     public Try<T, X> recoverFor(Class<? extends X> t, Function<? super X, ? extends T> fn);
 
     /**
-     * 
+     *
      * FlatMap recovery function if exception is of specified type
-     * 
+     *
      * @param t Type of exception to match against
      * @param fn Recovery FlatMap function. Map from a failure to a Success
      * @return Success from recovery function or this  and types match or if already Success
      */
     public Try<T, X> recoverWithFor(Class<? extends X> t, Function<? super X, ? extends Success<T, X>> fn);
 
-    
+
 
     /**
      * @return Optional present if Success, Optional empty if failure
@@ -725,7 +725,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     /**
      * Return a Try that will catch specified exceptions when map / flatMap called
      * For use with liftM / liftM2 and For Comprehensions (when Try is at the top level)
-     * 
+     *
      * @param value Initial value
      * @param classes Exceptions to catch during map / flatMap
      * @return Try instance
@@ -739,7 +739,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     /**
      * Try to execute supplied Supplier and will Catch specified Excpetions or java.lang.Exception
      * if none specified.
-     * 
+     *
      * @param cf CheckedSupplier to attempt to execute
      * @param classes  Exception types to catch (or java.lang.Exception if none specified)
      * @return New Try
@@ -766,7 +766,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     /**
      * Try to execute supplied Runnable and will Catch specified Excpetions or java.lang.Exception
      * if none specified.
-     * 
+     *
      * @param cf CheckedRunnable to attempt to execute
      * @param classes  Exception types to catch (or java.lang.Exception if none specified)
      * @return New Try
@@ -795,7 +795,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     /**
      * Fluent step builder for Try / Catch / Finally and Try with resources equivalents.
      * Start with Exception types to catch.
-     * 
+     *
      * @param classes Exception types to catch
      * @return Next step in the fluent Step Builder
      */
@@ -809,7 +809,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     static class MyInit<X extends Throwable> implements Init<X> {
         private final Class<X>[] classes;
 
-        /* 
+        /*
          *	@param input
          *	@return
          * @see com.aol.cyclops2.trycatch.Try.Init#init(com.aol.cyclops2.trycatch.Try.CheckedSupplier)
@@ -930,28 +930,28 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
          * A Tuple or Iterable can be returned to defined multiple values.
          * Closeables (lazy individually or within an iterable) will be closed
          * via tryWithResources.
-         * 
+         *
          * <pre>
-         * 
+         *
          * Try.catchExceptions(FileNotFoundException.class,IOException.class)
          *		   .init(()-&gt;new BufferedReader(new FileReader(&quot;file.txt&quot;)))
          *		   .tryWithResources(this::read);
-         * 
+         *
          * </pre>
-         * 
+         *
          * or
-         * 
+         *
          * <pre>
-         * 
+         *
          * Try t2 = Try.catchExceptions(FileNotFoundException.class,IOException.class)
          *		   .init(()-&gt;Tuple.tuple(new BufferedReader(new FileReader(&quot;file.txt&quot;)),new FileReader(&quot;hello&quot;)))
          *		   .tryWithResources(this::read2);
-         * 
+         *
          * private String read2(Tuple2&lt;BufferedReader,FileReader&gt; res) throws IOException{
          * String line = res.v1.readLine();
-         * 
+         *
          * </pre>
-         * 
+         *
          * @param input Supplier that provides input values to be used in the Try / Catch
          * @return
          */
@@ -960,7 +960,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /**
          * Run the supplied CheckedRunnable and trap any Exceptions
          * Return type is Void
-         * 
+         *
          * @param input CheckedRunnable
          * @return Try that traps any errors (no return type)
          */
@@ -969,7 +969,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /**
          * Run the supplied CheckedSupplier and trap the return value or an Exception
          * inside a Try
-         * 
+         *
          * @param input CheckedSupplier to run
          * @return new Try
          */
@@ -981,7 +981,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /**
          * Will execute and run the CheckedFunction supplied and will automatically
          * safely close any Closeables supplied during init (lazy individually or inside an iterable)
-         * 
+         *
          * @param catchBlock CheckedFunction to Try
          * @return New Try capturing return data or Exception
          */
@@ -991,7 +991,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
          * Build another stage in try / catch / finally block
          * This defines the CheckedFunction that will be run in the main body of the catch block
          * Next step can define the finally block
-         * 
+         *
          * @param catchBlock To Try
          * @return Next stage in the fluent step builder (finally block)
          */
@@ -1003,7 +1003,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         /**
          * Define the finally block and execute the Try
-         * 
+         *
          * @param finallyBlock to execute
          * @return New Try capturing return data or Exception
          */
@@ -1012,7 +1012,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         /**
          * Create a finally block that auto-closes any Closeables specified during init
          *  including those inside an Iterable
-         * 
+         *
         * @return New Try capturing return data or Exception
         */
         Try<T, X> close();
@@ -1033,19 +1033,19 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     public static interface CheckedRunnable<X extends Throwable> {
         public void run() throws X;
     }
-    /* 
+    /*
      * Flatten a nested Try Structure
      * @return Lowest nested Try
      * @see com.aol.cyclops2.trycatch.Try#flatten()
      */
-  
+
     public static <T,X extends Throwable> Try<T, X> flatten(Try<? extends Try<T,X>,X> nested) {
         return nested.flatMap(Function.identity());
     }
 
     /**
      * Class that represents a Successful Try
-     * 
+     *
      * @author johnmcclean
      *
      * @param <T> Success data type
@@ -1071,9 +1071,9 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
         public Ior<X, T> toIor() {
             return Ior.primary(value);
         }
-        
-       
-        /* 
+
+
+        /*
          *	@return Current value
          * @see com.aol.cyclops2.trycatch.Try#get()
          */
@@ -1082,7 +1082,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return value;
         }
 
-       
+
 
 
         /**
@@ -1094,7 +1094,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
                                  value, classes);
         }
 
-        /* 
+        /*
          * @param fn Map success value from T to R.
          * @return New Try with mapped value
          * @see com.aol.cyclops2.trycatch.Try#map(java.util.function.Function)
@@ -1124,7 +1124,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return null;
         }
 
-        /* 
+        /*
          * @param fn FlatMap success value or Do nothing if Failure (return this)
          * @return Try returned from FlatMap fn
          * @see com.aol.cyclops2.trycatch.Try#flatMap(java.util.function.Function)
@@ -1135,9 +1135,9 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         }
 
-        /* 
+        /*
          * @param p Convert a Success to a Failure (with a null value for Exception) if predicate does not hold.
-         *         
+         *
          * @return this if  Predicate holds, new Failure if not
          * @see com.aol.cyclops2.trycatch.Try#filter(java.util.function.Predicate)
          */
@@ -1149,7 +1149,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
                 return Maybe.none();
         }
 
-        /* 
+        /*
          * Does nothing (no error to recover from)
          * @see com.aol.cyclops2.trycatch.Try#recover(java.util.function.Function)
          */
@@ -1158,7 +1158,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return this;
         }
 
-        /* 
+        /*
          * Does nothing (no error to recover from)
          * @see com.aol.cyclops2.trycatch.Try#recoverWith(java.util.function.Function)
          */
@@ -1167,7 +1167,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return this;
         }
 
-        /* 
+        /*
          * Does nothing (no error to recover from)
          * @see com.aol.cyclops2.trycatch.Try#recoverFor(java.lang.Class, java.util.function.Function)
          */
@@ -1176,7 +1176,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return this;
         }
 
-        /* 
+        /*
          * Does nothing (no error to recover from)
          * @see com.aol.cyclops2.trycatch.Try#recoverWithFor(java.lang.Class, java.util.function.Function)
          */
@@ -1185,10 +1185,10 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return this;
         }
 
-        
 
-        /* 
-         *	
+
+        /*
+         *
          *	@return Returns current value (ignores supplied value)
          * @see com.aol.cyclops2.trycatch.Try#orElse(java.lang.Object)
          */
@@ -1203,7 +1203,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
                                              "Can't call failureGet() on an instance of Try.Success");
         }
 
-        /* 
+        /*
          *	@param value (ignored)
          *	@return Returns current value (ignores Supplier)
          * @see com.aol.cyclops2.trycatch.Try#orElseGet(java.util.function.Supplier)
@@ -1213,16 +1213,16 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return get();
         }
 
-        /* 
+        /*
          *	@return Optional of current value
-         * @see com.aol.cyclops2.trycatch.Try#toOptional()
+         * @see com.aol.cyclops2.trycatch.Try#optional()
          */
         @Override
         public Optional<T> toOptional() {
             return Optional.of(value);
         }
 
-        /* 
+        /*
          *	@return Stream of current value
          * @see com.aol.cyclops2.trycatch.Try#toStream()
          */
@@ -1231,7 +1231,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return ReactiveSeq.<T> of(value);
         }
 
-        /* 
+        /*
          *	@return true
          * @see com.aol.cyclops2.trycatch.Try#isSuccess()
          */
@@ -1240,7 +1240,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return true;
         }
 
-        /* 
+        /*
          *	@return false
          * @see com.aol.cyclops2.trycatch.Try#isFailure()
          */
@@ -1249,7 +1249,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return false;
         }
 
-        /* 
+        /*
          *	@param consumer to recieve current value
          * @see com.aol.cyclops2.trycatch.Try#foreach(java.util.function.Consumer)
          */
@@ -1259,7 +1259,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         }
 
-        /* 
+        /*
          *  does nothing no failure
          * @see com.aol.cyclops2.trycatch.Try#onFail(java.util.function.Consumer)
          */
@@ -1268,7 +1268,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return this;
         }
 
-        /* 
+        /*
          *  does nothing no failure
          * @see com.aol.cyclops2.trycatch.Try#onFail(java.lang.Class, java.util.function.Consumer)
          */
@@ -1277,7 +1277,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return this;
         }
 
-        /* 
+        /*
          *  does nothing no failure
          * @see com.aol.cyclops2.trycatch.Try#throwException()
          */
@@ -1286,7 +1286,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         }
 
-        /* 
+        /*
          *  @return java.util.Optional#empty()
          * @see com.aol.cyclops2.trycatch.Try#toFailedOptional()
          */
@@ -1295,7 +1295,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return Optional.empty();
         }
 
-        /* 
+        /*
          *	@return empty Stream
          * @see com.aol.cyclops2.trycatch.Try#toFailedStream()
          */
@@ -1304,7 +1304,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return Stream.of();
         }
 
-        /* 
+        /*
          *	does nothing - no failure
          * @see com.aol.cyclops2.trycatch.Try#foreachFailed(java.util.function.Consumer)
          */
@@ -1346,7 +1346,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
     /**
      * Class that represents the Failure of a Try
-     * 
+     *
      * @author johnmcclean
      *
      * @param <T> Value type
@@ -1379,16 +1379,16 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return Ior.secondary(error);
         }
 
-       
+
 
         @Override
         public X failureGet() {
             return error;
         }
 
-       
 
-        /* 
+
+        /*
          *	@return throws an Exception
          * @see com.aol.cyclops2.trycatch.Try#get()
          */
@@ -1398,7 +1398,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         }
 
-        /* 
+        /*
          *	@return this
          * @see com.aol.cyclops2.trycatch.Try#map(java.util.function.Function)
          */
@@ -1407,7 +1407,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return (Failure) this;
         }
 
-        /* 
+        /*
          *	@return this
          * @see com.aol.cyclops2.trycatch.Try#flatMap(java.util.function.Function)
          */
@@ -1416,7 +1416,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return (Try) this;
         }
 
-        /* 
+        /*
          *	@return Empty optional
          * @see com.aol.cyclops2.trycatch.Try#filter(java.util.function.Predicate)
          */
@@ -1425,9 +1425,9 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return Maybe.none();
         }
 
-        /* 
+        /*
          * FlatMap recovery function if exception is of specified type
-         * 
+         *
          * @param t Type of exception to match against
          * @param fn Recovery FlatMap function. Map from a failure to a Success
          * @return Success from recovery function
@@ -1440,7 +1440,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return this;
         }
 
-        /* 
+        /*
          * Recover if exception is of specified type
          * @param t Type of exception to match against
          * @param fn Recovery function
@@ -1454,7 +1454,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return this;
         }
 
-        /* 
+        /*
          * @param fn Recovery function - map from a failure to a Success.
          * @return new Success
          * @see com.aol.cyclops2.trycatch.Try#recover(java.util.function.Function)
@@ -1464,9 +1464,9 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return Try.success(fn.apply(error));
         }
 
-        /* 
+        /*
          * flatMap recovery
-         * 
+         *
          * @param fn Recovery FlatMap function. Map from a failure to a Success
          * @return Success from recovery function
          * @see com.aol.cyclops2.trycatch.Try#recoverWith(java.util.function.Function)
@@ -1476,10 +1476,10 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return fn.apply(error);
         }
 
-       
 
-        /* 
-         *  @param value Return value supplied 
+
+        /*
+         *  @param value Return value supplied
          * @return  supplied value
          * @see com.aol.cyclops2.trycatch.Try#orElse(java.lang.Object)
          */
@@ -1488,8 +1488,8 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return value;
         }
 
-        /* 
-         * @param value from supplied Supplier 
+        /*
+         * @param value from supplied Supplier
          * @return value from supplier
          * @see com.aol.cyclops2.trycatch.Try#orElseGet(java.util.function.Supplier)
          */
@@ -1498,16 +1498,16 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return value.get();
         }
 
-        /* 
+        /*
          *	@return Optional.empty()
-         * @see com.aol.cyclops2.trycatch.Try#toOptional()
+         * @see com.aol.cyclops2.trycatch.Try#optional()
          */
         @Override
         public Optional<T> toOptional() {
             return Optional.empty();
         }
 
-        /* 
+        /*
          *	@return empty Stream
          * @see com.aol.cyclops2.trycatch.Try#toStream()
          */
@@ -1516,7 +1516,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return ReactiveSeq.<T> empty();
         }
 
-        /* 
+        /*
          *	@return false
          * @see com.aol.cyclops2.trycatch.Try#isSuccess()
          */
@@ -1525,7 +1525,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return false;
         }
 
-        /*  
+        /*
          *	@return true
          * @see com.aol.cyclops2.trycatch.Try#isFailure()
          */
@@ -1534,7 +1534,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return true;
         }
 
-        /* 
+        /*
          *	does nothing
          * @see com.aol.cyclops2.trycatch.Try#foreach(java.util.function.Consumer)
          */
@@ -1543,7 +1543,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         }
 
-        /* 
+        /*
          *	@param consumer is passed error
          *	@return this
          * @see com.aol.cyclops2.trycatch.Try#onFail(java.util.function.Consumer)
@@ -1554,7 +1554,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return this;
         }
 
-        /* 
+        /*
          * @param t Class type of match Exception against
          * @param consumer Accept Exception if present
          * @return this
@@ -1567,8 +1567,8 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return this;
         }
 
-        /* 
-         *	
+        /*
+         *
          * @see com.aol.cyclops2.trycatch.Try#throwException()
          */
         @Override
@@ -1577,7 +1577,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
 
         }
 
-        /* 
+        /*
          * @return Optional containing error
          * @see com.aol.cyclops2.trycatch.Try#toFailedOptional()
          */
@@ -1587,7 +1587,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return Optional.of(error);
         }
 
-        /* 
+        /*
          *	@return Stream containing error
          * @see com.aol.cyclops2.trycatch.Try#toFailedStream()
          */
@@ -1596,7 +1596,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
             return Stream.of(error);
         }
 
-        /* 
+        /*
          * @param consumer that will accept error
          * @see com.aol.cyclops2.trycatch.Try#foreachFailed(java.util.function.Consumer)
          */
@@ -1646,7 +1646,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     /**
      * Equivalent to ap, but accepts an Iterable and takes the first value
      * only from that iterable.
-     * 
+     *
      * @param app
      * @param fn
      * @return

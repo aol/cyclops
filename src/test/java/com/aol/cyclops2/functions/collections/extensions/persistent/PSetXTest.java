@@ -32,7 +32,7 @@ public class PSetXTest extends AbstractCollectionXTest {
             System.out.println("Next " + it.next());
         }
       //  System.out.println(of(1).cycle(2));
-    //    assertThat(of(1,2,3).cycle(2).toListX(),equalTo(ListX.of(3,2,1,3,2,1)));
+    //    assertThat(of(1,2,3).cycle(2).listX(),equalTo(ListX.of(3,2,1,3,2,1)));
     }
     @Test
     public void onEmptySwitch() {

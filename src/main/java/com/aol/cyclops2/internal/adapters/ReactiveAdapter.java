@@ -1,5 +1,6 @@
 package com.aol.cyclops2.internal.adapters;
 
+import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -71,8 +72,10 @@ public class ReactiveAdapter<W extends Witness.StreamWitness<W>> extends  Abstra
 
     @Override
     public <T> AnyM<W, T> unitIterable(Iterable<T> it)  {
+
         if(it instanceof ReactiveSeq){
-            return fromStream((ReactiveSeq<T>)it,witness);
+            W witnessToUse = it instanceof ReactiveStreamX ? witness : (W)Witness.reactiveSeq.CO_REACTIVE;
+            return fromStream((ReactiveSeq<T>)it,witnessToUse);
         }
         if(it instanceof Publisher){
             return fromStream(Spouts.from((Publisher)it),witness);

@@ -7,8 +7,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * A class that extends Monoid to include a map operation to map to the type 
- * of the identity element first (to make reduction to immutable collections, for example, easier to 
+ * A class that extends Monoid toNested include a map operation toNested map toNested the type
+ * of the identity element first (toNested make reduction toNested immutable collections, for example, easier toNested
  * work with in Java 8 Streams).
  * 
  * @author johnmcclean
@@ -17,11 +17,11 @@ import java.util.stream.Stream;
  */
 public interface Reducer<T> extends Monoid<T> {
     /**
-     * Map this reducer to the supported Type t. 
+     * Map this reducer toNested the supported Type t.
      * 
      * Default implementation is a simple cast.
      * 
-     * @param stream Stream to convert
+     * @param stream Stream toNested convert
      * @return Converted Stream
      */
     default Stream<T> mapToType(final Stream<?> stream) {
@@ -29,7 +29,7 @@ public interface Reducer<T> extends Monoid<T> {
     }
 
     /**
-     * Map a given Stream to required type (via mapToType method), transform
+     * Map a given Stream toNested required type (via mapToType method), transform
      * reduce using this monoid
      * 
      * Example of multiple reduction using multiple Monoids and PowerTuples
@@ -42,7 +42,7 @@ public interface Reducer<T> extends Monoid<T> {
      *	assertThat(result,equalTo(tuple(10,24)));
      *  }</pre>
      * 
-     * @param toReduce Stream to reduce
+     * @param toReduce Stream toNested reduce
      * @return reduced value
      */
     default T mapReduce(final Stream<?> toReduce) {

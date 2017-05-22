@@ -226,7 +226,7 @@ public class AnyMTest {
 		Stream<List<Integer>> zipped = fromStream(Stream.of(1,2,3))
 										.stream()
 										.zip(AnyM.fromOptional(Optional.of(2)),
-											(a,b) -> Arrays.asList(a,b)).toStream();
+											(a,b) -> Arrays.asList(a,b)).stream();
 		
 		
 		List<Integer> zip = zipped.collect(Collectors.toList()).get(0);
@@ -240,7 +240,7 @@ public class AnyMTest {
 											.stream()
 											.zipS(Stream.of(2,3,4),
 													(a,b) -> Arrays.asList(a,b))
-													.toStream();
+													.stream();
 		
 		
 		List<Integer> zip = zipped.collect(Collectors.toList()).get(1);

@@ -25,7 +25,7 @@ public class SeqUtils {
      * }
      * </pre>
      * 
-     * @param stream Stream to reverse
+     * @param stream Stream toNested reverse
      * @return Reversed reactiveStream
      */
     public static <U> Stream<U> reverse(final Stream<U> stream) {
@@ -47,7 +47,7 @@ public class SeqUtils {
      * }
      * </pre>
      * 
-     * @param list List to create a reversed Stream from
+     * @param list List toNested create a reversed Stream from
      * @return Reversed Stream
      */
     public static <U> Stream<U> reversedStream(final List<U> list) {
@@ -65,7 +65,7 @@ public class SeqUtils {
     								equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
      * }
      * </pre>
-     * @param s Streamable to cycle
+     * @param s Streamable toNested cycle
      * @return New cycling reactiveStream
      */
     public static <U> Stream<U> cycle(final int times, final Streamable<U> s) {

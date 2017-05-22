@@ -48,7 +48,7 @@ public interface PersistentMapX<K, V>
     }
 
     default PersistentMapX<K, V> fromStream(final ReactiveSeq<Tuple2<K, V>> stream) {
-        return stream.toPMapX(k -> k.v1, v -> v.v2);
+        return stream.to().persistentMapX(k -> k.v1, v -> v.v2);
     }
 
     @Override
@@ -100,8 +100,8 @@ public interface PersistentMapX<K, V>
      */
     @Override
     default <R> PersistentMapX<K, R> map(final Function<? super V, ? extends R> fn) {
-        return stream().map(t -> t.map2(v -> fn.apply(v)))
-                       .toPMapX(t -> t.v1, t -> t.v2);
+        return stream().map(t -> t.map2(v -> fn.apply(v))).to()
+                       .persistentMapX(t -> t.v1, t -> t.v2);
     }
 
     /* (non-Javadoc)
@@ -111,8 +111,8 @@ public interface PersistentMapX<K, V>
     default <R1, R2> PersistentMapX<R1, R2> bimap(final Function<? super K, ? extends R1> fn1, final Function<? super V, ? extends R2> fn2) {
 
         return stream().map(t -> t.map2(v -> fn2.apply(v))
-                                  .map1(k -> fn1.apply(k)))
-                       .toPMapX(t -> t.v1, t -> t.v2);
+                                  .map1(k -> fn1.apply(k))).to()
+                .persistentMapX(t -> t.v1, t -> t.v2);
     }
 
     /* (non-Javadoc)
@@ -175,8 +175,8 @@ public interface PersistentMapX<K, V>
      */
     @Override
     default PersistentMapX<K, V> filter(final Predicate<? super Tuple2<K, V>> fn) {
-        return stream().filter(fn)
-                       .toPMapX(t -> t.v1, t -> t.v2);
+        return stream().filter(fn).to()
+                .persistentMapX(t -> t.v1, t -> t.v2);
     }
 
     /* (non-Javadoc)
@@ -298,9 +298,9 @@ public interface PersistentMapX<K, V>
         return this;
     }
     /**
-     * Convert this MapX to a ListX via the provided transformation function
+     * Convert this MapX toNested a ListX via the provided transformation function
      * 
-     * @param fn Mapping function to transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a single value
      * @return ListX of transformed values
      */
     default <T> ListX<T> toListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -309,67 +309,63 @@ public interface PersistentMapX<K, V>
     }
 
     /**
-     * Convert this MapX to a PersistentSetX via the provided transformation function
+     * Convert this MapX toNested a PersistentSetX via the provided transformation function
      * 
-     * @param fn Mapping function to transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a single value
      * @return PersistentSetX of transformed values
      */
     default <T> PersistentSetX<T> toPSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return PersistentSetX.narrow(stream().map(fn)
-                                   .toPSetX());
+        return PersistentSetX.narrow(stream().map(fn).to()
+                .persistentSetX());
     }
 
     /**
-     * Convert this MapX to a POrderdSetX via the provided transformation function
+     * Convert this MapX toNested a POrderdSetX via the provided transformation function
      * 
-     * @param fn Mapping function to transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a single value
      * @return OrderedSetX of transformed values
      */
     default <T> OrderedSetX<T> toPOrderedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return OrderedSetX.narrow(stream().map(fn)
-                                         .toPOrderedSetX());
+        return OrderedSetX.narrow(stream().map(fn).to().orderedSetX());
     }
 
     /**
-     * Convert this MapX to a QueueX via the provided transformation function
+     * Convert this MapX toNested a QueueX via the provided transformation function
      * 
-     * @param fn Mapping function to transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a single value
      * @return QueueX of transformed values
      */
     default <T> PersistentQueueX<T> toPQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return PersistentQueueX.narrow(stream().map(fn)
-                                     .toPQueueX());
+        return PersistentQueueX.narrow(stream().map(fn).to().persistentQueueX());
     }
 
     /**
-     * Convert this MapX to a LinkedListX via the provided transformation function
+     * Convert this MapX toNested a LinkedListX via the provided transformation function
      * 
-     * @param fn Mapping function to transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a single value
      * @return LinkedListX of transformed values
      */
     default <T> LinkedListX<T> toPStackX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return LinkedListX.narrow(stream().map(fn)
-                                     .toPStackX());
+        return LinkedListX.narrow(stream().map(fn).to().linkedListX());
+
     }
     /**
-     * Convert this MapX to a VectorX via the provided transformation function
+     * Convert this MapX toNested a VectorX via the provided transformation function
      * 
-     * @param fn Mapping function to transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a single value
      * @return VectorX of transformed values
      */
     default <T> VectorX<T> toPVectorX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return VectorX.narrow(stream().map(fn)
-                                     .toPVectorX());
+        return VectorX.narrow(stream().map(fn).to().vectorX());
     }
     /**
-     * Convert this MapX to a BagX via the provided transformation function
+     * Convert this MapX toNested a BagX via the provided transformation function
      * 
-     * @param fn Mapping function to transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a single value
      * @return BagX of transformed values
      */
     default <T> BagX<T> toPBagX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return BagX.narrow(stream().map(fn)
-                                     .toPBagX());
+        return BagX.narrow(stream().map(fn).to().bagX());
     }
 
 }

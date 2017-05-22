@@ -184,7 +184,7 @@ public class CompletableFutures {
 
 
     /**
-     * Asynchronous sequence operation that convert a Collection of Futures to a Future with a List
+     * Asynchronous sequence operation that convert a Collection of Futures toNested a Future with a List
      * 
      * <pre>
      * {@code 
@@ -197,14 +197,14 @@ public class CompletableFutures {
      * </pre>
      * 
      * 
-     * @param fts Collection of Futures to Sequence into a Future with a List
+     * @param fts Collection of Futures toNested Sequence into a Future with a List
      * @return Future with a List
      */
     public static <T> CompletableFuture<ListX<T>> sequence(final CollectionX<CompletableFuture<T>> fts) {
         return sequence(fts.stream()).thenApply(s -> s.toListX());
     }
     /**
-     * Asynchronous sequence operation that convert a Stream of FutureWs to a Future with a Stream
+     * Asynchronous sequence operation that convert a Stream of FutureWs toNested a Future with a Stream
      * 
      * <pre>
      * {@code 
@@ -217,7 +217,7 @@ public class CompletableFutures {
      * </pre>
      * 
      * 
-     * @param fts Stream of Futures to Sequence into a Future with a Stream
+     * @param fts Stream of Futures toNested Sequence into a Future with a Stream
      * @return Future with a Stream
      */
     public static <T> CompletableFuture<ReactiveSeq<T>> sequence(final Stream<CompletableFuture<T>> fts) {
@@ -229,7 +229,7 @@ public class CompletableFutures {
     /**
      * 
      * Asynchronously accumulate the results only from those Futures which have completed successfully.
-     * Also @see {@link CompletableFutures#accumulate(CollectionX, Reducer)} if you would like a failure to result in a CompletableFuture
+     * Also @see {@link CompletableFutures#accumulate(CollectionX, Reducer)} if you would like a failure toNested result in a CompletableFuture
      * with an error
      * <pre>
      * {@code 
@@ -244,8 +244,8 @@ public class CompletableFutures {
      *  }
      *  </pre>
      * 
-     * @param fts Collection of Futures to accumulate successes
-     * @param reducer Reducer to accumulate results
+     * @param fts Collection of Futures toNested accumulate successes
+     * @param reducer Reducer toNested accumulate results
      * @return CompletableFuture asynchronously populated with the accumulate success operation
      */
     public static <T, R> CompletableFuture<R> accumulateSuccess(final CollectionX<CompletableFuture<T>> fts, final Reducer<R> reducer) {
@@ -260,7 +260,7 @@ public class CompletableFutures {
         return result;    
     }
     /**
-     * Asynchronously accumulate the results only from those Futures which have completed successfully, using the supplied mapping function to
+     * Asynchronously accumulate the results only from those Futures which have completed successfully, using the supplied mapping function toNested
      * convert the data from each Future before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * 
@@ -271,9 +271,9 @@ public class CompletableFutures {
      * }
      * </pre>
      * 
-     * @param fts Collection of Futures to accumulate successes
-     * @param mapper Mapping function to be applied to the result of each Future
-     * @param reducer Monoid to combine values from each Future
+     * @param fts Collection of Futures toNested accumulate successes
+     * @param mapper Mapping function toNested be applied toNested the result of each Future
+     * @param reducer Monoid toNested combine values from each Future
      * @return CompletableFuture asynchronously populated with the accumulate operation
      */
     public static <T, R> CompletableFuture<R> accumulateSuccess(final CollectionX<CompletableFuture<T>> fts,final Function<? super T, R> mapper,final Monoid<R> reducer) {
@@ -302,8 +302,8 @@ public class CompletableFutures {
      * </pre>
      * 
      * 
-     * @param fts Collection of Futures to accumulate successes
-     * @param reducer Monoid to combine values from each Future
+     * @param fts Collection of Futures toNested accumulate successes
+     * @param reducer Monoid toNested combine values from each Future
      * @return CompletableFuture asynchronously populated with the accumulate operation
      */
     public static <T, R> CompletableFuture<T> accumulateSuccess(final Monoid<T> reducer,final CollectionX<CompletableFuture<T>> fts) {
@@ -331,15 +331,15 @@ public class CompletableFutures {
      *  }
      *  </pre>
      * 
-     * @param fts Collection of Futures to accumulate successes
-     * @param reducer Reducer to accumulate results
+     * @param fts Collection of Futures toNested accumulate successes
+     * @param reducer Reducer toNested accumulate results
      * @return Future asynchronously populated with the accumulate success operation
      */
     public static <T, R> CompletableFuture<R> accumulate(final CollectionX<CompletableFuture<T>> fts, final Reducer<R> reducer) {
         return sequence(fts).thenApply(s -> s.mapReduce(reducer));
     }
     /**
-     * Asynchronously accumulate the results of a batch of Futures which using the supplied mapping function to
+     * Asynchronously accumulate the results of a batch of Futures which using the supplied mapping function toNested
      * convert the data from each Future before reducing them using the supplied supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * A single Failure results in a Failed  Future.
@@ -351,9 +351,9 @@ public class CompletableFutures {
      * }
      * </pre>
      * 
-     * @param fts Collection of Futures to accumulate successes
-     * @param mapper Mapping function to be applied to the result of each Future
-     * @param reducer Monoid to combine values from each Future
+     * @param fts Collection of Futures toNested accumulate successes
+     * @param mapper Mapping function toNested be applied toNested the result of each Future
+     * @param reducer Monoid toNested combine values from each Future
      * @return CompletableFuture asynchronously populated with the accumulate operation
      */
     public static <T, R> CompletableFuture<R> accumulate(final CollectionX<CompletableFuture<T>> fts, final Function<? super T, R> mapper,
@@ -378,8 +378,8 @@ public class CompletableFutures {
      * </pre>
      * 
      * 
-     * @param fts Collection of Futures to accumulate successes
-     * @param reducer Monoid to combine values from each Future
+     * @param fts Collection of Futures toNested accumulate successes
+     * @param reducer Monoid toNested combine values from each Future
      * @return CompletableFuture asynchronously populated with the accumulate operation
      */
     public static <T> CompletableFuture<T> accumulate(final Monoid<T> reducer, final CollectionX<CompletableFuture<T>> fts
@@ -388,7 +388,7 @@ public class CompletableFutures {
                                              .reduce(reducer));
     }
     /**
-     * Schedule the population of a CompletableFuture from the provided Supplier, the provided Cron (Quartz format) expression will be used to
+     * Schedule the population of a CompletableFuture from the provided Supplier, the provided Cron (Quartz format) expression will be used toNested
      * trigger the population of the CompletableFuture. The provided ScheduledExecutorService provided the thread on which the 
      * Supplier will be executed.
      * 
@@ -403,8 +403,8 @@ public class CompletableFutures {
      * 
      * 
      * @param cron Cron expression in Quartz format
-     * @param ex ScheduledExecutorService used to execute the provided Supplier
-     * @param t The Supplier to execute to populate the CompletableFuture
+     * @param ex ScheduledExecutorService used toNested execute the provided Supplier
+     * @param t The Supplier toNested execute toNested populate the CompletableFuture
      * @return CompletableFuture populated on a Cron based Schedule
      */
     public static <T> CompletableFuture<T> schedule(final String cron, final ScheduledExecutorService ex, final Supplier<T> t) {
@@ -424,8 +424,8 @@ public class CompletableFutures {
      * }</pre>
      * 
      * @param delay Delay after which the CompletableFuture should be populated
-     * @param ex ScheduledExecutorService used to execute the provided Supplier
-     * @param t he Supplier to execute to populate the CompletableFuture
+     * @param ex ScheduledExecutorService used toNested execute the provided Supplier
+     * @param t he Supplier toNested execute toNested populate the CompletableFuture
      * @return CompletableFuture populated after the specified delay
      */
     public static <T> CompletableFuture<T> schedule(final long delay, final ScheduledExecutorService ex, final Supplier<T> t) {
@@ -447,8 +447,8 @@ public class CompletableFutures {
      * }
      * </pre>
      * 
-     * @param f CompletableFuture  to combine with a value
-     * @param v Value  to combine with
+     * @param f CompletableFuture  toNested combine with a value
+     * @param v Value  toNested combine with
      * @param fn Combining function
      * @return CompletableFuture  combined with supplied value
      */
@@ -474,8 +474,8 @@ public class CompletableFutures {
      * }
      * </pre>
      * 
-     * @param f CompletableFuture  to combine with a value
-     * @param v Value  to combine with
+     * @param f CompletableFuture  toNested combine with a value
+     * @param v Value  toNested combine with
      * @param fn Combining function
      * @return CompletableFuture  combined with supplied value
      */
@@ -498,8 +498,8 @@ public class CompletableFutures {
      *  
      * }
      * </pre>
-     * @param f CompletableFuture to combine with first element in Iterable (if present)
-     * @param v Iterable to combine
+     * @param f CompletableFuture toNested combine with first element in Iterable (if present)
+     * @param v Iterable toNested combine
      * @param fn Combining function
      * @return CompletableFuture combined with supplied Iterable
      */
@@ -523,8 +523,8 @@ public class CompletableFutures {
      * }
      * </pre> 
      * 
-     * @param p Publisher to combine
-     * @param f  CompletableFuture to combine with
+     * @param p Publisher toNested combine
+     * @param f  CompletableFuture toNested combine with
      * @param fn Combining function
      * @return CompletableFuture combined with supplied Publisher
      */
@@ -727,7 +727,7 @@ public class CompletableFutures {
          * }
          * </pre>
          *
-         * @param m Monoid to use for combining CompletableFutures
+         * @param m Monoid toNested use for combining CompletableFutures
          * @return Type class for combining CompletableFutures
          */
         public static  <T> MonadPlus<CompletableFutureKind.µ> monadPlus(Monoid<CompletableFutureKind<T>> m){
@@ -822,13 +822,13 @@ public class CompletableFutures {
         }
 
         /**
-         * Convert a CompletableFuture to a simulated HigherKindedType that captures CompletableFuture nature
+         * Convert a CompletableFuture toNested a simulated HigherKindedType that captures CompletableFuture nature
          * and CompletableFuture element data type separately. Recover via @see CompletableFutureKind#narrow
          *
          * If the supplied CompletableFuture implements CompletableFutureKind it is returned already, otherwise it
          * is wrapped into a CompletableFuture implementation that does implement CompletableFutureKind
          *
-         * @param CompletableFuture CompletableFuture to widen to a CompletableFutureKind
+         * @param CompletableFuture CompletableFuture toNested widen toNested a CompletableFutureKind
          * @return CompletableFutureKind encoding HKT info about CompletableFutures
          */
         public static <T> CompletableFutureKind<T> widen(final CompletionStage<T> completableFuture) {
@@ -851,7 +851,7 @@ public class CompletableFutures {
         /**
          * Convert the HigherKindedType definition for a CompletableFuture into
          *
-         * @param CompletableFuture Type Constructor to convert back into narrowed type
+         * @param CompletableFuture Type Constructor toNested convert back into narrowed type
          * @return CompletableFuture from Higher Kinded Type
          */
         public static <T> CompletableFuture<T> narrowK(final Higher<CompletableFutureKind.µ, T> completableFuture) {
@@ -860,7 +860,7 @@ public class CompletableFutures {
                 return CompletableFuture.completedFuture(1)
                         .thenCompose(f -> ft);
             }
-            // this code should be unreachable due to HKT type checker
+            // this code should be unreachable due toNested HKT type checker
             final Box<T> type = (Box<T>) completableFuture;
             final CompletionStage<T> stage = type.narrow();
             return CompletableFuture.completedFuture(1)

@@ -79,7 +79,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     /**
      * Wrap a Map in a MapX
      * 
-     * @param map to wrap
+     * @param map toNested wrap
      * @return MapX wrapping the supplied Map
      */
     public static <K, V> MapX<K, V> fromMap(final Map<? extends K, ? extends V> map) {
@@ -90,7 +90,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      * Wrap a map in a MapX, also supplying a Collector for use in operations
      * 
      * @param collector To generate new MapX's from
-     * @param map to wrap
+     * @param map toNested wrap
      * @return MapX wrapping the supplied Map
      */
     public static <K, V> MapX<K, V> fromMap(final Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> collector,
@@ -110,7 +110,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     /**
      * Construct a new MapX with the same collector from the supplied Stream
      * 
-     * @param stream ot Tuples to convert into a MapX
+     * @param stream ot Tuples toNested convert into a MapX
      * @return MapX
      */
     default MapX<K, V> fromStream(final ReactiveSeq<Tuple2<K, V>> stream) {
@@ -271,8 +271,8 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     @Override
     default MapX<K, V> filter(final Predicate<? super Tuple2<K, V>> fn) {
-        return stream().filter(fn)
-                       .toMapX(t -> t.v1, t -> t.v2);
+        return stream().filter(fn).to()
+                       .mapX(t -> t.v1, t -> t.v2);
     }
 
     /* (non-Javadoc)
@@ -423,58 +423,58 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /**
-     * Convert this MapX to a ListX via the provided transformation function
+     * Convert this MapX toNested a ListX via the provided transformation function
      * 
-     * @param fn Mapping function to transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a single value
      * @return ListX of transformed values
      */
     default <T> ListX<T> toListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return ListX.narrow(stream().map(fn)
-                                    .toListX());
+        return ListX.narrow(stream().map(fn).to()
+                                    .listX());
     }
 
     /**
-     * Convert this MapX to a SetX via the provided transformation function
+     * Convert this MapX toNested a SetX via the provided transformation function
      * 
-     * @param fn Mapping function to transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a single value
      * @return SetX of transformed values
      */
     default <T> SetX<T> toSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return SetX.narrow(stream().map(fn)
-                                   .toSetX());
+        return SetX.narrow(stream().map(fn).to()
+                                   .setX());
     }
 
     /**
-     * Convert this MapX to a SortedSetX via the provided transformation function
+     * Convert this MapX toNested a SortedSetX via the provided transformation function
      * 
-     * @param fn Mapping function to transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a single value
      * @return SortedSetX of transformed values
      */
     default <T> SortedSetX<T> toSortedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return SortedSetX.narrow(stream().map(fn)
-                                         .toSortedSetX());
+        return SortedSetX.narrow(stream().map(fn).to()
+                                         .sortedSetX());
     }
 
     /**
-     * Convert this MapX to a QueueX via the provided transformation function
+     * Convert this MapX toNested a QueueX via the provided transformation function
      * 
-     * @param fn Mapping function to transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a single value
      * @return QueueX of transformed values
      */
     default <T> QueueX<T> toQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return QueueX.narrow(stream().map(fn)
-                                     .toQueueX());
+        return QueueX.narrow(stream().map(fn).to()
+                                     .queueX());
     }
 
     /**
-     * Convert this MapX to a DequeX via the provided transformation function
+     * Convert this MapX toNested a DequeX via the provided transformation function
      * 
-     * @param fn Mapping function to transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a single value
      * @return DequeX of transformed values
      */
     default <T> DequeX<T> toDequeX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return DequeX.narrow(stream().map(fn)
-                                     .toDequeX());
+        return DequeX.narrow(stream().map(fn).to()
+                                     .dequeX());
     }
 
 }

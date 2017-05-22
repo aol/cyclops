@@ -47,7 +47,13 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapFlux(){
-      //  flux(1, 2, 3).forEachSubscribe(System.out::println).request(Long.MAX_VALUE);
+
+        System.out.println("Print out");
+        flux(1)
+                .flatMapP(in -> flux(1, 2, 3))
+                .forEach(System.out::println);
+        System.out.println("Print out finished");
+
        for(int i=0;i<100;i++){
             System.out.println("************Iteration " + i);
             System.out.println("************Iteration " + i);

@@ -19,7 +19,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
     /**
      * Remove all elements in the supplied Stream from this filterable
      * 
-     * @param stream of elements to remove
+     * @param stream of elements toNested remove
      * @return Filters with all supplied elements removed
      */
     default Filters<T> removeAllS(final Stream<? extends T> stream) {
@@ -30,7 +30,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
     /**
      * Remove all elements in the supplied Iterable from this filterable 
      * 
-     * @param it  an Iterable of elements to remove
+     * @param it  an Iterable of elements toNested remove
      * @return Filters with all supplied elements removed
      */
     default Filters<T> removeAllI(final Iterable<? extends T> it) {
@@ -40,7 +40,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
     /**
      * Remove all supplied elements from this filterable   
      * 
-     * @param values to remove
+     * @param values toNested remove
      * @return Filters with all supplied values removed
      */
     default Filters<T> removeAll(final T... values) {
@@ -51,7 +51,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
     /**
      * Retain only the supplied elements in the returned Filters
      * 
-     * @param it Iterable of elements to retain
+     * @param it Iterable of elements toNested retain
      * @return Filters with supplied values retained, and others removed
      */
     default Filters<T> retainAllI(final Iterable<? extends T> it) {
@@ -61,7 +61,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
     /**
      * Retain only the supplied elements in the returned Filters
      * 
-     * @param stream of elements to retain
+     * @param stream of elements toNested retain
      * @return Filters with supplied values retained, and others removed
      */
     default Filters<T> retainAllS(final Stream<? extends T> stream) {
@@ -72,7 +72,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
     /**
      * Retain only the supplied elements in the returned Filters
      * 
-     * @param values elements to retain
+     * @param values elements toNested retain
      * @return Filters with supplied values retained, and others removed
      */
     default Filters<T> retainAll(final T... values) {

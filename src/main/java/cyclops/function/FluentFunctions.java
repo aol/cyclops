@@ -83,7 +83,7 @@ public class FluentFunctions {
      * 
      * }
      * </pre>
-     * @param supplier to make Fluent
+     * @param supplier toNested make Fluent
      * @return FluentSupplier
      */
     public static <R> FluentFunctions.FluentSupplier<R> of(final Supplier<R> supplier) {
@@ -149,7 +149,7 @@ public class FluentFunctions {
     }
 
     /**
-     * Convert a BiFunction to a FluentBiFunction
+     * Convert a BiFunction toNested a FluentBiFunction
      * <pre>
      * {@code 
      * CompletableFuture<Integer> cf = FluentFunctions.of(this::add)
@@ -158,7 +158,7 @@ public class FluentFunctions {
      * 
      * }
      * </pre>
-     * @param fn BiFunction to convert
+     * @param fn BiFunction toNested convert
      * @return FluentBiFuntion
      */
     public static <T1, T2, R> FluentFunctions.FluentBiFunction<T1, T2, R> of(final BiFunction<T1, T2, R> fn) {
@@ -167,7 +167,7 @@ public class FluentFunctions {
     }
 
     /**
-     * Convert a CheckedTriFunction to a FluentTriFunction
+     * Convert a CheckedTriFunction toNested a FluentTriFunction
      * <pre>
      * {@code
        FluentFunctions.ofChecked(this::exceptionalFirstTime)
@@ -177,7 +177,7 @@ public class FluentFunctions {
     				   
        } 
        </pre>
-     * @param fn CheckedTriFunction to convert
+     * @param fn CheckedTriFunction toNested convert
      * @return FluentTriFunction
      */
     public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> ofChecked(final CheckedTriFunction<T1, T2, T3, R> fn) {
@@ -187,7 +187,7 @@ public class FluentFunctions {
     }
 
     /**
-     * Convert a CheckedTriFunction to a FluentTriFunction
+     * Convert a CheckedTriFunction toNested a FluentTriFunction
      * <pre>
      * {@code
        FluentFunctions.of(this::add)	
@@ -195,7 +195,7 @@ public class FluentFunctions {
     				  .apply(1,1,1)		   
        }  
        </pre>
-     * @param fn TriFunction to convert
+     * @param fn TriFunction toNested convert
      * @return FluentTriFunction
      */
     public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> of(final Fn3<T1, T2, T3, R> fn) {
@@ -204,7 +204,7 @@ public class FluentFunctions {
     }
 
     /**
-     * Convert a statement (e.g. a method or Consumer with no return value) to an Expression. The input is returned as emitted
+     * Convert a statement (e.g. a method or Consumer with no return value) toNested an Expression. The input is returned as emitted
      * <pre>
      * {@code 
      * FluentFunctions.expression(System.out::println)
@@ -224,7 +224,7 @@ public class FluentFunctions {
     }
 
     /**
-     * Convert a checked statement (e.g. a method or Consumer with no return value that throws a Checked Exception) to a 
+     * Convert a checked statement (e.g. a method or Consumer with no return value that throws a Checked Exception) toNested a
      * fluent expression (FluentFunction).  The input is returned as emitted
      * <pre>
      * {@code 
@@ -327,7 +327,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply before advice to this Supplier
+         * Apply before advice toNested this Supplier
          * 
          * @param r Runnable that represents before advice (AOP)
          * @return Returns a new Supplier with before advice attached
@@ -340,7 +340,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply after advice to this Supplier
+         * Apply after advice toNested this Supplier
          * 
          * @param action Runnable that represents after advice (AOP)
          * @return Returns a new Supplier with after advice attached
@@ -354,9 +354,9 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply around advice to this Supplier
+         * Apply around advice toNested this Supplier
          * 
-         * @param around Function that captures input to this Supplier and can optionally pass on the call
+         * @param around Function that captures input toNested this Supplier and can optionally pass on the call
          * @return Supplier with around advice attached
          */
         public FluentSupplier<R> around(final Function<Advice0<R>, R> around) {
@@ -406,7 +406,7 @@ public class FluentFunctions {
         }
 
         /**
-         * A supplier that logs it's success or error states to the provided Consumers
+         * A supplier that logs it's success or error states toNested the provided Consumers
          * 
          * @param logger Success logger
          * @param error Failure logger
@@ -429,7 +429,7 @@ public class FluentFunctions {
          * A supplier that can recover from the specified exception types, using the provided Supplier
          * 
          * @param type Recoverable exception types
-         * @param onError Supplier to use on error
+         * @param onError Supplier toNested use on error
          * @return Supplier capable of error recovery
          */
         public <X extends Throwable> FluentSupplier<R> recover(final Class<X> type, final Supplier<R> onError) {
@@ -450,7 +450,7 @@ public class FluentFunctions {
         /**
          * A supplier capable of retrying on failure using an exponential backoff strategy
          * 
-         * @param times Number of times to retry 
+         * @param times Number of times toNested retry
          * @param backoffStartTime Wait time before first retry
          * @return Supplier with a retry strategy
          */
@@ -497,7 +497,7 @@ public class FluentFunctions {
 
 
         /**
-         * @param ex Executor to execute this Supplier on
+         * @param ex Executor toNested execute this Supplier on
          * @return A Supplier that returns it's value wrapped in a CompletableFuture, populated asyncrhonously
          */
         public FluentSupplier<CompletableFuture<R>> liftAsync(final Executor ex) {
@@ -505,7 +505,7 @@ public class FluentFunctions {
         }
 
         /**
-         * @param ex Executor to execute this Supplier on
+         * @param ex Executor toNested execute this Supplier on
          * @return The value generated by this Supplier in a CompletableFuture executed Asynchronously
          */
         public CompletableFuture<FluentSupplier<R>> async(final Executor ex) {
@@ -551,7 +551,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply before advice to this function, capture the input with the provided Consumer
+         * Apply before advice toNested this function, capture the input with the provided Consumer
          * 
          * @param action Before advice
          * @return Function with Before advice attached
@@ -564,7 +564,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply After advice to this function capturing both the input and the emitted with the provided BiConsumer
+         * Apply After advice toNested this function capturing both the input and the emitted with the provided BiConsumer
          * 
          * @param action After advice
          * @return  Function with After advice attached
@@ -579,7 +579,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply around advice to this function, captures input allows emitted to be controlled by the advice
+         * Apply around advice toNested this function, captures input allows emitted toNested be controlled by the advice
          * 
          * @param around Around advice
          * @return Function with Around advice attached
@@ -590,10 +590,10 @@ public class FluentFunctions {
         }
 
         /**
-         * Partially apply the provided value to this function, to turn it into a Supplier
+         * Partially apply the provided value toNested this function, toNested turn it into a Supplier
          * 
-         * @param param Input param to apply to this function
-         * @return Supplier generated by partially applying the input param to this function
+         * @param param Input param toNested apply toNested this function
+         * @return Supplier generated by partially applying the input param toNested this function
          */
         public FluentSupplier<R> partiallyApply(final T param) {
             return new FluentSupplier<>(
@@ -634,7 +634,7 @@ public class FluentFunctions {
         }
 
         /**
-         *  A Function that logs it's success or error states to the provided Consumers
+         *  A Function that logs it's success or error states toNested the provided Consumers
          * 
          * @param logger Success logger
          * @param error Failure logger
@@ -658,10 +658,10 @@ public class FluentFunctions {
 
         /**
          * Visit the result of this Function once it has been executed, if the Function executes successfully the
-         * result will be passes to the eventConsumer, if there is an error it will be passed to the errorConsumer
+         * result will be passes toNested the eventConsumer, if there is an error it will be passed toNested the errorConsumer
          * 
-         * @param eventConsumer Consumer to recieve result on successful execution
-         * @param errorConsumer Consumer to recieve error on failure
+         * @param eventConsumer Consumer toNested recieve result on successful execution
+         * @param errorConsumer Consumer toNested recieve error on failure
          * @return Function with event vistor attached.
          */
         public FluentFunction<T, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
@@ -681,7 +681,7 @@ public class FluentFunctions {
         }
 
         /**
-         * @return Function that logs it's result or error to the console
+         * @return Function that logs it's result or error toNested the console
          */
         public FluentFunction<T, R> println() {
             return log(s -> System.out.println(s), t -> t.printStackTrace());
@@ -712,7 +712,7 @@ public class FluentFunctions {
         /**
          *  A Function capable of retrying on failure using an exponential backoff strategy
          * 
-         * @param times Number of times to retry 
+         * @param times Number of times toNested retry
          * @param backoffStartTime Wait time before first retry
          * @return Function with a retry strategy
          */
@@ -761,7 +761,7 @@ public class FluentFunctions {
          * 
          * 
          * @param seed initial value
-         * @param mapToType Convert from supplied function return type to Stream input type
+         * @param mapToType Convert from supplied function return type toNested Stream input type
          * @return Infinite Stream
          */
         public ReactiveSeq<R> iterate(final T seed, final Function<R, T> mapToType) {
@@ -770,9 +770,9 @@ public class FluentFunctions {
         }
 
         /**
-         * @param input Input value, this function will applied to this value to generate the value that will be infinitely repeated in this Stream
+         * @param input Input value, this function will applied toNested this value toNested generate the value that will be infinitely repeated in this Stream
          * @return An infinitely generating Stream {@link ReactiveSeq} of values determined by the application
-         *        of this function to the input value
+         *        of this function toNested the input value
          */
         public ReactiveSeq<R> generate(final T input) {
             return ReactiveSeq.generate(() -> fn.apply(input));
@@ -802,7 +802,7 @@ public class FluentFunctions {
         }*/
 
         /**
-         * @param ex Executor to execute this function on
+         * @param ex Executor toNested execute this function on
          * @return A Function that returns an asynchonously executing CompletableFuture
          */
         public FluentFunction<T, CompletableFuture<R>> liftAsync(final Executor ex) {
@@ -812,7 +812,7 @@ public class FluentFunctions {
         /**
          * Move this function into an asynchronous context
          * 
-         * @param ex Executor to manage operations on this function on
+         * @param ex Executor toNested manage operations on this function on
          * @return A CompletableFuture that contains this function
          */
         public CompletableFuture<FluentFunction<T, R>> async(final Executor ex) {
@@ -859,9 +859,9 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply before advice to this BiFunction
+         * Apply before advice toNested this BiFunction
          * 
-         * @param action BiConsumer to recieve input parameters to BiFunction
+         * @param action BiConsumer toNested recieve input parameters toNested BiFunction
          * @return BiFunction with before advice attached
          */
         public FluentBiFunction<T1, T2, R> before(final BiConsumer<T1, T2> action) {
@@ -872,9 +872,9 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply after advice to this BiFunction
+         * Apply after advice toNested this BiFunction
          * 
-         * @param action C3 to recieve input parameters and return value from BiFunction after it has executed
+         * @param action C3 toNested recieve input parameters and return value from BiFunction after it has executed
          * @return BiFunction with after advice attached
          */
         public FluentBiFunction<T1, T2, R> after(final C3<T1, T2, R> action) {
@@ -887,7 +887,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply around advice to this BiFunction
+         * Apply around advice toNested this BiFunction
          * 
          * <pre>
          * {@code 
@@ -903,7 +903,7 @@ public class FluentFunctions {
          * }</pre>
          * 
          * 
-         * @param around Function that allows the execution of this BiFunction to be contolled via it's input parameter
+         * @param around Function that allows the execution of this BiFunction toNested be contolled via it's input parameter
          * @return BiFunction with around advice attached
          */
         public FluentBiFunction<T1, T2, R> around(final Function<Advice2<T1, T2, R>, R> around) {
@@ -912,9 +912,9 @@ public class FluentFunctions {
         }
 
         /**
-         * Partially apply the provided parameter as the first parameter to this BiFunction to generate a Function (single input value)
+         * Partially apply the provided parameter as the first parameter toNested this BiFunction toNested generate a Function (single input value)
          * 
-         * @param param Input parameter to Partially Applied
+         * @param param Input parameter toNested Partially Applied
          * @return A Function generated from the BiFunction with the first parameter already applied
          */
         public FluentFunction<T2, R> partiallyApply(final T1 param) {
@@ -923,11 +923,11 @@ public class FluentFunctions {
         }
 
         /**
-         * Partially apply the provided parameters to this BiFunction to generate a Supplier (that takes no inputs)
+         * Partially apply the provided parameters toNested this BiFunction toNested generate a Supplier (that takes no inputs)
          * 
          * @param param1 First Input parameter
          * @param param2 Second Input parameter
-         * @return Supplier generated from the partial application of the provided input parameters to this BiFunction
+         * @return Supplier generated from the partial application of the provided input parameters toNested this BiFunction
          */
         public FluentSupplier<R> partiallyApply(final T1 param1, final T2 param2) {
             return new FluentSupplier<>(
@@ -945,9 +945,9 @@ public class FluentFunctions {
 
         /**
          * This methods creates a caching version of this BiFunction, caching is implemented via the Cacheable wrapper,
-         * that can be used to wrap any concrete cache implementation
+         * that can be used toNested wrap any concrete cache implementation
          * 
-         * E.g. to use a Guava cache for memoization
+         * E.g. toNested use a Guava cache for memoization
          * 
          * <pre>
          * {@code 
@@ -1000,7 +1000,7 @@ public class FluentFunctions {
         }
 
         /**
-         *  A BiFunction that logs it's success or error states to the provided Consumers
+         *  A BiFunction that logs it's success or error states toNested the provided Consumers
          * 
          * @param logger Success logger
          * @param error Failure logger
@@ -1022,10 +1022,10 @@ public class FluentFunctions {
 
         /**
          * Visit the result of this BiFunction once it has been executed, if the Function executes successfully the
-         * result will be passes to the eventConsumer, if there is an error it will be passed to the errorConsumer
+         * result will be passes toNested the eventConsumer, if there is an error it will be passed toNested the errorConsumer
          * 
-         * @param eventConsumer Consumer to recieve result on successful execution
-         * @param errorConsumer Consumer to recieve error on failure
+         * @param eventConsumer Consumer toNested recieve result on successful execution
+         * @param errorConsumer Consumer toNested recieve error on failure
          * @return BiFunction with event vistor attached.
          */
         public FluentBiFunction<T1, T2, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
@@ -1045,7 +1045,7 @@ public class FluentFunctions {
         }
 
         /**
-         * @return Function that logs it's result or error to the console
+         * @return Function that logs it's result or error toNested the console
          */
         public FluentBiFunction<T1, T2, R> println() {
             return log(s -> System.out.println(s), t -> t.printStackTrace());
@@ -1077,7 +1077,7 @@ public class FluentFunctions {
         /**
          *  A BiFunction capable of retrying on failure using an exponential backoff strategy
          * 
-         * @param times Number of times to retry 
+         * @param times Number of times toNested retry
          * @param backoffStartTime Wait time before first retry
          * @return BiFunction with a retry strategy
          */
@@ -1142,7 +1142,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Generate an infinite Stream by applying the input parameters to this function
+         * Generate an infinite Stream by applying the input parameters toNested this function
          * repeatedly
          * 
          * @param input1 First input parameter
@@ -1156,7 +1156,7 @@ public class FluentFunctions {
 
 
         /**
-         * @param classes Classes to catch exceptions for
+         * @param classes Classes toNested catch exceptions for
          * @return BiFunction that returns it's result in a Try
          */
         public <X extends Throwable> FluentBiFunction<T1, T2, Try<R, X>> liftTry(final Class<X>... classes) {
@@ -1172,7 +1172,7 @@ public class FluentFunctions {
         }
 
         /**
-         * @param ex Executor to execute this function on
+         * @param ex Executor toNested execute this function on
          * @return A BiFunction that executes asynchronously on the provided Executor returning a CompletableFuture as it's result
          */
         public FluentBiFunction<T1, T2, CompletableFuture<R>> liftAsync(final Executor ex) {
@@ -1191,7 +1191,7 @@ public class FluentFunctions {
          * }</pre>
          * 
          * 
-         * @param ex Executor to execute this BiFunction on
+         * @param ex Executor toNested execute this BiFunction on
          * @return CompletableFuture containing BiFunction for asyncrhonous execution
          */
         public CompletableFuture<FluentBiFunction<T1, T2, R>> async(final Executor ex) {
@@ -1228,9 +1228,9 @@ public class FluentFunctions {
         }
    
         /**
-         * Apply before advice to this TriFunction
+         * Apply before advice toNested this TriFunction
          * 
-         * @param action C3 to recieve the input parameters to TriFunction
+         * @param action C3 toNested recieve the input parameters toNested TriFunction
          * @return TriFunction with before advice attached
          */
         public FluentTriFunction<T1, T2, T3, R> before(final C3<T1, T2, T3> action) {
@@ -1241,9 +1241,9 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply after advice to this TriFunction
+         * Apply after advice toNested this TriFunction
          * 
-         * @param action C4 to recieve  the input parameters and result from this TriFunction
+         * @param action C4 toNested recieve  the input parameters and result from this TriFunction
          * @return TriFunction with after advice attached
          */
         public FluentTriFunction<T1, T2, T3, R> after(final C4<T1, T2, T3, R> action) {
@@ -1256,7 +1256,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply around advic to this TriFunction
+         * Apply around advic toNested this TriFunction
          * 
          * <pre>
          * {@code 
@@ -1271,7 +1271,7 @@ public class FluentFunctions {
          * </pre>
          * 
          * 
-         * @param around Function that gives controlling access to this Function via the Advice inout parameter
+         * @param around Function that gives controlling access toNested this Function via the Advice inout parameter
          * @return TriFunction with around advice attached
          */
         public FluentTriFunction<T1, T2, T3, R> around(final Function<Advice3<T1, T2, T3, R>, R> around) {
@@ -1279,9 +1279,9 @@ public class FluentFunctions {
                                                                      t1, t2, t3, fn)));
         }
         /**
-         * Partially apply the provided parameter as the first parameter to this TriFunction to generate a Function (single input value)
+         * Partially apply the provided parameter as the first parameter toNested this TriFunction toNested generate a Function (single input value)
          * 
-         * @param param Input parameter to Partially Applied
+         * @param param Input parameter toNested Partially Applied
          * @return A BiFunction generated from the BiFunction with the first parameter already applied
          */
         public FluentBiFunction<T2, T3, R> partiallyApply(final T1 param) {
@@ -1289,11 +1289,11 @@ public class FluentFunctions {
                                           PartialApplicator.partial3(param, fn));
         }
         /**
-         * Partially apply the provided parameters to this BiFunction to generate a Function (single input)
+         * Partially apply the provided parameters toNested this BiFunction toNested generate a Function (single input)
          * 
          * @param param1 First Input parameter
          * @param param2 Second Input parameter
-         * @return Function generated from the partial application of the provided input parameters to this TriFunction
+         * @return Function generated from the partial application of the provided input parameters toNested this TriFunction
          */
         public FluentFunction<T3, R> partiallyApply(final T1 param1, final T2 param2) {
             return new FluentFunction<>(
@@ -1301,19 +1301,19 @@ public class FluentFunctions {
         }
 
         /**
-         * Partially apply the provided parameters to this TriFunction to generate a Supplier (that takes no inputs)
+         * Partially apply the provided parameters toNested this TriFunction toNested generate a Supplier (that takes no inputs)
          * 
          * @param param1 First Input parameter
          * @param param2 Second Input parameter
          * @param param3 Third Input parameter
-         * @return Supplier generated from the partial application of the provided input parameters to this TriFunction
+         * @return Supplier generated from the partial application of the provided input parameters toNested this TriFunction
          */
         public FluentSupplier<R> partiallyApply(final T1 param1, final T2 param2, final T3 param3) {
             return new FluentSupplier<>(
                                         PartialApplicator.partial3(param1, param2, param3, fn));
         }
         /**
-         * Curry this BiFunction, that is convert it from a TriFunction that accepts thre input parameters to a 'chain'
+         * Curry this BiFunction, that is convert it from a TriFunction that accepts thre input parameters toNested a 'chain'
          * of three Functions that accept a single parameter
          * 
          * <pre>
@@ -1340,7 +1340,7 @@ public class FluentFunctions {
                                         Curry.curry3(fn));
         }
         /**
-         * @return Function that logs it's result or error to the console
+         * @return Function that logs it's result or error toNested the console
          */
         public FluentTriFunction<T1, T2, T3, R> memoize3() {
             return withFn(Memoize.memoizeTriFunction(fn));
@@ -1348,9 +1348,9 @@ public class FluentFunctions {
 
         /**
          * This methods creates a caching version of this BiFunction, caching is implemented via the Cacheable wrapper,
-         * that can be used to wrap any concrete cache implementation
+         * that can be used toNested wrap any concrete cache implementation
          *
-         * E.g. to use a Guava cache for memoization
+         * E.g. toNested use a Guava cache for memoization
          *
          * <pre>
          * {@code
@@ -1401,7 +1401,7 @@ public class FluentFunctions {
 
         }
         /**
-         *  A TriFunction that logs it's success or error states to the provided Consumers
+         *  A TriFunction that logs it's success or error states toNested the provided Consumers
          * 
          * @param logger Success logger
          * @param error Failure logger
@@ -1422,10 +1422,10 @@ public class FluentFunctions {
         }
         /**
          * Visit the result of this TriFunction once it has been executed, if the Function executes successfully the
-         * result will be passes to the eventConsumer, if there is an error it will be passed to the errorConsumer
+         * result will be passes toNested the eventConsumer, if there is an error it will be passed toNested the errorConsumer
          * 
-         * @param eventConsumer Consumer to recieve result on successful execution
-         * @param errorConsumer Consumer to recieve error on failure
+         * @param eventConsumer Consumer toNested recieve result on successful execution
+         * @param errorConsumer Consumer toNested recieve error on failure
          * @return TriFunction with event vistor attached.
          */
         public FluentTriFunction<T1, T2, T3, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
@@ -1444,7 +1444,7 @@ public class FluentFunctions {
             });
         }
         /**
-         * @return TriFunction that logs it's result or error to the console
+         * @return TriFunction that logs it's result or error toNested the console
          */
         public FluentTriFunction<T1, T2, T3, R> println() {
             return log(s -> System.out.println(s), t -> t.printStackTrace());
@@ -1475,7 +1475,7 @@ public class FluentFunctions {
         /**
          *  A TriFunction capable of retrying on failure using an exponential backoff strategy
          * 
-         * @param times Number of times to retry 
+         * @param times Number of times toNested retry
          * @param backoffStartTime Wait time before first retry
          * @return TriFunction with a retry strategy
          */
@@ -1531,7 +1531,7 @@ public class FluentFunctions {
             });
         }
         /**
-         * Generate an infinite Stream by applying the input parameters to this function
+         * Generate an infinite Stream by applying the input parameters toNested this function
          * repeatedly
          * 
          * @param input1 First input parameter
@@ -1552,7 +1552,7 @@ public class FluentFunctions {
         }
 
         /**
-         * @param classes Classes to catch exceptions for
+         * @param classes Classes toNested catch exceptions for
          * @return TriFunction that returns it's result in a Try
          */
         public <X extends Throwable> FluentTriFunction<T1, T2, T3, Try<R, X>> liftTry(final Class<X>... classes) {
@@ -1569,7 +1569,7 @@ public class FluentFunctions {
         /**
          * Convert this TriFunction into one that executes asynchronously and returns a CompleteableFuture with the result
          * 
-         * @param ex Executor to execute this TriFunction on
+         * @param ex Executor toNested execute this TriFunction on
          * @return TriFunction that executes Asynchronous 
          */
         public FluentTriFunction<T1, T2, T3, CompletableFuture<R>> liftAsync(final Executor ex) {
@@ -1579,7 +1579,7 @@ public class FluentFunctions {
         /**
          * Move this function into an asynchronous context
          * 
-         * @param ex Executor to manage operations on this function on
+         * @param ex Executor toNested manage operations on this function on
          * @return A CompletableFuture that contains this function
          */
         public CompletableFuture<FluentTriFunction<T1, T2, T3, R>> async(final Executor ex) {
@@ -1588,9 +1588,9 @@ public class FluentFunctions {
 
         /**
          * Compose this TriFunction with the provided function into a single TriFunction. 
-         * This TriFunction would be executed first and the result passed to the provided Function and applied there.
+         * This TriFunction would be executed first and the result passed toNested the provided Function and applied there.
          * 
-         * @param after Function to execute after this one in a chain
+         * @param after Function toNested execute after this one in a chain
          * @return TriFunction that executes this TriFunction and the provided Function in a chain
          */
         public <R2> FluentTriFunction<T1, T2, T3, R2> andThen3(final Function<? super R, ? extends R2> after) {

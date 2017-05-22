@@ -113,7 +113,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 	
 	@Test
 	public void testCollectable(){
-		assertThat(of(1,2,3).collectionOperations().anyMatch(i->i==2),equalTo(true));
+		assertThat(of(1,2,3).collectors().anyMatch(i->i==2),equalTo(true));
 	}
 	@Test
 	public void dropRight(){
@@ -241,7 +241,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
     
     @Test
     public void testIterable() {
-        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
         for (Integer i :of(1, 2, 3)) {
             assertThat(list,hasItem(i));
@@ -614,8 +614,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 	public void streamable(){
 		Streamable<Integer> repeat = (of(1,2,3,4,5,6)
 												.map(i->i*2)
-												)
-												.toStreamable();
+												).to()
+												.streamable();
 		
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
@@ -624,8 +624,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 	@Test
 	public void concurrentLazyStreamable(){
 		Streamable<Integer> repeat = of(1,2,3,4,5,6)
-												.map(i->i*2)
-												.toConcurrentLazyStreamable();
+												.map(i->i*2).to()
+												.lazyStreamableSynchronized();
 		
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
@@ -640,8 +640,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 	@Test
 	public void testLazy(){
 		Collection<Integer> col = of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toLazyCollection();
+											.peek(System.out::println).to()
+											.lazyCollection();
 		System.out.println("first!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
@@ -649,8 +649,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 	@Test
 	public void testLazyCollection(){
 		Collection<Integer> col = of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toConcurrentLazyCollection();
+											.peek(System.out::println).to()
+											.lazyCollectionSynchronized();
 		System.out.println("first!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
@@ -713,7 +713,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 		
 		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
 											.zip(of(100,200,300,400))
-											.toListX();
+											.toListX().materialize();
 
 				
 
@@ -882,56 +882,55 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 		assertEquals(asList(new Tuple2("a", 0L)), of("a").zipWithIndex().toListX());
 
 	}
-	
-	
-	
-	
+
+
+
+
 	@Test
 	public void emptyConvert(){
 
-		assertFalse(empty().toOptional().isPresent());
+		assertFalse(empty().to().optional().isPresent());
 		assertFalse(empty().toListX().size()>0);
-		assertFalse(empty().toDequeX().size()>0);
-		assertFalse(empty().toPStackX().size()>0);
-		assertFalse(empty().toQueueX().size()>0);
-		assertFalse(empty().toPVectorX().size()>0);
-		assertFalse(empty().toPQueueX().size()>0);
+		assertFalse(empty().to().dequeX().size()>0);
+		assertFalse(empty().to().linkedListX().size()>0);
+		assertFalse(empty().to().queueX().size()>0);
+		assertFalse(empty().to().vectorX().size()>0);
+		assertFalse(empty().to().persistentQueueX().size()>0);
 		assertFalse(empty().toSetX().size()>0);
-		assertFalse(empty().toSortedSetX().size()>0);
-		assertFalse(empty().toPOrderedSetX().size()>0);
-		assertFalse(empty().toPBagX().size()>0);
-		assertFalse(empty().toPMapX(t->t,t->t).size()>0);
-		assertFalse(empty().toMapX(t->t,t->t).size()>0);
-
+		assertFalse(empty().to().sortedSetX().size()>0);
+		assertFalse(empty().to().orderedSetX().size()>0);
+		assertFalse(empty().to().bagX().size()>0);
+		assertFalse(empty().to().persistentMapX(t->t, t->t).size()>0);
+		assertFalse(empty().to().mapX(t->t,t->t).size()>0);
 
 		assertFalse(empty().toSet().size()>0);
 		assertFalse(empty().toList().size()>0);
-		assertFalse(empty().toStreamable().size()>0);
-		
-		
+		assertFalse(empty().to().streamable().size()>0);
+
+
 	}
 	@Test
 	public void presentConvert(){
 
-		assertTrue(of(1).toOptional().isPresent());
+		assertTrue(of(1).to().optional().isPresent());
 		assertTrue(of(1).toListX().size()>0);
-		assertTrue(of(1).toDequeX().size()>0);
-		assertTrue(of(1).toPStackX().size()>0);
-		assertTrue(of(1).toQueueX().size()>0);
-		assertTrue(of(1).toPVectorX().size()>0);
-		assertTrue(of(1).toPQueueX().size()>0);
+		assertTrue(of(1).to().dequeX().size()>0);
+		assertTrue(of(1).to().linkedListX().size()>0);
+		assertTrue(of(1).to().queueX().size()>0);
+		assertTrue(of(1).to().vectorX().size()>0);
+		assertTrue(of(1).to().persistentQueueX().size()>0);
 		assertTrue(of(1).toSetX().size()>0);
-		assertTrue(of(1).toSortedSetX().size()>0);
-		assertTrue(of(1).toPOrderedSetX().size()>0);
-		assertTrue(of(1).toPBagX().size()>0);
-		assertTrue(of(1).toPMapX(t->t,t->t).size()>0);
-		assertTrue(of(1).toMapX(t->t,t->t).size()>0);
+		assertTrue(of(1).to().sortedSetX().size()>0);
+		assertTrue(of(1).to().orderedSetX().size()>0);
+		assertTrue(of(1).to().bagX().size()>0);
+		assertTrue(of(1).to().persistentMapX(t->t, t->t).size()>0);
+		assertTrue(of(1).to().mapX(t->t,t->t).size()>0);
 
 		assertTrue(of(1).toSet().size()>0);
 		assertTrue(of(1).toList().size()>0);
-		assertTrue(of(1).toStreamable().size()>0);
-		
-		
+		assertTrue(of(1).to().streamable().size()>0);
+
+
 	}
 
 	

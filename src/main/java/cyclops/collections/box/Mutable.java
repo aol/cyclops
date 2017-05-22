@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 /**
  * Class that represents a Closed Variable
- * In Java 8 because of the effectively final rule references to captured
+ * In Java 8 because of the effectively final rule references toNested captured
  * variables can't be changed.
  * e.g.
  *<pre>

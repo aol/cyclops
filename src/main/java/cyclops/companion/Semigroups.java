@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  * 
  * A static class with a large number of Semigroups  or Combiners.
  * 
- * A semigroup is an Object that can be used to combine objects of the same type.
+ * A semigroup is an Object that can be used toNested combine objects of the same type.
  *
  *  @author johnmcclean
  */
@@ -191,9 +191,9 @@ public interface Semigroups {
     }
 
     /**
-     * This Semigroup will attempt to combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
+     * This Semigroup will attempt toNested combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
      * or a pCollection persisent collection a new Collection type is created that contains the entries from both supplied collections.
-     * If the supplied Collections are standard JDK mutable collections Colleciton b is appended to Collection a and a is returned.
+     * If the supplied Collections are standard JDK mutable collections Colleciton b is appended toNested Collection a and a is returned.
      * 
      * 
      * To manage javac type inference first assign the semigroup
@@ -207,7 +207,7 @@ public interface Semigroups {
      * 
      * }
      * </pre>
-     * @return A Semigroup that attempts to combine the supplied Collections
+     * @return A Semigroup that attempts toNested combine the supplied Collections
      */
     static <T, C extends Collection<T>> Semigroup<C> collectionConcat() {
         return (a, b) -> {
@@ -238,7 +238,7 @@ public interface Semigroups {
      * }
      * </pre>
      * 
-     * @param semigroup Semigroup to combine the values inside the zippables
+     * @param semigroup Semigroup toNested combine the values inside the zippables
      * @return Combination of two Zippables
      */
     static <T,A extends Zippable<T>> Semigroup<A> combineZippables(BiFunction<T,T,T> semigroup) {
@@ -258,7 +258,7 @@ public interface Semigroups {
      * </pre>
      * 
      * 
-     * @param semigroup Semigroup to combine the values inside the Scalar Functors (Maybe, Xor, Ior, Try, Eva, FeatureToggle etc)
+     * @param semigroup Semigroup toNested combine the values inside the Scalar Functors (Maybe, Xor, Ior, Try, Eva, FeatureToggle etc)
      * @return Combination of two Scalar Functors
      */
     static <T,A extends Zippable<T>> Semigroup<A> combineScalarFunctors(BiFunction<T,T,T> semigroup) {
@@ -266,7 +266,7 @@ public interface Semigroups {
     }
 
     /**
-     * @return Combination of two LazyFutureStreams Streams b is appended to a
+     * @return Combination of two LazyFutureStreams Streams b is appended toNested a
      */
     static <T> Semigroup<FutureStream<T>> combineFutureStream() {
         return (a, b) -> a.appendS(b);
@@ -274,7 +274,7 @@ public interface Semigroups {
 
 
     /**
-     * @return Combination of two ReactiveSeq Streams b is appended to a
+     * @return Combination of two ReactiveSeq Streams b is appended toNested a
      */
     static <T> Semigroup<ReactiveSeq<T>> combineReactiveSeq() {
         return (a, b) -> a.appendS(b);
@@ -299,14 +299,14 @@ public interface Semigroups {
     }
 
     /**
-     * @return Combination of two Seq's : b is appended to a
+     * @return Combination of two Seq's : b is appended toNested a
      */
     static <T> Semigroup<Seq<T>> combineSeq() {
         return (a, b) -> Seq.concat(a, b);
     }
 
     /**
-     * @return Combination of two Stream's : b is appended to a
+     * @return Combination of two Stream's : b is appended toNested a
      */
     static <T> Semigroup<Stream<T>> combineStream() {
         return (a, b) -> Stream.concat(a, b);
@@ -496,19 +496,19 @@ public interface Semigroups {
     }
 
     /**
-     * Combine two BigIntegers by adding one to a (can be used to count BigIntegers in a Collection or Stream)
+     * Combine two BigIntegers by adding one toNested a (can be used toNested count BigIntegers in a Collection or Stream)
      */
     static Semigroup<BigInteger> bigIntCount = (a, b) -> a.add(BigInteger.ONE);
     /**
-     * Combine two Integers by adding one to a (can be used to count Integers in a Collection or Stream)
+     * Combine two Integers by adding one toNested a (can be used toNested count Integers in a Collection or Stream)
      */
     static Semigroup<Integer> intCount = (a, b) -> a + 1;
     /**
-     * Combine two Longs by adding one to a (can be used to count Integers in a Collection or Stream)
+     * Combine two Longs by adding one toNested a (can be used toNested count Integers in a Collection or Stream)
      */
     static Semigroup<Long> longCount = (a, b) -> a + 1;
     /**
-     * Combine two Double by adding one to a (can be used to count Double in a Collection or Stream)
+     * Combine two Double by adding one toNested a (can be used toNested count Double in a Collection or Stream)
      */
     static Semigroup<Double> doubleCount = (a, b) -> a + 1;
     /**

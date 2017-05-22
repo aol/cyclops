@@ -1,5 +1,7 @@
 package com.aol.cyclops2.types;
 
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
 import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.stream.ReactiveSeq;
@@ -23,12 +25,17 @@ import java.util.function.Supplier;
 public interface FoldableTraversable<T> extends
                                                 Traversable<T>,
                                                 CyclopsCollectable<T>,
-                                                ConvertableSequence<T>,
                                                 ExtendedTraversable<T>{
 
 
 
 
+    default ListX<T> toListX(){
+        return to().listX();
+    }
+    default SetX<T> toSetX(){
+        return to().setX();
+    }
     /**
      * Perform an async fold on the provided executor
      *
@@ -41,10 +48,10 @@ public interface FoldableTraversable<T> extends
      *  }
      *  </pre>
      *
-     * Similar to @see {@link ReactiveSeq#futureOperations(Executor)}, but returns Future
+     * Similar toNested @see {@link ReactiveSeq#futureOperations(Executor)}, but returns Future
      *
      * @param fn Folding function
-     * @param ex Executor to perform fold on
+     * @param ex Executor toNested perform fold on
      * @return Future that will contain the result when complete
      */
     default <R> Future<R> foldFuture(Executor ex,Function<? super FoldableTraversable<T>,? extends R> fn){
@@ -66,7 +73,7 @@ public interface FoldableTraversable<T> extends
      *  }
      *  </pre>
      *
-     *  Similar to @see {@link ReactiveSeq#lazyOperations()}, but always returns Eval (e.g. with nested Optionals)
+     *  Similar toNested @see {@link ReactiveSeq#lazyOperations()}, but always returns Eval (e.g. with nested Optionals)
      *
      * @param fn Folding function
      * @return Eval that lazily performs the fold once
@@ -89,7 +96,7 @@ public interface FoldableTraversable<T> extends
      *  }
      *  </pre>
      * @param fn Folding function
-     * @param classes Unhandled Exception types to capture in Try
+     * @param classes Unhandled Exception types toNested capture in Try
      * @return Try that eagerly executes the fold and captures specified unhandled exceptions
      */
     default <R, X extends Throwable> Try<R, X> foldTry(Function<? super FoldableTraversable<T>,? extends R> fn,
@@ -105,13 +112,13 @@ public interface FoldableTraversable<T> extends
 
     @Override
     ReactiveSeq<T> stream();
-    @Override
+
     default Seq<T> seq(){
         return Seq.seq(this);
     }
     /**
      * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
-     * whenStream may be more efficient (as it is guaranteed to be maybe).
+     * whenStream may be more efficient (as it is guaranteed toNested be maybe).
      *
      * <pre>
      * {@code
@@ -141,7 +148,7 @@ public interface FoldableTraversable<T> extends
 
 
     /**
-     * extract head and tail together, where head is expected to be present
+     * extract head and tail together, where head is expected toNested be present
      * Example :
      *
      * <pre>

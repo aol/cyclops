@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
 import org.junit.Test;
 
 public class ToOptionalCompletableFutureTest {
@@ -21,15 +20,15 @@ public class ToOptionalCompletableFutureTest {
 	}
 	@Test
 	public void toOptional(){
-		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4)
-						.toOptional()
+		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4).to()
+						.optional()
 						.get(),equalTo(Arrays.asList(1,2,3,4)));
 	  
 	}
 	@Test
 	public void toOptionalEmpty(){
-		assertFalse(LazyReact.sequentialBuilder().of()
-						.toOptional().isPresent());
+		assertFalse(LazyReact.sequentialBuilder().of().to()
+						.optional().isPresent());
 	  
 	}
 }

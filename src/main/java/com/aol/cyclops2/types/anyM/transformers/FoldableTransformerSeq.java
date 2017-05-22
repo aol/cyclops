@@ -35,7 +35,7 @@ public interface FoldableTransformerSeq<W extends WitnessType<W>,T> extends Tran
     public <R> FoldableTransformerSeq<W,R> unitIterator(final Iterator<R> it);
     public <B> FoldableTransformerSeq<W,B> flatMap(final Function<? super T, ? extends Iterable<? extends B>> f);
     /**
-     * extract head and tail together, where head is expected to be present
+     * extract head and tail together, where head is expected toNested be present
      *
      *
      * @return
@@ -45,7 +45,7 @@ public interface FoldableTransformerSeq<W extends WitnessType<W>,T> extends Tran
     }
     /**
      * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
-     * whenStream may be more efficient (as it is guaranteed to be lazy).
+     * whenStream may be more efficient (as it is guaranteed toNested be lazy).
      *
      * <pre>
      * {@code

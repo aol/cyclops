@@ -34,7 +34,7 @@ import java.util.stream.Collector;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyListX<T> extends AbstractLazyMutableCollection<T,List<T>> implements ListX<T> {
+public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements ListX<T> {
 
 
     public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector) {

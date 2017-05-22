@@ -14,6 +14,7 @@ import com.aol.cyclops2.types.stream.ToStream;
 
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
+import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
@@ -21,21 +22,22 @@ import cyclops.collections.mutable.MapX;
 import com.aol.cyclops2.types.stream.HotStream;
 
 /**
- * Represents a type that may be reducable (foldable) to a single value or collection
+ * Represents a type that may be reducable (foldable) toNested a single value or collection
  * 
  * @author johnmcclean
  *
  * @param <T> Data type of element(s) in this Folds
  */
-public interface Folds<T> extends ToStream<T> {
+public interface Folds<T> {
 
 
+    ReactiveSeq<T> stream();
 
     
 
     /**
-     * Attempt to map this Sequence to the same type as the supplied Monoid
-     * (Reducer) Then use Monoid to reduce values
+     * Attempt toNested map this Sequence toNested the same type as the supplied Monoid
+     * (Reducer) Then use Monoid toNested reduce values
      * 
      * <pre>
      * {@code 
@@ -46,7 +48,7 @@ public interface Folds<T> extends ToStream<T> {
      * </pre>
      * 
      * @param reducer
-     *            Monoid to reduce values
+     *            Monoid toNested reduce values
      * @return Reduce result
      */
     default <R> R mapReduce(final Reducer<R> reducer) {
@@ -54,8 +56,8 @@ public interface Folds<T> extends ToStream<T> {
     }
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid, using
-     * supplied function Then use Monoid to reduce values
+     * Attempt toNested map this Monad toNested the same type as the supplied Monoid, using
+     * supplied function Then use Monoid toNested reduce values
      * 
      * <pre>
      *  {@code
@@ -79,9 +81,9 @@ public interface Folds<T> extends ToStream<T> {
      * </pre>
      * 
      * @param mapper
-     *            Function to map Monad type
+     *            Function toNested map Monad type
      * @param reducer
-     *            Monoid to reduce values
+     *            Monoid toNested reduce values
      * @return Reduce result
      */
     default <R> R mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
@@ -89,7 +91,7 @@ public interface Folds<T> extends ToStream<T> {
     }
 
     /**
-     * Reduce this Folds to a single value, using the supplied Monoid. For example
+     * Reduce this Folds toNested a single value, using the supplied Monoid. For example
      * <pre>
      * {@code 
      * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
@@ -99,7 +101,7 @@ public interface Folds<T> extends ToStream<T> {
      * </pre>
      * 
      * @param reducer
-     *            Use supplied Monoid to reduce values
+     *            Use supplied Monoid toNested reduce values
      * @return reduced values
      */
     default T reduce(final Monoid<T> reducer) {
@@ -107,7 +109,7 @@ public interface Folds<T> extends ToStream<T> {
     }
 
     /**
-     * An equivalent function to {@link java.util.stream.Stream#reduce(BinaryOperator)}
+     * An equivalent function toNested {@link java.util.stream.Stream#reduce(BinaryOperator)}
      *  
      *  <pre> {@code
      *  
@@ -124,22 +126,22 @@ public interface Folds<T> extends ToStream<T> {
     }
 
     /**
-     *  An equivalent function to {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
+     *  An equivalent function toNested {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
      * @param accumulator Combiner function
      * @return Value emitted by applying the current accumulated value and the
-     *          next value to the combiner function as this Folds is traversed from left to right
+     *          next value toNested the combiner function as this Folds is traversed from left toNested right
      */
     default T reduce(final T identity, final BinaryOperator<T> accumulator) {
         return stream().reduce(identity, accumulator);
     }
 
     /**
-     * An equivalent function to {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
+     * An equivalent function toNested {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
      * 
      * @param identity Identity value for the combiner function (leaves the input unchanged)
      * @param accumulator Combiner function
      * @return Value emitted by applying the current accumulated value and the
-     *          next value to the combiner function as this Folds is traversed from left to right
+     *          next value toNested the combiner function as this Folds is traversed from left toNested right
      */
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
         final Folds<T> foldable = stream();
@@ -158,7 +160,7 @@ public interface Folds<T> extends ToStream<T> {
         return reduce(reducer);
     }
     /**
-     * An equivalent function to {@link java.util.stream.Stream#reduce(Object, BiFunction, BinaryOperator)}
+     * An equivalent function toNested {@link java.util.stream.Stream#reduce(Object, BiFunction, BinaryOperator)}
      * 
      */
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
@@ -229,7 +231,7 @@ public interface Folds<T> extends ToStream<T> {
      * </pre>
      * 
      * @param reducer
-     *            Use supplied Monoid to reduce values starting via foldRight
+     *            Use supplied Monoid toNested reduce values starting via foldRight
      * @return Reduced result
      */
     default T foldRight(final Monoid<T> reducer) {
@@ -237,7 +239,7 @@ public interface Folds<T> extends ToStream<T> {
     }
 
     /**
-     * Immutable reduction from right to left
+     * Immutable reduction from right toNested left
      * 
      * <pre>
      * {@code 
@@ -255,7 +257,7 @@ public interface Folds<T> extends ToStream<T> {
 
     /**
      * 
-     * Immutable reduction from right to left
+     * Immutable reduction from right toNested left
      * 
      * @param identity  Identity value for the combiner function (leaves the input unchanged)
      * @param accumulator Combining function
@@ -266,8 +268,8 @@ public interface Folds<T> extends ToStream<T> {
     }
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid (using
-     * mapToType on the monoid interface) Then use Monoid to reduce values
+     * Attempt toNested map this Monad toNested the same type as the supplied Monoid (using
+     * mapToType on the monoid interface) Then use Monoid toNested reduce values
      * 
      * <pre>
      * 		{@code
@@ -279,7 +281,7 @@ public interface Folds<T> extends ToStream<T> {
      * 
      * 
      * @param reducer
-     *            Monoid to reduce values
+     *            Monoid toNested reduce values
      * @return Reduce result
      */
     default <T> T foldRightMapToType(final Reducer<T> reducer) {
@@ -327,39 +329,39 @@ public interface Folds<T> extends ToStream<T> {
     }
 
     /**
-     * Write each element within this Folds in turn to the supplied PrintStream
+     * Write each element within this Folds in turn toNested the supplied PrintStream
      *
-     * @param str PrintStream to tell to
+     * @param str PrintStream toNested tell toNested
      */
     default void print(final PrintStream str) {
         stream().print(str);
     }
 
     /**
-     * Write each element within this Folds in turn to the supplied PrintWriter
+     * Write each element within this Folds in turn toNested the supplied PrintWriter
      *
-     * @param writer PrintWriter to tell to
+     * @param writer PrintWriter toNested tell toNested
      */
     default void print(final PrintWriter writer) {
         stream().print(writer);
     }
 
     /**
-     *  Print each value in this Folds to the console in turn (left-to-right)
+     *  Print each value in this Folds toNested the console in turn (left-toNested-right)
      */
     default void printOut() {
         stream().printOut();
     }
 
     /**
-     *  Print each value in this Folds to the error console in turn (left-to-right)
+     *  Print each value in this Folds toNested the error console in turn (left-toNested-right)
      */
     default void printErr() {
         stream().printErr();
     }
 
     /**
-     * Use classifier function to group elements in this Sequence into a Map
+     * Use classifier function toNested group elements in this Sequence into a Map
      * 
      * <pre>
      * {@code
@@ -433,7 +435,7 @@ public interface Folds<T> extends ToStream<T> {
      * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
      * </pre>
      * 
-     * @param stream Stream to check if this Folds has the same elements in the same order, at the skip
+     * @param stream Stream toNested check if this Folds has the same elements in the same order, at the skip
      * @return True if Monad starts with Iterators sequence of data
      */
     default boolean startsWith(final Stream<T> stream) {
@@ -449,7 +451,7 @@ public interface Folds<T> extends ToStream<T> {
      * }
      * </pre>
      * 
-     * @param iterable Values to check
+     * @param iterable Values toNested check
      * @return true if SequenceM ends with values in the supplied iterable
      */
     default boolean endsWithIterable(final Iterable<T> iterable) {
@@ -465,75 +467,15 @@ public interface Folds<T> extends ToStream<T> {
      * </pre>
      * 
      * @param stream
-     *            Values to check
+     *            Values toNested check
      * @return true if SequenceM endswith values in the supplied Stream
      */
     default boolean endsWith(final Stream<T> stream) {
         return stream().endsWith(stream);
     }
 
-    /**
-     * Lazily converts this SequenceM into a Collection. This does not trigger
-     * the Stream. E.g. Collection is not thread safe on the first iteration.
-     * 
-     * <pre>
-     * {@code 
-     *  
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).toLazyCollection();
-     * 
-     *  col.forEach(System.out::println);
-     * }
-     * 
-     * // Will print out &quot;first!&quot; before anything else
-     * </pre>
-     * 
-     * @return Lazy Collection
-     */
-    default CollectionX<T> toLazyCollection() {
-        return stream().toLazyCollection();
-    }
 
-    /**
-     * Lazily converts this SequenceM into a Collection. This does not trigger
-     * the Stream. E.g.
-     * 
-     * <pre>
-     * {@code
-     *  
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
-     *                                       .peek(System.out::println).toConcurrentLazyCollection();
-     * 
-     *  col.forEach(System.out::println);
-     * }
-     * 
-     * // Will print out "first!" before anything else
-     * </pre>
-     * 
-     * @return Concurrent Lazy Collection
-     */
-    default CollectionX<T> toConcurrentLazyCollection() {
-        return stream().toConcurrentLazyCollection();
-    }
 
-    /**
-     * <pre>
-     * {@code
-     *  
-     *  Streamable<Integer> repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6)
-     *                                          .map(i ->; i + 2)
-     *                                          .toConcurrentLazyStreamable();
-     * 
-     *  assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     *  assertThat(repeat.sequenceM().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     * }
-     * </pre>
-     * 
-     * @return Streamable that replay this SequenceM, populated lazily and can
-     *         be populated across threads
-     */
-    default Streamable<T> toConcurrentLazyStreamable() {
-        return stream().toConcurrentLazyStreamable();
-    }
 
     /**
      * <pre>
@@ -611,7 +553,7 @@ public interface Folds<T> extends ToStream<T> {
      * </pre>
      * 
      * @param index
-     *            to extract element from
+     *            toNested extract element from
      * @return elementAt index
      */
     default Optional<T> get(final long index) {
@@ -630,7 +572,7 @@ public interface Folds<T> extends ToStream<T> {
      * }
      * </pre>
      * 
-     * Connect to the Scheduled Stream
+     * Connect toNested the Scheduled Stream
      * 
      * <pre>
      * {@code
@@ -666,7 +608,7 @@ public interface Folds<T> extends ToStream<T> {
      * }
      * </pre>
      * 
-     * Connect to the Scheduled Stream
+     * Connect toNested the Scheduled Stream
      * 
      * <pre>
      * {@code 
@@ -701,7 +643,7 @@ public interface Folds<T> extends ToStream<T> {
      * }
      * </pre>
      * 
-     * Connect to the Scheduled Stream
+     * Connect toNested the Scheduled Stream
      * 
      * <pre>
      * {@code

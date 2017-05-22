@@ -13,40 +13,40 @@ public abstract class AbstractConvertableSequenceTest {
     @Test
     public void emptyConvert(){
 
-        assertFalse(empty().toOptional().isPresent());
-        assertFalse(empty().toListX().size()>0);
-        assertFalse(empty().toDequeX().size()>0);
-        assertFalse(empty().toPStackX().size()>0);
-        assertFalse(empty().toQueueX().size()>0);
-        assertFalse(empty().toPVectorX().size()>0);
-        assertFalse(empty().toPQueueX().size()>0);
-        assertFalse(empty().toSetX().size()>0);
-        assertFalse(empty().toSortedSetX().size()>0);
-        assertFalse(empty().toPOrderedSetX().size()>0);
-        assertFalse(empty().toPBagX().size()>0);
-        assertFalse(empty().toPMapX(t->t,t->t).size()>0);
-        assertFalse(empty().toMapX(t->t,t->t).size()>0);
-        assertFalse(empty().toStreamable().size()>0);
+        assertFalse(empty().optional().isPresent());
+        assertFalse(empty().listX().size()>0);
+        assertFalse(empty().dequeX().size()>0);
+        assertFalse(empty().linkedListX().size()>0);
+        assertFalse(empty().queueX().size()>0);
+        assertFalse(empty().vectorX().size()>0);
+        assertFalse(empty().persistentQueueX().size()>0);
+        assertFalse(empty().setX().size()>0);
+        assertFalse(empty().sortedSetX().size()>0);
+        assertFalse(empty().orderedSetX().size()>0);
+        assertFalse(empty().bagX().size()>0);
+        assertFalse(empty().persistentMapX(t->t, t->t).size()>0);
+        assertFalse(empty().mapX(t->t,t->t).size()>0);
+        assertFalse(empty().streamable().size()>0);
         
         
     }
     @Test
     public void presentConvert(){
 
-        assertTrue(of(1).toOptional().isPresent());
-        assertTrue(of(1).toListX().size()>0);
-        assertTrue(of(1).toDequeX().size()>0);
-        assertTrue(of(1).toPStackX().size()>0);
-        assertTrue(of(1).toQueueX().size()>0);
-        assertTrue(of(1).toPVectorX().size()>0);
-        assertTrue(of(1).toPQueueX().size()>0);
-        assertTrue(of(1).toSetX().size()>0);
-        assertTrue(of(1).toSortedSetX().size()>0);
-        assertTrue(of(1).toPOrderedSetX().size()>0);
-        assertTrue(of(1).toPBagX().size()>0);
-        assertTrue(of(1).toPMapX(t->t,t->t).size()>0);
-        assertTrue(of(1).toMapX(t->t,t->t).size()>0);
-        assertTrue(of(1).toStreamable().size()>0);
+        assertTrue(of(1).optional().isPresent());
+        assertTrue(of(1).listX().size()>0);
+        assertTrue(of(1).dequeX().size()>0);
+        assertTrue(of(1).linkedListX().size()>0);
+        assertTrue(of(1).queueX().size()>0);
+        assertTrue(of(1).vectorX().size()>0);
+        assertTrue(of(1).queueX().size()>0);
+        assertTrue(of(1).setX().size()>0);
+        assertTrue(of(1).sortedSetX().size()>0);
+        assertTrue(of(1).orderedSetX().size()>0);
+        assertTrue(of(1).bagX().size()>0);
+        assertTrue(of(1).persistentMapX(t->t, t->t).size()>0);
+        assertTrue(of(1).mapX(t->t,t->t).size()>0);
+        assertTrue(of(1).streamable().size()>0);
         
         
     }

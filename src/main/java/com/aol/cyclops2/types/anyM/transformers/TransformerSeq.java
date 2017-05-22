@@ -33,30 +33,32 @@ import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ToStream;
 
 public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
-                                                                    ConvertableSequence<T>,
                                                                     Traversable<T>,
                                                                     ToStream<T>,
                                                                     Publisher<T> {
 
-
+    default ConvertableSequence<T> to(){
+        return new ConvertableSequence<>(this);
+    }
+    /**
     @Override
-    default DequeX<T> toDequeX() {
-        return ConvertableSequence.super.toDequeX().materialize();
+    default DequeX<T> dequeX() {
+        return ConvertableSequence.super.dequeX().materialize();
     }
 
     @Override
-    default QueueX<T> toQueueX() {
-        return ConvertableSequence.super.toQueueX().materialize();
+    default QueueX<T> queueX() {
+        return ConvertableSequence.super.queueX().materialize();
     }
 
     @Override
-    default SetX<T> toSetX() {
-        return ConvertableSequence.super.toSetX().materialize();
+    default SetX<T> setX() {
+        return ConvertableSequence.super.setX().materialize();
     }
 
     @Override
-    default ListX<T> toListX() {
-        return ConvertableSequence.super.toListX().materialize();
+    default ListX<T> listX() {
+        return ConvertableSequence.super.listX().materialize();
     }
 
     @Override
@@ -82,6 +84,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     default PersistentSetX<T> toPSetX() {
         return ConvertableSequence.super.toPSetX().materialize();
     }
+    */
     public boolean isSeqPresent();
 
     <T> TransformerSeq<W,T> unitAnyM(AnyM<W,Traversable<T>> traversable);

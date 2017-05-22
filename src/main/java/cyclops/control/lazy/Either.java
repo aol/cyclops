@@ -42,70 +42,70 @@ import java.util.stream.Stream;
  *  
  *  Either is used to represent values that can be one of two states (for example a validation result, lazy everything is ok - or we have an error).
  *  It can be used to avoid a common design anti-pattern where an Object has two fields one of which is always null (or worse, both are defined as Optionals).
- *  
+ *
  *  <pre>
- *  {@code 
- *     
+ *  {@code
+ *
  *     public class Member{
- *           Either<SeniorTeam,JuniorTeam> team;      
+ *           Either<SeniorTeam,JuniorTeam> team;
  *     }
- *     
+ *
  *     Rather than
- *     
+ *
  *     public class Member{
  *           @Setter
  *           SeniorTeam seniorTeam = null;
  *           @Setter
- *           JuniorTeam juniorTeam = null;      
+ *           JuniorTeam juniorTeam = null;
  *     }
  *  }
  *  </pre>
- *  
+ *
  *  Either's have two states
  *  Right : Most methods operate naturally on the primary type, if it is present. If it is not, nothing happens.
- *  Left : Most methods do nothing to the secondary type if it is present. 
+ *  Left : Most methods do nothing to the secondary type if it is present.
  *              To operate on the Left type first call swap() or use secondary analogs of the main operators.
- *  
+ *
  *  Instantiating an Either - Right
  *  <pre>
- *  {@code 
- *      Either.right("hello").map(v->v+" world") 
+ *  {@code
+ *      Either.right("hello").map(v->v+" world")
  *    //Either.right["hello world"]
  *  }
  *  </pre>
- *  
+ *
  *  Instantiating an Either - Left
  *  <pre>
- *  {@code 
- *      Either.left("hello").map(v->v+" world") 
+ *  {@code
+ *      Either.left("hello").map(v->v+" world")
  *    //Either.seconary["hello"]
  *  }
  *  </pre>
- *  
+ *
  *  Either can operate (via map/flatMap) as a Functor / Monad and via combine as an ApplicativeFunctor
- *  
- *   Values can be accumulated via 
+ *
+ *   Values can be accumulated via
  *  <pre>
- *  {@code 
+ *  {@code
  *  Xor.accumulateLeft(ListX.of(Either.left("failed1"),
                                                     Either.left("failed2"),
                                                     Either.right("success")),
                                                     Semigroups.stringConcat)
- *  
+ *
  *  //failed1failed2
- *  
+ *
  *   Either<String,String> fail1 = Either.left("failed1");
      fail1.swap().combine((a,b)->a+b)
                  .combine(Either.left("failed2").swap())
                  .combine(Either.<String,String>primary("success").swap())
- *  
+ *
  *  //failed1failed2
  *  }
  *  </pre>
- * 
- * 
+ *
+ *
  * For Inclusive Ors @see Ior
- * 
+ *
  * @author johnmcclean
  *
  * @param <LT> Left type
@@ -326,35 +326,35 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /**
      *  Turn a collection of Eithers into a single Either with Lists of values.
-     *  
+     *
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      * Either<String,Integer> just  = Either.right(10);
        Either<String,Integer> none = Either.left("none");
-        
-        
+
+
      * Either<ListX<String>,ListX<Integer>> xors =Either.sequence(ListX.of(just,none,Either.right(1)));
        //Eitehr.right(ListX.of(10,1)));
-     * 
+     *
      * }</pre>
      *
-     * 
-     * 
+     *
+     *
      * @param Either Either to sequence
      * @return Either Sequenced
      */
     public static <LT1, PT> Either<ListX<LT1>,ListX<PT>> sequenceRight(final CollectionX<Either<LT1, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(Either::isRight).map(AnyM::fromEither).toListX(),Witness.either.INSTANCE)
+        return AnyM.sequence(xors.stream().filter(Either::isRight).map(AnyM::fromEither).to().listX(),Witness.either.INSTANCE)
                 .to(Witness::either);
     }
     public static <LT1, PT> Either<ListX<LT1>,ListX<PT>> sequenceLeft(final CollectionX<Either<LT1, PT>> xors) {
         Objects.requireNonNull(xors);
         Either<ListX<PT>,ListX<LT1>> res = AnyM.sequence(xors.stream()
                                  .filter(Either::isRight)
-                                 .map(i->AnyM.fromEither(i.swap()))
-                                 .toListX(),
+                                 .map(i->AnyM.fromEither(i.swap())).to()
+                                 .listX(),
                                 Witness.either.INSTANCE)
                     .to(Witness::either);
         return res.swap();
@@ -362,7 +362,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /**
      * Traverse a Collection of Either producting an Either3 with a ListX, applying the transformation function to every
      * element in the list
-     * 
+     *
      * @param xors Eithers to sequence and transform
      * @param fn Transformation function
      * @return An Either with a transformed list
@@ -373,25 +373,25 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     public static <LT1, PT,R> Either<ListX<R>,ListX<PT>> traverseLeft(final CollectionX<Either<LT1, PT>> xors, Function<? super LT1, ? extends R> fn) {
         return  sequenceLeft(xors).secondaryMap(l->l.map(fn));
     }
-   
+
 
     /**
      *  Accumulate the results only from those Either3 which have a Right type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see com.aol.cyclops2.Monoids }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Either3<String,String,Integer> just  = Either3.right(10);
        Either3<String,String,Integer> none = Either3.left("none");
-     *  
+     *
      *  Either3<ListX<String>,ListX<String>,Integer> xors = Either3.accumulatePrimary(Monoids.intSum,ListX.of(just,none,Either3.right(1)));
         //Either3.right(11);
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * @param xors Collection of Eithers to accumulate primary values
      * @param reducer  Reducer to accumulate results
      * @return  Either populated with the accumulate primary operation
@@ -399,7 +399,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     public static <LT1, RT> Either<ListX<LT1>, RT> accumulate(final Monoid<RT> reducer, final CollectionX<Either<LT1, RT>> xors) {
         return sequenceRight(xors).map(s -> s.reduce(reducer));
     }
-    
+
     public static <LT, B, RT> Either<LT,RT> rightEval(final Eval<RT> right) {
         return new Right<>(
                            right);
@@ -410,26 +410,26 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                           left);
     }
 
-    
+
     /**
-     * Static method useful as a method reference for fluent consumption of any value type stored in this Either 
+     * Static method useful as a method reference for fluent consumption of any value type stored in this Either
      * (will capture the lowest common type)
-     * 
+     *
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      *   myEither.to(Either::consumeAny)
                  .accept(System.out::println);
      * }
      * </pre>
-     * 
+     *
      * @param either Either to consume value for
      * @return Consumer we can apply to consume value
      */
     static <X, LT extends X, M extends X, RT extends X>  Consumer<Consumer<? super X>> consumeAny(Either<LT, RT> either){
         return in->visitAny(in,either);
     }
-    
+
     static <X, LT extends X, M extends X, RT extends X,R>  Function<Function<? super X, R>,R> applyAny(Either<LT, RT> either){
         return in->visitAny(either,in);
     }
@@ -437,7 +437,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     static <X, PT extends X, ST extends X,R> R visitAny(Either<ST, PT> either, Function<? super X, ? extends R> fn){
         return either.visit(fn, fn);
     }
- 
+
     static <X, LT extends X, RT extends X> X visitAny(Consumer<? super X> c, Either<LT, RT> either){
         Function<? super X, X> fn = x ->{
             c.accept(x);
@@ -453,7 +453,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                                                        BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
                                                        Fn3<? super RT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
                                                        Fn4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (Either<LT, R>)Xor.super.forEach4(value1, value2, value3, yieldingFunction);
     }
     /* (non-Javadoc)
@@ -465,7 +465,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                                                        Fn3<? super RT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
                                                        Fn4<? super RT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                                                        Fn4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (Either<LT, R>)Xor.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
     /* (non-Javadoc)
@@ -475,7 +475,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     default <T2, R1, R2, R> Either<LT, R> forEach3(Function<? super RT, ? extends MonadicValue<R1>> value1,
                                                    BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
                                                    Fn3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+
         return (Either<LT, R>)Xor.super.forEach3(value1, value2, yieldingFunction);
     }
     /* (non-Javadoc)
@@ -486,7 +486,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                                                    BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
                                                    Fn3<? super RT, ? super R1, ? super R2, Boolean> filterFunction,
                                                    Fn3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+
         return (Either<LT, R>)Xor.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
     /* (non-Javadoc)
@@ -495,7 +495,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     @Override
     default <R1, R> Either<LT, R> forEach2(Function<? super RT, ? extends MonadicValue<R1>> value1,
                                            BiFunction<? super RT, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (Either<LT, R>)Xor.super.forEach2(value1, yieldingFunction);
     }
     /* (non-Javadoc)
@@ -505,7 +505,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     default <R1, R> Either<LT, R> forEach2(Function<? super RT, ? extends MonadicValue<R1>> value1,
                                            BiFunction<? super RT, ? super R1, Boolean> filterFunction,
                                            BiFunction<? super RT, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (Either<LT, R>)Xor.super.forEach2(value1, filterFunction, yieldingFunction);
     }
     /* (non-Javadoc)
@@ -514,7 +514,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     @Override
     default <T2, R> Either<LinkedListX<LT>, R> combineToList(Xor<LT, ? extends T2> app,
                                                              BiFunction<? super RT, ? super T2, ? extends R> fn) {
-        
+
         return (Either<LinkedListX<LT>, R>)Xor.super.combineToList(app, fn);
     }
     /* (non-Javadoc)
@@ -523,19 +523,19 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     @Override
     default <T2, R> Either<LT, R> combine(Xor<? extends LT, ? extends T2> app, BinaryOperator<LT> semigroup,
                                           BiFunction<? super RT, ? super T2, ? extends R> fn) {
-        
+
         return (Either<LT, R>)Xor.super.combine(app, semigroup, fn);
     }
     /**
      * Lazily construct a Right Either from the supplied publisher
      * <pre>
-     * {@code 
+     * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
-        
+
          Either<Throwable,Integer> future = Either.fromPublisher(reactiveStream);
-        
+
          //Either[1]
-     * 
+     *
      * }
      * </pre>
      * @param pub Publisher to construct an Either from
@@ -548,15 +548,15 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /**
      * Construct a Right Either from the supplied Iterable
      * <pre>
-     * {@code 
+     * {@code
      *   List<Integer> list =  Arrays.asList(1,2,3);
-        
+
          Either<Throwable,Integer> future = Either.fromIterable(list);
-        
+
          //Either[1]
-     * 
+     *
      * }
-     * </pre> 
+     * </pre>
      * @param iterable Iterable to construct an Either from
      * @return Either constructed from the supplied Iterable
      */
@@ -569,18 +569,18 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /**
      * Create an instance of the secondary type. Most methods are biased to the primary type,
      * so you will need to use swap() or secondaryXXXX to manipulate the wrapped value
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   Either.<Integer,Integer>left(10).map(i->i+1);
      *   //Either.left[10]
-     *    
+     *
      *    Either.<Integer,Integer>left(10).swap().map(i->i+1);
      *    //Either.right[11]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param value to wrap
      * @return Left instance of Either
      */
@@ -591,29 +591,29 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /**
      * Create an instance of the primary type. Most methods are biased to the primary type,
      * which means, for example, that the map method operates on the primary type but does nothing on secondary Eithers
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   Either.<Integer,Integer>right(10).map(i->i+1);
      *   //Either.right[11]
-     *    
-     *   
+     *
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param value To construct an Either from
      * @return Right type instanceof Either
      */
     public static <ST, PT> Either<ST, PT> right(final PT value) {
-        
+
         return new Right<ST,PT>(Eval.later(()->
                            value));
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.MonadicValue#fromEither5()
      */
 
@@ -623,7 +623,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Applicative#combine(java.util.function.
      * BinaryOperator, com.aol.cyclops2.types.Applicative)
      */
@@ -635,7 +635,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.MonadicValue#flatMapI(java.util.function.
      * Function)
@@ -647,7 +647,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.MonadicValue#flatMapP(java.util.function.
      * Function)
@@ -659,7 +659,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
      */
@@ -671,7 +671,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     // cojoin
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.MonadicValue#nest()
      */
     @Override
@@ -681,10 +681,10 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.MonadicValue#combine(com.aol.cyclops2.Monoid,
      * com.aol.cyclops2.types.MonadicValue)
-     */ 
+     */
     @Override
     default Either<LT, RT> combineEager(final Monoid<RT> monoid, final MonadicValue<? extends RT> v2) {
         return (Either<LT, RT>) Xor.super.combineEager(monoid, v2);
@@ -692,7 +692,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
@@ -702,8 +702,8 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.aol.cyclops2.types.Convertable#toOptional()
+     *
+     * @see com.aol.cyclops2.types.Convertable#optional()
      */
     @Override
     default Optional<RT> toOptional() {
@@ -712,7 +712,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
      */
@@ -720,9 +720,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     Either<LT, RT> filter(Predicate<? super RT> test);
 
     /**
-     * If this Either contains the Left type, map it's value so that it contains the Right type 
-     * 
-     * 
+     * If this Either contains the Left type, map it's value so that it contains the Right type
+     *
+     *
      * @param fn Function to map secondary type to primary
      * @return Either with secondary type mapped to primary
      */
@@ -730,7 +730,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /**
      * Always map the Left type of this Either if it is present using the provided transformation function
-     * 
+     *
      * @param fn Transformation function for Left types
      * @return Either with Left type transformed
      */
@@ -738,7 +738,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.MonadicValue#map(java.util.function.Function)
      */
     @Override
@@ -746,7 +746,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /**
      * Peek at the Left type value if present
-     * 
+     *
      * @param action Consumer to peek at the Left type value
      * @return Either with the same values as before
      */
@@ -754,7 +754,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Functor#peek(java.util.function.Consumer)
      */
     @Override
@@ -818,28 +818,28 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /**
      * Swap types so operations directly affect the current (pre-swap) Left type
      *<pre>
-     *  {@code 
-     *    
+     *  {@code
+     *
      *    Either.left("hello")
-     *       .map(v->v+" world") 
+     *       .map(v->v+" world")
      *    //Either.seconary["hello"]
-     *    
+     *
      *    Either.left("hello")
      *       .swap()
-     *       .map(v->v+" world") 
+     *       .map(v->v+" world")
      *       .swap()
      *    //Either.seconary["hello world"]
      *  }
      *  </pre>
-     * 
-     * 
+     *
+     *
      * @return Swap the primary and secondary types, allowing operations directly on what was the Left type
      */
     Either<RT, LT> swap();
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Value#toIor()
      */
     @Override
@@ -847,7 +847,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Convertable#isPresent()
      */
     @Override
@@ -857,7 +857,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Value#toEither()
      */
     @Override
@@ -867,7 +867,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Value#toEither(java.lang.Object)
      */
     @Override
@@ -875,7 +875,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         return visit(s -> Xor.secondary(secondary), p -> Xor.primary(p));
     }
 
-     
+
 
 
     default boolean isSecondary(){
@@ -884,30 +884,30 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     default boolean isPrimary(){
         return isRight();
     }
-   
 
-   
+
+
     /**
      * Visitor pattern for this Ior.
      * Execute the secondary function if this Either contains an element of the secondary type
      * Execute the primary function if this Either contains an element of the primary type
-     * 
-     * 
+     *
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Either.right(10)
      *     .visit(secondary->"no", primary->"yes")
      *  //Either["yes"]
-        
+
         Either.left(90)
            .visit(secondary->"no", primary->"yes")
         //Either["no"]
-         
-    
-     * 
+
+
+     *
      * }
      * </pre>
-     * 
+     *
      * @param secondary Function to execute if this is a Left Either
      * @param primary Function to execute if this is a Right Ior
      * @param both Function to execute if this Ior contains both types
@@ -926,7 +926,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.BiFunctor#bimap(java.util.function.Function,
      * java.util.function.Function)
      */
@@ -941,7 +941,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.BiFunctor#bipeek(java.util.function.Consumer,
      * java.util.function.Consumer)
      */
@@ -953,7 +953,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.BiFunctor#bicast(java.lang.Class,
      * java.lang.Class)
      */
@@ -965,7 +965,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.BiFunctor#bitrampoline(java.util.function.Function,
      * java.util.function.Function)
@@ -982,7 +982,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.function.Supplier#get()
      */
     @Override
@@ -1010,7 +1010,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.MonadicValue#flatMap(java.util.function.Function)
      */
@@ -1018,20 +1018,20 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     <RT1> Either<LT, RT1> flatMap(
             Function<? super RT, ? extends MonadicValue<? extends RT1>> mapper);
 
-    
-    
+
+
     /**
      * Perform a flatMap operation on the Left type
-     * 
+     *
      * @param mapper Flattening transformation function
      * @return Either containing the value inside the result of the transformation function as the Left value, if the Left type was present
      */
     <LT1> Either<LT1, RT> secondaryFlatMap(Function<? super LT, ? extends Xor<LT1, RT>> mapper);
 
-    
+
     /**
      * A flatMap operation that keeps the Left and Right types the same
-     * 
+     *
      * @param fn Transformation function
      * @return Either
      */
@@ -1052,7 +1052,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.applicative.ApplicativeFunctor#ap(com.aol.cyclops2.
      * types.Value, java.util.function.BiFunction)
@@ -1070,7 +1070,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /**
      * Accumulate secondarys into a LinkedListX (extended Persistent List) and Right with the supplied combiner function
      * Right accumulation only occurs if all phases are primary
-     * 
+     *
      * @param app Value to combine with
      * @param fn Combiner function for primary values
      * @return Combined Either
@@ -1083,16 +1083,16 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /**
      * Accumulate secondary values with the provided BinaryOperator / Semigroup {@link Semigroups}
      * Right accumulation only occurs if all phases are primary
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Either<String,String> fail1 =  Either.left("failed1");
         Either<LinkedListX<String>,String> result = fail1.list().combine(Either.left("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
-        
+
         //Left of [LinkedListX.of("failed1","failed2")))]
      * }
      * </pre>
-     * 
+     *
      * @param app Value to combine with
      * @param semigroup to combine secondary types
      * @param fn To combine primary types
@@ -1109,7 +1109,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#zip(java.lang.
      * Iterable, java.util.function.BiFunction)
      */
@@ -1124,7 +1124,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#zip(java.util.
      * function.BiFunction, org.reactivestreams.Publisher)
      */
@@ -1140,7 +1140,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
      * java.util.function.BiFunction)
      */
@@ -1153,7 +1153,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
@@ -1166,7 +1166,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
@@ -1177,7 +1177,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.lambda.monads.Filters#ofType(java.lang.Class)
      */
     @Override
@@ -1188,7 +1188,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.lambda.monads.Filters#filterNot(java.util.function.
      * Predicate)
@@ -1201,7 +1201,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.lambda.monads.Filters#notNull()
      */
     @Override
@@ -1212,7 +1212,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.lambda.monads.Functor#cast(java.lang.Class)
      */
     @Override
@@ -1223,7 +1223,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.lambda.monads.Functor#trampoline(java.util.function.
      * Function)
      */
@@ -1248,7 +1248,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         }
 
 
-       
+
         public Either<ST, PT> resolve() {
           return lazy.get()
                        .visit(Either::left, Either::right);
@@ -1257,9 +1257,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         public <R> Either<ST, R> map(final Function<? super PT, ? extends R> mapper) {
             return flatMap(t -> Either.right(mapper.apply(t)));
 
-         
+
         }
-        
+
         private <PT> Either<ST, PT> toEither(MonadicValue<? extends PT> value) {
             return value.visit(p -> Either.right(p), () -> Either.left(null));
         }
@@ -1270,7 +1270,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
 
             return Either.fromLazy(lazy.map(m->m.flatMap(mapper)));
-         
+
         }
         @Override
         public final void subscribe(final Subscriber<? super PT> sub) {
@@ -1314,7 +1314,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.sum.types.Either#secondaryValue()
          */
         @Override
@@ -1325,7 +1325,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.sum.types.Either#secondaryToPrimayMap(java.util.
          * function.Function)
          */
@@ -1338,7 +1338,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * com.aol.cyclops2.sum.types.Either#secondaryMap(java.util.function.
          * Function)
@@ -1350,7 +1350,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * com.aol.cyclops2.sum.types.Either#secondaryPeek(java.util.function.
          * Consumer)
@@ -1362,7 +1362,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * com.aol.cyclops2.sum.types.Either#peek(java.util.function.Consumer)
          */
@@ -1373,7 +1373,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.sum.types.Either#swap()
          */
         @Override
@@ -1384,7 +1384,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.sum.types.Either#toIor()
          */
         @Override
@@ -1395,7 +1395,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * com.aol.cyclops2.sum.types.Either#visit(java.util.function.Function,
          * java.util.function.Function)
@@ -1404,7 +1404,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         public <R> R visit(Function<? super ST, ? extends R> secondary, Function<? super PT, ? extends R> primary) {
             return trampoline()
                        .visit(secondary, primary);
-        } 
+        }
         private Either<ST,PT> trampoline(){
             Either<ST,PT> maybe = lazy.get();
             while (maybe instanceof Lazy) {
@@ -1415,7 +1415,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.sum.types.Either#get()
          */
         @Override
@@ -1427,7 +1427,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.sum.types.Either#secondaryGet()
          */
         @Override
@@ -1438,7 +1438,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.sum.types.Either#secondaryToOptional()
          */
         @Override
@@ -1449,7 +1449,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.sum.types.Either#secondaryToStream()
          */
         @Override
@@ -1461,7 +1461,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * com.aol.cyclops2.sum.types.Either#secondaryFlatMap(java.util.function.
          * Function)
@@ -1474,7 +1474,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * com.aol.cyclops2.sum.types.Either#secondaryToPrimayFlatMap(java.util.
          * function.Function)
@@ -1486,7 +1486,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * com.aol.cyclops2.sum.types.Either#peek(java.util.function.Consumer,
          * java.util.function.Consumer)
@@ -1500,7 +1500,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.sum.types.Either#isRight()
          */
         @Override
@@ -1511,7 +1511,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.sum.types.Either#isLeft()
          */
         @Override
@@ -1522,7 +1522,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * com.aol.cyclops2.sum.types.Either#combine(com.aol.cyclops2.types.Value,
          * java.util.function.BiFunction)
@@ -1537,18 +1537,18 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#hashCode()
          */
         @Override
         public int hashCode() {
             return trampoline().hashCode();
-            
+
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
@@ -1635,8 +1635,8 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                 final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
 
             Eval<? extends Either<? extends ST,  ? extends RT1>> ret = value.map(mapper.andThen(Either::fromMonadicValue));
-          
-            
+
+
            final Eval<Either<ST, RT1>> e3 =  (Eval<Either<ST,  RT1>>)ret;
            return new Lazy<>(
                              e3);
@@ -1699,7 +1699,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#ap(com.aol.
          * cyclops2.types.Value, java.util.function.BiFunction)
          */

@@ -216,7 +216,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                  .accept(System.out::println);
      * }
      * </pre>
-     * 
+     *
      * @param either Either to consume value for
      * @return Consumer we can apply to consume value
      */
@@ -270,33 +270,33 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /**
      *  Turn a collection of Either3 into a single Either with Lists of values.
-     *  
+     *
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      * Either4<String,String,String,Integer> just  = Either4.right(10);
        Either4<String,String,String,Integer> none = Either4.left("none");
-        
-        
+
+
      * Either4<ListX<String>,ListX<String>,ListX<String>,ListX<Integer>> xors =Either4.sequence(ListX.of(just,none,Either4.right(1)));
        //Eitehr.right(ListX.of(10,1)));
-     * 
+     *
      * }</pre>
      *
-     * 
-     * 
+     *
+     *
      * @param Either3 Either3 to sequence
      * @return Either3 Sequenced
      */
     public static <LT1,LT2,LT3,LT4,PT> Either5<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<LT4>,ListX<PT>> sequence(final CollectionX<Either5<LT1, LT2, LT3, LT4, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(Either5::isRight).map(AnyM::fromEither5).toListX(),Witness.either5.INSTANCE)
+        return AnyM.sequence(xors.stream().filter(Either5::isRight).map(AnyM::fromEither5).to().listX(),Witness.either5.INSTANCE)
                 .to(Witness::either5);
     }
     /**
      * Traverse a Collection of Either3 producing an Either4 with a ListX, applying the transformation function to every
      * element in the list
-     * 
+     *
      * @param xors Either4s to sequence and transform
      * @param fn Transformation function
      * @return An Either4 with a transformed list
@@ -304,25 +304,25 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     public static <LT1,LT2, LT3,LT4,PT,R> Either5<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<LT4>,ListX<R>> traverse(final CollectionX<Either5<LT1, LT2, LT3, LT4, PT>> xors, Function<? super PT, ? extends R> fn) {
         return  sequence(xors).map(l->l.map(fn));
     }
-   
+
 
     /**
      *  Accumulate the results only from those Either3 which have a Right type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see com.aol.cyclops2.Monoids }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Either4<String,String,String,Integer> just  = Either4.right(10);
        Either4<String,String,String,Integer> none = Either4.left("none");
-     *  
+     *
      *  Either4<ListX<String>,ListX<String>,Integer> xors = Either4.accumulatePrimary(Monoids.intSum,ListX.of(just,none,Either4.right(1)));
         //Either4.right(11);
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * @param xors Collection of Eithers to accumulate primary values
      * @param reducer  Reducer to accumulate results
      * @return  Either4 populated with the accumulate primary operation
@@ -331,18 +331,18 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         return sequence(xors).map(s -> s.reduce(reducer));
     }
 
-    
+
 
     /**
      * Lazily construct a Right Either from the supplied publisher
      * <pre>
-     * {@code 
+     * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
-        
+
          Either5<Throwable,String,String,String,Integer> lazy = Either5.fromPublisher(reactiveStream);
-        
+
          //Either[1]
-     * 
+     *
      * }
      * </pre>
      * @param pub Publisher to construct an Either from
@@ -357,15 +357,15 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     /**
      * Construct a Right Either4 from the supplied Iterable
      * <pre>
-     * {@code 
+     * {@code
      *   List<Integer> list =  Arrays.asList(1,2,3);
-        
+
          Either4<Throwable,String,Integer> future = Either4.fromIterable(list);
-        
+
          //Either4[1]
-     * 
+     *
      * }
-     * </pre> 
+     * </pre>
      * @param iterable Iterable to construct an Either from
      * @return Either constructed from the supplied Iterable
      */
@@ -374,10 +374,10 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         final Iterator<RT> it = iterable.iterator();
         return it.hasNext() ? Either5.right( it.next()) : Either5.left1(null);
     }
-    
+
     /**
      * Construct a Either4#Right from an Eval
-     * 
+     *
      * @param right Eval to construct Either4#Right from
      * @return Either4 right instance
      */
@@ -388,7 +388,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /**
      * Construct a Either4#Left1 from an Eval
-     * 
+     *
      * @param left Eval to construct Either4#Left1 from
      * @return Either4 Left1 instance
      */
@@ -399,7 +399,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /**
      * Construct a Either4#Right
-     * 
+     *
      * @param right Value to store
      * @return Either4 Right instance
      */
@@ -410,7 +410,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /**
      * Construct a Either4#Left1
-     * 
+     *
      * @param left Value to store
      * @return Left1 instance
      */
@@ -421,7 +421,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /**
      * Construct a Either4#Second
-     * 
+     *
      * @param middle Value to store
      * @return Second instance
      */
@@ -431,7 +431,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
     /**
      * Construct a Either4#Third
-     * 
+     *
      * @param middle Value to store
      * @return Third instance
      */
@@ -442,7 +442,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /**
      * Construct a Either4#Third
-     * 
+     *
      * @param middle Value to store
      * @return Third instance
      */
@@ -452,7 +452,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
     /**
      * Construct a Either4#Second from an Eval
-     * 
+     *
      * @param second Eval to construct Either4#middle from
      * @return Either4 second instance
      */
@@ -462,7 +462,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
     /**
      * Construct a Either4#Third from an Eval
-     * 
+     *
      * @param third Eval to construct Either4#middle from
      * @return Either4 third instance
      */
@@ -472,7 +472,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
     /**
      * Construct a Either4#Third from an Eval
-     * 
+     *
      * @param third Eval to construct Either4#middle from
      * @return Either4 third instance
      */
@@ -482,7 +482,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
     /**
      * Construct a Either4#Third from an Eval
-     * 
+     *
      * @param third Eval to construct Either4#middle from
      * @return Either4 third instance
      */
@@ -564,7 +564,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /**
      * Visit the types in this Either4, only one user supplied function is executed depending on the type
-     * 
+     *
      * @param left1 Function to execute if this Either4 is a Left1 instance
      * @param left2 Function to execute if this Either4 is a Left2 instance
      * @param left3 Function to execute if this Either4 is a Left3 instance
@@ -579,7 +579,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     /**
      * Filter this Either4 resulting in a Maybe#none if it is not a Right instance or if the predicate does not
      * hold. Otherwise results in a Maybe containing the current value
-     * 
+     *
      * @param test Predicate to apply to filter this Either4
      * @return Maybe containing the current value if this is a Right instance and the predicate holds, otherwise Maybe#none
      */
@@ -588,13 +588,13 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     /**
      * Flattening transformation on this Either4. Contains an internal trampoline so will convert tail-recursive calls
      * to iteration.
-     * 
+     *
      * @param mapper Mapping function
      * @return Mapped Either4
      */
     < RT1> Either5<LT1, LT2,LT3, LT4,RT1> flatMap(
             Function<? super RT, ? extends MonadicValue<? extends RT1>> mapper);
- 
+
     /**
      * @return Swap the fourth and the right types
      */
@@ -635,14 +635,14 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @return True if this lazy contains the left4 type
      */
     public boolean isLeft4();
-    
-    
+
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Maybe<U> ofType(Class<? extends U> type) {
-        
+
         return (Maybe<U>)MonadicValue.super.ofType(type);
     }
     /* (non-Javadoc)
@@ -650,7 +650,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      */
     @Override
     default Maybe<RT> filterNot(Predicate<? super RT> predicate) {
-        
+
         return (Maybe<RT>)MonadicValue.super.filterNot(predicate);
     }
     /* (non-Javadoc)
@@ -658,12 +658,12 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      */
     @Override
     default Maybe<RT> notNull() {
-        
+
         return (Maybe<RT>)MonadicValue.super.notNull();
     }
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.BiFunctor#bimap(java.util.function.Function,
      * java.util.function.Function)
      */
@@ -673,7 +673,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Transformable#map(java.util.function.Function)
      */
     @Override
@@ -681,32 +681,32 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /**
      * Return an Ior that can be this object or a Ior.primary or Ior.secondary
-     * @return new Ior 
+     * @return new Ior
      */
      default Ior<LT1, RT> toIor() {
-        return this.visit(l->Ior.secondary(l), 
+        return this.visit(l->Ior.secondary(l),
                           m->Ior.secondary(null),
                           m->Ior.secondary(null),
                           m->Ior.secondary(null),
                           r->Ior.primary(r));
     }
      default Xor<LT1, RT> toXor() {
-         return this.visit(l->Xor.secondary(l), 
+         return this.visit(l->Xor.secondary(l),
                            m->Xor.secondary(null),
                            m->Xor.secondary(null),
                            m->Xor.secondary(null),
                            r->Xor.primary(r));
      }
-    
-     
-     
-     
+
+
+
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
     default <R> Either5<LT1,LT2,LT3,LT4,R> coflatMap(Function<? super MonadicValue<RT>, R> mapper) {
-        
+
         return (Either5<LT1,LT2,LT3,LT4,R>)MonadicValue.super.coflatMap(mapper);
     }
     /* (non-Javadoc)
@@ -714,7 +714,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      */
     @Override
     default Either5<LT1,LT2,LT3,LT4,MonadicValue<RT>> nest() {
-        
+
         return (Either5<LT1,LT2,LT3,LT4,MonadicValue<RT>>)MonadicValue.super.nest();
     }
     /* (non-Javadoc)
@@ -725,7 +725,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                                                                     BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
                                                                     Fn3<? super RT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
                                                                     Fn4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (Either5<LT1,LT2,LT3,LT4,R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
     /* (non-Javadoc)
@@ -737,7 +737,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                                                                     Fn3<? super RT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
                                                                     Fn4<? super RT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                                                                     Fn4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (Either5<LT1,LT2,LT3,LT4,R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
     /* (non-Javadoc)
@@ -747,7 +747,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     default <T2, R1, R2, R> Either5<LT1,LT2,LT3,LT4,R> forEach3(Function<? super RT, ? extends MonadicValue<R1>> value1,
                                                                 BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
                                                                 Fn3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+
         return (Either5<LT1,LT2,LT3,LT4,R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
     /* (non-Javadoc)
@@ -758,7 +758,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                                                                 BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
                                                                 Fn3<? super RT, ? super R1, ? super R2, Boolean> filterFunction,
                                                                 Fn3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+
         return (Either5<LT1,LT2,LT3,LT4,R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
     /* (non-Javadoc)
@@ -767,7 +767,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     @Override
     default <R1, R> Either5<LT1,LT2,LT3,LT4,R> forEach2(Function<? super RT, ? extends MonadicValue<R1>> value1,
                                                         BiFunction<? super RT, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (Either5<LT1,LT2,LT3,LT4,R>)MonadicValue.super.forEach2(value1, yieldingFunction);
     }
     /* (non-Javadoc)
@@ -777,7 +777,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     default <R1, R> Either5<LT1,LT2,LT3,LT4,R> forEach2(Function<? super RT, ? extends MonadicValue<R1>> value1,
                                                         BiFunction<? super RT, ? super R1, Boolean> filterFunction,
                                                         BiFunction<? super RT, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (Either5<LT1,LT2,LT3,LT4,R>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
     }
     /* (non-Javadoc)
@@ -785,12 +785,12 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      */
     @Override
     default Either5<LT1,LT2,LT3,LT4,RT> combineEager(Monoid<RT> monoid, MonadicValue<? extends RT> v2) {
-        
+
         return (Either5<LT1,LT2,LT3,LT4,RT>)MonadicValue.super.combineEager(monoid, v2);
     }
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Combiner#combine(com.aol.cyclops2.types.Value,
      * java.util.function.BiFunction)
      */
@@ -803,7 +803,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.Combiner#combine(java.util.function.BinaryOperator,
      * com.aol.cyclops2.types.Combiner)
@@ -818,7 +818,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
      * java.util.function.BiFunction)
      */
@@ -831,7 +831,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
@@ -844,7 +844,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
@@ -855,7 +855,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Pure#unit(java.lang.Object)
      */
     @Override
@@ -863,7 +863,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#zip(java.lang.
      * Iterable, java.util.function.BiFunction)
      */
@@ -876,7 +876,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#zip(java.util.
      * function.BiFunction, org.reactivestreams.Publisher)
      */
@@ -889,7 +889,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.BiFunctor#bipeek(java.util.function.Consumer,
      * java.util.function.Consumer)
      */
@@ -901,7 +901,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.BiFunctor#bicast(java.lang.Class,
      * java.lang.Class)
      */
@@ -913,7 +913,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.BiFunctor#bitrampoline(java.util.function.Function,
      * java.util.function.Function)
@@ -928,7 +928,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Transformable#cast(java.lang.Class)
      */
     @Override
@@ -939,7 +939,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Transformable#peek(java.util.function.Consumer)
      */
     @Override
@@ -950,7 +950,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.Transformable#trampoline(java.util.function.Function)
      */
@@ -1171,12 +1171,12 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         public <RT1> Either5<ST, M, M2, M3, RT1> flatMap(
                 final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
             Eval<? extends Either5<? extends ST, ? extends M, ? extends M2,? extends M3, ? extends RT1>> et = value.map(mapper.andThen(Either5::fromMonadicValue));
-           
-            
+
+
            final Eval<Either5<ST, M, M2,M3, RT1>> e3 =  (Eval<Either5<ST, M, M2,M3, RT1>>)et;
            return new Lazy<>(
                              e3);
-          
+
 
         }
 
@@ -1202,7 +1202,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         @Override
         public <R> R visit(final Function<? super ST, ? extends R> secondary,
-                final Function<? super M, ? extends R> mid,  
+                final Function<? super M, ? extends R> mid,
                 final Function<? super M2, ? extends R> mid2,
                 final Function<? super M3, ? extends R> mid3,
                 final Function<? super PT, ? extends R> primary) {
@@ -1211,7 +1211,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#ap(com.aol.
          * cyclops2.types.Value, java.util.function.BiFunction)
          */
@@ -1277,7 +1277,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
             return  new Left2<>(value);
         }
 
-        
+
         @Override
         public Either5<PT, M,M2,M3, ST> swap1() {
 
@@ -1336,7 +1336,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
             return true;
         }
 
-        
+
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -1407,16 +1407,16 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         @Override
         public <R> R visit(final Function<? super ST, ? extends R> secondary,
-                final Function<? super M, ? extends R> mid, 
-                final Function<? super M2, ? extends R> mid2, 
-                final Function<? super M3, ? extends R> mid3, 
+                final Function<? super M, ? extends R> mid,
+                final Function<? super M2, ? extends R> mid2,
+                final Function<? super M3, ? extends R> mid3,
                 final Function<? super PT, ? extends R> primary) {
             return secondary.apply(value.get());
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#ap(com.aol.
          * cyclops2.types.Value, java.util.function.BiFunction)
          */
@@ -1526,7 +1526,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                 return false;
             return true;
         }
-        
+
 
     }
 
@@ -1579,7 +1579,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         public boolean isLeft4() {
             return false;
         }
-        
+
 
         @Override
         public String toString() {
@@ -1594,15 +1594,15 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         @Override
         public <R> R visit(final Function<? super ST, ? extends R> secondary,
                 final Function<? super M, ? extends R> mid1,
-                final Function<? super M2, ? extends R> mid2, 
-                final Function<? super M3, ? extends R> mid3, 
+                final Function<? super M2, ? extends R> mid2,
+                final Function<? super M3, ? extends R> mid3,
                 final Function<? super PT, ? extends R> primary) {
             return mid1.apply(value.get());
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#ap(com.aol.
          * cyclops2.types.Value, java.util.function.BiFunction)
          */
@@ -1716,10 +1716,10 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                 return false;
             return true;
         }
-        
+
 
     }
-    @AllArgsConstructor(access = AccessLevel.PRIVATE) 
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     static class Left3<ST, M,M2, M3, PT> implements Either5<ST, M, M2, M3,PT> {
         private final Eval<M2> value;
 
@@ -1788,15 +1788,15 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         @Override
         public <R> R visit(final Function<? super ST, ? extends R> secondary,
                 final Function<? super M, ? extends R> mid1,
-                final Function<? super M2, ? extends R> mid2, 
-                final Function<? super M3, ? extends R> mid3, 
+                final Function<? super M2, ? extends R> mid2,
+                final Function<? super M3, ? extends R> mid3,
                 final Function<? super PT, ? extends R> primary) {
             return mid2.apply(value.get());
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#ap(com.aol.
          * cyclops2.types.Value, java.util.function.BiFunction)
          */
@@ -1852,7 +1852,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         public Either5<ST, M, PT,M3, M2> swap3() {
             return new Right<>(
                     value);
-            
+
         }
         @Override
         public Either5<ST, PT,M2, M3, M> swap2() {
@@ -1905,11 +1905,11 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
             result = prime * result + ((value == null) ? 0 : value.hashCode());
             return result;
         }
-        
+
 
     }
-    
-    @AllArgsConstructor(access = AccessLevel.PRIVATE) 
+
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     static class Left4<ST, M,M2, M3, PT> implements Either5<ST, M, M2, M3,PT> {
         private final Eval<M3> value;
 

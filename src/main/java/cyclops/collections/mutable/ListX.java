@@ -8,6 +8,8 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Trampoline;
 import cyclops.function.Fn3;
@@ -238,7 +240,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * }
          * </pre>
          *
-         * @param m Monoid to use for combining Lists
+         * @param m Monoid toNested use for combining Lists
          * @return Type class for combining Lists
          */
         public static <T> MonadPlus<ListX.µ> monadPlus(Monoid<ListX<T>> m){
@@ -312,7 +314,7 @@ public interface ListX<T> extends To<ListX<T>>,
         /**
          * Widen a ListType nested inside another HKT encoded type
          *
-         * @param flux HTK encoded type containing  a List to widen
+         * @param flux HTK encoded type containing  a List toNested widen
          * @return HKT encoded type with a widened List
          */
         public static <C2, T> Higher<C2, Higher<ListX.µ, T>> widen2(Higher<C2, ListX<T>> flux) {
@@ -337,7 +339,7 @@ public interface ListX<T> extends To<ListX<T>>,
         /**
          * Convert the HigherKindedType definition for a List into
          *
-         * @param List Type Constructor to convert back into narrowed type
+         * @param List Type Constructor toNested convert back into narrowed type
          * @return List from Higher Kinded Type
          */
         public static <T> ListX<T> narrow(final Higher<ListX.µ, T> completableList) {
@@ -356,7 +358,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
    
     public static <T> ListX<T> fromStreamS(Stream<T> s){
-        return ReactiveSeq.fromStream(s).toListX();
+        return ReactiveSeq.fromStream(s).to().listX(Conversion.LAZY);
     }
    
 
@@ -364,28 +366,28 @@ public interface ListX<T> extends To<ListX<T>>,
      * Create a ListX that contains the Integers between skip and take
      * 
      * @param start
-     *            Number of range to skip from
+     *            Number of range toNested skip from
      * @param end
-     *            Number for range to take at
+     *            Number for range toNested take at
      * @return Range ListX
      */
     public static ListX<Integer> range(final int start, final int end) {
-        return ReactiveSeq.range(start, end)
-                          .toListX();
+        return ReactiveSeq.range(start, end).to()
+                          .listX(Conversion.LAZY);
     }
 
     /**
      * Create a ListX that contains the Longs between skip and take
      * 
      * @param start
-     *            Number of range to skip from
+     *            Number of range toNested skip from
      * @param end
-     *            Number for range to take at
+     *            Number for range toNested take at
      * @return Range ListX
      */
     public static ListX<Long> rangeLong(final long start, final long end) {
-        return ReactiveSeq.rangeLong(start, end)
-                          .toListX();
+        return ReactiveSeq.rangeLong(start, end).to()
+                          .listX(Conversion.LAZY);
     }
 
     /**
@@ -405,12 +407,13 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     static <U, T> ListX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
-                          .toListX();
+                          .to()
+                          .listX(Conversion.LAZY);
     }
     /**
-     * Generate a ListX from the provided value up to the provided limit number of times
+     * Generate a ListX from the provided value up toNested the provided limit number of times
      * 
-     * @param limit Max number of elements to generate
+     * @param limit Max number of elements toNested generate
      * @param s Value for ListX elements
      * @return ListX generated from the provided Supplier
      */
@@ -418,35 +421,38 @@ public interface ListX<T> extends To<ListX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit)
-                          .toListX();
+                          .to()
+                          .listX(Conversion.LAZY);
     }
 
     /**
-     * Generate a ListX from the provided Supplier up to the provided limit number of times
+     * Generate a ListX from the provided Supplier up toNested the provided limit number of times
      * 
-     * @param limit Max number of elements to generate
-     * @param s Supplier to generate ListX elements
+     * @param limit Max number of elements toNested generate
+     * @param s Supplier toNested generate ListX elements
      * @return ListX generated from the provided Supplier
      */
     public static <T> ListX<T> generate(final long limit, final Supplier<T> s) {
 
         return ReactiveSeq.generate(s)
                           .limit(limit)
-                          .toListX();
+                          .to()
+                          .listX(Conversion.LAZY);
     }
 
     /**
-     * Create a ListX by iterative application of a function to an initial element up to the supplied limit number of times
+     * Create a ListX by iterative application of a function toNested an initial element up toNested the supplied limit number of times
      * 
-     * @param limit Max number of elements to generate
+     * @param limit Max number of elements toNested generate
      * @param seed Initial element
-     * @param f Iteratively applied to each element to generate the next element
+     * @param f Iteratively applied toNested each element toNested generate the next element
      * @return ListX generated by iterative application
      */
     public static <T> ListX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
-                          .toListX();
+                          .to()
+                          .listX(Conversion.LAZY);
 
     }
     @Override
@@ -523,14 +529,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     
-    
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.sequence.traits.ConvertableSequence#toListX()
-     */
-    @Override
-    default ListX<T> toListX() {
-        return this;
-    }
+
 
     /**
      * @return A JDK 8 Collector for converting Streams into ListX instances
@@ -573,7 +572,7 @@ public interface ListX<T> extends To<ListX<T>>,
      *
      * 
      * 
-     * @param values to construct a Deque from
+     * @param values toNested construct a Deque from
      * @return DequeX
      */
     @SafeVarargs
@@ -595,12 +594,12 @@ public interface ListX<T> extends To<ListX<T>>,
      * Construct a ListX from an Publisher
      * 
      * @param publisher
-     *            to construct ListX from
+     *            toNested construct ListX from
      * @return ListX
      */
     public static <T> ListX<T> fromPublisher(final Publisher<? extends T> publisher) {
-        return Spouts.from((Publisher<T>) publisher)
-                          .toListX();
+        return Spouts.from((Publisher<T>) publisher).to()
+                          .listX(Conversion.LAZY);
     }
     /**
      *
@@ -621,6 +620,7 @@ public interface ListX<T> extends To<ListX<T>>,
                 stream,
                 defaultCollector());
     }
+
 
     public static <T> ListX<T> fromIterable(final Iterable<T> it) {
         if (it instanceof ListX)
@@ -657,7 +657,7 @@ public interface ListX<T> extends To<ListX<T>>,
     ListX<T> withCollector(Collector<T, ?, List<T>> collector);
 
     /**
-     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used toNested perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 
@@ -714,7 +714,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /**
-     * @return A Collector to generate a List
+     * @return A Collector toNested generate a List
      */
     public <T> Collector<T, ?, List<T>> getCollector();
 
@@ -748,13 +748,13 @@ public interface ListX<T> extends To<ListX<T>>,
      * {@code 
      *  ListX.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .toListX()
+                   .listX(Conversion.LAZY)
                    
      *  //ListX(3,4) 
      * }</pre>
      * 
-     * @param predicate Test to see if two neighbors should be joined
-     * @param op Reducer to combine neighbors
+     * @param predicate Test toNested see if two neighbors should be joined
+     * @param op Reducer toNested combine neighbors
      * @return Combined / Partially Reduced ListX
      */
     @Override
@@ -1598,7 +1598,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * }
      * </pre>
      * 
-     * @param listX to narrow generic type
+     * @param listX toNested narrow generic type
      * @return ListX with narrowed type
      */
     public static <T> ListX<T> narrow(final ListX<? extends T> listX) {

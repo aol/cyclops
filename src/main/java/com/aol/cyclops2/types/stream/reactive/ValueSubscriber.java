@@ -115,7 +115,7 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
         return (T) firstValue.get();
     }
 
-    @Override
+
     public Xor<Throwable, T> toXor() {
         if (get() == null && firstError.get() != UNSET) {
             return Xor.secondary((Throwable) firstError.get());
@@ -133,12 +133,12 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
         return (T) firstValue.get();
     }
 
-    @Override
+
     public <X extends Throwable> Try<T, X> toTry(final Class<X>... classes) {
         return Try.withCatch(() -> throwingGet(), classes);
     }
 
-    @Override
+
     public Ior<Throwable, T> toIor() {
         get();
 

@@ -17,7 +17,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * General instance used to create typeclass instances from Java 8 method references
+ * General instance used toNested create typeclass instances from Java 8 method references
  * 
  * @author johnmcclean
  *
@@ -104,7 +104,7 @@ public interface General {
         
        
         Applicative<CRE> applicative;
-        BiFunction<? extends Higher<CRE,A>,Function<? super A,? extends Higher<CRE,B>>,? extends Higher<CRE,B>> bindRef; //reference to bind / flatMap method
+        BiFunction<? extends Higher<CRE,A>,Function<? super A,? extends Higher<CRE,B>>,? extends Higher<CRE,B>> bindRef; //reference toNested bind / flatMap method
        
         
         <T,R> BiFunction<Higher<CRE,T>,Function<? super T,? extends Higher<CRE,R>>,Higher<CRE,R>> bindRef(){

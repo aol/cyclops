@@ -206,13 +206,13 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      * </pre>
      * 
      * @param fn Function inside an Applicative
-     * @return Function to apply an Applicative's value to function
+     * @return Function toNested apply an Applicative's value toNested function
      */
     public static <W extends WitnessType<W>,T,T2,R> Function<AnyM2<W,T,T2>,AnyM2<W,R,T2>> ap(AnyM2<W, Function<T, R>,T2> fn){
         return apply->(AnyM2<W,R,T2>)apply.adapter().ap(fn,apply);
     }
     /**
-     * Applicative ap2 method to use fluently to apply to a curried function
+     * Applicative ap2 method toNested use fluently toNested apply toNested a curried function
      * <pre>
      * {@code 
      *    AnyM<optional,Function<Integer,Function<Integer,Integer>>> add = AnyM.fromNullable(Curry.curry2(this::add));
@@ -224,7 +224,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      * }
      * </pre>
      * @param fn Curried function inside an Applicative
-     * @return Function to apply two Applicative's values to a function
+     * @return Function toNested apply two Applicative's values toNested a function
      */
     public static <W extends WitnessType<W>,T,T2,R,T3> BiFunction<AnyM2<W,T,T3>,AnyM2<W,T2,T3>,AnyM2<W,R,T3>> ap2(AnyM2<W, Function<T, Function<T2, R>>,T3> fn){
         return (apply1,apply2)->(AnyM2<W,R,T3>)apply1.adapter().ap2(fn,apply1,apply2);
@@ -526,7 +526,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
               return a+b;
       }
    * }</pre>
-   * The add method has no null handling, but we can lift the method to Monadic form, and use Optionals to automatically handle null / empty value cases.
+   * The add method has no null handling, but we can lift the method toNested Monadic form, and use Optionals toNested automatically handle null / empty value cases.
    * 
    * 
    * @param fn BiFunction to lift

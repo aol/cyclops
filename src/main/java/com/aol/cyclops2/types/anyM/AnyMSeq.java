@@ -2,11 +2,7 @@ package com.aol.cyclops2.types.anyM;
 
 import static com.aol.cyclops2.internal.Utils.firstOrNull;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -21,12 +17,16 @@ import java.util.stream.Stream;
 import com.aol.cyclops2.types.*;
 
 
+import com.aol.cyclops2.types.futurestream.SimpleReactStream;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
+import cyclops.async.LazyReact;
+import cyclops.async.SimpleReact;
 import cyclops.async.adapters.QueueFactory;
-import cyclops.collections.mutable.DequeX;
-import cyclops.collections.mutable.QueueX;
-import cyclops.collections.mutable.SetX;
+import cyclops.collections.mutable.*;
 import cyclops.collections.immutable.*;
 import cyclops.monads.WitnessType;
+import cyclops.stream.FutureStream;
+import cyclops.stream.Streamable;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -39,7 +39,6 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
-import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import cyclops.function.Predicates;
 import cyclops.function.Fn4;
@@ -70,13 +69,13 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      *
      * 
      * @param monad1
-     *            Nested Monad to iterate over
+     *            Nested Monad toNested iterate over
      * @param monad2
-     *            Nested Monad to iterate over
+     *            Nested Monad toNested iterate over
      * @param monad3
-     *            Nested Monad to iterate over
+     *            Nested Monad toNested iterate over
      * @param yieldingFunction
-     *            Function with pointers to the current element from both
+     *            Function with pointers toNested the current element from both
      *            Monad that generates the new elements
      * @return AnyMSeq with elements generated via nested iteration
      */
@@ -106,16 +105,16 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
      * 
      * @param monad1
-     *            Nested Monad to iterate over
+     *            Nested Monad toNested iterate over
      * @param monad2
-     *            Nested Monad to iterate over
+     *            Nested Monad toNested iterate over
      * @param monad3
-     *            Nested Monad to iterate over
+     *            Nested Monad toNested iterate over
      * @param filterFunction
-     *            Filter to apply over elements before passing non-filtered
-     *            values to the yielding function
+     *            Filter toNested apply over elements before passing non-filtered
+     *            values toNested the yielding function
      * @param yieldingFunction
-     *            Function with pointers to the current element from both
+     *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
@@ -144,7 +143,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
     /**
      * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
-     * etc to be injected, for example)
+     * etc toNested be injected, for example)
      * 
      * <pre>
      * {@code 
@@ -158,8 +157,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * </pre>
      * 
      * 
-     * @param monad Nested Monad to iterate over
-     * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
+     * @param monad Nested Monad toNested iterate over
+     * @param yieldingFunction Function with pointers toNested the current element from both Streams that generates the new elements
      * @return FutureStream with elements generated via nested iteration
      */
     default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad,
@@ -174,7 +173,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
     /**
      * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
-     * etc to be injected, for example)
+     * etc toNested be injected, for example)
      * 
      * <pre>
      * {@code 
@@ -187,9 +186,9 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      *  //AnyM[14,15]
      * }
      * </pre>
-     * @param monad Nested Monad to iterate over
-     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
-     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
+     * @param monad Nested Monad toNested iterate over
+     * @param filterFunction Filter toNested apply over elements before passing non-filtered values toNested the yielding function
+     * @param yieldingFunction Function with pointers toNested the current element from both monads that generates the new elements
      * @return
      */
    default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad, 
@@ -221,10 +220,10 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      *  
      * }
      * </pre> 
-     * @param monad1 Nested monad to flatMap over
-     * @param monad2 Nested monad to flatMap over
-     * @param filterFunction Filter to apply over elements before passing non-filtered values to the yielding function
-     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
+     * @param monad1 Nested monad toNested flatMap over
+     * @param monad2 Nested monad toNested flatMap over
+     * @param filterFunction Filter toNested apply over elements before passing non-filtered values toNested the yielding function
+     * @param yieldingFunction Function with pointers toNested the current element from both monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
@@ -261,9 +260,9 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * }
     * </pre> 
      * 
-     * @param monad1 Nested Stream to iterate over
-     * @param monad2 Nested Stream to iterate over
-     * @param yieldingFunction Function with pointers to the current element from both Monads that generates the new elements
+     * @param monad1 Nested Stream toNested iterate over
+     * @param monad2 Nested Stream toNested iterate over
+     * @param yieldingFunction Function with pointers toNested the current element from both Monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
@@ -281,7 +280,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     
     }
     /**
-     * Equivalence test, returns true if this Monad is equivalent to the supplied monad
+     * Equivalence test, returns true if this Monad is equivalent toNested the supplied monad
      * e.g.
      * <pre>
      * {code
@@ -290,7 +289,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * </pre>
      * 
      * 
-     * @param t Monad to compare to
+     * @param t Monad toNested compare toNested
      * @return true if equivalent
      */
     default boolean eqv(final AnyMSeq<?,T> t) {
@@ -1117,56 +1116,11 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     ReactiveSeq<T> stream();
 
-
     @Override
-    default DequeX<T> toDequeX() {
-        return FoldableTraversable.super.toDequeX().materialize();
+    default ConvertableSequence<T> to() {
+        return new ConvertableSequence<>(traversable());
     }
 
-    @Override
-    default QueueX<T> toQueueX() {
-        return FoldableTraversable.super.toQueueX().materialize();
-    }
-
-    @Override
-    default SetX<T> toSetX() {
-        return FoldableTraversable.super.toSetX().materialize();
-    }
-
-    @Override
-    default ListX<T> toListX() {
-        return FoldableTraversable.super.toListX().materialize();
-    }
-
-    @Override
-    default LinkedListX<T> toPStackX() {
-        return FoldableTraversable.super.toPStackX().materialize();
-    }
-
-    @Override
-    default VectorX<T> toPVectorX() {
-        return FoldableTraversable.super.toPVectorX().materialize();
-    }
-
-    @Override
-    default PersistentQueueX<T> toPQueueX() {
-        return FoldableTraversable.super.toPQueueX().materialize();
-    }
-    @Override
-    default BagX<T> toPBagX() {
-        return FoldableTraversable.super.toPBagX().materialize();
-    }
-
-    @Override
-    default PersistentSetX<T> toPSetX() {
-        return FoldableTraversable.super.toPSetX().materialize();
-    }
-
-    @Override
-    default OrderedSetX<T> toPOrderedSetX() {
-        return FoldableTraversable.super.toPOrderedSetX().materialize();
-    }
-    
     default AnyMSeq<W,T> mergeP(final QueueFactory<T> factory, final Publisher<T>... publishers) {
     	ReactiveSeq<T> reactiveSeq = stream().mergeP(factory, publishers);
     	return (AnyMSeq<W,T>) reactiveSeq.anyM();
@@ -1175,4 +1129,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     default AnyMSeq<W,T> mergeP(final Publisher<T>... publishers) {
     	return (AnyMSeq<W,T>) stream().mergeP(publishers).anyM();
     }
+
+
+
+
 }

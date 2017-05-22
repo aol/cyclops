@@ -10,13 +10,13 @@ public class ListTSeqConvertableSequenceTest extends AbstractConvertableSequence
 
     @Override
     public <T> ConvertableSequence<T> of(T... elements) {
-        return ListX.of(elements).liftM(Witness.list.INSTANCE);
+        return ListX.of(elements).liftM(Witness.list.INSTANCE).to();
     }
 
     @Override
     public <T> ConvertableSequence<T> empty() {
 
-        return ListX.<T>empty().liftM(Witness.list.INSTANCE);
+        return ListX.<T>empty().liftM(Witness.list.INSTANCE).to();
     }
 
 }
