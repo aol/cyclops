@@ -7,6 +7,7 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Trampoline;
 import cyclops.function.Fn3;
@@ -599,7 +600,7 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     public static <T> ListX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                          .listX();
+                          .listX(ConvertableSequence.Conversion.LAZY);
     }
 
     public static <T> ListX<T> fromIterable(final Iterable<T> it) {
