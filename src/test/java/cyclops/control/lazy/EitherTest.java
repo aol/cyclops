@@ -187,7 +187,7 @@ public class EitherTest {
 
     @Test
     public void testAccumulateSecondary2() {
-        Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Either.right(1)),Reducers.<String>toPSetX());
+        Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Either.right(1)),Reducers.<String>toPersistentSetX());
         assertThat(xors,equalTo(Either.right(PersistentSetX.of("none"))));
     }
 
@@ -276,7 +276,7 @@ public class EitherTest {
     }
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-        Xor<?,PersistentSetX<Integer>> maybes =Xor.accumulatePrimary(ListX.of(just,none,Either.right(1)),Reducers.toPSetX());
+        Xor<?,PersistentSetX<Integer>> maybes =Xor.accumulatePrimary(ListX.of(just,none,Either.right(1)),Reducers.toPersistentSetX());
         assertThat(maybes,equalTo(Either.right(PersistentSetX.of(10,1))));
     }
 
@@ -507,7 +507,7 @@ public class EitherTest {
 
     @Test
     public void testMapReduceReducerOfR() {
-        assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(LinkedListX.fromIterable(just)));
+        assertThat(just.mapReduce(Reducers.toLinkedListX()),equalTo(LinkedListX.fromIterable(just)));
     }
 
     @Test
@@ -561,7 +561,7 @@ public class EitherTest {
 
     @Test
     public void testFoldRightMapToType() {
-        assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(LinkedListX.fromIterable(just)));
+        assertThat(just.foldRightMapToType(Reducers.toLinkedListX()),equalTo(LinkedListX.fromIterable(just)));
     }
 
     

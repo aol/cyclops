@@ -306,7 +306,7 @@ public interface Eval<T> extends    To<Eval<T>>,
      * 
      * <pre>
      * {@code 
-     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPSetX());
+     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPersistentSetX());
          //Eval.now(PersistentSetX.of(10,1)))
      * }
      * </pre>

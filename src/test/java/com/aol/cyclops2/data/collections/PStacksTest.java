@@ -30,11 +30,11 @@ public class PStacksTest {
 	}
 	@Test
 	public void testFromCollection() {
-		assertThat(LinkedListX.fromCollection(Arrays.asList("a","b","c")),equalTo(Arrays.asList("a","b","c")));
+		assertThat(LinkedListX.fromIterable(Arrays.asList("a","b","c")),equalTo(Arrays.asList("a","b","c")));
 	}
 	@Test
 	public void testToPStackstreamOfTReveresed() {
-		assertThat(LinkedListX.fromStream(Stream.of("a","b","c")),
+		assertThat(LinkedListX.linkedListX(ReactiveSeq.of("a","b","c")),
 						equalTo(Arrays.asList("c","b","a")));
 	}
 
@@ -45,7 +45,7 @@ public class PStacksTest {
 	}
 	@Test
 	public void testToPStackstreamOf() {
-		assertThat(LinkedListX.fromStream(Stream.of("a","b","c")),
+		assertThat(LinkedListX.linkedListX(ReactiveSeq.of("a","b","c")),
 						equalTo(Arrays.asList("c","b","a")));
 	}
 

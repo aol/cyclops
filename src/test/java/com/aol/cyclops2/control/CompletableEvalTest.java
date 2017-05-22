@@ -120,7 +120,7 @@ public class CompletableEvalTest {
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
 	    
 	   
-		Eval<PersistentSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,CompletableEvalTest.now(1)),Reducers.toPSetX());
+		Eval<PersistentSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,CompletableEvalTest.now(1)),Reducers.toPersistentSetX());
 		assertThat(maybes,equalTo(Eval.now(PersistentSetX.of(10,1))));
 	}
 

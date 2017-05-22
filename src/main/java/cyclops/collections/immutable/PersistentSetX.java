@@ -1,8 +1,9 @@
 package cyclops.collections.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPSetX;
-import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
+import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -18,6 +19,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.HashTreePSet;
+import org.pcollections.PQueue;
 import org.pcollections.PSet;
 import org.reactivestreams.Publisher;
 
@@ -28,7 +30,7 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 
-public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, PersistentCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
+public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
 
 
     /**
@@ -126,8 +128,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
 
     public static <T> PersistentSetX<T> of(final T... values) {
 
-        return new LazyPSetX<>(
-                               HashTreePSet.from(Arrays.asList(values)));
+        return new LazyPSetX<>(ReactiveSeq.of(values));
     }
 
     public static <T> PersistentSetX<T> empty() {
@@ -139,7 +140,25 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
         return new LazyPSetX<>(
                                HashTreePSet.singleton(value));
     }
+    PersistentSetX<T> type(Reducer<? extends PSet<T>> reducer);
 
+    /**
+     *
+     * <pre>
+     * {@code
+     *  import static cyclops.stream.ReactiveSeq.range;
+     *
+     *  PeristentSetX<Integer> bag = persistentSetX(range(10,20));
+     *
+     * }
+     * </pre>
+     * @param stream To create a PersistentSetX from
+     * @param <T> PersistentSetX generated from Stream
+     * @return
+     */
+    public static <T> PersistentQueueX<T> persistentSetX(ReactiveSeq<T> stream) {
+        return new LazyPQueueX<>(stream);
+    }
     public static <T> PersistentSetX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof PersistentSetX)
             return (PersistentSetX) iterable;
@@ -165,18 +184,10 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
                           .toPSetX();
     }
 
-    public static <T> PersistentSetX<T> fromCollection(final Collection<T> stream) {
-        if (stream instanceof PersistentSetX)
-            return (PersistentSetX) stream;
-        if (stream instanceof PSet)
-            return new LazyPSetX<>(
-                                   (PSet) stream);
-        return new LazyPSetX<>(
-                               HashTreePSet.from(stream));
-    }
 
-    public static <T> PersistentSetX<T> fromStream(final Stream<T> stream) {
-        return Reducers.<T> toPSetX()
+
+    default <T> PersistentSetX<T> fromStream(final ReactiveSeq<T> stream) {
+        return Reducers.<T>toPersistentSetX()
                        .mapReduce(stream);
     }
    
@@ -189,7 +200,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
                                                        Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
                                                        Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
-        return (PersistentSetX)PersistentCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
+        return (PersistentSetX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -202,7 +213,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
                                                        Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                                                        Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
-        return (PersistentSetX)PersistentCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
+        return (PersistentSetX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -213,7 +224,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
                                                    BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
                                                    Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
-        return (PersistentSetX)PersistentCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
+        return (PersistentSetX)LazyCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -225,7 +236,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
                                                    Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
                                                    Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
-        return (PersistentSetX)PersistentCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
+        return (PersistentSetX)LazyCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -235,7 +246,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
     default <R1, R> PersistentSetX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
                                                BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         
-        return (PersistentSetX)PersistentCollectionX.super.forEach2(stream1, yieldingFunction);
+        return (PersistentSetX)LazyCollectionX.super.forEach2(stream1, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -246,7 +257,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
                                                BiFunction<? super T, ? super R1, Boolean> filterFunction,
                                                BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         
-        return (PersistentSetX)PersistentCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+        return (PersistentSetX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     
     @Override
@@ -304,15 +315,15 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
     */
     @Override
     default PersistentSetX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.combine(predicate, op);
+        return (PersistentSetX<T>) LazyCollectionX.super.combine(predicate, op);
     }
     @Override
     default PersistentSetX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.combine(op,predicate);
+        return (PersistentSetX<T>)LazyCollectionX.super.combine(op,predicate);
     }
     @Override
     default <R> PersistentSetX<R> unit(final Collection<R> col) {
-        return fromCollection(col);
+        return fromIterable(col);
     }
 
     @Override
@@ -325,14 +336,14 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
         return fromIterable(() -> it);
     }
 
-    @Override
+   // @Override
     default <R> PersistentSetX<R> emptyUnit() {
         return empty();
     }
 
     @Override
     default PersistentSetX<T> materialize() {
-        return (PersistentSetX<T>)PersistentCollectionX.super.materialize();
+        return (PersistentSetX<T>)LazyCollectionX.super.materialize();
     }
 
     @Override
@@ -345,10 +356,10 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
 
     @Override
     default <X> PersistentSetX<X> from(final Collection<X> col) {
-        return fromCollection(col);
+        return fromIterable(col);
     }
 
-    @Override
+ //   @Override
     default <T> Reducer<PSet<T>> monoid() {
         return Reducers.toPSet();
     }
@@ -378,223 +389,223 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
     public PersistentSetX<T> minusAll(Collection<?> list);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#reverse()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#reverse()
      */
     @Override
     default PersistentSetX<T> reverse() {
-        return (PersistentSetX<T>) PersistentCollectionX.super.reverse();
+        return (PersistentSetX<T>) LazyCollectionX.super.reverse();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#filter(java.util.function.Predicate)
      */
     @Override
     default PersistentSetX<T> filter(final Predicate<? super T> pred) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.filter(pred);
+        return (PersistentSetX<T>) LazyCollectionX.super.filter(pred);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#map(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#map(java.util.function.Function)
      */
     @Override
     default <R> PersistentSetX<R> map(final Function<? super T, ? extends R> mapper) {
-        return (PersistentSetX<R>) PersistentCollectionX.super.map(mapper);
+        return (PersistentSetX<R>) LazyCollectionX.super.map(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#flatMap(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
     default <R> PersistentSetX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (PersistentSetX<R>) PersistentCollectionX.super.flatMap(mapper);
+        return (PersistentSetX<R>) LazyCollectionX.super.flatMap(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limit(long)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limit(long)
      */
     @Override
     default PersistentSetX<T> limit(final long num) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.limit(num);
+        return (PersistentSetX<T>) LazyCollectionX.super.limit(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skip(long)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skip(long)
      */
     @Override
     default PersistentSetX<T> skip(final long num) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.skip(num);
+        return (PersistentSetX<T>) LazyCollectionX.super.skip(num);
     }
 
     @Override
     default PersistentSetX<T> takeRight(final int num) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.takeRight(num);
+        return (PersistentSetX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     @Override
     default PersistentSetX<T> dropRight(final int num) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.dropRight(num);
+        return (PersistentSetX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#takeWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#takeWhile(java.util.function.Predicate)
      */
     @Override
     default PersistentSetX<T> takeWhile(final Predicate<? super T> p) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.takeWhile(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#dropWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#dropWhile(java.util.function.Predicate)
      */
     @Override
     default PersistentSetX<T> dropWhile(final Predicate<? super T> p) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.dropWhile(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#takeUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#takeUntil(java.util.function.Predicate)
      */
     @Override
     default PersistentSetX<T> takeUntil(final Predicate<? super T> p) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.takeUntil(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#dropUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#dropUntil(java.util.function.Predicate)
      */
     @Override
     default PersistentSetX<T> dropUntil(final Predicate<? super T> p) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.dropUntil(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#trampoline(java.util.function.Function)
      */
     @Override
     default <R> PersistentSetX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (PersistentSetX<R>) PersistentCollectionX.super.trampoline(mapper);
+        return (PersistentSetX<R>) LazyCollectionX.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#slice(long, long)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#slice(long, long)
      */
     @Override
     default PersistentSetX<T> slice(final long from, final long to) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.slice(from, to);
+        return (PersistentSetX<T>) LazyCollectionX.super.slice(from, to);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#sorted(java.util.function.Function)
      */
     @Override
     default <U extends Comparable<? super U>> PersistentSetX<T> sorted(final Function<? super T, ? extends U> function) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.sorted(function);
+        return (PersistentSetX<T>) LazyCollectionX.super.sorted(function);
     }
 
     @Override
     default PersistentSetX<ListX<T>> grouped(final int groupSize) {
-        return (PersistentSetX<ListX<T>>) PersistentCollectionX.super.grouped(groupSize);
+        return (PersistentSetX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
     @Override
     default <K, A, D> PersistentSetX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
-        return (PersistentSetX) PersistentCollectionX.super.grouped(classifier, downstream);
+        return (PersistentSetX) LazyCollectionX.super.grouped(classifier, downstream);
     }
 
     @Override
     default <K> PersistentSetX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return (PersistentSetX) PersistentCollectionX.super.grouped(classifier);
+        return (PersistentSetX) LazyCollectionX.super.grouped(classifier);
     }
 
     @Override
     default <U> PersistentSetX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return (PersistentSetX) PersistentCollectionX.super.zip(other);
+        return (PersistentSetX) LazyCollectionX.super.zip(other);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> PersistentSetX<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (PersistentSetX<R>) PersistentCollectionX.super.zip(other, zipper);
+        return (PersistentSetX<R>) LazyCollectionX.super.zip(other, zipper);
     }
 
 
     @Override
     default <U, R> PersistentSetX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (PersistentSetX<R>) PersistentCollectionX.super.zipS(other, zipper);
+        return (PersistentSetX<R>) LazyCollectionX.super.zipS(other, zipper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#permutations()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#permutations()
      */
     @Override
     default PersistentSetX<ReactiveSeq<T>> permutations() {
 
-        return (PersistentSetX<ReactiveSeq<T>>) PersistentCollectionX.super.permutations();
+        return (PersistentSetX<ReactiveSeq<T>>) LazyCollectionX.super.permutations();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#combinations(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#combinations(int)
      */
     @Override
     default PersistentSetX<ReactiveSeq<T>> combinations(final int size) {
 
-        return (PersistentSetX<ReactiveSeq<T>>) PersistentCollectionX.super.combinations(size);
+        return (PersistentSetX<ReactiveSeq<T>>) LazyCollectionX.super.combinations(size);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#combinations()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#combinations()
      */
     @Override
     default PersistentSetX<ReactiveSeq<T>> combinations() {
 
-        return (PersistentSetX<ReactiveSeq<T>>) PersistentCollectionX.super.combinations();
+        return (PersistentSetX<ReactiveSeq<T>>) LazyCollectionX.super.combinations();
     }
 
     @Override
     default PersistentSetX<VectorX<T>> sliding(final int windowSize) {
-        return (PersistentSetX<VectorX<T>>) PersistentCollectionX.super.sliding(windowSize);
+        return (PersistentSetX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize);
     }
 
     @Override
     default PersistentSetX<VectorX<T>> sliding(final int windowSize, final int increment) {
-        return (PersistentSetX<VectorX<T>>) PersistentCollectionX.super.sliding(windowSize, increment);
+        return (PersistentSetX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override
     default PersistentSetX<T> scanLeft(final Monoid<T> monoid) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.scanLeft(monoid);
+        return (PersistentSetX<T>) LazyCollectionX.super.scanLeft(monoid);
     }
 
     @Override
     default <U> PersistentSetX<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
-        return (PersistentSetX<U>) PersistentCollectionX.super.scanLeft(seed, function);
+        return (PersistentSetX<U>) LazyCollectionX.super.scanLeft(seed, function);
     }
 
     @Override
     default PersistentSetX<T> scanRight(final Monoid<T> monoid) {
-        return (PersistentSetX<T>) PersistentCollectionX.super.scanRight(monoid);
+        return (PersistentSetX<T>) LazyCollectionX.super.scanRight(monoid);
     }
 
     @Override
     default <U> PersistentSetX<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
-        return (PersistentSetX<U>) PersistentCollectionX.super.scanRight(identity, combiner);
+        return (PersistentSetX<U>) LazyCollectionX.super.scanRight(identity, combiner);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#plusInOrder(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#plusInOrder(java.lang.Object)
      */
     @Override
     default PersistentSetX<T> plusInOrder(final T e) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.plusInOrder(e);
+        return (PersistentSetX<T>) LazyCollectionX.super.plusInOrder(e);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cycle(int)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycle(int)
      */
     @Override
     default LinkedListX<T> cycle(final long times) {
@@ -605,7 +616,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops2.sequence.Monoid, int)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycle(com.aol.cyclops2.sequence.Monoid, int)
      */
     @Override
     default LinkedListX<T> cycle(final Monoid<T> m, final long times) {
@@ -616,7 +627,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cycleWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycleWhile(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> cycleWhile(final Predicate<? super T> predicate) {
@@ -627,7 +638,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cycleUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycleUntil(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> cycleUntil(final Predicate<? super T> predicate) {
@@ -638,139 +649,139 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> PersistentSetX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
-        return (PersistentSetX) PersistentCollectionX.super.zipS(other);
+        return (PersistentSetX) LazyCollectionX.super.zipS(other);
     }
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <S, U> PersistentSetX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
-        return (PersistentSetX) PersistentCollectionX.super.zip3(second, third);
+        return (PersistentSetX) LazyCollectionX.super.zip3(second, third);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <T2, T3, T4> PersistentSetX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
                                                                     final Iterable<? extends T4> fourth) {
 
-        return (PersistentSetX) PersistentCollectionX.super.zip4(second, third, fourth);
+        return (PersistentSetX) LazyCollectionX.super.zip4(second, third, fourth);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#zipWithIndex()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zipWithIndex()
      */
     @Override
     default PersistentSetX<Tuple2<T, Long>> zipWithIndex() {
 
-        return (PersistentSetX<Tuple2<T, Long>>) PersistentCollectionX.super.zipWithIndex();
+        return (PersistentSetX<Tuple2<T, Long>>) LazyCollectionX.super.zipWithIndex();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#distinct()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#distinct()
      */
     @Override
     default PersistentSetX<T> distinct() {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.distinct();
+        return (PersistentSetX<T>) LazyCollectionX.super.distinct();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#sorted()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#sorted()
      */
     @Override
     default PersistentSetX<T> sorted() {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.sorted();
+        return (PersistentSetX<T>) LazyCollectionX.super.sorted();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#sorted(java.util.Comparator)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#sorted(java.util.Comparator)
      */
     @Override
     default PersistentSetX<T> sorted(final Comparator<? super T> c) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.sorted(c);
+        return (PersistentSetX<T>) LazyCollectionX.super.sorted(c);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skipWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
      */
     @Override
     default PersistentSetX<T> skipWhile(final Predicate<? super T> p) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.skipWhile(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.skipWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skipUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
      */
     @Override
     default PersistentSetX<T> skipUntil(final Predicate<? super T> p) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.skipUntil(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.skipUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limitWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
     @Override
     default PersistentSetX<T> limitWhile(final Predicate<? super T> p) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.limitWhile(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.limitWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limitUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
     @Override
     default PersistentSetX<T> limitUntil(final Predicate<? super T> p) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.limitUntil(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.limitUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#intersperse(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#intersperse(java.lang.Object)
      */
     @Override
     default PersistentSetX<T> intersperse(final T value) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.intersperse(value);
+        return (PersistentSetX<T>) LazyCollectionX.super.intersperse(value);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#shuffle()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#shuffle()
      */
     @Override
     default PersistentSetX<T> shuffle() {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.shuffle();
+        return (PersistentSetX<T>) LazyCollectionX.super.shuffle();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#skipLast(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skipLast(int)
      */
     @Override
     default PersistentSetX<T> skipLast(final int num) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.skipLast(num);
+        return (PersistentSetX<T>) LazyCollectionX.super.skipLast(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#limitLast(int)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limitLast(int)
      */
     @Override
     default PersistentSetX<T> limitLast(final int num) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.limitLast(num);
+        return (PersistentSetX<T>) LazyCollectionX.super.limitLast(num);
     }
 
     /* (non-Javadoc)
@@ -784,129 +795,129 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#onEmpty(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmpty(java.lang.Object)
      */
     @Override
     default PersistentSetX<T> onEmpty(final T value) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.onEmpty(value);
+        return (PersistentSetX<T>) LazyCollectionX.super.onEmpty(value);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#onEmptyGet(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default PersistentSetX<T> onEmptyGet(final Supplier<? extends T> supplier) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.onEmptyGet(supplier);
+        return (PersistentSetX<T>) LazyCollectionX.super.onEmptyGet(supplier);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
     default <X extends Throwable> PersistentSetX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.onEmptyThrow(supplier);
+        return (PersistentSetX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#shuffle(java.util.Random)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#shuffle(java.util.Random)
      */
     @Override
     default PersistentSetX<T> shuffle(final Random random) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.shuffle(random);
+        return (PersistentSetX<T>) LazyCollectionX.super.shuffle(random);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#ofType(java.lang.Class)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#ofType(java.lang.Class)
      */
     @Override
     default <U> PersistentSetX<U> ofType(final Class<? extends U> type) {
 
-        return (PersistentSetX<U>) PersistentCollectionX.super.ofType(type);
+        return (PersistentSetX<U>) LazyCollectionX.super.ofType(type);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#filterNot(java.util.function.Predicate)
      */
     @Override
     default PersistentSetX<T> filterNot(final Predicate<? super T> fn) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.filterNot(fn);
+        return (PersistentSetX<T>) LazyCollectionX.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#notNull()
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#notNull()
      */
     @Override
     default PersistentSetX<T> notNull() {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.notNull();
+        return (PersistentSetX<T>) LazyCollectionX.super.notNull();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     default PersistentSetX<T> removeAllS(final Stream<? extends T> stream) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.removeAllS(stream);
+        return (PersistentSetX<T>) LazyCollectionX.super.removeAllS(stream);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
      */
     @Override
     default PersistentSetX<T> removeAllI(final Iterable<? extends T> it) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.removeAllI(it);
+        return (PersistentSetX<T>) LazyCollectionX.super.removeAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#removeAll(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default PersistentSetX<T> removeAll(final T... values) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.removeAll(values);
+        return (PersistentSetX<T>) LazyCollectionX.super.removeAll(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllI(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
     default PersistentSetX<T> retainAllI(final Iterable<? extends T> it) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.retainAllI(it);
+        return (PersistentSetX<T>) LazyCollectionX.super.retainAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default PersistentSetX<T> retainAllS(final Stream<? extends T> seq) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.retainAllS(seq);
+        return (PersistentSetX<T>) LazyCollectionX.super.retainAllS(seq);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#retainAllI(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Object[])
      */
     @Override
     default PersistentSetX<T> retainAll(final T... values) {
 
-        return (PersistentSetX<T>) PersistentCollectionX.super.retainAll(values);
+        return (PersistentSetX<T>) LazyCollectionX.super.retainAll(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.PersistentCollectionX#cast(java.lang.Class)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cast(java.lang.Class)
      */
     @Override
     default <U> PersistentSetX<U> cast(final Class<? extends U> type) {
 
-        return (PersistentSetX<U>) PersistentCollectionX.super.cast(type);
+        return (PersistentSetX<U>) LazyCollectionX.super.cast(type);
     }
 
 
@@ -914,117 +925,117 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Persis
     @Override
     default <C extends Collection<? super T>> PersistentSetX<C> grouped(final int size, final Supplier<C> supplier) {
 
-        return (PersistentSetX<C>) PersistentCollectionX.super.grouped(size, supplier);
+        return (PersistentSetX<C>) LazyCollectionX.super.grouped(size, supplier);
     }
 
     @Override
     default PersistentSetX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
 
-        return (PersistentSetX<ListX<T>>) PersistentCollectionX.super.groupedUntil(predicate);
+        return (PersistentSetX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
     @Override
     default PersistentSetX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (PersistentSetX<ListX<T>>) PersistentCollectionX.super.groupedStatefullyUntil(predicate);
+        return (PersistentSetX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
     @Override
     default PersistentSetX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
 
-        return (PersistentSetX<ListX<T>>) PersistentCollectionX.super.groupedWhile(predicate);
+        return (PersistentSetX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }
 
     @Override
     default <C extends Collection<? super T>> PersistentSetX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return (PersistentSetX<C>) PersistentCollectionX.super.groupedWhile(predicate, factory);
+        return (PersistentSetX<C>) LazyCollectionX.super.groupedWhile(predicate, factory);
     }
 
     @Override
     default <C extends Collection<? super T>> PersistentSetX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return (PersistentSetX<C>) PersistentCollectionX.super.groupedUntil(predicate, factory);
+        return (PersistentSetX<C>) LazyCollectionX.super.groupedUntil(predicate, factory);
     }
 
     @Override
     default <R> PersistentSetX<R> retry(final Function<? super T, ? extends R> fn) {
-        return (PersistentSetX<R>)PersistentCollectionX.super.retry(fn);
+        return (PersistentSetX<R>)LazyCollectionX.super.retry(fn);
     }
 
     @Override
     default <R> PersistentSetX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (PersistentSetX<R>)PersistentCollectionX.super.retry(fn);
+        return (PersistentSetX<R>)LazyCollectionX.super.retry(fn);
     }
 
     @Override
     default <R> PersistentSetX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (PersistentSetX<R>)PersistentCollectionX.super.flatMapS(fn);
+        return (PersistentSetX<R>)LazyCollectionX.super.flatMapS(fn);
     }
 
     @Override
     default <R> PersistentSetX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (PersistentSetX<R>)PersistentCollectionX.super.flatMapP(fn);
+        return (PersistentSetX<R>)LazyCollectionX.super.flatMapP(fn);
     }
 
     @Override
     default PersistentSetX<T> prependS(Stream<? extends T> stream) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.prependS(stream);
+        return (PersistentSetX<T>)LazyCollectionX.super.prependS(stream);
     }
 
     @Override
     default PersistentSetX<T> append(T... values) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.append(values);
+        return (PersistentSetX<T>)LazyCollectionX.super.append(values);
     }
 
     @Override
     default PersistentSetX<T> append(T value) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.append(value);
+        return (PersistentSetX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override
     default PersistentSetX<T> prepend(T value) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.prepend(value);
+        return (PersistentSetX<T>)LazyCollectionX.super.prepend(value);
     }
 
     @Override
     default PersistentSetX<T> prepend(T... values) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.prepend(values);
+        return (PersistentSetX<T>)LazyCollectionX.super.prepend(values);
     }
 
     @Override
     default PersistentSetX<T> insertAt(int pos, T... values) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.insertAt(pos,values);
+        return (PersistentSetX<T>)LazyCollectionX.super.insertAt(pos,values);
     }
 
     @Override
     default PersistentSetX<T> deleteBetween(int start, int end) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.deleteBetween(start,end);
+        return (PersistentSetX<T>)LazyCollectionX.super.deleteBetween(start,end);
     }
 
     @Override
     default PersistentSetX<T> insertAtS(int pos, Stream<T> stream) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.insertAtS(pos,stream);
+        return (PersistentSetX<T>)LazyCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override
     default PersistentSetX<T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.recover(fn);
+        return (PersistentSetX<T>)LazyCollectionX.super.recover(fn);
     }
 
     @Override
     default <EX extends Throwable> PersistentSetX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.recover(exceptionClass,fn);
+        return (PersistentSetX<T>)LazyCollectionX.super.recover(exceptionClass,fn);
     }
 
 
     @Override
     default PersistentSetX<T> plusLoop(int max, IntFunction<T> value) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.plusLoop(max,value);
+        return (PersistentSetX<T>)LazyCollectionX.super.plusLoop(max,value);
     }
 
     @Override
     default PersistentSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
-        return (PersistentSetX<T>)PersistentCollectionX.super.plusLoop(supplier);
+        return (PersistentSetX<T>)LazyCollectionX.super.plusLoop(supplier);
     }
 }

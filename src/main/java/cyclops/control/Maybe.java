@@ -579,7 +579,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      *  Maybe<Integer> just = Maybe.of(10);
         Maybe<Integer> none = Maybe.none();
         
-     * Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPSetX());
+     * Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPersistentSetX());
        //Maybe.of(PersistentSetX.of(10, 1)));
      * 
      * }

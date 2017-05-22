@@ -1,7 +1,9 @@
 package cyclops.collections.mutable;
 
+import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
+import com.aol.cyclops2.data.collections.extensions.lazy.LazySetX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySortedSetX;
-import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
+import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.function.Monoid;
@@ -27,7 +29,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCollectionX<T>, OnEmptySwitch<T, SortedSet<T>> {
+public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, SortedSet<T>> {
 
 
 
@@ -125,11 +127,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     public static <T> SortedSetX<T> of(final T... values) {
-        final SortedSet<T> res = (SortedSet<T>) defaultCollector().supplier()
-                                                                  .get();
-        for (final T v : values)
-            res.add(v);
-        return fromIterable(res);
+        return new LazySortedSetX<T>(null,
+                ReactiveSeq.of(values),
+                defaultCollector());
     }
 
     public static <T> SortedSetX<T> singleton(final T value) {
@@ -138,19 +138,19 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
 
     @Override
     default SortedSetX<T> materialize() {
-        return (SortedSetX<T>)MutableCollectionX.super.materialize();
+        return (SortedSetX<T>)LazyCollectionX.super.materialize();
     }
 
 
     @Override
     default SortedSetX<T> take(final long num) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.limit(num);
+        return (SortedSetX<T>) LazyCollectionX.super.limit(num);
     }
     @Override
     default SortedSetX<T> drop(final long num) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.skip(num);
+        return (SortedSetX<T>) LazyCollectionX.super.skip(num);
     }
     /**
      * Construct a SortedSetX from an Publisher
@@ -163,7 +163,25 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         return Spouts.from((Publisher<T>) publisher)
                           .toSortedSetX();
     }
-
+    /**
+     *
+     * <pre>
+     * {@code
+     *  import static cyclops.stream.ReactiveSeq.range;
+     *
+     *  SortedSetX<Integer> sortedSet = sortedSetX(range(10,20));
+     *
+     * }
+     * </pre>
+     * @param stream To create SortedSetX from
+     * @param <T> SortedSetX generated from Stream
+     * @return
+     */
+    public static <T> SortedSetX<T> sortedSetX(ReactiveSeq<T> stream){
+        return new LazySortedSetX<T>(null,
+                stream,
+                defaultCollector());
+    }
     public static <T> SortedSetX<T> fromIterable(final Iterable<T> it) {
         if (it instanceof SortedSetX)
             return (SortedSetX<T>) it;
@@ -184,9 +202,8 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
         if (it instanceof SortedSet)
             return new LazySortedSetX<T>(
                                          (SortedSet) it, collector);
-        return new LazySortedSetX<T>(
-                                     Streams.stream(it)
-                                                .collect(collector),
+        return new LazySortedSetX<T>(null,
+                                     ReactiveSeq.fromIterable(it),
                                      collector);
     }
     
@@ -225,7 +242,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
             Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
             Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
-        return (SortedSetX)MutableCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
+        return (SortedSetX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -238,7 +255,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
             Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
             Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
-        return (SortedSetX)MutableCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
+        return (SortedSetX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -249,7 +266,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
-        return (SortedSetX)MutableCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
+        return (SortedSetX)LazyCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -261,7 +278,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
             Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
-        return (SortedSetX)MutableCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
+        return (SortedSetX)LazyCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -271,7 +288,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     default <R1, R> SortedSetX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         
-        return (SortedSetX)MutableCollectionX.super.forEach2(stream1, yieldingFunction);
+        return (SortedSetX)LazyCollectionX.super.forEach2(stream1, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -282,7 +299,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
             BiFunction<? super T, ? super R1, Boolean> filterFunction,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         
-        return (SortedSetX)MutableCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+        return (SortedSetX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     
     /* (non-Javadoc)
@@ -312,11 +329,11 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
      */
     @Override
     default SortedSetX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
-        return (SortedSetX<T>) MutableCollectionX.super.combine(predicate, op);
+        return (SortedSetX<T>) LazyCollectionX.super.combine(predicate, op);
     }
     @Override
     default SortedSetX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
-        return (SortedSetX<T>)MutableCollectionX.super.combine(op,predicate);
+        return (SortedSetX<T>)LazyCollectionX.super.combine(op,predicate);
     }
     @Override
     default <R> SortedSetX<R> unit(final R value) {
@@ -347,145 +364,145 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     public <T> Collector<T, ?, SortedSet<T>> getCollector();
 
     @Override
-    default <X> SortedSetX<X> fromStream(final Stream<X> stream) {
+    default <X> SortedSetX<X> fromStream(final ReactiveSeq<X> stream) {
         return new LazySortedSetX<>(
                                     stream.collect(getCollector()), getCollector());
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#reverse()
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#reverse()
      */
     @Override
     default SortedSetX<T> reverse() {
-        return (SortedSetX<T>) MutableCollectionX.super.reverse();
+        return (SortedSetX<T>) LazyCollectionX.super.reverse();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#filter(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#filter(java.util.function.Predicate)
      */
     @Override
     default SortedSetX<T> filter(final Predicate<? super T> pred) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.filter(pred);
+        return (SortedSetX<T>) LazyCollectionX.super.filter(pred);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#map(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#map(java.util.function.Function)
      */
     @Override
     default <R> SortedSetX<R> map(final Function<? super T, ? extends R> mapper) {
 
-        return (SortedSetX<R>) MutableCollectionX.super.<R> map(mapper);
+        return (SortedSetX<R>) LazyCollectionX.super.<R> map(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#flatMap(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
     default <R> SortedSetX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (SortedSetX<R>) MutableCollectionX.super.<R> flatMap(mapper);
+        return (SortedSetX<R>) LazyCollectionX.super.<R> flatMap(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#limit(long)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#limit(long)
      */
     @Override
     default SortedSetX<T> limit(final long num) {
-        return (SortedSetX<T>) MutableCollectionX.super.limit(num);
+        return (SortedSetX<T>) LazyCollectionX.super.limit(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#skip(long)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#skip(long)
      */
     @Override
     default SortedSetX<T> skip(final long num) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.skip(num);
+        return (SortedSetX<T>) LazyCollectionX.super.skip(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#takeWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#takeWhile(java.util.function.Predicate)
      */
     @Override
     default SortedSetX<T> takeWhile(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.takeWhile(p);
+        return (SortedSetX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#dropWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#dropWhile(java.util.function.Predicate)
      */
     @Override
     default SortedSetX<T> dropWhile(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.dropWhile(p);
+        return (SortedSetX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#takeUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#takeUntil(java.util.function.Predicate)
      */
     @Override
     default SortedSetX<T> takeUntil(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.takeUntil(p);
+        return (SortedSetX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#dropUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#dropUntil(java.util.function.Predicate)
      */
     @Override
     default SortedSetX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.dropUntil(p);
+        return (SortedSetX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
     @Override
     default SortedSetX<T> takeRight(final int num) {
-        return (SortedSetX<T>) MutableCollectionX.super.takeRight(num);
+        return (SortedSetX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     @Override
     default SortedSetX<T> dropRight(final int num) {
-        return (SortedSetX<T>) MutableCollectionX.super.dropRight(num);
+        return (SortedSetX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#trampoline(java.util.function.Function)
      */
     @Override
     default <R> SortedSetX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (SortedSetX<R>) MutableCollectionX.super.<R> trampoline(mapper);
+        return (SortedSetX<R>) LazyCollectionX.super.<R> trampoline(mapper);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#slice(long, long)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#slice(long, long)
      */
     @Override
     default SortedSetX<T> slice(final long from, final long to) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.slice(from, to);
+        return (SortedSetX<T>) LazyCollectionX.super.slice(from, to);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#sorted(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#sorted(java.util.function.Function)
      */
     @Override
     default <U extends Comparable<? super U>> SortedSetX<T> sorted(final Function<? super T, ? extends U> function) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.sorted(function);
+        return (SortedSetX<T>) LazyCollectionX.super.sorted(function);
     }
 
     @Override
     default SortedSetX<ListX<T>> grouped(final int groupSize) {
-        return (SortedSetX<ListX<T>>) (SortedSetX<T>) MutableCollectionX.super.grouped(groupSize);
+        return (SortedSetX<ListX<T>>) (SortedSetX<T>) LazyCollectionX.super.grouped(groupSize);
     }
 
     @Override
     default <K, A, D> SortedSetX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
             final Collector<? super T, A, D> downstream) {
-        return (SortedSetX) MutableCollectionX.super.grouped(classifier, downstream);
+        return (SortedSetX) LazyCollectionX.super.grouped(classifier, downstream);
     }
 
     @Override
@@ -497,51 +514,51 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
 
     @Override
     default <U> SortedSetX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return (SortedSetX<Tuple2<T, U>>) (SortedSetX<T>) MutableCollectionX.super.zip(other);
+        return (SortedSetX<Tuple2<T, U>>) (SortedSetX<T>) LazyCollectionX.super.zip(other);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> SortedSetX<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (SortedSetX<R>) MutableCollectionX.super.zip(other, zipper);
+        return (SortedSetX<R>) LazyCollectionX.super.zip(other, zipper);
     }
 
 
     @Override
     default <U, R> SortedSetX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (SortedSetX<R>) MutableCollectionX.super.zipS(other, zipper);
+        return (SortedSetX<R>) LazyCollectionX.super.zipS(other, zipper);
     }
 
     @Override
     default SortedSetX<VectorX<T>> sliding(final int windowSize) {
-        return (SortedSetX<VectorX<T>>) (SortedSetX<T>) MutableCollectionX.super.sliding(windowSize);
+        return (SortedSetX<VectorX<T>>) (SortedSetX<T>) LazyCollectionX.super.sliding(windowSize);
     }
 
     @Override
     default SortedSetX<VectorX<T>> sliding(final int windowSize, final int increment) {
-        return (SortedSetX<VectorX<T>>) (SortedSetX<T>) MutableCollectionX.super.sliding(windowSize, increment);
+        return (SortedSetX<VectorX<T>>) (SortedSetX<T>) LazyCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override
     default SortedSetX<T> scanLeft(final Monoid<T> monoid) {
-        return (SortedSetX<T>) MutableCollectionX.super.scanLeft(monoid);
+        return (SortedSetX<T>) LazyCollectionX.super.scanLeft(monoid);
     }
 
     @Override
     default <U> SortedSetX<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
-        return (SortedSetX<U>) (SortedSetX<T>) MutableCollectionX.super.scanLeft(seed, function);
+        return (SortedSetX<U>) (SortedSetX<T>) LazyCollectionX.super.scanLeft(seed, function);
     }
 
     @Override
     default SortedSetX<T> scanRight(final Monoid<T> monoid) {
-        return (SortedSetX<T>) MutableCollectionX.super.scanRight(monoid);
+        return (SortedSetX<T>) LazyCollectionX.super.scanRight(monoid);
     }
 
     @Override
     default <U> SortedSetX<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
-        return (SortedSetX<U>) (SortedSetX<T>) MutableCollectionX.super.scanRight(identity, combiner);
+        return (SortedSetX<U>) (SortedSetX<T>) LazyCollectionX.super.scanRight(identity, combiner);
     }
 
     @Override
@@ -569,7 +586,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cycle(int)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycle(int)
      */
     @Override
     default ListX<T> cycle(final long times) {
@@ -580,7 +597,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cycle(com.aol.cyclops2.sequence.Monoid, int)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycle(com.aol.cyclops2.sequence.Monoid, int)
      */
     @Override
     default ListX<T> cycle(final Monoid<T> m, final long times) {
@@ -591,7 +608,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cycleWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycleWhile(java.util.function.Predicate)
      */
     @Override
     default ListX<T> cycleWhile(final Predicate<? super T> predicate) {
@@ -602,7 +619,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cycleUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycleUntil(java.util.function.Predicate)
      */
     @Override
     default ListX<T> cycleUntil(final Predicate<? super T> predicate) {
@@ -613,141 +630,141 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip(java.util.reactiveStream.Stream)
      */
     @Override
     default <U> SortedSetX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return (SortedSetX) MutableCollectionX.super.zipS(other);
+        return (SortedSetX) LazyCollectionX.super.zipS(other);
     }
 
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <S, U> SortedSetX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
-        return (SortedSetX) MutableCollectionX.super.zip3(second, third);
+        return (SortedSetX) LazyCollectionX.super.zip3(second, third);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
      */
     @Override
     default <T2, T3, T4> SortedSetX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
             final Iterable<? extends T4> fourth) {
 
-        return (SortedSetX) MutableCollectionX.super.zip4(second, third, fourth);
+        return (SortedSetX) LazyCollectionX.super.zip4(second, third, fourth);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#zipWithIndex()
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zipWithIndex()
      */
     @Override
     default SortedSetX<Tuple2<T, Long>> zipWithIndex() {
 
-        return (SortedSetX<Tuple2<T, Long>>) MutableCollectionX.super.zipWithIndex();
+        return (SortedSetX<Tuple2<T, Long>>) LazyCollectionX.super.zipWithIndex();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#distinct()
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#distinct()
      */
     @Override
     default SortedSetX<T> distinct() {
 
-        return (SortedSetX<T>) MutableCollectionX.super.distinct();
+        return (SortedSetX<T>) LazyCollectionX.super.distinct();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#sorted()
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#sorted()
      */
     @Override
     default SortedSetX<T> sorted() {
 
-        return (SortedSetX<T>) MutableCollectionX.super.sorted();
+        return (SortedSetX<T>) LazyCollectionX.super.sorted();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#sorted(java.util.Comparator)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#sorted(java.util.Comparator)
      */
     @Override
     default SortedSetX<T> sorted(final Comparator<? super T> c) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.sorted(c);
+        return (SortedSetX<T>) LazyCollectionX.super.sorted(c);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#skipWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#skipWhile(java.util.function.Predicate)
      */
     @Override
     default SortedSetX<T> skipWhile(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.skipWhile(p);
+        return (SortedSetX<T>) LazyCollectionX.super.skipWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#skipUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#skipUntil(java.util.function.Predicate)
      */
     @Override
     default SortedSetX<T> skipUntil(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.skipUntil(p);
+        return (SortedSetX<T>) LazyCollectionX.super.skipUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#limitWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
     @Override
     default SortedSetX<T> limitWhile(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.limitWhile(p);
+        return (SortedSetX<T>) LazyCollectionX.super.limitWhile(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#limitUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
     @Override
     default SortedSetX<T> limitUntil(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.limitUntil(p);
+        return (SortedSetX<T>) LazyCollectionX.super.limitUntil(p);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#intersperse(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#intersperse(java.lang.Object)
      */
     @Override
     default SortedSetX<T> intersperse(final T value) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.intersperse(value);
+        return (SortedSetX<T>) LazyCollectionX.super.intersperse(value);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#shuffle()
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#shuffle()
      */
     @Override
     default SortedSetX<T> shuffle() {
 
-        return (SortedSetX<T>) MutableCollectionX.super.shuffle();
+        return (SortedSetX<T>) LazyCollectionX.super.shuffle();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#skipLast(int)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#skipLast(int)
      */
     @Override
     default SortedSetX<T> skipLast(final int num) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.skipLast(num);
+        return (SortedSetX<T>) LazyCollectionX.super.skipLast(num);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#limitLast(int)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#limitLast(int)
      */
     @Override
     default SortedSetX<T> limitLast(final int num) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.limitLast(num);
+        return (SortedSetX<T>) LazyCollectionX.super.limitLast(num);
     }
 
     /* (non-Javadoc)
@@ -761,166 +778,166 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#onEmpty(java.lang.Object)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#onEmpty(java.lang.Object)
      */
     @Override
     default SortedSetX<T> onEmpty(final T value) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.onEmpty(value);
+        return (SortedSetX<T>) LazyCollectionX.super.onEmpty(value);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#onEmptyGet(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default SortedSetX<T> onEmptyGet(final Supplier<? extends T> supplier) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.onEmptyGet(supplier);
+        return (SortedSetX<T>) LazyCollectionX.super.onEmptyGet(supplier);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
     default <X extends Throwable> SortedSetX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.onEmptyThrow(supplier);
+        return (SortedSetX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#shuffle(java.util.Random)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#shuffle(java.util.Random)
      */
     @Override
     default SortedSetX<T> shuffle(final Random random) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.shuffle(random);
+        return (SortedSetX<T>) LazyCollectionX.super.shuffle(random);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#ofType(java.lang.Class)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#ofType(java.lang.Class)
      */
     @Override
     default <U> SortedSetX<U> ofType(final Class<? extends U> type) {
 
-        return (SortedSetX<U>) MutableCollectionX.super.ofType(type);
+        return (SortedSetX<U>) LazyCollectionX.super.ofType(type);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#filterNot(java.util.function.Predicate)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#filterNot(java.util.function.Predicate)
      */
     @Override
     default SortedSetX<T> filterNot(final Predicate<? super T> fn) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.filterNot(fn);
+        return (SortedSetX<T>) LazyCollectionX.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#notNull()
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#notNull()
      */
     @Override
     default SortedSetX<T> notNull() {
 
-        return (SortedSetX<T>) MutableCollectionX.super.notNull();
+        return (SortedSetX<T>) LazyCollectionX.super.notNull();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.reactiveStream.Stream)
      */
     @Override
     default SortedSetX<T> removeAllS(final Stream<? extends T> stream) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.removeAllS(stream);
+        return (SortedSetX<T>) LazyCollectionX.super.removeAllS(stream);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Iterable)
      */
     @Override
     default SortedSetX<T> removeAllI(final Iterable<? extends T> it) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.removeAllI(it);
+        return (SortedSetX<T>) LazyCollectionX.super.removeAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#removeAll(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default SortedSetX<T> removeAll(final T... values) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.removeAll(values);
+        return (SortedSetX<T>) LazyCollectionX.super.removeAll(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllI(java.lang.Iterable)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
     default SortedSetX<T> retainAllI(final Iterable<? extends T> it) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.retainAllI(it);
+        return (SortedSetX<T>) LazyCollectionX.super.retainAllI(it);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.reactiveStream.Stream)
      */
     @Override
     default SortedSetX<T> retainAllS(final Stream<? extends T> seq) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.retainAllS(seq);
+        return (SortedSetX<T>) LazyCollectionX.super.retainAllS(seq);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#retainAllI(java.lang.Object[])
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Object[])
      */
     @Override
     default SortedSetX<T> retainAll(final T... values) {
 
-        return (SortedSetX<T>) MutableCollectionX.super.retainAll(values);
+        return (SortedSetX<T>) LazyCollectionX.super.retainAll(values);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.MutableCollectionX#cast(java.lang.Class)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cast(java.lang.Class)
      */
     @Override
     default <U> SortedSetX<U> cast(final Class<? extends U> type) {
 
-        return (SortedSetX<U>) MutableCollectionX.super.cast(type);
+        return (SortedSetX<U>) LazyCollectionX.super.cast(type);
     }
 
 
     @Override
     default <C extends Collection<? super T>> SortedSetX<C> grouped(final int size, final Supplier<C> supplier) {
 
-        return (SortedSetX<C>) MutableCollectionX.super.grouped(size, supplier);
+        return (SortedSetX<C>) LazyCollectionX.super.grouped(size, supplier);
     }
 
     @Override
     default SortedSetX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
 
-        return (SortedSetX<ListX<T>>) MutableCollectionX.super.groupedUntil(predicate);
+        return (SortedSetX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
     @Override
     default SortedSetX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
 
-        return (SortedSetX<ListX<T>>) MutableCollectionX.super.groupedWhile(predicate);
+        return (SortedSetX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }
 
     @Override
     default <C extends Collection<? super T>> SortedSetX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return (SortedSetX<C>) MutableCollectionX.super.groupedWhile(predicate, factory);
+        return (SortedSetX<C>) LazyCollectionX.super.groupedWhile(predicate, factory);
     }
 
     @Override
     default <C extends Collection<? super T>> SortedSetX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return (SortedSetX<C>) MutableCollectionX.super.groupedUntil(predicate, factory);
+        return (SortedSetX<C>) LazyCollectionX.super.groupedUntil(predicate, factory);
     }
 
     @Override
     default SortedSetX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (SortedSetX<ListX<T>>) MutableCollectionX.super.groupedStatefullyUntil(predicate);
+        return (SortedSetX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
     }
 
 
@@ -955,81 +972,81 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, MutableCo
 
     @Override
     default <R> SortedSetX<R> retry(final Function<? super T, ? extends R> fn) {
-        return (SortedSetX<R>)MutableCollectionX.super.retry(fn);
+        return (SortedSetX<R>)LazyCollectionX.super.retry(fn);
     }
 
     @Override
     default <R> SortedSetX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (SortedSetX<R>)MutableCollectionX.super.retry(fn);
+        return (SortedSetX<R>)LazyCollectionX.super.retry(fn);
     }
 
     @Override
     default <R> SortedSetX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (SortedSetX<R>)MutableCollectionX.super.flatMapS(fn);
+        return (SortedSetX<R>)LazyCollectionX.super.flatMapS(fn);
     }
 
     @Override
     default <R> SortedSetX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (SortedSetX<R>)MutableCollectionX.super.flatMapP(fn);
+        return (SortedSetX<R>)LazyCollectionX.super.flatMapP(fn);
     }
 
     @Override
     default SortedSetX<T> prependS(Stream<? extends T> stream) {
-        return (SortedSetX<T>)MutableCollectionX.super.prependS(stream);
+        return (SortedSetX<T>)LazyCollectionX.super.prependS(stream);
     }
 
     @Override
     default SortedSetX<T> append(T... values) {
-        return (SortedSetX<T>)MutableCollectionX.super.append(values);
+        return (SortedSetX<T>)LazyCollectionX.super.append(values);
     }
 
     @Override
     default SortedSetX<T> append(T value) {
-        return (SortedSetX<T>)MutableCollectionX.super.append(value);
+        return (SortedSetX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override
     default SortedSetX<T> prepend(T value) {
-        return (SortedSetX<T>)MutableCollectionX.super.prepend(value);
+        return (SortedSetX<T>)LazyCollectionX.super.prepend(value);
     }
 
     @Override
     default SortedSetX<T> prepend(T... values) {
-        return (SortedSetX<T>)MutableCollectionX.super.prepend(values);
+        return (SortedSetX<T>)LazyCollectionX.super.prepend(values);
     }
 
     @Override
     default SortedSetX<T> insertAt(int pos, T... values) {
-        return (SortedSetX<T>)MutableCollectionX.super.insertAt(pos,values);
+        return (SortedSetX<T>)LazyCollectionX.super.insertAt(pos,values);
     }
 
     @Override
     default SortedSetX<T> deleteBetween(int start, int end) {
-        return (SortedSetX<T>)MutableCollectionX.super.deleteBetween(start,end);
+        return (SortedSetX<T>)LazyCollectionX.super.deleteBetween(start,end);
     }
 
     @Override
     default SortedSetX<T> insertAtS(int pos, Stream<T> stream) {
-        return (SortedSetX<T>)MutableCollectionX.super.insertAtS(pos,stream);
+        return (SortedSetX<T>)LazyCollectionX.super.insertAtS(pos,stream);
     }
 
     @Override
     default SortedSetX<T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return (SortedSetX<T>)MutableCollectionX.super.recover(fn);
+        return (SortedSetX<T>)LazyCollectionX.super.recover(fn);
     }
 
     @Override
     default <EX extends Throwable> SortedSetX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return (SortedSetX<T>)MutableCollectionX.super.recover(exceptionClass,fn);
+        return (SortedSetX<T>)LazyCollectionX.super.recover(exceptionClass,fn);
     }
     @Override
     default SortedSetX<T> plusLoop(int max, IntFunction<T> value) {
-        return (SortedSetX<T>)MutableCollectionX.super.plusLoop(max,value);
+        return (SortedSetX<T>)LazyCollectionX.super.plusLoop(max,value);
     }
 
     @Override
     default SortedSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
-        return (SortedSetX<T>)MutableCollectionX.super.plusLoop(supplier);
+        return (SortedSetX<T>)LazyCollectionX.super.plusLoop(supplier);
     }
 
     /**

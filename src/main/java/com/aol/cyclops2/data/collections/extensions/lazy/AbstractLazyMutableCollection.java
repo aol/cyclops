@@ -2,13 +2,11 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollection;
-import com.aol.cyclops2.data.collections.extensions.standard.MutableCollectionX;
+import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.Getter;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,7 +14,6 @@ import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -24,7 +21,7 @@ import java.util.stream.Stream;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public abstract class AbstractLazyMutableCollection<T, C extends Collection<T>> implements LazyFluentCollection<T, C>, MutableCollectionX<T> {
+public abstract class AbstractLazyMutableCollection<T, C extends Collection<T>> implements LazyFluentCollection<T, C>, LazyCollectionX<T> {
     @Getter(AccessLevel.PROTECTED)
     private volatile C list;
     @Getter(AccessLevel.PROTECTED)

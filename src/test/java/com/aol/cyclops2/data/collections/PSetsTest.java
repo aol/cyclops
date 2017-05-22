@@ -36,12 +36,12 @@ public class PSetsTest {
 	}
 	@Test
 	public void testFromCollection() {
-		assertThat(PersistentSetX.fromCollection(Arrays.asList("a","b","c")).stream()
+		assertThat(PersistentSetX.fromIterable(Arrays.asList("a","b","c")).stream()
 				.collect(Collectors.toList()),hasItems("a","b","c"));
 	}
 	@Test
 	public void testToPSetstreamOfT() {
-		assertThat(PersistentSetX.fromStream(Stream.of("a","b","c")).stream()
+		assertThat(PersistentSetX.fromIterable(ReactiveSeq.of("a","b","c")).stream()
 				.collect(Collectors.toList()),
 						hasItems("a","b","c"));
 	}

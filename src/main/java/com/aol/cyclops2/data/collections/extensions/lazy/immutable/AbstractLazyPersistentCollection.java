@@ -2,7 +2,7 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollection;
-import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
+import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<T>> implements LazyFluentCollection<T, C>, PersistentCollectionX<T> {
+public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<T>> implements LazyFluentCollection<T, C>, LazyCollectionX<T> {
     @Getter(AccessLevel.PROTECTED)
     protected volatile C list;
     @Getter(AccessLevel.PROTECTED)

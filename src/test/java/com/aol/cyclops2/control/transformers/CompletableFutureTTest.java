@@ -266,7 +266,7 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
 	public void testMapReduceReducerOfR() {
-		assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(LinkedListX.of(10)));
+		assertThat(just.mapReduce(Reducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
 	}
 
 	@Test
@@ -320,7 +320,7 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
 	public void testFoldRightMapToType() {
-		assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(LinkedListX.of(10)));
+		assertThat(just.foldRightMapToType(Reducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
 	}
 
 	

@@ -6,7 +6,6 @@ import cyclops.stream.ReactiveSeq;
 
 import java.util.*;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -69,7 +68,7 @@ public class LazyQueueX<T> extends AbstractLazyMutableCollection<T,Queue<T>> imp
 
 
     @Override
-    public <X> LazyQueueX<X> fromStream(Stream<X> stream) {
+    public <X> LazyQueueX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyQueueX<X>((Deque)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
     }

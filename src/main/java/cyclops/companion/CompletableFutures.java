@@ -238,7 +238,7 @@ public class CompletableFutures {
       CompletableFuture<Integer> none = Future.ofError(new NoSuchElementException())
                                                .getFuture();
        
-     * CompletableFuture<PersistentSetX<Integer>> futures = CompletableFutures.accumulateSuccess(ListX.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPSetX());
+     * CompletableFuture<PersistentSetX<Integer>> futures = CompletableFutures.accumulateSuccess(ListX.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPersistentSetX());
        
        //CompletableFuture[PersistentSetX[10,1]]
      *  }
@@ -325,7 +325,7 @@ public class CompletableFutures {
      * CompletableFuture<Integer> just =CompletableFuture.completedFuture(10);
        CompletableFuture<Integer> none = Future.ofError(new NoSuchElementException()).getFuture();
        
-     * CompletableFuture<PersistentSetX<Integer>> futures = CompletableFutures.accumulateSuccess(ListX.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPSetX());
+     * CompletableFuture<PersistentSetX<Integer>> futures = CompletableFutures.accumulateSuccess(ListX.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPersistentSetX());
        
        //CompletableFuture[PersistentSetX[10,1]]
      *  }

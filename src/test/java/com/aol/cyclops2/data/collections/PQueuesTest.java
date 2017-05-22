@@ -35,12 +35,12 @@ public class PQueuesTest {
 	}
 	@Test
 	public void testFromCollection() {
-		assertThat(PersistentQueueX.fromCollection(Arrays.asList("a","b","c")).stream()
+		assertThat(PersistentQueueX.fromIterable(Arrays.asList("a","b","c")).stream()
 				.collect(Collectors.toList()),equalTo(Arrays.asList("a","b","c")));
 	}
 	@Test
 	public void testToPStackstreamOfT() {
-		assertThat(PersistentQueueX.fromStream(Stream.of("a","b","c")).stream()
+		assertThat(PersistentQueueX.fromIterable(ReactiveSeq.of("a","b","c")).stream()
 				.collect(Collectors.toList()),
 						equalTo(Arrays.asList("a","b","c")));
 	}
