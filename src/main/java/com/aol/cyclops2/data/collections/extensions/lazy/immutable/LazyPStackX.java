@@ -19,6 +19,8 @@ import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static com.aol.cyclops2.types.mixins.Printable.*;
+
 /**
  * An extended List type {@see java.util.List}
  * Extended List operations execute lazily e.g.
@@ -70,19 +72,33 @@ public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>
 
 
     }
-    private static <E> PStack<E> from(final Iterator<E> i,int depth,ReactiveSeq<E> toUse) {
-        if(depth>1000){
-            return Reducers.<E>toPStack().mapReduce(toUse);
-        }
+    private static <E> PStack<E> from(final Iterator<E> i,int depth) {
+
         if(!i.hasNext())
             return ConsPStack.empty();
         E e = i.next();
-        return from(i,depth++,toUse).plus(e);
+        System.out.println(e);
+        return  from(i,depth++).plus(e);
     }
     public PStack<T> materializeList(ReactiveSeq<T> toUse){
-        PStack<T> res = from(toUse.iterator(),0,toUse);//ConsPStack.<T> empty();
+
+
+        PStack<T> res = from(toUse.iterator(),0);
         return new LazyPStackX<>(
                 res);
+
+    }
+    public PStack<T> materializeList2(ReactiveSeq<T> toUse){
+        PStack<T> res = ConsPStack.<T> empty();
+
+
+        final Iterator<T> it = toUse.iterator();
+
+        while (it.hasNext())
+            res = res.plus(it.next());
+
+        return new LazyPStackX<T>(res);
+
     }
 
 

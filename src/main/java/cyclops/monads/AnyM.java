@@ -73,6 +73,8 @@ import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.stream.ToStream;
 import cyclops.companion.Optionals;
 
+import static com.aol.cyclops2.types.stream.ConvertableSequence.Conversion.LAZY;
+
 /**
  * 
  * Wrapper for Any Monad type
@@ -1160,7 +1162,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @return Monad with a List
      */
     public static <W extends WitnessType<W>,T1> AnyM<W,ListX<T1>> sequence(final Collection<? extends AnyM<W,T1>> seq,W w) {
-        return sequence(seq.stream(),w).map(ListX::fromStreamS);
+        return sequence(seq.stream(),w).map(s->ReactiveSeq.fromStream(s).to().listX(LAZY));
     }
 
     /**

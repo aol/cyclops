@@ -9,6 +9,7 @@ import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.pcollections.PCollection;
+import org.pcollections.PStack;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -48,9 +49,10 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     }
 
     public C materializeList(ReactiveSeq<T> toUse){
-        System.out.println("Collector internal!");
+
         return collectorInternal.mapReduce(toUse);
     }
+
     @Override
     public C get() {
         if (seq.get() != null) {

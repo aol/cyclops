@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ToStream;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
@@ -33,6 +34,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.*;
+
+import static com.aol.cyclops2.types.stream.ConvertableSequence.Conversion.LAZY;
 
 /**
  * 
@@ -457,7 +460,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      * @return Monad with a List
      */
     public static <W extends WitnessType<W>,T1,T2> AnyM2<W,ListX<T1>,T2> sequence(final Collection<? extends AnyM2<W, T1,T2>> seq, W w) {
-        return sequence(seq.stream(),w).map(ListX::fromStreamS);
+        return sequence(seq.stream(),w).map(s->ReactiveSeq.fromStream(s).to().listX(LAZY));
     }
 
     /**

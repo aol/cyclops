@@ -224,6 +224,11 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
         return this;
 
     }
+    default CollectionX<T> materializeReversed(){
+
+        return reverse().materialize();
+
+    }
     /**
      * Get the element at the specified index (if it exists)
      * 

@@ -294,7 +294,7 @@ public interface ListX<T> extends To<ListX<T>>,
         }
 
         private static  <T> ListX<T> concat(List<T> l1, List<T> l2){
-            return ListX.fromStreamS(Stream.concat(l1.stream(),l2.stream()));
+            return ListX.listX(ReactiveSeq.fromStream(Stream.concat(l1.stream(),l2.stream())));
         }
         private static <T> ListX<T> of(T value){
             return ListX.of(value);
@@ -356,11 +356,7 @@ public interface ListX<T> extends To<ListX<T>>,
     default AnyMSeq<list,T> anyM(){
         return AnyM.fromList(this);
     }
-   
-    public static <T> ListX<T> fromStreamS(Stream<T> s){
-        return ReactiveSeq.fromStream(s).to().listX(Conversion.LAZY);
-    }
-   
+
 
     /**
      * Create a ListX that contains the Integers between skip and take
@@ -373,7 +369,7 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     public static ListX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                          .listX(Conversion.LAZY);
+                          .listX();
     }
 
     /**
@@ -387,7 +383,7 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     public static ListX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .listX(Conversion.LAZY);
+                          .listX();
     }
 
     /**
@@ -408,7 +404,7 @@ public interface ListX<T> extends To<ListX<T>>,
     static <U, T> ListX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
                           .to()
-                          .listX(Conversion.LAZY);
+                          .listX();
     }
     /**
      * Generate a ListX from the provided value up toNested the provided limit number of times
@@ -422,7 +418,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return ReactiveSeq.fill(s)
                           .limit(limit)
                           .to()
-                          .listX(Conversion.LAZY);
+                          .listX();
     }
 
     /**
@@ -437,7 +433,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return ReactiveSeq.generate(s)
                           .limit(limit)
                           .to()
-                          .listX(Conversion.LAZY);
+                          .listX();
     }
 
     /**
@@ -452,7 +448,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
                           .to()
-                          .listX(Conversion.LAZY);
+                          .listX();
 
     }
     @Override
@@ -748,6 +744,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * {@code 
      *  ListX.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .to()
                    .listX(Conversion.LAZY)
                    
      *  //ListX(3,4) 

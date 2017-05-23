@@ -79,7 +79,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     */
     public static QueueX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX();
     }
 
     /**
@@ -93,7 +93,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     public static QueueX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX();
     }
 
     /**
@@ -113,7 +113,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     static <U, T> QueueX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX();
     }
 
     /**
@@ -127,7 +127,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX();
     }
     /**
      * Generate a QueueX from the provided value up toNested the provided limit number of times
@@ -140,7 +140,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX();
     }
     /**
      * Create a QueueX by iterative application of a function toNested an initial element up toNested the supplied limit number of times
@@ -153,7 +153,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     public static <T> QueueX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX();
 
     }
 

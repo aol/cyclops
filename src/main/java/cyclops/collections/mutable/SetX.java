@@ -46,7 +46,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
 
         return ReactiveSeq.range(start, end)
                           .to()
-                          .setX(Conversion.LAZY);
+                          .setX();
     }
 
     /**
@@ -60,7 +60,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
      */
     public static SetX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .setX(Conversion.LAZY);
+                          .setX();
     }
 
     /**
@@ -80,7 +80,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
      */
     static <U, T> SetX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .setX(Conversion.LAZY);
+                          .setX();
     }
 
     /**
@@ -94,7 +94,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .setX(Conversion.LAZY);
+                          .setX();
     }
 
     /**
@@ -108,7 +108,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
     public static <T> SetX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .setX(Conversion.LAZY);
+                          .setX();
 
     }
 

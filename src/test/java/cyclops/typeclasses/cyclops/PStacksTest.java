@@ -129,7 +129,8 @@ public class PStacksTest {
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), LinkedListX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
        
-       
+
+       System.out.println("Res " + res);
        assertThat(res,equalTo(Maybe.just(LinkedListX.of(2,4,6))));
     }
     

@@ -22,8 +22,7 @@ import java.util.function.Supplier;
 /**
  * Created by johnmcclean on 17/12/2016.
  */
-public interface FoldableTraversable<T> extends
-                                                Traversable<T>,
+public interface FoldableTraversable<T> extends Traversable<T>,
                                                 CyclopsCollectable<T>,
                                                 ExtendedTraversable<T>{
 

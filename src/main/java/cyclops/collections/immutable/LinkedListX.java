@@ -102,7 +102,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static LinkedListX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX();
     }
 
     /**
@@ -116,7 +116,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static LinkedListX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX();
     }
 
     /**
@@ -136,7 +136,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     static <U, T> LinkedListX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX();
     }
 
     /**
@@ -150,7 +150,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX();
     }
 
     /**
@@ -164,7 +164,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX();
     }
     
     /**
@@ -178,7 +178,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     public static <T> LinkedListX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX();
     }
 
 
@@ -1408,8 +1408,10 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
                 BinaryOperator<Higher<C2,LinkedListX<T>>> combinePStacks = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> l1.plusAll(l2)),a,b); ;
 
+
                 return list.stream()
-                        .reduce(identity,
+                           .reverse()
+                           .reduce(identity,
                                 combineToPStack,
                                 combinePStacks);
 
@@ -1446,7 +1448,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return LinkedListX.fromIterable(l1.plusAll(l2));
         }
         private <T> LinkedListX<T> of(T value){
-            return LinkedListX.of(value);
+            return LinkedListX.singleton(value);
         }
         private static <T,R> LinkedListX<R> ap(LinkedListX<Function< T, R>> lt, LinkedListX<T> list){
             return LinkedListX.fromIterable(lt).zip(list,(a, b)->a.apply(b));

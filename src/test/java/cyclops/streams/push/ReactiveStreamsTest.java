@@ -73,7 +73,7 @@ public class ReactiveStreamsTest {
     @Test
     public void fromFluxPStackX(){
         assertThat( LinkedListX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
-                Arrays.asList(3,2,1)));
+                Arrays.asList(1,2,3)));
     }
     @Test
     public void fromFluxPVectorX(){

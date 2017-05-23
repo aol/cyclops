@@ -35,4 +35,8 @@ public interface Printable {
         return object;
     }
 
+    static <T> T println(final T object){
+        System.out.println(object);
+        return object;
+    }
 }

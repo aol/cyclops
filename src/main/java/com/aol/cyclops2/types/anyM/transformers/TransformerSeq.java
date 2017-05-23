@@ -40,51 +40,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     default ConvertableSequence<T> to(){
         return new ConvertableSequence<>(this);
     }
-    /**
-    @Override
-    default DequeX<T> dequeX() {
-        return ConvertableSequence.super.dequeX().materialize();
-    }
 
-    @Override
-    default QueueX<T> queueX() {
-        return ConvertableSequence.super.queueX().materialize();
-    }
-
-    @Override
-    default SetX<T> setX() {
-        return ConvertableSequence.super.setX().materialize();
-    }
-
-    @Override
-    default ListX<T> listX() {
-        return ConvertableSequence.super.listX().materialize();
-    }
-
-    @Override
-    default LinkedListX<T> toPStackX() {
-        return ConvertableSequence.super.toPStackX().materialize();
-    }
-
-    @Override
-    default VectorX<T> toPVectorX() {
-        return ConvertableSequence.super.toPVectorX().materialize();
-    }
-
-    @Override
-    default PersistentQueueX<T> toPQueueX() {
-        return ConvertableSequence.super.toPQueueX().materialize();
-    }
-    @Override
-    default BagX<T> toPBagX() {
-        return ConvertableSequence.super.toPBagX().materialize();
-    }
-
-    @Override
-    default PersistentSetX<T> toPSetX() {
-        return ConvertableSequence.super.toPSetX().materialize();
-    }
-    */
     public boolean isSeqPresent();
 
     <T> TransformerSeq<W,T> unitAnyM(AnyM<W,Traversable<T>> traversable);

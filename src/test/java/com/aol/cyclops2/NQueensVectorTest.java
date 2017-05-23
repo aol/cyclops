@@ -1,20 +1,16 @@
 package com.aol.cyclops2;
 
 import com.aol.cyclops2.types.FoldableTraversable;
-import com.aol.cyclops2.types.Traversable;
-import com.aol.cyclops2.types.stream.ConvertableSequence;
-import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.immutable.VectorX;
+import lombok.val;
 import org.junit.Test;
 
-import cyclops.collections.immutable.VectorX;
-
-import static cyclops.collections.immutable.LinkedListX.range;
+import static cyclops.collections.immutable.VectorX.range;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import lombok.val;
 
-public class NQueensPStackTest {
+public class NQueensVectorTest {
     private final int num=8;
 
     @Test
@@ -28,13 +24,13 @@ public class NQueensPStackTest {
         show(placeQueens(num));
     }
     
-    public LinkedListX<LinkedListX<Integer>> placeQueens(int k) {
+    public VectorX<VectorX<Integer>> placeQueens(int k) {
         if (k == 0)
-            return LinkedListX.of(LinkedListX.empty());
+            return VectorX.of(VectorX.empty());
         else {
             return placeQueens(k - 1).forEach2(queens -> range(1, num+1 ),
                                                (queens, column) -> isSafe(column, queens, 1),
-                                               (queens, column) -> queens.plus(column));
+                                               (queens, column) -> queens.plus(0,column));
         }
     }
     
@@ -48,7 +44,7 @@ public class NQueensPStackTest {
            
 
     
-    public void show(LinkedListX<LinkedListX<Integer>> solutions){
+    public void show(VectorX<VectorX<Integer>> solutions){
         solutions.forEach(solution->{
             System.out.println("----Solution----");
             solution.forEach(col->{

@@ -35,7 +35,7 @@ public class PStacksTest {
 	@Test
 	public void testToPStackstreamOfTReveresed() {
 		assertThat(LinkedListX.linkedListX(ReactiveSeq.of("a","b","c")),
-						equalTo(Arrays.asList("c","b","a")));
+						equalTo(Arrays.asList("a","b","c")));
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class PStacksTest {
 	@Test
 	public void testToPStackstreamOf() {
 		assertThat(LinkedListX.linkedListX(ReactiveSeq.of("a","b","c")),
-						equalTo(Arrays.asList("c","b","a")));
+						equalTo(Arrays.asList("a","b","c")));
 	}
 
 	@Test

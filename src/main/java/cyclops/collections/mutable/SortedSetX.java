@@ -60,7 +60,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     public static SortedSetX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end)
                           .to()
-                          .sortedSetX(Conversion.LAZY);
+                          .sortedSetX();
     }
 
     /**
@@ -75,7 +75,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     public static SortedSetX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end)
                           .to()
-                          .sortedSetX(Conversion.LAZY);
+                          .sortedSetX();
     }
 
     /**
@@ -96,7 +96,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     static <U, T> SortedSetX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
                           .to()
-                          .sortedSetX(Conversion.LAZY);
+                          .sortedSetX();
     }
 
     /**
@@ -111,7 +111,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         return ReactiveSeq.generate(s)
                           .limit(limit)
                           .to()
-                          .sortedSetX(Conversion.LAZY);
+                          .sortedSetX();
     }
 
     /**
@@ -126,7 +126,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
                           .to()
-                          .sortedSetX(Conversion.LAZY);
+                          .sortedSetX();
 
     }
 
