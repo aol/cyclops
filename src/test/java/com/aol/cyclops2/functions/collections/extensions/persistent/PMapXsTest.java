@@ -19,7 +19,7 @@ public class PMapXsTest {
     public void toPStackX(){
         PersistentMapX<String,Integer> maps = PersistentMapXs.of("a",1,"b",2);
         LinkedListX<String> strs = maps.toPStackX(t->""+t.v1+t.v2);
-        assertThat(strs.reverse(),equalTo(ListX.of("a1","b2")));
+        assertThat(strs,equalTo(ListX.of("a1","b2")));
     }
     @Test
     public void toPSetX(){

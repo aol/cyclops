@@ -53,6 +53,11 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
     }
 
     @Override
+    public ListX<T> type(Collector<T, ?, List<T>> collector) {
+        return withCollector(collector);
+    }
+
+    @Override
     public String toString() {
         return get().toString();
     }

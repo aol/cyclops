@@ -53,7 +53,7 @@ public class LazySetX<T> extends AbstractLazyCollection<T,Set<T>> implements Set
     }
 
     @Override
-    public LazySetX<T> withCollector(Collector<T, ?, Set<T>> collector){
+    public LazySetX<T> type(Collector<T, ?, Set<T>> collector){
         return (LazySetX)new LazySetX<T>(this.getList(),this.getSeq().get(),collector);
     }
     //@Override

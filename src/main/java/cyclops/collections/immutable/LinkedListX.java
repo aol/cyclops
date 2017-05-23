@@ -102,7 +102,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static LinkedListX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                .linkedListX();
+                .linkedListX(Conversion.LAZY);
     }
 
     /**
@@ -116,7 +116,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static LinkedListX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                .linkedListX();
+                .linkedListX(Conversion.LAZY);
     }
 
     /**
@@ -136,7 +136,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     static <U, T> LinkedListX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                .linkedListX();
+                .linkedListX(Conversion.LAZY);
     }
 
     /**
@@ -150,7 +150,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                .linkedListX();
+                .linkedListX(Conversion.LAZY);
     }
 
     /**
@@ -164,7 +164,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                .linkedListX();
+                .linkedListX(Conversion.LAZY);
     }
     
     /**
@@ -178,7 +178,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     public static <T> LinkedListX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                .linkedListX();
+                .linkedListX(Conversion.LAZY);
     }
 
 

@@ -34,7 +34,7 @@ public class QueueXTestSuite {
                     .named("QueueX test")
                     .withFeatures(
                             CollectionSize.ANY,
-                          
+                            CollectionFeature.ALLOWS_NULL_VALUES,
                             CollectionFeature.FAILS_FAST_ON_CONCURRENT_MODIFICATION,
                             CollectionFeature.SUPPORTS_ADD,
                            

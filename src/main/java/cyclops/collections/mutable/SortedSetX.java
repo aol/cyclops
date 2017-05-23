@@ -1,14 +1,10 @@
 package cyclops.collections.mutable;
 
-import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
-import com.aol.cyclops2.data.collections.extensions.lazy.LazySetX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySortedSetX;
-import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
-import cyclops.companion.Streams;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -60,7 +56,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     public static SortedSetX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end)
                           .to()
-                          .sortedSetX();
+                          .sortedSetX(Conversion.LAZY);
     }
 
     /**
@@ -75,7 +71,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     public static SortedSetX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end)
                           .to()
-                          .sortedSetX();
+                          .sortedSetX(Conversion.LAZY);
     }
 
     /**
@@ -96,7 +92,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     static <U, T> SortedSetX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
                           .to()
-                          .sortedSetX();
+                          .sortedSetX(Conversion.LAZY);
     }
 
     /**
@@ -111,7 +107,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         return ReactiveSeq.generate(s)
                           .limit(limit)
                           .to()
-                          .sortedSetX();
+                          .sortedSetX(Conversion.LAZY);
     }
 
     /**
@@ -126,7 +122,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
                           .to()
-                          .sortedSetX();
+                          .sortedSetX(Conversion.LAZY);
 
     }
 
@@ -209,7 +205,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
 
     public static <T> SortedSetX<T> fromIterable(final Collector<T, ?, SortedSet<T>> collector, final Iterable<T> it) {
         if (it instanceof SortedSetX)
-            return ((SortedSetX<T>) it).withCollector(collector);
+            return ((SortedSetX<T>) it).type(collector);
         if (it instanceof SortedSet)
             return new LazySortedSetX<T>(
                                          (SortedSet) it, collector);
@@ -218,7 +214,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
                                      collector);
     }
     
-    SortedSetX<T> withCollector(Collector<T, ?, SortedSet<T>> collector);
+    SortedSetX<T> type(Collector<T, ?, SortedSet<T>> collector);
 
     /**
      * coflatMap pattern, can be used toNested perform lazy reductions / collections / folds and other terminal operations

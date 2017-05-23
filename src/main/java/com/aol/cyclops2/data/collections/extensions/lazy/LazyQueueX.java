@@ -3,6 +3,7 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 
 import cyclops.collections.mutable.QueueX;
 import cyclops.stream.ReactiveSeq;
+import lombok.EqualsAndHashCode;
 
 import java.util.*;
 import java.util.stream.Collector;
@@ -33,6 +34,7 @@ import java.util.stream.Collector;
  *
  * @param <T> the type of elements held in this collection
  */
+@EqualsAndHashCode(of = { "queue" })
 public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements QueueX<T> {
 
 
@@ -48,6 +50,11 @@ public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements
     public LazyQueueX(ReactiveSeq<T> seq, Collector<T, ?, Queue<T>> collector) {
         super(null, seq, collector);
 
+    }
+
+    @Override
+    public QueueX<T> type(Collector<T, ?, Queue<T>> collector) {
+        return withCollector(collector);
     }
 
     @Override

@@ -1,14 +1,10 @@
 package cyclops.collections.mutable;
 
-import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
-import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySetX;
-import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
-import cyclops.companion.Streams;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -46,7 +42,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
 
         return ReactiveSeq.range(start, end)
                           .to()
-                          .setX();
+                          .setX(Conversion.LAZY);
     }
 
     /**
@@ -60,7 +56,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
      */
     public static SetX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .setX();
+                          .setX(Conversion.LAZY);
     }
 
     /**
@@ -80,7 +76,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
      */
     static <U, T> SetX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .setX();
+                          .setX(Conversion.LAZY);
     }
 
     /**
@@ -94,7 +90,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .setX();
+                          .setX(Conversion.LAZY);
     }
 
     /**
@@ -108,7 +104,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
     public static <T> SetX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .setX();
+                          .setX(Conversion.LAZY);
 
     }
 
@@ -188,7 +184,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
 
     public static <T> SetX<T> fromIterable(final Collector<T, ?, Set<T>> collector, final Iterable<T> it) {
         if (it instanceof SetX)
-            return ((SetX) it).withCollector(collector);
+            return ((SetX) it).type(collector);
         if (it instanceof Set)
             return new LazySetX<T>(
                                    (Set) it, collector);
@@ -282,7 +278,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
         return (SetX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
 
-    SetX<T> withCollector(Collector<T, ?, Set<T>> collector);
+    SetX<T> type(Collector<T, ?, Set<T>> collector);
 
     /**
      * coflatMap pattern, can be used toNested perform lazy reductions / collections / folds and other terminal operations

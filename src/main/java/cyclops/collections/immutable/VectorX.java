@@ -121,7 +121,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static VectorX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .vectorX();
+                          .vectorX(Conversion.LAZY);
     }
 
     /**
@@ -141,7 +141,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     static <U, T> VectorX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .vectorX();
+                          .vectorX(Conversion.LAZY);
     }
 
     /**
@@ -155,7 +155,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .vectorX();
+                          .vectorX(Conversion.LAZY);
     }  
     /**
      * Generate a VectorX from the provided value up toNested the provided limit number of times
@@ -168,7 +168,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                          .vectorX();
+                          .vectorX(Conversion.LAZY);
     }
 
     /**
@@ -182,7 +182,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     public static <T> VectorX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .vectorX();
+                          .vectorX(Conversion.LAZY);
 
     }
 

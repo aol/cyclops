@@ -36,7 +36,7 @@ public interface Folds<T> {
     
 
     /**
-     * Attempt toNested map this Sequence toNested the same type as the supplied Monoid
+     * Attempt toNePsted map this Sequence toNested the same type as the supplied Monoid
      * (Reducer) Then use Monoid toNested reduce values
      * 
      * <pre>

@@ -89,7 +89,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static DequeX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end)
                           .to()
-                          .dequeX();
+                          .dequeX(Conversion.LAZY);
     }
 
     /**
@@ -104,7 +104,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static DequeX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end)
                           .to()
-                          .dequeX();
+                          .dequeX(Conversion.LAZY);
     }
 
     /**
@@ -125,7 +125,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     static <U, T> DequeX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
                           .to()
-                          .dequeX();
+                          .dequeX(Conversion.LAZY);
     }
     /**
      * Generate a DequeX from the provided value up toNested the provided limit number of times
@@ -139,7 +139,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return ReactiveSeq.fill(s)
                           .limit(limit)
                           .to()
-                          .dequeX();
+                          .dequeX(Conversion.LAZY);
     }
 
     /**
@@ -154,7 +154,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return ReactiveSeq.generate(s)
                           .limit(limit)
                           .to()
-                          .dequeX();
+                          .dequeX(Conversion.LAZY);
     }
 
     /**
@@ -169,7 +169,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
                           .to()
-                          .dequeX();
+                          .dequeX(Conversion.LAZY);
 
     }
 
