@@ -1,11 +1,11 @@
 package cyclops.monads.transformers;
 
 
-import com.aol.cyclops2.types.FoldableTraversable;
-import com.aol.cyclops2.types.To;
-import com.aol.cyclops2.types.Traversable;
+import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.traversable.Traversable;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
-import com.aol.cyclops2.types.stream.CyclopsCollectable;
+import com.aol.cyclops2.types.foldable.CyclopsCollectable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;

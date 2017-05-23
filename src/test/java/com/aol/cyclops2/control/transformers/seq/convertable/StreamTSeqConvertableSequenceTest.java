@@ -1,7 +1,7 @@
 package com.aol.cyclops2.control.transformers.seq.convertable;
 
 import com.aol.cyclops2.types.AbstractConvertableSequenceTest;
-import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 

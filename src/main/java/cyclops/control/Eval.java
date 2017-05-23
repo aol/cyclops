@@ -3,6 +3,8 @@ package cyclops.control;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.reactive.Completable;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.immutable.VectorX;
@@ -69,7 +71,7 @@ import java.util.stream.Stream;
  *
  * @param <T> Type of value storable in this Eval
  */
-public interface Eval<T> extends    To<Eval<T>>,
+public interface Eval<T> extends To<Eval<T>>,
                                     MonadicValue<T>,
                                     Higher<Eval.µ ,T> {
 
@@ -507,7 +509,7 @@ public interface Eval<T> extends    To<Eval<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
     default <R> R visit(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {

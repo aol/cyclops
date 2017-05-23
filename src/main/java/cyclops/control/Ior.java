@@ -3,7 +3,9 @@ package cyclops.control;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.AnyMValue;
-import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.functor.BiTransformable;
+import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
@@ -41,7 +43,7 @@ import java.util.stream.Stream;
  * @param <ST> Secondary type
  * @param <PT> Primary type
  */
-public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFunctor<ST, PT> {
+public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransformable<ST, PT> {
 
 
     /**
@@ -412,7 +414,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     Ior<ST, PT> secondaryPeek(Consumer<? super ST> action);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Transformable#peek(java.util.function.Consumer)
+     * @see com.aol.cyclops2.types.functor.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     Ior<ST, PT> peek(Consumer<? super PT> action);
@@ -463,7 +465,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bimap(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> Ior<R1, R2> bimap(final Function<? super ST, ? extends R1> fn1, final Function<? super PT, ? extends R2> fn2) {
@@ -530,7 +532,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     PT get();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Convertable#isPresent()
+     * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
      */
     @Override
     default boolean isPresent() {
@@ -852,31 +854,31 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bipeek(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default Ior<ST, PT> bipeek(final Consumer<? super ST> c1, final Consumer<? super PT> c2) {
 
-        return (Ior<ST, PT>) BiFunctor.super.bipeek(c1, c2);
+        return (Ior<ST, PT>) BiTransformable.super.bipeek(c1, c2);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bicast(java.lang.Class, java.lang.Class)
+     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bicast(java.lang.Class, java.lang.Class)
      */
     @Override
     default <U1, U2> Ior<U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
 
-        return (Ior<U1, U2>) BiFunctor.super.bicast(type1, type2);
+        return (Ior<U1, U2>) BiTransformable.super.bicast(type1, type2);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bitrampoline(java.util.function.Function, java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> Ior<R1, R2> bitrampoline(final Function<? super ST, ? extends Trampoline<? extends R1>> mapper1,
             final Function<? super PT, ? extends Trampoline<? extends R2>> mapper2) {
 
-        return (Ior<R1, R2>) BiFunctor.super.bitrampoline(mapper1, mapper2);
+        return (Ior<R1, R2>) BiTransformable.super.bitrampoline(mapper1, mapper2);
     }
 
     /* (non-Javadoc)

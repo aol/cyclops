@@ -1,7 +1,7 @@
 package cyclops.control.lazy;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.types.Completable;
+import com.aol.cyclops2.types.reactive.Completable;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
@@ -703,7 +703,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Convertable#optional()
+     * @see com.aol.cyclops2.types.foldable.Convertable#optional()
      */
     @Override
     default Optional<RT> toOptional() {
@@ -848,7 +848,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Convertable#isPresent()
+     * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
      */
     @Override
     default boolean isPresent() {
@@ -927,7 +927,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.BiFunctor#bimap(java.util.function.Function,
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bimap(java.util.function.Function,
      * java.util.function.Function)
      */
     @Override
@@ -942,7 +942,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.BiFunctor#bipeek(java.util.function.Consumer,
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bipeek(java.util.function.Consumer,
      * java.util.function.Consumer)
      */
     @Override
@@ -954,7 +954,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.BiFunctor#bicast(java.lang.Class,
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bicast(java.lang.Class,
      * java.lang.Class)
      */
     @Override
@@ -967,7 +967,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.BiFunctor#bitrampoline(java.util.function.Function,
+     * com.aol.cyclops2.types.functor.BiTransformable#bitrampoline(java.util.function.Function,
      * java.util.function.Function)
      */
     @Override

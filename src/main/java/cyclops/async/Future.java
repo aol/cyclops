@@ -2,6 +2,9 @@ package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.reactive.Completable;
+import com.aol.cyclops2.types.recoverable.Recoverable;
 import cyclops.companion.Monoids;
 import cyclops.collections.box.Mutable;
 import cyclops.control.*;
@@ -16,7 +19,7 @@ import com.aol.cyclops2.react.Status;
 import com.aol.cyclops2.react.collectors.lazy.Blocker;
 import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
-import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.companion.CompletableFutures;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Fn3;
@@ -65,9 +68,9 @@ import java.util.stream.Stream;
 @EqualsAndHashCode
 public class Future<T> implements To<Future<T>>,
                                   MonadicValue<T>,
-                                  Completable<T>,
+        Completable<T>,
                                   Higher<Future.µ,T>,
-                                  Recoverable<Throwable,T>{
+        Recoverable<Throwable,T> {
 
     public static class µ {
     }
@@ -1173,7 +1176,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Convertable#isPresent()
+     * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
      */
     @Override
     public boolean isPresent() {
@@ -1243,7 +1246,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Convertable#optional()
+     * @see com.aol.cyclops2.types.foldable.Convertable#optional()
      */
     @Override
     public Optional<T> toOptional() {
@@ -1263,7 +1266,7 @@ public class Future<T> implements To<Future<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.Convertable#toFutureAsync(java.util.concurrent.
+     * com.aol.cyclops2.types.foldable.Convertable#toFutureAsync(java.util.concurrent.
      * Executor)
      */
     @Override

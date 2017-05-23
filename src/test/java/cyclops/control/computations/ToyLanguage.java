@@ -1,6 +1,6 @@
 package cyclops.control.computations;
 
-import com.aol.cyclops2.types.Transformable;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Unrestricted;
 import cyclops.control.lazy.Either3;
 import cyclops.function.Fn1;

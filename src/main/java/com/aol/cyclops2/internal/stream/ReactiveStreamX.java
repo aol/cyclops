@@ -3,7 +3,7 @@ package com.aol.cyclops2.internal.stream;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.HotStream;
-import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
+import com.aol.cyclops2.types.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.util.ExceptionSoftener;
 
 import cyclops.async.Future;
@@ -26,7 +26,6 @@ import cyclops.stream.Spouts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
-import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;

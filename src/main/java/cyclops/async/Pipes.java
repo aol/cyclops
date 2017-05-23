@@ -1,7 +1,7 @@
 package cyclops.async;
 
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
-import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.async.adapters.Adapter;
 import cyclops.collections.box.LazyImmutable;
 import cyclops.collections.immutable.PersistentMapX;

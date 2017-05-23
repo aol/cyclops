@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 
 import com.aol.cyclops2.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
 import cyclops.stream.FutureStream;
-import com.aol.cyclops2.types.stream.reactive.ReactiveStreamsTerminalFutureOperations;
-import com.aol.cyclops2.types.stream.reactive.ReactiveTask;
+import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalFutureOperations;
+import com.aol.cyclops2.types.reactive.ReactiveTask;
 
 public class FutureOpterationsImpl<T> implements ReactiveStreamsTerminalFutureOperations<T> {
     private final Executor exec;

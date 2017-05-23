@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.aol.cyclops2.types.Convertable;
+import com.aol.cyclops2.types.foldable.Convertable;
 public class ConvertableTest {
 
 	@Test

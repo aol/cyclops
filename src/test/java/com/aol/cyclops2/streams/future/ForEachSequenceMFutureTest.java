@@ -2,7 +2,6 @@ package com.aol.cyclops2.streams.future;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -12,13 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.function.Supplier;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops2.types.stream.reactive.ReactiveTask;
 import org.reactivestreams.Subscription;
 
 public class ForEachSequenceMFutureTest {

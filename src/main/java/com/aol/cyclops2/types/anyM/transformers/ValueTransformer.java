@@ -4,6 +4,8 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.factory.Unit;
+import com.aol.cyclops2.types.foldable.Folds;
 import cyclops.function.Fn0;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
@@ -18,8 +20,8 @@ import cyclops.function.Fn3;
 
 public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
                                                                             Unwrapable,
-                                                                            Unit<T>,
-                                                                            Folds<T>,
+        Unit<T>,
+        Folds<T>,
                                                                             Zippable<T>,
         Fn0<T> {
     public abstract <R> ValueTransformer<W,R> empty();

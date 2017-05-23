@@ -1,8 +1,10 @@
 package com.aol.cyclops2.types;
 
+import com.aol.cyclops2.types.factory.Unit;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.Monoid;
 import cyclops.control.Maybe;
-import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.function.Curry;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -37,7 +39,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     public <T> MonadicValue<T> unit(T unit);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Transformable#map(java.util.function.Function)
+     * @see com.aol.cyclops2.types.functor.Transformable#map(java.util.function.Function)
      */
     @Override
     <R> MonadicValue<R> map(Function<? super T, ? extends R> fn);

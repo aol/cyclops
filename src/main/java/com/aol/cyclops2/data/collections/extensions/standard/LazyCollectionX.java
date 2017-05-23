@@ -32,7 +32,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
    
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Folds#reduce(java.lang.Object, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.foldable.Folds#reduce(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {

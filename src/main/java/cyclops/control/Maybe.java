@@ -2,6 +2,9 @@ package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.reactive.Completable;
+import com.aol.cyclops2.types.recoverable.Recoverable;
 import cyclops.companion.Monoids;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.async.Future;
@@ -102,7 +105,7 @@ import java.util.stream.Stream;
  */
 public interface Maybe<T> extends To<Maybe<T>>,
                                   MonadicValue<T>,
-                                  Recoverable<Void,T>,
+        Recoverable<Void,T>,
                                   Higher<Maybe.µ,T> {
 
     default <W extends WitnessType<W>> MaybeT<W, T> liftM(W witness) {
@@ -914,7 +917,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Convertable#isPresent()
+     * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
      */
     @Override
     boolean isPresent();
@@ -942,7 +945,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     <R> Maybe<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
     <R> R visit(Function<? super T, ? extends R> some, Supplier<? extends R> none);

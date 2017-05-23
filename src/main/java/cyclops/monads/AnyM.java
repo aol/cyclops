@@ -19,6 +19,11 @@ import java.util.stream.StreamSupport;
 
 import com.aol.cyclops2.internal.adapters.StreamAdapter;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
+import com.aol.cyclops2.types.factory.EmptyUnit;
+import com.aol.cyclops2.types.factory.Unit;
+import com.aol.cyclops2.types.foldable.Folds;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.companion.Streams;
@@ -65,7 +70,7 @@ import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.stream.ToStream;
 import cyclops.companion.Optionals;
 
-import static com.aol.cyclops2.types.stream.ConvertableSequence.Conversion.LAZY;
+import static com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion.LAZY;
 
 /**
  * 
@@ -96,8 +101,8 @@ import static com.aol.cyclops2.types.stream.ConvertableSequence.Conversion.LAZY;
  * @param <T> type data wrapped by the underlying monad
  */
 public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
-                                                            To<AnyM<W,T>>,
-                                                            EmptyUnit<T>,
+        To<AnyM<W,T>>,
+        EmptyUnit<T>,
                                                             Unit<T>,
         Folds<T>,
         Transformable<T>,
@@ -298,7 +303,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     }
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.EmptyUnit#emptyUnit()
+     * @see com.aol.cyclops2.types.factory.EmptyUnit#emptyUnit()
      */
     @Override
     default <T> Unit<T> emptyUnit(){

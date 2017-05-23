@@ -2,6 +2,8 @@ package cyclops.monads.transformers;
 
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Eval;
 import cyclops.control.Trampoline;
 import cyclops.function.Fn3;
@@ -30,7 +32,7 @@ import java.util.stream.Stream;
  * @param <T> Type of data stored inside the nested Eval(s)
  */
 public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
-                                                       implements  To<EvalT<W,T>>,
+                                                       implements To<EvalT<W,T>>,
         Transformable<T>,
         Filters<T> {
 

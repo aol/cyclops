@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.types.To;
+import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.Value;
 
 /**

@@ -5,7 +5,10 @@ import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
-import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.factory.EmptyUnit;
+import com.aol.cyclops2.types.factory.Unit;
+import com.aol.cyclops2.types.foldable.Folds;
+import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.stream.ToStream;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
@@ -35,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.*;
 
-import static com.aol.cyclops2.types.stream.ConvertableSequence.Conversion.LAZY;
+import static com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion.LAZY;
 
 /**
  * 
@@ -67,10 +70,10 @@ import static com.aol.cyclops2.types.stream.ConvertableSequence.Conversion.LAZY;
  */
 public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
                                                                 Unwrapable,
-                                                                EmptyUnit<T>,
+        EmptyUnit<T>,
                                                                 Unit<T>,
-                                                                Folds<T>,
-                                                                Transformable<T>,
+        Folds<T>,
+        Transformable<T>,
                                                                 ToStream<T>,
                                                                 Zippable<T>,
                                                                 Publisher<T> {
@@ -268,7 +271,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
     }
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.EmptyUnit#emptyUnit()
+     * @see com.aol.cyclops2.types.factory.EmptyUnit#emptyUnit()
      */
     @Override
     default <T> Unit<T> emptyUnit(){

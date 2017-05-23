@@ -1,6 +1,7 @@
 package cyclops;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.types.foldable.To;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.MapX;
 import cyclops.companion.Reducers;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 /**
  * Class for holding conversion methods between types
- * Use in conjunction with {@link com.aol.cyclops2.types.To#to(Function)} for fluent conversions
+ * Use in conjunction with {@link To#to(Function)} for fluent conversions
  *
  * <pre>
  *     {@code

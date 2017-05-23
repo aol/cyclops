@@ -1,7 +1,7 @@
 package cyclops.streams.push;
 
-import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
-import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
+import com.aol.cyclops2.types.reactive.AsyncSubscriber;
+import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
 import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;

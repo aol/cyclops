@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.zip;
 
 import com.aol.cyclops2.internal.stream.spliterators.push.Fixtures;
-import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
+import com.aol.cyclops2.types.reactive.AsyncSubscriber;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;

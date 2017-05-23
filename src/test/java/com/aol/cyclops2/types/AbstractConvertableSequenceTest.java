@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.foldable.ConvertableSequence;
 
 public abstract class AbstractConvertableSequenceTest {
     public abstract <T> ConvertableSequence<T> of(T...elements);

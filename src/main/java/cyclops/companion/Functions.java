@@ -1,7 +1,7 @@
 package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.Unit;
+import com.aol.cyclops2.types.factory.Unit;
 import cyclops.control.Maybe;
 import cyclops.control.Reader;
 import cyclops.function.*;

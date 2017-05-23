@@ -1,7 +1,6 @@
 package cyclops.stream;
 
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
@@ -13,10 +12,14 @@ import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingLongArraySpl
 import com.aol.cyclops2.internal.stream.spliterators.longs.ReversingRangeLongSpliterator;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.aol.cyclops2.types.factory.Unit;
+import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.futurestream.Continuation;
+import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.stream.*;
-import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
-import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
+import com.aol.cyclops2.types.reactive.QueueBasedSubscriber;
+import com.aol.cyclops2.types.reactive.QueueBasedSubscriber.Counter;
+import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.companion.Streams;
 import cyclops.async.*;
@@ -27,7 +30,6 @@ import cyclops.collections.mutable.MapX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
-import cyclops.function.*;
 
 import cyclops.control.lazy.Either;
 import cyclops.function.Fn3;
@@ -108,9 +110,9 @@ import java.util.stream.*;
  */
 public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Stream<T>,
-                                        OnEmptySwitch<T, Stream<T>>,
+        OnEmptySwitch<T, Stream<T>>,
                                         FoldableTraversable<T>,
-                                        Unit<T>,
+        Unit<T>,
 
                                         Higher<ReactiveSeq.µ,T> {
 
@@ -1647,7 +1649,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     * @see com.aol.cyclops2.types.traversable.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
     default ReactiveSeq<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
@@ -1682,7 +1684,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#takeWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.traversable.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
     default ReactiveSeq<T> takeWhile(final Predicate<? super T> p) {
@@ -1707,7 +1709,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#dropWhile(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.traversable.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
     default ReactiveSeq<T> dropWhile(final Predicate<? super T> p) {
@@ -1716,7 +1718,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#takeUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.traversable.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
     default ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {
@@ -1725,7 +1727,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#dropUntil(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.traversable.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
     default ReactiveSeq<T> dropUntil(final Predicate<? super T> p) {
@@ -1734,7 +1736,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#dropRight(int)
+     * @see com.aol.cyclops2.types.traversable.Traversable#dropRight(int)
      */
     @Override
     default ReactiveSeq<T> dropRight(final int num) {
@@ -1743,7 +1745,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#takeRight(int)
+     * @see com.aol.cyclops2.types.traversable.Traversable#takeRight(int)
      */
     @Override
     default ReactiveSeq<T> takeRight(final int num) {

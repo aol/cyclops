@@ -1,6 +1,6 @@
 package com.aol.cyclops2.control;
 
-import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
+import com.aol.cyclops2.types.reactive.AsyncSubscriber;
 import com.aol.cyclops2.util.SimpleTimer;
 import com.google.common.collect.Lists;
 import cyclops.collections.immutable.BagX;
@@ -8,7 +8,7 @@ import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
 import cyclops.collections.mutable.ListX;
 
-import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
+import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.control.Eval;
 import cyclops.monads.AnyM;

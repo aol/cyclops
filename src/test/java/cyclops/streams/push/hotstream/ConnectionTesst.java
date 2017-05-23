@@ -1,8 +1,6 @@
 package cyclops.streams.push.hotstream;
 
-import com.aol.cyclops2.types.FoldableTraversable;
 import com.aol.cyclops2.types.stream.PausableHotStream;
-import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Test;
 
