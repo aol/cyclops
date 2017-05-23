@@ -2,7 +2,11 @@ package cyclops.control.lazy;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.functor.BiTransformable;
+import com.aol.cyclops2.types.functor.Transformable;
+import com.aol.cyclops2.types.reactive.Completable;
+import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
@@ -45,8 +49,8 @@ import java.util.stream.Stream;
  */
 public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                                                         Filters<RT>,
-                                                        BiFunctor<LT4, RT>,
-                                                        To<Either5<LT1, LT2,LT3, LT4,RT>>,
+        BiTransformable<LT4, RT>,
+        To<Either5<LT1, LT2,LT3, LT4,RT>>,
                                                         MonadicValue<RT>,
                                                         Supplier<RT>{
 
@@ -664,7 +668,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.BiFunctor#bimap(java.util.function.Function,
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bimap(java.util.function.Function,
      * java.util.function.Function)
      */
     @Override
@@ -674,7 +678,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Transformable#map(java.util.function.Function)
+     * @see com.aol.cyclops2.types.functor.Transformable#map(java.util.function.Function)
      */
     @Override
     <R> Either5<LT1,LT2,LT3, LT4, R> map(Function<? super RT, ? extends R> fn);
@@ -890,32 +894,32 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.BiFunctor#bipeek(java.util.function.Consumer,
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bipeek(java.util.function.Consumer,
      * java.util.function.Consumer)
      */
     @Override
     default Either5<LT1, LT2, LT3, LT4, RT> bipeek(final Consumer<? super LT4> c1, final Consumer<? super RT> c2) {
 
-        return (Either5<LT1, LT2, LT3,LT4, RT>) BiFunctor.super.bipeek(c1, c2);
+        return (Either5<LT1, LT2, LT3,LT4, RT>) BiTransformable.super.bipeek(c1, c2);
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.BiFunctor#bicast(java.lang.Class,
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bicast(java.lang.Class,
      * java.lang.Class)
      */
     @Override
     default <U1, U2> Either5<LT1, LT2, LT3, U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
 
-        return (Either5<LT1, LT2,LT3, U1, U2>) BiFunctor.super.bicast(type1, type2);
+        return (Either5<LT1, LT2,LT3, U1, U2>) BiTransformable.super.bicast(type1, type2);
     }
 
     /*
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.BiFunctor#bitrampoline(java.util.function.Function,
+     * com.aol.cyclops2.types.functor.BiTransformable#bitrampoline(java.util.function.Function,
      * java.util.function.Function)
      */
     @Override
@@ -923,13 +927,13 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
             final Function<? super LT4, ? extends Trampoline<? extends R1>> mapper1,
             final Function<? super RT, ? extends Trampoline<? extends R2>> mapper2) {
 
-        return (Either5<LT1,LT2,LT3, R1, R2>) BiFunctor.super.bitrampoline(mapper1, mapper2);
+        return (Either5<LT1,LT2,LT3, R1, R2>) BiTransformable.super.bitrampoline(mapper1, mapper2);
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Transformable#cast(java.lang.Class)
+     * @see com.aol.cyclops2.types.functor.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> Either5<LT1, LT2, LT3, LT4, U> cast(final Class<? extends U> type) {
@@ -940,7 +944,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Transformable#peek(java.util.function.Consumer)
+     * @see com.aol.cyclops2.types.functor.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     default Either5<LT1, LT2, LT3,LT4, RT> peek(final Consumer<? super RT> c) {
@@ -952,7 +956,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.Transformable#trampoline(java.util.function.Function)
+     * com.aol.cyclops2.types.functor.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> Either5<LT1, LT2, LT3,LT4, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {

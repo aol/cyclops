@@ -3,9 +3,9 @@ package com.aol.cyclops2.internal.stream;
 
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.futurestream.Continuation;
-import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
-import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
-import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.types.reactive.QueueBasedSubscriber;
+import com.aol.cyclops2.types.reactive.QueueBasedSubscriber.Counter;
+import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.QueueFactory;
 import cyclops.async.adapters.Signal;

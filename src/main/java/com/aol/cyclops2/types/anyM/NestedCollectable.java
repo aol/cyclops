@@ -17,7 +17,7 @@ import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
-import com.aol.cyclops2.types.stream.CyclopsCollectable;
+import com.aol.cyclops2.types.foldable.CyclopsCollectable;
 
 /**
  * Interface for manipulating monads nested inside monad transformers

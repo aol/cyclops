@@ -1,6 +1,6 @@
 package cyclops.control;
 
-import com.aol.cyclops2.types.Transformable;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.lazy.Either3;
 import cyclops.function.Fn3;
 import lombok.AccessLevel;

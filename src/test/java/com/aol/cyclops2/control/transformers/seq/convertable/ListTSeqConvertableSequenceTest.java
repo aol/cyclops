@@ -3,7 +3,7 @@ package com.aol.cyclops2.control.transformers.seq.convertable;
 import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.AbstractConvertableSequenceTest;
 import cyclops.monads.Witness;
-import com.aol.cyclops2.types.stream.ConvertableSequence;
+import com.aol.cyclops2.types.foldable.ConvertableSequence;
 
 
 public class ListTSeqConvertableSequenceTest extends AbstractConvertableSequenceTest {

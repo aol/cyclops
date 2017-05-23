@@ -14,8 +14,8 @@ import java.util.NoSuchElementException;
 public class FutureAnyMValueTest extends BaseAnyMValueTest<Witness.future> {
     @Before
     public void setUp() throws Exception {
-        just = AnyM.fromFutureW(Future.ofResult(10));
-        none = AnyM.fromFutureW(Future.ofError(new NoSuchElementException()));
+        just = AnyM.fromFuture(Future.ofResult(10));
+        none = AnyM.fromFuture(Future.ofError(new NoSuchElementException()));
 
     }
     @Test

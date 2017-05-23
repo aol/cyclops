@@ -18,6 +18,8 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.recoverable.Recoverable;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple;
@@ -28,7 +30,7 @@ import org.reactivestreams.Publisher;
 
 import cyclops.function.Monoid;
 import com.aol.cyclops2.types.anyM.AnyMValue;
-import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Curry;
 import cyclops.function.Fn4;
@@ -141,8 +143,8 @@ import lombok.val;
  * @param <T> Return type (success)
  * @param <X> Base Error type
  */
-public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
-                                                        Recoverable<X,T>,
+public interface Try<T, X extends Throwable> extends To<Try<T,X>>,
+        Recoverable<X,T>,
                                                         MonadicValue<T> {
 
 
@@ -430,7 +432,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Transformable#cast(java.lang.Class)
+     * @see com.aol.cyclops2.types.functor.Transformable#cast(java.lang.Class)
      */
     @Override
     default <U> Try<U, X> cast(final Class<? extends U> type) {
@@ -438,7 +440,7 @@ public interface Try<T, X extends Throwable> extends    To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Transformable#trampoline(java.util.function.Function)
+     * @see com.aol.cyclops2.types.functor.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> Try<R, X> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {

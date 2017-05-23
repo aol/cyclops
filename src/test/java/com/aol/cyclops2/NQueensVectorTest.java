@@ -1,7 +1,6 @@
 package com.aol.cyclops2;
 
-import com.aol.cyclops2.types.FoldableTraversable;
-import cyclops.collections.immutable.VectorX;
+import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import cyclops.collections.immutable.VectorX;
 import lombok.val;
 import org.junit.Test;

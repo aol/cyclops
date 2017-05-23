@@ -1,20 +1,19 @@
 package cyclops.collections.mutable;
 
-import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
-import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.stream.ConvertableSequence;
-import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
-import cyclops.companion.Streams;
 import cyclops.function.Monoid;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness.queue;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
-import com.aol.cyclops2.types.OnEmptySwitch;
-import com.aol.cyclops2.types.To;
+import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
+import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
@@ -212,6 +211,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         return new LazyQueueX<T>(null,
                 stream,
                 defaultCollector());
+    }
+    default AnyMSeq<queue,T> anyM(){
+        return AnyM.fromQueue(this);
     }
 
     QueueX<T> type(Collector<T, ?, Queue<T>> collector);
@@ -829,7 +831,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
     default QueueX<T> onEmptySwitch(final Supplier<? extends Queue<T>> supplier) {

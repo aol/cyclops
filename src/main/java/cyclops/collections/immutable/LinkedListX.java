@@ -1,21 +1,23 @@
 package cyclops.collections.immutable;
 
 
-import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPStackX;
+import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.stream.ConvertableSequence;
-import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness.linkedListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.monads.transformers.ListT;
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.OnEmptySwitch;
-import com.aol.cyclops2.types.To;
+import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
+import com.aol.cyclops2.types.foldable.To;
 import cyclops.monads.WitnessType;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -199,7 +201,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @return
      */
     public static <T> LinkedListX<T> linkedListX(ReactiveSeq<T> stream) {
-        return new LazyPStackX<T>(stream);
+        return new LazyLinkedListX<T>(stream);
     }
 
 
@@ -225,7 +227,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     @SafeVarargs
     public static <T> LinkedListX<T> of(final T... values) {
-        return new LazyPStackX<>(
+        return new LazyLinkedListX<>(
                                  ReactiveSeq.of(values));
     }
     /**
@@ -254,10 +256,10 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         if (iterable instanceof LinkedListX)
             return (LinkedListX) iterable;
         if (iterable instanceof PStack)
-            return new LazyPStackX<T>(
+            return new LazyLinkedListX<T>(
                     (PStack) iterable);
 
-        return new LazyPStackX<>(ReactiveSeq.fromIterable(iterable));
+        return new LazyLinkedListX<>(ReactiveSeq.fromIterable(iterable));
 
     }
 
@@ -278,7 +280,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @return an empty PStack
      */
     public static <T> LinkedListX<T> empty() {
-        return new LazyPStackX<>(
+        return new LazyLinkedListX<>(
                                  ConsPStack.empty());
     }
 
@@ -299,7 +301,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @return PVector with a single value
      */
     public static <T> LinkedListX<T> singleton(final T value){
-        return new LazyPStackX<>(
+        return new LazyLinkedListX<>(
                                  ConsPStack.singleton(value));
     }
 
@@ -324,6 +326,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                        .mapReduce(stream);
     }
 
+    default AnyMSeq<linkedListX,T> anyM(){
+        return AnyM.fromLinkedListX(this);
+    }
     @Override
     default LinkedListX<T> materialize() {
         return (LinkedListX<T>)LazyCollectionX.super.materialize();
@@ -955,7 +960,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
     default LinkedListX<T> onEmptySwitch(final Supplier<? extends PStack<T>> supplier) {

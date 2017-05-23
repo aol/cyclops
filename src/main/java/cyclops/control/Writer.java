@@ -1,14 +1,12 @@
 package cyclops.control;
 
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.Transformable;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.val;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 

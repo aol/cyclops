@@ -10,6 +10,8 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.async.Future;
 import cyclops.control.Trampoline;
 import com.aol.cyclops2.types.*;
@@ -37,7 +39,7 @@ import cyclops.function.Fn3;
  * @param <T> Type of data stored inside the nested Future(s)
  */
 public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
-                                                       implements  To<FutureT<W,T>>,
+                                                       implements To<FutureT<W,T>>,
         Transformable<T>,
         Filters<T> {
 
@@ -222,7 +224,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
     	
     	Future<Future<Integer>> two = Future.completedFuture(Future.completedFuture(2));
-    	AnyMSeq<Future<Integer>> future=  AnyM.fromFutureW(two);
+    	AnyMSeq<Future<Integer>> future=  AnyM.fromFuture(two);
     	List<Integer> results = optTAdd2.apply(FutureWT.of(streamOpt),FutureWT.of(future))
     									.unwrap()
     									.<Stream<Future<Integer>>>unwrap()

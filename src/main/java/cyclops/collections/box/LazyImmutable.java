@@ -1,9 +1,9 @@
 package cyclops.collections.box;
 
-import com.aol.cyclops2.types.Transformable;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
-import com.aol.cyclops2.types.To;
+import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.Zippable;
 import lombok.ToString;
 

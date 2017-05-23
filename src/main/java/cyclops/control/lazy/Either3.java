@@ -2,7 +2,10 @@ package cyclops.control.lazy;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.functor.BiTransformable;
+import com.aol.cyclops2.types.reactive.Completable;
+import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
@@ -36,8 +39,8 @@ import java.util.stream.Stream;
  * @param <RT> Right type (operations are performed on this type if present)
  */
 public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
-                                                BiFunctor<LT2, RT>,
-                                                To<Either3<LT1, LT2, RT>>,
+        BiTransformable<LT2, RT>,
+        To<Either3<LT1, LT2, RT>>,
                                                 Supplier<RT>{
     
     static <LT1,LT2,RT> Either3<LT1,LT2,RT> fromMonadicValue(MonadicValue<RT> mv3){
@@ -654,7 +657,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.BiFunctor#bimap(java.util.function.Function,
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bimap(java.util.function.Function,
      * java.util.function.Function)
      */
     @Override
@@ -769,32 +772,32 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.BiFunctor#bipeek(java.util.function.Consumer,
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bipeek(java.util.function.Consumer,
      * java.util.function.Consumer)
      */
     @Override
     default Either3<LT1, LT2, RT> bipeek(final Consumer<? super LT2> c1, final Consumer<? super RT> c2) {
 
-        return (Either3<LT1, LT2, RT>) BiFunctor.super.bipeek(c1, c2);
+        return (Either3<LT1, LT2, RT>) BiTransformable.super.bipeek(c1, c2);
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.BiFunctor#bicast(java.lang.Class,
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bicast(java.lang.Class,
      * java.lang.Class)
      */
     @Override
     default <U1, U2> Either3<LT1, U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
 
-        return (Either3<LT1, U1, U2>) BiFunctor.super.bicast(type1, type2);
+        return (Either3<LT1, U1, U2>) BiTransformable.super.bicast(type1, type2);
     }
 
     /*
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.BiFunctor#bitrampoline(java.util.function.Function,
+     * com.aol.cyclops2.types.functor.BiTransformable#bitrampoline(java.util.function.Function,
      * java.util.function.Function)
      */
     @Override
@@ -802,7 +805,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
             final Function<? super LT2, ? extends Trampoline<? extends R1>> mapper1,
             final Function<? super RT, ? extends Trampoline<? extends R2>> mapper2) {
 
-        return (Either3<LT1, R1, R2>) BiFunctor.super.bitrampoline(mapper1, mapper2);
+        return (Either3<LT1, R1, R2>) BiTransformable.super.bitrampoline(mapper1, mapper2);
     }
 
     /*

@@ -8,6 +8,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+import com.aol.cyclops2.types.foldable.Convertable;
+import com.aol.cyclops2.types.foldable.Folds;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -18,7 +20,7 @@ import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;
 import cyclops.control.Xor;
-import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.function.Predicates;
 
 import lombok.AllArgsConstructor;
@@ -150,7 +152,7 @@ public interface Value<T> extends Folds<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Folds#reactiveStream()
+     * @see com.aol.cyclops2.types.foldable.Folds#reactiveStream()
      */
     @Override
     default ReactiveSeq<T> stream() {

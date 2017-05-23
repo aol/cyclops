@@ -151,42 +151,42 @@ public interface Semigroups {
     /**
      * @return A combiner for LinkedListX (concatenates two LinkedListX into a single LinkedListX)
      */
-    static <T> Semigroup<LinkedListX<T>> pStackXConcat() {
+    static <T> Semigroup<LinkedListX<T>> linkedListXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
      * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
      */
-    static <T> Semigroup<VectorX<T>> pVectorXConcat() {
+    static <T> Semigroup<VectorX<T>> vectorXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
      * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
      */
-    static <T> Semigroup<PersistentSetX<T>> pSetXConcat() {
+    static <T> Semigroup<PersistentSetX<T>> persistentSetXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
      * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
      */
-    static <T> Semigroup<OrderedSetX<T>> pOrderedSetXConcat() {
+    static <T> Semigroup<OrderedSetX<T>> orderedSetXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
      * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
      */
-    static <T> Semigroup<PersistentQueueX<T>> pQueueXConcat() {
+    static <T> Semigroup<PersistentQueueX<T>> persistentQueueXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
      * @return A combiner for BagX (concatenates two BagX into a single BagX)
      */
-    static <T> Semigroup<BagX<T>> pBagXConcat() {
+    static <T> Semigroup<BagX<T>> bagXConcat() {
         return Semigroups.collectionXConcat();
     }
 

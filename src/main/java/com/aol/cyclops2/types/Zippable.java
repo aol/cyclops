@@ -5,7 +5,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.types.stream.ToStream;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;

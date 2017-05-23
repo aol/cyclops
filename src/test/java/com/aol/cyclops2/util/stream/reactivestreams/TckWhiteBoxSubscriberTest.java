@@ -6,8 +6,8 @@ import org.reactivestreams.tck.SubscriberWhiteboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
-import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
-import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
+import com.aol.cyclops2.types.reactive.QueueBasedSubscriber;
+import com.aol.cyclops2.types.reactive.QueueBasedSubscriber.Counter;
 
 @Test
 public class TckWhiteBoxSubscriberTest extends SubscriberWhiteboxVerification<Long>{

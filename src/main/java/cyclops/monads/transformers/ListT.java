@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
-import com.aol.cyclops2.types.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import org.jooq.lambda.tuple.Tuple2;
@@ -25,12 +25,12 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.To;
-import com.aol.cyclops2.types.Traversable;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
-import com.aol.cyclops2.types.stream.CyclopsCollectable;
+import com.aol.cyclops2.types.foldable.CyclopsCollectable;
 
 /**
  * Monad Transformer for Java Lists

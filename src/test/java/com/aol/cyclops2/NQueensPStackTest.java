@@ -1,9 +1,6 @@
 package com.aol.cyclops2;
 
-import com.aol.cyclops2.types.FoldableTraversable;
-import com.aol.cyclops2.types.Traversable;
-import com.aol.cyclops2.types.stream.ConvertableSequence;
-import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
+import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import cyclops.collections.immutable.LinkedListX;
 import org.junit.Test;
 

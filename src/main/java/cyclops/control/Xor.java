@@ -1,5 +1,7 @@
 package cyclops.control;
 
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.functor.BiTransformable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -9,7 +11,7 @@ import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.monads.Witness;
-import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
+import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.companion.Streams;
 import cyclops.function.Curry;
 import cyclops.function.Fn3;
@@ -112,7 +114,7 @@ import java.util.stream.Stream;
  */
 public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                                      MonadicValue<PT>,
-                                     BiFunctor<ST,PT> {
+        BiTransformable<ST,PT> {
 
 
     /**
@@ -426,7 +428,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Convertable#optional()
+     * @see com.aol.cyclops2.types.foldable.Convertable#optional()
      */
     @Override
     default Optional<PT> toOptional() {
@@ -505,7 +507,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     Ior<ST, PT> toIor();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Convertable#isPresent()
+     * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
      */
     @Override
     default boolean isPresent() {
@@ -556,18 +558,8 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * {@code
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-     *  Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPSetX());
-=======
-        
      *  Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPersistentSetX());
->>>>>>> master
-=======
-        
-     *  Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPersistentSetX());
->>>>>>> master
       //Xor.primary(PersistentSetX.of("none"))));
       * }
      * </pre>
@@ -639,18 +631,8 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * {@code
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
-<<<<<<< HEAD
-<<<<<<< HEAD
-     *
-     *  Xor<?,PersistentSetX<Integer>> xors =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPSetX());
-=======
-     * 
+
      *  Xor<?,PersistentSetX<Integer>> xors =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPersistentSetX());
->>>>>>> master
-=======
-     * 
-     *  Xor<?,PersistentSetX<Integer>> xors =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPersistentSetX());
->>>>>>> master
         //Xor.primary(PersistentSetX.of(10,1))));
      * }
      * </pre>
@@ -779,7 +761,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bimap(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> Xor<R1, R2> bimap(Function<? super ST, ? extends R1> secondary, Function<? super PT, ? extends R2> primary) {
@@ -790,31 +772,31 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.BiFunctor#bipeek(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default Xor<ST, PT> bipeek(Consumer<? super ST> c1, Consumer<? super PT> c2) {
 
-        return (Xor<ST, PT>)BiFunctor.super.bipeek(c1, c2);
+        return (Xor<ST, PT>)BiTransformable.super.bipeek(c1, c2);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.BiFunctor#bicast(java.lang.Class, java.lang.Class)
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bicast(java.lang.Class, java.lang.Class)
      */
     @Override
     default <U1, U2> Xor<U1, U2> bicast(Class<U1> type1, Class<U2> type2) {
 
-        return (Xor<U1, U2>)BiFunctor.super.bicast(type1, type2);
+        return (Xor<U1, U2>)BiTransformable.super.bicast(type1, type2);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.BiFunctor#bitrampoline(java.util.function.Function, java.util.function.Function)
+     * @see com.aol.cyclops2.types.functor.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> Xor<R1, R2> bitrampoline(Function<? super ST, ? extends Trampoline<? extends R1>> mapper1,
             Function<? super PT, ? extends Trampoline<? extends R2>> mapper2) {
 
-        return  (Xor<R1, R2>)BiFunctor.super.bitrampoline(mapper1, mapper2);
+        return  (Xor<R1, R2>)BiTransformable.super.bitrampoline(mapper1, mapper2);
     }
 
 

@@ -1,7 +1,7 @@
 package com.aol.cyclops2.control.transformers.seq;
 
 import com.aol.cyclops2.types.AbstractTraversableTest;
-import com.aol.cyclops2.types.Traversable;
+import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 

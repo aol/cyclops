@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.collections.immutable.VectorX;
 import cyclops.stream.Spouts;

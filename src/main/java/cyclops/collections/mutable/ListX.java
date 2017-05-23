@@ -1,15 +1,13 @@
 package cyclops.collections.mutable;
 
-import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.OnEmptySwitch;
-import com.aol.cyclops2.types.To;
+import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
+import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.stream.ConvertableSequence;
-import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
+import com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Trampoline;
 import cyclops.function.Fn3;
@@ -48,7 +46,7 @@ import static cyclops.monads.Witness.list;
  */
 public interface ListX<T> extends To<ListX<T>>,
                                   List<T>,
-        LazyCollectionX<T>,
+                                  LazyCollectionX<T>,
                                   MutableSequenceX<T>,
                                   Comparable<T>,
                                   OnEmptySwitch<T, List<T>>,
@@ -1466,7 +1464,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
     default ListX<T> onEmptySwitch(final Supplier<? extends List<T>> supplier) {

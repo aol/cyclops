@@ -1,18 +1,14 @@
 package cyclops.monads;
 
 
-import com.aol.cyclops2.types.Transformable;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Xor;
 import cyclops.function.*;
-import cyclops.monads.transformers.ReaderT;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 
 /**

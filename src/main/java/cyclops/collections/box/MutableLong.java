@@ -4,7 +4,7 @@ import java.util.OptionalLong;
 import java.util.function.*;
 import java.util.stream.LongStream;
 
-import com.aol.cyclops2.types.To;
+import com.aol.cyclops2.types.foldable.To;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

@@ -1,6 +1,7 @@
 package cyclops.monads.transformers;
 
-import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Reader;
 import cyclops.control.Trampoline;
 import cyclops.function.*;
@@ -19,8 +20,8 @@ import java.util.function.*;
  *
  * @param <T> Type of data stored inside the nested Future(s)
  */
-public final class ReaderT<W extends WitnessType<W>,T,R>  implements  To<ReaderT<W,T,R>>,
-                                                                      Transformable<R>, Fn1<T,R> {
+public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<W,T,R>>,
+        Transformable<R>, Fn1<T,R> {
 
     private final AnyM2<W,Reader<T,R>,T> run;
 

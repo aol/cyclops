@@ -5,7 +5,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.aol.cyclops2.types.FilterableTransformable;
+import com.aol.cyclops2.types.functor.FilterableTransformable;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.types.anyM.NestedCollectable;

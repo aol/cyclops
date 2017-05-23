@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.foldable.Folds;
+import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import cyclops.collections.mutable.ListX;
 import org.junit.Test;
 

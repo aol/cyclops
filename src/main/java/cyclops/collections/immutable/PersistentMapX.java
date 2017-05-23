@@ -11,6 +11,12 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.data.collections.extensions.persistent.PMapXImpl;
 import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.foldable.Folds;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.functor.BiTransformable;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
+import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
+import com.aol.cyclops2.types.traversable.IterableFilterable;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.HashTreePMap;
@@ -22,13 +28,13 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.FluentMapX;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.Transformable;
-import com.aol.cyclops2.types.stream.CyclopsCollectable;
+import com.aol.cyclops2.types.functor.Transformable;
+import com.aol.cyclops2.types.foldable.CyclopsCollectable;
 
 public interface PersistentMapX<K, V>
         extends To<PersistentMapX<K,V>>,
                 PMap<K, V>, Unwrapable,
-                FluentMapX<K, V>, BiFunctor<K, V>, Transformable<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
+                FluentMapX<K, V>, BiTransformable<K, V>, Transformable<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
         OnEmptySwitch<Tuple2<K, V>, PMap<K, V>>, Publisher<Tuple2<K, V>>, Folds<Tuple2<K, V>>, CyclopsCollectable<Tuple2<K, V>> {
 
 
@@ -105,7 +111,7 @@ public interface PersistentMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bimap(java.util.function.Function, java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bimap(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> PersistentMapX<R1, R2> bimap(final Function<? super K, ? extends R1> fn1, final Function<? super V, ? extends R2> fn2) {
@@ -116,31 +122,31 @@ public interface PersistentMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bipeek(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default PersistentMapX<K, V> bipeek(final Consumer<? super K> c1, final Consumer<? super V> c2) {
 
-        return (PersistentMapX<K, V>) BiFunctor.super.bipeek(c1, c2);
+        return (PersistentMapX<K, V>) BiTransformable.super.bipeek(c1, c2);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bicast(java.lang.Class, java.lang.Class)
+     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bicast(java.lang.Class, java.lang.Class)
      */
     @Override
     default <U1, U2> PersistentMapX<U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
 
-        return (PersistentMapX<U1, U2>) BiFunctor.super.bicast(type1, type2);
+        return (PersistentMapX<U1, U2>) BiTransformable.super.bicast(type1, type2);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiFunctor#bitrampoline(java.util.function.Function, java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> PersistentMapX<R1, R2> bitrampoline(final Function<? super K, ? extends Trampoline<? extends R1>> mapper1,
                                                          final Function<? super V, ? extends Trampoline<? extends R2>> mapper2) {
 
-        return (PersistentMapX) BiFunctor.super.bitrampoline(mapper1, mapper2);
+        return (PersistentMapX) BiTransformable.super.bitrampoline(mapper1, mapper2);
     }
 
     /* (non-Javadoc)
@@ -263,7 +269,7 @@ public interface PersistentMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.OnEmpty#onEmpty(java.lang.Object)
+     * @see com.aol.cyclops2.types.recoverable.OnEmpty#onEmpty(java.lang.Object)
      */
     @Override
     default PersistentMapX<K, V> onEmpty(final Tuple2<K, V> value) {
@@ -271,7 +277,7 @@ public interface PersistentMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.OnEmpty#onEmptyGet(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.recoverable.OnEmpty#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default PersistentMapX<K, V> onEmptyGet(final Supplier<? extends Tuple2<K, V>> supplier) {
@@ -280,7 +286,7 @@ public interface PersistentMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.OnEmpty#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.recoverable.OnEmpty#onEmptyThrow(java.util.function.Supplier)
      */
     @Override
     default <X extends Throwable> PersistentMapX<K, V> onEmptyThrow(final Supplier<? extends X> supplier) {
@@ -289,7 +295,7 @@ public interface PersistentMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
     default PersistentMapX<K, V> onEmptySwitch(final Supplier<? extends PMap<K, V>> supplier) {
@@ -314,7 +320,7 @@ public interface PersistentMapX<K, V>
      * @param fn Mapping function toNested transform each Map entry into a single value
      * @return PersistentSetX of transformed values
      */
-    default <T> PersistentSetX<T> toPSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+    default <T> PersistentSetX<T> toPersistentSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return PersistentSetX.narrow(stream().map(fn).to()
                 .persistentSetX());
     }
@@ -325,7 +331,7 @@ public interface PersistentMapX<K, V>
      * @param fn Mapping function toNested transform each Map entry into a single value
      * @return OrderedSetX of transformed values
      */
-    default <T> OrderedSetX<T> toPOrderedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+    default <T> OrderedSetX<T> toOrderedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return OrderedSetX.narrow(stream().map(fn).to().orderedSetX());
     }
 
@@ -335,7 +341,7 @@ public interface PersistentMapX<K, V>
      * @param fn Mapping function toNested transform each Map entry into a single value
      * @return QueueX of transformed values
      */
-    default <T> PersistentQueueX<T> toPQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+    default <T> PersistentQueueX<T> toPersistentQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return PersistentQueueX.narrow(stream().map(fn).to().persistentQueueX());
     }
 
@@ -345,7 +351,7 @@ public interface PersistentMapX<K, V>
      * @param fn Mapping function toNested transform each Map entry into a single value
      * @return LinkedListX of transformed values
      */
-    default <T> LinkedListX<T> toPStackX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+    default <T> LinkedListX<T> toLinkedListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return LinkedListX.narrow(stream().map(fn).to().linkedListX());
 
     }
@@ -355,7 +361,7 @@ public interface PersistentMapX<K, V>
      * @param fn Mapping function toNested transform each Map entry into a single value
      * @return VectorX of transformed values
      */
-    default <T> VectorX<T> toPVectorX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+    default <T> VectorX<T> toVectorX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return VectorX.narrow(stream().map(fn).to().vectorX());
     }
     /**
@@ -364,7 +370,7 @@ public interface PersistentMapX<K, V>
      * @param fn Mapping function toNested transform each Map entry into a single value
      * @return BagX of transformed values
      */
-    default <T> BagX<T> toPBagX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+    default <T> BagX<T> toBagX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return BagX.narrow(stream().map(fn).to().bagX());
     }
 

@@ -3,6 +3,8 @@ package cyclops.control;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.reactive.Completable;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.immutable.VectorX;
@@ -69,7 +71,7 @@ import java.util.stream.Stream;
  *
  * @param <T> Type of value storable in this Eval
  */
-public interface Eval<T> extends    To<Eval<T>>,
+public interface Eval<T> extends To<Eval<T>>,
                                     MonadicValue<T>,
                                     Higher<Eval.µ ,T> {
 
@@ -305,18 +307,9 @@ public interface Eval<T> extends    To<Eval<T>>,
      * Sequence and reduce a CollectionX of Evals into an Eval with a reduced value
      *
      * <pre>
-<<<<<<< HEAD
-<<<<<<< HEAD
+
      * {@code
-     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPSetX());
-=======
-     * {@code 
      *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPersistentSetX());
->>>>>>> master
-=======
-     * {@code 
-     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPersistentSetX());
->>>>>>> master
          //Eval.now(PersistentSetX.of(10,1)))
      * }
      * </pre>
@@ -516,7 +509,7 @@ public interface Eval<T> extends    To<Eval<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
+     * @see com.aol.cyclops2.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
     default <R> R visit(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {
@@ -917,14 +910,7 @@ public interface Eval<T> extends    To<Eval<T>>,
                 return input.map(Eval::get);
             }
 
-            /**
-             * @return This convertable converted to a Future asyncrhonously
-             */
-            @Override
-            public Future<T> toFutureWAsync() {
 
-                return toFuture();
-            }
 
             /**
              * This convertable converted to a Future asyncrhonously using the supplied Executor
@@ -933,7 +919,7 @@ public interface Eval<T> extends    To<Eval<T>>,
              * @return  This convertable converted to a Future asyncrhonously
              */
             @Override
-            public Future<T> toFutureWAsync(final Executor ex) {
+            public Future<T> toFutureAsync(final Executor ex) {
                 return toFuture();
             }
 
@@ -945,13 +931,6 @@ public interface Eval<T> extends    To<Eval<T>>,
                 return toFuture().getFuture();
             }
 
-            /**
-             * @return A CompletableFuture populated asynchronously on the Common ForkJoinPool by calling get
-             */
-            @Override
-            public  CompletableFuture<T> toCompletableFutureAsync() {
-                return toFuture().getFuture();
-            }
 
             /**
              * @param exec Executor to asyncrhonously populate the CompletableFuture
