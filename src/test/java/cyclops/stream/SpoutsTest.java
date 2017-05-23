@@ -10,6 +10,7 @@ import cyclops.collections.mutable.ListX;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
@@ -33,6 +34,17 @@ import static org.junit.Assert.*;
  * Created by johnmcclean on 20/01/2017.
  */
 public class SpoutsTest {
+
+    @Test
+    public void combineLatest(){
+       for(int i=0;i<10_000;i++) {
+           assertThat(Spouts.of(100, 200, 300)
+                            .zipLatest(nextAsyncRS(), (a, b) -> Tuple.tuple(a, b))
+                           .toList(),
+                   equalTo(ListX.of(Tuple.tuple(100, 1), Tuple.tuple(200, 2))));
+       }
+   }
+
 
     @Test
     public void iteratePredicate(){

@@ -404,13 +404,6 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>{
         rightSub[0].request(Long.MAX_VALUE);
 
     }
-    private void drainAll(Queue<T1> leftQ, OneToOneConcurrentArrayQueue<T2> rightQ, Consumer<? super R> onNext) {
-        while(leftQ.size()>0 && rightQ.size()>0){
 
-
-            onNext.accept(fn.apply(leftQ.poll(), rightQ.poll()));
-
-        }
-    }
 
 }

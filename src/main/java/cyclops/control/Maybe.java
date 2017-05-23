@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Totally maybe more powerful general Option(al) type. Maybe is maybe like a Java
+ * Totally lazy and reactive more powerful general Option(al) type. Maybe is maybe like a Java
  * 8 Stream that represents 0 or 1 values rather than eager like a Java 8
  * Optional. map / peek/ filter and flatMap build the execution chaing, but are
  * not executed until the value inside the Maybe is required.
@@ -91,7 +91,7 @@ import java.util.stream.Stream;
  * 
  * Maybe is a functor (map) monad (flatMap) and an applicative (ap)
  * 
- * Maybe has pattern matching built in (visit, matches, patternMatch)
+ * Maybe is reactive via fromPublisher and maybe() methods
  * 
  * Maybe is convertable to all cyclops2-react data types.
  *

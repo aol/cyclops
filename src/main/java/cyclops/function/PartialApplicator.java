@@ -105,7 +105,7 @@ public class PartialApplicator extends Lambda {
         return (t3) -> triFunc.apply(t1, t2, t3);
     }
 
-    /**
+    /**2
      * Returns a BiFunction with 1 argument applied to the supplied TriFunction
      * @param t1 Generic Argument
      * @param triFunc Function that accepts 3 parameters
