@@ -826,7 +826,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @param future toNested wrap inside an AnyM
      * @return AnyM instance that wraps the provided future
      */
-    public static <T> AnyMValue<future,T> fromFutureW(final Future<T> future) {
+    public static <T> AnyMValue<future,T> fromFuture(final Future<T> future) {
         Objects.requireNonNull(future);
         return AnyMFactory.instance.value(future, Witness.future.INSTANCE);
     }
@@ -1122,9 +1122,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @param anyM Iterable containing Maybes
      * @return List of AnyMs
      */
-    public static <T> ListX<AnyMValue<future,T>> listFromFutureW(final Iterable<Future<T>> anyM) {
+    public static <T> ListX<AnyMValue<future,T>> listFromFuture(final Iterable<Future<T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
-                            .map(i -> AnyM.fromFutureW(i))
+                            .map(i -> AnyM.fromFuture(i))
                             .collect(ListX.listXCollector());
     }
 

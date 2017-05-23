@@ -222,7 +222,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
     	
     	Future<Future<Integer>> two = Future.completedFuture(Future.completedFuture(2));
-    	AnyMSeq<Future<Integer>> future=  AnyM.fromFutureW(two);
+    	AnyMSeq<Future<Integer>> future=  AnyM.fromFuture(two);
     	List<Integer> results = optTAdd2.apply(FutureWT.of(streamOpt),FutureWT.of(future))
     									.unwrap()
     									.<Stream<Future<Integer>>>unwrap()

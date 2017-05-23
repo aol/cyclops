@@ -1,13 +1,10 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
-import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Reducers;
 import cyclops.function.Reducer;
-import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
-import lombok.Getter;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
@@ -17,9 +14,6 @@ import java.util.ListIterator;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static com.aol.cyclops2.types.mixins.Printable.*;
 
 /**
  * An extended List type {@see java.util.List}
@@ -47,27 +41,27 @@ import static com.aol.cyclops2.types.mixins.Printable.*;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>> implements LinkedListX<T> {
+public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStack<T>> implements LinkedListX<T> {
 
 
 
-    public LazyPStackX(PStack<T> list, ReactiveSeq<T> seq) {
+    public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq) {
         super(list, seq, Reducers.toPStack());
 
 
     }
-    public LazyPStackX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer) {
+    public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer) {
         super(list, seq, reducer);
 
 
     }
-    public LazyPStackX(PStack<T> list) {
+    public LazyLinkedListX(PStack<T> list) {
         super(list, null, Reducers.toPStack());
 
 
     }
 
-    public LazyPStackX(ReactiveSeq<T> seq) {
+    public LazyLinkedListX(ReactiveSeq<T> seq) {
         super(null, seq, Reducers.toPStack());
 
 
@@ -84,7 +78,7 @@ public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>
 
 
         PStack<T> res = from(toUse.iterator(),0);
-        return new LazyPStackX<>(
+        return new LazyLinkedListX<>(
                 res);
 
     }
@@ -97,7 +91,7 @@ public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>
         while (it.hasNext())
             res = res.plus(it.next());
 
-        return new LazyPStackX<T>(res);
+        return new LazyLinkedListX<T>(res);
 
     }
 
@@ -111,19 +105,19 @@ public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>
 
     @Override
     public LinkedListX<T> type(Reducer<? extends PStack<T>> reducer) {
-        return new LazyPStackX<T>(list,seq.get(),Reducer.narrow(reducer));
+        return new LazyLinkedListX<T>(list,seq.get(),Reducer.narrow(reducer));
     }
 
     //  @Override
-    public <X> LazyPStackX<X> fromStream(ReactiveSeq<X> stream) {
+    public <X> LazyLinkedListX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPStackX<X>((PStack)getList(),ReactiveSeq.fromStream(stream));
+        return new LazyLinkedListX<X>((PStack)getList(),ReactiveSeq.fromStream(stream));
     }
 
     @Override
-    public <T1> LazyPStackX<T1> from(Collection<T1> c) {
+    public <T1> LazyLinkedListX<T1> from(Collection<T1> c) {
         if(c instanceof PStack)
-            return new LazyPStackX<T1>((PStack)c,null);
+            return new LazyLinkedListX<T1>((PStack)c,null);
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 
@@ -226,14 +220,14 @@ public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>
     }
 
     @Override
-    public <U> LazyPStackX<U> unitIterator(Iterator<U> it) {
+    public <U> LazyLinkedListX<U> unitIterator(Iterator<U> it) {
         return fromStream(ReactiveSeq.fromIterator(it));
     }
 
 
 
     @Override
-    public <R> LazyPStackX<R> unit(Collection<R> col) {
+    public <R> LazyLinkedListX<R> unit(Collection<R> col) {
         return from(col);
     }
 

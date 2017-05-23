@@ -184,7 +184,7 @@ public class SemigroupsTest {
         LinkedListX<Integer> two = LinkedListX.of(4,5,6);
        
         
-        LinkedListX<Integer> result = Semigroups.<Integer>pStackXConcat().apply(one,two);
+        LinkedListX<Integer> result = Semigroups.<Integer>linkedListXConcat().apply(one,two);
         assertThat(result,equalTo(LinkedListX.of(6,5,4,1,2,3)));
     }
     @Test
@@ -195,7 +195,7 @@ public class SemigroupsTest {
         VectorX<Integer> two = VectorX.of(4,5,6);
        
         
-        VectorX<Integer> result = Semigroups.<Integer>pVectorXConcat().apply(one,two);
+        VectorX<Integer> result = Semigroups.<Integer>vectorXConcat().apply(one,two);
         assertThat(result,equalTo(VectorX.of(1,2,3,4,5,6)));
     }
 
@@ -207,7 +207,7 @@ public class SemigroupsTest {
         PersistentSetX<Integer> two = PersistentSetX.of(4,5,6);
        
         
-        PersistentSetX<Integer> result = Semigroups.<Integer>pSetXConcat().apply(one,two);
+        PersistentSetX<Integer> result = Semigroups.<Integer>persistentSetXConcat().apply(one,two);
         assertThat(result,equalTo(PersistentSetX.of(1,2,3,4,5,6)));
     }
 
@@ -219,7 +219,7 @@ public class SemigroupsTest {
         OrderedSetX<Integer> two = OrderedSetX.of(4,5,6);
        
         
-        OrderedSetX<Integer> result = Semigroups.<Integer>pOrderedSetXConcat().apply(one,two);
+        OrderedSetX<Integer> result = Semigroups.<Integer>orderedSetXConcat().apply(one,two);
         assertThat(result,equalTo(OrderedSetX.of(1,2,3,4,5,6)));
     }
 
@@ -231,7 +231,7 @@ public class SemigroupsTest {
         PersistentQueueX<Integer> two = PersistentQueueX.of(4,5,6);
        
         
-        PersistentQueueX<Integer> result = Semigroups.<Integer>pQueueXConcat().apply(one,two);
+        PersistentQueueX<Integer> result = Semigroups.<Integer>persistentQueueXConcat().apply(one,two);
         assertThat(result.toList(),equalTo(PersistentQueueX.of(1,2,3,4,5,6).toList()));
     }
 
@@ -243,7 +243,7 @@ public class SemigroupsTest {
         BagX<Integer> two = BagX.of(4,5,6);
        
         
-        BagX<Integer> result = Semigroups.<Integer>pBagXConcat().apply(one,two);
+        BagX<Integer> result = Semigroups.<Integer>bagXConcat().apply(one,two);
         assertThat(result,equalTo(BagX.of(1,2,3,4,5,6)));
     }
     @Test

@@ -303,7 +303,7 @@ public class Future<T> implements To<Future<T>>,
     public static <T> Future<T> fromPublisher(final Publisher<T> pub, final Executor ex) {
         final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
-        return sub.toFutureWAsync(ex);
+        return sub.toFutureAsync(ex);
     }
 
     /**
@@ -530,7 +530,7 @@ public class Future<T> implements To<Future<T>>,
      * @return Future with a Stream
      */
     public static <T> Future<ReactiveSeq<T>> sequence(final Stream<? extends Future<T>> fts) {
-        return AnyM.sequence(fts.map(AnyM::fromFutureW), Witness.future.INSTANCE)
+        return AnyM.sequence(fts.map(AnyM::fromFuture), Witness.future.INSTANCE)
                    .map(ReactiveSeq::fromStream)
                    .to(Witness::future);
     }
@@ -545,20 +545,9 @@ public class Future<T> implements To<Future<T>>,
      *
      * Future<Integer> just =Future.of(CompletableFuture.completedFuture(10));
        Future<Integer> none = Future.ofError(new NoSuchElementException());
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPSetX());
 
-=======
-=======
-       
      * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPersistentSetX());
->>>>>>> master
-       
-     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPersistentSetX());
-       
->>>>>>> master
        //Future[PersistentSetX[10,1]]
      *  }
      *  </pre>
@@ -577,18 +566,8 @@ public class Future<T> implements To<Future<T>>,
      *
      * Future<Integer> just =Future.of(CompletableFuture.completedFuture(10));
        Future<Integer> none = Future.ofError(new NoSuchElementException());
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPSetX());
-
-=======
-=======
->>>>>>> master
-       
      * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPersistentSetX());
-       
->>>>>>> master
+
        //Future[PersistentSetX[10,1]]
      *  }
      *  </pre>
@@ -1056,15 +1035,7 @@ public class Future<T> implements To<Future<T>>,
         return this.future;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.closures.Convertable#toCompletableFutureAsync()
-     */
-    @Override
-    public CompletableFuture<T> toCompletableFutureAsync() {
-        return this.future;
-    }
+
 
     /*
      * (non-Javadoc)
@@ -1287,25 +1258,16 @@ public class Future<T> implements To<Future<T>>,
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.Convertable#toFutureWAsync()
-     */
-    @Override
-    public Future<T> toFutureWAsync() {
-        return this;
-    }
 
     /*
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.Convertable#toFutureWAsync(java.util.concurrent.
+     * com.aol.cyclops2.types.Convertable#toFutureAsync(java.util.concurrent.
      * Executor)
      */
     @Override
-    public Future<T> toFutureWAsync(final Executor ex) {
+    public Future<T> toFutureAsync(final Executor ex) {
         return this;
     }
 

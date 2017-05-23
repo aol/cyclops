@@ -184,12 +184,6 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
         return Future.of(toCompletableFuture());
     }
 
-    /**
-     * @return This convertable converted to a Future asyncrhonously
-     */
-    default Future<T> toFutureWAsync() {
-        return Future.of(toCompletableFutureAsync());
-    }
 
     /**
      * This convertable converted to a Future asyncrhonously using the supplied Executor
@@ -197,7 +191,7 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
      * @param ex Executor to execute the conversion on
      * @return  This convertable converted to a Future asyncrhonously
      */
-    default Future<T> toFutureWAsync(final Executor ex) {
+    default Future<T> toFutureAsync(final Executor ex) {
         return Future.of(toCompletableFutureAsync(ex));
     }
 
@@ -212,13 +206,6 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
             res.completeExceptionally(t);
             return res;
         }
-    }
-
-    /**
-     * @return A CompletableFuture populated asynchronously on the Common ForkJoinPool by calling get
-     */
-    default CompletableFuture<T> toCompletableFutureAsync() {
-        return CompletableFuture.supplyAsync(this);
     }
 
     /**

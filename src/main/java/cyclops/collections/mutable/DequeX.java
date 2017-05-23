@@ -1,7 +1,6 @@
 package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
-import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.stream.ConvertableSequence;

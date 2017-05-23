@@ -218,7 +218,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     	AnyMSeq<CompletableFuture<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
     	
     	CompletableFuture<CompletableFuture<Integer>> two = Future.completedFuture(Future.completedFuture(2));
-    	AnyMSeq<CompletableFuture<Integer>> future=  AnyM.fromFutureW(two);
+    	AnyMSeq<CompletableFuture<Integer>> future=  AnyM.fromFuture(two);
     	List<Integer> results = optTAdd2.apply(FutureWT.of(streamOpt),FutureWT.of(future))
     									.unwrap()
     									.<Stream<CompletableFuture<Integer>>>unwrap()

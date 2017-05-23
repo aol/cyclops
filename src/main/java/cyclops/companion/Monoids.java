@@ -147,42 +147,42 @@ public interface Monoids {
     /**
      * @return A combiner for LinkedListX (concatenates two LinkedListX into a single LinkedListX)
      */
-    static <T> Monoid<LinkedListX<T>> pStackXConcat() {
+    static <T> Monoid<LinkedListX<T>> linkedListXConcat() {
         return Monoid.of(LinkedListX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
      * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
      */
-    static <T> Monoid<VectorX<T>> pVectorXConcat() {
+    static <T> Monoid<VectorX<T>> vectorXConcat() {
         return Monoid.of(VectorX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
      * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
      */
-    static <T> Monoid<PersistentSetX<T>> pSetXConcat() {
+    static <T> Monoid<PersistentSetX<T>> persistentSetXConcat() {
         return Monoid.of(PersistentSetX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
      * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
      */
-    static <T> Monoid<OrderedSetX<T>> pOrderedSetXConcat() {
+    static <T> Monoid<OrderedSetX<T>> orderedSetXConcat() {
         return Monoid.of(OrderedSetX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
      * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
      */
-    static <T> Monoid<PersistentQueueX<T>> pQueueXConcat() {
+    static <T> Monoid<PersistentQueueX<T>> persistentQueueXConcat() {
         return Monoid.of(PersistentQueueX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
      * @return A combiner for BagX (concatenates two BagX into a single BagX)
      */
-    static <T> Monoid<BagX<T>> pBagXConcat() {
+    static <T> Monoid<BagX<T>> bagXConcat() {
         return Monoid.of(BagX.empty(),Semigroups.collectionXConcat());
     }
 

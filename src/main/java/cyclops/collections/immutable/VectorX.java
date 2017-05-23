@@ -290,21 +290,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
      *
      * }
      * </pre>
-<<<<<<< HEAD
-<<<<<<< HEAD
-     * 
-     * @param values toNested add toNested new PVector
-     * @return PVector containing values
-=======
      * @param stream To create VectorX from
      * @param <T> VectorX generated from Stream
      * @return
->>>>>>> master
-=======
-     * @param stream To create VectorX from
-     * @param <T> VectorX generated from Stream
-     * @return
->>>>>>> master
      */
     public static <T> VectorX<T> vectorX(ReactiveSeq<T> stream) {
 

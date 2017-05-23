@@ -556,18 +556,8 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * {@code
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-     *  Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPSetX());
-=======
-        
      *  Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPersistentSetX());
->>>>>>> master
-=======
-        
-     *  Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPersistentSetX());
->>>>>>> master
       //Xor.primary(PersistentSetX.of("none"))));
       * }
      * </pre>
@@ -639,18 +629,8 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * {@code
      *  Xor<String,Integer> just  = Xor.primary(10);
         Xor<String,Integer> none = Xor.secondary("none");
-<<<<<<< HEAD
-<<<<<<< HEAD
-     *
-     *  Xor<?,PersistentSetX<Integer>> xors =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPSetX());
-=======
-     * 
+
      *  Xor<?,PersistentSetX<Integer>> xors =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPersistentSetX());
->>>>>>> master
-=======
-     * 
-     *  Xor<?,PersistentSetX<Integer>> xors =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPersistentSetX());
->>>>>>> master
         //Xor.primary(PersistentSetX.of(10,1))));
      * }
      * </pre>

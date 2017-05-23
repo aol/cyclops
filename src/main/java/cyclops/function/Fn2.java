@@ -140,14 +140,14 @@ public interface Fn2<T1, T2, R> extends BiFunction<T1,T2,R> {
         default Fn2<ListX<T1>,ListX<T2>, ListX<R>> listXM() {
             return (a,b) -> a.forEach2(x->b,this);
         }
-        default Fn2<LinkedListX<T1>,LinkedListX<T2>, LinkedListX<R>> pstackXZip() {
+        default Fn2<LinkedListX<T1>,LinkedListX<T2>, LinkedListX<R>> linkedListXZip() {
             return (a,b) -> a.zip(b,this);
         }
 
-        default Fn2<LinkedListX<T1>,LinkedListX<T2>, LinkedListX<R>> pstackXM() {
+        default Fn2<LinkedListX<T1>,LinkedListX<T2>, LinkedListX<R>> linkedListXM() {
             return (a,b) -> a.forEach2(x->b,this);
         }
-        default Fn2<VectorX<T1>,VectorX<T2>, VectorX<R>> pvectorXZip() {
+        default Fn2<VectorX<T1>,VectorX<T2>, VectorX<R>> vectorXZip() {
             return (a,b) -> a.zip(b,this);
         }
 

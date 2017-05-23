@@ -305,18 +305,9 @@ public interface Eval<T> extends    To<Eval<T>>,
      * Sequence and reduce a CollectionX of Evals into an Eval with a reduced value
      *
      * <pre>
-<<<<<<< HEAD
-<<<<<<< HEAD
+
      * {@code
-     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPSetX());
-=======
-     * {@code 
      *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPersistentSetX());
->>>>>>> master
-=======
-     * {@code 
-     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPersistentSetX());
->>>>>>> master
          //Eval.now(PersistentSetX.of(10,1)))
      * }
      * </pre>
@@ -917,14 +908,7 @@ public interface Eval<T> extends    To<Eval<T>>,
                 return input.map(Eval::get);
             }
 
-            /**
-             * @return This convertable converted to a Future asyncrhonously
-             */
-            @Override
-            public Future<T> toFutureWAsync() {
 
-                return toFuture();
-            }
 
             /**
              * This convertable converted to a Future asyncrhonously using the supplied Executor
@@ -933,7 +917,7 @@ public interface Eval<T> extends    To<Eval<T>>,
              * @return  This convertable converted to a Future asyncrhonously
              */
             @Override
-            public Future<T> toFutureWAsync(final Executor ex) {
+            public Future<T> toFutureAsync(final Executor ex) {
                 return toFuture();
             }
 
@@ -945,13 +929,6 @@ public interface Eval<T> extends    To<Eval<T>>,
                 return toFuture().getFuture();
             }
 
-            /**
-             * @return A CompletableFuture populated asynchronously on the Common ForkJoinPool by calling get
-             */
-            @Override
-            public  CompletableFuture<T> toCompletableFutureAsync() {
-                return toFuture().getFuture();
-            }
 
             /**
              * @param exec Executor to asyncrhonously populate the CompletableFuture
