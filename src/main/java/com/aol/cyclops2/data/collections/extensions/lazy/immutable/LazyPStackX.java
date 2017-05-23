@@ -1,6 +1,7 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
+import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Reducers;
 import cyclops.function.Reducer;
@@ -16,6 +17,7 @@ import java.util.ListIterator;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * An extended List type {@see java.util.List}
@@ -46,39 +48,41 @@ import java.util.function.Supplier;
 public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>> implements LinkedListX<T> {
 
 
-    @Getter
-    private final boolean efficientOps;
-    public LazyPStackX(PStack<T> list, ReactiveSeq<T> seq, boolean efficientOps) {
+
+    public LazyPStackX(PStack<T> list, ReactiveSeq<T> seq) {
         super(list, seq, Reducers.toPStack());
-        this.efficientOps= efficientOps;
+
 
     }
-    public LazyPStackX(PStack<T> list, ReactiveSeq<T> seq, boolean efficientOps, Reducer<PStack<T>> reducer) {
+    public LazyPStackX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer) {
         super(list, seq, reducer);
-        this.efficientOps= efficientOps;
+
 
     }
-    public LazyPStackX(PStack<T> list,boolean efficientOps) {
+    public LazyPStackX(PStack<T> list) {
         super(list, null, Reducers.toPStack());
-        this.efficientOps= efficientOps;
+
 
     }
 
-    public LazyPStackX(ReactiveSeq<T> seq,  boolean efficientOps) {
+    public LazyPStackX(ReactiveSeq<T> seq) {
         super(null, seq, Reducers.toPStack());
-        this.efficientOps= efficientOps;
 
+
+    }
+    private static <E> PStack<E> from(final Iterator<E> i,int depth,ReactiveSeq<E> toUse) {
+        if(depth>1000){
+            return Reducers.<E>toPStack().mapReduce(toUse);
+        }
+        if(!i.hasNext())
+            return ConsPStack.empty();
+        E e = i.next();
+        return from(i,depth++,toUse).plus(e);
     }
     public PStack<T> materializeList(ReactiveSeq<T> toUse){
-        PStack<T> res = ConsPStack.<T> empty();
-
-        final Iterator<T> it = toUse.iterator();
-
-        while (it.hasNext())
-            res = res.plus(it.next());
-
+        PStack<T> res = from(toUse.iterator(),0,toUse);//ConsPStack.<T> empty();
         return new LazyPStackX<>(
-                res, true);
+                res);
     }
 
 
@@ -91,31 +95,22 @@ public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>
 
     @Override
     public LinkedListX<T> type(Reducer<? extends PStack<T>> reducer) {
-        return new LazyPStackX<T>(list,seq.get(),this.efficientOps,Reducer.narrow(reducer));
+        return new LazyPStackX<T>(list,seq.get(),Reducer.narrow(reducer));
     }
 
     //  @Override
     public <X> LazyPStackX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPStackX<X>((PStack)getList(),ReactiveSeq.fromStream(stream),this.efficientOps);
+        return new LazyPStackX<X>((PStack)getList(),ReactiveSeq.fromStream(stream));
     }
 
     @Override
     public <T1> LazyPStackX<T1> from(Collection<T1> c) {
         if(c instanceof PStack)
-            return new LazyPStackX<T1>((PStack)c,null,this.efficientOps);
+            return new LazyPStackX<T1>((PStack)c,null);
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 
-    @Override
-    public LinkedListX<T> efficientOpsOn() {
-        return new LazyPStackX<T>(list,seq.get(),true);
-    }
-
-    @Override
-    public LinkedListX<T> efficientOpsOff() {
-        return new LazyPStackX<T>(list,seq.get(),false);
-    }
 
 
 

@@ -199,7 +199,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @return
      */
     public static <T> LinkedListX<T> linkedListX(ReactiveSeq<T> stream) {
-        return new LazyPStackX<T>(stream,true);
+        return new LazyPStackX<T>(stream);
     }
 
 
@@ -226,7 +226,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @SafeVarargs
     public static <T> LinkedListX<T> of(final T... values) {
         return new LazyPStackX<>(
-                                 ReactiveSeq.of(values), false);
+                                 ReactiveSeq.of(values));
     }
     /**
      * 
@@ -255,9 +255,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return (LinkedListX) iterable;
         if (iterable instanceof PStack)
             return new LazyPStackX<T>(
-                    (PStack) iterable, false);
+                    (PStack) iterable);
 
-        return new LazyPStackX<>(ReactiveSeq.fromIterable(iterable), true);
+        return new LazyPStackX<>(ReactiveSeq.fromIterable(iterable));
 
     }
 
@@ -279,7 +279,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> empty() {
         return new LazyPStackX<>(
-                                 ConsPStack.empty(), false);
+                                 ConsPStack.empty());
     }
 
     /**
@@ -300,7 +300,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> singleton(final T value){
         return new LazyPStackX<>(
-                                 ConsPStack.singleton(value), true);
+                                 ConsPStack.singleton(value));
     }
 
     /**
@@ -321,8 +321,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     default <T> LinkedListX<T> fromStream(final ReactiveSeq<T> stream) {
         return Reducers.<T>toLinkedListX()
-                       .mapReduce(stream)
-                       .efficientOpsOff();
+                       .mapReduce(stream);
     }
 
     @Override
@@ -463,9 +462,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
     @Override
     default <R> LinkedListX<R> unit(final Collection<R> col) {
-        if (isEfficientOps())
-            return fromIterable(col);
-        return fromIterable(col).efficientOpsOff();
+
+        return fromIterable(col);
     }
 
     @Override
@@ -480,18 +478,14 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
     //@Override
     default <R> LinkedListX<R> emptyUnit() {
-        if (isEfficientOps())
-            return empty();
-        return LinkedListX.<R> empty()
-                      .efficientOpsOff();
+
+        return LinkedListX.<R> empty();
     }
 
 
 
     @Override
     default LinkedListX<T> plusInOrder(final T e) {
-        if (isEfficientOps())
-            return plus(e);
         return plus(size(), e);
     }
 
@@ -503,15 +497,12 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
     @Override
     default <X> LinkedListX<X> from(final Collection<X> col) {
-        if (isEfficientOps())
-            return fromIterable(col);
-        return fromIterable(col).efficientOpsOff();
+
+        return fromIterable(col);
     }
 
     //@Override
     default <T> Reducer<PStack<T>> monoid() {
-        if (isEfficientOps())
-            return Reducers.toPStackReversed();
         return Reducers.toPStack();
 
     }
@@ -528,11 +519,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         return fromIterable(reversed);
     }
 
-    LinkedListX<T> efficientOpsOn();
 
-    LinkedListX<T> efficientOpsOff();
-
-    boolean isEfficientOps();
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#filter(java.util.function.Predicate)

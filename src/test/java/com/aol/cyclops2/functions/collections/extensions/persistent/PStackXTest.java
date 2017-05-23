@@ -19,6 +19,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
@@ -32,9 +33,17 @@ public class PStackXTest extends CollectionXTestsWithNulls{
 			list = list.plus(list.size(),next);
 		}
 		System.out.println("List " + list);
-		return list.efficientOpsOff();
+		return list;
 		
 	}
+    @Test
+    public void sliding() {
+        ListX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
+
+        System.out.println(list);
+        assertThat(list.get(0), hasItems(1, 2));
+        assertThat(list.get(1), hasItems(2, 3));
+    }
 	
 	@Test
     public void coflatMap(){
