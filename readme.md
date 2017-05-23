@@ -236,6 +236,21 @@ Interfaces
 | Either4     | Lazy Either type maybe one of four values            | Optionally Reactive or Coreactive, Lazy, tail recursive, sum type                 |
 | Either5     | Lazy Either type maybe one of five values            | Optionally Reactive or Coreactive, Lazy, tail recursive, sum type                 |
 
+## cyclops.control : Reactive Sum Types
+
+Complete / push data into Reactive Sum types via complete method
+```java
+completableMaybe.complete(value) 
+```
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| CompletableMaybe     | Reactive analogue of Optional (Just/None). Create via Maybe.maybe()             |     Reactive, Lazy, tail recursive, sum type         |
+| CompletableEither     | Reactive Either type maybe one of two values, reactive analogue of Xor.  Create via Either.either()            | Reactive, Lazy, tail recursive, sum type                 |
+| CompletableEither3     | Reactive Either type maybe one of three values.  Create via Either3.either3()            | Reactive, Lazy, tail recursive, sum type                 |
+| CompletableEither4     | Reactive Either type maybe one of four values.  Create via Either4.either4()            | Reactive, Lazy, tail recursive, sum type                 |
+| CompletableEither5     | Reactive Either type maybe one of five values.  Create via Either5.either5()            | Reactive,Lazy, tail recursive, sum type                 |
+
 ## cyclops.collections (mutable / immutable)
 
 | type | description | characteristics |
@@ -251,16 +266,16 @@ Interfaces
 
 | type | description | characteristics |
 |------|-------------|-----------------|
-| PStackX     | Functional extensions for working with persistent Lists            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support, Higher kinded                 |
-| PVectorX     | Functional extensions for working with persistent Vectors            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support, Higher kinded                 |
-| PSetX     | Functional extensions for working with persistent Sets            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support                 |
-| POrderedSetX     | Functional extensions for working with persistent Ordered Sets            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support                 |
-| PQueueX     | Functional extensions for working with persistent Queues           | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support, Higher kinded                 |
-| PBagX     | Functional extensions for working with persistent Bags (set like collections that allow duplicates)          | Optionally Reactive or Coreactive,Lazy, persistent, 3rd party support                 |
-| PMapX     | Functional extensions for working with persistent Maps          | Map, persistent, 3rd party support                 |
+| LinkedListX     | Functional extensions for working with persistent Lists            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support, Higher kinded                 |
+| VectorX     | Functional extensions for working with persistent Vectors            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support, Higher kinded                 |
+| PersistentSetX     | Functional extensions for working with persistent Sets            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support                 |
+| OrderedSetX     | Functional extensions for working with persistent Ordered Sets            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support                 |
+| PersistentQueueX     | Functional extensions for working with persistent Queues           | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support, Higher kinded                 |
+| BagX     | Functional extensions for working with persistent Bags (set like collections that allow duplicates)          | Optionally Reactive or Coreactive,Lazy, persistent, 3rd party support                 |
+| PersistentMapX     | Functional extensions for working with persistent Maps          | Map, persistent, 3rd party support                 |
 
 
-## cyclops.control + cyclops.typeclasses.free
+## cyclops.control
 
 | type | description | characteristics |
 |------|-------------|-----------------|
@@ -269,7 +284,7 @@ Interfaces
 | Writer     | Monad / Wrapper type that supports the accumulation of a values using a Monoid            | Eager                |
 | State     | State Monad to manage state  / state transformations in a functional manner (backed by Free)            | Lazy                |
 | ReaderWriterState     | Monad transformer encompassing behaviour from Reader, Writer and State Monads (backed by Free)            | Lazy                |
-| Free     | Higher kinded implementation of the Free monad for Java, facilitates functional interpreters. Free + SupplierKind (higher kinded Fn0) = a more advanced Trampoline implementation.            | Lazy                |
+| Unrestricted     | "Java Friendly" implementation of the Free monad for Java, facilitates functional interpreters.         | Lazy                |
 
 ## cyclops.collections.box
 
@@ -341,6 +356,7 @@ Interfaces
 | MonadZero     | Filter a monad (e.g. like Optional.filter)            | Higher kinded                 |
 | MonadPlus     | Combine two monads            | Higher kinded                 |
 | Comonad     | Extract values from a context and extend functions to operat at monadic level            | Higher kinded                 |
+| Free     | Higher kinded implementation of the Free monad for Java, facilitates functional interpreters. Free + SupplierKind (higher kinded Fn0) = a more advanced Trampoline implementation.            | Lazy                |
 
 
 
