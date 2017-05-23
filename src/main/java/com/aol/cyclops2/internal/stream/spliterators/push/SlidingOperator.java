@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import cyclops.collections.box.Mutable;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.VectorX;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
@@ -17,11 +17,11 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
 
 
 
-    private final Function<? super PVectorX<T>, ? extends R> finalizer;
+    private final Function<? super VectorX<T>, ? extends R> finalizer;
     private final int windowSize;
     private final int increment;
 
-    public SlidingOperator(Operator<T> source,  Function<? super PVectorX<T>, ? extends R> finalizer,
+    public SlidingOperator(Operator<T> source,  Function<? super VectorX<T>, ? extends R> finalizer,
                            int windowSize, int increment){
         super(source);
 
@@ -69,7 +69,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                         list.mutate(var -> var.plus(Math.max(0, var.size()),e));
                         if(list.get().size()==windowSize) {
 
-                            onNext.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
+                            onNext.accept(finalizer.apply(VectorX.fromIterable(list.get())));
                             sub.requested.decrementAndGet();
                             sent[0] = true;
                             for (int i = 0; i < increment && list.get()
@@ -93,7 +93,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                         upstream[0].request(1);
                 },()->{
                     if(!sent[0] && list.get().size()>0)
-                        onNext.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
+                        onNext.accept(finalizer.apply(VectorX.fromIterable(list.get())));
                     sub.requested.decrementAndGet();
                     onComplete.run();
                 });
@@ -109,7 +109,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                         list.mutate(var -> var.plus(Math.max(0, var.size()),e));
                         if(list.get().size()==windowSize) {
 
-                            onNext.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
+                            onNext.accept(finalizer.apply(VectorX.fromIterable(list.get())));
                             sent[0] = true;
                             for (int i = 0; i < increment && list.get()
                                     .size() > 0; i++)
@@ -126,7 +126,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                 }
                 ,onError,()->{
                     if(!sent[0]  && list.get().size()>0)
-                        onNext.accept(finalizer.apply(PVectorX.fromIterable(list.get())));
+                        onNext.accept(finalizer.apply(VectorX.fromIterable(list.get())));
                     onCompleteDs.run();
                 });
     }

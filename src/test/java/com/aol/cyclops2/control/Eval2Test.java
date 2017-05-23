@@ -1,13 +1,18 @@
 package com.aol.cyclops2.control;
 
-import cyclops.*;
+import cyclops.collections.immutable.PersistentSetX;
+import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.control.*;
+import cyclops.control.Eval;
 import cyclops.control.Eval.Module.Later;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.immutable.PSetX;
 import cyclops.async.LazyReact;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.async.Future;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import org.junit.Before;
 import org.junit.Test;
@@ -123,13 +128,13 @@ public class Eval2Test {
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
 	    
 	   
-		Eval<PSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPSetX());
-		assertThat(maybes,equalTo(Eval.now(PSetX.of(10,1))));
+		Eval<PersistentSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPersistentSetX());
+		assertThat(maybes,equalTo(Eval.now(PersistentSetX.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Eval<String> maybes =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
+		Eval<String> maybes =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i, Monoids.stringConcat);
 		assertThat(maybes,equalTo(Eval.now("101")));
 	}
 	@Test

@@ -1,12 +1,11 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
-import cyclops.collections.SortedSetX;
+import cyclops.collections.mutable.SortedSetX;
 import cyclops.stream.ReactiveSeq;
 
 import java.util.*;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 /**
  * An extended Set type {@see java.util.List}
@@ -34,7 +33,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazySortedSetX<T> extends AbstractLazyMutableCollection<T,SortedSet<T>> implements SortedSetX<T> {
+public class LazySortedSetX<T> extends AbstractLazyCollection<T,SortedSet<T>> implements SortedSetX<T> {
 
 
     public LazySortedSetX(SortedSet<T> list, ReactiveSeq<T> seq, Collector<T, ?, SortedSet<T>> collector) {
@@ -52,7 +51,7 @@ public class LazySortedSetX<T> extends AbstractLazyMutableCollection<T,SortedSet
     }
 
     @Override
-    public LazySortedSetX<T> withCollector(Collector<T, ?, SortedSet<T>> collector){
+    public LazySortedSetX<T> type(Collector<T, ?, SortedSet<T>> collector){
         return (LazySortedSetX)new LazySortedSetX<T>(this.getList(),this.getSeq().get(),collector);
     }
     //@Override
@@ -69,7 +68,7 @@ public class LazySortedSetX<T> extends AbstractLazyMutableCollection<T,SortedSet
 
 
     @Override
-    public <X> LazySortedSetX<X> fromStream(Stream<X> stream) {
+    public <X> LazySortedSetX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazySortedSetX<X>((SortedSet)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
     }

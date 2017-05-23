@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
@@ -18,26 +18,26 @@ public class PStacksTest {
     @Test
     public void unit(){
         
-        PStackX<String> list = PStackX.Instances.unit()
+        LinkedListX<String> list = LinkedListX.Instances.unit()
                                      .unit("hello")
-                                     .convert(PStackX::narrowK);
+                                     .convert(LinkedListX::narrowK);
         
-        assertThat(list,equalTo(PStackX.of("hello")));
+        assertThat(list,equalTo(LinkedListX.of("hello")));
     }
     @Test
     public void functor(){
         
-        PStackX<Integer> list = PStackX.Instances.unit()
+        LinkedListX<Integer> list = LinkedListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->PStackX.Instances.functor().map((String v) ->v.length(), h))
-                                     .convert(PStackX::narrowK);
+                                     .apply(h-> LinkedListX.Instances.functor().map((String v) ->v.length(), h))
+                                     .convert(LinkedListX::narrowK);
         
-        assertThat(list,equalTo(PStackX.of("hello".length())));
+        assertThat(list,equalTo(LinkedListX.of("hello".length())));
     }
     @Test
     public void apSimple(){
-        PStackX.Instances.zippingApplicative()
-            .ap(PStackX.of(l1(this::multiplyByTwo)),PStackX.of(1,2,3));
+        LinkedListX.Instances.zippingApplicative()
+            .ap(LinkedListX.of(l1(this::multiplyByTwo)), LinkedListX.of(1,2,3));
     }
     private int multiplyByTwo(int x){
         return x*2;
@@ -45,92 +45,93 @@ public class PStacksTest {
     @Test
     public void applicative(){
         
-        PStackX<Fn1<Integer,Integer>> listFn =PStackX.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(PStackX::narrowK);
+        LinkedListX<Fn1<Integer,Integer>> listFn = LinkedListX.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(LinkedListX::narrowK);
         
-        PStackX<Integer> list = PStackX.Instances.unit()
+        LinkedListX<Integer> list = LinkedListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->PStackX.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h->PStackX.Instances.zippingApplicative().ap(listFn, h))
-                                     .convert(PStackX::narrowK);
+                                     .apply(h-> LinkedListX.Instances.functor().map((String v) ->v.length(), h))
+                                     .apply(h-> LinkedListX.Instances.zippingApplicative().ap(listFn, h))
+                                     .convert(LinkedListX::narrowK);
         
-        assertThat(list,equalTo(PStackX.of("hello".length()*2)));
+        assertThat(list,equalTo(LinkedListX.of("hello".length()*2)));
     }
     @Test
     public void monadSimple(){
-       PStackX<Integer> list  = PStackX.Instances.monad()
-                                      .flatMap(i->PStackX.range(0,i), PStackX.of(1,2,3))
-                                      .convert(PStackX::narrowK);
+       LinkedListX<Integer> list  = LinkedListX.Instances.monad()
+                                      .flatMap(i-> LinkedListX.range(0,i), LinkedListX.of(1,2,3))
+                                      .convert(LinkedListX::narrowK);
     }
     @Test
     public void monad(){
         
-        PStackX<Integer> list = PStackX.Instances.unit()
+        LinkedListX<Integer> list = LinkedListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->PStackX.Instances.monad().flatMap((String v) ->PStackX.Instances.unit().unit(v.length()), h))
-                                     .convert(PStackX::narrowK);
+                                     .apply(h-> LinkedListX.Instances.monad().flatMap((String v) -> LinkedListX.Instances.unit().unit(v.length()), h))
+                                     .convert(LinkedListX::narrowK);
         
-        assertThat(list,equalTo(PStackX.of("hello".length())));
+        assertThat(list,equalTo(LinkedListX.of("hello".length())));
     }
     @Test
     public void monadZeroFilter(){
         
-        PStackX<String> list = PStackX.Instances.unit()
+        LinkedListX<String> list = LinkedListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->PStackX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
-                                     .convert(PStackX::narrowK);
+                                     .apply(h-> LinkedListX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .convert(LinkedListX::narrowK);
         
-        assertThat(list,equalTo(PStackX.of("hello")));
+        assertThat(list,equalTo(LinkedListX.of("hello")));
     }
     @Test
     public void monadZeroFilterOut(){
         
-        PStackX<String> list = PStackX.Instances.unit()
+        LinkedListX<String> list = LinkedListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->PStackX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
-                                     .convert(PStackX::narrowK);
+                                     .apply(h-> LinkedListX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .convert(LinkedListX::narrowK);
         
-        assertThat(list,equalTo(PStackX.empty()));
+        assertThat(list,equalTo(LinkedListX.empty()));
     }
     
     @Test
     public void monadPlus(){
-        PStackX<Integer> list = PStackX.Instances.<Integer>monadPlus()
-                                      .plus(PStackX.empty(), PStackX.of(10))
-                                      .convert(PStackX::narrowK);
-        assertThat(list,equalTo(PStackX.of(10)));
+        LinkedListX<Integer> list = LinkedListX.Instances.<Integer>monadPlus()
+                                      .plus(LinkedListX.empty(), LinkedListX.of(10))
+                                      .convert(LinkedListX::narrowK);
+        assertThat(list,equalTo(LinkedListX.of(10)));
     }
     @Test
     public void monadPlusNonEmpty(){
         
-        Monoid<PStackX<Integer>> m = Monoid.of(PStackX.empty(), (a, b)->a.isEmpty() ? b : a);
-        PStackX<Integer> list = PStackX.Instances.<Integer>monadPlus(m)
-                                      .plus(PStackX.of(5), PStackX.of(10))
-                                      .convert(PStackX::narrowK);
-        assertThat(list,equalTo(PStackX.of(5)));
+        Monoid<LinkedListX<Integer>> m = Monoid.of(LinkedListX.empty(), (a, b)->a.isEmpty() ? b : a);
+        LinkedListX<Integer> list = LinkedListX.Instances.<Integer>monadPlus(m)
+                                      .plus(LinkedListX.of(5), LinkedListX.of(10))
+                                      .convert(LinkedListX::narrowK);
+        assertThat(list,equalTo(LinkedListX.of(5)));
     }
     @Test
     public void  foldLeft(){
-        int sum  = PStackX.Instances.foldable()
-                        .foldLeft(0, (a,b)->a+b, PStackX.of(1,2,3,4));
+        int sum  = LinkedListX.Instances.foldable()
+                        .foldLeft(0, (a,b)->a+b, LinkedListX.of(1,2,3,4));
         
         assertThat(sum,equalTo(10));
     }
     @Test
     public void  foldRight(){
-        int sum  = PStackX.Instances.foldable()
-                        .foldRight(0, (a,b)->a+b, PStackX.of(1,2,3,4));
+        int sum  = LinkedListX.Instances.foldable()
+                        .foldRight(0, (a,b)->a+b, LinkedListX.of(1,2,3,4));
         
         assertThat(sum,equalTo(10));
     }
     
     @Test
     public void traverse(){
-       Maybe<Higher<PStackX.µ, Integer>> res = PStackX.Instances.traverse()
-                                                         .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), PStackX.of(1,2,3))
+       Maybe<Higher<LinkedListX.µ, Integer>> res = LinkedListX.Instances.traverse()
+                                                         .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), LinkedListX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
        
-       
-       assertThat(res,equalTo(Maybe.just(PStackX.of(2,4,6))));
+
+       System.out.println("Res " + res);
+       assertThat(res,equalTo(Maybe.just(LinkedListX.of(2,4,6))));
     }
     
 }

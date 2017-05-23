@@ -1,11 +1,12 @@
 package com.aol.cyclops2.functions.collections.extensions;
 
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.stream.HeadAndTail;
+import cyclops.stream.Spouts;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import org.jooq.lambda.tuple.Tuple3;
@@ -75,6 +76,27 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
     @Test
     public void testCycleUntil() {
         count =0;
+        System.out.println("Cycle until!");
+        ListX<Integer> a =Spouts.of(1,2,3).cycleUntil(next->count++==6).toListX();
+        System.out.println("1 " + a);
+        count =0;
+        ListX<Integer> b= of(1, 2, 3).cycleUntil(next->count++==6).toListX();
+        System.out.println("2 " + b);
+        count =0;
+        ListX<Integer> c= of(1, 2, 3).cycleUntil(next->count++==6).toListX();
+        System.out.println("3 " + c);
+        count =0;
+        System.out.println("A " + a);
+        count =0;
+        System.out.println("C " + c);
+        count =0;
+
+
+        System.out.println("Cycle"  +Spouts.of(1,2,3).cycleUntil(next->count++==6).toListX());
+        count =0;
+        System.out.println("Print!");
+      //  of(1, 2, 3).cycleUntil(next->count++==6).printOut();
+
         assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
        
     }

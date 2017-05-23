@@ -25,23 +25,23 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import cyclops.Streams;
+import com.aol.cyclops2.internal.adapters.StreamAdapter;
+import com.aol.cyclops2.internal.stream.ReactiveStreamX;
+import cyclops.companion.Streams;
 import cyclops.control.*;
-import cyclops.control.either.Either;
-import cyclops.control.either.Either3;
-import cyclops.control.either.Either4;
-import cyclops.control.either.Either5;
+import cyclops.control.lazy.*;
 import cyclops.monads.function.AnyMFn1;
 import cyclops.monads.function.AnyMFn2;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
-import cyclops.collections.SetX;
+import cyclops.collections.mutable.SetX;
 import com.aol.cyclops2.types.*;
 import cyclops.async.Future;
 import cyclops.function.*;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
+import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -49,7 +49,7 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops2.internal.monads.AnyMValueImpl;
 
@@ -71,29 +71,31 @@ import cyclops.monads.Witness.*;
 import cyclops.monads.Witness.future;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.stream.ToStream;
-import cyclops.Optionals;
+import cyclops.companion.Optionals;
+
+import static com.aol.cyclops2.types.stream.ConvertableSequence.Conversion.LAZY;
 
 /**
  * 
  * Wrapper for Any Monad type
  * 
  * There are two subsclass of AnyM - @see {@link AnyMValue} and  @see {@link AnyMSeq}. 
- * AnyMValue is used to represent Monads that wrap a single value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Xor}, {@link Try}, {@link Ior}, {@link FeatureToggle}
- * AnyMSeq is used to represent Monads that wrap an aggregation of values such as {@link Stream}, {@link FutureStream}, {@link List}, {@link Set}, {@link Streamable}
+ * AnyMValue is used toNested represent Monads that wrap a single value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Xor}, {@link Try}, {@link Ior}, {@link FeatureToggle}
+ * AnyMSeq is used toNested represent Monads that wrap an aggregation of values such as {@link Stream}, {@link FutureStream}, {@link List}, {@link Set}, {@link Streamable}
  * 
- * Use AnyM to create your monad wrapper.
+ * Use AnyM toNested create your monad wrapper.
  * AnyM.fromXXXX methods can create the appropriate AnyM type for a range of known monad types.
  * 
  * <pre>
  * {@code 
- *    AnyMValue<String> monad1 = AnyM.fromOptional(Optional.of("hello"));
+ *    AnyMValue<optional,String> monad1 = AnyM.fromOptional(Optional.of("hello"));
  *    
- *    AnyMSeq<String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
+ *    AnyMSeq<stream,String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
  *  
  * }
  * </pre>
  * 
- * Wrapped monads can be unwrapped via the unwrap method, or converted to the desired type via toXXXX methods
+ * Wrapped monads can be unwrapped via the unwrap method, or converted toNested the desired type via toXXXX methods
  * 
  *
  * 
@@ -117,21 +119,21 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
-     * A mutable reduction operation equivalent to Stream#collect
+     * A mutable reduction operation equivalent toNested Stream#collect
      *
      * <pre>
      * {@code
      *      AnyM<Integer> monad1 = AnyM.fromStream(Stream.of(1,2,3));
      *      AnyM<Integer> monad2 = AnyM.fromOptional(Optional.of(1));
      *
-     *      List<Integer> list1 = monad1.collect(Collectors.toList());
-     *      List<Integer> list2 = monad2.collect(Collectors.toList());
+     *      List<Integer> list1 = monad1.collect(CyclopsCollectors.toList());
+     *      List<Integer> list2 = monad2.collect(CyclopsCollectors.toList());
      *
      * }
      * </pre>
      *
      *
-     * @param collector JDK collector to perform mutable reduction
+     * @param collector JDK collector toNested perform mutable reduction
      * @return Reduced value
      */
     default <R, A> R collect(Collector<? super T, A, R> collector){
@@ -222,7 +224,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * }
      * </pre>
      * 
-     * @param t to embed inside the monad wrapped by AnyM
+     * @param t toNested embed inside the monad wrapped by AnyM
      * @return Newly instantated AnyM
      */
     @Override
@@ -231,12 +233,12 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     }
     
     /**
-     * Applicative 'ap' method to use fluently
+     * Applicative 'ap' method toNested use fluently
      * 
      * <pre>
      * {@code 
      *    AnyM<optional,Function<Integer,Integer>> add = AnyM.fromNullable(this::add2);
-     *    add.to(AnyM::ap)
+     *    add.toNested(AnyM::ap)
      *       .apply(AnyM.ofNullable(10));
      *   
      *    //AnyM[12] //add 2
@@ -245,17 +247,17 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * </pre>
      * 
      * @param fn Function inside an Applicative
-     * @return Function to apply an Applicative's value to function
+     * @return Function toNested apply an Applicative's value toNested function
      */
     public static <W extends WitnessType<W>,T,R> Function<AnyM<W,T>,AnyM<W,R>> ap(AnyM<W, Function<T,R>> fn){
         return apply->apply.adapter().ap(fn,apply);
     }
     /**
-     * Applicative ap2 method to use fluently to apply to a curried function
+     * Applicative ap2 method toNested use fluently toNested apply toNested a curried function
      * <pre>
      * {@code 
      *    AnyM<optional,Function<Integer,Function<Integer,Integer>>> add = AnyM.fromNullable(Curry.curry2(this::add));
-     *    add.to(AnyM::ap2)
+     *    add.toNested(AnyM::ap2)
      *       .apply(AnyM.ofNullable(10),AnyM.ofNullable(20));
      *   
      *    //AnyM[30] //add together
@@ -263,7 +265,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * }
      * </pre>
      * @param fn Curried function inside an Applicative
-     * @return Function to apply two Applicative's values to a function
+     * @return Function toNested apply two Applicative's values toNested a function
      */
     public static <W extends WitnessType<W>,T,T2,R> BiFunction<AnyM<W,T>,AnyM<W,T2>,AnyM<W,R>> ap2(AnyM<W, Function<T,Function<T2,R>>> fn){
         return (apply1,apply2)->apply1.adapter().ap2(fn,apply1,apply2);
@@ -323,7 +325,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * }
      * </pre>
      * 
-     * @param t AnyM to check for equivalence with this AnyM
+     * @param t AnyM toNested check for equivalence with this AnyM
      * @return true if monads are equivalent
      */
     default boolean eqv(final AnyM<?,T> t) {
@@ -345,7 +347,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * </pre>
      * 
      * 
-     * @return An Xor for pattern matching either an AnyMValue or AnyMSeq
+     * @return An Xor for pattern matching lazy an AnyMValue or AnyMSeq
      */
     Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable();
 
@@ -353,7 +355,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
 
     /* 
-     * Convert this AnyM to an extended Stream (ReactiveSeq)
+     * Convert this AnyM toNested an extended Stream (ReactiveSeq)
      * 
      * <pre>
      * {@code 
@@ -367,7 +369,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      */
     @Override
     default ReactiveSeq<T> stream(){
-        return ReactiveSeq.fromIterable(this);
+        return this.adapter().toStream(this);
     }
 
     
@@ -382,7 +384,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * }
      * </pre>
      * 
-     * @param c Consumer to accept current data
+     * @param c Consumer toNested accept current data
      * @return AnyM after peek operation
      */
     @Override
@@ -424,7 +426,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     	assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
     	}</pre>
      * 
-     * @param next Monad to aggregate content with
+     * @param next Monad toNested aggregate content with
      * @return Aggregated Monad
      */
     default AnyM<W,List<T>> aggregate(AnyM<W,T> next){
@@ -461,7 +463,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     public String toString();
 
     /**
-     * Construct an AnyM instance that wraps a range from skip (inclusive) to take (exclusive) provided
+     * Construct an AnyM instance that wraps a range from skip (inclusive) toNested take (exclusive) provided
      * 
      * The AnyM will contain a SequenceM over the spefied range
      * 
@@ -475,7 +477,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     }
 
     /**
-     * Construct an AnyM instance that wraps a range from skip (inclusive) to take (exclusive) provided
+     * Construct an AnyM instance that wraps a range from skip (inclusive) toNested take (exclusive) provided
      * 
      * The AnyM will contain a SequenceM over the spefied range
      * 
@@ -504,11 +506,11 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM from a List
      * 
-     * This AnyM will convert the List to a Stream under the covers, but will rematerialize the Stream as List
+     * This AnyM will convert the List toNested a Stream under the covers, but will rematerialize the Stream as List
      * if wrap() is called
      * 
      * 
-     * @param list to wrap inside an AnyM
+     * @param list toNested wrap inside an AnyM
      * @return AnyM wrapping a list
      */
     public static <T> AnyMSeq<list,T> fromList(final List<T> list) {
@@ -525,11 +527,11 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM from a Set
      * 
-     * This AnyM will convert the Set to a Stream under the covers, but will rematerialize the Stream as Set
+     * This AnyM will convert the Set toNested a Stream under the covers, but will rematerialize the Stream as Set
      * if wrap() is called
      * 
      * 
-     * @param set to wrap inside an AnyM
+     * @param set toNested wrap inside an AnyM
      * @return AnyM wrapping a Set
      */
     public static <T> AnyMSeq<set,T> fromSet(final Set<T> set) {
@@ -543,7 +545,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM wrapping a Stream of the supplied data
      * 
-     * @param streamData values to populate a Stream
+     * @param streamData values toNested populate a Stream
      * @return AnyMSeq wrapping a Stream that encompasses the supplied Array
      */
     public static <T> AnyMSeq<stream,T> fromArray(final T... streamData) {
@@ -553,9 +555,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM wrapping a Stream of the supplied data
      * 
-     * Identical to fromArray, exists as it may appear functionally more obvious to users than fromArray (which fits the convention)
+     * Identical toNested fromArray, exists as it may appear functionally more obvious toNested users than fromArray (which fits the convention)
      * 
-     * @param streamData values to populate a Stream
+     * @param streamData values toNested populate a Stream
      * @return  AnyMSeq wrapping a Stream that encompasses the supplied Array
      */
     public static <T> AnyMSeq<stream,T> streamOf(final T... streamData) {
@@ -567,7 +569,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
     /**
      * Construct an AnyM that wraps a reactive-streams Publisher. If there is no registered Comprehender for the supplied Publisher, this method
-     *  will attempt to convert the Publisher to a type that cyclops2-react can understand.
+     *  will attempt toNested convert the Publisher toNested a type that cyclops2-react can understand.
      *  
      *  <pre>
      *  {@code 
@@ -580,24 +582,42 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      *       //AnyM[ReactiveSeq[Integer]]]
      *  }
      *  </pre>
-     *  It is generally safer to define a Comprehender and use a non-converting call to generate the wrapped AnyM
+     *  It is generally safer toNested define a Comprehender and use a non-converting call toNested generate the wrapped AnyM
      *       (e.g. Reactor.Flux in cyclops2-reactor for Pivotal Reactor Publishers)
      * 
-     * @param publisher Publisher to wrap inside an AnyM
+     * @param publisher Publisher toNested wrap inside an AnyM
      * @return AnyMSeq that wraps a Publisher
      */
-    public static <T> AnyMSeq<stream,T> fromPublisher(final Publisher<T> publisher) {
-        return AnyMFactory.instance.seq(ReactiveSeq.fromPublisher(publisher),Witness.stream.INSTANCE);
+    public static <T> AnyMSeq<reactiveSeq,T> fromPublisher(final Publisher<T> publisher) {
+        return AnyMFactory.instance.seq(Spouts.from(publisher),reactiveSeq.REACTIVE);
     }
     /**
      * Create an AnyM instance that wraps a Stream
      *
-     * @param stream Stream to wrap
+     * @param stream Stream toNested wrap
      * @return AnyM that wraps the provided Stream
      */
     public static <T> AnyMSeq<reactiveSeq,T> fromStream(final ReactiveSeq<T> stream) {
         Objects.requireNonNull(stream);
-        return AnyMFactory.instance.seq(stream,Witness.reactiveSeq.INSTANCE);
+        if(stream instanceof ReactiveStreamX) {
+            return AnyMFactory.instance.seq(stream, reactiveSeq.REACTIVE);
+        }else{
+            return AnyMFactory.instance.seq(stream, reactiveSeq.CO_REACTIVE);
+        }
+
+    }
+    /**
+     * Create an AnyM instance that wraps a FutureStream
+     *
+     * @param stream FutureStream toNested wrap
+     * @return AnyM that wraps the provided Stream
+     */
+    public static <T> AnyMSeq<futureStream,T> fromFutureStream(final FutureStream<T> stream) {
+        Objects.requireNonNull(stream);
+        return AnyMFactory.instance.seq(stream, futureStream.INSTANCE,new StreamAdapter<futureStream>(
+                    ()->stream.getSimpleReact().of(), t->stream.getSimpleReact().of(t), it->(Stream)stream.getSimpleReact().from((Iterator)it),Witness.futureStream.INSTANCE));
+
+
 
     }
     public static <W extends Witness.StreamWitness<W>,T> AnyMSeq<W,T> fromStream(final Stream<T> stream, W witness) {
@@ -608,7 +628,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM instance that wraps a Stream
      * 
-     * @param stream Stream to wrap
+     * @param stream Stream toNested wrap
      * @return AnyM that wraps the provided Stream
      */
     public static <T> AnyMSeq<stream,T> fromStream(final Stream<T> stream) {
@@ -620,7 +640,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM instance that wraps an IntStream
      * 
-     * @param stream IntStream to wrap
+     * @param stream IntStream toNested wrap
      * @return AnyM that wraps the provided IntStream
      */
     public static AnyMSeq<stream,Integer> fromIntStream(final IntStream stream) {
@@ -632,7 +652,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM instance that wraps an DoubleStream
      * 
-     * @param stream DoubleStream to wrap
+     * @param stream DoubleStream toNested wrap
      * @return AnyM that wraps the provided DoubleStream
      */
     public static AnyMSeq<stream,Double> fromDoubleStream(final DoubleStream stream) {
@@ -644,7 +664,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM instance that wraps an LongStream
      * 
-     * @param stream LongStream to wrap
+     * @param stream LongStream toNested wrap
      * @return AnyM that wraps the provided LongStream
      */
     public static AnyMSeq<stream,Long> fromLongStream(final LongStream stream) {
@@ -655,7 +675,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM instance that wraps an Optional
      * 
-     * @param opt Optional to wrap
+     * @param opt Optional toNested wrap
      * @return AnyM that wraps the provided Optonal
      */
     public static <T> AnyMValue<optional,T> fromOptional(final Optional<T> opt) {
@@ -667,7 +687,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM instance that wraps an OptionalDouble
      * 
-     * @param optional Optional to wrap
+     * @param optional Optional toNested wrap
      * @return AnyM that wraps the provided OptonalDouble
      */
     public static AnyMValue<optional,Double> fromOptionalDouble(final OptionalDouble optional) {
@@ -679,7 +699,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM instance that wraps an OptionalLong
      * 
-     * @param optional OptionalLong to wrap
+     * @param optional OptionalLong toNested wrap
      * @return AnyM that wraps the provided OptonalLong
      */
     public static AnyMValue<optional,Long> fromOptionalLong(final OptionalLong optional) {
@@ -691,7 +711,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM instance that wraps an OptionalInt
      * 
-     * @param optional OptionalInt to wrap
+     * @param optional OptionalInt toNested wrap
      * @return AnyM that wraps the provided OptonalInt
      */
     public static AnyMValue<optional,Integer> fromOptionalInt(final OptionalInt optional) {
@@ -702,7 +722,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM instance that wraps a CompletableFuture
      * 
-     * @param future CompletableFuture to wrap
+     * @param future CompletableFuture toNested wrap
      * @return AnyM that wraps the provided CompletableFuture
      */
     public static <T> AnyMValue<completableFuture,T> fromCompletableFuture(final CompletableFuture<T> future) {
@@ -714,7 +734,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyMValue instance that wraps an Xor
      * 
-     * @param xor Xor to wrap inside an AnyM
+     * @param xor Xor toNested wrap inside an AnyM
      * @return AnyM instance that wraps the provided Xor
      */
     public static <T> AnyMValue<xor,T> fromXor(final Xor<?, T> xor) {
@@ -725,7 +745,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyMValue instance that wraps an Either3
      *
-     * @param xor Xor to wrap inside an AnyM
+     * @param xor Xor toNested wrap inside an AnyM
      * @return AnyM instance that wraps the provided Either
      */
     public static <LT1,T> AnyMValue<either,T> fromEither(final Either<LT1, T> xor) {
@@ -735,7 +755,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyMValue instance that wraps an Either3
      *
-     * @param xor Xor to wrap inside an AnyM
+     * @param xor Xor toNested wrap inside an AnyM
      * @return AnyM instance that wraps the provided Either3
      */
     public static <LT1,LT2,T> AnyMValue<either3,T> fromEither3(final Either3<LT1, LT2, T> xor) {
@@ -745,7 +765,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyMValue instance that wraps an Either4
      *
-     * @param xor Either4 to wrap inside an AnyM
+     * @param xor Either4 toNested wrap inside an AnyM
      * @return AnyM instance that wraps the provided Either4
      */
     public static <LT1,LT2,LT3,T> AnyMValue<either4,T> fromEither4(final Either4<LT1, LT2, LT3, T> xor) {
@@ -755,7 +775,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyMValue instance that wraps an Either4
      *
-     * @param xor Either4 to wrap inside an AnyM
+     * @param xor Either4 toNested wrap inside an AnyM
      * @return AnyM instance that wraps the provided Either4
      */
     public static <LT1,LT2,LT3,LT4,T> AnyMValue<either5,T> fromEither5(final Either5<LT1, LT2, LT3, LT4, T> xor) {
@@ -765,7 +785,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyMValue instance that wraps a Try
      * 
-     * @param trySomething to wrap inside an AnyM
+     * @param trySomething toNested wrap inside an AnyM
      * @return AnyM instance that wraps the provided Try
      */
     public static <T> AnyMValue<tryType,T> fromTry(final Try<T, ?> trySomething) {
@@ -776,7 +796,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      *  Create an AnyMValue instance that wraps an Ior
      * 
-     * @param ior to wrap inside an AnyM
+     * @param ior toNested wrap inside an AnyM
      * @return AnyM instance that wraps the provided Ior
      */
     public static <T> AnyMValue<ior,T> fromIor(final Ior<?, T> ior) {
@@ -787,7 +807,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyMValue instance that wraps an Eval
      * 
-     * @param eval to wrap inside an AnyM
+     * @param eval toNested wrap inside an AnyM
      * @return AnyM instance that wraps the provided Eval
      */
     public static <T> AnyMValue<eval,T> fromEval(final Eval<T> eval) {
@@ -803,7 +823,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyMValue instance that wraps a Future
      * 
-     * @param future to wrap inside an AnyM
+     * @param future toNested wrap inside an AnyM
      * @return AnyM instance that wraps the provided future
      */
     public static <T> AnyMValue<future,T> fromFutureW(final Future<T> future) {
@@ -814,7 +834,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyMValue instance that wraps a {@link Maybe}
      * 
-     * @param maybe to wrap inside an AnyM
+     * @param maybe toNested wrap inside an AnyM
      * @return instance that wraps the provided Maybe
      */
     public static <T> AnyMValue<maybe,T> fromMaybe(final Maybe<T> maybe) {
@@ -826,7 +846,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyMValue that wraps the untyped monad
      * 
-     * @param monad to wrap inside an AnyM
+     * @param monad toNested wrap inside an AnyM
      * @return AnyMValue that wraps the supplied monad
     */
     public static <W extends WitnessType<W>,T> AnyMValue<W,T> ofValue(final Object monad, W witness) {
@@ -841,7 +861,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyMSeq that wraps the untyped monad
      * 
-     * @param monad to wrap inside an AnyM
+     * @param monad toNested wrap inside an AnyM
      * @return AnyMSeq that wraps the supplied monad
      */
     public static <W extends WitnessType<W>,T> AnyMSeq<W,T> ofSeq(final Object monad, W witness) {
@@ -852,7 +872,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Generate an AnyM that wraps an Optional from the provided nullable object
      * 
-     * @param nullable - Nullable object to generate an optional from
+     * @param nullable - Nullable object toNested generate an optional from
      * @return AnyM wrapping an Optional created with the supplied nullable
      */
     public static <T> AnyMValue<optional,T> ofNullable(final Object nullable) {
@@ -1127,7 +1147,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     }*/
 
     /**
-     * Convert a Collection of Monads to a Monad with a List
+     * Convert a Collection of Monads toNested a Monad with a List
      * 
      * <pre>
      * {@code
@@ -1138,15 +1158,15 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
       }</pre>
      * 
      * 
-     * @param seq Collection of monads to convert
+     * @param seq Collection of monads toNested convert
      * @return Monad with a List
      */
     public static <W extends WitnessType<W>,T1> AnyM<W,ListX<T1>> sequence(final Collection<? extends AnyM<W,T1>> seq,W w) {
-        return sequence(seq.stream(),w).map(ListX::fromStreamS);
+        return sequence(seq.stream(),w).map(s->ReactiveSeq.fromStream(s).to().listX(LAZY));
     }
 
     /**
-     * Convert a Collection of Monads to a Monad with a List applying the supplied function in the process
+     * Convert a Collection of Monads toNested a Monad with a List applying the supplied function in the process
      * 
      * <pre>
      * {@code 
@@ -1156,7 +1176,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         </pre>
      * 
      * @param seq Collection of Monads
-     * @param fn Function to apply 
+     * @param fn Function toNested apply
      * @return Monad with a list
      */
     public static <W extends WitnessType<W>,T, R> AnyM<W,ListX<R>> traverse(final Collection<? extends AnyM<W,T>> seq, final Function<? super T, ? extends R> fn,W w) {
@@ -1177,9 +1197,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         }
 
         /**
-         * Non-type safe way to wrap a supported monad type in an AnyMValue
+         * Non-type safe way toNested wrap a supported monad type in an AnyMValue
          * 
-         * @param o Monad to wrap
+         * @param o Monad toNested wrap
          * @return AnyMValue wrapping supplied monad
          */
         public <W extends WitnessType<W>,T> AnyMValue<W,T> value(final Object o,W comp) {
@@ -1191,12 +1211,17 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         }
 
         /**
-         * Non-type safe way to wrap a supported monad type in an AnyMSeq
+         * Non-type safe way toNested wrap a supported monad type in an AnyMSeq
          * 
-         * @param o Monad to wrap
+         * @param o Monad toNested wrap
          * @return AnyMValue wrapping supplied monad
          */
         public <W extends WitnessType<W>,T> AnyMSeq<W,T> seq(final Object o, WitnessType comp) {
+            if (o instanceof AnyMSeq)
+                return (AnyMSeq<W,T>) o;
+            return new AnyMSeqImpl<W,T>(o,comp.adapter());
+        }
+        public <W extends WitnessType<W>,T> AnyMSeq<W,T> seq(final Object o, WitnessType comp, FunctionalAdapter adapter) {
             if (o instanceof AnyMSeq)
                 return (AnyMSeq<W,T>) o;
             return new AnyMSeqImpl<W,T>(o,comp.adapter());
@@ -1248,10 +1273,10 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
               return a+b;
       }
    * }</pre>
-   * The add method has no null handling, but we can lift the method to Monadic form, and use Optionals to automatically handle null / empty value cases.
+   * The add method has no null handling, but we can lift the method toNested Monadic form, and use Optionals toNested automatically handle null / empty value cases.
    * 
    * 
-   * @param fn BiFunction to lift
+   * @param fn BiFunction toNested lift
    * @return Lifted BiFunction
    */
   public static <W extends WitnessType<W>,U1, U2, R> AnyMFn2<W,U1,U2,R> liftF2(
@@ -1262,7 +1287,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
 
   /**
-   * Lift a TriFunction into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
+   * Lift a TriFunction into Monadic form. A good use case it toNested take an existing method and lift it so it can accept and return monads
    * 
    * <pre>
    * {@code
@@ -1271,9 +1296,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
    * }
    * </pre>
    * 
-   * Now we can execute the Method with Streams, Optional, Futures, Try's etc to transparently inject iteration, null handling, async execution and / or error handling
+   * Now we can execute the Method with Streams, Optional, Futures, Try's etc toNested transparently inject iteration, null handling, async execution and / or error handling
    * 
-   * @param fn Function to lift
+   * @param fn Function toNested lift
    * @return Lifted function
    */
   public static <W extends WitnessType<W>,U1, U2, U3, R> Fn3<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,R>> liftF3(
@@ -1285,7 +1310,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
   /**
    * Lift a QuadFunction into Monadic form.
    * 
-   * @param fn Quad funciton to lift
+   * @param fn Quad funciton toNested lift
    * @return Lifted Quad function
    */
   public static <W extends WitnessType<W>,U1, U2, U3, U4, R> Fn4<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,U4>, AnyM<W,R>> liftF4(
@@ -1297,7 +1322,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
   /**
    * Lift a  jOOλ Function5 (5 parameters) into Monadic form
    * 
-   * @param fn Function to lift
+   * @param fn Function toNested lift
    * @return Lifted Function
    */
   public static <W extends WitnessType<W>,U1, U2, U3, U4, U5, R> Fn5<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,U4>, AnyM<W,U5>, AnyM<W,R>> liftF5(
@@ -1313,7 +1338,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
   /**
    * Lift a Curried Function {@code(2 levels a->b->fn.apply(a,b) )} into Monadic form
    * 
-   * @param fn Function to lift
+   * @param fn Function toNested lift
    * @return Lifted function 
    */
   public static <W extends WitnessType<W>,U1, U2, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, AnyM<W,R>>> liftF2(final Function<U1, Function<U2, R>> fn) {
@@ -1325,7 +1350,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
   /**
    * Lift a Curried Function {@code(3 levels a->b->c->fn.apply(a,b,c) )} into Monadic form
    * 
-   * @param fn Function to lift
+   * @param fn Function toNested lift
    * @return Lifted function 
    */
   public static <W extends WitnessType<W>,U1, U2, U3, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, Function<AnyM<W,U3>, AnyM<W,R>>>> liftF3(
@@ -1338,7 +1363,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
   /**
    * Lift a Curried Function {@code(4 levels a->b->c->d->fn.apply(a,b,c,d) )} into Monadic form
    * 
-   * @param fn Function to lift
+   * @param fn Function toNested lift
    * @return Lifted function 
    */
   public static <W extends WitnessType<W>,U1, U2, U3, U4, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, Function<AnyM<W,U3>, Function<AnyM<W,U4>, AnyM<W,R>>>>> liftF4(
@@ -1353,7 +1378,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
   /**
    * Lift a Curried Function {@code (5 levels a->b->c->d->e->fn.apply(a,b,c,d,e) ) }into Monadic form
    * 
-   * @param fn Function to lift
+   * @param fn Function toNested lift
    * @return Lifted function 
    */
   public static <W extends WitnessType<W>,U1, U2, U3, U4, U5, R> Function<AnyM<W,U1>, Function<AnyM<W,U2>, Function<AnyM<W,U3>, Function<AnyM<W,U4>, Function<AnyM<W,U5>, AnyM<W,R>>>>>> liftF5(

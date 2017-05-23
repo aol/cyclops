@@ -3,7 +3,7 @@ package com.aol.cyclops2.comprehensions;
 import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.monads.transformers.FutureT;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.monads.Witness;
 import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
 import org.junit.Test;
@@ -16,9 +16,9 @@ public class TransformersValuesTest {
   //  CompletableFutureTValue<Integer> cf = CompletableFutureT.fromValue(Eval.now(CompletableFuture.completedFuture(10)));
     FutureT<Witness.eval,Integer> future = FutureT.of(Eval.now(Future.ofResult(10)).anyM());
   //  TryTValue<Integer,Throwable> attempt = TryT.fromValue(Eval.now(Try.success(10)));
-   // XorTValue<Throwable,Integer> either = XorT.fromValue(Eval.now(Xor.primary(10)));
+   // XorTValue<Throwable,Integer> lazy = XorT.fromValue(Eval.now(Xor.primary(10)));
     
-    ListX<ValueTransformer<?,Integer>> all = ListX.of(future);// ListX.of(opt,maybe,eval,cf,future,attempt,either);
+    ListX<ValueTransformer<?,Integer>> all = ListX.of(future);// ListX.of(opt,maybe,eval,cf,future,attempt,lazy);
 
     int count;
     @Test

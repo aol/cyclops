@@ -2,10 +2,8 @@ package cyclops.streams.future;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
 import cyclops.async.LazyReact;
-import cyclops.collections.ListX;
-import cyclops.stream.FutureStream;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 

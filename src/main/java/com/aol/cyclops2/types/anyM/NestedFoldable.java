@@ -7,6 +7,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.*;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.stream.ConvertableSequence;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
@@ -14,8 +15,8 @@ import cyclops.monads.WitnessType;
 import cyclops.stream.Streamable;
 import cyclops.monads.transformers.ListT;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
-import cyclops.collections.MapX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.MapX;
 import com.aol.cyclops2.types.stream.CyclopsCollectable;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.ToStream;
@@ -39,8 +40,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
 
     /**
-     * Attempt to map this Sequence to the same type as the supplied Monoid
-     * (Reducer) Then use Monoid to reduce values
+     * Attempt toNested map this Sequence toNested the same type as the supplied Monoid
+     * (Reducer) Then use Monoid toNested reduce values
      * 
      * <pre>
      * {@code 
@@ -51,7 +52,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param reducer
-     *            Monoid to reduce values
+     *            Monoid toNested reduce values
      * @return Reduce result
      */
     default <R> AnyM<W,R> mapReduce(final Reducer<R> reducer) {
@@ -59,8 +60,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid, using
-     * supplied function Then use Monoid to reduce values
+     * Attempt toNested map this Monad toNested the same type as the supplied Monoid, using
+     * supplied function Then use Monoid toNested reduce values
      * 
      * <pre>
      *  {@code
@@ -84,9 +85,9 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param mapper
-     *            Function to map Monad type
+     *            Function toNested map Monad type
      * @param reducer
-     *            Monoid to reduce values
+     *            Monoid toNested reduce values
      * @return Reduce result
      */
     default <R> AnyM<W,R> mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
@@ -103,7 +104,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param reducer
-     *            Use supplied Monoid to reduce values
+     *            Use supplied Monoid toNested reduce values
      * @return reduced values
      */
     default AnyM<W,T> reduce(final Monoid<T> reducer) {
@@ -205,7 +206,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param reducer
-     *            Use supplied Monoid to reduce values starting via foldRight
+     *            Use supplied Monoid toNested reduce values starting via foldRight
      * @return Reduced result
      */
     default AnyM<W,T> foldRight(final Monoid<T> reducer) {
@@ -213,7 +214,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Immutable reduction from right to left
+     * Immutable reduction from right toNested left
      * 
      * <pre>
      * {@code 
@@ -221,7 +222,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * @param identity value that results in the input parameter to the accumulator function being returned.
+     * @param identity value that results in the input parameter toNested the accumulator function being returned.
      *          E.g. for multiplication 1 is the identity value, for addition 0 is the identity value
      * @param accumulator function that combines the accumulated value and the next one
      * @return AnyM containing the results of the nested fold right
@@ -231,13 +232,13 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Immutable reduction from right to left
+     * Immutable reduction from right toNested left
      * <pre>
      * {@code 
      *  assertTrue(ReactiveSeq.of("a","b","c").foldRight("", (a,b)->a+b).equals("cba"));
      * }
      * </pre> * 
-     * @param identity value that results in the input parameter to the accumulator function being returned.
+     * @param identity value that results in the input parameter toNested the accumulator function being returned.
      *          E.g. for multiplication 1 is the identity value, for addition 0 is the identity value
      * @param accumulator function that combines the accumulated value and the next one
      * @return AnyM containing the results of the nested fold right
@@ -247,8 +248,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid (using
-     * mapToType on the monoid interface) Then use Monoid to reduce values
+     * Attempt toNested map this Monad toNested the same type as the supplied Monoid (using
+     * mapToType on the monoid interface) Then use Monoid toNested reduce values
      * 
      * <pre>
      *      {@code
@@ -260,7 +261,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * 
      * 
      * @param reducer
-     *            Monoid to reduce values
+     *            Monoid toNested reduce values
      * @return Reduce result
      */
     default <T> AnyM<W,T> foldRightMapToType(final Reducer<T> reducer) {
@@ -333,7 +334,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Use classifier function to group elements in this Sequence into a Map
+     * Use classifier function toNested group elements in this Sequence into a Map
      * 
      * <pre>
      * {@code
@@ -407,7 +408,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * 
      * }
      * 
-     * @param iterable Values to check
+     * @param iterable Values toNested check
      * @return true if SequenceM ends with values in the supplied iterable
      */
     default AnyM<W,Boolean> endsWithIterable(final Iterable<T> iterable) {
@@ -423,75 +424,14 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param stream
-     *            Values to check
+     *            Values toNested check
      * @return true if SequenceM endswith values in the supplied Stream
      */
     default AnyM<W,Boolean> endsWith(final Stream<T> stream) {
         return nestedFoldables().map(s -> s.endsWith(stream));
     }
-
-    /**
-     * Lazily converts this NestedFoldable into a Collection. This does not trigger
-     * the Stream. E.g. Collection is not thread safe on the first iteration.
-     * 
-     * <pre>
-     * {@code
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
-     *                                       .peek(System.out::println)
-     *                                       .toLazyCollection();
-     * 
-     *  col.forEach(System.out::println);
-     * }
-     * 
-     * // Will print out &quot;first!&quot; before anything else
-     * </pre>
-     * 
-     * @return
-     */
-    default AnyM<W,CollectionX<T>> toLazyCollection() {
-        return nestedFoldables().map(s -> s.toLazyCollection());
-    }
-
-    /**
-     * Lazily converts this SequenceM into a Collection. This does not trigger
-     * the Stream. E.g.
-     * 
-     * <pre>
-     * {@code
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
-     *                                       .peek(System.out::println)
-     *                                       .toConcurrentLazyCollection();
-     * 
-     *  col.forEach(System.out::println);
-     * }
-     * 
-     * // Will print out &quot;first!&quot; before anything else
-     * </pre>
-     * 
-     * @return
-     */
-    default AnyM<W,CollectionX<T>> toConcurrentLazyCollection() {
-        return nestedFoldables().map(s -> s.toConcurrentLazyCollection());
-    }
-
-    /**
-     * <pre>
-     * {@code
-     *  Streamable<Integer> repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6)
-     *                                          .map(i -> i + 2)
-     *                                          .toConcurrentLazyStreamable();
-     * 
-     *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     *  assertThat(repeat.reactiveStream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     * }
-     * </pre>
-     * 
-     * @return Streamable that replay this SequenceM, populated lazily and can
-     *         be populated across threads
-     */
-    default AnyM<W,Streamable<T>>  toConcurrentLazyStreamable() {
-        return nestedFoldables().map(s -> s.toConcurrentLazyStreamable());
-
+    default <R> AnyM<W,R> toNested(Function<? super ConvertableSequence<T>, ? extends R> fn) {
+        return nestedFoldables().map(s -> fn.apply(s.to()));
     }
 
     /**
@@ -569,7 +509,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param index
-     *            to extract element from
+     *            toNested extract element from
      * @return elementAt index
      */
     default AnyM<W,Optional<T>> get(final long index) {
@@ -589,7 +529,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * Connect to the Scheduled Stream
+     * Connect toNested the Scheduled Stream
      * 
      * <pre>
      * {@code
@@ -626,7 +566,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * Connect to the Scheduled Stream
+     * Connect toNested the Scheduled Stream
      * 
      * <pre>
      * {@code
@@ -661,7 +601,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * Connect to the Scheduled Stream
+     * Connect toNested the Scheduled Stream
      * 
      * <pre>
      * {@code

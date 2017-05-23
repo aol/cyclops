@@ -15,13 +15,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.control.Xor;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.Witness;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
@@ -29,11 +30,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
-import cyclops.Reducers;
-import cyclops.Semigroups;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 
 import com.aol.cyclops2.types.mixins.Printable;
 
@@ -273,7 +273,7 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testMapReduceReducerOfR() {
-		assertThat(just.mapReduce(Reducers.toPStackX()),equalTo(PStackX.of(10)));
+		assertThat(just.mapReduce(Reducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
 	}
 
 	@Test
@@ -327,7 +327,7 @@ public class FutureWTTest implements Printable {
 
 	@Test
 	public void testFoldRightMapToType() {
-		assertThat(just.foldRightMapToType(Reducers.toPStackX()),equalTo(PStackX.of(10)));
+		assertThat(just.foldRightMapToType(Reducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
 	}
 
 	

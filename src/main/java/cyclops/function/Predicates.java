@@ -3,13 +3,12 @@ package cyclops.function;
 import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.Value;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -147,7 +146,7 @@ public class Predicates {
      * import static cyclops2.function.Predicates.some
 
      * 
-     * Eval<Integer> result = Matchables.future(FutureW.ofResult(1))
+     * Eval<Integer> result = Xors.future(FutureW.ofResult(1))
                                          .matches(c-> c.is( when(some(1)), apply(10)), c->c.is(when(instanceOf(RuntimeException.class)), apply(2)),otherwise(3));
         
        //Eval[10]
@@ -171,7 +170,7 @@ public class Predicates {
      * {@code 
      *  import static cyclops2.function.Predicates.__
      * 
-     *  Eval<String> result = Matchables.listOfValues(1,new MyCase(4,5,6))
+     *  Eval<String> result = Xors.listOfValues(1,new MyCase(4,5,6))
                                 .matches(c->c.is(when(__,Predicates.has(4,5,6)),transform("rec")),otherwise("n/a"));
         
         //Eval["rec"]
@@ -240,7 +239,7 @@ public class Predicates {
      * 
      *  <pre>
      *  {@code 
-     *   Eval<String> url = Matchables.url(new URL("http://www.aol.com/path?q=hello"))
+     *   Eval<String> url = Xors.url(new URL("http://www.aol.com/path?q=hello"))
                                      .on$12_45()
                                      .matches(c->c.is(when(eq("http"),in("www.aol.com","aol.com"),any(),not(eq("q=hello!"))), transform("correct")),otherwise("miss"));
        
@@ -264,7 +263,7 @@ public class Predicates {
 
     /**
      *  Test for equivalence
-     *  null eqv to absent, embedded value equivalency, non-values converted to values before testing
+     *  null eqv toNested absent, embedded value equivalency, non-values converted toNested values before testing
      *.
      * <pre>
      * {@code 

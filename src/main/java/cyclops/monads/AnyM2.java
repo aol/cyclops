@@ -5,11 +5,14 @@ import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
+import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ToStream;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.Future;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.function.*;
 import cyclops.monads.function.AnyMFn1;
 import cyclops.monads.function.AnyMFn2;
@@ -32,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.*;
 
+import static com.aol.cyclops2.types.stream.ConvertableSequence.Conversion.LAZY;
+
 /**
  * 
  * Wrapper for Any Monad type
@@ -45,9 +50,9 @@ import java.util.stream.*;
  * 
  * <pre>
  * {@code 
- *    AnyMValue<String> monad1 = AnyM.fromOptional(Optional.of("hello"));
+ *    AnyMValue<optional,String> monad1 = AnyM.fromOptional(Optional.of("hello"));
  *    
- *    AnyMSeq<String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
+ *    AnyMSeq<stream,String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
  *  
  * }
  * </pre>
@@ -83,8 +88,8 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      *      AnyM<Integer> monad1 = AnyM.fromStream(Stream.of(1,2,3));
      *      AnyM<Integer> monad2 = AnyM.fromOptional(Optional.of(1));
      *
-     *      List<Integer> list1 = monad1.collect(Collectors.toList());
-     *      List<Integer> list2 = monad2.collect(Collectors.toList());
+     *      List<Integer> list1 = monad1.collect(CyclopsCollectors.toList());
+     *      List<Integer> list2 = monad2.collect(CyclopsCollectors.toList());
      *
      * }
      * </pre>
@@ -204,13 +209,13 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      * </pre>
      * 
      * @param fn Function inside an Applicative
-     * @return Function to apply an Applicative's value to function
+     * @return Function toNested apply an Applicative's value toNested function
      */
     public static <W extends WitnessType<W>,T,T2,R> Function<AnyM2<W,T,T2>,AnyM2<W,R,T2>> ap(AnyM2<W, Function<T, R>,T2> fn){
         return apply->(AnyM2<W,R,T2>)apply.adapter().ap(fn,apply);
     }
     /**
-     * Applicative ap2 method to use fluently to apply to a curried function
+     * Applicative ap2 method toNested use fluently toNested apply toNested a curried function
      * <pre>
      * {@code 
      *    AnyM<optional,Function<Integer,Function<Integer,Integer>>> add = AnyM.fromNullable(Curry.curry2(this::add));
@@ -222,7 +227,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      * }
      * </pre>
      * @param fn Curried function inside an Applicative
-     * @return Function to apply two Applicative's values to a function
+     * @return Function toNested apply two Applicative's values toNested a function
      */
     public static <W extends WitnessType<W>,T,T2,R,T3> BiFunction<AnyM2<W,T,T3>,AnyM2<W,T2,T3>,AnyM2<W,R,T3>> ap2(AnyM2<W, Function<T, Function<T2, R>>,T3> fn){
         return (apply1,apply2)->(AnyM2<W,R,T3>)apply1.adapter().ap2(fn,apply1,apply2);
@@ -304,7 +309,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      * </pre>
      * 
      * 
-     * @return An Xor for pattern matching either an AnyMValue or AnyMSeq
+     * @return An Xor for pattern matching lazy an AnyMValue or AnyMSeq
      */
     Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable();
 
@@ -455,7 +460,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
      * @return Monad with a List
      */
     public static <W extends WitnessType<W>,T1,T2> AnyM2<W,ListX<T1>,T2> sequence(final Collection<? extends AnyM2<W, T1,T2>> seq, W w) {
-        return sequence(seq.stream(),w).map(ListX::fromStreamS);
+        return sequence(seq.stream(),w).map(s->ReactiveSeq.fromStream(s).to().listX(LAZY));
     }
 
     /**
@@ -524,7 +529,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
               return a+b;
       }
    * }</pre>
-   * The add method has no null handling, but we can lift the method to Monadic form, and use Optionals to automatically handle null / empty value cases.
+   * The add method has no null handling, but we can lift the method toNested Monadic form, and use Optionals toNested automatically handle null / empty value cases.
    * 
    * 
    * @param fn BiFunction to lift

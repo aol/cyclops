@@ -12,8 +12,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.DequeX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.DequeX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.functions.collections.extensions.AbstractCollectionXTest;
 
 public class DequeXTest extends AbstractCollectionXTest{

@@ -1,12 +1,13 @@
 package com.aol.cyclops2.internal.monads;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class AnyMSeqImpl<W extends WitnessType<W>,T> extends BaseAnyMImpl<W,T>implements AnyMSeq<W,T> {
 
@@ -16,6 +17,10 @@ public class AnyMSeqImpl<W extends WitnessType<W>,T> extends BaseAnyMImpl<W,T>im
     }
     @Override
     public ReactiveSeq<T> stream(){
+        if(unwrap() instanceof Stream){
+            return ReactiveSeq.fromStream((Stream<T>)unwrap());
+
+        }
         return Streams.oneShotStreamI(this);
     }
     @Override

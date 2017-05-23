@@ -1,13 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import com.aol.cyclops2.internal.stream.publisher.PublisherIterable;
-import cyclops.Semigroups;
-import cyclops.function.Semigroup;
 import org.reactivestreams.Subscription;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 import java.util.function.*;
 
 /**
@@ -26,7 +21,7 @@ public class StreamSubscription implements Subscription {
             work.accept(n);
             return true;
         }
-      //  System.out.println("Another process running..");
+
         return false;
     }
 

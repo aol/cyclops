@@ -1,7 +1,6 @@
 package cyclops.function;
 
-import cyclops.Monoids;
-import cyclops.Semigroups;
+import cyclops.companion.Monoids;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;

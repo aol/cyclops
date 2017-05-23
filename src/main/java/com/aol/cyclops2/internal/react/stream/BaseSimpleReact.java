@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.aol.cyclops2.types.futurestream.BaseSimpleReactStream;
-import com.nurkiewicz.asyncretry.RetryExecutor;
+
 
 import lombok.Getter;
 
@@ -25,7 +25,6 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 
     protected abstract Executor getExecutor();
 
-    protected abstract RetryExecutor getRetrier();
 
     protected abstract boolean isAsync();
 

@@ -1,6 +1,6 @@
 package cyclops.streams.push.async;
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
@@ -33,7 +33,7 @@ public class AsyncCycle {
     }
     @Test
     public void testCycleAsync() {
-        //  of(1, 2).collectAll(CyclopsCollectors.toListX())
+        //  of(1, 2).collectStream(CyclopsCollectors.listX())
         //        .flatMapI(i->i.cycle(3)).printOut();
 
         // of(1, 2).cycle().limit(6).forEach(n->System.out.println("Next " + n));

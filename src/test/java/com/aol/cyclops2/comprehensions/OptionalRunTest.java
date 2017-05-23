@@ -1,6 +1,6 @@
 package com.aol.cyclops2.comprehensions;
 
-import cyclops.Optionals;
+import cyclops.companion.Optionals;
 import org.junit.Before;
 import org.junit.Test;
 

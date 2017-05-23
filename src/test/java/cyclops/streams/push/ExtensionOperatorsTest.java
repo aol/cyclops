@@ -1,10 +1,10 @@
 package cyclops.streams.push;
 
 
-import cyclops.Semigroups;
-import cyclops.Streams;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.async.Future;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
@@ -244,7 +244,7 @@ public class ExtensionOperatorsTest {
 	    System.out.println("Hello world!");
         Future result = Future.future();
 
-        Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).subscribe(e -> {
+        Spouts.of(1,2,3,4,5).limitLast(1).collectStream(Collectors.toList()).forEachSubscribe(e -> {
             System.out.println("Value recieved " + e);
             result.complete(e);
           //  sub[0].cancel();
@@ -261,7 +261,7 @@ public class ExtensionOperatorsTest {
         }).request(1l);
 
         assertThat(result.get(),equalTo(ListX.of(5)));
-        System.out.println(Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).findFirst());
+        System.out.println(Spouts.of(1,2,3,4,5).limitLast(1).collectStream(Collectors.toList()).findFirst());
 
 
 		assertThat(Spouts.of(1,2,3,4,5)
@@ -345,8 +345,8 @@ public class ExtensionOperatorsTest {
 	@Test
 	public void streamable(){
 		Streamable<Integer> repeat = Spouts.of(1,2,3,4,5,6)
-												.map(i->i*2)
-												.toStreamable();
+												.map(i->i*2).to()
+												.streamable();
 		
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
@@ -355,8 +355,8 @@ public class ExtensionOperatorsTest {
 	@Test
 	public void concurrentLazyStreamable(){
 		Streamable<Integer> repeat = Spouts.of(1,2,3,4,5,6)
-												.map(i->i*2)
-												.toConcurrentLazyStreamable();
+												.map(i->i*2).to()
+												.lazyStreamableSynchronized();
 		
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
@@ -369,8 +369,8 @@ public class ExtensionOperatorsTest {
 	@Test
 	public void testLazy(){
 		Collection<Integer> col = Spouts.of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toLazyCollection();
+											.peek(System.out::println).to()
+											.lazyCollection();
 		System.out.println("first!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
@@ -378,8 +378,8 @@ public class ExtensionOperatorsTest {
 	@Test
 	public void testLazyCollection(){
 		Collection<Integer> col = Spouts.of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toConcurrentLazyCollection();
+											.peek(System.out::println).to()
+											.lazyCollectionSynchronized();
 		System.out.println("first!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));

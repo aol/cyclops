@@ -1,11 +1,9 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
-
-import java.util.function.Consumer;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;

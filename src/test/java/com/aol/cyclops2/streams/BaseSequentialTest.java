@@ -16,18 +16,15 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import cyclops.async.QueueFactories;
-import cyclops.async.Topic;
-import cyclops.collections.ListX;
-import cyclops.collections.SetX;
+import cyclops.async.adapters.Topic;
+import cyclops.async.adapters.Queue;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
 import cyclops.control.Maybe;
-import cyclops.control.either.Either;
-import cyclops.stream.FutureStream;
-import cyclops.stream.Spouts;
-import cyclops.stream.Streamable;
+import cyclops.control.lazy.Either;
 import org.hamcrest.Matchers;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Before;
@@ -63,7 +60,7 @@ public class BaseSequentialTest {
     @Test
     public void subscribeEmpty(){
         List result = new ArrayList<>();
-        Subscription s= of().subscribe(i->result.add(i));
+        Subscription s= of().forEachSubscribe(i->result.add(i));
         s.request(1l);
         assertThat(result.size(), Matchers.equalTo(0));
         s.request(1l);
@@ -75,7 +72,7 @@ public class BaseSequentialTest {
     @Test
     public void subscribe() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i));
         s.request(1l);
         assertThat(result.size(), Matchers.equalTo(1));
         s.request(1l);
@@ -87,7 +84,7 @@ public class BaseSequentialTest {
     @Test
     public void subscribe3() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i));
         s.request(3l);
 
         assertThat(result.size(), Matchers.equalTo(3));
@@ -96,7 +93,7 @@ public class BaseSequentialTest {
     @Test
     public void subscribeErrorEmpty() throws InterruptedException {
         List result = new ArrayList<>();
-        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace());
+        Subscription s= of().forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(1l);
         assertThat(result.size(), Matchers.equalTo(0));
         s.request(1l);
@@ -108,7 +105,7 @@ public class BaseSequentialTest {
     @Test
     public void subscribeError() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(1l);
         assertThat(result.size(), Matchers.equalTo(1));
         s.request(1l);
@@ -120,7 +117,7 @@ public class BaseSequentialTest {
     @Test
     public void subscribe3Error() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(3l);
 
         assertThat(result.size(), Matchers.equalTo(3));
@@ -130,7 +127,7 @@ public class BaseSequentialTest {
     public void subscribeErrorEmptyOnComplete() throws InterruptedException {
         List result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of().forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
         s.request(1l);
         assertThat(onComplete.get(), Matchers.equalTo(true));
         assertThat(result.size(), Matchers.equalTo(0));
@@ -144,7 +141,7 @@ public class BaseSequentialTest {
     public void subscribeErrorOnComplete() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
 
         assertThat(onComplete.get(), Matchers.equalTo(false));
         s.request(1l);
@@ -163,7 +160,7 @@ public class BaseSequentialTest {
     public void subscribe3ErrorOnComplete() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
         assertThat(onComplete.get(), Matchers.equalTo(false));
         s.request(4l);
         assertThat(onComplete.get(), Matchers.equalTo(true));
@@ -200,11 +197,11 @@ public class BaseSequentialTest {
     @Test
     public void skipLimitDuplicateLimitSkip() {
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = of(1, 2, 3).triplicate();
-        Optional<Integer> head1 = dup.v1.limit(1).toOptional().flatMap(l -> {
+        Optional<Integer> head1 = dup.v1.limit(1).to().optional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup2 = dup.v2.skip(1).triplicate();
-        Optional<Integer> head2 = dup2.v1.limit(1).toOptional().flatMap(l -> {
+        Optional<Integer> head2 = dup2.v1.limit(1).to().optional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
         assertThat(dup2.v2.skip(1).toListX(), equalTo(ListX.of(3)));
@@ -215,8 +212,8 @@ public class BaseSequentialTest {
 
     @Test
     public void splitThenSplit() {
-        assertThat(of(1, 2, 3).toOptional(), equalTo(Optional.of(ListX.of(1, 2, 3))));
-        // System.out.println(of(1, 2, 3).splitAtHead().v2.toListX());
+        assertThat(of(1, 2, 3).to().optional(), equalTo(Optional.of(ListX.of(1, 2, 3))));
+        // System.out.println(of(1, 2, 3).splitAtHead().v2.listX());
         System.out.println("split " + of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toListX());
         assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
     }
@@ -242,8 +239,8 @@ public class BaseSequentialTest {
     @Test
     public void publishToAndMerge() {
         for (int k = 0; k < ITERATIONS; k++) {
-            System.out.println("Publish to and product iteration " + k);
-            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+            System.out.println("Publish toNested and product iteration " + k);
+            cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
             Thread t = new Thread(() -> {
@@ -283,7 +280,7 @@ public class BaseSequentialTest {
     @Test
     public void publishTest() {
         for (int k = 0; k < ITERATIONS; k++) {
-            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+            Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
             Thread t = new Thread(() -> {
@@ -314,7 +311,7 @@ public class BaseSequentialTest {
     @Test
     public void mergeAdapterTest() {
         for (int k = 0; k < ITERATIONS; k++) {
-            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+            Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
             Thread t = new Thread(() -> {
@@ -349,7 +346,7 @@ public class BaseSequentialTest {
     public void mergeAdapterTest1() {
         for (int k = 0; k < ITERATIONS; k++) {
             System.out.println("Test iteration " + k);
-            cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+            Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
             Thread t = new Thread(() -> {
@@ -641,26 +638,27 @@ public class BaseSequentialTest {
         assertThat(of().takeWhile(p -> true).toList(), equalTo(Arrays.asList()));
     }
 
+
     @Test
-    public void presentConvert() {
+    public void presentConvert(){
 
-        assertTrue(of(1).toOptional().isPresent());
-        assertTrue(of(1).toListX().size() > 0);
-        assertTrue(of(1).toDequeX().size() > 0);
-        assertTrue(of(1).toPStackX().size() > 0);
-        assertTrue(of(1).toQueueX().size() > 0);
-        assertTrue(of(1).toPVectorX().size() > 0);
-        assertTrue(of(1).toPQueueX().size() > 0);
-        assertTrue(of(1).toSetX().size() > 0);
-        assertTrue(of(1).toSortedSetX().size() > 0);
-        assertTrue(of(1).toPOrderedSetX().size() > 0);
-        assertTrue(of(1).toPBagX().size() > 0);
-        assertTrue(of(1).toPMapX(t -> t, t -> t).size() > 0);
-        assertTrue(of(1).toMapX(t -> t, t -> t).size() > 0);
+        assertTrue(of(1).to().optional().isPresent());
+        assertTrue(of(1).toListX().size()>0);
+        assertTrue(of(1).to().dequeX().size()>0);
+        assertTrue(of(1).to().linkedListX().size()>0);
+        assertTrue(of(1).to().queueX().size()>0);
+        assertTrue(of(1).to().vectorX().size()>0);
+        assertTrue(of(1).to().persistentQueueX().size()>0);
+        assertTrue(of(1).toSetX().size()>0);
+        assertTrue(of(1).to().sortedSetX().size()>0);
+        assertTrue(of(1).to().orderedSetX().size()>0);
+        assertTrue(of(1).to().bagX().size()>0);
+        assertTrue(of(1).to().persistentMapX(t->t, t->t).size()>0);
+        assertTrue(of(1).to().mapX(t->t,t->t).size()>0);
 
-        assertTrue(of(1).toSet().size() > 0);
-        assertTrue(of(1).toList().size() > 0);
-        assertTrue(of(1).toStreamable().size() > 0);
+        assertTrue(of(1).toSet().size()>0);
+        assertTrue(of(1).toList().size()>0);
+        assertTrue(of(1).to().streamable().size()>0);
 
 
     }
@@ -668,33 +666,33 @@ public class BaseSequentialTest {
     @Test
     public void optionalConvert() {
         for (int i = 0; i < 10; i++) {
-            assertThat(of(1, 2, 3).toOptional(), equalTo(Optional.of(ListX.of(1, 2, 3))));
+            assertThat(of(1, 2, 3).to().optional(), equalTo(Optional.of(ListX.of(1, 2, 3))));
         }
     }
 
     @Test
     public void presentConvert2() {
 
-        assertTrue(of(1, 2).toOptional().isPresent());
-        Optional<ListX<Integer>> opt = of(1, 2).toOptional();
+        assertTrue(of(1, 2).to().optional().isPresent());
+        Optional<ListX<Integer>> opt = of(1, 2).to().optional();
         assertThat(opt, equalTo(Optional.of(ListX.of(1, 2))));
 
         assertTrue(of(1, 2).toListX().size() == 2);
-        assertTrue(of(1, 2).toDequeX().size() == 2);
-        assertTrue(of(1, 2).toPStackX().size() == 2);
-        assertTrue(of(1, 2).toQueueX().size() == 2);
-        assertTrue(of(1, 2).toPVectorX().size() == 2);
-        assertTrue(of(1, 2).toPQueueX().size() == 2);
+        assertTrue(of(1, 2).to().dequeX().size() == 2);
+        assertTrue(of(1, 2).to().linkedListX().size() == 2);
+        assertTrue(of(1, 2).to().queueX().size() == 2);
+        assertTrue(of(1, 2).to().vectorX().size() == 2);
+        assertTrue(of(1, 2).to().persistentQueueX().size() == 2);
         assertTrue(of(1, 2).toSetX().size() == 2);
-        assertTrue(of(1, 2).toSortedSetX().size() == 2);
-        assertTrue(of(1, 2).toPOrderedSetX().size() == 2);
-        assertTrue(of(1, 2).toPBagX().size() == 2);
-        assertTrue(of(1, 2).toPMapX(t -> t, t -> t).size() == 2);
-        assertTrue(of(1, 2).toMapX(t -> t, t -> t).size() == 2);
+        assertTrue(of(1, 2).to().sortedSetX().size() == 2);
+        assertTrue(of(1, 2).to().orderedSetX().size() == 2);
+        assertTrue(of(1, 2).to().bagX().size() == 2);
+        assertTrue(of(1, 2).to().persistentMapX(t -> t, t -> t).size() == 2);
+        assertTrue(of(1, 2).to().mapX(t -> t, t -> t).size() == 2);
 
         assertTrue(of(1, 2).toSet().size() == 2);
         assertTrue(of(1, 2).toList().size() == 2);
-        assertTrue(of(1, 2).toStreamable().size() == 2);
+        assertTrue(of(1, 2).to().streamable().size() == 2);
 
 
     }
@@ -1003,7 +1001,7 @@ public class BaseSequentialTest {
 
     @Test
     public void testIterable() {
-        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
         for (Integer i : of(1, 2, 3)) {
             assertThat(list, hasItem(i));

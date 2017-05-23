@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
 
 

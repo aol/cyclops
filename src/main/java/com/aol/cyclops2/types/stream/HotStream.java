@@ -29,7 +29,7 @@ import cyclops.stream.ReactiveSeq;
 public interface HotStream<T> {
     
     /**
-     * Connect to this HotStream (Stream that is already emitting data)
+     * Connect toNested this HotStream (Stream that is already emitting data)
      * 
      * <pre>
      * {@code 
@@ -49,7 +49,7 @@ public interface HotStream<T> {
      * </pre>
      * 
      * 
-     * @return Stream connected to the HotStream emitting data
+     * @return Stream connected toNested the HotStream emitting data
      */
     public default ReactiveSeq<T> connect() {
         return connect(new OneToOneConcurrentArrayQueue<T>(
@@ -57,8 +57,8 @@ public interface HotStream<T> {
     }
 
     /**
-     * Connect to this HotStream using the provided transfer async.Queue.
-     * The transfer Queue can be used to apply backpressure to the HotStream if it produces
+     * Connect toNested this HotStream using the provided transfer async.Queue.
+     * The transfer Queue can be used toNested apply backpressure toNested the HotStream if it produces
      * data faster than the connected Stream can consume it {@see cyclops2.async.wait.WaitStrategy}
      * 
      * <pre>
@@ -81,19 +81,19 @@ public interface HotStream<T> {
      * 
      * 
      * @param queue Transfer Queue between the Streams
-     * @return Stream connected to the HotStream emitting data
+     * @return Stream connected toNested the HotStream emitting data
      */
     public ReactiveSeq<T> connect(Queue<T> queue);
 
     /**
-     * Connect to this HotStream using the provided transfer async.Queue.
-     * The transfer Queue can be used to apply backpressure to the HotStream if it produces
+     * Connect toNested this HotStream using the provided transfer async.Queue.
+     * The transfer Queue can be used toNested apply backpressure toNested the HotStream if it produces
      * data faster than the connected Stream can consume it {@see cyclops2.async.wait.WaitStrategy}
-     * Convert the emitted Stream to the required type with the provided function
+     * Convert the emitted Stream toNested the required type with the provided function
      * 
      * @param queue  Transfer Queue between the Streams
-     * @param to Function to convert a ReactiveSeq to desired Stream type
-     * @return Stream connected to the HotStream emitting data
+     * @param to Function toNested convert a ReactiveSeq toNested desired Stream type
+     * @return Stream connected toNested the HotStream emitting data
      */
     public default <R extends Stream<T>> R connectTo(final Queue<T> queue, final Function<ReactiveSeq<T>, R> to) {
         return to.apply(connect(queue));

@@ -1,13 +1,12 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 
 import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -35,7 +34,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyListX<T> extends AbstractLazyMutableCollection<T,List<T>> implements ListX<T> {
+public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements ListX<T> {
 
 
     public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector) {
@@ -51,6 +50,11 @@ public class LazyListX<T> extends AbstractLazyMutableCollection<T,List<T>> imple
     public ListX<T> materialize() {
         get();
         return this;
+    }
+
+    @Override
+    public ListX<T> type(Collector<T, ?, List<T>> collector) {
+        return withCollector(collector);
     }
 
     @Override
@@ -129,7 +133,7 @@ public class LazyListX<T> extends AbstractLazyMutableCollection<T,List<T>> imple
     }
 
     @Override
-    public <X> LazyListX<X> fromStream(Stream<X> stream) {
+    public <X> LazyListX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyListX<X>((List)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
     }

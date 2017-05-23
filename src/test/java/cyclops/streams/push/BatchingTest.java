@@ -1,7 +1,7 @@
 package cyclops.streams.push;
 
 import com.aol.cyclops2.util.SimpleTimer;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import lombok.Value;
@@ -12,7 +12,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static cyclops.stream.Spouts.*;
 import static org.hamcrest.Matchers.*;

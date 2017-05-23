@@ -3,13 +3,9 @@ package com.aol.cyclops2.internal.stream;
 import com.aol.cyclops2.internal.stream.spliterators.CopyableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.IteratableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
-import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
-import cyclops.Streams;
-import cyclops.collections.ListX;
-import cyclops.monads.Witness;
-import cyclops.monads.transformers.StreamT;
+import cyclops.companion.Streams;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -140,7 +136,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     public Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return new Tuple2(
-                Tuple2.v1.toOptional()
+                Tuple2.v1.to().optional()
                         .flatMap(l -> l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty()),
                 Tuple2.v2);
     }

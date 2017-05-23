@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.immutable.PQueueX;
+import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Monoid;
@@ -18,26 +18,26 @@ public class PQueuesTest {
     @Test
     public void unit(){
         
-        PQueueX<String> list = PQueueX.Instances.unit()
+        PersistentQueueX<String> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .convert(PQueueX::narrowK);
+                                     .convert(PersistentQueueX::narrowK);
         
-        assertThat(list.toArray(),equalTo(PQueueX.of("hello").toArray()));
+        assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello").toArray()));
     }
     @Test
     public void functor(){
         
-        PQueueX<Integer> list = PQueueX.Instances.unit()
+        PersistentQueueX<Integer> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->PQueueX.Instances.functor().map((String v) ->v.length(), h))
-                                     .convert(PQueueX::narrowK);
+                                     .apply(h-> PersistentQueueX.Instances.functor().map((String v) ->v.length(), h))
+                                     .convert(PersistentQueueX::narrowK);
         
-        assertThat(list.toArray(),equalTo(PQueueX.of("hello".length()).toArray()));
+        assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello".length()).toArray()));
     }
     @Test
     public void apSimple(){
-        PQueueX.Instances.zippingApplicative()
-            .ap(PQueueX.of(l1(this::multiplyByTwo)),PQueueX.of(1,2,3));
+        PersistentQueueX.Instances.zippingApplicative()
+            .ap(PersistentQueueX.of(l1(this::multiplyByTwo)), PersistentQueueX.of(1,2,3));
     }
     private int multiplyByTwo(int x){
         return x*2;
@@ -45,93 +45,93 @@ public class PQueuesTest {
     @Test
     public void applicative(){
         
-        PQueueX<Fn1<Integer,Integer>> listFn =PQueueX.Instances.unit().unit(l1((Integer i) ->i*2)).convert(PQueueX::narrowK);
+        PersistentQueueX<Fn1<Integer,Integer>> listFn = PersistentQueueX.Instances.unit().unit(l1((Integer i) ->i*2)).convert(PersistentQueueX::narrowK);
         
-        PQueueX<Integer> list = PQueueX.Instances.unit()
+        PersistentQueueX<Integer> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->PQueueX.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h->PQueueX.Instances.zippingApplicative().ap(listFn, h))
-                                     .convert(PQueueX::narrowK);
+                                     .apply(h-> PersistentQueueX.Instances.functor().map((String v) ->v.length(), h))
+                                     .apply(h-> PersistentQueueX.Instances.zippingApplicative().ap(listFn, h))
+                                     .convert(PersistentQueueX::narrowK);
         
-        assertThat(list.toArray(),equalTo(PQueueX.of("hello".length()*2).toArray()));
+        assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello".length()*2).toArray()));
     }
     @Test
     public void monadSimple(){
-       PQueueX<Integer> list  = PQueueX.Instances.monad()
-                                      .flatMap(i->PQueueX.range(0,i), PQueueX.of(1,2,3))
-                                      .convert(PQueueX::narrowK);
+       PersistentQueueX<Integer> list  = PersistentQueueX.Instances.monad()
+                                      .flatMap(i-> PersistentQueueX.range(0,i), PersistentQueueX.of(1,2,3))
+                                      .convert(PersistentQueueX::narrowK);
     }
     @Test
     public void monad(){
         
-        PQueueX<Integer> list = PQueueX.Instances.unit()
+        PersistentQueueX<Integer> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->PQueueX.Instances.monad().flatMap((String v) ->PQueueX.Instances.unit().unit(v.length()), h))
-                                     .convert(PQueueX::narrowK);
+                                     .apply(h-> PersistentQueueX.Instances.monad().flatMap((String v) -> PersistentQueueX.Instances.unit().unit(v.length()), h))
+                                     .convert(PersistentQueueX::narrowK);
         
-        assertThat(list.toArray(),equalTo(PQueueX.of("hello".length()).toArray()));
+        assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello".length()).toArray()));
     }
     @Test
     public void monadZeroFilter(){
         
-        PQueueX<String> list = PQueueX.Instances.unit()
+        PersistentQueueX<String> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->PQueueX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
-                                     .convert(PQueueX::narrowK);
+                                     .apply(h-> PersistentQueueX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .convert(PersistentQueueX::narrowK);
         
-        assertThat(list.toArray(),equalTo(PQueueX.of("hello").toArray()));
+        assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello").toArray()));
     }
     @Test
     public void monadZeroFilterOut(){
         
-        PQueueX<String> list = PQueueX.Instances.unit()
+        PersistentQueueX<String> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->PQueueX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
-                                     .convert(PQueueX::narrowK);
+                                     .apply(h-> PersistentQueueX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .convert(PersistentQueueX::narrowK);
         
-        assertThat(list.toArray(),equalTo(PQueueX.empty().toArray()));
+        assertThat(list.toArray(),equalTo(PersistentQueueX.empty().toArray()));
     }
     
     @Test
     public void monadPlus(){
-        PQueueX<Integer> list = PQueueX.Instances.<Integer>monadPlus()
-                                      .plus(PQueueX.empty(), PQueueX.of(10))
-                                      .convert(PQueueX::narrowK);
-        assertThat(list.toArray(),equalTo(PQueueX.of(10).toArray()));
+        PersistentQueueX<Integer> list = PersistentQueueX.Instances.<Integer>monadPlus()
+                                      .plus(PersistentQueueX.empty(), PersistentQueueX.of(10))
+                                      .convert(PersistentQueueX::narrowK);
+        assertThat(list.toArray(),equalTo(PersistentQueueX.of(10).toArray()));
     }
     @Test
     public void monadPlusNonEmpty(){
         
-        Monoid<PQueueX<Integer>> m = Monoid.of(PQueueX.empty(), (a, b)->a.isEmpty() ? b : a);
-        PQueueX<Integer> list = PQueueX.Instances.<Integer>monadPlus(m)
-                                      .plus(PQueueX.of(5), PQueueX.of(10))
-                                      .convert(PQueueX::narrowK);
-        assertThat(list.toArray(),equalTo(PQueueX.of(5).toArray()));
+        Monoid<PersistentQueueX<Integer>> m = Monoid.of(PersistentQueueX.empty(), (a, b)->a.isEmpty() ? b : a);
+        PersistentQueueX<Integer> list = PersistentQueueX.Instances.<Integer>monadPlus(m)
+                                      .plus(PersistentQueueX.of(5), PersistentQueueX.of(10))
+                                      .convert(PersistentQueueX::narrowK);
+        assertThat(list.toArray(),equalTo(PersistentQueueX.of(5).toArray()));
     }
     @Test
     public void  foldLeft(){
-        int sum  = PQueueX.Instances.foldable()
-                        .foldLeft(0, (a,b)->a+b, PQueueX.of(1,2,3,4));
+        int sum  = PersistentQueueX.Instances.foldable()
+                        .foldLeft(0, (a,b)->a+b, PersistentQueueX.of(1,2,3,4));
         
         assertThat(sum,equalTo(10));
     }
     @Test
     public void  foldRight(){
-        int sum  = PQueueX.Instances.foldable()
-                        .foldRight(0, (a,b)->a+b, PQueueX.of(1,2,3,4));
+        int sum  = PersistentQueueX.Instances.foldable()
+                        .foldRight(0, (a,b)->a+b, PersistentQueueX.of(1,2,3,4));
         
         assertThat(sum,equalTo(10));
     }
     
     @Test
     public void traverse(){
-       Maybe<Higher<PQueueX.µ, Integer>> res = PQueueX.Instances.traverse()
-                                                         .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), PQueueX.of(1,2,3))
+       Maybe<Higher<PersistentQueueX.µ, Integer>> res = PersistentQueueX.Instances.traverse()
+                                                         .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), PersistentQueueX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
        
        
-       assertThat(res.map(q->PQueueX.narrowK(q)
-                                       .toArray()).get(),equalTo(Maybe.just(PQueueX.of(2,4,6).toArray()).get()));
+       assertThat(res.map(q-> PersistentQueueX.narrowK(q)
+                                       .toArray()).get(),equalTo(Maybe.just(PersistentQueueX.of(2,4,6).toArray()).get()));
     }
     
 }

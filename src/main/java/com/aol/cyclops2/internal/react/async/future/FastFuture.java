@@ -22,7 +22,7 @@ import lombok.Getter;
  * 3. For results / errors : single writer (one thread executing a task at a time, one thread sets the result or error) 
  * 						/ single reader (simple-react Stream)
  * 4. For post-hoc event listeners : single writer (simple-react Stream adds event listeners) : single reader (only one thread can read event listeners - 
- * 						either the thread that sets the result / error and eventually done,
+ * 						lazy the thread that sets the result / error and eventually done,
  * 							or if done already set - the calling thread can execute post-hoc events)
  */
 @AllArgsConstructor
@@ -186,7 +186,7 @@ public class FastFuture<T> {
         return new FastFuture<T>().completeExceptionally(t);
     }
 
-    /** Internal conversion method to convert CompletableFutures to FastFuture.
+    /** Internal conversion method toNested convert CompletableFutures toNested FastFuture.
      */
     public static <T> FastFuture<T> fromCompletableFuture(final CompletableFuture<T> cf) {
         final FastFuture<T> f = new FastFuture<>();
@@ -200,7 +200,7 @@ public class FastFuture<T> {
     }
 
     public static <R> FastFuture<List<R>> allOf(final Runnable onComplete, final FastFuture... futures) {
-        //needs to use onComplete
+        //needs toNested use onComplete
         final FastFuture allOf = new FastFuture(
                                                 FinalPipeline.empty(), futures.length);
 
@@ -220,7 +220,7 @@ public class FastFuture<T> {
     }
 
     public static <R> FastFuture<List<R>> xOf(final int x, final Runnable onComplete, final FastFuture... futures) {
-        //needs to use onComplete
+        //needs toNested use onComplete
         final FastFuture xOf = new FastFuture(
                                               FinalPipeline.empty(), x);
         for (final FastFuture next : futures) {

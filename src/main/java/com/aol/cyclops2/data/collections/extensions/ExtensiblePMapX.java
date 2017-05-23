@@ -2,7 +2,7 @@ package com.aol.cyclops2.data.collections.extensions;
 
 
 import com.aol.cyclops2.data.collections.extensions.persistent.PMapXImpl;
-import cyclops.collections.immutable.PMapX;
+import cyclops.collections.immutable.PersistentMapX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import lombok.NonNull;
@@ -13,16 +13,16 @@ import java.util.function.Supplier;
 
 public class ExtensiblePMapX<K, V> extends PMapXImpl<K, V> {
 
-    private final Supplier<Reducer<PMapX<K, V>>> reducer;
+    private final Supplier<Reducer<PersistentMapX<K, V>>> reducer;
 
-    public ExtensiblePMapX(@NonNull PMap<K, V> map, @NonNull Supplier<Reducer<PMapX<K, V>>> reducer) {
+    public ExtensiblePMapX(@NonNull PMap<K, V> map, @NonNull Supplier<Reducer<PersistentMapX<K, V>>> reducer) {
         super(
                 map);
         this.reducer = reducer;
 
     }
 
-    public PMapX<K, V> fromStream(final ReactiveSeq<Tuple2<K, V>> stream) {
+    public PersistentMapX<K, V> fromStream(final ReactiveSeq<Tuple2<K, V>> stream) {
         return stream.mapReduce(reducer.get());
     }
 

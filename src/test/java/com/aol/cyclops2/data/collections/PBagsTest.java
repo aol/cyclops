@@ -8,40 +8,40 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.collections.immutable.BagX;
 import org.junit.Test;
 
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.immutable.PBagX;
 
 public class PBagsTest {
 
 	@Test
 	public void testOf() {
-		assertThat(PBagX.of("a","b","c")
+		assertThat(BagX.of("a","b","c")
 							.stream()
 							.collect(Collectors.toList()),hasItems("a","b","c"));
 	}
 
 	@Test
 	public void testEmpty() {
-		assertThat(PBagX.empty().stream()
+		assertThat(BagX.empty().stream()
 				.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 
 	@Test
 	public void testSingleton() {
-		assertThat(PBagX.of("a").stream()
+		assertThat(BagX.of("a").stream()
 				.collect(Collectors.toList()),equalTo(Arrays.asList("a")));
 	}
 	@Test
 	public void testFromCollection() {
-		assertThat(PBagX.fromCollection(Arrays.asList("a","b","c")).stream()
+		assertThat(BagX.fromIterable(Arrays.asList("a","b","c")).stream()
 				.collect(Collectors.toList()),hasItems("a","b","c"));
 	}
 	@Test
 	public void testToPBagXtreamOfT() {
-		assertThat(PBagX.fromStream(Stream.of("a","b","c")).stream()
+		assertThat(BagX.bagX(ReactiveSeq.of("a","b","c")).stream()
 				.collect(Collectors.toList()),
 						hasItems("a","b","c"));
 	}

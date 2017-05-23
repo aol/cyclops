@@ -16,18 +16,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
-import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.*;
+import cyclops.async.adapters.Queue;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.stream.FutureStream;
-import cyclops.stream.Spouts;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 
 
 import lombok.val;
@@ -131,7 +129,7 @@ public class PipesTest {
       System.out.println(Thread.currentThread().getId());
        List<String> res =  bus.futureStream("reactor", new LazyReact())
             .get()
-           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList();
           System.out.println(res);
        
@@ -157,7 +155,7 @@ public class PipesTest {
       System.out.println(Thread.currentThread().getId());
        List<String> res =  bus.futureStream("reactor", new LazyReact(10,10))
             .get()
-           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList();
           System.out.println(res);
        
@@ -183,7 +181,7 @@ public class PipesTest {
       System.out.println(Thread.currentThread().getId());
        List<String> res =  bus.futureStream("reactor", new LazyReact())
             .get()
-           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList();
           System.out.println(res);
        

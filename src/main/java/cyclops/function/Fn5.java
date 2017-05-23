@@ -4,8 +4,6 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import org.jooq.lambda.function.Function5;
-
 import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.control.Maybe;

@@ -5,12 +5,11 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
 
 public class Javaone {
@@ -51,7 +50,7 @@ public class Javaone {
               .limit(100)
               .map(i->"prefix"+i)
               .map(this::loadStr)
-              .collect(Collectors.toList());
+              .collect(CyclopsCollectors.toList());
         
         new LazyReact().of(1,2,3,4)
                        .map(this::load)
@@ -85,7 +84,7 @@ public class Javaone {
         SeqSubscriber<Integer> sub = SeqSubscriber.reactiveSubscriber();
         Flux.just(1,2,3,4)
             .map(i->i*2)
-            .subscribeAll(sub);
+            .forEachAsync(sub);
         
         ReactiveSeq<Integer> connected = sub.reactiveStream();
         

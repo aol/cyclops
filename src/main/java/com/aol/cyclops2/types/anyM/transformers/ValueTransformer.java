@@ -19,7 +19,7 @@ import cyclops.function.Fn3;
 public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
                                                                             Unwrapable,
                                                                             Unit<T>,
-        Folds<T>,
+                                                                            Folds<T>,
                                                                             Zippable<T>,
         Fn0<T> {
     public abstract <R> ValueTransformer<W,R> empty();
@@ -56,7 +56,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
     
     
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#subscribeAll(org.reactivestreams.Subscriber)
+     * @see com.aol.cyclops2.types.Traversable#forEachAsync(org.reactivestreams.Subscriber)
      */
      @Override
     public void subscribe(final Subscriber<? super T> s) {

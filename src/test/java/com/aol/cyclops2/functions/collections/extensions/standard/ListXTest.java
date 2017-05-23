@@ -3,9 +3,9 @@ package com.aol.cyclops2.functions.collections.extensions.standard;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.functions.collections.extensions.CollectionXTestsWithNulls;
 import com.aol.cyclops2.types.Zippable;
-import cyclops.Semigroups;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.mutable.ListX;
+import cyclops.companion.Semigroups;
+import cyclops.collections.immutable.*;
 import cyclops.monads.Witness;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
@@ -21,10 +21,12 @@ import static org.junit.Assert.assertThat;
 
 public class ListXTest extends CollectionXTestsWithNulls {
 
+
     @Test
     public void lazy(){
 
-        ListX<PVectorX<String>> list =     ListX.of(1,2,3,5,6,7,8)
+
+        ListX<VectorX<String>> list =     ListX.of(1,2,3,5,6,7,8)
                                                 .map(i->i*2)
                                                 .filter(i->i<4)
                                                 .sliding(2)

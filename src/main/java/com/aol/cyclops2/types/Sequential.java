@@ -14,7 +14,7 @@ import cyclops.stream.ReactiveSeq;
 public interface Sequential<T> {
 
     /**
-     * @return This Sequential converted to a Stream (@link {@link ReactiveSeq}
+     * @return This Sequential converted toNested a Stream (@link {@link ReactiveSeq}
      */
     ReactiveSeq<T> stream();
 
@@ -26,7 +26,7 @@ public interface Sequential<T> {
      *  SimpleTimer timer = new SimpleTimer();
         ReactiveSeq.of(1, 2, 3, 4, 5, 6)
                   .xPer(6, 100000000, TimeUnit.NANOSECONDS)
-                  .collect(Collectors.toList())
+                  .collect(CyclopsCollectors.toList())
                   .size()
                   
        //6           
@@ -35,7 +35,7 @@ public interface Sequential<T> {
      * </pre>
      * 
      * @param x
-     *            number of elements to emit
+     *            number of elements toNested emit
      * @param time
      *            period
      * @param t
@@ -78,7 +78,7 @@ public interface Sequential<T> {
      *  SimpleTimer timer = new SimpleTimer();
      *  ReactiveSeq.of(1, 2, 3, 4, 5, 6)
      *             .fixedDelay(10000, TimeUnit.NANOSECONDS)
-     *             .collect(Collectors.toList())
+     *             .collect(CyclopsCollectors.toList())
      *             .size()
      *  //6           
      *  //timer.getElapsedNanoseconds() > greaterThan(60000l)

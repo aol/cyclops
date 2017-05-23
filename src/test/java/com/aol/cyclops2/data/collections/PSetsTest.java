@@ -8,40 +8,40 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.collections.immutable.PersistentSetX;
 import org.junit.Test;
 
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.immutable.PSetX;
 
 public class PSetsTest {
 
 	@Test
 	public void testOf() {
-		assertThat(PSetX.of("a","b","c")
+		assertThat(PersistentSetX.of("a","b","c")
 							.stream()
 							.collect(Collectors.toList()),hasItems("a","b","c"));
 	}
 
 	@Test
 	public void testEmpty() {
-		assertThat(PSetX.empty().stream()
+		assertThat(PersistentSetX.empty().stream()
 				.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 
 	@Test
 	public void testSingleton() {
-		assertThat(PSetX.of("a").stream()
+		assertThat(PersistentSetX.of("a").stream()
 				.collect(Collectors.toList()),equalTo(Arrays.asList("a")));
 	}
 	@Test
 	public void testFromCollection() {
-		assertThat(PSetX.fromCollection(Arrays.asList("a","b","c")).stream()
+		assertThat(PersistentSetX.fromIterable(Arrays.asList("a","b","c")).stream()
 				.collect(Collectors.toList()),hasItems("a","b","c"));
 	}
 	@Test
 	public void testToPSetstreamOfT() {
-		assertThat(PSetX.fromStream(Stream.of("a","b","c")).stream()
+		assertThat(PersistentSetX.fromIterable(ReactiveSeq.of("a","b","c")).stream()
 				.collect(Collectors.toList()),
 						hasItems("a","b","c"));
 	}

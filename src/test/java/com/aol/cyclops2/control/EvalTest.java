@@ -8,7 +8,6 @@ import org.jooq.lambda.tuple.Tuple;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;

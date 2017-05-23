@@ -1,8 +1,8 @@
 package com.aol.cyclops2.functions.collections.extensions.persistent;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PersistentSetX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.functions.collections.extensions.AbstractCollectionXTest;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class PSetXTest extends AbstractCollectionXTest {
 
     @Override
     public <T> FluentCollectionX<T> of(T... values) {
-        return PSetX.of(values);
+        return PersistentSetX.of(values);
     }
 
     @Test
@@ -32,13 +32,13 @@ public class PSetXTest extends AbstractCollectionXTest {
             System.out.println("Next " + it.next());
         }
       //  System.out.println(of(1).cycle(2));
-    //    assertThat(of(1,2,3).cycle(2).toListX(),equalTo(ListX.of(3,2,1,3,2,1)));
+    //    assertThat(of(1,2,3).cycle(2).listX(),equalTo(ListX.of(3,2,1,3,2,1)));
     }
     @Test
     public void onEmptySwitch() {
-        assertThat(PSetX.empty()
-                        .onEmptySwitch(() -> PSetX.of(1, 2, 3)),
-                   equalTo(PSetX.of(1, 2, 3)));
+        assertThat(PersistentSetX.empty()
+                        .onEmptySwitch(() -> PersistentSetX.of(1, 2, 3)),
+                   equalTo(PersistentSetX.of(1, 2, 3)));
     }
 
     /*
@@ -50,7 +50,7 @@ public class PSetXTest extends AbstractCollectionXTest {
      */
     @Override
     public <T> FluentCollectionX<T> empty() {
-        return PSetX.empty();
+        return PersistentSetX.empty();
     }
 
     @Test
@@ -64,34 +64,34 @@ public class PSetXTest extends AbstractCollectionXTest {
     }
     @Test
     public void coflatMap(){
-       assertThat(PSetX.of(1,2,3)
+       assertThat(PersistentSetX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
                    .single(),equalTo(6));
         
     }
     @Override
     public FluentCollectionX<Integer> range(int start, int end) {
-        return PSetX.range(start, end);
+        return PersistentSetX.range(start, end);
     }
 
     @Override
     public FluentCollectionX<Long> rangeLong(long start, long end) {
-        return PSetX.rangeLong(start, end);
+        return PersistentSetX.rangeLong(start, end);
     }
 
     @Override
     public <T> FluentCollectionX<T> iterate(int times, T seed, UnaryOperator<T> fn) {
-        return PSetX.iterate(times, seed, fn);
+        return PersistentSetX.iterate(times, seed, fn);
     }
 
     @Override
     public <T> FluentCollectionX<T> generate(int times, Supplier<T> fn) {
-        return PSetX.generate(times, fn);
+        return PersistentSetX.generate(times, fn);
     }
 
     @Override
     public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
-        return PSetX.unfold(seed, unfolder);
+        return PersistentSetX.unfold(seed, unfolder);
     }
 
 }

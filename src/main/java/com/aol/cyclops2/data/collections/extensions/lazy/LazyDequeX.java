@@ -1,13 +1,12 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
-import cyclops.collections.DequeX;
+import cyclops.collections.mutable.DequeX;
 import cyclops.stream.ReactiveSeq;
 import lombok.EqualsAndHashCode;
 
 import java.util.*;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -19,7 +18,7 @@ import java.util.stream.Stream;
  * }
  * </pre>
  * The map operation above is not executed immediately. It will only be executed when (if) the data inside the
- * queue is accessed. This allows lazy operations to be chained and executed more efficiently e.g.
+ * queue is accessed. This allows lazy operations toNested be chained and executed more efficiently e.g.
  *
  * <pre>
  * {@code
@@ -36,7 +35,7 @@ import java.util.stream.Stream;
  * @param <T> the type of elements held in this collection
  */
 @EqualsAndHashCode(of = { "deque" })
-public class LazyDequeX<T> extends AbstractLazyMutableCollection<T,Deque<T>> implements DequeX<T> {
+public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements DequeX<T> {
 
 
     public LazyDequeX(Deque<T> list, ReactiveSeq<T> seq, Collector<T, ?, Deque<T>> collector) {
@@ -54,7 +53,7 @@ public class LazyDequeX<T> extends AbstractLazyMutableCollection<T,Deque<T>> imp
     }
 
     @Override
-    public LazyDequeX<T> withCollector(Collector<T, ?, Deque<T>> collector){
+    public LazyDequeX<T> type(Collector<T, ?, Deque<T>> collector){
         return (LazyDequeX)new LazyDequeX<T>(this.getList(),this.getSeq().get(),collector);
     }
     //@Override
@@ -71,7 +70,7 @@ public class LazyDequeX<T> extends AbstractLazyMutableCollection<T,Deque<T>> imp
 
 
     @Override
-    public <X> LazyDequeX<X> fromStream(Stream<X> stream) {
+    public <X> LazyDequeX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyDequeX<X>((Deque)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
     }

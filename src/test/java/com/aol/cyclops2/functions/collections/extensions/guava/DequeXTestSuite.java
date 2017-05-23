@@ -34,7 +34,7 @@ public class DequeXTestSuite {
                     .named("DequeX test")
                     .withFeatures(
                             CollectionSize.ANY,
-                          //  CollectionFeature.ALLOWS_NULL_VALUES,
+                            CollectionFeature.ALLOWS_NULL_VALUES,
                             CollectionFeature.FAILS_FAST_ON_CONCURRENT_MODIFICATION,
                             CollectionFeature.SUPPORTS_ADD,
                            

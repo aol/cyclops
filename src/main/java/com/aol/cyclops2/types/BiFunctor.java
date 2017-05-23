@@ -7,7 +7,7 @@ import cyclops.control.Trampoline;
 
 /* 
  * A type that can perform transformations across a domain with two types. 
- * For example a BiFunctor for Java Map may allow both the Keys and Values to be transformed together (via the bimap operator).
+ * For example a BiFunctor for Java Map may allow both the Keys and Values toNested be transformed together (via the bimap operator).
  * 
  * @author johnmcclean
  *
@@ -34,7 +34,7 @@ public interface BiFunctor<T1, T2> {
     <R1, R2> BiFunctor<R1, R2> bimap(Function<? super T1, ? extends R1> fn1, Function<? super T2, ? extends R2> fn2);
 
     /**
-     * Peek at two data types simulatanously (typically to perform a side-effect with each data point)
+     * Peek at two data types simulatanously (typically toNested perform a side-effect with each data point)
      * 
      * <pre>
      * {@code

@@ -58,7 +58,6 @@ configurations {
 dependencies {
 
 	//compile group: 'org.derive4j.hkt', name: 'hkt', version: derive4jHKTVersion
-	compile 'com.nurkiewicz.asyncretry:asyncretry:'+asyncRetryVersion
 	compile 'org.pcollections:pcollections:'+pCollectionsVersion
 	compile "org.jooq:jool:${joolVersion}"
 	compile 'org.agrona:Agrona:'+agronaVersion
@@ -96,13 +95,6 @@ jacocoTestReport {
 jmh {
 	jmhVersion = '1.14'
 	humanOutputFile = null
-	/**
-	if (project.hasProperty('jmh')) {
-		include = ".*" + project.jmh + ".*"
-	} else {
-		include = ".*"
-	}
-	 **/
     include = ".*scrabble*"
 }
 

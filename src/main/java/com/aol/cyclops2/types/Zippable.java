@@ -9,9 +9,9 @@ import com.aol.cyclops2.types.stream.ToStream;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
-import cyclops.Monoids;
+import cyclops.companion.Monoids;
 import cyclops.function.Semigroup;
-import cyclops.Semigroups;
+import cyclops.companion.Semigroups;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -28,7 +28,7 @@ import cyclops.stream.ReactiveSeq;
  *
  * @param <T> Data type of element(s) of this Zippable
  */
-public interface Zippable<T> extends Iterable<T>, Transformable<T>, ToStream<T> {
+public interface Zippable<T> extends Iterable<T>, Transformable<T> {
 
     /**
      * Combine two applicatives together using the provided BinaryOperator (Semigroup, Monoid and Reducer all
@@ -41,7 +41,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T>, ToStream<T> 
      * @see Monoid
      * @see Monoids
      *
-     * To lift any Semigroup (or monoid) up to handling Applicatives use the combineApplicatives operator in Semigroups
+     * To lift any Semigroup (or monoid) up toNested handling Applicatives use the combineApplicatives operator in Semigroups
      * {@see com.aol.cyclops2.Semigroups#combineApplicatives(BiFunction) } or Monoids
      * { {@see com.aol.cyclops2.Monoids#combineApplicatives(java.util.function.Function, com.aol.cyclops2.function.Monoid)
      *  }
@@ -76,7 +76,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T>, ToStream<T> 
     /**
      * Zip (combine) this Zippable with the supplied Iterable using the supplied combining function
      * 
-     * @param iterable to zip with
+     * @param iterable toNested zip with
      * @param fn Zip function
      * @return Combined zippable
      */
@@ -89,7 +89,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T>, ToStream<T> 
     /**
      * Zip (combine) this Zippable with the supplied Publisher, using the supplied combining function
      * 
-     * @param publisher to combine with
+     * @param publisher toNested combine with
      * @param fn Zip / combining function
      * @return Combined zippable
      */
@@ -103,7 +103,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T>, ToStream<T> 
     /**
      * Zip (combine) this Zippable with the supplied Stream, using the supplied combining function
      * 
-     * @param other Stream to combine with
+     * @param other Stream toNested combine with
      * @param zipper Zip / combining function
      * @return Combined zippable
      */
@@ -114,7 +114,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T>, ToStream<T> 
     /**
      * Zip (combine) this Zippable with the supplied Stream combining both into a Tuple2
      * 
-     * @param other Stream to combine with
+     * @param other Stream toNested combine with
      * @return Combined Zippable
      */
     default <U> Zippable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -127,7 +127,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T>, ToStream<T> 
     /**
      * Zip (combine) this Zippable with the supplied Iterable combining both into a Tuple2
      * 
-     * @param other Iterable to combine with
+     * @param other Iterable toNested combine with
      * @return
      */
     default <U> Zippable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -138,7 +138,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T>, ToStream<T> 
      *
      * <pre>
      * {@code
-     *  List<Tuple3<Integer, Integer, Character>> list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(Collectors.toList());
+     *  List<Tuple3<Integer, Integer, Character>> list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(CyclopsCollectors.toList());
      *
      *  // [[1,100,'a'],[2,200,'b'],[3,300,'c']]
      * }
@@ -159,7 +159,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T>, ToStream<T> 
      * <pre>
      * {@code
      *  List<Tuple4<Integer, Integer, Character, String>> list = of(1, 2, 3, 4, 5, 6).zip4(of(100, 200, 300, 400), of('a', 'b', 'c'), of("hello", "world"))
-     *          .collect(Collectors.toList());
+     *          .collect(CyclopsCollectors.toList());
      *
      * }
      * // [[1,100,'a',"hello"],[2,200,'b',"world"]]

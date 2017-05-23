@@ -1,8 +1,8 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
-import cyclops.Reducers;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.VectorX;
+import cyclops.companion.Reducers;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PVector;
@@ -10,7 +10,6 @@ import org.pcollections.PVector;
 import java.util.*;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -38,7 +37,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<T>> implements PVectorX<T> {
+public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<T>> implements VectorX<T> {
 
 
     public LazyPVectorX(PVector<T> list, ReactiveSeq<T> seq) {
@@ -63,16 +62,19 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
     
     
     //@Override
-    public PVectorX<T> materialize() {
+    public VectorX<T> materialize() {
         get();
         return this;
     }
 
-  
 
+    @Override
+    public VectorX<T> type(Reducer<? extends PVector<T>> reducer) {
+        return new LazyPVectorX<T>(list,seq.get(),Reducer.narrow(reducer));
+    }
 
-  //  @Override
-    private <X> LazyPVectorX<X> fromStream(Stream<X> stream) {
+    //  @Override
+    public <X> LazyPVectorX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyPVectorX<X>((PVector)getList(),ReactiveSeq.fromStream(stream));
     }
@@ -88,47 +90,47 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
    
 
     @Override
-    public PVectorX<T> minusAll(Collection<?> list) {
+    public VectorX<T> minusAll(Collection<?> list) {
         return from(get().minusAll(list));
     }
 
     @Override
-    public PVectorX<T> minus(Object remove) {
+    public VectorX<T> minus(Object remove) {
         return from(get().minus(remove));
     }
 
     @Override
-    public PVectorX<T> with(int i, T e) {
+    public VectorX<T> with(int i, T e) {
         return from(get().with(i,e));
     }
 
     @Override
-    public PVectorX<T> plus(int i, T e) {
+    public VectorX<T> plus(int i, T e) {
         return from(get().plus(i,e));
     }
 
     @Override
-    public PVectorX<T> plus(T e) {
+    public VectorX<T> plus(T e) {
         return from(get().plus(e));
     }
 
     @Override
-    public PVectorX<T> plusAll(Collection<? extends T> list) {
+    public VectorX<T> plusAll(Collection<? extends T> list) {
         return from(get().plusAll(list));
     }
 
     @Override
-    public PVectorX<T> plusAll(int i, Collection<? extends T> list) {
+    public VectorX<T> plusAll(int i, Collection<? extends T> list) {
         return from(get().plusAll(i,list));
     }
 
     @Override
-    public PVectorX<T> minus(int i) {
+    public VectorX<T> minus(int i) {
         return from(get().minus(i));
     }
 
     @Override
-    public PVectorX<T> subList(int start, int end) {
+    public VectorX<T> subList(int start, int end) {
         return from(get().subList(start,end));
     }
 
@@ -219,13 +221,13 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
 
     }
     @Override
-    public PVectorX<T> plusLoop(int max, IntFunction<T> value) {
-        return (PVectorX<T>)super.plusLoop(max,value);
+    public VectorX<T> plusLoop(int max, IntFunction<T> value) {
+        return (VectorX<T>)super.plusLoop(max,value);
     }
 
     @Override
-    public PVectorX<T> plusLoop(Supplier<Optional<T>> supplier) {
-        return (PVectorX<T>)super.plusLoop(supplier);
+    public VectorX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (VectorX<T>)super.plusLoop(supplier);
     }
 
 }

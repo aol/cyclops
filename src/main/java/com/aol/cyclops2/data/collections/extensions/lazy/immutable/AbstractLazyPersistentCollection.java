@@ -2,14 +2,14 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollection;
-import com.aol.cyclops2.data.collections.extensions.persistent.PersistentCollectionX;
+import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.collections.immutable.PBagX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.pcollections.PCollection;
+import org.pcollections.PStack;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<T>> implements LazyFluentCollection<T, C>, PersistentCollectionX<T> {
+public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<T>> implements LazyFluentCollection<T, C>, LazyCollectionX<T> {
     @Getter(AccessLevel.PROTECTED)
     protected volatile C list;
     @Getter(AccessLevel.PROTECTED)
@@ -43,6 +43,15 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     }
 
 
+    @Override
+    public <T> T unwrap(){
+        return (T)get();
+    }
+
+    public C materializeList(ReactiveSeq<T> toUse){
+
+        return collectorInternal.mapReduce(toUse);
+    }
 
     @Override
     public C get() {
@@ -51,7 +60,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
                 try{
                     ReactiveSeq<T> toUse = seq.get();
                     if(toUse!=null){//dbl check - as we may pass null check on on thread and set updating false on another
-                        list = collectorInternal.mapReduce(toUse);
+                        list = materializeList(toUse);
                         seq.set(null);
                     }
                 }catch(Throwable t){

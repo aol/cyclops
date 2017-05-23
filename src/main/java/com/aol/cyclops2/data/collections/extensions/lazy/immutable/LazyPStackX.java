@@ -1,11 +1,14 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
-import cyclops.Reducers;
-import cyclops.collections.immutable.PStackX;
+import com.aol.cyclops2.types.mixins.Printable;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.companion.Reducers;
 import cyclops.function.Reducer;
+import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import lombok.Getter;
+import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
 import java.util.Collection;
@@ -14,7 +17,9 @@ import java.util.ListIterator;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
+
+import static com.aol.cyclops2.types.mixins.Printable.*;
 
 /**
  * An extended List type {@see java.util.List}
@@ -26,7 +31,7 @@ import java.util.stream.Stream;
  * }
  * </pre>
  * The map operation above is not executed immediately. It will only be executed when (if) the data inside the
- * queue is accessed. This allows lazy operations to be chained and executed more efficiently e.g.
+ * queue is accessed. This allows lazy operations toNested be chained and executed more efficiently e.g.
  *
  * <pre>
  * {@code
@@ -42,111 +47,131 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>> implements PStackX<T> {
+public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>> implements LinkedListX<T> {
 
 
-    @Getter
-    private final boolean efficientOps;
-    public LazyPStackX(PStack<T> list, ReactiveSeq<T> seq, boolean efficientOps) {
+
+    public LazyPStackX(PStack<T> list, ReactiveSeq<T> seq) {
         super(list, seq, Reducers.toPStack());
-        this.efficientOps= efficientOps;
+
 
     }
-    public LazyPStackX(PStack<T> list, ReactiveSeq<T> seq, boolean efficientOps, Reducer<PStack<T>> reducer) {
+    public LazyPStackX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer) {
         super(list, seq, reducer);
-        this.efficientOps= efficientOps;
+
 
     }
-    public LazyPStackX(PStack<T> list,boolean efficientOps) {
+    public LazyPStackX(PStack<T> list) {
         super(list, null, Reducers.toPStack());
-        this.efficientOps= efficientOps;
+
 
     }
 
-    public LazyPStackX(ReactiveSeq<T> seq,  boolean efficientOps) {
+    public LazyPStackX(ReactiveSeq<T> seq) {
         super(null, seq, Reducers.toPStack());
-        this.efficientOps= efficientOps;
+
 
     }
+    private static <E> PStack<E> from(final Iterator<E> i,int depth) {
 
+        if(!i.hasNext())
+            return ConsPStack.empty();
+        E e = i.next();
+        System.out.println(e);
+        return  from(i,depth++).plus(e);
+    }
+    public PStack<T> materializeList(ReactiveSeq<T> toUse){
+
+
+        PStack<T> res = from(toUse.iterator(),0);
+        return new LazyPStackX<>(
+                res);
+
+    }
+    public PStack<T> materializeList2(ReactiveSeq<T> toUse){
+        PStack<T> res = ConsPStack.<T> empty();
+
+
+        final Iterator<T> it = toUse.iterator();
+
+        while (it.hasNext())
+            res = res.plus(it.next());
+
+        return new LazyPStackX<T>(res);
+
+    }
 
 
     //@Override
-    public PStackX<T> materialize() {
+    public LinkedListX<T> materialize() {
         get();
         return this;
     }
 
 
+    @Override
+    public LinkedListX<T> type(Reducer<? extends PStack<T>> reducer) {
+        return new LazyPStackX<T>(list,seq.get(),Reducer.narrow(reducer));
+    }
 
+    //  @Override
+    public <X> LazyPStackX<X> fromStream(ReactiveSeq<X> stream) {
 
-  //  @Override
-    private <X> LazyPStackX<X> fromStream(Stream<X> stream) {
-
-        return new LazyPStackX<X>((PStack)getList(),ReactiveSeq.fromStream(stream),this.efficientOps);
+        return new LazyPStackX<X>((PStack)getList(),ReactiveSeq.fromStream(stream));
     }
 
     @Override
     public <T1> LazyPStackX<T1> from(Collection<T1> c) {
         if(c instanceof PStack)
-            return new LazyPStackX<T1>((PStack)c,null,this.efficientOps);
+            return new LazyPStackX<T1>((PStack)c,null);
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 
-    @Override
-    public PStackX<T> efficientOpsOn() {
-        return new LazyPStackX<T>(list,seq.get(),true);
-    }
-
-    @Override
-    public PStackX<T> efficientOpsOff() {
-        return new LazyPStackX<T>(list,seq.get(),false);
-    }
 
 
 
     @Override
-    public PStackX<T> minusAll(Collection<?> list) {
+    public LinkedListX<T> minusAll(Collection<?> list) {
         return from(get().minusAll(list));
     }
 
     @Override
-    public PStackX<T> minus(Object remove) {
+    public LinkedListX<T> minus(Object remove) {
         return from(get().minus(remove));
     }
 
     @Override
-    public PStackX<T> with(int i, T e) {
+    public LinkedListX<T> with(int i, T e) {
         return from(get().with(i,e));
     }
 
     @Override
-    public PStackX<T> plus(int i, T e) {
+    public LinkedListX<T> plus(int i, T e) {
         return from(get().plus(i,e));
     }
 
     @Override
-    public PStackX<T> plus(T e) {
+    public LinkedListX<T> plus(T e) {
         return from(get().plus(e));
     }
 
     @Override
-    public PStackX<T> plusAll(Collection<? extends T> list) {
+    public LinkedListX<T> plusAll(Collection<? extends T> list) {
         return from(get().plusAll(list));
     }
 
     @Override
-    public PStackX<T> plusAll(int i, Collection<? extends T> list) {
+    public LinkedListX<T> plusAll(int i, Collection<? extends T> list) {
         return from(get().plusAll(i,list));
     }
 
     @Override
-    public PStackX<T> minus(int i) {
+    public LinkedListX<T> minus(int i) {
         return from(get().minus(i));
     }
 
     @Override
-    public PStackX<T> subList(int start, int end) {
+    public LinkedListX<T> subList(int start, int end) {
         return from(get().subList(start,end));
     }
 
@@ -213,12 +238,12 @@ public class LazyPStackX<T> extends AbstractLazyPersistentCollection<T,PStack<T>
     }
 
     @Override
-    public PStackX<T> plusLoop(int max, IntFunction<T> value) {
-        return (PStackX<T>)super.plusLoop(max,value);
+    public LinkedListX<T> plusLoop(int max, IntFunction<T> value) {
+        return (LinkedListX<T>)super.plusLoop(max,value);
     }
 
     @Override
-    public PStackX<T> plusLoop(Supplier<Optional<T>> supplier) {
-        return (PStackX<T>)super.plusLoop(supplier);
+    public LinkedListX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (LinkedListX<T>)super.plusLoop(supplier);
     }
 }

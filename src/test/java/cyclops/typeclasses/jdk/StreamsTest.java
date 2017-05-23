@@ -1,6 +1,6 @@
 package com.aol.cyclops.hkt.instances.jdk;
 
-import static cyclops.Streams.StreamKind.widen;
+import static cyclops.companion.Streams.StreamKind.widen;
 import static cyclops.function.Lambda.l1;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.Streams;
-import cyclops.Streams.StreamKind;
-import cyclops.collections.ListX;
+import cyclops.companion.Streams;
+import cyclops.companion.Streams.StreamKind;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;

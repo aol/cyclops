@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.FutureStream;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -83,7 +83,7 @@ public  class LFSNoOrderTest {
     }
 	@Test
 	public void toStream(){
-		List<Integer> list = of(1,2,3).<Integer>toStream().collect(Collectors.toList());
+		List<Integer> list = of(1,2,3).<Integer>stream().collect(Collectors.toList());
 		assertThat(list,equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
@@ -176,7 +176,7 @@ public  class LFSNoOrderTest {
     
     @Test
     public void testIterable() {
-        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
         for (Integer i :of(1, 2, 3)) {
             assertThat(list,hasItem(i));

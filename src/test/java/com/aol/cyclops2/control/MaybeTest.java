@@ -1,14 +1,19 @@
 package com.aol.cyclops2.control;
 
-import cyclops.*;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Future;
+import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.control.*;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.control.Maybe.CompletableMaybe;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
@@ -51,7 +56,7 @@ public class MaybeTest implements Printable {
     public void completableTest(){
         CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
         Maybe<Integer> mapped = completable.map(i->i*2)
-                                          .flatMap(i->Eval.later(()->i+1));
+                                          .flatMap(i-> Eval.later(()->i+1));
 
         completable.complete(5);
         System.out.println(mapped.getClass());
@@ -106,7 +111,7 @@ public class MaybeTest implements Printable {
               .map(i->i*2))
                 .peek(System.out::println)
                 .map(i->i*100)
-                .subscribeAll(e->result.complete(e));
+                .forEachAsync(e->result.complete(e));
 
 
         assertFalse(result.isDone());
@@ -300,8 +305,8 @@ public class MaybeTest implements Printable {
 
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-        Maybe<PSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPSetX());
-        assertThat(maybes, equalTo(Maybe.of(PSetX.of(10, 1))));
+        Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPersistentSetX());
+        assertThat(maybes, equalTo(Maybe.of(PersistentSetX.of(10, 1))));
     }
 
     @Test

@@ -37,6 +37,7 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
 
     public Iterator<T> iterator(){
         return new Iterator<T>() {
+            boolean active = false;
             final Object UNSET = new Object();
             final AtomicReference value = new AtomicReference<>(UNSET);
             final AtomicReference error = new AtomicReference<>(UNSET);
@@ -56,7 +57,7 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
             });
 
             public void forEachRemaining(Consumer<? super T> action) {
-                if(async)
+                if(async || active)
                     Iterator.super.forEachRemaining(action);
                 else
                       source.subscribeAll(action,defaultErrorHandler,()->{});
@@ -73,6 +74,7 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
             }
             @Override
             public boolean hasNext() {
+
                 if(complete())
                     return false;
                 if (!requested) {
@@ -90,6 +92,7 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
 
             @Override
             public T next() {
+                active=true;
                 if (!hasNext()) {
                     throw new NoSuchElementException();
 

@@ -2,20 +2,22 @@ package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.*;
-import cyclops.Monoids;
+import cyclops.companion.Monoids;
 import cyclops.collections.box.Mutable;
 import cyclops.control.*;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.transformers.FutureT;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.react.Status;
 import com.aol.cyclops2.react.collectors.lazy.Blocker;
 import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
-import cyclops.CompletableFutures;
+import cyclops.companion.CompletableFutures;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -30,7 +32,6 @@ import cyclops.typeclasses.monad.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -62,7 +63,6 @@ import java.util.stream.Stream;
         */
 @AllArgsConstructor
 @EqualsAndHashCode
-@Slf4j
 public class Future<T> implements To<Future<T>>,
                                   MonadicValue<T>,
                                   Completable<T>,
@@ -132,7 +132,7 @@ public class Future<T> implements To<Future<T>>,
 
     /**
      * An empty Future
-     * 
+     *
      * @return A Future that wraps a CompletableFuture with a null result
      */
     public static <T> Future<T> empty() {
@@ -141,23 +141,23 @@ public class Future<T> implements To<Future<T>>,
     }
     /**
      * An empty Future
-     * 
+     *
      * @return A Future that wraps a CompletableFuture with a null result
      */
     public static <T> Future<T> future() {
         return new Future<>(
                            new CompletableFuture<>());
     }
-    
+
     /**
      * Select the first Future to complete
-     * 
+     *
      * @see CompletableFuture#anyOf(CompletableFuture...)
      * @param fts FutureWs to race
      * @return First Future to complete
      */
     public static <T> Future<T> anyOf(Future<T>... fts) {
-        
+
        return (Future<T>) Future.ofResult( (CompletableFuture<T>)CompletableFuture.anyOf(Stream.of(fts)
                                                                               .map(Future::getFuture)
                                                                               .collect(Collectors.toList())
@@ -165,15 +165,15 @@ public class Future<T> implements To<Future<T>>,
     }
     /**
      * Wait until all the provided Future's to complete
-     * 
+     *
      * @see CompletableFuture#allOf(CompletableFuture...)
-     * 
+     *
      * @param fts FutureWs to  wait on
      * @return Future that completes when all the provided Futures Complete. Empty Future result, or holds an Exception
      *         from a provided Future that failed.
      */
     public static <T> Future<T> allOf(Future<T>... fts) {
-        
+
         return (Future<T>) Future.ofResult((CompletableFuture<T>)CompletableFuture.allOf(Stream.of(fts)
                                                                       .map(Future::getFuture)
                                                                       .collect(Collectors.toList())
@@ -181,51 +181,82 @@ public class Future<T> implements To<Future<T>>,
      }
     /**
      * Block until a Quorum of results have returned as determined by the provided Predicate
-     * 
+     *
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      * Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.ofSupplier(()->1),Future.future(),Future.future());
-               
+
 
         strings.get().size()
         //1
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
+     * @param breakout Predicate that determines whether the block should be
+     *            continued or removed
+     * @param fts FutureWs to  wait on results from
+     * @param errorHandler Consumer to handle any exceptions thrown
+     * @return Future which will be populated with a Quorum of results
+     */
+    @SafeVarargs
+    public static <T> Future<ListX<T>> quorum(Predicate<Status<T>> breakout,Consumer<Throwable> errorHandler, Future<T>... fts) {
+
+        List<CompletableFuture<?>> list = Stream.of(fts)
+                                                .map(Future::getFuture)
+                                                .collect(Collectors.toList());
+
+        return Future.of(new Blocker<T>(list, Optional.of(errorHandler)).nonBlocking(breakout));
+
+
+    }
+    /**
+     * Block until a Quorum of results have returned as determined by the provided Predicate
+     *
+     * <pre>
+     * {@code
+     *
+     * Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.ofSupplier(()->1),Future.future(),Future.future());
+
+
+    strings.get().size()
+    //1
+     *
+     * }
+     * </pre>
+     *
+     *
      * @param breakout Predicate that determines whether the block should be
      *            continued or removed
      * @param fts FutureWs to  wait on results from
      * @return Future which will be populated with a Quorum of results
      */
     @SafeVarargs
-    public static <T> Future<ListX<T>> quorum(Predicate<Status<T>> breakout, Future<T>... fts) {
-        
+    public static <T> Future<ListX<T>> quorum(Predicate<Status<T>> breakout,Future<T>... fts) {
+
         List<CompletableFuture<?>> list = Stream.of(fts)
-                                                .map(Future::getFuture)
-                                                .collect(Collectors.toList());
-        
-        return Future.of(new Blocker<T>(list, Optional.of(e-> {
-                    log.error(e.getMessage(), e);
-                })).nonBlocking(breakout));
-                
-       
+                .map(Future::getFuture)
+                .collect(Collectors.toList());
+
+        return Future.of(new Blocker<T>(list, Optional.empty()).nonBlocking(breakout));
+
+
     }
     /**
      * Select the first Future to return with a successful result
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Future<Integer> ft = Future.future();
        Future<Integer> result = Future.firstSuccess(Future.ofSupplier(()->1),ft);
-               
+
        ft.complete(10);
        result.get() //1
      * }
      * </pre>
-     * 
+     *
      * @param fts Futures to race
      * @return First Future to return with a result
      */
@@ -236,9 +267,9 @@ public class Future<T> implements To<Future<T>>,
               .forEach(f->f.peek(r->future.complete(r)));
         Future<T> all = allOf(fts).recover(e->{ future.completeExceptionally(e); return null;});
         return future;
-        
+
       }
-    
+
     /**
      * Complete this Future with an Exception
      * @see CompletableFuture#completeExceptionally(Throwable)
@@ -247,24 +278,24 @@ public class Future<T> implements To<Future<T>>,
      */
     public boolean completeExceptionally(Throwable e) {
         return this.future.completeExceptionally(e);
-        
+
     }
     /**
      * Construct a Future asyncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
-     * 
-     * 
+     *
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
-        
+
         Future<Integer> future = Future.fromPublisher(reactiveStream,ex);
-        
+
         //Future[1]
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param pub Publisher to extract value from
      * @param ex Executor to extract value on
      * @return Future populated asyncrhonously from Publisher
@@ -278,13 +309,13 @@ public class Future<T> implements To<Future<T>>,
     /**
      * Construct a Future asyncrhonously that contains a single value extracted from the supplied Iterable
      * <pre>
-     * {@code 
+     * {@code
      *  ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
-        
+
         Future<Integer> future = Future.fromIterable(reactiveStream,ex);
-        
+
         //Future[1]
-     * 
+     *
      * }
      * </pre>
      * @param iterable Iterable to generate a Future from
@@ -300,13 +331,13 @@ public class Future<T> implements To<Future<T>>,
     /**
      * Construct a Future syncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
      * <pre>
-     * {@code 
+     * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
-        
+
         Future<Integer> future = Future.fromPublisher(reactiveStream);
-        
+
         //Future[1]
-     * 
+     *
      * }
      * </pre>
      * @param pub Publisher to extract value from
@@ -343,19 +374,19 @@ public class Future<T> implements To<Future<T>>,
 
     /**
      * Construct a Future syncrhonously that contains a single value extracted from the supplied Iterable
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
-        
+
         Future<Integer> future = Future.fromIterable(reactiveStream);
-        
+
         //Future[1]
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param iterable Iterable to extract value from
      * @return Future populated syncrhonously from Iterable
      */
@@ -369,7 +400,7 @@ public class Future<T> implements To<Future<T>>,
 
     /**
      * Create a Future instance from the supplied CompletableFuture
-     * 
+     *
      * @param f CompletableFuture to wrap as a Future
      * @return Future wrapping the supplied CompletableFuture
      */
@@ -378,12 +409,12 @@ public class Future<T> implements To<Future<T>>,
                              f);
     }
 
-    
+
     /**
      * Construct a Future syncrhonously from the Supplied Try
-     * 
+     *
      * @param value Try to populate Future from
-     * @return Future populated with either the value or error in provided Try
+     * @return Future populated with lazy the value or error in provided Try
      */
     public static <T, X extends Throwable> Future<T> fromTry(final Try<T, X> value) {
         return Future.ofSupplier(value);
@@ -393,17 +424,17 @@ public class Future<T> implements To<Future<T>>,
      * Schedule the population of a Future from the provided Supplier, the provided Cron (Quartz format) expression will be used to
      * trigger the population of the Future. The provided ScheduledExecutorService provided the thread on which the
      * Supplier will be executed.
-     * 
+     *
      * <pre>
-     * {@code 
-     *  
+     * {@code
+     *
      *    Future<String> future = Future.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello");
-     *    
+     *
      *    //Future["hello"]
-     * 
+     *
      * }</pre>
-     * 
-     * 
+     *
+     *
      * @param cron Cron expression in Quartz format
      * @param ex ScheduledExecutorService used to execute the provided Supplier
      * @param t The Supplier to execute to populate the Future
@@ -431,14 +462,14 @@ public class Future<T> implements To<Future<T>>,
      * Schedule the population of a Future from the provided Supplier after the specified delay. The provided ScheduledExecutorService provided the thread on which the
      * Supplier will be executed.
      * <pre>
-     * {@code 
-     *  
+     * {@code
+     *
      *    Future<String> future = Future.schedule(10l, Executors.newScheduledThreadPool(1), ()->"hello");
-     *    
+     *
      *    //Future["hello"]
-     * 
+     *
      * }</pre>
-     * 
+     *
      * @param delay Delay after which the Future should be populated
      * @param ex ScheduledExecutorService used to execute the provided Supplier
      * @param t he Supplier to execute to populate the Future
@@ -465,16 +496,16 @@ public class Future<T> implements To<Future<T>>,
 
     /**
      * Asynchronous sequence operation that convert a Collection of FutureWs to a Future with a List
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   Future<ListX<Integer>> futures =Future.sequence(ListX.of(Future.ofResult(10),Future.ofResult(1)));
          //ListX.of(10,1)
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fts Collection of Futures to Sequence into a Future with a List
      * @return Future with a List
      */
@@ -487,11 +518,11 @@ public class Future<T> implements To<Future<T>>,
      * Sequence operation that convert a Stream of FutureWs to a Future with a Stream
      *
      * <pre>
-     * {@code 
+     * {@code
      *   Future<Integer> just = Future.ofResult(10);
      *   Future<ReactiveSeq<Integer>> futures =Future.sequence(Stream.of(just,Future.ofResult(1)));
          //ListX.of(10,1)
-     * 
+     *
      * }
      * </pre>
      *
@@ -505,22 +536,33 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * 
+     *
      * Asynchronously accumulate the results only from those Futures which have completed successfully.
      * Also @see {@link Future#accumulate(CollectionX, Reducer)} if you would like a failure to result in a Future
      * with an error
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      * Future<Integer> just =Future.of(CompletableFuture.completedFuture(10));
        Future<Integer> none = Future.ofError(new NoSuchElementException());
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPSetX());
+
+=======
+=======
        
-     * Future<PSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPSetX());
+     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPersistentSetX());
+>>>>>>> master
        
-       //Future[PSetX[10,1]]
+     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPersistentSetX());
+       
+>>>>>>> master
+       //Future[PersistentSetX[10,1]]
      *  }
      *  </pre>
-     * 
+     *
      * @param fts Collection of Futures to accumulate successes
      * @param reducer Reducer to accumulate results
      * @return Future asynchronously populated with the accumulate success operation
@@ -531,17 +573,26 @@ public class Future<T> implements To<Future<T>>,
     /**
      * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see cyclops2.Reducers}
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      * Future<Integer> just =Future.of(CompletableFuture.completedFuture(10));
        Future<Integer> none = Future.ofError(new NoSuchElementException());
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPSetX());
+
+=======
+=======
+>>>>>>> master
        
-     * Future<PSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPSetX());
+     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPersistentSetX());
        
-       //Future[PSetX[10,1]]
+>>>>>>> master
+       //Future[PersistentSetX[10,1]]
      *  }
      *  </pre>
-     * 
+     *
      * @param fts Collection of Futures to accumulate successes
      * @param reducer Reducer to accumulate results
      * @return Future asynchronously populated with the accumulate success operation
@@ -553,14 +604,14 @@ public class Future<T> implements To<Future<T>>,
      * Asynchronously accumulate the results only from those Futures which have completed successfully, using the supplied mapping function to
      * convert the data from each Future before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Future<String> future = Future.accumulate(ListX.of(Future.ofResult(10),Future.ofResult(1)),i->""+i,Monoids.stringConcat);
         //Future["101"]
      * }
      * </pre>
-     * 
+     *
      * @param fts Collection of Futures to accumulate successes
      * @param mapper Mapping function to be applied to the result of each Future
      * @param reducer Monoid to combine values from each Future
@@ -574,16 +625,16 @@ public class Future<T> implements To<Future<T>>,
      * Asynchronously accumulate the results only from those Futures which have completed successfully,
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Future<Integer> just =Future.of(CompletableFuture.completedFuture(10));
      * Future<Integer> future =Future.accumulate(Monoids.intSum, ListX.of(just,Future.ofResult(1)));
        //Future[11]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fts Collection of Futures to accumulate successes
      * @param reducer Monoid to combine values from each Future
      * @return Future asynchronously populated with the accumulate operation
@@ -597,14 +648,14 @@ public class Future<T> implements To<Future<T>>,
      * convert the data from each Future before reducing them using the supplied supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * A single Failure results in a Failed  Future.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Future<String> future = Future.accumulate(ListX.of(Future.ofResult(10),Future.ofResult(1)),i->""+i,Monoids.stringConcat);
         //Future["101"]
      * }
      * </pre>
-     * 
+     *
      * @param fts Collection of Futures to accumulate successes
      * @param mapper Mapping function to be applied to the result of each Future
      * @param reducer Monoid to combine values from each Future
@@ -620,17 +671,17 @@ public class Future<T> implements To<Future<T>>,
      * Asynchronously accumulate the results only from the provided Futures,
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }
-     * 
+     *
      * A single Failure results in a Failed  Future.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Future<Integer> future =Future.accumulate(Monoids.intSum,ListX.of(just,Future.ofResult(1)));
        //Future[11]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fts Collection of Futures to accumulate successes
      * @param reducer Monoid to combine values from each Future
      * @return Future asynchronously populated with the accumulate operation
@@ -641,7 +692,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
 
-    
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
      */
@@ -662,7 +713,7 @@ public class Future<T> implements To<Future<T>>,
                                                   Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
                                                   Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                                                   Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (Future<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
@@ -673,7 +724,7 @@ public class Future<T> implements To<Future<T>>,
     public <T2, R1, R2, R> Future<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                               BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                                               Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-      
+
         return (Future<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
 
@@ -710,45 +761,57 @@ public class Future<T> implements To<Future<T>>,
     }
 
 
+
+    @Override
+    public Eval<T> toEvalAlways() {
+        return Eval.fromFuture(this);
+    }
+
+    @Override
+    public Maybe<T> toMaybe() {
+
+        return Maybe.fromFuture(this);
+    }
+
     private final CompletableFuture<T> future;
 
     /**
      * Non-blocking visit on the state of this Future
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Future.ofResult(10)
               .visitAsync(i->i*2, e->-1);
        //Future[20]
-        
+
        Future.<Integer>ofError(new RuntimeException())
               .visitAsync(i->i*2, e->-1)
        //Future[-1]
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param success Function to execute if the previous stage completes successfully
      * @param failure Function to execute if this Future fails
      * @return Future with the eventual result of the executed Function
      */
     public <R> Future<R> visitAsync(Function<T,R> success, Function<Throwable,R> failure){
         return map(success).recover(failure);
-                
+
     }
     /**
      * Blocking analogue to visitAsync. Visit the state of this Future, block until ready.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Future.ofResult(10)
                .visit(i->i*2, e->-1);
         //20
-        
+
         Future.<Integer>ofError(new RuntimeException())
                .visit(i->i*2, e->-1)
-        //[-1]       
-     * 
+        //[-1]
+     *
      * }
      * </pre>
      * @param success Function to execute if the previous stage completes successfully
@@ -757,11 +820,11 @@ public class Future<T> implements To<Future<T>>,
      */
     public <R> R visit(Function<T,R> success, Function<Throwable,R> failure){
         return visitAsync(success,failure).get();
-                
+
     }
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
      */
@@ -772,7 +835,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * cojoin (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.MonadicValue#nest()
      */
     @Override
@@ -782,7 +845,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.MonadicValue2#combine(cyclops2.function.Monoid,
      * com.aol.cyclops2.types.MonadicValue2)
      */
@@ -793,7 +856,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.ConvertableFunctor#map(java.util.function.Function)
      */
@@ -804,9 +867,9 @@ public class Future<T> implements To<Future<T>>,
     }
     /**
      * Asyncrhonous map operation
-     * 
+     *
      * @see CompletableFuture#thenApplyAsync(Function, Executor)
-     * 
+     *
      * @param fn Transformation function
      * @param ex Executor to execute the transformation asynchronously
      * @return Mapped Future
@@ -820,7 +883,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.function.Supplier#get()
      */
     @Override
@@ -844,7 +907,7 @@ public class Future<T> implements To<Future<T>>,
      * @return true if this Future has completed executing
      */
     public boolean isDone(){
-       
+
         return future.isDone();
     }
     /**
@@ -863,7 +926,7 @@ public class Future<T> implements To<Future<T>>,
         future.cancel(true);
     }
     /**If not already completed, sets the value of this Future to the provided value
-     * 
+     *
      * @param value Value to set this Future to
      */
     public boolean complete(T value){
@@ -879,7 +942,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Value#iterator()
      */
     @Override
@@ -889,7 +952,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.lambda.monads.Pure#unit(java.lang.Object)
      */
     @Override
@@ -900,7 +963,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Value#reactiveStream()
      */
     @Override
@@ -913,7 +976,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.FlatMap#flatten()
      */
     public static <R> Future<R> flatten(Future<? extends Future<R>> nested) {
@@ -922,7 +985,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.MonadicValue#flatMap(java.util.function.Function)
      */
@@ -936,7 +999,7 @@ public class Future<T> implements To<Future<T>>,
     /**
      * A flatMap operation that accepts a CompleteableFuture CompletionStage as
      * the return type
-     * 
+     *
      * @param mapper
      *            Mapping function
      * @return FlatMapped Future
@@ -947,7 +1010,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Value#toXor()
      */
     @Override
@@ -961,7 +1024,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Value#toIor()
      */
     @Override
@@ -975,7 +1038,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.closures.Convertable#toFuture()
      */
     @Override
@@ -985,7 +1048,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.closures.Convertable#toCompletableFuture()
      */
     @Override
@@ -995,7 +1058,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.closures.Convertable#toCompletableFutureAsync()
      */
     @Override
@@ -1005,7 +1068,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.closures.Convertable#toCompletableFutureAsync(java.util.
      * concurrent.Executor)
@@ -1020,17 +1083,17 @@ public class Future<T> implements To<Future<T>>,
      * executed with this Future exception as the argument to the supplied
      * function. Otherwise, if this Future completes normally, apply the
      * returned Future also completes normally with the same value.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *     Future.ofError(new RuntimeException())
      *            .recover(__ -> true)
-     *            
+     *
      *    //Future[true]
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param fn
      *            the function to use to compute the value of the returned
      *            Future if this Future completed exceptionally
@@ -1046,15 +1109,15 @@ public class Future<T> implements To<Future<T>>,
     /**
      * Map this Future differently depending on whether the previous stage
      * completed successfully or failed
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Future.ofResult(1)
      *         .map(i->i*2,e->-1);
      * //Future[2]
-     * 
+     *
      * }</pre>
-     * 
+     *
      * @param success
      *            Mapping function for successful outcomes
      * @param failure
@@ -1068,7 +1131,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
      */
     @Override
@@ -1079,7 +1142,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.lambda.monads.Transformable#peek(java.util.function.Consumer)
      */
@@ -1091,7 +1154,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.
      * Function)
      */
@@ -1103,7 +1166,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -1113,7 +1176,7 @@ public class Future<T> implements To<Future<T>>,
 
     /**
      * Construct a successfully completed Future from the given value
-     * 
+     *
      * @param result
      *            To wrap inside a Future
      * @return Future containing supplied result
@@ -1124,7 +1187,7 @@ public class Future<T> implements To<Future<T>>,
 
     /**
      * Construct a completed-with-error Future from the given Exception
-     * 
+     *
      * @param error
      *            To wrap inside a Future
      * @return Future containing supplied error
@@ -1138,7 +1201,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Convertable#isPresent()
      */
     @Override
@@ -1148,7 +1211,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Value#mkString()
      */
     @Override
@@ -1163,7 +1226,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
      */
@@ -1174,7 +1237,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Filters#ofType(java.lang.Class)
      */
     @Override
@@ -1185,7 +1248,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.Filters#filterNot(java.util.function.Predicate)
      */
@@ -1197,7 +1260,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Filters#notNull()
      */
     @Override
@@ -1208,8 +1271,8 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.aol.cyclops2.types.Convertable#toOptional()
+     *
+     * @see com.aol.cyclops2.types.Convertable#optional()
      */
     @Override
     public Optional<T> toOptional() {
@@ -1226,7 +1289,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Convertable#toFutureWAsync()
      */
     @Override
@@ -1236,7 +1299,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.Convertable#toFutureWAsync(java.util.concurrent.
      * Executor)
@@ -1248,7 +1311,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * Apply a function across two values at once. (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.types.applicative.ApplicativeFunctor#combine(com.aol.
      * cyclops2.types.Value, java.util.function.BiFunction)
@@ -1264,7 +1327,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * Equivalent to combine, but accepts an Iterable and takes the first value
      * only from that iterable. (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable,
      * java.util.function.BiFunction)
      */
@@ -1277,9 +1340,9 @@ public class Future<T> implements To<Future<T>>,
     /*
      * Equivalent to combine, but accepts a Publisher and takes the first value
      * only from that publisher.
-     * 
+     *
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction,
      * org.reactivestreams.Publisher)
      */
@@ -1292,7 +1355,7 @@ public class Future<T> implements To<Future<T>>,
     /**
      * Create a Future object that asyncrhonously populates using the Common
      * ForkJoinPool from the user provided Supplier
-     * 
+     *
      * @param s
      *            Supplier to asynchronously populate results from
      * @return Future asynchronously populated from the Supplier
@@ -1304,7 +1367,7 @@ public class Future<T> implements To<Future<T>>,
     /**
      * Create a Future object that asyncrhonously populates using the provided
      * Executor and Supplier
-     * 
+     *
      * @param s
      *            Supplier to asynchronously populate results from
      * @param ex
@@ -1319,7 +1382,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
      * java.util.function.BiFunction)
      */
@@ -1330,7 +1393,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
      */
     @Override
@@ -1342,7 +1405,7 @@ public class Future<T> implements To<Future<T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
@@ -1350,7 +1413,7 @@ public class Future<T> implements To<Future<T>>,
         return (Future) MonadicValue.super.zip(other);
     }
 
-    
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#flatMapI(java.util.function.Function)
      */
@@ -1359,7 +1422,7 @@ public class Future<T> implements To<Future<T>>,
         return (Future<R>) MonadicValue.super.flatMapI(mapper);
     }
 
-    
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#flatMapP(java.util.function.Function)
      */

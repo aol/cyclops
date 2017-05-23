@@ -1,7 +1,7 @@
 package com.aol.cyclops2.comprehensions;
 
-import cyclops.Streams;
-import cyclops.CompletableFutures;
+import cyclops.companion.Streams;
+import cyclops.companion.CompletableFutures;
 import org.junit.Test;
 
 import java.util.Arrays;

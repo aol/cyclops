@@ -5,8 +5,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
 
-import cyclops.CyclopsCollectors;
-import cyclops.collections.ListX;
+import cyclops.companion.CyclopsCollectors;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.react.stream.EagerStreamWrapper;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops2.util.ThrowsSoftened;
@@ -54,8 +54,8 @@ public interface BlockingStream<U> {
 
     /**
      * @param collector
-     *            to perform aggregation / reduction operation on the results
-     *            (e.g. to Collect into a List or String)
+     *            toNested perform aggregation / reduction operation on the results
+     *            (e.g. toNested Collect into a List or String)
      * @return Results of currently active stage in aggregated in form
      *         determined by collector throws
      *         InterruptedException,ExecutionException

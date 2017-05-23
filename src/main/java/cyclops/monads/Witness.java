@@ -8,27 +8,28 @@ import java.util.SortedSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.internal.comprehensions.comprehenders.*;
+import com.aol.cyclops2.internal.adapters.*;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
-import cyclops.control.either.Either;
-import cyclops.control.either.Either3;
-import cyclops.control.either.Either4;
-import cyclops.control.either.Either5;
+import cyclops.control.lazy.Either;
+import cyclops.control.lazy.Either3;
+import cyclops.control.lazy.Either4;
+import cyclops.control.lazy.Either5;
+import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import cyclops.control.Try;
 import cyclops.control.Xor;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.immutable.PVectorX;
-import cyclops.collections.DequeX;
-import cyclops.collections.ListX;
-import cyclops.collections.QueueX;
-import cyclops.collections.SetX;
-import cyclops.collections.SortedSetX;
+import cyclops.collections.mutable.DequeX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.QueueX;
+import cyclops.collections.mutable.SetX;
+import cyclops.collections.mutable.SortedSetX;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 
@@ -45,16 +46,22 @@ public interface Witness {
     public static <T> Stream<T> stream(AnyM<stream,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> ReactiveSeq<T> reactiveSeq(AnyM<stream,? extends T> anyM){
+    public static <T> ReactiveSeq<T> toReactiveSeq(AnyM<stream,? extends T> anyM){
         return ReactiveSeq.fromStream(anyM.unwrap());
+    }
+    public static <T> ReactiveSeq<T> reactiveSeq(AnyM<reactiveSeq,? extends T> anyM){
+        return anyM.unwrap();
+    }
+    public static <T> FutureStream<T> futureStream(AnyM<futureStream,? extends T> anyM){
+        return anyM.unwrap();
     }
     public static <T> Streamable<T> streamable(AnyM<streamable,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> PVectorX<T> pvector(AnyM<pvector,? extends T> anyM){
+    public static <T> VectorX<T> pvector(AnyM<pvector,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> PStackX<T> pstack(AnyM<pstack,? extends T> anyM){
+    public static <T> LinkedListX<T> pstack(AnyM<pstack,? extends T> anyM){
         return anyM.unwrap();
     }
     public static <T> ListX<T> list(AnyM<list,? extends T> anyM){
@@ -127,15 +134,30 @@ public interface Witness {
         }
         
     }
-    public static enum reactiveSeq implements StreamWitness<reactiveSeq>{
+    public static enum futureStream implements StreamWitness<futureStream>{
         INSTANCE;
 
         @Override
+        public  FunctionalAdapter<futureStream> adapter() {
+            return StreamAdapter.futureStream;
+        }
+
+    }
+    public static enum reactiveSeq implements StreamWitness<reactiveSeq>{
+
+        REACTIVE,CO_REACTIVE;
+
+        @Override
         public  FunctionalAdapter<reactiveSeq> adapter() {
+            if(ordinal()==0)
+                return ReactiveAdapter.reactiveSeq;
             return StreamAdapter.reactiveSeq;
+
+
         }
         
     }
+
     public static enum sortedSet implements CollectionXWitness<sortedSet>{
         INSTANCE;
 
@@ -171,8 +193,8 @@ public interface Witness {
 
         @Override
         public  FunctionalAdapter<pstack> adapter() {
-            return new CollectionXAdapter<Witness.pstack>(PStackX::empty,
-                    PStackX::of,PStackX::fromIterator,this);
+            return new CollectionXAdapter<Witness.pstack>(LinkedListX::empty,
+                    LinkedListX::of, LinkedListX::fromIterator,this);
         }
         
     }
@@ -181,8 +203,8 @@ public interface Witness {
 
         @Override
         public  FunctionalAdapter<pvector> adapter() {
-            return new CollectionXAdapter<Witness.pvector>(PVectorX::empty,
-                    PVectorX::of,PVectorX::fromIterator,this);
+            return new CollectionXAdapter<Witness.pvector>(VectorX::empty,
+                    VectorX::of, VectorX::fromIterator,this);
         }
         
     }
@@ -222,7 +244,7 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<tryType> adapter() {
-            return new MonadicValueAdapter<Witness.tryType>(()->Try.failure(null),
+            return new MonadicValueAdapter<tryType>(()->Try.failure(null),
                     Try::success,Try::fromIterable,false,this);
         }
         

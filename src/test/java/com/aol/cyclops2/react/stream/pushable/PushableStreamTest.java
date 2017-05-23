@@ -20,12 +20,12 @@ import org.mockito.internal.util.collections.Sets;
 import cyclops.async.LazyReact;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.StreamSource;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
-import cyclops.async.Signal;
-import cyclops.collections.immutable.PSetX;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.SetX;
+import cyclops.async.adapters.Signal;
+import cyclops.collections.immutable.PersistentSetX;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.mutable.SetX;
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.util.stream.pushable.MultipleStreamSource;
 import com.aol.cyclops2.util.stream.pushable.PushableFutureStream;
@@ -40,13 +40,13 @@ public class PushableStreamTest {
     @Test
     public void pipes() throws InterruptedException{
         
-        Flux.from(PStackX.of(10,20,30));
+        Flux.from(LinkedListX.of(10,20,30));
         
         SetX.fromPublisher(Flux.just(10,20,30));
         
-        PSetX.of(1,2,3)
+        PersistentSetX.of(1,2,3)
              .flatMapP(i->Flux.just(i,i*10))
-             .toPVectorX();
+             .to().vectorX();
         
         /**
         Pipes<String, Integer> bus = Pipes.of();
@@ -58,7 +58,7 @@ public class PushableStreamTest {
         System.out.println(Thread.currentThread().getId());
        System.out.println(bus.futureStream("reactor", new LazyReact(50,50))
             .get()
-           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+           .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList());//.forEach(System.out::println);
         
         Thread.sleep(1500);

@@ -6,17 +6,17 @@ import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.types.stream.reactive.QueueBasedSubscriber.Counter;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
-import cyclops.*;
 import cyclops.async.QueueFactories;
-import cyclops.async.QueueFactory;
-import cyclops.async.Signal;
-import cyclops.collections.ListX;
+import cyclops.async.adapters.QueueFactory;
+import cyclops.async.adapters.Signal;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.stream.publisher.PublisherIterable;
 import com.aol.cyclops2.internal.stream.spliterators.*;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.companion.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.control.either.Either;
+import cyclops.control.lazy.Either;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.monads.Witness;
@@ -42,7 +42,7 @@ import java.util.stream.*;
 import static java.util.Comparator.comparing;
 /*
  * Note on Organization
- * Composite operators (those that work by composing calls to existing operators) should move to ReactiveSeq
+ * Composite operators (those that work by composing calls toNested existing operators) should move toNested ReactiveSeq
  * Shared operators should be defined here
  * Specific operators in the specific base class
  *
@@ -181,7 +181,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     @Override
-    public final ReactiveSeq<PVectorX<T>> sliding(final int windowSize, final int increment) {
+    public final ReactiveSeq<VectorX<T>> sliding(final int windowSize, final int increment) {
         return createSeq(new SlidingSpliterator<>(get(),Function.identity(), windowSize,increment), reversible);
     }
 
@@ -382,8 +382,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
-     * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
-     * method to subscribeAll asynchronously also. A default limit of 10k active publishers is enforced, along with a default limit of 5k queued values before
+     * are configured toNested publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
+     * method toNested forEachAsync asynchronously also. A default limit of 10k active publishers is enforced, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param mapper
@@ -395,8 +395,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
-     * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
-     * method to subscribeAll asynchronously also. Active publishers are limited by the maxConcurrency parameter, along with a default limit of 5k queued values before
+     * are configured toNested publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
+     * method toNested forEachAsync asynchronously also. Active publishers are limited by the maxConcurrency parameter, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param mapper
@@ -408,8 +408,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
-     * are configured to publish asynchronously.
-     * Active publishers are limited by the maxConcurrency parameter. The QueueFactory parameter can be used to control the maximum queued elements @see {@link QueueFactories}
+     * are configured toNested publish asynchronously.
+     * Active publishers are limited by the maxConcurrency parameter. The QueueFactory parameter can be used toNested control the maximum queued elements @see {@link QueueFactories}
      *
      *
      */
@@ -505,7 +505,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     public ReactiveSeq<T> changes(){
 
-            cyclops.async.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+            cyclops.async.adapters.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
 
 
@@ -637,7 +637,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     }
     public  <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn){
-        //not composable to the 'left' (as statefulness is lost)
+        //not composable toNested the 'left' (as statefulness is lost)
         return createSeq(new LazyMappingSpliterator<T,R>(this.get(),fn), reversible);
 
     }
@@ -795,7 +795,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public Collectable<T> collectable() {
+    public Collectable<T> collectors() {
         return Seq.seq(copy());
     }
 

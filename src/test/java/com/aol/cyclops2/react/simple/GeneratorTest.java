@@ -175,7 +175,7 @@ public class GeneratorTest {
 				.then(it -> Thread.currentThread().getId())
 				.then(it -> "*" + it)
 				.capture(e -> capture++)
-				.block(Collectors.toSet());
+				.block(CyclopsCollectors.toSet());
 
 		assertThat(threads.size(), is(greaterThan(1)));
 	

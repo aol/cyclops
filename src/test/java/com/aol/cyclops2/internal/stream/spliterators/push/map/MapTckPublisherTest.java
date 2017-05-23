@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.map;
 
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.Spouts;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
@@ -25,7 +25,7 @@ public class MapTckPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createFailedPublisher() {
-		return null; //not possible to subscribeAll to failed Stream
+		return null; //not possible toNested forEachAsync toNested failed Stream
 		
 	}
 	

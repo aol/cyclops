@@ -6,7 +6,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
 import cyclops.async.Future;
-import org.jooq.lambda.function.Function4;
 
 import cyclops.control.Eval;
 import cyclops.control.Maybe;

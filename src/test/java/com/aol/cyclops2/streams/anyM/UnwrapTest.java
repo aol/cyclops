@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 
 public class UnwrapTest {
 
@@ -24,8 +24,8 @@ public class UnwrapTest {
 	@Test
 	public void unwrapOptional(){
 		Optional<ListX<String>> stream = AnyM.streamOf("hello","world")
-											.stream()
-											.toOptional();
+											.stream().to()
+											.optional();
 		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
 	}
 

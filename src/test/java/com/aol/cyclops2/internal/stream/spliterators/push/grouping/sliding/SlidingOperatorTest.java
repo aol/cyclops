@@ -1,9 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.grouping.sliding;
 
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.VectorX;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class SlidingOperatorTest extends AbstractOperatorTest {
     }
     public Operator<Integer> createTwoAndError(){
 
-        return new MapOperator<PVectorX<Integer>,Integer>(new SlidingOperator(Fixtures.twoAndErrorSource,
+        return new MapOperator<VectorX<Integer>,Integer>(new SlidingOperator(Fixtures.twoAndErrorSource,
                 i->i,1,1),i->i.get(0));
     }
     public Operator<Integer> createThreeErrors(){

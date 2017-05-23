@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
 
-import cyclops.collections.MapX;
+import cyclops.collections.mutable.MapX;
 import org.jooq.lambda.tuple.Tuple2;
 
 import lombok.AllArgsConstructor;
@@ -31,6 +31,11 @@ public class MapXImpl<K, V> implements MapX<K, V> {
         this.collector = MapX.defaultCollector();
         this.map = (Map) this.collector.supplier()
                                        .get();
+    }
+
+    @Override
+    public <R> R unwrap() {
+        return (R)map;
     }
 
     /**
@@ -300,18 +305,18 @@ public class MapXImpl<K, V> implements MapX<K, V> {
         return stream().forEach(numberOfElements,consumer,consumerError,onComplete);
     }
     @Override
-    public <X extends Throwable> Subscription subscribe(Consumer<? super Tuple2<K, V>> consumer) {
-        return stream().subscribe(consumer);
+    public <X extends Throwable> Subscription forEachSubscribe(Consumer<? super Tuple2<K, V>> consumer) {
+        return stream().forEachSubscribe(consumer);
     }
 
     @Override
-    public <X extends Throwable> Subscription subscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError) {
-        return stream().subscribe(consumer,consumerError);
+    public <X extends Throwable> Subscription forEachSubscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError) {
+        return stream().forEachSubscribe(consumer,consumerError);
     }
 
     @Override
-    public <X extends Throwable> Subscription subscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete) {
-        return stream().subscribe(consumer,consumerError,onComplete);
+    public <X extends Throwable> Subscription forEachSubscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete) {
+        return stream().forEachSubscribe(consumer,consumerError,onComplete);
     }
 
     @Override

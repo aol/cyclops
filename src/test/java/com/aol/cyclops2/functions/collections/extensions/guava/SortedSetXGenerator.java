@@ -2,7 +2,7 @@ package com.aol.cyclops2.functions.collections.extensions.guava;
 
 import java.util.Set;
 
-import cyclops.collections.SortedSetX;
+import cyclops.collections.mutable.SortedSetX;
 import com.google.common.collect.testing.TestStringSetGenerator;
 
 public class SortedSetXGenerator extends  TestStringSetGenerator {

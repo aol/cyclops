@@ -4,8 +4,8 @@ import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
 import cyclops.stream.ReactiveSeq;
-import cyclops.async.Queue;
-import cyclops.async.Topic;
+import cyclops.async.adapters.Queue;
+import cyclops.async.adapters.Topic;
 import cyclops.stream.FutureStream;
 
 /**
@@ -27,9 +27,9 @@ public class MultipleStreamSource<T> {
     /**
      * Create a pushable LazyFutureStream using the supplied ReactPool
      * 
-     * @param s React builder to use to create the Stream
+     * @param s React builder toNested use toNested create the Stream
      * @return a Tuple2 with a Topic&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
-     * to push it to the Stream
+     * toNested push it toNested the Stream
      */
     public FutureStream<T> futureStream(final LazyReact s) {
 
@@ -40,7 +40,7 @@ public class MultipleStreamSource<T> {
     /**
      * Create a pushable JDK 8 Stream
      * @return a Tuple2 with a Topic&lt;T&gt; and Stream&lt;T&gt; - add data to the Queue
-     * to push it to the Stream
+     * toNested push it toNested the Stream
      */
     public Stream<T> stream() {
 
@@ -52,7 +52,7 @@ public class MultipleStreamSource<T> {
      * Create a pushable {@link ReactiveSeq}
      * 
      * @return a Tuple2 with a Topic&lt;T&gt; and Seq&lt;T&gt; - add data to the Queue
-     * to push it to the Stream
+     * toNested push it toNested the Stream
      */
     public ReactiveSeq<T> reactiveSeq() {
 

@@ -5,15 +5,19 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
+import cyclops.collections.immutable.VectorX;
 import cyclops.control.*;
+
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.monads.function.AnyMFn1;
+
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.immutable.PVectorX;
-import cyclops.collections.DequeX;
-import cyclops.collections.ListX;
-import cyclops.collections.SetX;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.mutable.DequeX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
 import cyclops.monads.WitnessType;
 import cyclops.async.Future;
 import cyclops.monads.AnyM;
@@ -191,11 +195,11 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
             return set.map(this);
         }
 
-        default PStackX<R> mapF(PStackX<T1> list) {
+        default LinkedListX<R> mapF(LinkedListX<T1> list) {
             return list.map(this);
         }
 
-        default PVectorX<R> mapF(PVectorX<T1> list) {
+        default VectorX<R> mapF(VectorX<T1> list) {
             return list.map(this);
         }
         default Streamable<R> mapF(Streamable<T1> stream) {
@@ -243,12 +247,12 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
             return liftList().andThen(l->l.liftM(witness));
         }
 
-        default Fn1<T1, PStackX<R>> liftPStack() {
-            return in -> PStackX.of(apply(in));
+        default Fn1<T1, LinkedListX<R>> liftPStack() {
+            return in -> LinkedListX.of(apply(in));
         }
 
-        default Fn1<T1, PVectorX<R>> liftPVector() {
-            return in -> PVectorX.of(apply(in));
+        default Fn1<T1, VectorX<R>> liftPVector() {
+            return in -> VectorX.of(apply(in));
         }
     }
 

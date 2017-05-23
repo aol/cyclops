@@ -1,14 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.collections.DequeX;
-import cyclops.collections.ListX;
-import cyclops.collections.QueueX;
-import org.reactivestreams.Subscription;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.QueueX;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.LockSupport;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 /**
@@ -25,6 +19,11 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
         for(Operator<IN> next : sources){
             operators.add(next);
         }
+
+
+    }
+    public ArrayConcatonatingOperator(ListX<Operator<IN>> sources){
+        this.operators = sources;
 
 
     }

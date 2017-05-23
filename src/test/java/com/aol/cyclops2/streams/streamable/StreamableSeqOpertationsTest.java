@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -259,7 +259,7 @@ public class StreamableSeqOpertationsTest {
 	    
 	    @Test
 	    public void testIterable() {
-	        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+	        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
 	        for (Integer i :of(1, 2, 3)) {
 	            assertThat(list,hasItem(i));

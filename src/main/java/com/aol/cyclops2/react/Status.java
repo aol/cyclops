@@ -2,7 +2,7 @@ package com.aol.cyclops2.react;
 
 import org.pcollections.PStack;
 
-import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.LinkedListX;
 
 import lombok.AllArgsConstructor;
 
@@ -20,7 +20,7 @@ public class Status<T> {
     private final int errors;
     private final int total;
     private final long elapsedNanos;
-    private final PStackX<T> resultsSoFar;
+    private final LinkedListX<T> resultsSoFar;
 
     public final int getAllCompleted() {
         return completed + errors;

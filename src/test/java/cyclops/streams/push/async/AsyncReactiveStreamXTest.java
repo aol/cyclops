@@ -1,25 +1,19 @@
 package cyclops.streams.push.async;
 
-import cyclops.Streams;
-import cyclops.async.LazyReact;
-import cyclops.collections.ListX;
+import cyclops.companion.Streams;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
-import cyclops.control.Try;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.hamcrest.Matchers;
-import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.URL;
 import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -237,7 +231,7 @@ public  class AsyncReactiveStreamXTest {
 	}
 	@Test
 	public void limitTime() throws InterruptedException {
-			Thread.sleep(100); //sleep to allow any background tasks to complete
+			Thread.sleep(100); //sleep toNested allow any background tasks toNested complete
 									//before time sensitive test
 		    System.out.println("Next iteration...");
             List<Integer> result = of(1, 2, 3, 4, 5, 6)
@@ -332,7 +326,7 @@ public  class AsyncReactiveStreamXTest {
     
     @Test
     public void testIterable() {
-        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
         for (Integer i :of(1, 2, 3)) {
             assertThat(list,hasItem(i));

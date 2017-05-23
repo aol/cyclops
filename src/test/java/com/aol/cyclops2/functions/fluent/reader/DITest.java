@@ -1,17 +1,12 @@
 package com.aol.cyclops2.functions.fluent.reader;
 
-import cyclops.async.Future;
-import cyclops.control.Maybe;
 import cyclops.function.FluentFunctions;
-import cyclops.function.Fn1;
-import cyclops.function.Reader;
+import cyclops.control.Reader;
 import com.aol.cyclops2.functions.fluent.reader.Application.UserRepositoryImpl;
 import org.junit.Test;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

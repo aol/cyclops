@@ -1,13 +1,12 @@
 package com.aol.cyclops2.internal.stream;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.internal.stream.spliterators.LazyMappingSpliterator;
 import com.aol.cyclops2.types.Unwrapable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.Streams;
-import cyclops.collections.ListX;
+import cyclops.companion.Streams;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
@@ -176,10 +175,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return reducer.mapReduce(reverse());
     }
 
-    @Override
-    public final Streamable<T> toStreamable() {
-        return Streamable.fromStream(stream());
-    }
+
 
     @Override
     public final Set<T> toSet() {
@@ -192,16 +188,6 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return collect(Collectors.toList());
     }
 
-    @Override
-    public final <C extends Collection<T>> C toCollection(final Supplier<C> collectionFactory) {
-
-        return collect(Collectors.toCollection(collectionFactory));
-    }
-
-    @Override
-    public final <T> Stream<T> toStream() {
-        return (Stream<T>) this.unwrapStream();
-    }
 
     @Override
     public final ReactiveSeq<T> stream() {
@@ -320,25 +306,9 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
 
-    @Override
-    public CollectionX<T> toLazyCollection() {
-        return Streams.toLazyCollection(this);
-    }
 
-    @Override
-    public CollectionX<T> toConcurrentLazyCollection() {
-        return Streams.toConcurrentLazyCollection(this);
-    }
 
-    public Streamable<T> toLazyStreamable() {
-        return Streams.toLazyStreamable(this);
-    }
 
-    @Override
-    public Streamable<T> toConcurrentLazyStreamable() {
-        return Streams.toConcurrentLazyStreamable(this);
-
-    }
 
 
     @Override

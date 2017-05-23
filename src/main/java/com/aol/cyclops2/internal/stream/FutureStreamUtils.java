@@ -7,11 +7,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple3;
 import org.reactivestreams.Subscription;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 
 public class FutureStreamUtils {
     /**
@@ -194,7 +193,7 @@ public class FutureStreamUtils {
      * @param stream - the Stream to consume data from	 
      * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
-     * @return A Tuple containing a Future with a Subscription to this publisher, a runnable to skip processing on a separate thread, and future that stores true / false depending on success
+     * @return A Tuple containing a Future with a Subscription toNested this publisher, a runnable toNested skip processing on a separate thread, and future that stores true / false depending on success
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachWithError(
             final Stream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
@@ -229,7 +228,7 @@ public class FutureStreamUtils {
      * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      * @param onComplete To run after an onComplete event
-     * @return A Tuple containing a Future with a Subscription to this publisher, a runnable to skip processing on a separate thread, and future that stores true / false depending on success
+     * @return A Tuple containing a Future with a Subscription toNested this publisher, a runnable toNested skip processing on a separate thread, and future that stores true / false depending on success
      */
     public static <T, X extends Throwable> Tuple3<CompletableFuture<Subscription>, Runnable, CompletableFuture<Boolean>> forEachEvent(
             final Stream<T> stream, final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,

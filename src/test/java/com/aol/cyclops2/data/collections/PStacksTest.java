@@ -8,34 +8,34 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.immutable.PStackX;
+import cyclops.collections.immutable.LinkedListX;
 
 public class PStacksTest {
 
 	@Test
 	public void testOf() {
-		assertThat(PStackX.of("a","b","c"),equalTo(Arrays.asList("a","b","c")));
+		assertThat(LinkedListX.of("a","b","c"),equalTo(Arrays.asList("a","b","c")));
 	}
 
 	@Test
 	public void testEmpty() {
-		assertThat(PStackX.empty(),equalTo(Arrays.asList()));
+		assertThat(LinkedListX.empty(),equalTo(Arrays.asList()));
 	}
 
 	@Test
 	public void testSingleton() {
-		assertThat(PStackX.of("a"),equalTo(Arrays.asList("a")));
+		assertThat(LinkedListX.of("a"),equalTo(Arrays.asList("a")));
 	}
 	@Test
 	public void testFromCollection() {
-		assertThat(PStackX.fromCollection(Arrays.asList("a","b","c")),equalTo(Arrays.asList("a","b","c")));
+		assertThat(LinkedListX.fromIterable(Arrays.asList("a","b","c")),equalTo(Arrays.asList("a","b","c")));
 	}
 	@Test
 	public void testToPStackstreamOfTReveresed() {
-		assertThat(PStackX.fromStream(Stream.of("a","b","c")),
-						equalTo(Arrays.asList("c","b","a")));
+		assertThat(LinkedListX.linkedListX(ReactiveSeq.of("a","b","c")),
+						equalTo(Arrays.asList("a","b","c")));
 	}
 
 	@Test
@@ -45,8 +45,8 @@ public class PStacksTest {
 	}
 	@Test
 	public void testToPStackstreamOf() {
-		assertThat(PStackX.fromStream(Stream.of("a","b","c")),
-						equalTo(Arrays.asList("c","b","a")));
+		assertThat(LinkedListX.linkedListX(ReactiveSeq.of("a","b","c")),
+						equalTo(Arrays.asList("a","b","c")));
 	}
 
 	@Test

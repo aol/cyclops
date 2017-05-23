@@ -5,10 +5,10 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.util.stream.pushable.PushableFutureStream;
 import cyclops.async.LazyReact;
-import cyclops.async.Adapter;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Adapter;
+import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
-import cyclops.async.QueueFactory;
+import cyclops.async.adapters.QueueFactory;
 import com.aol.cyclops2.util.stream.pushable.MultipleStreamSource;
 import com.aol.cyclops2.util.stream.pushable.PushableReactiveSeq;
 import com.aol.cyclops2.util.stream.pushable.PushableStream;
@@ -129,7 +129,7 @@ public class StreamSource {
     private final boolean backPressureOn;
 
     /**
-     * Connect multiple Streams to a Pushable datasource, each Stream will recieve the same
+     * Connect multiple Streams toNested a Pushable datasource, each Stream will recieve the same
      * data.
      * <pre>
      * {@code 
@@ -178,7 +178,7 @@ public class StreamSource {
      * }
      * </pre>
      * 
-     * @return a builder that will use Topics to allow multiple Streams from the same data
+     * @return a builder that will use Topics toNested allow multiple Streams from the same data
      */
     public static <T> MultipleStreamSource<T> ofMultiple() {
         return new MultipleStreamSource<T>(
@@ -187,7 +187,7 @@ public class StreamSource {
     }
 
     /**
-     * Connect multiple Streams to a Pushable datasource, each Stream will recieve the same
+     * Connect multiple Streams toNested a Pushable datasource, each Stream will recieve the same
      * data. In this backpresure is applied by using a LinkedBlockingQueue. @see cyclops2.reactiveStream.StreamSource#ofMultiple(QueueFactory)
      * For more granular management of Adapter based backpressure. Adapters can be backed by non-blocking data structures and different backpressure strategies applied
      * <pre>
@@ -245,7 +245,7 @@ public class StreamSource {
      * </pre>
      * @param backPressureAfter Excess number of emitted records over consumed (by all connected Streams
      * after which backPressure will be applied).
-     * @return a builder that will use Topics to allow multiple Streams from the same data
+     * @return a builder that will use Topics toNested allow multiple Streams from the same data
      */
     public static <T> MultipleStreamSource<T> ofMultiple(final int backPressureAfter) {
         return new MultipleStreamSource<T>(
@@ -267,14 +267,14 @@ public class StreamSource {
         ReactiveSeq<Integer> seq = multi.reactiveSeq();
         multi.getInput().offer(100);
         multi.getInput().close();
-        pushable.collect(Collectors.toList()); //[100]
-        seq.collect(Collectors.toList()); //[100]     
+        pushable.collect(CyclopsCollectors.toList()); //[100]
+        seq.collect(CyclopsCollectors.toList()); //[100]
      * 
      * }
      * </pre>
      * 
-     * @param q QueueFactory used to create the Adapter to back the pushable StreamSource
-     * @return a builder that will use Topics to allow multiple Streams from the same data
+     * @param q QueueFactory used toNested create the Adapter toNested back the pushable StreamSource
+     * @return a builder that will use Topics toNested allow multiple Streams from the same data
      */
     public static <T> MultipleStreamSource<T> ofMultiple(final QueueFactory<?> q) {
         Objects.requireNonNull(q);
@@ -312,7 +312,7 @@ public class StreamSource {
      * 
      * 
      * 
-     * @param q QueueFactory used to create the Adapter to back the pushable StreamSource
+     * @param q QueueFactory used toNested create the Adapter toNested back the pushable StreamSource
      * @return Pushable StreamSource
      */
     public static StreamSource of(final QueueFactory<?> q) {
@@ -328,7 +328,7 @@ public class StreamSource {
     }
 
     /**
-     * Construct a Pushable StreamSource with no max size. Warning if data producers pushing data to this StreamSource
+     * Construct a Pushable StreamSource with no max size. Warning if data producers pushing data toNested this StreamSource
      * are faster than Data consumers the JVM will eventually run out of memory.
      * <pre>
      * {@code 
@@ -421,7 +421,7 @@ public class StreamSource {
         pushable.getInput().close();
         
         
-        assertThat(pushable.getStream().collect(Collectors.toList()),
+        assertThat(pushable.getStream().collect(CyclopsCollectors.toList()),
                 hasItem(100));
      * 
      * 
@@ -429,9 +429,9 @@ public class StreamSource {
      * 
      * 
      * 
-     * @param s ReactPool to use to create the Stream
-     * @return a Tuple2 with a Queue&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
-     * to push it to the Stream
+     * @param s ReactPool toNested use toNested create the Stream
+     * @return a Tuple2 with a Queue&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data toNested the Queue
+     * toNested push it toNested the Stream
      */
     public <T> PushableFutureStream<T> futureStream(final LazyReact s) {
 
@@ -453,14 +453,14 @@ public class StreamSource {
         pushable.getInput().close();
         
         
-        assertThat(pushable.getStream().collect(Collectors.toList()),
+        assertThat(pushable.getStream().collect(CyclopsCollectors.toList()),
                 hasItem(100));
      * 
      * 
      * }</pre> 
      * 
      * 
-     * @param adapter Adapter to create a LazyFutureStream from
+     * @param adapter Adapter toNested create a LazyFutureStream from
      * @return A LazyFutureStream that will accept values from the supplied adapter
      */
     public static <T> FutureStream<T> futureStream(final Adapter<T> adapter, final LazyReact react) {
@@ -481,14 +481,14 @@ public class StreamSource {
         pushable.getInput()
                 .close();
         
-        pushable.getStream().collect(Collectors.toList()) //[10]
+        pushable.getStream().collect(CyclopsCollectors.toList()) //[10]
                
      * 
      * }
      * </pre>
      * 
-     * @return PushableStream that can accept data to push into a Java 8 Stream
-     * to push it to the Stream
+     * @return PushableStream that can accept data toNested push into a Java 8 Stream
+     * toNested push it toNested the Stream
      */
     public <T> PushableStream<T> stream() {
         final Queue<T> q = createQueue();
@@ -509,15 +509,15 @@ public class StreamSource {
         
         //on another thread
         pushable.getStream()
-                .collect(Collectors.toList()) //[10]
+                .collect(CyclopsCollectors.toList()) //[10]
               
      * 
      * }
      * </pre>
      * 
      * 
-     * @return PushableStream that can accept data to push into a {@see cyclops2.reactiveStream.ReactiveSeq}
-     * to push it to the Stream
+     * @return PushableStream that can accept data toNested push into a {@see cyclops2.reactiveStream.ReactiveSeq}
+     * toNested push it toNested the Stream
      */
     public <T> PushableReactiveSeq<T> reactiveSeq() {
         final Queue<T> q = createQueue();
@@ -538,7 +538,7 @@ public class StreamSource {
      *   q.offer(10);
      * }
      * </pre>
-     * @param adapter Adapter to create a Steam from
+     * @param adapter Adapter toNested create a Steam from
      * @return Stream that will accept input from supplied adapter
      */
     public static <T> Stream<T> stream(final Adapter<T> adapter) {
@@ -557,11 +557,11 @@ public class StreamSource {
         signal.set(100);
         signal.close();
         
-        assertThat(pushable.collect(Collectors.toList()), hasItem(100));
+        assertThat(pushable.collect(CyclopsCollectors.toList()), hasItem(100));
      * }
      * </pre>
      * 
-     * @param adapter Adapter to create a Seq from
+     * @param adapter Adapter toNested create a Seq from
      * @return A Seq that will accept input from a supplied adapter
      */
     public static <T> ReactiveSeq<T> reactiveSeq(final Adapter<T> adapter) {

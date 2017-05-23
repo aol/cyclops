@@ -1,12 +1,12 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
-import cyclops.collections.QueueX;
+import cyclops.collections.mutable.QueueX;
 import cyclops.stream.ReactiveSeq;
+import lombok.EqualsAndHashCode;
 
 import java.util.*;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -34,7 +34,8 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyQueueX<T> extends AbstractLazyMutableCollection<T,Queue<T>> implements QueueX<T> {
+@EqualsAndHashCode(of = { "queue" })
+public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements QueueX<T> {
 
 
     public LazyQueueX(Queue<T> list, ReactiveSeq<T> seq, Collector<T, ?, Queue<T>> collector) {
@@ -49,6 +50,11 @@ public class LazyQueueX<T> extends AbstractLazyMutableCollection<T,Queue<T>> imp
     public LazyQueueX(ReactiveSeq<T> seq, Collector<T, ?, Queue<T>> collector) {
         super(null, seq, collector);
 
+    }
+
+    @Override
+    public QueueX<T> type(Collector<T, ?, Queue<T>> collector) {
+        return withCollector(collector);
     }
 
     @Override
@@ -69,7 +75,7 @@ public class LazyQueueX<T> extends AbstractLazyMutableCollection<T,Queue<T>> imp
 
 
     @Override
-    public <X> LazyQueueX<X> fromStream(Stream<X> stream) {
+    public <X> LazyQueueX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyQueueX<X>((Deque)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
     }

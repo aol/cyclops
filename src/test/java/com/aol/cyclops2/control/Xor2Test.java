@@ -1,12 +1,17 @@
 package com.aol.cyclops2.control;
 
-import cyclops.*;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.async.Future;
+import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.control.*;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -40,7 +45,7 @@ public class Xor2Test {
 
 	@Test
     public void testZip(){
-        assertThat(Xor.primary(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Xor.primary(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
         assertThat(Xor.primary(10).zipP(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
         assertThat(Xor.primary(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
         assertThat(Xor.primary(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
@@ -57,13 +62,13 @@ public class Xor2Test {
 
     @Test
     public void testAccumulateSecondary2() {
-        Xor<?,PSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPSetX());
-        assertThat(xors,equalTo(Xor.primary(PSetX.of("none"))));
+        Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPersistentSetX());
+        assertThat(xors,equalTo(Xor.primary(PersistentSetX.of("none"))));
     }
 
     @Test
     public void testAccumulateSecondarySemigroup() {
-        Xor<?,String> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.secondary("1")),i->""+i,Monoids.stringConcat);
+        Xor<?,String> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.secondary("1")),i->""+i, Monoids.stringConcat);
         assertThat(xors,equalTo(Xor.primary("none1")));
     }
     @Test
@@ -130,8 +135,8 @@ public class Xor2Test {
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Xor<?,PSetX<Integer>> maybes =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPSetX());
-		assertThat(maybes,equalTo(Xor.primary(PSetX.of(10,1))));
+		Xor<?,PersistentSetX<Integer>> maybes =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPersistentSetX());
+		assertThat(maybes,equalTo(Xor.primary(PersistentSetX.of(10,1))));
 	}
 
 	@Test
@@ -400,7 +405,7 @@ public class Xor2Test {
 
 	@Test
 	public void testReduceMonoidOfT() {
-		assertThat(just.reduce(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+		assertThat(just.reduce(Monoid.of(1, Semigroups.intMult)),equalTo(10));
 	}
 
 	@Test

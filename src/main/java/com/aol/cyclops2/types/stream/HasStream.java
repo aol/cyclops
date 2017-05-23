@@ -3,7 +3,7 @@ package com.aol.cyclops2.types.stream;
 import cyclops.stream.ReactiveSeq;
 
 /**
- * A type that either has a reactiveStream of data or can be converted to a Stream of data
+ * A type that lazy has a reactiveStream of data or can be converted to a Stream of data
  * 
  * @author johnmcclean
  *

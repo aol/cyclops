@@ -2,12 +2,11 @@ package cyclops.stream;
 
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
-import cyclops.Monoids;
-import cyclops.Semigroups;
-import cyclops.async.Future;
+import cyclops.companion.Monoids;
+import cyclops.companion.Semigroups;
 import cyclops.async.QueueFactories;
-import cyclops.async.Topic;
-import cyclops.collections.ListX;
+import cyclops.async.adapters.Topic;
+import cyclops.collections.mutable.ListX;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -22,8 +21,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.LockSupport;
-import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -127,7 +124,7 @@ public class SpoutsTest {
     }
     @Test
     public void publishOn(){
-        assertThat(Spouts.publishOn(Stream.of(1,2),Executors.newFixedThreadPool(1)).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
+        assertThat(Spouts.reactive(Stream.of(1,2),Executors.newFixedThreadPool(1)).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
     }
     @Test
     public void iteratorTest(){
@@ -233,9 +230,9 @@ public class SpoutsTest {
         }
 
         //    assertThat(Monoids.<Integer>amb()
-       //         .apply(nextAsync(),Spouts.of(100,200,300)).toListX(),equalTo(ListX.of(100,200,300)));
-     //   assertThat(Monoids.<Integer>amb().reduce(Stream.of((nextAsync()),Spouts.of(100,200,300))).toListX(),equalTo(ListX.of(100,200,300)));
-       // assertThat(Spouts.amb(ListX.of(nextAsync(),Spouts.of(100,200,300))).toListX(),equalTo(ListX.of(100,200,300)));
+       //         .apply(nextAsync(),Spouts.of(100,200,300)).listX(),equalTo(ListX.of(100,200,300)));
+     //   assertThat(Monoids.<Integer>amb().reduce(Stream.of((nextAsync()),Spouts.of(100,200,300))).listX(),equalTo(ListX.of(100,200,300)));
+       // assertThat(Spouts.amb(ListX.of(nextAsync(),Spouts.of(100,200,300))).listX(),equalTo(ListX.of(100,200,300)));
     }
 
     @Test
@@ -245,7 +242,7 @@ public class SpoutsTest {
     }
     @Test
     public void publishToAndMerge(){
-        cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+        cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                 .build();
 
         Thread t=  new Thread( ()-> {
@@ -392,9 +389,9 @@ public class SpoutsTest {
 **/
  /**
         assertThat(Semigroups.<Integer>amb()
-                .apply(Spouts.of(100,200,300),nextAsyncRS()).toListX(),equalTo(ListX.of(100,200,300)));
+                .apply(Spouts.of(100,200,300),nextAsyncRS()).listX(),equalTo(ListX.of(100,200,300)));
         assertThat(Semigroups.<Integer>amb()
-                .apply(nextAsyncRS(),Spouts.of(100,200,300)).toListX(),equalTo(ListX.of(100,200,300)));
+                .apply(nextAsyncRS(),Spouts.of(100,200,300)).listX(),equalTo(ListX.of(100,200,300)));
 **/
     }
     AtomicInteger start= new AtomicInteger(0);
@@ -431,7 +428,7 @@ public class SpoutsTest {
             sub.onComplete();
 
 
-            // Flux.just(1,2).subscribeAll(sub);
+            // Flux.just(1,2).forEachAsync(sub);
 
 
         }).start();

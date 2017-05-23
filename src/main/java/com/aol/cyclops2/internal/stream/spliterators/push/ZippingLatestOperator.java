@@ -1,5 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import cyclops.async.adapters.Queue;
 import lombok.AllArgsConstructor;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
@@ -215,11 +216,11 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
 
     private Object nilsafeIn(Object o){
         if(o==null)
-            return cyclops.async.Queue.NILL;
+            return Queue.NILL;
         return o;
     }
     private <T> T nilsafeOut(Object o){
-        if(cyclops.async.Queue.NILL==o){
+        if(Queue.NILL==o){
             return null;
         }
         return (T)o;

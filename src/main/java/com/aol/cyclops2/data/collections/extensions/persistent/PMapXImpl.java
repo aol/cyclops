@@ -8,22 +8,27 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import cyclops.collections.immutable.PMapX;
+import cyclops.collections.immutable.PersistentMapX;
 import org.jooq.lambda.tuple.Tuple2;
 import org.pcollections.PMap;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.SetX;
+import cyclops.collections.mutable.SetX;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 import org.reactivestreams.Subscription;
 
 @AllArgsConstructor
-public class PMapXImpl<K, V> implements PMapX<K, V> {
+public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
 
     @Wither
     private final PMap<K, V> map;
+
+    @Override
+    public <R> R unwrap() {
+        return (R)map;
+    }
 
     /**
      * @param key
@@ -32,7 +37,7 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @see org.pcollections.PMap#plus(java.lang.Object, java.lang.Object)
      */
     @Override
-    public PMapX<K, V> plus(final K key, final V value) {
+    public PersistentMapX<K, V> plus(final K key, final V value) {
         return withMap(map.plus(key, value));
     }
 
@@ -42,7 +47,7 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @see org.pcollections.PMap#plusAll(java.util.Map)
      */
     @Override
-    public PMapX<K, V> plusAll(final Map<? extends K, ? extends V> map) {
+    public PersistentMapX<K, V> plusAll(final Map<? extends K, ? extends V> map) {
         return withMap(this.map.plusAll(map));
     }
 
@@ -52,7 +57,7 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @see org.pcollections.PMap#minus(java.lang.Object)
      */
     @Override
-    public PMapX<K, V> minus(final Object key) {
+    public PersistentMapX<K, V> minus(final Object key) {
         return withMap(map.minus(key));
     }
 
@@ -62,7 +67,7 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
      * @see org.pcollections.PMap#minusAll(java.util.Collection)
      */
     @Override
-    public PMapX<K, V> minusAll(final Collection<?> keys) {
+    public PersistentMapX<K, V> minusAll(final Collection<?> keys) {
         return withMap(map.minusAll(keys));
     }
 
@@ -350,18 +355,18 @@ public class PMapXImpl<K, V> implements PMapX<K, V> {
     }
 
     @Override
-    public <X extends Throwable> Subscription subscribe(Consumer<? super Tuple2<K, V>> consumer) {
-        return this.stream().subscribe(consumer);
+    public <X extends Throwable> Subscription forEachSubscribe(Consumer<? super Tuple2<K, V>> consumer) {
+        return this.stream().forEachSubscribe(consumer);
     }
 
     @Override
-    public <X extends Throwable> Subscription subscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError) {
-        return this.stream().subscribe(consumer,consumerError);
+    public <X extends Throwable> Subscription forEachSubscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError) {
+        return this.stream().forEachSubscribe(consumer,consumerError);
     }
 
     @Override
-    public <X extends Throwable> Subscription subscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete) {
-        return this.stream().subscribe(consumer,consumerError,onComplete);
+    public <X extends Throwable> Subscription forEachSubscribe(Consumer<? super Tuple2<K, V>> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete) {
+        return this.stream().forEachSubscribe(consumer,consumerError,onComplete);
     }
 
     @Override

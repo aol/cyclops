@@ -11,7 +11,7 @@ public class Starter extends AbstractVerticle {
 	  public void start() throws Exception {
 	    super.start();
 	    //this can't work as the tasks from cyclops2-react are being passed back into the
-	    //event loop that is executing this task, LazyReact needs to pass tasks to a different 
+	    //event loop that is executing this task, LazyReact needs toNested pass tasks toNested a different
 	    //event loop
 	    LazyReact react = new LazyReact(new VertxExecutor(getVertx()));
 	    

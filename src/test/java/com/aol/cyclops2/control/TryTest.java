@@ -3,12 +3,14 @@ package com.aol.cyclops2.control;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import cyclops.control.*;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
-import cyclops.Reducers;
-import cyclops.Semigroups;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.ListX;
-import cyclops.Streams;
+import cyclops.collections.mutable.ListX;
+import cyclops.companion.Streams;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 import org.junit.Before;
@@ -53,7 +55,7 @@ public class TryTest {
 
 	   @Test
 	    public void testZip(){
-	        assertThat(Try.success(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+	        assertThat(Try.success(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
 	        assertThat(Try.success(10).zipP(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
 	        assertThat(Try.success(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
 	        assertThat(Try.success(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));

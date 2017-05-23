@@ -6,10 +6,8 @@ import com.aol.cyclops2.types.To;
 import com.aol.cyclops2.types.Traversable;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
 import com.aol.cyclops2.types.stream.CyclopsCollectable;
-import cyclops.collections.DequeX;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PStackX;
-import cyclops.collections.immutable.PVectorX;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -30,7 +28,7 @@ import java.util.stream.Stream;
 /**
  * Monad Transformer for Java Streams and related types such as ReactiveSeq
  * 
- * StreamT allows the deeply wrapped Stream to be manipulating within it's nested /contained context
+ * StreamT allows the deeply wrapped Stream toNested be manipulating within it's nested /contained context
  * @author johnmcclean
  *
  * @param <T> Type of data stored inside the nested  Streams
@@ -48,18 +46,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     
    
 
-    public <R> AnyM<W, R> visit(Function<? super ReactiveSeq<T>, ? extends R> rsFn,
-                                Function<? super Stream<T>, ? extends R> sFn) {
 
-        return this.transformerStream()
-                   .map(t -> {
-                       if (t instanceof ReactiveSeq)
-                           return rsFn.apply((ReactiveSeq<T>) t);
-                        else
-                           return sFn.apply((Stream<T>)t);
-
-                   });
-    }
 
     /**
      * @return The wrapped AnyM
@@ -82,7 +69,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
      * }
      * </pre>
      * 
-     * @param peek  Consumer to accept current value of List
+     * @param peek  Consumer toNested accept current value of List
      * @return ListT with peek call
      */
     @Override
@@ -104,7 +91,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
      *     //ListT<AnyM<Stream<List[11]>>>
      * }
      * </pre>
-     * @param test Predicate to filter the wrapped List
+     * @param test Predicate toNested filter the wrapped List
      * @return ListT that applies the provided filter
      */
     @Override
@@ -126,7 +113,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
      * </pre>
      * 
      * @param f Mapping function for the wrapped List
-     * @return ListT that applies the map function to the wrapped List
+     * @return ListT that applies the map function toNested the wrapped List
      */
     @Override
     public <B> StreamT<W,B> map(final Function<? super T, ? extends B> f) {
@@ -152,7 +139,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
      * }
      * </pre>
      * @param f FlatMap function
-     * @return ListT that applies the flatMap function to the wrapped List
+     * @return ListT that applies the flatMap function toNested the wrapped List
      */
     public <B> StreamT<W,B> flatMapT(final Function<? super T, StreamT<W,B>> f) {
 
@@ -166,7 +153,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
     /**
      * Construct an ListT from an AnyM that contains a monad type that contains type other than List
-     * The values in the underlying monad will be mapped to List<A>
+     * The values in the underlying monad will be mapped toNested List<A>
      * 
      * @param anyM AnyM that doesn't contain a monad wrapping an List
      * @return ListT
@@ -238,10 +225,10 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectable()
+     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectors()
      
     @Override
-    public Collectable<T> collectable() {
+    public Collectable<T> collectors() {
        return this;
     } */
     @Override
@@ -408,18 +395,18 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
      * @see cyclops2.monads.transformers.values.ListT#sliding(int)
      */
     @Override
-    public StreamT<W,PVectorX<T>> sliding(final int windowSize) {
+    public StreamT<W,VectorX<T>> sliding(final int windowSize) {
 
-        return (StreamT<W,PVectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize);
+        return (StreamT<W,VectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize);
     }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ListT#sliding(int, int)
      */
     @Override
-    public StreamT<W,PVectorX<T>> sliding(final int windowSize, final int increment) {
+    public StreamT<W,VectorX<T>> sliding(final int windowSize, final int increment) {
 
-        return (StreamT<W,PVectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
+        return (StreamT<W,VectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
     }
 
     /* (non-Javadoc)

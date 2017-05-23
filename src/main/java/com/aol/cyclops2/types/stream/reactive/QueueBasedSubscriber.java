@@ -20,10 +20,10 @@ import org.reactivestreams.Subscription;
 
 import cyclops.control.Eval;
 import cyclops.stream.ReactiveSeq;
-import cyclops.async.Queue;
-import cyclops.async.Queue.ClosedQueueException;
-import cyclops.async.QueueFactory;
-import cyclops.collections.QueueX;
+import cyclops.async.adapters.Queue;
+import cyclops.async.adapters.Queue.ClosedQueueException;
+import cyclops.async.adapters.QueueFactory;
+import cyclops.collections.mutable.QueueX;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 import com.aol.cyclops2.types.futurestream.Continuation;
 
@@ -42,7 +42,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     /**
      * Create a QueueBasedSubscriber, backed by a JDK LinkedBlockingQueue
      *
-     * @param counter Counter for tracking connections to the queue and data volumes
+     * @param counter Counter for tracking connections toNested the queue and data volumes
      * @param maxConcurrency Maximum number of subscriptions
      * @return QueueBasedSubscriber
      */
@@ -55,7 +55,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
      * Create a QueueBasedSubscriber, backed by the provided Queue
      *
      * @param q Queue backing the reactiveSubscriber
-     * @param counter Counter for tracking connections to the queue and data volumes
+     * @param counter Counter for tracking connections toNested the queue and data volumes
      * @param maxConcurrency Maximum number of subscriptions
      * @return QueueBasedSubscriber
      */
@@ -68,7 +68,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
      * Create a QueueBasedSubscriber, backed by a Queue that will be created with the provided QueueFactory
      *
      * @param factory QueueFactory
-     * @param counter Counter for tracking connections to the queue and data volumes
+     * @param counter Counter for tracking connections toNested the queue and data volumes
      * @param maxConcurrency Maximum number of subscriptions
      * @return QueueBasedSubscriber
      */
@@ -138,15 +138,9 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
             public T get() {
 
                 if(size()<maxConcurrency*3 && counter.subscription.size()>0) {
-                //    System.out.println("Requesting " + counter.subscription.size() + " thread " + Thread.currentThread().getId());
                     counter.subscription.forEach(s -> s.request(1));
                 }
-/**
-                    System.out.println("GET Being called queue size " + size() + " q " + this + " added " + counter.added
-                                            + " open? " + this.isOpen() + " t "
-                                            + Thread.currentThread().getId());**/
                     T res = super.get();
-                //    System.out.println("Next in QS is " + res + " thread " + Thread.currentThread().getId() + " queue size " + size() + " q " + this);
                     return res;
 
             }
@@ -197,10 +191,10 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
             LockSupport.parkNanos(100l);
         }
-       // System.out.println("Adding subscription " +  subscription);
+
         counter.subscription.plus(subscription);
 
-     //   System.out.println("Requesting 1");
+
         s.request(1);
 
     }
@@ -216,6 +210,8 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
         Objects.requireNonNull(t);
         counter.added++;
         queue.add(t);
+
+
 
 
 
@@ -240,11 +236,11 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     public static class Counter {
         public AtomicLong active = new AtomicLong(
                 0);
-        volatile boolean completable = false;
+        public volatile boolean completable = false;
         public final QueueX<Subscription> subscription = QueueX.fromIterable(Collectors.toCollection(() -> new ConcurrentLinkedQueue<Subscription>()),
                 Arrays.<Subscription> asList());
         volatile boolean closed = false;
-        volatile int added = 0;
+        public volatile int added = 0;
         final AtomicBoolean closing =new AtomicBoolean(false);
     }
 
@@ -268,13 +264,14 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
                                 final List current = new ArrayList();
                                 while (queue.size() > 0) {
                                     try {
-                                  //      System.out.println("Adding to queue");
+
                                         current.add(queue.get());
                                     }catch(ClosedQueueException e){
+
                                         break;
                                     }
                                 }
-                               // System.out.println("Drained values " + current);
+
                                 throw new ClosedQueueException(
                                         current);
                             }));
@@ -290,13 +287,15 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
         counter.completable = true;
 
         if (queue != null && counter.active.get() == 0) {
-            counter.closed = true;
-     //       System.out.println("Closing!");
-            queue.addContinuation(new Continuation(
-                    () -> {
-                        throw new ClosedQueueException();
-                    }));
-            queue.close();
+            if(counter.closing.compareAndSet(false,true)) {
+                counter.closed = true;
+
+                queue.addContinuation(new Continuation(
+                        () -> {
+                            throw new ClosedQueueException();
+                        }));
+                queue.close();
+            }
         }
 
 

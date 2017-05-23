@@ -12,7 +12,7 @@ import org.junit.Test;
 import cyclops.async.LazyReact;
 import cyclops.stream.ReactiveSeq;
 import cyclops.async.SimpleReact;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.async.wait.WaitStrategy;
 
@@ -75,7 +75,7 @@ public class VertxTest {
 	    
         new SimpleReact(c->vertx.runOnContext(v -> c.run())).from(server)
                         .then(s->"server started")
-                        .onFail(e->"failed to skip "+e.getMessage())
+                        .onFail(e->"failed toNested skip "+e.getMessage())
                         .peek(System.out::println);	    
 	    
 	    while(true){
@@ -107,7 +107,7 @@ public class VertxTest {
 
         //populate the download queue asynchronously
         ReactiveSeq.of("www.aol.com","www.rte.ie","www.aol.com")
-                   .peek(next->System.out.println("adding to download queue " + next))
+                   .peek(next->System.out.println("adding toNested download queue " + next))
                    .runFuture(c->vertx.runOnContext(v -> c.run()),t->t.forEach(downloadQueue::add,System.err::println));
         
         //download asynchronously : all cyclops2-react tasks are passed into vert.x

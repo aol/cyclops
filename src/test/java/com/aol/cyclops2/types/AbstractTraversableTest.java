@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.collections.immutable.PVectorX;
+import cyclops.companion.CyclopsCollectors;
+import cyclops.collections.immutable.VectorX;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -32,13 +32,12 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.CyclopsCollectors;
 import cyclops.function.Monoid;
-import cyclops.Reducers;
-import cyclops.Semigroups;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 
 
 public abstract class AbstractTraversableTest {
@@ -60,7 +59,7 @@ public abstract class AbstractTraversableTest {
     @Test
     public void stream(){
        
-        assertThat(of(1,2,3).stream().collect(Collectors.toList()),hasItems(1,2,3));
+        assertThat(of(1,2,3).stream().collect(java.util.stream.Collectors.toList()),hasItems(1,2,3));
     }
 
        @Test
@@ -115,8 +114,8 @@ public abstract class AbstractTraversableTest {
     
     @Test
     public void batchBySize(){
-        System.out.println(of(1,2,3,4,5,6).grouped(3).stream().collect(Collectors.toList()));
-        assertThat(of(1,2,3,4,5,6).grouped(3).stream().collect(Collectors.toList()).size(),is(2));
+        System.out.println(of(1,2,3,4,5,6).grouped(3).stream().collect(java.util.stream.Collectors.toList()));
+        assertThat(of(1,2,3,4,5,6).grouped(3).stream().collect(java.util.stream.Collectors.toList()).size(),is(2));
     }
     
 
@@ -129,7 +128,7 @@ public abstract class AbstractTraversableTest {
         List<Integer> list = new ArrayList<>();
         while(list.size()==0){
             list = of(1,2,3,4,5,6).takeWhile(it -> it<4)
-                    .stream().peek(it -> System.out.println(it)).collect(Collectors.toList());
+                    .stream().peek(it -> System.out.println(it)).collect(java.util.stream.Collectors.toList());
     
         }
         assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(list.get(0)));
@@ -167,7 +166,7 @@ public abstract class AbstractTraversableTest {
     
     @Test
     public void testIterable() {
-        List<Integer> list = of(1, 2, 3).stream().toCollection(LinkedList::new);
+        List<Integer> list = of(1, 2, 3).stream().to().collection(LinkedList::new);
 
         for (Integer i :of(1, 2, 3)) {
             assertThat(list,hasItem(i));
@@ -220,19 +219,20 @@ public abstract class AbstractTraversableTest {
         @Test
         public void zip(){
             List<Tuple2<Integer,Integer>> list =
-                    of(1,2,3,4,5,6).zip(of(100,200,300,400).stream()).stream()
+                    ((Traversable<Tuple2<Integer,Integer>>)of(1,2,3,4,5,6)
+                            .zip(of(100,200,300,400).stream())).stream()
                                                     .peek(it -> System.out.println(it))
-                                                    .collect(Collectors.toList());
+                                                    .collect(java.util.stream.Collectors.toList());
             System.out.println("list = " +list);
             
-            List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+            List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
             
             assertThat(right,hasItem(100));
             assertThat(right,hasItem(200));
             assertThat(right,hasItem(300));
             assertThat(right,hasItem(400));
             
-            List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+            List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
             assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
             
             
@@ -295,19 +295,19 @@ public abstract class AbstractTraversableTest {
     public void testSkipLastEmpty(){
         assertThat(of()
                             .skipLast(2)
-                            .stream().collect(Collectors.toList()),equalTo(Arrays.asList()));
+                            .stream().collect(java.util.stream.Collectors.toList()),equalTo(Arrays.asList()));
     }
     @Test
     public void testLimitLast(){
         assertThat(of(1,2,3,4,5)
                             .limitLast(2)
-                            .stream().collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
+                            .stream().collect(java.util.stream.Collectors.toList()),equalTo(Arrays.asList(4,5)));
     }
     @Test
     public void testLimitLastEmpty(){
         assertThat(of()
                             .limitLast(2)
-                            .stream().collect(Collectors.toList()),equalTo(Arrays.asList()));
+                            .stream().collect(java.util.stream.Collectors.toList()),equalTo(Arrays.asList()));
     }
   
   
@@ -315,18 +315,18 @@ public abstract class AbstractTraversableTest {
     @Test
     public void zip2of(){
         
-        List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
-                                            .zip(of(100,200,300,400).stream())
+        List<Tuple2<Integer,Integer>> list =ReactiveSeq.fromIterable(of(1,2,3,4,5,6)
+                                            .zip(of(100,200,300,400).stream()))
                                             .stream().toListX().materialize();
                 
     
-        List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+        List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
         assertThat(right,hasItem(100));
         assertThat(right,hasItem(200));
         assertThat(right,hasItem(300));
         assertThat(right,hasItem(400));
         
-        List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+        List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
 
         assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
@@ -334,9 +334,9 @@ public abstract class AbstractTraversableTest {
     @Test
     public void zipInOrder(){
         
-        List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6)
-                                                    .zip( of(100,200,300,400).stream())
-                                                    .stream().toListX();
+        List<Tuple2<Integer,Integer>> list =  ReactiveSeq.fromIterable(of(1,2,3,4,5,6)
+                                                    .zip( of(100,200,300,400).stream()))
+                                                    .toListX();
         
         assertThat(asList(1,2,3,4,5,6),hasItem(list.get(0).v1));
         assertThat(asList(100,200,300,400),hasItem(list.get(0).v2));
@@ -350,7 +350,7 @@ public abstract class AbstractTraversableTest {
         
         
         final Traversable<Integer> zipped = this.<Integer>empty().zip(ReactiveSeq.<Integer>of(), (a, b) -> a + b);
-        assertTrue(zipped.stream().collect(Collectors.toList()).isEmpty());
+        assertTrue(zipped.stream().collect(java.util.stream.Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -359,7 +359,7 @@ public abstract class AbstractTraversableTest {
         
         
         final Traversable<Integer> zipped = this.<Integer>empty().zip(of(1,2), (a, b) -> a + b);
-        assertTrue(zipped.stream().collect(Collectors.toList()).isEmpty());
+        assertTrue(zipped.stream().collect(java.util.stream.Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -369,7 +369,7 @@ public abstract class AbstractTraversableTest {
         final Traversable<Integer> zipped = of(1,2,3).zip(this.<Integer>empty(), (a, b) -> a + b);
 
         
-        assertTrue(zipped.stream().collect(Collectors.toList()).isEmpty());
+        assertTrue(zipped.stream().collect(java.util.stream.Collectors.toList()).isEmpty());
     }
 
     @Test
@@ -382,7 +382,7 @@ public abstract class AbstractTraversableTest {
         final Traversable<String> zipped = first.zip(second, (a, b) -> a + b);
 
         
-        assertThat(zipped.stream().collect(Collectors.toList()).size(),is(3));
+        assertThat(zipped.stream().collect(java.util.stream.Collectors.toList()).size(),is(3));
     }
 
     
@@ -395,7 +395,7 @@ public abstract class AbstractTraversableTest {
         
         final Traversable<String> zipped = first.zip(second, (a, b) -> a + b);
 
-        assertThat(zipped.stream().collect(Collectors.toList()).size(),is(3));
+        assertThat(zipped.stream().collect(java.util.stream.Collectors.toList()).size(),is(3));
     }
 
     @Test
@@ -405,12 +405,14 @@ public abstract class AbstractTraversableTest {
         final Traversable<String> zipped = first.zip(second, (a, b) -> a + b);
 
         
-        assertThat(zipped.stream().collect(Collectors.toList()).size(),equalTo(3));
+        assertThat(zipped.stream().collect(java.util.stream.Collectors.toList()).size(),equalTo(3));
     }
 
     @Test
     public void testZipDifferingLength() {
-        List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d").stream()).stream().toList();
+        List<Tuple2<Integer, String>> list = ReactiveSeq.fromIterable(of(1, 2).zip(of("a", "b", "c", "d").stream())
+
+                ).stream().toList();
 
         assertEquals(2, list.size());
         assertTrue(asList(1, 2).contains(list.get(0).v1));
@@ -429,7 +431,7 @@ public abstract class AbstractTraversableTest {
         
         final Traversable<String> zipped = first.zip(second, (a, b) -> a + b);
 
-        assertThat(zipped.stream().collect(Collectors.toList()).size(),is(3));
+        assertThat(zipped.stream().collect(java.util.stream.Collectors.toList()).size(),is(3));
     }
 
     @Test
@@ -440,12 +442,13 @@ public abstract class AbstractTraversableTest {
         final Traversable<String> zipped = first.zip(second, (a, b) -> a + b);
 
         
-        assertThat(zipped.stream().collect(Collectors.toList()).size(),equalTo(3));
+        assertThat(zipped.stream().collect(java.util.stream.Collectors.toList()).size(),equalTo(3));
     }
 
     @Test
     public void testZipDifferingLengthStream() {
-        List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d").stream()).stream().toList();
+        List<Tuple2<Integer, String>> list = ReactiveSeq.fromIterable(of(1, 2)
+                .zip(of("a", "b", "c", "d").stream())).stream().toList();
 
         assertEquals(2, list.size());
         assertTrue(asList(1, 2).contains(list.get(0).v1));
@@ -463,7 +466,7 @@ public abstract class AbstractTraversableTest {
         
         final Traversable<String> zipped = first.zip(second, (a, b) -> a + b);
 
-        assertThat(zipped.stream().collect(Collectors.toList()).size(),is(3));
+        assertThat(zipped.stream().collect(java.util.stream.Collectors.toList()).size(),is(3));
     }
 
     @Test
@@ -473,7 +476,7 @@ public abstract class AbstractTraversableTest {
         final Traversable<String> zipped = first.zip(second, (a, b) -> a + b);
 
         
-        assertThat(zipped.stream().collect(Collectors.toList()).size(),equalTo(3));
+        assertThat(zipped.stream().collect(java.util.stream.Collectors.toList()).size(),equalTo(3));
     }
 
     
@@ -503,7 +506,7 @@ public abstract class AbstractTraversableTest {
         }
         @Test
         public void batchBySizeInternalSize(){
-            assertThat(of(1,2,3,4,5,6).grouped(3).stream().collect(Collectors.toList()).get(0).size(),is(3));
+            assertThat(of(1,2,3,4,5,6).grouped(3).stream().collect(java.util.stream.Collectors.toList()).get(0).size(),is(3));
         }
         
        
@@ -536,15 +539,15 @@ public abstract class AbstractTraversableTest {
                     of(1,2,3,4,5,6).zipS(Stream.of(100,200,300,400))
                                                     .stream()
                                                     .peek(it -> System.out.println(it))
-                                                    .collect(Collectors.toList());
+                                                    .collect(java.util.stream.Collectors.toList());
             
-            List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+            List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
             assertThat(right,hasItem(100));
             assertThat(right,hasItem(200));
             assertThat(right,hasItem(300));
             assertThat(right,hasItem(400));
             
-            List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+            List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
             assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
             
             
@@ -621,7 +624,7 @@ public abstract class AbstractTraversableTest {
           
             @Test
             public void slidingNoOrder() {
-                ListX<PVectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).stream().toListX();
+                ListX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).stream().toListX();
 
                 System.out.println(list);
                 assertThat(list.get(0).size(), equalTo(2));
@@ -630,7 +633,7 @@ public abstract class AbstractTraversableTest {
 
             @Test
             public void slidingIncrementNoOrder() {
-                List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).stream().collect(Collectors.toList());
+                List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).stream().collect(java.util.stream.Collectors.toList());
 
                 System.out.println(list);
                
@@ -653,8 +656,8 @@ public abstract class AbstractTraversableTest {
             }
             @Test
             public void groupedFunctionCollectorNoOrder(){
-                assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b",CyclopsCollectors.toListX()).stream().count(),equalTo((2L)));
-                assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b",CyclopsCollectors.toListX()).stream().filter(t->t.v1.equals("a"))
+                assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b", CyclopsCollectors.toListX()).stream().count(),equalTo((2L)));
+                assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b", CyclopsCollectors.toListX()).stream().filter(t->t.v1.equals("a"))
                         .map(t->t.v2).single(),
                             equalTo((Arrays.asList(1,2))));
             }
@@ -665,16 +668,16 @@ public abstract class AbstractTraversableTest {
                                                         .toListX();
                 
                 System.out.println(list);
-                List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+                List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
                 assertThat(right,hasItem(100));
                 assertThat(right,hasItem(200));
                 assertThat(right,hasItem(300));
                 assertThat(right,hasItem(400));
                 
-                List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+                List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
                 assertThat(Arrays.asList(1,2,3,4),hasItem(left.get(0)));
                 
-                List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+                List<Character> three = list.stream().map(t -> t.v3).collect(java.util.stream.Collectors.toList());
                 assertThat(Arrays.asList('a','b','c','d'),hasItem(three.get(0)));
                 
                 
@@ -685,19 +688,19 @@ public abstract class AbstractTraversableTest {
                         of(1,2,3,4).zip4(of(100,200,300,400).stream(),of('a','b','c','d').stream(),of("hello","world","boo!","2").stream()).stream()
                                                         .toListX();
                 System.out.println(list);
-                List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+                List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
                 assertThat(right,hasItem(100));
                 assertThat(right,hasItem(200));
                 assertThat(right,hasItem(300));
                 assertThat(right,hasItem(400));
                 
-                List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+                List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
                 assertThat(Arrays.asList(1,2,3,4),hasItem(left.get(0)));
                 
-                List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+                List<Character> three = list.stream().map(t -> t.v3).collect(java.util.stream.Collectors.toList());
                 assertThat(Arrays.asList('a','b','c','d'),hasItem(three.get(0)));
             
-                List<String> four = list.stream().map(t -> t.v4).collect(Collectors.toList());
+                List<String> four = list.stream().map(t -> t.v4).collect(java.util.stream.Collectors.toList());
                 assertThat(Arrays.asList("hello","world","boo!","2"),hasItem(four.get(0)));
                 
                 

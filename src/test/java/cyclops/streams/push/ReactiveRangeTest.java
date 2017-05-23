@@ -1,17 +1,14 @@
 package cyclops.streams.push;
 
-import cyclops.collections.ListX;
-import cyclops.stream.ReactiveSeq;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.Spouts;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

@@ -2,14 +2,14 @@ package com.aol.cyclops2.functions.collections.extensions;
 
 import java.util.Arrays;
 
+import cyclops.companion.CyclopsCollectors;
 import org.junit.Test;
 
-import cyclops.CyclopsCollectors;
-import cyclops.collections.DequeX;
-import cyclops.collections.ListX;
-import cyclops.collections.QueueX;
-import cyclops.collections.SetX;
-import cyclops.collections.SortedSetX;
+import cyclops.collections.mutable.DequeX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.QueueX;
+import cyclops.collections.mutable.SetX;
+import cyclops.collections.mutable.SortedSetX;
 
 public class ExampleTest {
 

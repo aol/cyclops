@@ -1,8 +1,8 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
-import cyclops.Reducers;
-import cyclops.collections.immutable.POrderedSetX;
+import cyclops.collections.immutable.OrderedSetX;
+import cyclops.companion.Reducers;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.POrderedSet;
@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -40,7 +39,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrderedSet<T>> implements POrderedSetX<T> {
+public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrderedSet<T>> implements OrderedSetX<T> {
 
 
     public LazyPOrderedSetX(POrderedSet<T> list, ReactiveSeq<T> seq) {
@@ -67,16 +66,19 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
     
     
     //@Override
-    public POrderedSetX<T> materialize() {
+    public OrderedSetX<T> materialize() {
         get();
         return this;
     }
 
-  
 
+    @Override
+    public OrderedSetX<T> type(Reducer<? extends POrderedSet<T>> reducer) {
+        return new LazyPOrderedSetX<T>(list,seq.get(),Reducer.narrow(reducer));
+    }
 
-  //  @Override
-    private <X> LazyPOrderedSetX<X> fromStream(Stream<X> stream) {
+    //  @Override
+    public <X> LazyPOrderedSetX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyPOrderedSetX<X>((POrderedSet)getList(),ReactiveSeq.fromStream(stream));
     }
@@ -90,18 +92,18 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
 
   
     @Override
-    public POrderedSetX<T> plus(T e) {
+    public OrderedSetX<T> plus(T e) {
         return from(get().plus(e));
     }
 
     @Override
-    public POrderedSetX<T> plusAll(Collection<? extends T> list) {
+    public OrderedSetX<T> plusAll(Collection<? extends T> list) {
         return from(get().plusAll(list));
     }
 
 
     @Override
-    public POrderedSetX<T> minusAll(Collection<?> list) {
+    public OrderedSetX<T> minusAll(Collection<?> list) {
         return from(get().minusAll(list));
     }
 
@@ -117,7 +119,7 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
 
 
     @Override
-    public POrderedSetX<T> minus(Object remove) {
+    public OrderedSetX<T> minus(Object remove) {
         return from(get().minus(remove));
     }
 
@@ -136,13 +138,13 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
         return from(col);
     }
     @Override
-    public POrderedSetX<T> plusLoop(int max, IntFunction<T> value) {
-        return (POrderedSetX<T>)super.plusLoop(max,value);
+    public OrderedSetX<T> plusLoop(int max, IntFunction<T> value) {
+        return (OrderedSetX<T>)super.plusLoop(max,value);
     }
 
     @Override
-    public POrderedSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
-        return (POrderedSetX<T>)super.plusLoop(supplier);
+    public OrderedSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (OrderedSetX<T>)super.plusLoop(supplier);
     }
     
 }

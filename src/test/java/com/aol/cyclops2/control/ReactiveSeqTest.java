@@ -3,21 +3,18 @@ package com.aol.cyclops2.control;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.util.SimpleTimer;
 import com.google.common.collect.Lists;
-import cyclops.Monoids;
-import cyclops.Semigroups;
-import cyclops.collections.ListX;
+import cyclops.collections.immutable.BagX;
+import cyclops.companion.Monoids;
+import cyclops.companion.Semigroups;
+import cyclops.collections.mutable.ListX;
 
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
-import cyclops.Semigroups;
 import cyclops.async.Future;
-import cyclops.collections.ListX;
-import cyclops.collections.immutable.PBagX;
 import cyclops.control.Eval;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
-import org.jooq.lambda.tuple.Tuple;
 import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -54,9 +51,20 @@ import static org.junit.Assert.fail;
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
+
+    @Test
+    public void cycleWhile(){
+        count =0;
+        ListX<Integer> b= ReactiveSeq.fromStream(Stream.of(1, 2, 3)).peek(System.out::println)
+                .cycleUntil(next->count++==6).toListX();
+
+        System.out.println("B " + b);
+        assertEquals(asList(1, 2,3, 1, 2,3),b);
+    }
+
     @Test
     public void testCombineMonoid(){
-
+        ReactiveSeq.of(1,2).to();
         assertThat(ReactiveSeq.of(1,1,2,3)
                 .combine(Monoids.intMult,(a, b)->a.equals(b))
                 .findFirst().get()
@@ -118,7 +126,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void cycleUntil(){
-        System.out.println("List " + PBagX.of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());
+        System.out.println("List " + BagX.of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());
     }
 
     @Test
@@ -286,7 +294,7 @@ public class ReactiveSeqTest {
                     .map(i->"hello" + i)
                     .map(s->s.length())
                     .map(i -> i * 2)
-                    .forEach(i->count++);//collect(Collectors.toList()).size();
+                    .forEach(i->count++);//collect(CyclopsCollectors.toList()).size();
 
         }
         System.out.println("Streams " + (System.currentTimeMillis() - time));
@@ -300,7 +308,7 @@ public class ReactiveSeqTest {
         for(int x=0;x<1000;x++) {
 
             //total +=
-                    stream.forEach(i->count++);//collect(Collectors.toList()).size();
+                    stream.forEach(i->count++);//collect(CyclopsCollectors.toList()).size();
 
         }
         System.out.println("Reactive Seq without construction " + (System.currentTimeMillis() - time));
@@ -314,7 +322,7 @@ public class ReactiveSeqTest {
                     .map(i -> i * 2)
                     .map(i -> "hello" + i)
                     .map(s -> s.length())
-                    .map(i -> i * 2).forEach(i->count++);//collect(Collectors.toList()).size();
+                    .map(i -> i * 2).forEach(i->count++);//collect(CyclopsCollectors.toList()).size();
 
         }
         System.out.println("Reactive Seq with construction " + (System.currentTimeMillis() - time));
@@ -589,7 +597,7 @@ public class ReactiveSeqTest {
         ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
         ReactiveSeq<String> reactiveStream = pushable.reactiveStream();
         ReactiveSeq<List<String>> res = reactiveStream.map(i->i+"-hello").limit(2)
-                                               .collectSeq(Collectors.toList());
+                                               .collectSeq(CyclopsCollectors.toList());
         pushable.onNext("hello1");
         pushable.onNext("hello2");
         pushable.onNext("hello3");

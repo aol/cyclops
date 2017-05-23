@@ -8,7 +8,7 @@ import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.stream.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;
@@ -26,14 +26,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
- * Created by johnmcclean on 14/01/2017.
+ * reactive : is used toNested denote creational methods for reactive-streams that support non-blocking backpressure
+ * async : is used toNested denote creational methods for asynchronous streams that do not support backpressure
  */
 
 public interface Spouts {
@@ -81,14 +80,14 @@ public interface Spouts {
 
     /**
      * Create a push based Stream with <b>no backpressure</b> fromm the provided Stream.
-     * The provided Stream will be executed on the provided executor and pushed to the returned Stream
+     * The provided Stream will be executed on the provided executor and pushed toNested the returned Stream
      *
-     * @param seq Stream to execute and push to a new non-backpressure aware Stream
+     * @param seq Stream toNested execute and push toNested a new non-backpressure aware Stream
      * @param exec
      * @param <T>
      * @return
      */
-    static <T> ReactiveSeq<T> observeOn(Stream<T> seq, Executor exec){
+    static <T> ReactiveSeq<T> async(Stream<T> seq, Executor exec){
         Subscriber[] subscriber = {null};
 
         ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
@@ -101,12 +100,12 @@ public interface Spouts {
             subscriber[0]=s;
         });
     }
-    static <T> ReactiveSeq<T> publishOn(Stream<T> seq, Executor exec){
+    static <T> ReactiveSeq<T> reactive(Stream<T> seq, Executor exec){
         Future<Subscriber<T>> subscriber = Future.future();
         Future<Subscription> sub = Future.future();
         ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
             Subscriber<T> local = subscriber.get();
-            sub.complete(t.subscribe(local::onNext,local::onError,local::onComplete));
+            sub.complete(t.forEachSubscribe(local::onNext,local::onError,local::onComplete));
 
             return null;
         });
@@ -124,11 +123,11 @@ public interface Spouts {
 
 
     /**
-     *   The recommended way to connect a Spout to a Publisher is via Spouts#from
+     *   The recommended way toNested connect a Spout toNested a Publisher is via Spouts#from
      *   Create an Subscriber for Observable style asynchronous push based Streams,
      *   that implements backpressure internally via the reactive-streams spec.
      *
-     *   Subscribers signal demand via their subscription and publishers push data to subscribers
+     *   Subscribers signal demand via their subscription and publishers push data toNested subscribers
      *   synchronously or asynchronously, never exceeding signalled demand
      *
      * @param <T> Stream data type
@@ -190,6 +189,8 @@ public interface Spouts {
         return new ReactiveStreamX<>(new ArrayOfValuesOperator<T>(values));
     }
     public static  <T> ReactiveSeq<T> fromIterable(Iterable<T> iterable){
+        if(iterable instanceof ReactiveStreamX)
+            return (ReactiveSeq<T>)iterable;
         return new ReactiveStreamX<>(new IterableSourceOperator<T>(iterable));
     }
     public static  <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
@@ -203,6 +204,8 @@ public interface Spouts {
 
     }
     static <T> ReactiveSeq<T> from(Publisher<? extends T> pub){
+        if(pub instanceof ReactiveSeq)
+            return (ReactiveSeq<T>)pub;
         return new ReactiveStreamX<T>(new PublisherToOperator<T>((Publisher<T>)pub), Type.BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> merge(Publisher<? extends Publisher<T>> publisher){
@@ -424,7 +427,16 @@ public interface Spouts {
     static <U, T> ReactiveSeq<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return reactiveStream(new SpliteratorToOperator<T>(new UnfoldSpliterator<>(seed, unfolder)));
     }
+    public static  <T> ReactiveSeq<T> concat(Publisher<Publisher<T>> pubs){
 
+        return new ReactiveStreamX<>(new ArrayConcatonatingOperator<T>(ListX.fromPublisher(pubs)
+                .map(p->new PublisherToOperator<T>(p))));
+    }
+    public static  <T> ReactiveSeq<T> lazyConcat(Publisher<Publisher<T>> pubs){
+
+        return new ReactiveStreamX<>(new LazyArrayConcatonatingOperator<T>(ListX.fromPublisher(pubs)
+                .map(p->new PublisherToOperator<T>(p))));
+    }
     public static  <T> ReactiveSeq<T> concat(Stream<? extends T>... streams){
         Operator<T>[] operators = new Operator[streams.length];
         int index = 0;
@@ -623,7 +635,7 @@ public interface Spouts {
          * }
          * </pre>
          *
-         * @param m Monoid to use for combining Lists
+         * @param m Monoid toNested use for combining Lists
          * @return Type class for combining Lists
          */
         public static <T> MonadPlus<ReactiveSeq.µ> monadPlus(Monoid<ReactiveSeq<T>> m){
@@ -697,7 +709,7 @@ public interface Spouts {
         /**
          * Widen a ReactiveSeq nested inside another HKT encoded type
          *
-         * @param flux HTK encoded type containing  a List to widen
+         * @param flux HTK encoded type containing  a List toNested widen
          * @return HKT encoded type with a widened List
          */
         public static <C2, T> Higher<C2, Higher<ReactiveSeq.µ, T>> widen2(Higher<C2, ReactiveSeq<T>> flux) {
@@ -714,7 +726,7 @@ public interface Spouts {
         /**
          * Convert the HigherKindedType definition for a List into
          *
-         * @param List Type Constructor to convert back into narrowed type
+         * @param List Type Constructor toNested convert back into narrowed type
          * @return List from Higher Kinded Type
          */
         public static <T> ReactiveSeq<T> narrow(final Higher<ReactiveSeq.µ, T> completableList) {

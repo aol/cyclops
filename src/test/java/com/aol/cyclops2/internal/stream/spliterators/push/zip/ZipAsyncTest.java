@@ -3,14 +3,13 @@ package com.aol.cyclops2.internal.stream.spliterators.push.zip;
 import com.aol.cyclops2.internal.stream.spliterators.push.Fixtures;
 import com.aol.cyclops2.types.stream.reactive.AsyncSubscriber;
 import cyclops.async.Future;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Assert;
 import org.junit.Test;
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
@@ -77,7 +76,7 @@ public class ZipAsyncTest {
             System.out.println("*************Iteration " + i+"***********************");
             List<Tuple2<Integer, Integer>> list = flux(1, 2, 3, 4, 5, 6)
                     .zip(flux(100, 200, 300, 400).stream()).collect(Collectors.toList());
-                    //.toListX();
+                    //.listX();
 
             System.out.println(list);
 
@@ -105,7 +104,7 @@ public class ZipAsyncTest {
             System.out.println("*************Iteration " + i+"***********************");
             List<Tuple2<Integer, Integer>> list = flux(100, 200, 300, 400)
                     .zip(flux(1, 2, 3, 4, 5, 6).stream()).collect(Collectors.toList());
-            //.toListX();
+            //.listX();
 
             System.out.println(list);
 
@@ -197,7 +196,7 @@ public class ZipAsyncTest {
         /**
         Spouts.of(1,2,3,4,5)
                 .zipS(nextAsync())
-                .toListX()
+                .listX()
                 .printOut();
 **/
 
@@ -233,19 +232,19 @@ public class ZipAsyncTest {
        Spouts.of(1, 2, 3, 4, 5)
                // .peek(System.out::println)
                 .zipS(nextAsync())
-                .collectAll(Collectors.toList())
+                .collectStream(Collectors.toList())
                 .forEach(System.out::println);
 
        System.out.println(Spouts.of(1, 2, 3, 4, 5)
                                 .peek(System.out::println)
                                 .zipS(nextAsync())
-                                .collectAll(Collectors.toList())
+                                .collectStream(Collectors.toList())
                                 .single());
 
         System.out.println(Spouts.of(1, 2, 3, 4, 5)
                 .peek(System.out::println)
                 .zipS(nextAsync())
-                .collectAll(Collectors.toList())
+                .collectStream(Collectors.toList())
                 .findFirst().get());
 
 

@@ -1,7 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.filter;
 
 
-import cyclops.collections.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.reactivestreams.Publisher;
@@ -28,7 +27,7 @@ public class FilterSpliteratorTckPublisherTest extends PublisherVerification<Lon
 
 	@Override
 	public Publisher<Long> createFailedPublisher() {
-		return null; //not possible to subscribeAll to failed Stream
+		return null; //not possible toNested forEachAsync toNested failed Stream
 		
 	}
 

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.stream.Stream;
 
+import cyclops.async.adapters.Signal;
 import org.junit.Before;
 import org.junit.Test;
 

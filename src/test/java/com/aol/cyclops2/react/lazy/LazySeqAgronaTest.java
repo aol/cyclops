@@ -1,6 +1,5 @@
 package com.aol.cyclops2.react.lazy;
 
-import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -28,9 +27,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.async.LazyReact;
-import cyclops.async.Queue;
+import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
-import cyclops.async.Signal;
+import cyclops.async.adapters.Signal;
 import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.react.base.BaseSeqTest;
 
@@ -41,7 +40,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	public void testZipWithFutures(){
 		FutureStream stream = of("a","b");
 		FutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
-		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
+		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(CyclopsCollectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
 	
@@ -49,14 +48,14 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	public void testZipWithFuturesStream(){
 		Stream stream = of("a","b");
 		FutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
-		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
+		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(CyclopsCollectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
 	@Test
 	public void testZipWithFuturesCoreStream(){
 		Stream stream = Stream.of("a","b");
 		FutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
-		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
+		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(CyclopsCollectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
 	
@@ -65,7 +64,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	public void testZipFuturesWithIndex(){
 		
 		 FutureStream<Tuple2<String,Long>> seq = of("a","b").actOnFutures().zipWithIndex();
-		List<Tuple2<String,Long>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(Collectors.toList());
+		List<Tuple2<String,Long>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(CyclopsCollectors.toList());
 		assertThat(result.size(),is(asList(tuple("a",0l),tuple("b",1l)).size()));
 	}
 	@Test

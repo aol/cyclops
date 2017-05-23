@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
@@ -15,17 +14,16 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import cyclops.async.LazyReact;
-import cyclops.Streams;
-import cyclops.async.QueueFactory;
-import cyclops.collections.ListX;
+import cyclops.companion.Streams;
+import cyclops.async.adapters.QueueFactory;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;
 import com.aol.cyclops2.internal.react.async.future.PipelineBuilder;
 import com.aol.cyclops2.internal.react.exceptions.FilteredExecutionPathException;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops2.react.SimpleReactFailedStageException;
 import com.aol.cyclops2.react.async.subscription.Continueable;
-import com.nurkiewicz.asyncretry.RetryExecutor;
-import com.nurkiewicz.asyncretry.policy.AbortRetryException;
+
 
 public interface LazySimpleReactStream<U> extends BlockingStream<U>, ConfigurableStream<U, FastFuture<U>>, ToQueue<U>, BaseSimpleReactStream<U> {
 
@@ -35,8 +33,6 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     @Override
     LazySimpleReactStream<U> withTaskExecutor(Executor e);
 
-    @Override
-    LazySimpleReactStream<U> withRetrier(RetryExecutor retry);
 
     @Override
     LazySimpleReactStream<U> withQueueFactory(QueueFactory<U> queue);
@@ -59,10 +55,10 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     abstract LazyStreamWrapper<U> getLastActive();
 
     /* 
-     * React to new events with the supplied function on the supplied Executor
+     * React toNested new events with the supplied function on the supplied Executor
      * 
-     *	@param fn Apply to incoming events
-     *	@param service Service to execute function on 
+     *	@param fn Apply toNested incoming events
+     *	@param service Service toNested execute function on
      *	@return next stage in the Stream
      */
     @Override
@@ -72,10 +68,10 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     }
 
     /* 
-     * React to new events with the supplied function on the supplied Executor
+     * React toNested new events with the supplied function on the supplied Executor
      * 
-     *	@param fn Apply to incoming events
-     *	@param service Service to execute function on 
+     *	@param fn Apply toNested incoming events
+     *	@param service Service toNested execute function on
      *	@return next stage in the Stream
      */
     @Override
@@ -85,30 +81,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
         return this.withLastActive(getLastActive().operation((ft) -> ft.thenApply(LazySimpleReactStream.<U, R> handleExceptions(fn))));
     }
 
-    /**
-     * Will execute this phase on the RetryExecutor (default or user supplied).
-     * The RetryExecutor can be changed via withRetrier.
-     * 
-     * This stage will be retried according to the configured rules. See
-     * https://github.com/nurkiewicz/async-retry for detailed advice on how to
-     * conifugre
-     * 
-     * 
-     * @param fn
-     *            Function that will be executed and retried on failure
-     * @return Next Stage in the Strea,
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    default <R> LazySimpleReactStream<R> retry(final Function<? super U, ? extends R> fn) {
-        final Function<PipelineBuilder, PipelineBuilder> mapper = (
-                ft) -> ft.thenApplyAsync(res -> getRetrier().getWithRetry((Callable) () -> LazySimpleReactStream.<U, R> handleExceptions(fn)
-                                                                                                                .apply((U) res))
-                                                            .join(),
-                                         getTaskExecutor());
 
-        return this.withLastActive(getLastActive().operation(mapper));
-    }
 
     /**
      * React <b>transform</b>
@@ -127,14 +100,14 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     			}
     </pre>
      *
-     * React transform allows event reactors to be chained. Unlike React with, which
+     * React transform allows event reactors toNested be chained. Unlike React with, which
      * returns a collection of Future references, React transform is a fluent
-     * interface that returns the React builder - allowing further reactors to
-     * be added to the chain.
+     * interface that returns the React builder - allowing further reactors toNested
+     * be added toNested the chain.
      * 
      * React transform does not block.
      * 
-     * React with can be called after React transform which gives access to the full
+     * React with can be called after React transform which gives access toNested the full
      * CompleteableFuture api. CompleteableFutures can be passed back into
      * SimpleReact via SimpleReact.react(streamOfCompleteableFutures);
      * 
@@ -144,9 +117,9 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * l </a>
      * 
      * @param fn
-     *            Function to be applied to the results of the currently active
+     *            Function toNested be applied toNested the results of the currently active
      *            event tasks
-     * @return A new builder object that can be used to define the next stage in
+     * @return A new builder object that can be used toNested define the next stage in
      *         the dataflow
      */
     @Override
@@ -161,11 +134,11 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
 
     /**
      * Peek asynchronously at the results in the current stage. Current results
-     * are passed through to the next stage.
+     * are passed through toNested the next stage.
      * 
      * @param consumer
      *            That will recieve current results
-     * @return A new builder object that can be used to define the next stage in
+     * @return A new builder object that can be used toNested define the next stage in
      *         the dataflow
      */
     @Override
@@ -199,8 +172,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
                 return fn.apply(input);
             } catch (final Throwable t) {
 
-                if (t instanceof AbortRetryException) //special case for retry
-                    throw t;
+
                 throw new SimpleReactFailedStageException(
                                                           input, t);
 
@@ -222,7 +194,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * }
      * </pre>
      *
-     * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
+     * In this example the result of the flatMapCompletableFuture is 'flattened' toNested the raw integer values
      * 
      * 
      * @param flatFn flatMap function
@@ -249,7 +221,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     									.block(),equalTo(Arrays.asList(1,2,3)));
      * }
      *</pre>
-     * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
+     * In this example the result of the flatMapCompletableFuture is 'flattened' toNested the raw integer values
      * 
      * 
      * @param flatFn flatMap function
@@ -263,7 +235,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     }
 
     /**
-     * Allows aggregate values in a Stream to be flatten into a single Stream.
+     * Allows aggregate values in a Stream toNested be flatten into a single Stream.
      * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
      * into a single flattened reactiveStream
      * 
@@ -273,7 +245,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     @Override
     default <R> LazySimpleReactStream<R> flatMap(final Function<? super U, ? extends Stream<? extends R>> flatFn) {
 
-        //need to pass in a builder in the constructor and build using it
+        //need toNested pass in a builder in the constructor and build using it
         return (LazySimpleReactStream) getSimpleReact().construct(Stream.of())
                                                        .withSubscription(getSubscription())
                                                        .withQueueFactory((QueueFactory<Object>) getQueueFactory())
@@ -296,9 +268,9 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * dataflow
      * 
      * @param p
-     *            Predicate that will be used to filter elements from the
+     *            Predicate that will be used toNested filter elements from the
      *            dataflow
-     * @return A new builder object that can be used to define the next stage in
+     * @return A new builder object that can be used toNested define the next stage in
      *         the dataflow
      */
     @Override
@@ -324,9 +296,9 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * dataflow
      * 
      * @param p
-     *            Predicate that will be used to filter elements from the
+     *            Predicate that will be used toNested filter elements from the
      *            dataflow
-     * @return A new builder object that can be used to define the next stage in
+     * @return A new builder object that can be used toNested define the next stage in
      *         the dataflow
      */
     @Override
@@ -358,7 +330,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * React <b>onFail</b>
      * 
      * 
-     * Define a function that can be used to recover from exceptions during the
+     * Define a function that can be used toNested recover from exceptions during the
      * preceeding stage of the dataflow. e.g.
      * 
      * 
@@ -366,8 +338,8 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * onFail allows disaster recovery for each task (a separate onFail should
      * be configured for each react phase that can fail). E.g. if reading data
      * from an external service fails, but default value is acceptable - onFail
-     * is a suitable mechanism to set the default value. Asynchronously apply
-     * the function supplied to the currently active event tasks in the
+     * is a suitable mechanism toNested set the default value. Asynchronously apply
+     * the function supplied toNested the currently active event tasks in the
      * dataflow.
      * 
      * <pre>
@@ -391,12 +363,12 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * 
      * 
      * In this example onFail recovers from the RuntimeException thrown when the
-     * input to the first 'transform' stage is 100.
+     * input toNested the first 'transform' stage is 100.
      * 
      * @param fn
      *            Recovery function, the exception is input, and the recovery
      *            value is emitted
-     * @return A new builder object that can be used to define the next stage in
+     * @return A new builder object that can be used toNested define the next stage in
      *         the dataflow
      */
     @Override
@@ -407,7 +379,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
 
     /**
      * Recover for a particular class of exceptions only. Chain onFail methods from specific Exception classes
-     * to general, as Exceptions will be caught and handled in order. 
+     * toNested general, as Exceptions will be caught and handled in order.
      * e.g.
      * <pre>
      * {@code
@@ -428,7 +400,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * recoveryFunction1 will not be called
      * 
      * 
-     * @param exceptionClass Class of exceptions to recover from
+     * @param exceptionClass Class of exceptions toNested recover from
      * @param fn Recovery function
      * @return recovery value
      */
@@ -463,8 +435,8 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     /**
      * React <b>capture</b>
      * 
-     * While onFail is used for disaster recovery (when it is possible to
-     * recover) - capture is used to capture those occasions where the full
+     * While onFail is used for disaster recovery (when it is possible toNested
+     * recover) - capture is used toNested capture those occasions where the full
      * pipeline has failed and is unrecoverable.
      * 
      * <pre>
@@ -500,7 +472,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * @param errorHandler
      *            A consumer that recieves and deals with an unrecoverable error
      *            in the dataflow
-     * @return A new builder object that can be used to define the next stage in
+     * @return A new builder object that can be used toNested define the next stage in
      *         the dataflow
      */
     @Override

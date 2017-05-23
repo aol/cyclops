@@ -1,12 +1,14 @@
 package com.aol.cyclops2.control;
 
-import cyclops.*;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.async.Future;
+import cyclops.companion.*;
 import cyclops.control.*;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
@@ -60,7 +62,7 @@ public class FutureTest {
     public void sub(){
         Future<Integer> f = Future.future();
 
-        Spouts.from(f).subscribe(System.out::println);
+        Spouts.from(f).forEachSubscribe(System.out::println);
 
         f.complete(10);
     }
@@ -216,7 +218,7 @@ public class FutureTest {
     public void combine(){
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
         
-        assertThat(just.combineEager(add,Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
+        assertThat(just.combineEager(add, Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
         assertThat(just.combineEager(firstNonNull,none).get(),equalTo(just.get()));
          
@@ -248,7 +250,7 @@ public class FutureTest {
     }
     @Test
     public void testSequenceCF() {
-        CompletableFuture<ListX<Integer>> maybes =CompletableFutures.sequence(ListX.of(just.getFuture(),none.getFuture(), Future.ofResult(1).getFuture()));
+        CompletableFuture<ListX<Integer>> maybes = CompletableFutures.sequence(ListX.of(just.getFuture(),none.getFuture(), Future.ofResult(1).getFuture()));
         assertThat(maybes.isCompletedExceptionally(),equalTo(true));
  
     }
@@ -260,13 +262,13 @@ public class FutureTest {
     }
     @Test
     public void testAccumulateSuccess() {
-        Future<PSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofResult(1)),Reducers.toPSetX());
+        Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofResult(1)), Reducers.toPersistentSetX());
         
-        assertThat(maybes.get(),equalTo(PSetX.of(10,1)));
+        assertThat(maybes.get(),equalTo(PersistentSetX.of(10,1)));
     }
     @Test @Ignore
     public void testAccumulateJNonBlocking() {
-        Future<PSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofSupplier(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)), Future.ofResult(1)),Reducers.toPSetX());
+        Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofSupplier(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)), Future.ofResult(1)),Reducers.toPersistentSetX());
         System.out.println("not blocked");
        
     }
@@ -581,7 +583,7 @@ public class FutureTest {
 
     @Test
     public void testFoldRightMonoidOfT() {
-        assertThat(just.foldRight(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+        assertThat(just.foldRight(Monoid.of(1, Semigroups.intMult)),equalTo(10));
     }
 
     @Test

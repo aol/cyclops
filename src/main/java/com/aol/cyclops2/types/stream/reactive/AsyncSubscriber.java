@@ -1,8 +1,6 @@
 package com.aol.cyclops2.types.stream.reactive;
 
-import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
-import cyclops.async.AdaptersModule;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import lombok.AllArgsConstructor;
@@ -11,7 +9,6 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 
@@ -33,10 +30,10 @@ import java.util.concurrent.locks.LockSupport;
  *
  *          sub.reactiveStream()
  *             .peek(System.out::println)
- *             .collect(Collectors.toList());
+ *             .collect(CyclopsCollectors.toList());
  *
  *          //note JDK Stream based terminal operations may block the current thread
- *          //see ReactiveSeq#collectAll ReactiveSeq#foldAll for non-blocking alternatives
+ *          //see ReactiveSeq#collectStream ReactiveSeq#foldAll for non-blocking alternatives
  *    }
  * </pre>
  * 
@@ -87,10 +84,10 @@ public class AsyncSubscriber<T> implements Subscriber<T> {
      *
      *          sub.reactiveStream()
      *             .peek(System.out::println)
-     *             .collect(Collectors.toList());
+     *             .collect(CyclopsCollectors.toList());
      *
      *          //note JDK Stream based terminal operations may block the current thread
-     *          //see ReactiveSeq#collectAll ReactiveSeq#foldAll for non-blocking alternatives
+     *          //see ReactiveSeq#collectStream ReactiveSeq#foldAll for non-blocking alternatives
      *    }
      * </pre>
      *

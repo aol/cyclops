@@ -21,12 +21,10 @@ import java.util.stream.Collectors;
 
 import com.aol.cyclops2.react.ThreadPools;
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
 import org.junit.Test;
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.util.SimpleTimer;
-import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 import lombok.Value;
 public class BatchingTest {
 	@Test

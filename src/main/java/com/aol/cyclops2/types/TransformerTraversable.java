@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.monads.transformers.ListT;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.monads.Witness.stream;
 
 /**
@@ -19,10 +19,10 @@ public interface TransformerTraversable<T>{
 
     /**
      * Group the elements in this Traversable into batches of the provided size.
-     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly. 
+     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists toNested be manipulated directly.
      * The data will remain nested (as List's inside the current
-     * Traversable), but the ListTransformer will be able to operate aggregate operations across all nested Lists, each operation 
-     * on the List Transformer is applied, by the transformer to all Lists.
+     * Traversable), but the ListTransformer will be able toNested operate aggregate operations across all nested Lists, each operation
+     * on the List Transformer is applied, by the transformer toNested all Lists.
      * 
      * <pre>
      * {@code
@@ -41,7 +41,7 @@ public interface TransformerTraversable<T>{
       
        
      * 
-     * @param groupSize Size of each batch of elements to be grouped into Lists 
+     * @param groupSize Size of each batch of elements toNested be grouped into Lists
      * @return List Transformer view into batched / grouped data
      */
     default ListT<stream,T> groupedT(final int groupSize) {
@@ -50,10 +50,10 @@ public interface TransformerTraversable<T>{
 
     /**
      * Create a Sliding window into the data in this traversble.
-     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly. 
+     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists toNested be manipulated directly.
      * The data will remain nested (as List's inside the current
-     * Traversable), but the ListTransformer will be able to operate aggregate operations across all nested Lists, each operation 
-     * on the List Transformer is applied, by the transformer to all Lists.
+     * Traversable), but the ListTransformer will be able toNested operate aggregate operations across all nested Lists, each operation
+     * on the List Transformer is applied, by the transformer toNested all Lists.
      * 
      * <pre>
      * {@code 
@@ -75,10 +75,10 @@ public interface TransformerTraversable<T>{
 
     /**
      * Create a Sliding window into the data in this traversble.
-     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly. 
+     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists toNested be manipulated directly.
      * The data will remain nested (as List's inside the current
-     * Traversable), but the ListTransformer will be able to operate aggregate operations across all nested Lists, each operation 
-     * on the List Transformer is applied, by the transformer to all Lists. ( @see TransformerTraversable#grouped(int) )
+     * Traversable), but the ListTransformer will be able toNested operate aggregate operations across all nested Lists, each operation
+     * on the List Transformer is applied, by the transformer toNested all Lists. ( @see TransformerTraversable#grouped(int) )
      
        <pre>
        {@code 
@@ -100,10 +100,10 @@ public interface TransformerTraversable<T>{
     /**
      * Create a Traversable batched by List, where each batch is populated until
      * the predicate holds.
-     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly. 
+     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists toNested be manipulated directly.
      * The data will remain nested (as List's inside the current
-     * Traversable), but the ListTransformer will be able to operate aggregate operations across all nested Lists, each operation 
-     * on the List Transformer is applied, by the transformer to all Lists.
+     * Traversable), but the ListTransformer will be able toNested operate aggregate operations across all nested Lists, each operation
+     * on the List Transformer is applied, by the transformer toNested all Lists.
      * 
      * <pre>
      * {@code 
@@ -116,7 +116,7 @@ public interface TransformerTraversable<T>{
      * }
      * </pre>
      * 
-     * @param predicate Predicate to determine batch termination point
+     * @param predicate Predicate toNested determine batch termination point
      * @return List Transformer view into batched Traversable
      */
     default ListT<stream,T> groupedUntilT(final Predicate<? super T> predicate) {
@@ -127,13 +127,13 @@ public interface TransformerTraversable<T>{
      * List Transformer view into batched Lists where
      * each List is populated while the supplied bipredicate holds. The
      * bipredicate recieves the List from the last window as well as the
-     * current value and can choose to aggregate the current value or create a
+     * current value and can choose toNested aggregate the current value or create a
      * new window
      * 
     
      * 
      * 
-     * @param predicate Predicate to determine batch
+     * @param predicate Predicate toNested determine batch
      * @return List Transformer view into batched Traversable
      */
     default ListT<stream,T> groupedStatefullyUntilT(final BiPredicate<ListX<? super T>, ? super T> predicate) {
@@ -143,10 +143,10 @@ public interface TransformerTraversable<T>{
     /**
      * Create a Traversable batched by List, where each batch is populated while
      * the predicate holds.
-     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly. 
+     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists toNested be manipulated directly.
      * The data will remain nested (as List's inside the current
-     * Traversable), but the ListTransformer will be able to operate aggregate operations across all nested Lists, each operation 
-     * on the List Transformer is applied, by the transformer to all Lists. 
+     * Traversable), but the ListTransformer will be able toNested operate aggregate operations across all nested Lists, each operation
+     * on the List Transformer is applied, by the transformer toNested all Lists.
      * <pre>
      * {@code 
      *  ListTSeq<Integer> grouped = ReactiveSeq.of(1,2,3,4,5,6,7,8,9,5)
@@ -157,7 +157,7 @@ public interface TransformerTraversable<T>{
      *  
      * }
      * </pre>
-     * @param predicate Predicate to determine batch termination point
+     * @param predicate Predicate toNested determine batch termination point
      * @return List Transformer view into batched Traversable
      */
     default ListT<stream,T> groupedWhileT(final Predicate<? super T> predicate) {

@@ -1,7 +1,7 @@
 package cyclops.async.wait;
 
 /**
- * Repeatedly retry to take or offer element to Queue if full or data unavailable
+ * Repeatedly retry toNested take or offer element toNested Queue if full or data unavailable
  * 
  * @author johnmcclean
  *

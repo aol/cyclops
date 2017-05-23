@@ -1,8 +1,8 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
-import cyclops.Reducers;
-import cyclops.collections.immutable.PBagX;
+import cyclops.collections.immutable.BagX;
+import cyclops.companion.Reducers;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PBag;
@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * An extended List type {@see java.util.List}
@@ -40,7 +39,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> implements PBagX<T> {
+public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> implements BagX<T> {
 
 
     public LazyPBagX(PBag<T> list, ReactiveSeq<T> seq) {
@@ -64,27 +63,32 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
 
     }
     @Override
-    public PBagX<T> plusLoop(int max, IntFunction<T> value) {
-        return (PBagX<T>)super.plusLoop(max,value);
+    public BagX<T> plusLoop(int max, IntFunction<T> value) {
+        return (BagX<T>)super.plusLoop(max,value);
     }
 
     @Override
-    public PBagX<T> plusLoop(Supplier<Optional<T>> supplier) {
-        return (PBagX<T>)super.plusLoop(supplier);
+    public BagX<T> plusLoop(Supplier<Optional<T>> supplier) {
+        return (BagX<T>)super.plusLoop(supplier);
     }
     
     
     //@Override
-    public PBagX<T> materialize() {
+    public BagX<T> materialize() {
         get();
         return this;
     }
 
-  
+    public BagX<T> type(Reducer<? extends PBag<T>> reducer){
+        Reducer<PBag<T>> narrow = Reducer.narrow(reducer);
+        return new LazyPBagX<T>(list,seq.get(),narrow);
+    }
 
 
-  //  @Override
-    private <X> LazyPBagX<X> fromStream(Stream<X> stream) {
+
+
+    @Override
+    public <X> LazyPBagX<X> fromStream(ReactiveSeq<X> stream) {
 
         return new LazyPBagX<X>((PBag)getList(),ReactiveSeq.fromStream(stream));
     }
@@ -98,24 +102,24 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
 
 
     @Override
-    public PBagX<T> plus(T e) {
+    public BagX<T> plus(T e) {
         return from(get().plus(e));
     }
 
     @Override
-    public PBagX<T> plusAll(Collection<? extends T> list) {
+    public BagX<T> plusAll(Collection<? extends T> list) {
         return from(get().plusAll(list));
     }
 
 
     @Override
-    public PBagX<T> minusAll(Collection<?> list) {
+    public BagX<T> minusAll(Collection<?> list) {
         return from(get().minusAll(list));
     }
 
 
     @Override
-    public PBagX<T> minus(Object remove) {
+    public BagX<T> minus(Object remove) {
         return from(get().minus(remove));
     }
 

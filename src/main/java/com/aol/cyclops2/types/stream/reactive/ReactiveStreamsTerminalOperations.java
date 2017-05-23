@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import org.reactivestreams.Subscription;
 
 /**
- * Interface for reactive-streams based terminal operations, requires simple-react to be on the classpath.
+ * Interface for reactive-streams based terminal operations, requires simple-react toNested be on the classpath.
  *
  * 
  * @author johnmcclean
@@ -21,7 +21,7 @@ public interface ReactiveStreamsTerminalOperations<T> {
      * <pre>
      * {@code
      *     Subscription next = Spouts.of(1,2,3,4)
-     *          					    .subscribe(System.out::println);
+     *          					    .forEachSubscribe(System.out::println);
      *
      *     next.request(2);
      *     Thread.sleep(500);
@@ -46,7 +46,7 @@ public interface ReactiveStreamsTerminalOperations<T> {
      * @param consumer To accept incoming events from the Stream
      * @return Subscription so that further processing can be continued or cancelled.
      */
-   default <X extends Throwable> Subscription subscribe(Consumer<? super T> consumer){
+   default <X extends Throwable> Subscription forEachSubscribe(Consumer<? super T> consumer){
        return forEach(0,consumer);
    }
     /**
@@ -56,7 +56,7 @@ public interface ReactiveStreamsTerminalOperations<T> {
      * {@code
      *     Subscription next = ReactiveSeq.of(()->1,()->2,()->throw new RuntimeException(),()->4)
      *                                  .map(Supplier::get)
-     *          					    .subscribe(System.out::println, e->e.printStackTrace());
+     *          					    .forEachSubscribe(System.out::println, e->e.printStackTrace());
      *
      *      next.request(2);
      *     System.out.println("First batch processed!");
@@ -83,8 +83,8 @@ public interface ReactiveStreamsTerminalOperations<T> {
      * @param consumerError To accept incoming processing errors from the Stream
      * @return Subscription so that further processing can be continued or cancelled.
      */
-     default <X extends Throwable> Subscription subscribe(Consumer<? super T> consumer,
-                                               Consumer<? super Throwable> consumerError){
+     default <X extends Throwable> Subscription forEachSubscribe(Consumer<? super T> consumer,
+                                                                 Consumer<? super Throwable> consumerError){
          return forEach(0,consumer,consumerError);
      }
 
@@ -97,7 +97,7 @@ public interface ReactiveStreamsTerminalOperations<T> {
      * {@code
      *     Subscription next = ReactiveSeq.of(()->1,()->2,()->throw new RuntimeException(),()->4)
      *                                  .map(Supplier::get)
-     *          					    .subscribe(System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *          					    .forEachSubscribe(System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *
      *      next.request(2);
      *     System.out.println("First batch processed!");
@@ -124,8 +124,8 @@ public interface ReactiveStreamsTerminalOperations<T> {
      * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.
      */
-    default <X extends Throwable> Subscription subscribe(Consumer<? super T> consumer, Consumer<? super Throwable> consumerError,
-                                               Runnable onComplete){
+    default <X extends Throwable> Subscription forEachSubscribe(Consumer<? super T> consumer, Consumer<? super Throwable> consumerError,
+                                                                Runnable onComplete){
         return forEach(0,consumer,consumerError,onComplete);
     }
 

@@ -22,13 +22,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.stream.Streamable;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 
@@ -267,8 +266,8 @@ public class SequenceMTest {
 	@Test
 	public void streamable(){
 		Streamable<Integer> repeat = LazyReact.sequentialBuilder().of(1,2,3,4,5,6)
-												.map(i->i*2)
-												.toStreamable();
+												.map(i->i*2).to()
+												.streamable();
 		
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
@@ -277,8 +276,8 @@ public class SequenceMTest {
 	@Test
 	public void concurrentLazyStreamable(){
 		Streamable<Integer> repeat = LazyReact.sequentialBuilder().of(1,2,3,4,5,6)
-												.map(i->i*2)
-												.toConcurrentLazyStreamable();
+												.map(i->i*2).to()
+												.lazyStreamableSynchronized();
 		
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
@@ -291,8 +290,8 @@ public class SequenceMTest {
 	@Test
 	public void testLazy(){
 		CollectionX<Integer> col = LazyReact.sequentialBuilder().of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toLazyCollection();
+											.peek(System.out::println).to()
+											.lazyCollection();
 		
 		
 		assertThat(col.map(i->"hello"+i).toList().size(),equalTo(5));
@@ -303,8 +302,8 @@ public class SequenceMTest {
 	@Test
 	public void testLazyCollection(){
 		Collection<Integer> col = LazyReact.sequentialBuilder().of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toConcurrentLazyCollection();
+											.peek(System.out::println).to()
+											.lazyCollectionSynchronized();
 		System.out.println("first!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));

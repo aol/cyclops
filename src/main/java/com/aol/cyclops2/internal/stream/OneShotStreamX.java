@@ -1,19 +1,15 @@
 package com.aol.cyclops2.internal.stream;
 
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
-import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
-import cyclops.Streams;
-import cyclops.collections.ListX;
+import cyclops.companion.Streams;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import lombok.val;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
 import java.util.*;
-import java.util.concurrent.ForkJoinPool;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -107,7 +103,7 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
     public final Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return new Tuple2(
-                Tuple2.v1.toOptional()
+                Tuple2.v1.to().optional()
                         .flatMap(l -> l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty()),
                 Tuple2.v2);
     }

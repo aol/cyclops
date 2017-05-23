@@ -14,20 +14,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import cyclops.async.QueueFactories;
-import cyclops.async.Topic;
-import cyclops.collections.ListX;
-import cyclops.monads.Witness;
-import cyclops.stream.Spouts;
-import lombok.val;
+import cyclops.async.adapters.Topic;
+import cyclops.collections.mutable.ListX;
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matcher;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -68,7 +63,7 @@ public  class CoreReactiveSeqTest {
     public void subscribeErrorOnComplete(){
         List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of(1,2,3).subscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
 
         assertThat(onComplete.get(),equalTo(false));
         s.request(1l);
@@ -86,7 +81,7 @@ public  class CoreReactiveSeqTest {
 
 	@Test
     public void publishToAndMerge(){
-	    cyclops.async.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+	    cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                                             .build();
 
         Thread t=  new Thread( ()-> {
@@ -641,7 +636,7 @@ public  class CoreReactiveSeqTest {
     
     @Test
     public void testIterable() {
-        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
         for (Integer i :of(1, 2, 3)) {
             assertThat(list,hasItem(i));

@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.Streams;
+import cyclops.companion.Streams;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -291,8 +291,8 @@ public class SequenceMTest {
 	@Test
 	public void testLazy(){
 		Collection<Integer> col = Streamable.of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toLazyCollection();
+											.peek(System.out::println).to()
+											.lazyCollection();
 		System.out.println("first!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
@@ -300,8 +300,8 @@ public class SequenceMTest {
 	@Test
 	public void testLazyCollection(){
 		Collection<Integer> col = Streamable.of(1,2,3,4,5)
-											.peek(System.out::println)
-											.toConcurrentLazyCollection();
+											.peek(System.out::println).to()
+											.lazyCollectionSynchronized();
 		System.out.println("first!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));

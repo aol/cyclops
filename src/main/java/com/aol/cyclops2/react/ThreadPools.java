@@ -21,12 +21,11 @@ public class ThreadPools {
     private static final Executor commonLazyExecutor = new ForkJoinPool(
                                                                         1);
 
-    @Getter
-    private static final ScheduledExecutorService commonFreeThreadRetry = Executors.newScheduledThreadPool(1);
 
     @Getter
-    private static final ScheduledExecutorService commonStanardRetry = Executors.newScheduledThreadPool(Runtime.getRuntime()
-                                                                                                               .availableProcessors());
+    private static final ScheduledExecutorService commonSchedular = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
+    @Getter
+    private static final ScheduledExecutorService commonSequentialSchedular = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
     public static enum ExecutionMode {
         CURRENT,
@@ -38,7 +37,7 @@ public class ThreadPools {
 
     /**
      * @return Standard Parallel Executor, uses the ForkJoin Common Pool is @see {@link ThreadPools#isUseCommon()} is true
-     *         Otherwise a new Executor sized to the number of threads is used.
+     *         Otherwise a new Executor sized toNested the number of threads is used.
      */
     public static Executor getStandard() {
         if (useCommon)
@@ -56,20 +55,23 @@ public class ThreadPools {
                                     1);
     }
 
-    public static ScheduledExecutorService getSequentialRetry() {
+
+
+    public static ScheduledExecutorService getSequentialSchedular() {
         if (useCommon)
-            return commonFreeThreadRetry;
+            return commonSequentialSchedular;
         else
             return Executors.newScheduledThreadPool(1);
     }
 
-    public static ScheduledExecutorService getStandardRetry() {
+    public static ScheduledExecutorService getStandardSchedular() {
         if (useCommon)
-            return commonStanardRetry;
+            return commonSchedular;
         else
             return Executors.newScheduledThreadPool(Runtime.getRuntime()
-                                                           .availableProcessors());
+                    .availableProcessors());
     }
+
 
     public static Executor getLazyExecutor() {
         if (useCommon)

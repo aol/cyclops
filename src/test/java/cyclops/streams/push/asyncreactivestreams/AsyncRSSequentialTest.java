@@ -1,8 +1,8 @@
 package cyclops.streams.push.asyncreactivestreams;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
-import cyclops.async.Topic;
-import cyclops.collections.ListX;
+import cyclops.async.adapters.Topic;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -16,7 +16,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -130,7 +129,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
 
     @Test
     public void testCycleAsync() {
-      //  of(1, 2).collectAll(CyclopsCollectors.toListX())
+      //  of(1, 2).collectStream(CyclopsCollectors.listX())
         //        .flatMapI(i->i.cycle(3)).printOut();
 
        // of(1, 2).cycle().limit(6).forEach(n->System.out.println("Next " + n));
@@ -265,11 +264,11 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Test
     public void skipLimitDuplicateLimitSkip() {
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup = of(1, 2, 3).triplicate();
-        Optional<Integer> head1 = dup.v1.limit(1).toOptional().flatMap(l -> {
+        Optional<Integer> head1 = dup.v1.limit(1).to().optional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup2 = dup.v2.skip(1).triplicate();
-        Optional<Integer> head2 = dup2.v1.limit(1).toOptional().flatMap(l -> {
+        Optional<Integer> head2 = dup2.v1.limit(1).to().optional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
        assertThat(dup2.v2.skip(1).toListX(),equalTo(ListX.of(3)));
@@ -280,8 +279,8 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
 
     @Test
     public void splitThenSplit(){
-        assertThat(of(1,2,3).toOptional(),equalTo(Optional.of(ListX.of(1,2,3))));
-       // System.out.println(of(1, 2, 3).splitAtHead().v2.toListX());
+        assertThat(of(1,2,3).to().optional(),equalTo(Optional.of(ListX.of(1,2,3))));
+       // System.out.println(of(1, 2, 3).splitAtHead().v2.listX());
         System.out.println("split " + of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toListX());
         assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
     }
@@ -310,7 +309,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Test
     public void subscribe() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i));
         s.request(1l);
         sleep(10);
         assertThat(result.size(), Matchers.equalTo(1));
@@ -326,7 +325,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Test
     public void subscribe3() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i));
         s.request(3l);
         sleep(10);
         assertThat(result.size(), Matchers.equalTo(3));
@@ -335,7 +334,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Test
     public void subscribeErrorEmpty() throws InterruptedException {
         List result = new ArrayList<>();
-        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace());
+        Subscription s= of().forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(1l);
         sleep(10);
         assertThat(result.size(), Matchers.equalTo(0));
@@ -350,7 +349,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Test
     public void subscribeError() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(1l);
         sleep(10);
         assertThat(result.size(), Matchers.equalTo(1));
@@ -365,7 +364,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Test
     public void subscribe3Error() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace());
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(3l);
         sleep(10);
         assertThat(result.size(), Matchers.equalTo(3));
@@ -375,7 +374,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     public void subscribeErrorEmptyOnComplete() throws InterruptedException {
         List result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of().subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of().forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
         s.request(1l);
         sleep(10);
         assertThat(onComplete.get(), Matchers.equalTo(true));
@@ -392,7 +391,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     public void subscribeErrorOnComplete() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
 
         assertThat(onComplete.get(), Matchers.equalTo(false));
         s.request(1l);
@@ -415,7 +414,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     public void subscribe3ErrorOnComplete() throws InterruptedException {
         List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
-        Subscription s= of(1,2,3).subscribe(i->result.add(i),e->e.printStackTrace(),()->onComplete.set(true));
+        Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
         assertThat(onComplete.get(), Matchers.equalTo(false));
         s.request(4l);
         sleep(10);

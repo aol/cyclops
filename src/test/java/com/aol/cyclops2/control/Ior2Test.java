@@ -1,12 +1,17 @@
 package com.aol.cyclops2.control;
 
-import cyclops.*;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.immutable.PSetX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.async.Future;
+import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
 import cyclops.control.*;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -53,7 +58,7 @@ public class Ior2Test {
 
 	@Test
     public void testZip(){
-        assertThat(Ior.primary(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Ior.primary(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
         assertThat(Ior.primary(10).zipP(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
         assertThat(Ior.primary(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
         assertThat(Ior.primary(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
@@ -125,8 +130,8 @@ public class Ior2Test {
 
 	@Test
     public void testAccumulateSecondary() {
-        Ior<?,PSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPSetX());
-        assertThat(iors,equalTo(Ior.primary(PSetX.of("none"))));
+        Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)), Reducers.<String>toPersistentSetX());
+        assertThat(iors,equalTo(Ior.primary(PersistentSetX.of("none"))));
     }
 
 	@Test
@@ -147,8 +152,8 @@ public class Ior2Test {
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Ior<?,PSetX<Integer>> maybes =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPSetX());
-		assertThat(maybes,equalTo(Ior.primary(PSetX.of(10,1))));
+		Ior<?,PersistentSetX<Integer>> maybes =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPersistentSetX());
+		assertThat(maybes,equalTo(Ior.primary(PersistentSetX.of(10,1))));
 	}
 
 	@Test
@@ -451,7 +456,7 @@ public class Ior2Test {
 
 	@Test
 	public void testFoldRightMonoidOfT() {
-		assertThat(just.foldRight(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+		assertThat(just.foldRight(Monoid.of(1, Semigroups.intMult)),equalTo(10));
 	}
 
 	@Test

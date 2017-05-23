@@ -1,7 +1,7 @@
 package cyclops.streams.push.asyncreactivestreams;
 
 import com.aol.cyclops2.util.SimpleTimer;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import lombok.Value;
@@ -11,7 +11,6 @@ import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;

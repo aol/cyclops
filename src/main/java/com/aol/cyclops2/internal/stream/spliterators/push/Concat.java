@@ -1,6 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 import org.reactivestreams.Subscription;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -90,7 +90,7 @@ public class Concat<IN> {
         return wip.decrementAndGet()!=0;
     }
 
-    //transfer demand from previous to next
+    //transfer demand from previous toNested next
     public void addMissingRequests(){
 
 
@@ -184,13 +184,9 @@ public class Concat<IN> {
             }
         }
 
-
         index++; //next index
         int localIndex = index;
         subscribeNext(); //next subscription
-
-
-
 
 
     }

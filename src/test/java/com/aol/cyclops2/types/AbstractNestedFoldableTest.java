@@ -31,10 +31,10 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 
-import cyclops.Reducers;
+import cyclops.companion.Reducers;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.ListX;
+import cyclops.collections.mutable.ListX;
 
 public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Rule
@@ -150,7 +150,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     
     @Test
     public void foldRightMapToType() {
-        assertThat(of(1,2,3,4).foldRightMapToType(Reducers.toPStackX()).single().size(),
+        assertThat(of(1,2,3,4).foldRightMapToType(Reducers.toLinkedListX()).single().size(),
                 equalTo(4));
     }
     
@@ -275,7 +275,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Test
     public void testToLazyCollection() {
         Collection<Integer> col = of(1,2,3,4,5)
-                                  .toLazyCollection()
+                                    .toNested(s->s.lazyCollection())
                                   .single();
         System.out.println("first!");
         col.forEach(System.out::println);
@@ -284,8 +284,8 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void testToConcurrentLazyCollection() {
-        Collection<Integer> col = of(1,2,3,4,5)
-                                    .toConcurrentLazyCollection()
+        Collection<Integer> col = of(1,2,3,4,5).toNested(s->s.lazyCollectionSynchronized())
+
                                     .single();
         System.out.println("first!");
         col.forEach(System.out::println);
@@ -295,7 +295,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Test
     public void testToConcurrentLazyStreamable() {
         StreamableT<Integer> repeat = of(1,2,3,4,5,6)
-                                        .toConcurrentLazyStreamable();
+                                        .lazyStreamableSynchronized();
 
         assertThat(repeat.reactiveSeq().toList(),hasItems(1,2,3,4,5,6));
         assertThat(repeat.reactiveSeq().toList(),hasItems(1,2,3,4,5,6));

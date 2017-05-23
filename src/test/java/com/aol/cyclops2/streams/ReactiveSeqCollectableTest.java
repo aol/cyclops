@@ -9,7 +9,7 @@ public class ReactiveSeqCollectableTest extends CollectableTest {
 
     @Override
     public <T> Collectable<T> of(T... values) {
-       return ReactiveSeq.of(values).collectable();
+       return ReactiveSeq.of(values).collectors();
     }
 
 }

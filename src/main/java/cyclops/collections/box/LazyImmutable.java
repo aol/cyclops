@@ -19,8 +19,8 @@ import java.util.function.Supplier;
  * A class that represents an 'immutable' value that is generated inside a lambda
  * expression, but is accessible outside it
  * 
- * It will only allow it's value to be set once. Unfortunately the compiler won't be
- * able to tell if setOnce is called more than once
+ * It will only allow it's value toNested be set once. Unfortunately the compiler won't be
+ * able toNested tell if setOnce is called more than once
  * 
  * example usage
  * 
@@ -85,7 +85,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     }
 
     /**
-     * Map the value stored in this Immutable Closed Value from one Value to another
+     * Map the value stored in this Immutable Closed Value from one Value toNested another
      * If this is an unitiatilised ImmutableClosedValue, an uninitialised closed value will be returned instead
      * 
      * @param fn Mapper function
@@ -103,7 +103,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
 
 
     /**
-     * FlatMap the value stored in Immutable Closed Value from one Value to another
+     * FlatMap the value stored in Immutable Closed Value from one Value toNested another
      *  If this is an unitiatilised ImmutableClosedValue, an uninitialised closed value will be returned instead
      * 
      * @param fn  Flat Mapper function
@@ -123,7 +123,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
      * Set the value of this ImmutableClosedValue
      * If it has already been set will throw an exception
      * 
-     * @param val Value to set to
+     * @param val Value toNested set toNested
      * @return Current set Value
      */
     public LazyImmutable<T> setOnce(final T val) {
@@ -143,7 +143,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     /**
      * Get the current value or set if it has not been set yet
      * 
-     * @param lazy Supplier to generate new value
+     * @param lazy Supplier toNested generate new value
      * @return Current value
      */
     public T computeIfAbsent(final Supplier<T> lazy) {
@@ -174,7 +174,6 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Value#reactiveStream()
      */
-    @Override
     public ReactiveSeq<T> stream() {
         return ReactiveSeq.generate(this)
                           .limit(1);

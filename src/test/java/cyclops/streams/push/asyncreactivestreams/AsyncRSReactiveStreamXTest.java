@@ -1,8 +1,7 @@
 package cyclops.streams.push.asyncreactivestreams;
 
-import cyclops.Streams;
-import cyclops.async.LazyReact;
-import cyclops.collections.ListX;
+import cyclops.companion.Streams;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
@@ -17,8 +16,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -381,7 +378,7 @@ public  class AsyncRSReactiveStreamXTest {
     
     @Test
     public void testIterable() {
-        List<Integer> list = of(1, 2, 3).toCollection(LinkedList::new);
+        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
         for (Integer i :of(1, 2, 3)) {
             assertThat(list,hasItem(i));

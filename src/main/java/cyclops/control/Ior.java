@@ -4,8 +4,8 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.stream.reactive.ValueSubscriber;
-import cyclops.Streams;
-import cyclops.collections.ListX;
+import cyclops.companion.Streams;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -87,16 +87,16 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      * Construct an Ior that contains a single value extracted from the supplied reactive-streams Publisher
 
      * <pre>
-     * {@code 
+     * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
-        
+
         Ior<Throwable,Integer> future = Ior.fromPublisher(reactiveStream);
-        
+
         //Ior[1]
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param pub Publisher to extract value from
      * @return Ior populated from Publisher
      */
@@ -110,13 +110,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     /**
      * Construct an Ior that contains a single value extracted from the supplied Iterable
      * <pre>
-     * {@code 
+     * {@code
      *   List<Integer> list =  Arrays.asList(1,2,3);
-        
+
         Ior<Throwable,Integer> future = Ior.fromPublisher(list);
-        
+
         //Ior[1]
-     * 
+     *
      * }
      * </pre>
      * @param iterable Iterable to extract value from
@@ -130,17 +130,17 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     /**
      * Create an instance of the primary type. Most methods are biased to the primary type,
      * which means, for example, that the map method operates on the primary type but does nothing on secondary Iors
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   Ior.<Integer,Integer>primary(10).map(i->i+1);
      * //Ior.primary[11]
-     *    
-     *   
+     *
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param value To construct an Ior from
      * @return Primary type instanceof Ior
      */
@@ -151,18 +151,18 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     /**
      * Create an instance of the secondary type. Most methods are biased to the primary type,
      * so you will need to use swap() or secondaryXXXX to manipulate the wrapped value
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   Ior.<Integer,Integer>secondary(10).map(i->i+1);
      *   //Ior.secondary[10]
-     *    
+     *
      *    Ior.<Integer,Integer>secondary(10).swap().map(i->i+1);
      *    //Ior.primary[11]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param value to wrap
      * @return Secondary instance of Ior
      */
@@ -171,18 +171,18 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
                                secondary);
     }
 
-    
+
 
     /**
      * Create an Ior instance that contains both secondary and primary types
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *    Ior<String,Ingeger> kv = Ior.both("hello",90);
      *    //Ior["hello",90]
      * }
      * </pre>
-     * 
+     *
      * @param secondary Secondary value
      * @param primary Primary value
      * @return Ior that contains both the secondary and the primary value
@@ -267,7 +267,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
             Fn3<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
             Fn4<? super PT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
             Fn4<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (Ior<ST,R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
@@ -278,7 +278,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     default <T2, R1, R2, R> Ior<ST,R> forEach3(Function<? super PT, ? extends MonadicValue<R1>> value1,
             BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
             Fn3<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-      
+
         return (Ior<ST,R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
 
@@ -314,7 +314,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
         return (Ior<ST,R>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
     }
 
-    
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#flatMapI(java.util.function.Function)
@@ -383,7 +383,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     /**
      * If this Ior contains the Secondary type only, map it's value so that it contains the Primary type only
      * If this Ior contains both types, this method has no effect in the default implementations
-     * 
+     *
      * @param fn Function to map secondary type to primary
      * @return Ior with secondary type mapped to primary
      */
@@ -391,7 +391,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
     /**
      * Always map the Secondary type of this Ior if it is present using the provided transformation function
-     * 
+     *
      * @param fn Transformation function for Secondary types
      * @return Ior with Secondary type transformed
      */
@@ -405,7 +405,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
     /**
      * Peek at the Secondary type value if present
-     * 
+     *
      * @param action Consumer to peek at the Secondary type value
      * @return Ior with the same values as before
      */
@@ -448,7 +448,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     }
 
     /**
-     * @return An empty Optional if this Ior only has either the Secondary or Primary type. Or an Optional containing a Tuple2
+     * @return An empty Optional if this Ior only has lazy the Secondary or Primary type. Or an Optional containing a Tuple2
      * with both the Secondary and Primary types if they are both present.
      */
     Optional<Tuple2<ST, PT>> both();
@@ -480,31 +480,31 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
         return Both.both(stMap.get(), ptMap.get());
     }
 
-   
+
     /**
      * Visitor pattern for this Ior.
      * Execute the secondary function if this Ior contains an element of the secondary type only
      * Execute the primary function if this Ior contains an element of the primary type only
      * Execute the both function if this Ior contains an element of both type
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Ior.primary(10)
      *     .visit(secondary->"no", primary->"yes",(sec,pri)->"oops!")
      *  //Ior["yes"]
-        
+
         Ior.secondary(90)
            .visit(secondary->"no", primary->"yes",(sec,pri)->"oops!")
         //Ior["no"]
-         
+
         Ior.both(10, "eek")
            .visit(secondary->"no", primary->"yes",(sec,pri)->"oops!")
         //Ior["oops!"]
-     * 
-     * 
+     *
+     *
      * }
      * </pre>
-     * 
+     *
      * @param secondary Function to execute if this is a Secondary Ior
      * @param primary Function to execute if this is a Primary Ior
      * @param both Function to execute if this Ior contains both types
@@ -562,11 +562,11 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      */
     @Override
     public < RT1> Ior<ST, RT1> flatMap(final Function<? super PT, ? extends MonadicValue< ? extends RT1>> mapper);
- 
+
 
     /**
      * Perform a flatMap operation on the Secondary type
-     * 
+     *
      * @param mapper Flattening transformation function
      * @return Ior containing the value inside the result of the transformation function as the Secondary value, if the Secondary type was present
      */
@@ -574,7 +574,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
     /**
      * A flatMap operation that keeps the Secondary and Primary types the same
-     * 
+     *
      * @param fn Transformation function
      * @return Ior
      */
@@ -598,37 +598,47 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     /**
      *  Turn a collection of Iors into a single Ior with Lists of values.
      *  Primary and secondary types are swapped during this operation.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
      *  Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceSecondary(ListX.of(just,none,Ior.primary(1)));
         //Ior.primary(ListX.of("none")))
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param iors Iors to sequence
      * @return Ior sequenced and swapped
      */
     public static <ST, PT> Ior<ListX<PT>, ListX<ST>> sequenceSecondary(final CollectionX<? extends Ior<ST, PT>> iors) {
         return AnyM.sequence(iors.stream().filterNot(Ior::isPrimary).map(i->AnyM.fromIor(i.swap())).toListX(),Witness.ior.INSTANCE)
                    .to(Witness::ior);
-   
+
     }
 
     /**
      * Accumulate the result of the Secondary types in the Collection of Iors provided using the supplied Reducer  {@see cyclops2.Reducers}.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPSetX());
+=======
         
-     *  Ior<?,PSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPSetX());
-      //Ior.primary(PSetX.of("none"))));
+     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPersistentSetX());
+>>>>>>> master
+=======
+        
+     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPersistentSetX());
+>>>>>>> master
+      //Ior.primary(PersistentSetX.of("none"))));
       * }
      * </pre>
      * @param iors Collection of Iors to accumulate secondary values
@@ -643,20 +653,20 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      * Accumulate the results only from those Iors which have a Secondary type present, using the supplied mapping function to
      * convert the data from each Ior before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
-        
+
      *  Ior<?,String> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.secondary("1")),i->""+i,Monoids.stringConcat);
         //Ior.primary("none1")
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
-     *  
+     *
+     *
+     *
      * @param iors Collection of Iors to accumulate secondary values
      * @param mapper Mapping function to be applied to the result of each Ior
      * @param reducer Semigroup to combine values from each Ior
@@ -671,21 +681,21 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     /**
      *  Accumulate the results only from those Iors which have a Secondary type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * 
+     *
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
-        
+
      * Ior<?,Integer> iors = Ior.accumulateSecondary(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)));
        //Ior.primary(3);  2+1
-     * 
-     * 
+     *
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param iors Collection of Iors to accumulate secondary values
      * @param reducer  Semigroup to combine values from each Ior
      * @return populated with the accumulate Secondary operation
@@ -696,21 +706,21 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
     /**
      *  Turn a collection of Iors into a single Ior with Lists of values.
-     *  
+     *
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      * Ior<String,Integer> just  = Ior.primary(10);
        Ior<String,Integer> none = Ior.secondary("none");
-        
-        
+
+
      * Ior<ListX<String>,ListX<Integer>> iors =Ior.sequencePrimary(ListX.of(just,none,Ior.primary(1)));
        //Ior.primary(ListX.of(10,1)));
-     * 
+     *
      * }</pre>
      *
-     * 
-     * 
+     *
+     *
      * @param iors Iors to sequence
      * @return Ior Sequenced
      */
@@ -723,12 +733,22 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      * Accumulate the result of the Primary types in the Collection of Iors provided using the supplied Reducer  {@see cyclops2.Reducers}.
 
      * <pre>
-     * {@code 
+     * {@code
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
+<<<<<<< HEAD
+<<<<<<< HEAD
+     *
+     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPSetX());
+=======
      * 
-     *  Ior<?,PSetX<Integer>> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPSetX());
-        //Ior.primary(PSetX.of(10,1))));
+     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPersistentSetX());
+>>>>>>> master
+=======
+     * 
+     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPersistentSetX());
+>>>>>>> master
+        //Ior.primary(PersistentSetX.of(10,1))));
      * }
      * </pre>
      * @param iors Collection of Iors to accumulate primary values
@@ -743,18 +763,18 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
      * Accumulate the results only from those Iors which have a Primary type present, using the supplied mapping function to
      * convert the data from each Ior before reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Semigroups }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
-        
+
      * Ior<?,String> iors = Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),i->""+i,Semigroups.stringConcat);
        //Ior.primary("101"));
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param iors Collection of Iors to accumulate primary values
      * @param mapper Mapping function to be applied to the result of each Ior
      * @param reducer Reducer to accumulate results
@@ -770,20 +790,20 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
     /**
      *  Accumulate the results only from those Iors which have a Primary type present, using the supplied  Semgigroup (a combining BiFunction/BinaryOperator that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Semigroups }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
-     *  
+     *
      *  Ior<?,Integer> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Semigroups.intSum);
         //Ior.primary(11);
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * @param iors Collection of Iors to accumulate primary values
      * @param reducer  Reducer to accumulate results
      * @return  Ior populated with the accumulate primary operation
@@ -804,7 +824,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiFuncto
 
     @Override
     default  Ior<ST,PT> zip(BinaryOperator<Zippable<PT>> combiner, Zippable<PT> app) {
-       
+
         return (Ior<ST,PT>)MonadicValue.super.zip(combiner, app);
     }
     /* (non-Javadoc)

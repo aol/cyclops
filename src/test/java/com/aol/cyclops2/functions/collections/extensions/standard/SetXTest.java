@@ -13,7 +13,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.SetX;
+import cyclops.collections.mutable.SetX;
 import com.aol.cyclops2.functions.collections.extensions.AbstractCollectionXTest;
 
 public class SetXTest extends AbstractCollectionXTest {

@@ -24,7 +24,7 @@ public class FilterRangeLongTckPublisherTest extends PublisherVerification<Long>
 
 	@Override
 	public Publisher<Long> createFailedPublisher() {
-		return null; //not possible to subscribeAll to failed Stream
+		return null; //not possible toNested forEachAsync toNested failed Stream
 		
 	}
 
