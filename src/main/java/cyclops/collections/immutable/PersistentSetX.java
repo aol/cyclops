@@ -1,8 +1,10 @@
 package cyclops.collections.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPSetX;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
@@ -12,6 +14,9 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.persistentSetX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.collections.mutable.ListX;
@@ -264,7 +269,10 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
         
         return (PersistentSetX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
-    
+
+    default AnyMSeq<persistentSetX,T> anyM(){
+        return AnyM.fromPersistentSetX(this);
+    }
     @Override
     default PersistentSetX<T> take(final long num) {
         return limit(num);
@@ -1039,5 +1047,9 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
     @Override
     default PersistentSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
         return (PersistentSetX<T>)LazyCollectionX.super.plusLoop(supplier);
+    }
+
+    static <T> PersistentSetX<T> fromIterator(Iterator<T> iterator) {
+        return fromIterable(()->iterator);
     }
 }

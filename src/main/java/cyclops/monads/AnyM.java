@@ -1,14 +1,6 @@
 package cyclops.monads;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.OptionalDouble;
-import java.util.OptionalInt;
-import java.util.OptionalLong;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -27,6 +19,8 @@ import java.util.stream.StreamSupport;
 
 import com.aol.cyclops2.internal.adapters.StreamAdapter;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
+import cyclops.collections.immutable.*;
+import cyclops.collections.mutable.*;
 import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.control.lazy.*;
@@ -35,7 +29,6 @@ import cyclops.monads.function.AnyMFn2;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
-import cyclops.collections.mutable.SetX;
 import com.aol.cyclops2.types.*;
 import cyclops.async.Future;
 import cyclops.function.*;
@@ -49,7 +42,6 @@ import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.monads.AnyMSeqImpl;
 import com.aol.cyclops2.internal.monads.AnyMValueImpl;
 
@@ -506,10 +498,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Create an AnyM from a List
      * 
-     * This AnyM will convert the List toNested a Stream under the covers, but will rematerialize the Stream as List
-     * if wrap() is called
-     * 
-     * 
+     *
      * @param list toNested wrap inside an AnyM
      * @return AnyM wrapping a list
      */
@@ -526,11 +515,6 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
     /**
      * Create an AnyM from a Set
-     * 
-     * This AnyM will convert the Set toNested a Stream under the covers, but will rematerialize the Stream as Set
-     * if wrap() is called
-     * 
-     * 
      * @param set toNested wrap inside an AnyM
      * @return AnyM wrapping a Set
      */
@@ -539,9 +523,45 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         final Set<T> toUse = (set instanceof CollectionX)? set : SetX.fromIterable(set);
         return AnyMFactory.instance.seq(SetX.fromIterable(set), Witness.set.INSTANCE);
     }
-
-
-
+    public static <T> AnyMSeq<queue,T> fromQueue(final Queue<T> queue) {
+        Objects.requireNonNull(queue);
+        final Queue<T> toUse = (queue instanceof CollectionX)? queue : QueueX.fromIterable(queue);
+        return AnyMFactory.instance.seq(QueueX.fromIterable(queue), Witness.queue.INSTANCE);
+    }
+    public static <T> AnyMSeq<deque,T> fromDeque(final Deque<T> deque) {
+        Objects.requireNonNull(deque);
+        final Deque<T> toUse = (deque instanceof CollectionX)? deque : DequeX.fromIterable(deque);
+        return AnyMFactory.instance.seq(DequeX.fromIterable(deque), Witness.deque.INSTANCE);
+    }
+    public static <T> AnyMSeq<sortedSet,T> fromSortedSet(final SortedSet<T> set) {
+        Objects.requireNonNull(set);
+        final SortedSet<T> toUse = (set instanceof CollectionX)? set : SortedSetX.fromIterable(set);
+        return AnyMFactory.instance.seq(SortedSetX.fromIterable(set), Witness.set.INSTANCE);
+    }
+    public static <T> AnyMSeq<linkedListX,T> fromLinkedListX(final LinkedListX<T> list) {
+        Objects.requireNonNull(list);
+        return AnyMFactory.instance.seq(list, Witness.linkedListX.INSTANCE);
+    }
+    public static <T> AnyMSeq<vectorX,T> fromVectorX(final VectorX<T> list) {
+        Objects.requireNonNull(list);
+        return AnyMFactory.instance.seq(list, Witness.vectorX.INSTANCE);
+    }
+    public static <T> AnyMSeq<persistentSetX,T> fromPersistentSetX(final PersistentSetX<T> set) {
+        Objects.requireNonNull(set);
+        return AnyMFactory.instance.seq(set, Witness.persistentSetX.INSTANCE);
+    }
+    public static <T> AnyMSeq<persistentQueueX,T> fromPersistentQueueX(final PersistentQueueX<T> set) {
+        Objects.requireNonNull(set);
+        return AnyMFactory.instance.seq(set, Witness.persistentQueueX.INSTANCE);
+    }
+    public static <T> AnyMSeq<orderedSetX,T> fromOrderedSetX(final OrderedSetX<T> set) {
+        Objects.requireNonNull(set);
+        return AnyMFactory.instance.seq(set, Witness.orderedSetX.INSTANCE);
+    }
+    public static <T> AnyMSeq<bagX,T> fromBagX(final BagX<T> set) {
+        Objects.requireNonNull(set);
+        return AnyMFactory.instance.seq(set, Witness.bagX.INSTANCE);
+    }
     /**
      * Create an AnyM wrapping a Stream of the supplied data
      * 

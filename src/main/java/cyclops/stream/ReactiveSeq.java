@@ -1555,7 +1555,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
-        return (MapX<K, ListX<T>>)this.collect(Collectors.groupingBy(classifier, (Supplier)MapX::empty, ListX.<T>defaultCollector()));
+        return (MapX<K, ListX<T>>)this.collect(Collectors.groupingBy(classifier, (Supplier)MapX::empty, ListX.<T>listXCollector()));
     }
 
     /*

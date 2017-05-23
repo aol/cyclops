@@ -1,9 +1,11 @@
 package cyclops.collections.immutable;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.types.OnEmptySwitch;
 import com.aol.cyclops2.types.To;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import cyclops.companion.Reducers;
@@ -13,6 +15,9 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.bagX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
@@ -215,6 +220,10 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
                                      BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         
         return (BagX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
+    }
+
+    default AnyMSeq<bagX,T> anyM(){
+        return AnyM.fromBagX(this);
     }
     
     @Override
@@ -1068,4 +1077,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
 
+    static <T> BagX<T> fromIterator(Iterator<T> iterator) {
+        return fromIterable(()->iterator);
+    }
 }

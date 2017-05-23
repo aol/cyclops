@@ -5,12 +5,16 @@ import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.companion.Streams;
 import cyclops.function.Monoid;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.queue;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import com.aol.cyclops2.types.OnEmptySwitch;
@@ -212,6 +216,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         return new LazyQueueX<T>(null,
                 stream,
                 defaultCollector());
+    }
+    default AnyMSeq<queue,T> anyM(){
+        return AnyM.fromQueue(this);
     }
 
     QueueX<T> type(Collector<T, ?, Queue<T>> collector);

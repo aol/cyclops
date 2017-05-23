@@ -6,11 +6,15 @@ import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.vectorX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.monads.transformers.ListT;
@@ -44,7 +48,7 @@ import java.util.stream.Stream;
 public interface VectorX<T> extends To<VectorX<T>>,
                                      PVector<T>,
                                      IndexedSequenceX<T>,
-        LazyCollectionX<T>,
+                                     LazyCollectionX<T>,
                                      OnEmptySwitch<T, 
                                      PVector<T>>,
                                      Comparable<T>,
@@ -300,7 +304,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
 
-
+    default AnyMSeq<vectorX,T> anyM(){
+        return AnyM.fromVectorX(this);
+    }
 
     /**
      * Reduce (immutable Collection) a Stream toNested a PVector

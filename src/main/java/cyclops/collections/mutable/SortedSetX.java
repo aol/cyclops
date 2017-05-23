@@ -1,11 +1,15 @@
 package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySortedSetX;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.function.Monoid;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.sortedSet;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import com.aol.cyclops2.types.OnEmptySwitch;
@@ -215,7 +219,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
     
     SortedSetX<T> type(Collector<T, ?, SortedSet<T>> collector);
-
+    default AnyMSeq<sortedSet,T> anyM(){
+        return AnyM.fromSortedSet(this);
+    }
     /**
      * coflatMap pattern, can be used toNested perform lazy reductions / collections / folds and other terminal operations
      * 

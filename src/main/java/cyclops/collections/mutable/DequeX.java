@@ -3,6 +3,7 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 
@@ -11,6 +12,9 @@ import cyclops.collections.immutable.BagX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.function.Monoid;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.deque;
 import cyclops.stream.ReactiveSeq;
 import cyclops.companion.Streams;
 import cyclops.control.Trampoline;
@@ -309,7 +313,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
     default DequeX<T> materialize() {
         return (DequeX<T>)LazyCollectionX.super.materialize();
     }
-
+    default AnyMSeq<deque,T> anyM(){
+        return AnyM.fromDeque(this);
+    }
     DequeX<T> type(Collector<T, ?, Deque<T>> collector);
 
     /* (non-Javadoc)

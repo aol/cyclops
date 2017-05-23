@@ -1,14 +1,19 @@
 package cyclops.collections.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.persistentQueueX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.collections.mutable.ListX;
@@ -42,6 +47,10 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                                     OnEmptySwitch<T, PQueue<T>>,
                                     Higher<PersistentQueueX.µ,T>{
 
+
+    static <T> PersistentQueueX<T> fromIterator(Iterator<T> iterator) {
+        return fromIterable(()->iterator);
+    }
 
     public static class µ {
     }
@@ -259,7 +268,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
        return fn.andThen(r ->  this.<R>unit(r))
                 .apply(this);
     }
-
+    default AnyMSeq<persistentQueueX,T> anyM(){
+        return AnyM.fromPersistentQueueX(this);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
      */

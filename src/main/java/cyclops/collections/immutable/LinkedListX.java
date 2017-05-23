@@ -4,10 +4,14 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.linkedListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.monads.transformers.ListT;
@@ -323,6 +327,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                        .mapReduce(stream);
     }
 
+    default AnyMSeq<linkedListX,T> anyM(){
+        return AnyM.fromLinkedListX(this);
+    }
     @Override
     default LinkedListX<T> materialize() {
         return (LinkedListX<T>)LazyCollectionX.super.materialize();

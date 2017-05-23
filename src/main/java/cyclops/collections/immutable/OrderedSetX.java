@@ -1,7 +1,9 @@
 package cyclops.collections.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPOrderedSetX;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ConvertableSequence.Conversion;
 
@@ -10,6 +12,9 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.orderedSetX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.collections.mutable.ListX;
@@ -315,6 +320,9 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     default OrderedSetX<T> drop(final long num) {
 
         return skip(num);
+    }
+    default AnyMSeq<orderedSetX,T> anyM(){
+        return AnyM.fromOrderedSetX(this);
     }
 
 
@@ -1049,6 +1057,9 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     @Override
     default OrderedSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
         return (OrderedSetX<T>)LazyCollectionX.super.plusLoop(supplier);
+    }
+    static <T> OrderedSetX<T> fromIterator(Iterator<T> iterator) {
+        return fromIterable(()->iterator);
     }
 
 

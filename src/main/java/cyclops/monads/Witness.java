@@ -9,8 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.internal.adapters.*;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.immutable.VectorX;
+import cyclops.collections.immutable.*;
 import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.control.Ior;
@@ -58,10 +57,22 @@ public interface Witness {
     public static <T> Streamable<T> streamable(AnyM<streamable,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> VectorX<T> pvector(AnyM<pvector,? extends T> anyM){
+    public static <T> VectorX<T> vectorX(AnyM<vectorX,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> LinkedListX<T> pstack(AnyM<pstack,? extends T> anyM){
+    public static <T> PersistentQueueX<T> persistentQueueX(AnyM<persistentSetX,? extends T> anyM){
+        return anyM.unwrap();
+    }
+    public static <T> PersistentSetX<T> persistentSetX(AnyM<persistentSetX,? extends T> anyM){
+        return anyM.unwrap();
+    }
+    public static <T> OrderedSetX<T> orderedSetX(AnyM<orderedSetX,? extends T> anyM){
+        return anyM.unwrap();
+    }
+    public static <T> BagX<T> bagX(AnyM<bagX,? extends T> anyM){
+        return anyM.unwrap();
+    }
+    public static <T> LinkedListX<T> linkedListX(AnyM<linkedListX,? extends T> anyM){
         return anyM.unwrap();
     }
     public static <T> ListX<T> list(AnyM<list,? extends T> anyM){
@@ -188,25 +199,65 @@ public interface Witness {
         }
         
     }
-    public static enum pstack implements CollectionXWitness<pstack>{
+    public static enum linkedListX implements CollectionXWitness<linkedListX>{
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<pstack> adapter() {
-            return new CollectionXAdapter<Witness.pstack>(LinkedListX::empty,
+        public  FunctionalAdapter<linkedListX> adapter() {
+            return new CollectionXAdapter<linkedListX>(LinkedListX::empty,
                     LinkedListX::of, LinkedListX::fromIterator,this);
         }
         
     }
-    public static enum pvector implements CollectionXWitness<pvector>{
+    public static enum vectorX implements CollectionXWitness<vectorX>{
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<pvector> adapter() {
-            return new CollectionXAdapter<Witness.pvector>(VectorX::empty,
+        public  FunctionalAdapter<vectorX> adapter() {
+            return new CollectionXAdapter<vectorX>(VectorX::empty,
                     VectorX::of, VectorX::fromIterator,this);
         }
         
+    }
+    public static enum persistentQueueX implements CollectionXWitness<persistentQueueX>{
+        INSTANCE;
+
+        @Override
+        public  FunctionalAdapter<persistentQueueX> adapter() {
+            return new CollectionXAdapter<persistentQueueX>(PersistentQueueX::empty,
+                    PersistentQueueX::of, PersistentQueueX::fromIterator,this);
+        }
+
+    }
+    public static enum persistentSetX implements CollectionXWitness<persistentSetX>{
+        INSTANCE;
+
+        @Override
+        public  FunctionalAdapter<persistentSetX> adapter() {
+            return new CollectionXAdapter<persistentSetX>(PersistentSetX::empty,
+                    PersistentSetX::of, PersistentSetX::fromIterator,this);
+        }
+
+    }
+    public static enum orderedSetX implements CollectionXWitness<orderedSetX>{
+        INSTANCE;
+
+        @Override
+        public  FunctionalAdapter<orderedSetX> adapter() {
+            return new CollectionXAdapter<orderedSetX>(OrderedSetX::empty,
+                    OrderedSetX::of, OrderedSetX::fromIterator,this);
+        }
+
+    }
+    public static enum bagX implements CollectionXWitness<bagX>{
+        INSTANCE;
+
+        @Override
+        public  FunctionalAdapter<bagX> adapter() {
+            return new CollectionXAdapter<bagX>(BagX::empty,
+                    BagX::of, BagX::fromIterator,this);
+        }
+
     }
     public static enum deque implements CollectionXWitness<deque>{
         INSTANCE;
