@@ -26,8 +26,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.isOneOf;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.*;
 
 /**
@@ -38,12 +40,19 @@ public class SpoutsTest {
     @Test
     public void combineLatest(){
        for(int i=0;i<10_000;i++) {
-           assertThat(Spouts.of(100, 200, 300)
-                            .zipLatest(nextAsyncRS(), (a, b) -> Tuple.tuple(a, b))
+
+           assertThat("Iteration " + i,Spouts.of(100, 200, 300)
+                            .zipLatest(nextAsyncRS(), (a, b) -> b)
                            .toList(),
-                   equalTo(ListX.of(Tuple.tuple(100, 1), Tuple.tuple(200, 2))));
+                   hasItems(1,2));
+           assertThat("Iteration " + i,Spouts.of(100, 200, 300)
+                           .zipLatest(nextAsyncRS(), (a, b) -> a)
+                           .toList(),
+                   hasItems(300));
        }
    }
+
+
 
 
     @Test

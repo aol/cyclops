@@ -466,7 +466,7 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 		CompletableFuture<Integer> cf = just.toCompletableFuture();
 		assertThat(cf.join(),equalTo(10));
 	}
-	
+
 	Executor exec = Executors.newFixedThreadPool(1);
 
 	@Test

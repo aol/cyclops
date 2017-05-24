@@ -155,9 +155,8 @@ public  class LFSNoOrderTest {
     }
     @Test
     public void testReverseListLimit() {
-    	
-        assertThat( new LazyReact().fromIterable(Arrays.asList(10,400,2,-1)).reverse().limit(2)
-        				.toList(), equalTo(asList(-1, 2)));
+        assertThat(LazyReact.sequentialBuilder().fromIterable(Arrays.asList(10, 400, 2, -1)).reverse().limit(2)
+                    .toList(), equalTo(asList(-1, 2)));
     }
     @Test
     public void testReverseRange() {
