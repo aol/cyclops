@@ -649,11 +649,7 @@ public class FutureTest {
         assertThat(cf.join(),equalTo(10));
     }
 
-    @Test
-    public void testToCompletableFutureAsync() {
-        CompletableFuture<Integer> cf = just.toCompletableFutureAsync();
-        assertThat(cf.join(),equalTo(10));
-    }
+
     Executor exec = Executors.newFixedThreadPool(1);
 
     @Test

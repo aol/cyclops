@@ -523,11 +523,7 @@ public class Ior2Test {
 		assertThat(cf.join(),equalTo(10));
 	}
 
-	@Test
-	public void testToCompletableFutureAsync() {
-		CompletableFuture<Integer> cf = just.toCompletableFutureAsync();
-		assertThat(cf.join(),equalTo(10));
-	}
+
 	static Executor exec = Executors.newFixedThreadPool(1);
 
 	@Test

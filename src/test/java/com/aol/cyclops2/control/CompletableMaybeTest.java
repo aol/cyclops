@@ -675,11 +675,7 @@ public class CompletableMaybeTest implements Printable {
         assertThat(cf.join(), equalTo(10));
     }
 
-    @Test
-    public void testToCompletableFutureAsync() {
-        CompletableFuture<Integer> cf = just.toCompletableFutureAsync();
-        assertThat(cf.join(), equalTo(10));
-    }
+
 
     static Executor exec = Executors.newFixedThreadPool(1);
 

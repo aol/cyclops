@@ -62,10 +62,7 @@ public class ConvertableTest {
 	public void toCompletableFuture(){
 		assertThat(Convertable.fromSupplier(()->10).toCompletableFuture().join(),equalTo(10));
 	}
-	@Test
-	public void toCompletableFutureAsync(){
-		assertThat(Convertable.fromSupplier(()->10).toCompletableFutureAsync().join(),equalTo(10));
-	}
+
 	@Test
 	public void toCompletableFutureAsyncEx(){
 		assertThat(Convertable.fromSupplier(()->10).toCompletableFutureAsync(Executors.newSingleThreadExecutor()).join(),equalTo(10));
