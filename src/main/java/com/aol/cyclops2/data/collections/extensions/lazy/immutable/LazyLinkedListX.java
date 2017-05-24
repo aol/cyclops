@@ -71,7 +71,6 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
         if(!i.hasNext())
             return ConsPStack.empty();
         E e = i.next();
-        System.out.println(e);
         return  from(i,depth++).plus(e);
     }
     public PStack<T> materializeList(ReactiveSeq<T> toUse){
