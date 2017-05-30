@@ -20,6 +20,11 @@ This is the 2.x branch for 1.x click the link below
 * [User Guide](https://github.com/aol/cyclops-react/wiki) Primarily tailored for 1.x still.
 * [javadoc](http://www.javadoc.io/doc/com.aol.simplereact/cyclops-react/)
 
+## Latest Articles
+
+* [DSLs with the Free Monad in Java 8 : Part I](https://medium.com/@johnmcclean/dsls-with-the-free-monad-in-java-8-part-i-701408e874f8)
+* [Cross Library Stream Benchmarking : Playing Scrabble with Shakespeare](https://medium.com/@johnmcclean/cross-library-stream-benchmarking-playing-scrabble-with-shakespeare-8dd1d1654717)
+
 ## Gradle
 
 where x.y.z represents the latest version
