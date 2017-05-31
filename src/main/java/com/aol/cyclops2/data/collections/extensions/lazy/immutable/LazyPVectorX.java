@@ -40,24 +40,10 @@ import java.util.function.Supplier;
 public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<T>> implements VectorX<T> {
 
 
-    public LazyPVectorX(PVector<T> list, ReactiveSeq<T> seq) {
-        super(list, seq, Reducers.toPVector());
-
-
-    }
     public LazyPVectorX(PVector<T> list, ReactiveSeq<T> seq, Reducer<PVector<T>> reducer) {
         super(list, seq, reducer);
     }
-    public LazyPVectorX(PVector<T> list) {
-        super(list, null, Reducers.toPVector());
 
-    }
-
-    public LazyPVectorX(ReactiveSeq<T> seq) {
-        super(null, seq, Reducers.toPVector());
-
-
-    }
 
     
     
@@ -76,13 +62,13 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
     //  @Override
     public <X> LazyPVectorX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPVectorX<X>((PVector)getList(),ReactiveSeq.fromStream(stream));
+        return new LazyPVectorX<X>((PVector)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal());
     }
 
     @Override
     public <T1> LazyPVectorX<T1> from(Collection<T1> c) {
         if(c instanceof PVector)
-            return new LazyPVectorX<T1>((PVector)c,null);
+            return new LazyPVectorX<T1>((PVector)c,null,(Reducer)this.getCollectorInternal());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 

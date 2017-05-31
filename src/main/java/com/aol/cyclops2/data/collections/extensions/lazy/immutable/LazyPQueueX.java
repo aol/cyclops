@@ -42,28 +42,10 @@ import java.util.function.Supplier;
 public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>> implements PersistentQueueX<T> {
 
 
-    public LazyPQueueX(PQueue<T> list, ReactiveSeq<T> seq) {
-        super(list, seq, Reducers.toPQueue());
-        
-
-    }
     public LazyPQueueX(PQueue<T> list, ReactiveSeq<T> seq, Reducer<PQueue<T>> reducer) {
         super(list, seq, reducer);
-
-
-    }
-    public LazyPQueueX(PQueue<T> list) {
-        super(list, null, Reducers.toPQueue());
-        
     }
 
-    public LazyPQueueX(ReactiveSeq<T> seq) {
-        super(null, seq, Reducers.toPQueue());
-       
-
-    }
-
-    
     
     //@Override
     public PersistentQueueX<T> materialize() {
@@ -80,13 +62,13 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
     //  @Override
     public <X> LazyPQueueX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPQueueX<X>((PQueue)getList(),ReactiveSeq.fromStream(stream));
+        return new LazyPQueueX<X>((PQueue)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal());
     }
 
     @Override
     public <T1> LazyPQueueX<T1> from(Collection<T1> c) {
         if(c instanceof PQueue)
-            return new LazyPQueueX<T1>((PQueue)c,null);
+            return new LazyPQueueX<T1>((PQueue)c,null,(Reducer)this.getCollectorInternal());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 

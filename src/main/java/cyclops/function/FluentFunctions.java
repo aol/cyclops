@@ -556,7 +556,7 @@ public class FluentFunctions {
          * @param action Before advice
          * @return Function with Before advice attached
          */
-        public FluentFunction<T, R> before(final Consumer<T> action) {
+        public FluentFunction<T, R> before(final Consumer<? super T> action) {
             return withFn(t -> {
                 action.accept(t);
                 return fn.apply(t);
@@ -569,7 +569,7 @@ public class FluentFunctions {
          * @param action After advice
          * @return  Function with After advice attached
          */
-        public FluentFunction<T, R> after(final BiConsumer<T, R> action) {
+        public FluentFunction<T, R> after(final BiConsumer<? super T,? super R> action) {
             return withFn(t -> {
 
                 final R result = fn.apply(t);

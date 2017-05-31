@@ -28,6 +28,7 @@ import cyclops.async.adapters.Queue;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.MapX;
 import cyclops.collections.immutable.VectorX;
+import cyclops.control.Generator;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 
@@ -3388,6 +3389,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return Spouts.from(publisher);
     }
 
+    public static <T> ReactiveSeq<T> generate(Generator<T> gen){
+        return gen.stream();
+    }
     /**
      * Construct a ReactiveSeq from an Iterable
      *

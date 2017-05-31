@@ -1,5 +1,6 @@
 package cyclops.stream;
 
+import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
 import cyclops.companion.Monoids;
@@ -25,6 +26,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion.LAZY;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.greaterThan;
@@ -37,6 +39,14 @@ import static org.junit.Assert.*;
  */
 public class SpoutsTest {
 
+    @Test
+    public void asyncStream(){
+        assertThat(ListX.of(1,2,3),equalTo(Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1)).toListX()));
+    }
+    @Test
+    public void asyncStreamAsync(){
+        assertThat(ListX.of(1,2,3),equalTo(Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1)).to().listX(LAZY)));
+    }
     @Test
     public void combineLatest(){
        for(int i=0;i<10_000;i++) {

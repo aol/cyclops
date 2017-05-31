@@ -42,29 +42,12 @@ import java.util.function.Supplier;
 public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrderedSet<T>> implements OrderedSetX<T> {
 
 
-    public LazyPOrderedSetX(POrderedSet<T> list, ReactiveSeq<T> seq) {
-        super(list, seq, Reducers.toPOrderedSet());
-        
-
-    }
     public LazyPOrderedSetX(POrderedSet<T> list, ReactiveSeq<T> seq, Reducer<POrderedSet<T>> reducer) {
         super(list, seq, reducer);
 
 
     }
-    public LazyPOrderedSetX(POrderedSet<T> list) {
-        super(list, null, Reducers.toPOrderedSet());
-        
-    }
 
-    public LazyPOrderedSetX(ReactiveSeq<T> seq) {
-        super(null, seq, Reducers.toPOrderedSet());
-       
-
-    }
-
-    
-    
     //@Override
     public OrderedSetX<T> materialize() {
         get();
@@ -80,13 +63,13 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
     //  @Override
     public <X> LazyPOrderedSetX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPOrderedSetX<X>((POrderedSet)getList(),ReactiveSeq.fromStream(stream));
+        return new LazyPOrderedSetX<X>((POrderedSet)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal());
     }
 
     @Override
     public <T1> LazyPOrderedSetX<T1> from(Collection<T1> c) {
         if(c instanceof POrderedSet)
-            return new LazyPOrderedSetX<T1>((POrderedSet)c,null);
+            return new LazyPOrderedSetX<T1>((POrderedSet)c,null,(Reducer)this.getCollectorInternal());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 
