@@ -1,5 +1,6 @@
 package cyclops.control;
 
+import cyclops.function.BooleanFn0;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.mixins.Printable;
@@ -17,7 +18,42 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * Sequence generator, for simple and complex sequences
+ *
+ * <pre>
+ *     {@code
+ *      import static cyclops.control.Generator.*;
+ *     int i = 100;
+        ReactiveSeq.generate(suspend(infinitely(),s->s.yield(i++)))
+                   .take(6)
+                    .printOut();
 
+}
+100
+101
+102
+103
+104
+105
+106
+ {@code
+     ReactiveSeq.generate(suspend((Integer i)->i!=4, s-> {
+
+
+                    Generator<Integer> gen1 = suspend(times(5),s2->s2.yield(i++));
+                    Generator<Integer> gen2 = suspend(times(2),s2->s2.yield(k--));
+
+                    return s.yieldAll(gen1.stream(),gen2.stream());
+                                                            }
+                    ))
+                .take(12)
+                .printOut();
+ }
+ * </pre>
+ *
+ * @param <T>
+ */
 public class Generator<T> implements Iterable<T>, ToStream<T> {
     private final Suspended suspended;
     private final Maybe<T> value;
@@ -328,94 +364,29 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
         };
     }
 
-    public static ComposableBooleanSupplier infinitely(){
+    public static BooleanFn0 infinitely(){
         return ()->true;
     }
-    public static ComposableBooleanSupplier times(int times){
+    public static BooleanFn0 times(int times){
         int[] num = {0};
         return ()->++num[0]<times-1;
     }
-    public static ComposableBooleanSupplier once(){
+    public static BooleanFn0 once(){
         return times(1);
     }
 
-    static interface ContSupplier<T> extends Fn0<Generator<T>>
+    public static interface ContSupplier<T> extends Fn0<Generator<T>>
     {
 
     }
-    static interface ContFunction<T> extends Fn1<Suspended<T>,Generator<T>>
+    public static interface ContFunction<T> extends Fn1<Suspended<T>,Generator<T>>
     {
 
     }
 
-    static interface ComposableBooleanSupplier extends BooleanSupplier{
-
-        default ComposableBooleanSupplier before(Runnable r){
-            return ()->{
-                r.run();
-                return getAsBoolean();
-            };
-        }
-        default ComposableBooleanSupplier after(Runnable r){
-            return ()->{
-
-                boolean res = getAsBoolean();
-                r.run();
-                return res;
-            };
-        }
-
-    }
-
-
-
-    public static void main(String[] args){
 
 
 
 
 
-/**
-         ReactiveSeq.<Integer>fromIterable(suspend(new ContFunction<Integer>() {
-                    int runningTotal =0;
-
-                   @Override
-                   public Generator<Integer> apply(Suspended<Integer> s) {
-                       System.out.println("Top level - should see this only once!");
-                       return s.yield(1,
-                               () -> {
-                                    runningTotal = runningTotal +5;
-                                    return s.yield(runningTotal+2);
-                               },
-                               () -> s.yield(runningTotal+3),
-                               () -> s.yieldAndStop(runningTotal+6));
-
-                   }
-               }
-
-        )).take(6)
-                .printOut();
-**/
-        /**
-        ReactiveSeq.fromIterable(suspend(()-> yield(1,__ -> true)
-        )).take(4)
-                .printOut();
-         **/
-
-        /**
-        ReactiveSeq.fromIterable(suspend(()->
-                yieldSequence(1,
-                        () -> yield(2),
-                        () -> yield(3),
-                        () -> yield(4),
-                        () -> yield(5))
-        ))
-                .printOut();**/
-
-
-
-   /**     ReactiveSeq.fromIterable(suspend(()->yieldAndStop(i)))
-                .printOut();
-**/
-    }
 }

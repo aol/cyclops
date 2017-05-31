@@ -12,6 +12,7 @@ import cyclops.control.*;
 
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
+import cyclops.function.FluentFunctions.Advice1;
 import cyclops.monads.function.AnyMFn1;
 
 import cyclops.monads.transformers.FutureT;
@@ -64,6 +65,7 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
     default Fn1<T1, R> after(final BiConsumer<? super T1,? super R> action) {
         return FluentFunctions.of(this).after(action);
     }
+
     default Fn1<T1,Maybe<R>> lift(){
        return (T1)-> Maybe.fromLazy(Eval.later(()-> Maybe.ofNullable(apply(T1))));
     }
