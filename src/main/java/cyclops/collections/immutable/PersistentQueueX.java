@@ -180,12 +180,12 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
     public static <T> PersistentQueueX<T> of(final T... values) {
-        return new LazyPQueueX<>(ReactiveSeq.of(values));
+        return new LazyPQueueX<>(null,ReactiveSeq.of(values),Reducers.toPQueue());
     }
 
     public static <T> PersistentQueueX<T> empty() {
         return new LazyPQueueX<>(
-                                 AmortizedPQueue.empty());
+                                 AmortizedPQueue.empty(),null,Reducers.toPQueue());
     }
 
     public static <T> PersistentQueueX<T> singleton(final T value) {
@@ -221,7 +221,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * @return
      */
     public static <T> PersistentQueueX<T> persistentQueueX(ReactiveSeq<T> stream) {
-        return new LazyPQueueX<>(stream);
+        return new LazyPQueueX<>(null,stream,Reducers.toPQueue());
     }
 
     public static <T> PersistentQueueX<T> fromIterable(final Iterable<T> iterable) {
@@ -229,7 +229,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
             return (PersistentQueueX) iterable;
         if (iterable instanceof PQueue)
             return new LazyPQueueX<>(
-                                     (PQueue) iterable);
+                                     (PQueue) iterable,null,Reducers.toPQueue());
 
 
         return new LazyPQueueX<>(null,

@@ -197,7 +197,7 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
 
                 };
             }else{
-                System.out.println("End!");
+
                 local = nullValue();
             }
         }
@@ -215,13 +215,16 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
             }
         }
         private ContSupplier<T> nullValue(){
-
+            if(parent==null)
+                return null;
             return parent.local;
         }
 
         public Generator<T> yieldAndStop(T value){
-
-            return new Generator<T>(this,value,nullValue() );
+            Suspended<T> stopped = new Suspended<>();
+            stopped.value=value;
+            stopped.local = local;
+            return new Generator<T>(stopped,value,null );
         }
 
         public Suspended<T> copy() {
@@ -246,12 +249,11 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
 
         suspended.local=()->value.apply(suspended);
         suspended.parent.local = ()->value.apply(suspended);
-       // suspended.parent = parent;
         Generator<T> res = new Generator<T>(suspended,suspended.local);
         ContSupplier<T> current = suspended.local;
         suspended.parent.local = ()->{
 
-            System.out.println("Finished?");
+
             if(pred.getAsBoolean()){
                 return current.get();
             }
@@ -365,83 +367,14 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
 
     }
 
-    public static Integer next(){
-        return i++;
-    }
-    static int i = 100;
-    static int x = 100;
-    public static void main(String[] args){
-        /**
-        Generator<Integer> generator = suspendRef(times(10),Generator::next);
-        generator.stream().forEach(System.out::println);
-        generator.to()
-                 .linkedListX()
-                 .map(i->i+2);
-**/
-/**
-       ReactiveSeq.fromIterable(suspendRef(times(10),Generator::next))
-                .take(3)
-                .printOut();
 
-   **/    /**
-        ReactiveSeq.fromIterable(suspend(times(10),s->s.yield(i++)))
-                .peek(i-> {
-                    ReactiveSeq.fromIterable(suspend(s-> {
-                                System.out.println("Top level - should see this only once!");
-                                return s.yield(1,
-                                        () -> s.yield(2),
-                                        () -> s.yield(3),
-                                        () -> s.yield(4));
-                            }
-                    )).take(6)
-                            .printOut();
-                        }
-                )
-                       .take(3)
-                       .printOut();
-        **/
-/**
-        ReactiveSeq.fromIterable(suspendRef(times(10),Generator::next))
-                   .take(3)
-                   .printOut();
-        **/
-/**
-          ReactiveSeq.fromIterable(suspendLoop(()->i<20 ? yield(i++) : yieldAndStop(i)))
-                     .printOut();
-**/
-/**
-        ReactiveSeq.fromIterable(suspend(s-> {
-                    System.out.println("Top level - should see this only once!");
-                    return s.yieldRef(1,
-                                      Generator::next,
-                                      Generator::next,
-                                      Generator::next,
-                                      Generator::next);
-                }
-        )).take(6)
-                .printOut();
-**/
-/**
-        ReactiveSeq.fromIterable(suspend((Integer i)->i!=4,s-> {
-            System.out.println("Top level - repeat 2 times after sequence!");
-            return s.yield(1,
-                    () -> s.yield(2),
-                    () -> s.yield(3),
-                    () -> s.yield(4));
-                }
-        )).take(12)
-                .printOut();**/
-        ReactiveSeq.generate(suspend((Integer i)->i==4,s-> {
-                    System.out.println("Top level - repeat 2 times after sequence!");
-                    return s.yield(1,
-                            () -> s.yield(s.maybe()
-                                            .map(o->o+5)
-                                            .orElse(10)),
-                            () -> s.yield(3),
-                            () -> s.yield(4));
-                }
-        )).take(120)
-                .printOut();
+
+    public static void main(String[] args){
+
+
+
+
+
 /**
          ReactiveSeq.<Integer>fromIterable(suspend(new ContFunction<Integer>() {
                     int runningTotal =0;
