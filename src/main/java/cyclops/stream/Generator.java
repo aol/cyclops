@@ -1,14 +1,12 @@
-package cyclops.control;
+package cyclops.stream;
 
+import cyclops.control.Ior;
+import cyclops.control.Maybe;
 import cyclops.function.BooleanFn0;
-import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
-import com.aol.cyclops2.types.mixins.Printable;
 import com.aol.cyclops2.types.stream.ToStream;
-import com.sun.tools.javah.Gen;
 import cyclops.function.Fn0;
 import cyclops.function.Fn1;
-import cyclops.stream.ReactiveSeq;
 import lombok.experimental.Wither;
 
 import java.util.Arrays;
@@ -16,14 +14,13 @@ import java.util.Iterator;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * Sequence generator, for simple and complex sequences
  *
  * <pre>
  *     {@code
- *      import static cyclops.control.Generator.*;
+ *      import static cyclops.stream.Generator.*;
  *     int i = 100;
         ReactiveSeq.generate(suspend(infinitely(),s->s.yield(i++)))
                    .take(6)
@@ -58,21 +55,21 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
     private final Suspended suspended;
     private final Maybe<T> value;
     @Wither
-    private final ContSupplier<T> remainderOfWorkToBeDone;
+    private final GeneratorSupplier<T> remainderOfWorkToBeDone;
 
 
-    public Generator(Suspended suspended, Maybe<T> value, ContSupplier<T> remainderOfWorkToBeDone){
+    public Generator(Suspended suspended, Maybe<T> value, GeneratorSupplier<T> remainderOfWorkToBeDone){
         this.value = value;
         this.suspended=suspended;
         this.remainderOfWorkToBeDone = remainderOfWorkToBeDone;
     }
-    public Generator(Suspended suspended, T value, ContSupplier<T> work){
+    public Generator(Suspended suspended, T value, GeneratorSupplier<T> work){
         this.value = Maybe.just(value);
         this.suspended=suspended;
         this.suspended.local = work;
         this.remainderOfWorkToBeDone = work;
     }
-    public Generator(Suspended suspended, ContSupplier<T> work){
+    public Generator(Suspended suspended, GeneratorSupplier<T> work){
         this.value = Maybe.none();
         this.suspended=suspended;
         this.suspended.local = work;
@@ -95,9 +92,9 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
         return ex;
     }
 
-    static class Suspended<T>{
+    public static class Suspended<T>{
         private final Suspended<T> parent;
-        private ContSupplier<T>  local;
+        private GeneratorSupplier<T> local;
         private T value;
 
         public Suspended(){
@@ -115,14 +112,14 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
             return value;
         }
 
-        public Generator<T> yield(T value, ContSupplier<T> remainderOfWorkToBeDone){
+        public Generator<T> yield(T value, GeneratorSupplier<T> remainderOfWorkToBeDone){
             //this.local = remainderOfWorkToBeDone;
             Generator<T> res = new Generator<T>(this,value,remainderOfWorkToBeDone );
             local = nullValue();
             return res;
         }
         public Generator<T> yield(T value){
-            Generator<T> res = new Generator<T>(this, value, (ContSupplier<T>) local);
+            Generator<T> res = new Generator<T>(this, value, (GeneratorSupplier<T>) local);
             local = nullValue();
             return res;
         }
@@ -173,9 +170,9 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
             return yield(value);
         }
         public Generator<T> yield(T value, Predicate<? super T> predicate){
-            return new Generator<T>(this,value,(ContSupplier<T>)local );
+            return new Generator<T>(this,value,(GeneratorSupplier<T>)local );
         }
-        public Generator<T> yield(T value, ContSupplier<T> nextA, ContSupplier<T> nextB){
+        public Generator<T> yield(T value, GeneratorSupplier<T> nextA, GeneratorSupplier<T> nextB){
 
 
             local = ()->{
@@ -188,9 +185,9 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
 
             return yield(value);
         }
-        public Generator<T> yield(T value, ContSupplier<T>... next){
-            Iterator<ContSupplier<T>> it = Arrays.asList(next).iterator();
-            ContSupplier<T> nextA = it.next();
+        public Generator<T> yield(T value, GeneratorSupplier<T>... next){
+            Iterator<GeneratorSupplier<T>> it = Arrays.asList(next).iterator();
+            GeneratorSupplier<T> nextA = it.next();
             local = ()->{
                 setNestedContinutation(it);
 
@@ -238,9 +235,9 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
             }
         }
 
-        private  void setNestedContinutation(Iterator<ContSupplier<T>> it) {
+        private  void setNestedContinutation(Iterator<GeneratorSupplier<T>> it) {
             if(it.hasNext()) {
-                ContSupplier<T> nextB = it.next();
+                GeneratorSupplier<T> nextB = it.next();
                 local = () -> {
                     setNestedContinutation(it);
                     return nextB.get();
@@ -250,7 +247,7 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
                 local = nullValue();
             }
         }
-        private ContSupplier<T> nullValue(){
+        private GeneratorSupplier<T> nullValue(){
             if(parent==null)
                 return null;
             return parent.local;
@@ -271,7 +268,7 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
         }
     }
 
-    public static <T> Generator<T> suspend(ContFunction<T> value){
+    public static <T> Generator<T> suspend(GeneratorFunction<T> value){
         Suspended<T> suspended = new Suspended<>();
         suspended.local=()->value.apply(suspended);
         Generator<T> res = new Generator<T>(suspended,suspended.local);
@@ -280,13 +277,13 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
         return res;
     }
 
-    public static <T> Generator<T> suspend(BooleanSupplier pred, ContFunction<T> value){
+    public static <T> Generator<T> suspend(BooleanSupplier pred, GeneratorFunction<T> value){
         Suspended<T> suspended = new Suspended<>(new Suspended<>());
 
         suspended.local=()->value.apply(suspended);
         suspended.parent.local = ()->value.apply(suspended);
         Generator<T> res = new Generator<T>(suspended,suspended.local);
-        ContSupplier<T> current = suspended.local;
+        GeneratorSupplier<T> current = suspended.local;
         suspended.parent.local = ()->{
 
 
@@ -299,14 +296,14 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
 
         return res;
     }
-    public static <T> Generator<T> suspend(Predicate<? super T> pred, ContFunction<T> value){
+    public static <T> Generator<T> suspend(Predicate<? super T> pred, GeneratorFunction<T> value){
         Suspended<T> suspended = new Suspended<>(new Suspended<>());
 
         suspended.local=()->value.apply(suspended);
         suspended.parent.local = ()->value.apply(suspended);
 
         Generator<T> res = new Generator<T>(suspended,suspended.local);
-        ContSupplier<T> current = suspended.local;
+        GeneratorSupplier<T> current = suspended.local;
         suspended.parent.local = ()->{
 
             if(pred.test(suspended.value)){
@@ -375,11 +372,11 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
         return times(1);
     }
 
-    public static interface ContSupplier<T> extends Fn0<Generator<T>>
+    public static interface GeneratorSupplier<T> extends Fn0<Generator<T>>
     {
 
     }
-    public static interface ContFunction<T> extends Fn1<Suspended<T>,Generator<T>>
+    public static interface GeneratorFunction<T> extends Fn1<Suspended<T>,Generator<T>>
     {
 
     }

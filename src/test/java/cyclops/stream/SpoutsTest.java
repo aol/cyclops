@@ -39,6 +39,7 @@ import static org.junit.Assert.*;
  */
 public class SpoutsTest {
 
+
     @Test
     public void asyncStream(){
         assertThat(ListX.of(1,2,3),equalTo(Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1)).toListX()));

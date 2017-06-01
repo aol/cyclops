@@ -28,7 +28,6 @@ import cyclops.async.adapters.Queue;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.MapX;
 import cyclops.collections.immutable.VectorX;
-import cyclops.control.Generator;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 

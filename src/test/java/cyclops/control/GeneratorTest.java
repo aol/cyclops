@@ -1,15 +1,12 @@
 package cyclops.control;
 
-import com.sun.tools.javah.Gen;
 import cyclops.collections.mutable.ListX;
-import cyclops.function.FluentFunctions;
-import cyclops.function.Fn1;
+import cyclops.stream.Generator;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
-import org.testng.annotations.TestInstance;
 
-import static cyclops.control.Generator.*;
+import static cyclops.stream.Generator.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
@@ -160,7 +157,7 @@ public class GeneratorTest {
 
     @Test
     public void innerClass(){
-        assertThat(ReactiveSeq.<Integer>fromIterable(suspend(new ContFunction<Integer>() {
+        assertThat(ReactiveSeq.<Integer>fromIterable(suspend(new GeneratorFunction<Integer>() {
                                                       int runningTotal =0;
 
                                                       @Override

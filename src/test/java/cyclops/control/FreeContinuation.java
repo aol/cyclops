@@ -31,30 +31,30 @@ public class FreeContinuation<T> {//} implements Iterable<T> {
     }
 
 
-   // static ThreadLocal<ContSupplier<?>> local = ThreadLocal.withInitial(()->null);
+   // static ThreadLocal<GeneratorSupplier<?>> local = ThreadLocal.withInitial(()->null);
    /**
-    public static <T> FreeContinuation<T> yield(T value, ContSupplier<T> remainderOfWorkToBeDone){
+    public static <T> FreeContinuation<T> yield(T value, GeneratorSupplier<T> remainderOfWorkToBeDone){
         local.set(remainderOfWorkToBeDone);
         return new FreeContinuation<T>(value,remainderOfWorkToBeDone );
     }
     public static <T> FreeContinuation<T> yield(T value){
-        return new FreeContinuation<T>(value,(ContSupplier<T>)local.get() );
+        return new FreeContinuation<T>(value,(GeneratorSupplier<T>)local.get() );
     }
-    public static <T> FreeContinuation<T> yield(T value, ContSupplier<T> nextA, ContSupplier<T> nextB){
+    public static <T> FreeContinuation<T> yield(T value, GeneratorSupplier<T> nextA, GeneratorSupplier<T> nextB){
 
         return new FreeContinuation<T>(value,()->nextA.get().withRemainderOfWorkToBeDone(nextB) );
     }
-    public static <T> ContSupplier<T> include(ContSupplier<T> nextA,ContSupplier<T> nextB){
+    public static <T> GeneratorSupplier<T> include(GeneratorSupplier<T> nextA,GeneratorSupplier<T> nextB){
 
         return new FreeContinuation<T>(value,()->nextA.get().withRemainderOfWorkToBeDone(nextB) );
     }
 
-    public static <T> FreeContinuation<T> yieldSequence(T value, ContSupplier<T>... sequence){
-        Mutable<ContSupplier<T>> next1 = Mutable.of(sequence[0]);
-        Mutable<ContSupplier<T>> next2 = Mutable.of(sequence[1]);
+    public static <T> FreeContinuation<T> yieldSequence(T value, GeneratorSupplier<T>... sequence){
+        Mutable<GeneratorSupplier<T>> next1 = Mutable.of(sequence[0]);
+        Mutable<GeneratorSupplier<T>> next2 = Mutable.of(sequence[1]);
         return new FreeContinuation<T>(value,()->{
-            ContSupplier<T> nextA = next1.get();
-            ContSupplier<T> nextB = calcNextB(next2.get();
+            GeneratorSupplier<T> nextA = next1.get();
+            GeneratorSupplier<T> nextB = calcNextB(next2.get();
             return nextA.get().withRemainderOfWorkToBeDone(nextB);
         } );
     }
@@ -63,7 +63,7 @@ public class FreeContinuation<T> {//} implements Iterable<T> {
         System.out.println("Yeild and stop!");
         return new FreeContinuation<T>(value,null );
     }
-    public static <T> FreeContinuation<T> suspend(ContSupplier<T> value){
+    public static <T> FreeContinuation<T> suspend(GeneratorSupplier<T> value){
         return new FreeContinuation<T>(value);
     }
 
@@ -97,7 +97,7 @@ public class FreeContinuation<T> {//} implements Iterable<T> {
         };
     }
 
-    static interface ContSupplier<T> extends Supplier<FreeContinuation<T>>
+    static interface GeneratorSupplier<T> extends Supplier<FreeContinuation<T>>
     {
 
     }

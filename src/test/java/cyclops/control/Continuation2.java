@@ -47,21 +47,21 @@ public class Continuation2<T> implements Iterable<T> {
         return new Continuation2<T>(value,(ContSupplier<T>)local.get() );
     }
     /**
-    public static <T> Continuation2<T> yield(T value, ContSupplier<T> nextA, ContSupplier<T> nextB){
+    public static <T> Continuation2<T> yield(T value, GeneratorSupplier<T> nextA, GeneratorSupplier<T> nextB){
 
         return new Continuation2<T>(value,()->nextA.get().withRemainderOfWorkToBeDone(nextB) );
     }
-    public static <T> Continuation2<T> yield(T value, ContSupplier<T> nextA, ContSupplier<T> nextB, ContSupplier<T> nextC){
+    public static <T> Continuation2<T> yield(T value, GeneratorSupplier<T> nextA, GeneratorSupplier<T> nextB, GeneratorSupplier<T> nextC){
 
         return new Continuation2<T>(value,()->nextA.get().withRemainderOfWorkToBeDone(()->nextB) );
     }
 
-    public static <T> Continuation2<T> yieldSequence(T value, ContSupplier<T>... sequence){
-        Mutable<ContSupplier<T>> next1 = Mutable.of(sequence[0]);
-        Mutable<ContSupplier<T>> next2 = Mutable.of(sequence[1]);
+    public static <T> Continuation2<T> yieldSequence(T value, GeneratorSupplier<T>... sequence){
+        Mutable<GeneratorSupplier<T>> next1 = Mutable.of(sequence[0]);
+        Mutable<GeneratorSupplier<T>> next2 = Mutable.of(sequence[1]);
         return new Continuation2<T>(value,()->{
-            ContSupplier<T> nextA = next1.get();
-            ContSupplier<T> nextB = calcNextB(next2.get();
+            GeneratorSupplier<T> nextA = next1.get();
+            GeneratorSupplier<T> nextB = calcNextB(next2.get();
             return nextA.get().withRemainderOfWorkToBeDone(nextB);
         } );
     }
