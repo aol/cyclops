@@ -257,22 +257,22 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
      */
     public static <T> BagX<T> bagX(ReactiveSeq<T> stream) {
 
-        return new LazyPBagX<>(stream);
+        return new LazyPBagX<>(null,stream,Reducers.toPBag());
     }
     public static <T> BagX<T> of(final T... values) {
-        return new LazyPBagX<>(
-                               ReactiveSeq.of(values));
+        return new LazyPBagX<>(null,
+                               ReactiveSeq.of(values),Reducers.toPBag());
     }
 
     public static <T> BagX<T> empty() {
-        return new LazyPBagX<>(
-                               ReactiveSeq.empty());
+        return new LazyPBagX<>(null,
+                               ReactiveSeq.empty(),Reducers.toPBag());
     }
 
     public static <T> BagX<T> singleton(final T value) {
         //use concrete type for singleton as used in Reducers
         return new LazyPBagX<>(
-                HashTreePBag.singleton(value));
+                HashTreePBag.singleton(value),null,Reducers.toPBag());
     }
 
     /**
@@ -291,7 +291,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
             return (BagX) iterable;
         if (iterable instanceof PBag)
             return new LazyPBagX<>(
-                                   (PBag) iterable);
+                                   (PBag) iterable,null,Reducers.toPBag());
 
 
         return new LazyPBagX<>(null,
@@ -302,7 +302,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
 
     default <T> BagX<T> fromStream(final ReactiveSeq<T> stream) {
-        return new LazyPBagX<>(ReactiveSeq.fromStream(stream));
+        return new LazyPBagX<>(null,ReactiveSeq.fromStream(stream),Reducers.toPBag());
     }
     /**
      * coflatMap pattern, can be used toNested perform lazy reductions / collections / folds and other terminal operations

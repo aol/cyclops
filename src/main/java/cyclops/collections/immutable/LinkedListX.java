@@ -201,7 +201,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @return
      */
     public static <T> LinkedListX<T> linkedListX(ReactiveSeq<T> stream) {
-        return new LazyLinkedListX<T>(stream);
+        return new LazyLinkedListX<T>(null,stream,Reducers.toPStack());
     }
 
 
@@ -227,8 +227,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     @SafeVarargs
     public static <T> LinkedListX<T> of(final T... values) {
-        return new LazyLinkedListX<>(
-                                 ReactiveSeq.of(values));
+        return new LazyLinkedListX<>(null,
+                                 ReactiveSeq.of(values),Reducers.toPStack());
     }
     /**
      * 
@@ -257,9 +257,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return (LinkedListX) iterable;
         if (iterable instanceof PStack)
             return new LazyLinkedListX<T>(
-                    (PStack) iterable);
+                    (PStack) iterable,null,Reducers.toPStack());
 
-        return new LazyLinkedListX<>(ReactiveSeq.fromIterable(iterable));
+        return new LazyLinkedListX<>(null,ReactiveSeq.fromIterable(iterable),Reducers.toPStack());
 
     }
 
@@ -281,7 +281,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> empty() {
         return new LazyLinkedListX<>(
-                                 ConsPStack.empty());
+                                 ConsPStack.empty(),null,Reducers.toPStack());
     }
 
     /**
@@ -302,7 +302,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> singleton(final T value){
         return new LazyLinkedListX<>(
-                                 ConsPStack.singleton(value));
+                                 ConsPStack.singleton(value),null,Reducers.toPStack());
     }
 
     /**

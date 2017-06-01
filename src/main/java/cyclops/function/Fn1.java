@@ -3,6 +3,8 @@ package cyclops.function;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import cyclops.collections.immutable.VectorX;
@@ -10,6 +12,7 @@ import cyclops.control.*;
 
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
+import cyclops.function.FluentFunctions.Advice1;
 import cyclops.monads.function.AnyMFn1;
 
 import cyclops.monads.transformers.FutureT;
@@ -44,6 +47,24 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
     }
     public R apply(T1 a);
 
+    /**
+     * Apply before advice toNested this function, capture the input with the provided Consumer
+     *
+     * @param action Before advice
+     * @return Function with Before advice attached
+     */
+    default Fn1<T1, R> before(final Consumer<? super T1> action){
+        return FluentFunctions.of(this).before(action);
+    }
+    /**
+     * Apply After advice toNested this function capturing both the input and the emitted with the provided BiConsumer
+     *
+     * @param action After advice
+     * @return  Function with After advice attached
+     */
+    default Fn1<T1, R> after(final BiConsumer<? super T1,? super R> action) {
+        return FluentFunctions.of(this).after(action);
+    }
 
     default Fn1<T1,Maybe<R>> lift(){
        return (T1)-> Maybe.fromLazy(Eval.later(()-> Maybe.ofNullable(apply(T1))));

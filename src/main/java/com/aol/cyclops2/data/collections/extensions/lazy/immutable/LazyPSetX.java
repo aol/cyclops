@@ -42,29 +42,13 @@ import java.util.function.Supplier;
 public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> implements PersistentSetX<T> {
 
 
-    public LazyPSetX(PSet<T> list, ReactiveSeq<T> seq) {
-        super(list, seq, Reducers.toPSet());
-        
 
-    }
     public LazyPSetX(PSet<T> list, ReactiveSeq<T> seq, Reducer<PSet<T>> reducer) {
         super(list, seq, reducer);
 
 
     }
-    public LazyPSetX(PSet<T> list) {
-        super(list, null, Reducers.toPSet());
-        
-    }
 
-    public LazyPSetX(ReactiveSeq<T> seq) {
-        super(null, seq, Reducers.toPSet());
-       
-
-    }
-
-    
-    
     //@Override
     public PersistentSetX<T> materialize() {
         get();
@@ -80,13 +64,13 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
     //  @Override
     public <X> LazyPSetX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPSetX<X>((PSet)getList(),ReactiveSeq.fromStream(stream));
+        return new LazyPSetX<X>((PSet)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal());
     }
 
     @Override
     public <T1> LazyPSetX<T1> from(Collection<T1> c) {
         if(c instanceof PSet)
-            return new LazyPSetX<T1>((PSet)c,null);
+            return new LazyPSetX<T1>((PSet)c,null,(Reducer)this.getCollectorInternal());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 

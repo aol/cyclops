@@ -26,4 +26,14 @@ public interface Unwrapable {
         }
         return supplier.get();
     }
+    default <R> R unwrapNested(Class<?> c,Supplier<? extends R> supplier ){
+        R unwrapped = unwrap();
+        while(unwrapped instanceof Unwrapable){
+            unwrapped = ((Unwrapable) unwrapped).unwrap();
+        }
+        if(c.isAssignableFrom(unwrapped.getClass())){
+            return unwrapped;
+        }
+        return supplier.get();
+    }
 }

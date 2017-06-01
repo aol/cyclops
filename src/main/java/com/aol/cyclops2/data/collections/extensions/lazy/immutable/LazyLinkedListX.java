@@ -44,28 +44,12 @@ import java.util.function.Supplier;
 public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStack<T>> implements LinkedListX<T> {
 
 
-
-    public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq) {
-        super(list, seq, Reducers.toPStack());
-
-
-    }
     public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer) {
         super(list, seq, reducer);
 
 
     }
-    public LazyLinkedListX(PStack<T> list) {
-        super(list, null, Reducers.toPStack());
 
-
-    }
-
-    public LazyLinkedListX(ReactiveSeq<T> seq) {
-        super(null, seq, Reducers.toPStack());
-
-
-    }
     private static <E> PStack<E> from(final Iterator<E> i,int depth) {
 
         if(!i.hasNext())
@@ -77,8 +61,8 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
 
 
         PStack<T> res = from(toUse.iterator(),0);
-        return new LazyLinkedListX<>(
-                res);
+        return new LazyLinkedListX<T>(
+                res,null, this.getCollectorInternal());
 
     }
     public PStack<T> materializeList2(ReactiveSeq<T> toUse){
@@ -90,7 +74,7 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
         while (it.hasNext())
             res = res.plus(it.next());
 
-        return new LazyLinkedListX<T>(res);
+        return new LazyLinkedListX<T>(res,null, this.getCollectorInternal());
 
     }
 
@@ -110,17 +94,16 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
     //  @Override
     public <X> LazyLinkedListX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyLinkedListX<X>((PStack)getList(),ReactiveSeq.fromStream(stream));
+        Reducer<PStack<T>> reducer = getCollectorInternal();
+        return new LazyLinkedListX<X>((PStack<X>)getList(),(ReactiveSeq)stream,(Reducer)reducer);
     }
 
     @Override
     public <T1> LazyLinkedListX<T1> from(Collection<T1> c) {
         if(c instanceof PStack)
-            return new LazyLinkedListX<T1>((PStack)c,null);
+            return new LazyLinkedListX<T1>((PStack)c,null,(Reducer)getCollectorInternal());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
-
-
 
 
     @Override

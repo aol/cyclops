@@ -132,17 +132,17 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
 
     public static <T> PersistentSetX<T> of(final T... values) {
 
-        return new LazyPSetX<>(ReactiveSeq.of(values));
+        return new LazyPSetX<>(null,ReactiveSeq.of(values),Reducers.toPSet());
     }
 
     public static <T> PersistentSetX<T> empty() {
         return new LazyPSetX<>(
-                               HashTreePSet.empty());
+                               HashTreePSet.empty(),null,Reducers.toPSet());
     }
 
     public static <T> PersistentSetX<T> singleton(final T value) {
         return new LazyPSetX<>(
-                               HashTreePSet.singleton(value));
+                               HashTreePSet.singleton(value),null,Reducers.toPSet());
     }
     PersistentSetX<T> type(Reducer<? extends PSet<T>> reducer);
 
@@ -160,15 +160,15 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
      * @param <T> PersistentSetX generated from Stream
      * @return
      */
-    public static <T> PersistentQueueX<T> persistentSetX(ReactiveSeq<T> stream) {
-        return new LazyPQueueX<>(stream);
+    public static <T> PersistentSetX<T> persistentSetX(ReactiveSeq<T> stream) {
+        return new LazyPSetX<>(null,stream,Reducers.toPSet());
     }
     public static <T> PersistentSetX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof PersistentSetX)
             return (PersistentSetX) iterable;
         if (iterable instanceof PSet)
             return new LazyPSetX<>(
-                                   (PSet) iterable);
+                                   (PSet) iterable,null,Reducers.toPSet());
 
 
         return new LazyPSetX<>(null,

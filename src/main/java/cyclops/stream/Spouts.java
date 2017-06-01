@@ -88,16 +88,14 @@ public interface Spouts {
      * @return
      */
     static <T> ReactiveSeq<T> async(Stream<T> seq, Executor exec){
-        Subscriber[] subscriber = {null};
+          return async(s->{
 
-        ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
+            ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
 
-            Subscriber<T> local = subscriber[0];
-            t.forEach(local::onNext,local::onError,local::onComplete);
-            return null;
-        });
-        return async(s->{
-            subscriber[0]=s;
+                Subscriber<T> local = s;
+                t.forEach(local::onNext,local::onError,local::onComplete);
+                return null;
+            });
         });
     }
     static <T> ReactiveSeq<T> reactive(Stream<T> seq, Executor exec){

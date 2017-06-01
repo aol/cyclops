@@ -125,17 +125,17 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     public static <T> OrderedSetX<T> of(final T... values) {
-        return new LazyPOrderedSetX<>(ReactiveSeq.of(values));
+        return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPOrderedSet());
     }
 
     public static <T> OrderedSetX<T> empty() {
         return new LazyPOrderedSetX<>(
-                                      OrderedPSet.empty());
+                                      OrderedPSet.empty(),null,Reducers.toPOrderedSet());
     }
 
     public static <T> OrderedSetX<T> singleton(final T value) {
         return new LazyPOrderedSetX<>(
-                                      OrderedPSet.singleton(value));
+                                      OrderedPSet.singleton(value),null,Reducers.toPOrderedSet());
     }
     OrderedSetX<T> type(Reducer<? extends POrderedSet<T>> reducer);
 
@@ -154,7 +154,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
      * @return
      */
     public static <T> OrderedSetX<T> orderedSetX(ReactiveSeq<T> stream) {
-        return new LazyPOrderedSetX<T>(stream);
+        return new LazyPOrderedSetX<T>(null,stream,Reducers.toPOrderedSet());
     }
 
 
@@ -198,7 +198,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
             return (OrderedSetX) iterable;
         if (iterable instanceof POrderedSet)
             return new LazyPOrderedSetX<>(
-                                          (POrderedSet) iterable);
+                                          (POrderedSet) iterable,null,Reducers.toPOrderedSet());
 
 
         return new LazyPOrderedSetX<>(null,

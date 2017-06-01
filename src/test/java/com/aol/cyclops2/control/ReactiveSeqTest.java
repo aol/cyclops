@@ -1,5 +1,6 @@
 package com.aol.cyclops2.control;
 
+import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.reactive.AsyncSubscriber;
 import com.aol.cyclops2.util.SimpleTimer;
 import com.google.common.collect.Lists;
@@ -11,6 +12,8 @@ import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.control.Eval;
+import cyclops.control.Maybe;
+import cyclops.control.Maybe.CompletableMaybe;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -31,6 +34,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion.LAZY;
 import static cyclops.function.Predicates.anyOf;
 import static cyclops.function.Predicates.greaterThan;
 import static cyclops.function.Predicates.hasItems;
@@ -54,6 +58,7 @@ public class ReactiveSeqTest {
 
     @Test
     public void cycleWhile(){
+        ReactiveSeq.of(1).toListX();
         count =0;
         ListX<Integer> b= ReactiveSeq.fromStream(Stream.of(1, 2, 3)).peek(System.out::println)
                 .cycleUntil(next->count++==6).toListX();

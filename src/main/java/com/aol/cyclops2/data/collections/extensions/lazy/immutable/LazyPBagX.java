@@ -42,26 +42,11 @@ import java.util.function.Supplier;
 public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> implements BagX<T> {
 
 
-    public LazyPBagX(PBag<T> list, ReactiveSeq<T> seq) {
-        super(list, seq, Reducers.toPBag());
-        
 
-    }
     public LazyPBagX(PBag<T> list, ReactiveSeq<T> seq, Reducer<PBag<T>> reducer) {
         super(list, seq, reducer);
-
-
-    }
-    public LazyPBagX(PBag<T> list) {
-        super(list, null, Reducers.toPBag());
-        
     }
 
-    public LazyPBagX(ReactiveSeq<T> seq) {
-        super(null, seq, Reducers.toPBag());
-       
-
-    }
     @Override
     public BagX<T> plusLoop(int max, IntFunction<T> value) {
         return (BagX<T>)super.plusLoop(max,value);
@@ -90,13 +75,13 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
     @Override
     public <X> LazyPBagX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPBagX<X>((PBag)getList(),ReactiveSeq.fromStream(stream));
+        return new LazyPBagX<X>((PBag)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal());
     }
 
     @Override
     public <T1> LazyPBagX<T1> from(Collection<T1> c) {
         if(c instanceof PBag)
-            return new LazyPBagX<T1>((PBag)c,null);
+            return new LazyPBagX<T1>((PBag)c,null,(Reducer)this.getCollectorInternal());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 

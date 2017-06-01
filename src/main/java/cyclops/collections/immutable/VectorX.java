@@ -206,7 +206,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @return new PVector
      */
     public static <T> VectorX<T> of(final T... values) {
-        return new LazyPVectorX<>(ReactiveSeq.of(values));
+        return new LazyPVectorX<>(null,ReactiveSeq.of(values),Reducers.toPVector());
     }
     /**
      * 
@@ -230,8 +230,8 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @return an empty PVector
      */
     public static <T> VectorX<T> empty() {
-        return new LazyPVectorX<>(
-                                  TreePVector.empty());
+        return new LazyPVectorX<T>(
+                                  TreePVector.empty(),null,Reducers.toPVector());
     }
 
     /**
@@ -252,7 +252,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> singleton(final T value) {
         return new LazyPVectorX<>(
-                                  TreePVector.singleton(value));
+                                  TreePVector.singleton(value),null,Reducers.toPVector());
     }
 
     /**
@@ -272,7 +272,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
             return (VectorX) iterable;
         if (iterable instanceof PVector)
             return new LazyPVectorX<>(
-                                      (PVector) iterable);
+                                      (PVector) iterable,null,Reducers.toPVector());
 
         return new LazyPVectorX<>(null,
                 ReactiveSeq.fromIterable(iterable),
@@ -296,7 +296,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> vectorX(ReactiveSeq<T> stream) {
 
-        return new LazyPVectorX<T>(stream);
+        return new LazyPVectorX<T>(null,stream,Reducers.toPVector());
     }
 
 

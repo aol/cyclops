@@ -3388,6 +3388,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return Spouts.from(publisher);
     }
 
+    public static <T> ReactiveSeq<T> generate(Generator<T> gen){
+        return gen.stream();
+    }
     /**
      * Construct a ReactiveSeq from an Iterable
      *
