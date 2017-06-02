@@ -16,8 +16,7 @@ public class SkipLastSpliterator<T> extends AbstractSpliterator<T> implements Co
         if(skip==source.getExactSizeIfKnown()){ //right sized already
             return Spliterators.emptySpliterator();
         }
-        if(skip==1)
-            return new SkipLastOneSpliterator<T>(source);
+
         return new SkipLastSpliterator<T>(source,skip);
     }
 

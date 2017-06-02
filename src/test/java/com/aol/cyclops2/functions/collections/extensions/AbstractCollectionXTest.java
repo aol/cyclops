@@ -529,7 +529,9 @@ public abstract class AbstractCollectionXTest {
 	}
 	@Test
 	public void dropRight(){
-		assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
+
+	    assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
+        assertThat(of(1,2,3).dropRight(1).toList().size(),equalTo(2));
 	}
 	@Test
 	public void dropRightEmpty(){
