@@ -17,11 +17,14 @@ public class AnyMSeqImpl<W extends WitnessType<W>,T> extends BaseAnyMImpl<W,T>im
     }
     @Override
     public ReactiveSeq<T> stream(){
+     
+
         if(unwrap() instanceof Stream){
             return ReactiveSeq.fromStream((Stream<T>)unwrap());
 
         }
-        return Streams.oneShotStreamI(this);
+        return adapter.toStream(this);
+     //   return Streams.oneShotStreamI(this);
     }
     @Override
     public String toString() {
