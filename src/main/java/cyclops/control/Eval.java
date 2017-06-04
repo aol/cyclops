@@ -78,7 +78,9 @@ public interface Eval<T> extends To<Eval<T>>,
 
     public static class µ {
     }
-
+    static <T> Eval<T> async(final Executor ex, final Supplier<T> s){
+        return fromFuture(Future.ofSupplier(s,ex));
+    }
     default <W extends WitnessType<W>> EvalT<W, T> liftM(W witness) {
         return EvalT.of(witness.adapter().unit(this));
     }

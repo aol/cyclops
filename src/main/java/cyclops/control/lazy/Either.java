@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -121,6 +122,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     }
 
+    static <RT> Either<Throwable,RT> async( final Executor ex, final Supplier<RT> s){
+        return fromFuture(Future.ofSupplier(s,ex));
+    }
     /**
      * Create a reactive CompletableEither
      *

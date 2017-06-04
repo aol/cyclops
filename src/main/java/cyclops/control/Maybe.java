@@ -8,6 +8,7 @@ import com.aol.cyclops2.types.recoverable.Recoverable;
 import cyclops.companion.Monoids;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.async.Future;
+import cyclops.control.lazy.Either;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
@@ -41,6 +42,7 @@ import org.reactivestreams.Subscription;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collectors;
@@ -111,7 +113,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
     default <W extends WitnessType<W>> MaybeT<W, T> liftM(W witness) {
         return MaybeT.of(witness.adapter().unit(this));
     }
-
+    static <T> Maybe<T> async(final Executor ex, final Supplier<T> s){
+        return fromFuture(Future.ofSupplier(s,ex));
+    }
     public static class µ {
     }
     default AnyM<Witness.maybe,T> anyM(){

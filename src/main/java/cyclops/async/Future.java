@@ -1342,6 +1342,9 @@ public class Future<T> implements To<Future<T>>,
     public static <T> Future<T> ofSupplier(final Supplier<T> s, final Executor ex) {
         return Future.of(CompletableFuture.supplyAsync(s, ex));
     }
+    public static <T> Future<T> async(final Executor ex,final Supplier<T> s) {
+        return ofSupplier(s,ex);
+    }
 
 
 
