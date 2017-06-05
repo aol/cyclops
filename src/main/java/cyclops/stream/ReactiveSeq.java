@@ -4576,7 +4576,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         init.addContinuation(continuation);
         return ReactiveSeq.fromStream(init.jdkStream());
     }
-
+    <R> R visit(Function<? super ReactiveSeq<T>,? extends R> sync,Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
+                       Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure);
     /**
      * Broadcast the contents of this Stream toNested multiple downstream Streams (determined by supplier parameter).
      * For pull based Streams this Stream will be buffered.

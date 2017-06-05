@@ -49,6 +49,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.aol.cyclops2.internal.adapters.StreamAdapter.stream;
+import static com.aol.cyclops2.internal.stream.ReactiveStreamX.Type.BACKPRESSURE;
+import static com.aol.cyclops2.internal.stream.ReactiveStreamX.Type.SYNC;
 
 
 @AllArgsConstructor
@@ -74,7 +76,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public ReactiveStreamX(Operator<T> source){
         this.source = source;
         this.defaultErrorHandler = e->{ if(!(e instanceof Queue.ClosedQueueException)) throw ExceptionSoftener.throwSoftenedException(e);};
-        this.async = Type.SYNC;
+        this.async = SYNC;
     }
     public ReactiveStreamX(Operator<T> source,Type async){
         this.source = source;
@@ -124,7 +126,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             return queue.stream().iterator();
 
         }
-        return new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).iterator();
+        return new OperatorToIterable<>(source,this.defaultErrorHandler,async== BACKPRESSURE).iterator();
     }
 
     <X> ReactiveStreamX<X> createSeq(Operator<X> stream) {
@@ -578,7 +580,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             return queue.stream();
 
         }
-       return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,async==Type.BACKPRESSURE).spliterator(),false);
+       return StreamSupport.stream(new OperatorToIterable<>(source,this.defaultErrorHandler,async== BACKPRESSURE).spliterator(),false);
     }
 
     @Override
@@ -654,7 +656,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }else{
             right = new PublisherToOperator<U>((Publisher<U>)other);
         }
-        return createSeq(new ZippingLatestOperator<>(source,right,zipper),Type.BACKPRESSURE);
+        return createSeq(new ZippingLatestOperator<>(source,right,zipper), BACKPRESSURE);
     }
 
     @Override
@@ -703,7 +705,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public ReactiveSeq<T> backpressureAware(){
         if(async==Type.NO_BACKPRESSURE){
-            return this.withAsync(Type.SYNC);
+            return this.withAsync(SYNC);
         }
         return this;
     }
@@ -1059,8 +1061,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         pubs[0]=this;
         System.arraycopy(publishers,0,pubs,1,publishers.length);
         ReactiveStreamX<T> merged =(ReactiveStreamX<T>) Spouts.mergeLatest(pubs);
-        if(async==Type.SYNC || async ==Type.BACKPRESSURE)
-         return merged.withAsync(Type.BACKPRESSURE);
+        if(async== SYNC || async == BACKPRESSURE)
+         return merged.withAsync(BACKPRESSURE);
         else
             return merged.withAsync(Type.NO_BACKPRESSURE);
     }
@@ -1071,8 +1073,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         System.arraycopy(publishers,0,pubs,1,publishers.length);
 
         ReactiveStreamX<T> merged =(ReactiveStreamX<T>) Spouts.mergeLatest(pubs);
-        if(async==Type.SYNC || async ==Type.BACKPRESSURE)
-            return merged.withAsync(Type.BACKPRESSURE);
+        if(async== SYNC || async == BACKPRESSURE)
+            return merged.withAsync(BACKPRESSURE);
         else
             return merged.withAsync(Type.NO_BACKPRESSURE);
     }
@@ -1191,7 +1193,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         ReactiveSeq<T> cycling =  collectStream(Collectors.toList())
                                     .map(s -> ReactiveSeq.fromIterable(s).cycle(Long.MAX_VALUE))
                                     .flatMap(i->i);
-        return createSeq(new IterableSourceOperator<T>(cycling),Type.SYNC);
+        return createSeq(new IterableSourceOperator<T>(cycling), SYNC);
  /**
         return ReactiveSeq.fromIterator(this.iterator()).cycle();
   **/
@@ -1204,8 +1206,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
             ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 2);
-            return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)),Type.SYNC),
-                    createSeq(new IterableSourceOperator<>(copy.get(1)),Type.SYNC));
+            return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)), SYNC),
+                    createSeq(new IterableSourceOperator<>(copy.get(1)), SYNC));
 
 
 
@@ -1215,8 +1217,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
             ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 2,bufferFactory);
-            return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)),Type.SYNC),
-                    createSeq(new IterableSourceOperator<>(copy.get(1)),Type.SYNC));
+            return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)), SYNC),
+                    createSeq(new IterableSourceOperator<>(copy.get(1)), SYNC));
 
 
     }
@@ -1227,8 +1229,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
             ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 3);
-            return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)),Type.SYNC),
-                    createSeq(new IterableSourceOperator<>(copy.get(1)),Type.SYNC),createSeq(new IterableSourceOperator<>(copy.get(2)),Type.SYNC));
+            return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)), SYNC),
+                    createSeq(new IterableSourceOperator<>(copy.get(1)), SYNC),createSeq(new IterableSourceOperator<>(copy.get(2)), SYNC));
 
 
 
@@ -1239,8 +1241,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
         ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 3,bufferFactory);
-        return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)),Type.SYNC),
-                createSeq(new IterableSourceOperator<>(copy.get(1)),Type.SYNC),createSeq(new IterableSourceOperator<>(copy.get(2)),Type.SYNC));
+        return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)), SYNC),
+                createSeq(new IterableSourceOperator<>(copy.get(1)), SYNC),createSeq(new IterableSourceOperator<>(copy.get(2)), SYNC));
 
     }
 
@@ -1260,7 +1262,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             return result;
 
         }
-        if(this.async==Type.BACKPRESSURE){
+        if(this.async== BACKPRESSURE){
             ConcurrentLinkedQueue<Subscriber> subs = new ConcurrentLinkedQueue<>();
             ListX<ReactiveSeq<T>> result = ListX.empty();
             Subscription sub = forEachSubscribe(e -> subs.forEach(s -> s.onNext(e)), ex -> subs.forEach(s -> s.onError(ex)), () -> subs.forEach(s -> s.onComplete()));
@@ -1290,10 +1292,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @SuppressWarnings("unchecked")
     public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate() {
         ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 4);
-        return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)),Type.SYNC),
-                createSeq(new IterableSourceOperator<>(copy.get(1)),Type.SYNC),
-                createSeq(new IterableSourceOperator<>(copy.get(2)),Type.SYNC),
-                        createSeq(new IterableSourceOperator<>(copy.get(3)),Type.SYNC));
+        return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)), SYNC),
+                createSeq(new IterableSourceOperator<>(copy.get(1)), SYNC),
+                createSeq(new IterableSourceOperator<>(copy.get(2)), SYNC),
+                        createSeq(new IterableSourceOperator<>(copy.get(3)), SYNC));
 
 
     }
@@ -1301,10 +1303,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @SuppressWarnings("unchecked")
     public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate(Supplier<Deque<T>> bufferFactory) {
         ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> iterator(), 4,bufferFactory);
-        return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)),Type.SYNC),
-                createSeq(new IterableSourceOperator<>(copy.get(1)),Type.SYNC),
-                createSeq(new IterableSourceOperator<>(copy.get(2)),Type.SYNC),
-                        createSeq(new IterableSourceOperator<>(copy.get(3)),Type.SYNC));
+        return Tuple.tuple(createSeq(new IterableSourceOperator<>(copy.get(0)), SYNC),
+                createSeq(new IterableSourceOperator<>(copy.get(1)), SYNC),
+                createSeq(new IterableSourceOperator<>(copy.get(2)), SYNC),
+                        createSeq(new IterableSourceOperator<>(copy.get(3)), SYNC));
     }
 
     @Override
@@ -1355,9 +1357,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             right = new SpliteratorToOperator<U>(((Stream<U>)other).spliterator());
         }
         ReactiveStreamX<Tuple2<T, U>> res = createSeq(new ZippingOperator<>(source, right, Tuple::tuple));
-        if(this.async == Type.SYNC){
+        if(this.async == SYNC){
             //zip could recieve an asyncrhonous Stream so we force onto the async path
-            return res.withAsync(Type.BACKPRESSURE);
+            return res.withAsync(BACKPRESSURE);
         }
         return res;
 
@@ -1494,7 +1496,15 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return result.get();
     }
 
-
+    public <R> R visit(Function<? super ReactiveSeq<T>,? extends R> sync,Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
+                       Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure){
+        switch(this.async){
+            case SYNC : return sync.apply(this);
+            case BACKPRESSURE: return reactiveStreams.apply(this);
+            case NO_BACKPRESSURE: return asyncNoBackPressure.apply(this);
+        }
+        return null;
+    }
 
 
 }
