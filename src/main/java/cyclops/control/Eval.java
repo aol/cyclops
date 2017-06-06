@@ -267,7 +267,7 @@ public interface Eval<T> extends To<Eval<T>>,
     }
 
     /**
-     * Turn a collection of Evals into a single Eval with a List of values.
+     * Turn a collection of Evals into a singleUnsafe Eval with a List of values.
      *
      * <pre>
      * {@code
@@ -277,7 +277,7 @@ public interface Eval<T> extends To<Eval<T>>,
      * }
      * </pre>
      *
-     * @param evals Collection of evals to convert into a single eval with a List of values
+     * @param evals Collection of evals to convert into a singleUnsafe eval with a List of values
      * @return  Eval with a  list of values
      */
     public static <T> Eval<ListX<T>> sequence(final CollectionX<Eval<T>> evals) {
@@ -286,7 +286,7 @@ public interface Eval<T> extends To<Eval<T>>,
     }
 
     /**
-     * Turn a Stream of Evals into a single Eval with a Stream of values.
+     * Turn a Stream of Evals into a singleUnsafe Eval with a Stream of values.
      *
      * <pre>
      * {@code
@@ -296,7 +296,7 @@ public interface Eval<T> extends To<Eval<T>>,
      * }
      * </pre>
      *
-     * @param evals Collection of evals to convert into a single eval with a List of values
+     * @param evals Collection of evals to convert into a singleUnsafe eval with a List of values
      * @return  Eval with a  list of values
      */
     public static <T> Eval<ReactiveSeq<T>> sequence(final Stream<? extends Eval<T>> evals) {

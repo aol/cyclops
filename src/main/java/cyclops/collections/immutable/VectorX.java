@@ -235,20 +235,20 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     /**
-     * Construct a PVector containing a single value
+     * Construct a PVector containing a singleUnsafe value
      * </pre>
      * {@code 
-     *    List<String> single = PVectors.singleton("1");
+     *    List<String> singleUnsafe = PVectors.singleton("1");
      *    
      *    //or
      *    
-     *    PVector<String> single = PVectors.singleton("1");
+     *    PVector<String> singleUnsafe = PVectors.singleton("1");
      * 
      * }
      * </pre>
      * 
      * @param value Single value for PVector
-     * @return PVector with a single value
+     * @return PVector with a singleUnsafe value
      */
     public static <T> VectorX<T> singleton(final T value) {
         return new LazyPVectorX<>(

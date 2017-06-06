@@ -912,7 +912,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Partially apply the provided parameter as the first parameter toNested this BiFunction toNested generate a Function (single input value)
+         * Partially apply the provided parameter as the first parameter toNested this BiFunction toNested generate a Function (singleUnsafe input value)
          * 
          * @param param Input parameter toNested Partially Applied
          * @return A Function generated from the BiFunction with the first parameter already applied
@@ -1279,7 +1279,7 @@ public class FluentFunctions {
                                                                      t1, t2, t3, fn)));
         }
         /**
-         * Partially apply the provided parameter as the first parameter toNested this TriFunction toNested generate a Function (single input value)
+         * Partially apply the provided parameter as the first parameter toNested this TriFunction toNested generate a Function (singleUnsafe input value)
          * 
          * @param param Input parameter toNested Partially Applied
          * @return A BiFunction generated from the BiFunction with the first parameter already applied
@@ -1289,7 +1289,7 @@ public class FluentFunctions {
                                           PartialApplicator.partial3(param, fn));
         }
         /**
-         * Partially apply the provided parameters toNested this BiFunction toNested generate a Function (single input)
+         * Partially apply the provided parameters toNested this BiFunction toNested generate a Function (singleUnsafe input)
          * 
          * @param param1 First Input parameter
          * @param param2 Second Input parameter
@@ -1314,7 +1314,7 @@ public class FluentFunctions {
         }
         /**
          * Curry this BiFunction, that is convert it from a TriFunction that accepts thre input parameters toNested a 'chain'
-         * of three Functions that accept a single parameter
+         * of three Functions that accept a singleUnsafe parameter
          * 
          * <pre>
          * {@code 
@@ -1587,7 +1587,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Compose this TriFunction with the provided function into a single TriFunction. 
+         * Compose this TriFunction with the provided function into a singleUnsafe TriFunction.
          * This TriFunction would be executed first and the result passed toNested the provided Function and applied there.
          * 
          * @param after Function toNested execute after this one in a chain

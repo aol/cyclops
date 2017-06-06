@@ -190,27 +190,27 @@ public class AsyncExtensionOperatorsTest {
 	}
 	@Test
 	public void singleTest(){
-		assertThat(of(1).single(),equalTo(1));
+		assertThat(of(1).singleUnsafe(),equalTo(1));
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void singleEmpty(){
-		of().single();
+		of().singleUnsafe();
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void single2(){
-		of(1,2).single();
+		of(1,2).singleUnsafe();
 	}
 	@Test
 	public void singleOptionalTest(){
-		assertThat(of(1).singleOptional().get(),equalTo(1));
+		assertThat(of(1).single().get(),equalTo(1));
 	}
 	@Test
 	public void singleOptionalEmpty(){
-		assertFalse(of().singleOptional().isPresent());
+		assertFalse(of().single().isPresent());
 	}
 	@Test
 	public void singleOptonal2(){
-		assertFalse(of(1,2).singleOptional().isPresent());
+		assertFalse(of(1,2).single().isPresent());
 	}
 	@Test
 	public void limitTime(){

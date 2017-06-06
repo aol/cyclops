@@ -1,6 +1,5 @@
 package cyclops.stream;
 
-import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
 import cyclops.companion.Monoids;
@@ -11,7 +10,6 @@ import cyclops.collections.mutable.ListX;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
@@ -350,13 +348,13 @@ public class SpoutsTest {
 
         Thread t=  new Thread( ()-> {
             ReactiveSeq<Integer> stream2 = topic.stream();
-            assertThat(stream2.takeRight(1).single(), Matchers.equalTo(99_999));
+            assertThat(stream2.takeRight(1).singleUnsafe(), Matchers.equalTo(99_999));
         });
         t.start();
 
         ReactiveSeq<Integer> stream1 = topic.stream();
 
-        assertThat(stream1.takeRight(1).single(), Matchers.equalTo(99_999));
+        assertThat(stream1.takeRight(1).singleUnsafe(), Matchers.equalTo(99_999));
 
         t.join();
 

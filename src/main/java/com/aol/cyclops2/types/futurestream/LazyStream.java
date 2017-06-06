@@ -94,7 +94,7 @@ public interface LazyStream<U> extends BlockingStream<U> {
      */
     default <A, R> R run(final Collector<U, A, R> collector) {
         if (getLastActive().isSequential()) {
-            //if single threaded we can simply push from each Future into the collection toNested be returned
+            //if singleUnsafe threaded we can simply push from each Future into the collection toNested be returned
             if (collector.supplier()
                          .get() == null) {
                 forEach(r -> {
@@ -148,7 +148,7 @@ public interface LazyStream<U> extends BlockingStream<U> {
         final Function<FastFuture<U>, U> safeJoin = (final FastFuture<U> cf) -> (U) BlockingStreamHelper.getSafe(cf, getErrorHandler());
 
         if (getLastActive().isSequential()) {
-            //if single threaded we can simply push from each Future into the collection toNested be returned
+            //if singleUnsafe threaded we can simply push from each Future into the collection toNested be returned
             try {
                 this.getLastActive()
                     .operation(f -> f.peek(c))

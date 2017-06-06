@@ -25,7 +25,7 @@ public class PVectorXTest extends CollectionXTestsWithNulls{
     public void coflatMap(){
        assertThat(VectorX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .single(),equalTo(6));
+                   .singleUnsafe(),equalTo(6));
         
     }
 	@Test

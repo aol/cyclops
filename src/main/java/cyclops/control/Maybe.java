@@ -294,7 +294,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     final static Maybe EMPTY = new Nothing<>();
 
     /**
-     * @return Get the empty Maybe (single instance)
+     * @return Get the empty Maybe (singleUnsafe instance)
      */
     @SuppressWarnings("unchecked")
     static <T> Maybe<T> none() {
@@ -325,7 +325,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
     /**
-     * Construct a Maybe  that contains a single value extracted from the supplied reactive-streams Publisher
+     * Construct a Maybe  that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
@@ -345,7 +345,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
     /**
-     *  Construct a Maybe  that contains a single value extracted from the supplied Iterable
+     *  Construct a Maybe  that contains a singleUnsafe value extracted from the supplied Iterable
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);

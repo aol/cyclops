@@ -318,7 +318,7 @@ public class CompletableFutures {
         return result;    
     }
     /**
-     * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see cyclops2.Reducers}
+     * Asynchronously accumulate the results of Futures, a singleUnsafe failure will cause a failed result, using the supplied Reducer {@see cyclops2.Reducers}
      * <pre>
      * {@code 
      * 
@@ -342,7 +342,7 @@ public class CompletableFutures {
      * Asynchronously accumulate the results of a batch of Futures which using the supplied mapping function toNested
      * convert the data from each Future before reducing them using the supplied supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * A single Failure results in a Failed  Future.
+     * A singleUnsafe Failure results in a Failed  Future.
      * 
      * <pre>
      * {@code 
@@ -366,7 +366,7 @@ public class CompletableFutures {
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * 
-     * A single Failure results in a Failed  Future.
+     * A singleUnsafe Failure results in a Failed  Future.
      * 
      * <pre>
      * {@code 

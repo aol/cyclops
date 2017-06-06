@@ -530,7 +530,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
         return visit(s -> secondary(secondary), p -> primary(p));
     }
     /**
-     *  Turn a collection of Xors into a single Xor with Lists of values.
+     *  Turn a collection of Xors into a singleUnsafe Xor with Lists of values.
      *  Primary and secondary types are swapped during this operation.
      *
      * <pre>
@@ -601,7 +601,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
 
     /**
-     *  Turn a collection of Xors into a single Ior with Lists of values.
+     *  Turn a collection of Xors into a singleUnsafe Ior with Lists of values.
      *
      * <pre>
      * {@code

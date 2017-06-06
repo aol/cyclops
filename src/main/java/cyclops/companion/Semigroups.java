@@ -114,77 +114,77 @@ public interface Semigroups {
     }
 
     /**
-     * @return A combiner for ListX (concatenates two ListX into a single ListX)
+     * @return A combiner for ListX (concatenates two ListX into a singleUnsafe ListX)
      */
     static <T> Semigroup<ListX<T>> listXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for SetX (concatenates two SetX into a single SetX)
+     * @return A combiner for SetX (concatenates two SetX into a singleUnsafe SetX)
      */
     static <T> Semigroup<SetX<T>> setXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for SortedSetX (concatenates two SortedSetX into a single SortedSetX)
+     * @return A combiner for SortedSetX (concatenates two SortedSetX into a singleUnsafe SortedSetX)
      */
     static <T> Semigroup<SortedSetX<T>> sortedSetXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for QueueX (concatenates two QueueX into a single QueueX)
+     * @return A combiner for QueueX (concatenates two QueueX into a singleUnsafe QueueX)
      */
     static <T> Semigroup<QueueX<T>> queueXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for DequeX (concatenates two DequeX into a single DequeX)
+     * @return A combiner for DequeX (concatenates two DequeX into a singleUnsafe DequeX)
      */
     static <T> Semigroup<DequeX<T>> dequeXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for LinkedListX (concatenates two LinkedListX into a single LinkedListX)
+     * @return A combiner for LinkedListX (concatenates two LinkedListX into a singleUnsafe LinkedListX)
      */
     static <T> Semigroup<LinkedListX<T>> linkedListXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
+     * @return A combiner for VectorX (concatenates two VectorX into a singleUnsafe VectorX)
      */
     static <T> Semigroup<VectorX<T>> vectorXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
+     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a singleUnsafe PersistentSetX)
      */
     static <T> Semigroup<PersistentSetX<T>> persistentSetXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
+     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a singleUnsafe OrderedSetX)
      */
     static <T> Semigroup<OrderedSetX<T>> orderedSetXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
+     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a singleUnsafe PersistentQueueX)
      */
     static <T> Semigroup<PersistentQueueX<T>> persistentQueueXConcat() {
         return Semigroups.collectionXConcat();
     }
 
     /**
-     * @return A combiner for BagX (concatenates two BagX into a single BagX)
+     * @return A combiner for BagX (concatenates two BagX into a singleUnsafe BagX)
      */
     static <T> Semigroup<BagX<T>> bagXConcat() {
         return Semigroups.collectionXConcat();

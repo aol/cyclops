@@ -432,7 +432,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     /**
      * Convert this MapX toNested a ListX via the provided transformation function
      * 
-     * @param fn Mapping function toNested transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a singleUnsafe value
      * @return ListX of transformed values
      */
     default <T> ListX<T> toListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -443,7 +443,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     /**
      * Convert this MapX toNested a SetX via the provided transformation function
      * 
-     * @param fn Mapping function toNested transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a singleUnsafe value
      * @return SetX of transformed values
      */
     default <T> SetX<T> toSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -454,7 +454,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     /**
      * Convert this MapX toNested a SortedSetX via the provided transformation function
      * 
-     * @param fn Mapping function toNested transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a singleUnsafe value
      * @return SortedSetX of transformed values
      */
     default <T> SortedSetX<T> toSortedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -465,7 +465,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     /**
      * Convert this MapX toNested a QueueX via the provided transformation function
      * 
-     * @param fn Mapping function toNested transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a singleUnsafe value
      * @return QueueX of transformed values
      */
     default <T> QueueX<T> toQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -476,7 +476,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     /**
      * Convert this MapX toNested a DequeX via the provided transformation function
      * 
-     * @param fn Mapping function toNested transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a singleUnsafe value
      * @return DequeX of transformed values
      */
     default <T> DequeX<T> toDequeX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {

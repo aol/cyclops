@@ -91,7 +91,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
     public void coflatMap(){
        assertThat(ListX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .single(),equalTo(6));
+                   .singleUnsafe(),equalTo(6));
         
     }
     @Test

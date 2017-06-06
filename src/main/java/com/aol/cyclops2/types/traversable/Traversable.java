@@ -112,7 +112,7 @@ public interface Traversable<T> extends Publisher<T>,
      * }</pre>
      *
      * Simalar toNested @see {@link Traversable#combine(BiPredicate, BinaryOperator)} but differs in that the first comparison is always toNested the Monoid zero
-     * This allows us toNested terminate with just a single value
+     * This allows us toNested terminate with just a singleUnsafe value
      *
      * @param predicate Test toNested see if two neighbours should be joined. The first parameter toNested the bi-predicate is the currently
      *                  accumulated result and the second is the next element

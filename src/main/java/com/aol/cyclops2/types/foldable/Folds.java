@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
@@ -18,7 +19,7 @@ import cyclops.collections.mutable.MapX;
 import com.aol.cyclops2.types.stream.HotStream;
 
 /**
- * Represents a type that may be reducable (foldable) toNested a single value or collection
+ * Represents a type that may be reducable (foldable) toNested a singleUnsafe value or collection
  * 
  * @author johnmcclean
  *
@@ -87,7 +88,7 @@ public interface Folds<T> {
     }
 
     /**
-     * Reduce this Folds toNested a single value, using the supplied Monoid. For example
+     * Reduce this Folds toNested a singleUnsafe value, using the supplied Monoid. For example
      * <pre>
      * {@code 
      * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
@@ -494,25 +495,25 @@ public interface Folds<T> {
      * {@code 
      *    
      *    //1
-     *    ReactiveSeq.of(1).single(); 
+     *    ReactiveSeq.of(1).singleUnsafe();
      *    
      *    //UnsupportedOperationException
-     *    ReactiveSeq.of().single();
+     *    ReactiveSeq.of().singleUnsafe();
      *     
      *     //UnsupportedOperationException
-     *    ReactiveSeq.of(1,2,3).single();
+     *    ReactiveSeq.of(1,2,3).singleUnsafe();
      * }
      * </pre>
      * 
-     * @return a single value or an UnsupportedOperationException if 0/1 values
+     * @return a singleUnsafe value or an UnsupportedOperationException if 0/1 values
      *         in this Stream
      */
-    default T single() {
-        return stream().single();
+    default T singleUnsafe() {
+        return stream().singleUnsafe();
 
     }
 
-    default T single(final Predicate<? super T> predicate) {
+    default Maybe<T> single(final Predicate<? super T> predicate) {
         return stream().single(predicate);
     }
 
@@ -521,21 +522,21 @@ public interface Folds<T> {
      * {@code 
      *    
      *    //Optional[1]
-     *    ReactiveSeq.of(1).singleOptional(); 
+     *    ReactiveSeq.of(1).singleUnsafe();
      *    
      *    //Optional.empty
      *    ReactiveSeq.of().singleOpional();
      *     
      *     //Optional.empty
-     *    ReactiveSeq.of(1,2,3).singleOptional();
+     *    ReactiveSeq.of(1,2,3).singleUnsafe();
      * }
      * </pre>
      * 
-     * @return An Optional with single value if this Stream has exactly one
+     * @return An Optional with singleUnsafe value if this Stream has exactly one
      *         element, otherwise Optional Empty
      */
-    default Optional<T> singleOptional() {
-        return stream().singleOptional();
+    default Maybe<T> single() {
+        return stream().single();
 
     }
 
@@ -552,7 +553,7 @@ public interface Folds<T> {
      *            toNested extract element from
      * @return elementAt index
      */
-    default Optional<T> get(final long index) {
+    default Maybe<T> get(final long index) {
         return stream().get(index);
     }
 

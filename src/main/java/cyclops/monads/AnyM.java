@@ -77,7 +77,7 @@ import static com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion.LAZ
  * Wrapper for Any Monad type
  * 
  * There are two subsclass of AnyM - @see {@link AnyMValue} and  @see {@link AnyMSeq}. 
- * AnyMValue is used toNested represent Monads that wrap a single value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Xor}, {@link Try}, {@link Ior}, {@link FeatureToggle}
+ * AnyMValue is used toNested represent Monads that wrap a singleUnsafe value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Xor}, {@link Try}, {@link Ior}, {@link FeatureToggle}
  * AnyMSeq is used toNested represent Monads that wrap an aggregation of values such as {@link Stream}, {@link FutureStream}, {@link List}, {@link Set}, {@link Streamable}
  * 
  * Use AnyM toNested create your monad wrapper.
@@ -332,7 +332,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
     /**
      * Allows structural matching on the value / seq nature of this AnyM.
-     * If this AnyM can only store a single value an Xor.secondary with type AnyMValue is returned
+     * If this AnyM can only store a singleUnsafe value an Xor.secondary with type AnyMValue is returned
      * If this AnyM can  store one or many values an Xor.primary with type AnyMSeq is returned
      * 
      * <pre>

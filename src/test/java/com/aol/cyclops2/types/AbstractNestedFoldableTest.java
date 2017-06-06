@@ -50,39 +50,39 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Test
     public void visitPresent() {
 
-        assertThat(of(1,2,3,4).visit((a, b)->"world",()->"hello" ).single(),equalTo("world"));
+        assertThat(of(1,2,3,4).visit((a, b)->"world",()->"hello" ).singleUnsafe(),equalTo("world"));
     }
     @Test
     public void visitEmpty() {
         System.out.println(empty().visit((a, b)->"world",()->"hello" ));
-        assertThat(empty().visit((a, b)->"world",()->"hello" ).single(),equalTo("hello"));
+        assertThat(empty().visit((a, b)->"world",()->"hello" ).singleUnsafe(),equalTo("hello"));
     }
     @Test
     public void visitPresentHead() {
-        assertThat(of(1,2,3,4).visit((a, b)->a,()->-1 ).single(),equalTo(1));
+        assertThat(of(1,2,3,4).visit((a, b)->a,()->-1 ).singleUnsafe(),equalTo(1));
     }
     @Test
     public void visitPresentTail() {
-        assertThat(of(1,2,3,4).visit((a, b)->b.toList().size(),()->Arrays.asList().size()).single(),equalTo(3));
+        assertThat(of(1,2,3,4).visit((a, b)->b.toList().size(),()->Arrays.asList().size()).singleUnsafe(),equalTo(3));
     }
     @Test
     public void visitMaybe() {
-        assertThat(of(1,2,3,4).visit((a, b)->"world",()->"hello").single(),equalTo("world"));
+        assertThat(of(1,2,3,4).visit((a, b)->"world",()->"hello").singleUnsafe(),equalTo("world"));
     }
     @Test
     public void visitMaybeEmpty() {
-        assertThat(this.<Integer>empty().visit((a, b)->a,()->10).single(),equalTo(10));
+        assertThat(this.<Integer>empty().visit((a, b)->a,()->10).singleUnsafe(),equalTo(10));
     }
 
 
     @Test
     public void mapReduce() {
-        assertThat(of("hello","2","world","4").mapReduce(Reducers.toCountInt()).single(),equalTo(4));
+        assertThat(of("hello","2","world","4").mapReduce(Reducers.toCountInt()).singleUnsafe(),equalTo(4));
     }
 
     @Test
     public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-        assertThat(of("one","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()).single(),
+        assertThat(of("one","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()).singleUnsafe(),
                 equalTo(10));
     }
     int toInt(String s){
@@ -99,44 +99,44 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void reduceMonoid() {
-        assertThat(of("hello","2","world","4").reduce(Reducers.toString(",")).single().length(),
+        assertThat(of("hello","2","world","4").reduce(Reducers.toString(",")).singleUnsafe().length(),
                 equalTo(",hello,2,world,4".length()));
     }
 
     @Test
     public void reduceBinaryOperator() {
-        assertThat(of(100,200,300,400,500).reduce( (acc,next) -> acc+next).stream().single(),is(Optional.of(1500)));
+        assertThat(of(100,200,300,400,500).reduce( (acc,next) -> acc+next).stream().singleUnsafe(),is(Optional.of(1500)));
     }
 
     @Test
     public void reduceIdentity() {
-        assertThat(of(100,200,300,400,500).reduce( 0,(acc,next) -> acc+next).stream().single(),is(1500));
+        assertThat(of(100,200,300,400,500).reduce( 0,(acc,next) -> acc+next).stream().singleUnsafe(),is(1500));
     }
 
     @Test
     public void reduceCombiner() {
         assertThat(of(100,200,300,400,500).reduce( 0,
                 (acc, next) -> acc+next,
-                Integer::sum).single(),equalTo(1500));
+                Integer::sum).singleUnsafe(),equalTo(1500));
     }
 
     @Test
     public void testReduceStreamOfQextendsMonoidOfT() {
-        assertThat(of("hello","2","world","4").reduce(Stream.of(Reducers.toString(","))).single().single().length(),
+        assertThat(of("hello","2","world","4").reduce(Stream.of(Reducers.toString(","))).singleUnsafe().singleUnsafe().length(),
                 equalTo(",hello,2,world,4".length()));
     }
 
     @Test
     public void testReduceIterableOfQextendsMonoidOfT() {
         assertThat(of("hello","2","world","4").reduce(ListX.of(Reducers.toString(",")))
-                    .single().single().length(),
+                    .singleUnsafe().singleUnsafe().length(),
                 equalTo(",hello,2,world,4".length()));
     }
 
     @Test
     public void foldRight() {
         
-        assertThat(of("hello","2","world","4").foldRight(Reducers.toString(",")).single().length(),
+        assertThat(of("hello","2","world","4").foldRight(Reducers.toString(",")).singleUnsafe().length(),
                 equalTo(",hello,2,world,4".length()));
        
     }
@@ -144,32 +144,32 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void foldRightIdentity() {
-        assertThat(of(100,200,300,400,500).foldRight( 0,(acc,next) -> acc+next).stream().single(),is(1500));
+        assertThat(of(100,200,300,400,500).foldRight( 0,(acc,next) -> acc+next).stream().singleUnsafe(),is(1500));
     }
 
     
     @Test
     public void foldRightMapToType() {
-        assertThat(of(1,2,3,4).foldRightMapToType(Reducers.toLinkedListX()).single().size(),
+        assertThat(of(1,2,3,4).foldRightMapToType(Reducers.toLinkedListX()).singleUnsafe().size(),
                 equalTo(4));
     }
     
 
     @Test
     public void testJoin() {
-        assertEquals("123".length(),of(1, 2, 3).join().single().length());
+        assertEquals("123".length(),of(1, 2, 3).join().singleUnsafe().length());
         
        
     }
 
     @Test
     public void testJoinString() {
-        assertEquals("1, 2, 3".length(), of(1, 2, 3).join(", ").single().length());
+        assertEquals("1, 2, 3".length(), of(1, 2, 3).join(", ").singleUnsafe().length());
     }
 
     @Test
     public void testJoinStringStringString() {
-        assertEquals("^1|2|3$".length(), of(1, 2, 3).join("|", "^", "$").single().length());
+        assertEquals("^1|2|3$".length(), of(1, 2, 3).join("|", "^", "$").singleUnsafe().length());
     }
 
     @Test
@@ -214,7 +214,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void testGroupBy() {
-        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2).single();
+        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2).singleUnsafe();
         
         assertThat(map1.get(0),hasItem(2));
         assertThat(map1.get(0),hasItem(4));
@@ -226,57 +226,57 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void testHeadAndTail() {
-        assertEquals(Optional.empty(), of().headAndTail().single().headOptional());
-        assertEquals(asList(), of().headAndTail().single().tail().toList());
+        assertEquals(Optional.empty(), of().headAndTail().singleUnsafe().headOptional());
+        assertEquals(asList(), of().headAndTail().singleUnsafe().tail().toList());
 
-        assertEquals(Optional.of(1), of(1).headAndTail().single().headOptional());
-        assertEquals(asList(), of(1).headAndTail().single().tail().toList());
+        assertEquals(Optional.of(1), of(1).headAndTail().singleUnsafe().headOptional());
+        assertEquals(asList(), of(1).headAndTail().singleUnsafe().tail().toList());
 
-        assertEquals(Maybe.of(1), of(1, 2).headAndTail().single().headMaybe());
-        assertEquals(asList(2), of(1, 2).headAndTail().single().tail().toList());
+        assertEquals(Maybe.of(1), of(1, 2).headAndTail().singleUnsafe().headMaybe());
+        assertEquals(asList(2), of(1, 2).headAndTail().singleUnsafe().tail().toList());
 
-        assertEquals(Arrays.asList(1), of(1, 2, 3).headAndTail().single().headStream().toList());
-        assertEquals((Integer)2, of(1, 2, 3).headAndTail().single().tail().headAndTail().head());
-        assertEquals(Optional.of(3), of(1, 2, 3).headAndTail().single().tail().headAndTail().tail().headAndTail().headOptional());
-        assertEquals(asList(2, 3), of(1, 2, 3).headAndTail().single().tail().toList());
-        assertEquals(asList(3), of(1, 2, 3).headAndTail().single().tail().headAndTail().tail().toList());
-        assertEquals(asList(), of(1, 2, 3).headAndTail().single().tail().headAndTail().tail().headAndTail().tail().toList());
+        assertEquals(Arrays.asList(1), of(1, 2, 3).headAndTail().singleUnsafe().headStream().toList());
+        assertEquals((Integer)2, of(1, 2, 3).headAndTail().singleUnsafe().tail().headAndTail().head());
+        assertEquals(Optional.of(3), of(1, 2, 3).headAndTail().singleUnsafe().tail().headAndTail().tail().headAndTail().headOptional());
+        assertEquals(asList(2, 3), of(1, 2, 3).headAndTail().singleUnsafe().tail().toList());
+        assertEquals(asList(3), of(1, 2, 3).headAndTail().singleUnsafe().tail().headAndTail().tail().toList());
+        assertEquals(asList(), of(1, 2, 3).headAndTail().singleUnsafe().tail().headAndTail().tail().headAndTail().tail().toList());
     }
 
     @Test
     public void testFindFirst() {
-        assertThat(of(1,2,3,4,5).findFirst().stream().single().get(),lessThan(6));
+        assertThat(of(1,2,3,4,5).findFirst().stream().singleUnsafe().get(),lessThan(6));
     }
 
     @Test
     public void testStartsWithIterable() {
         assertTrue(of(1,2,3,4)
-                .startsWithIterable(Arrays.asList(1,2,3)).single());
+                .startsWithIterable(Arrays.asList(1,2,3)).singleUnsafe());
     }
 
     @Test
     public void testStartsWith() {
         assertTrue(of(1,2,3,4)
-                .startsWith(ReactiveSeq.of(1,2,3)).single());
+                .startsWith(ReactiveSeq.of(1,2,3)).singleUnsafe());
     }
 
     @Test
     public void testEndsWithIterable() {
         assertTrue(of(1,2,3,4,5,6)
-                .endsWithIterable(Arrays.asList(5,6)).single());
+                .endsWithIterable(Arrays.asList(5,6)).singleUnsafe());
     }
 
     @Test
     public void testEndsWith() {
         assertTrue(of(1,2,3,4,5,6)
-                .endsWithIterable(ReactiveSeq.of(5,6)).single());
+                .endsWithIterable(ReactiveSeq.of(5,6)).singleUnsafe());
     }
 
     @Test
     public void testToLazyCollection() {
         Collection<Integer> col = of(1,2,3,4,5)
                                     .toNested(s->s.lazyCollection())
-                                  .single();
+                                  .singleUnsafe();
         System.out.println("first!");
         col.forEach(System.out::println);
         assertThat(col.size(),equalTo(5));
@@ -286,7 +286,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     public void testToConcurrentLazyCollection() {
         Collection<Integer> col = of(1,2,3,4,5).toNested(s->s.lazyCollectionSynchronized())
 
-                                    .single();
+                                    .singleUnsafe();
         System.out.println("first!");
         col.forEach(System.out::println);
         assertThat(col.size(),equalTo(5));
@@ -305,28 +305,28 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void testFirstValue() {
-        assertThat(of(1,2,3).firstValue().single(),anyOf(equalTo(1),equalTo(2),equalTo(3)));
+        assertThat(of(1,2,3).firstValue().singleUnsafe(),anyOf(equalTo(1),equalTo(2),equalTo(3)));
     }
 
     @Test
     public void testSingle() {
-        assertThat(of(1).single().single(),equalTo(1));
+        assertThat(of(1).singleUnsafe().singleUnsafe(),equalTo(1));
     }
 
     @Test
     public void testSinglePredicateOfQsuperT() {
-        assertThat(of(1,11).single(i->i>10).single(),equalTo(11));
+        assertThat(of(1,11).single(i->i>10).singleUnsafe(),equalTo(11));
     }
 
     @Test
     public void testSingleOptional() {
         
-        assertThat(of(1,11).singleOptional().stream().toListX(),equalTo(ListX.of(Optional.empty())));
+        assertThat(of(1,11).single().stream().toListX(),equalTo(ListX.of(Optional.empty())));
     }
 
     @Test
     public void testGet() {
-        assertThat(of(1).get(0).stream().single(),equalTo(Optional.of(1)));
+        assertThat(of(1).get(0).stream().singleUnsafe(),equalTo(Optional.of(1)));
     }
 
     @Test

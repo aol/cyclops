@@ -35,7 +35,7 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
 
         StreamSubscription  leftSub[] = {null};
         StreamSubscription  rightSub[] = {null};
-        AtomicBoolean leftComplete = new AtomicBoolean(false); //left & right compelte can be merged into single integer
+        AtomicBoolean leftComplete = new AtomicBoolean(false); //left & right compelte can be merged into singleUnsafe integer
         AtomicBoolean rightComplete = new AtomicBoolean(false);
         AtomicReference<Tuple2<T1,T2>> nextValue = new AtomicReference<>(Tuple.tuple((T1)UNSET,(T2)UNSET));
         AtomicBoolean completing = new AtomicBoolean(false);
@@ -248,7 +248,7 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
         AtomicBoolean active = new AtomicBoolean(false);
         ManyToOneConcurrentArrayQueue<R> data = new ManyToOneConcurrentArrayQueue<R>(1024);
         AtomicReference<Tuple2<T1,T2>> nextValue = new AtomicReference<>(Tuple.tuple((T1)UNSET,(T2)UNSET));
-        AtomicBoolean leftComplete = new AtomicBoolean(false); //left & right compelte can be merged into single integer
+        AtomicBoolean leftComplete = new AtomicBoolean(false); //left & right compelte can be merged into singleUnsafe integer
         AtomicBoolean rightComplete = new AtomicBoolean(false);
         left.subscribeAll(e->{
 

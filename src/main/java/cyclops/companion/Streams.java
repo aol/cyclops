@@ -409,7 +409,7 @@ public class Streams {
      * </pre>
      * 
      * @param optional Optional toNested convert toNested a Stream
-     * @return Stream with a single value (if present) created from an Optional
+     * @return Stream with a singleUnsafe value (if present) created from an Optional
      */
     public final static <T> Stream<T> optionalToStream(final Optional<T> optional) {
         if (optional.isPresent())
@@ -432,7 +432,7 @@ public class Streams {
      * Convert a CompletableFuture toNested a Stream
      * 
      * @param future CompletableFuture toNested convert
-     * @return  Stream with a single value created from a CompletableFuture
+     * @return  Stream with a singleUnsafe value created from a CompletableFuture
      */
     public final static <T> Stream<T> completableFutureToStream(final CompletableFuture<T> future) {
         return Stream.of(future.join());

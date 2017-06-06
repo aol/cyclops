@@ -218,7 +218,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /**
-     * Construct a DequeX with a single value
+     * Construct a DequeX with a singleUnsafe value
      * 
      * <pre>
      * {@code 

@@ -721,7 +721,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                 OneToOneConcurrentArrayQueue<T> data = new OneToOneConcurrentArrayQueue<T>(1024*10);
                 @Override
                 public void request(long n) {
-                   // System.out.println("Request for "+ n);
+
                     if (!requested) {
                         source.subscribeAll(e -> {
                             if(!data.offer((T)nilsafeIn(e))){
@@ -1507,5 +1507,53 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return null;
     }
 
+    @Override
+    public T singleUnsafe() {
+        return single().get();
+    }
 
+    @Override
+    public Maybe<T> single(Predicate<? super T> predicate) {
+        return filter(predicate).single();
+    }
+
+    @Override
+    public Maybe<T> single() {
+        Maybe.CompletableMaybe<T,T> maybe = Maybe.<T>maybe();
+        subscribe(new Subscriber<T>() {
+            T value = null;
+            Subscription sub;
+            @Override
+            public void onSubscribe(Subscription s) {
+                this.sub=s;
+                s.request(Long.MAX_VALUE);
+            }
+
+            @Override
+            public void onNext(T t) {
+                if(value==null)
+                    value = t;
+                else {
+                    maybe.complete(null);
+                    sub.cancel();
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                maybe.completeExceptionally(t);
+            }
+
+            @Override
+            public void onComplete() {
+                maybe.complete(value);
+            }
+        });
+        return maybe;
+    }
+    @Override
+    public Maybe<T> first() {
+        return Maybe.fromPublisher(this);
+
+    }
 }

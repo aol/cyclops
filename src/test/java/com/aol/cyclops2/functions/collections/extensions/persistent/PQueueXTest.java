@@ -30,7 +30,7 @@ public class PQueueXTest extends AbstractCollectionXTest{
     public void coflatMap(){
        assertThat(PersistentQueueX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .single(),equalTo(6));
+                   .singleUnsafe(),equalTo(6));
         
     }
 	/* (non-Javadoc)

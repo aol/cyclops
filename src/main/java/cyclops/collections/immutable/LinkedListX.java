@@ -285,20 +285,20 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /**
-     * Construct a PStack containing a single value
+     * Construct a PStack containing a singleUnsafe value
      * </pre>
      * {@code 
-     *    List<String> single = PStacks.singleton("1");
+     *    List<String> singleUnsafe = PStacks.singleton("1");
      *    
      *    //or
      *    
-     *    PStack<String> single = PStacks.singleton("1");
+     *    PStack<String> singleUnsafe = PStacks.singleton("1");
      * 
      * }
      * </pre>
      * 
      * @param value Single value for PVector
-     * @return PVector with a single value
+     * @return PVector with a singleUnsafe value
      */
     public static <T> LinkedListX<T> singleton(final T value){
         return new LazyLinkedListX<>(

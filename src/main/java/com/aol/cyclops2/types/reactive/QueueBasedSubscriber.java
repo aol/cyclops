@@ -31,7 +31,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * A reactive-streams reactiveSubscriber, backed by a cyclops2-react async.Queue, for merging data from multiple publishers into a single Stream
+ * A reactive-streams reactiveSubscriber, backed by a cyclops2-react async.Queue, for merging data from multiple publishers into a singleUnsafe Stream
  *
  * @author johnmcclean
  *

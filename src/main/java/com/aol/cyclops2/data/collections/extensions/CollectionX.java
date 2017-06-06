@@ -3,6 +3,7 @@ package com.aol.cyclops2.data.collections.extensions;
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import cyclops.collections.immutable.VectorX;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -272,10 +273,10 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     CollectionX<T> reverse();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#single()
+     * @see com.aol.cyclops2.types.foldable.Folds#singleUnsafe()
      */
     @Override
-    default T single() {
+    default T singleUnsafe() {
 
         final Iterator<T> it = iterator();
         if (it.hasNext()) {
@@ -284,25 +285,25 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
                 return result;
         }
         throw new UnsupportedOperationException(
-                                                "single only works for Streams with a single value");
+                                                "singleUnsafe only works for Streams with a singleUnsafe value");
 
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#single(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.foldable.Folds#singleUnsafe(java.util.function.Predicate)
      */
     @Override
-    default T single(final Predicate<? super T> predicate) {
+    default Maybe<T> single(final Predicate<? super T> predicate) {
         return this.filter(predicate)
-                   .single();
+                   .singleUnsafe();
 
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#singleOptional()
+     * @see com.aol.cyclops2.types.foldable.Folds#singleUnsafe()
      */
     @Override
-    default Optional<T> singleOptional() {
+    default Maybe<T> single() {
         final Iterator<T> it = iterator();
         if (it.hasNext()) {
             final T result = it.next();

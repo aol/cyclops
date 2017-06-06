@@ -617,9 +617,9 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Allows aggregate values in a Stream toNested be flatten into a single Stream.
+     * Allows aggregate values in a Stream toNested be flatten into a singleUnsafe Stream.
      * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
-     * into a single flattened reactiveStream
+     * into a singleUnsafe flattened reactiveStream
      *
      * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
      * @return SimpleReactStream
@@ -1056,7 +1056,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
 
     /**
      * Convert between an Lazy and Eager future reactiveStream,
-     * can be used toNested take advantages of each approach during a single Stream
+     * can be used toNested take advantages of each approach during a singleUnsafe Stream
      *
      * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
      */

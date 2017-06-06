@@ -652,14 +652,14 @@ public abstract class AbstractTraversableTest {
             public void groupedFunctionNoOrder(){
                 assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").stream().count(),equalTo((2L)));
                 assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").stream().filter(t->t.v1.equals("a"))
-                                .map(t->t.v2).map(ReactiveSeq::fromStream).map(ReactiveSeq::toListX).single(),
+                                .map(t->t.v2).map(ReactiveSeq::fromStream).map(ReactiveSeq::toListX).singleUnsafe(),
                                     equalTo((ListX.of(1,2))));
             }
             @Test
             public void groupedFunctionCollectorNoOrder(){
                 assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b", CyclopsCollectors.toListX()).stream().count(),equalTo((2L)));
                 assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b", CyclopsCollectors.toListX()).stream().filter(t->t.v1.equals("a"))
-                        .map(t->t.v2).single(),
+                        .map(t->t.v2).singleUnsafe(),
                             equalTo((Arrays.asList(1,2))));
             }
             @Test

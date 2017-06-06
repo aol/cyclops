@@ -153,7 +153,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,
         return recover(t->s.get());
     }
     /**
-     * Construct a Try  that contains a single value extracted from the supplied reactive-streams Publisher, will catch any Exceptions
+     * Construct a Try  that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher, will catch any Exceptions
      * of the provided types
      * <pre>
      * {@code
@@ -178,7 +178,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,
     }
 
     /**
-     * Construct a Try  that contains a single value extracted from the supplied reactive-streams Publisher
+     * Construct a Try  that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
      *
      * <pre>
      * {@code
@@ -200,7 +200,7 @@ public interface Try<T, X extends Throwable> extends To<Try<T,X>>,
         return sub.toTry();
     }
     /**
-     * Construct a Try  that contains a single value extracted from the supplied Iterable
+     * Construct a Try  that contains a singleUnsafe value extracted from the supplied Iterable
      *
      * <pre>
      * {@code

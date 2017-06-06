@@ -112,15 +112,15 @@ public class SequenceMTest {
 	}
 	@Test
 	public void singleTest(){
-		assertThat(LazyReact.sequentialBuilder().of(1).single(),equalTo(1));
+		assertThat(LazyReact.sequentialBuilder().of(1).singleUnsafe(),equalTo(1));
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void singleEmpty(){
-		LazyReact.sequentialBuilder().of().single();
+		LazyReact.sequentialBuilder().of().singleUnsafe();
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void single2(){
-		LazyReact.sequentialBuilder().of(1,2).single();
+		LazyReact.sequentialBuilder().of(1,2).singleUnsafe();
 	}
 	@Test
 	public void limitTime(){

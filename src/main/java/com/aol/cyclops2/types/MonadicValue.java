@@ -17,7 +17,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
- * A type that represents a Monad that wraps a single value
+ * A type that represents a Monad that wraps a singleUnsafe value
  * 
  * @author johnmcclean
  *
@@ -48,7 +48,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
 
     /**
      * Perform a coflatMap operation. The mapping function accepts this MonadicValue and returns
-     * a single value toNested be wrapped inside a Monad.
+     * a singleUnsafe value toNested be wrapped inside a Monad.
      * 
      * <pre>
      * {@code 

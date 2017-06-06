@@ -28,6 +28,7 @@ import cyclops.async.adapters.Queue;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.MapX;
 import cyclops.collections.immutable.VectorX;
+import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 
@@ -561,7 +562,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Efficiently construct a ReactiveSeq from a single value
+     * Efficiently construct a ReactiveSeq from a singleUnsafe value
      *
      * @param value Value toNested construct ReactiveSeq from
      * @return ReactiveSeq of one value
@@ -681,11 +682,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Construct a Stream consisting of a single value repeatedly infinitely (use take / drop etc toNested
+     * Construct a Stream consisting of a singleUnsafe value repeatedly infinitely (use take / drop etc toNested
      * switch toNested a finite Stream)
      *
      * @param t Value toNested fill Stream with
-     * @return Infinite ReactiveSeq consisting of a single value
+     * @return Infinite ReactiveSeq consisting of a singleUnsafe value
      */
     public static <T> ReactiveSeq<T> fill(T t){
         return ReactiveSeq.fromSpliterator(new FillSpliterator<T>(t));
@@ -1332,7 +1333,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param size Max size of a batch
-     * @param time (Max) time period toNested build a single batch in
+     * @param time (Max) time period toNested build a singleUnsafe batch in
      * @param t time unit for batch
      * @return ReactiveSeq batched by size and time
      */
@@ -1354,7 +1355,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param size
      *            Max size of a batch
      * @param time
-     *            (Max) time period toNested build a single batch in
+     *            (Max) time period toNested build a singleUnsafe batch in
      * @param unit
      *            time unit for batch
      * @param factory
@@ -1381,7 +1382,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param time
-     *            - time period toNested build a single batch in
+     *            - time period toNested build a singleUnsafe batch in
      * @param t
      *            time unit for batch
      * @return ReactiveSeq batched into lists by time period
@@ -1402,7 +1403,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param time
-     *            - time period toNested build a single batch in
+     *            - time period toNested build a singleUnsafe batch in
      * @param unit
      *            time unit for batch
      * @param factory
@@ -1921,7 +1922,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     boolean allMatch(Predicate<? super T> c);
 
     /**
-     * True if a single element matches when Monad converted toNested a Stream
+     * True if a singleUnsafe element matches when Monad converted toNested a Stream
      *
      * <pre>
      * {@code
@@ -2230,7 +2231,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }</pre>
      * <p>
      * <p>The following will take a reactiveStream of strings and concatenates them into a
-     * single string:
+     * singleUnsafe string:
      * <pre>{@code
      *     String concat = stringStream.collect(StringBuilder::new, StringBuilder::append,
      *                                          StringBuilder::append)
@@ -3044,21 +3045,21 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *
      *    //1
-     *    ReactiveSeq.of(1).single();
+     *    ReactiveSeq.of(1).singleUsafe();
      *
      *    //UnsupportedOperationException
-     *    ReactiveSeq.of().single();
+     *    ReactiveSeq.of().singleUnsafe();
      *
      *     //UnsupportedOperationException
-     *    ReactiveSeq.of(1,2,3).single();
+     *    ReactiveSeq.of(1,2,3).singleUnsafe();
      * }
      * </pre>
      *
-     * @return a single value or an UnsupportedOperationException if 0/1 values
+     * @return a singleUnsafe value or an UnsupportedOperationException if 0/1 values
      *         in this Stream
      */
     @Override
-    default T single() {
+    default T singleUnsafe() {
         final Iterator<T> it = iterator();
         if (it.hasNext()) {
             final T result = it.next();
@@ -3066,12 +3067,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 return result;
         }
         throw new UnsupportedOperationException(
-                                                "single only works for Streams with a single value");
+                                                "singleUnsafe only works for Streams with a singleUnsafe value");
 
     }
 
     @Override
-    default T single(final Predicate<? super T> predicate) {
+    default Maybe<T> single(final Predicate<? super T> predicate) {
         return this.filter(predicate)
                    .single();
 
@@ -3081,29 +3082,46 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *
-     *    //Optional[1]
-     *    ReactiveSeq.of(1).singleOptional();
+     *    //Maybe[1]
+     *    ReactiveSeq.of(1).singleUnsafe();
      *
-     *    //Optional.empty
-     *    ReactiveSeq.of().singleOpional();
+     *    //Maybe.none
+     *    ReactiveSeq.of().singleUnsafe();
      *
-     *     //Optional.empty
-     *    ReactiveSeq.of(1,2,3).singleOptional();
+     *     //Maybe.none
+     *    ReactiveSeq.of(1,2,3).singleUnsafe();
      * }
      * </pre>
      *
-     * @return An Optional with single value if this Stream has exactly one
-     *         element, otherwise Optional Empty
+     * @return An Maybe with singleUnsafe value if this Stream has exactly one
+     *         element, otherwise Maybe.none
      */
     @Override
-    default Optional<T> singleOptional() {
+    default Maybe<T> single() {
         final Iterator<T> it = iterator();
-        if (it.hasNext()) {
-            final T result = it.next();
-            if (!it.hasNext())
-                return Optional.of(result);
-        }
-        return Optional.empty();
+
+        return Maybe.<Object>fromEval(Eval.later(() -> {
+            if(it.hasNext()) {
+                Object res = it.next();
+                if(it.hasNext())
+                    return null;
+                if(res==null)
+                    res = Queue.NILL;
+                return res;
+            }
+            else
+             return null;
+        })).<T>map(i->{
+            if(i==Queue.NILL)
+                return null;
+            return (T)i;
+        });
+
+
+
+    }
+    default Maybe<T> first() {
+        return Maybe.fromIterable(this);
 
     }
 
@@ -3121,10 +3139,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return elementAt index
      */
     @Override
-    default Optional<T> get(final long index) {
+    default Maybe<T> get(final long index) {
         return this.zipWithIndex()
                    .filter(t -> t.v2 == index)
-                   .findFirst()
+                   .first()
                    .map(t -> t.v1());
     }
 

@@ -1,6 +1,5 @@
 package com.aol.cyclops2.control;
 
-import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.reactive.AsyncSubscriber;
 import com.aol.cyclops2.util.SimpleTimer;
 import com.google.common.collect.Lists;
@@ -12,8 +11,6 @@ import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.control.Maybe.CompletableMaybe;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -34,7 +31,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion.LAZY;
 import static cyclops.function.Predicates.anyOf;
 import static cyclops.function.Predicates.greaterThan;
 import static cyclops.function.Predicates.hasItems;
@@ -450,7 +446,7 @@ public class ReactiveSeqTest {
     public void lastOneBug(){
         assertThat(ReactiveSeq.of(1, 2, 3, 4)
                 .takeRight(1)
-                .singleOptional()
+                .single()
                 .orElse(-1),equalTo(4));
     }
 
@@ -609,7 +605,7 @@ public class ReactiveSeqTest {
 
 
        //LimitSpliterator only supports iteration
-        assertThat(res.single().size(),equalTo(3));
+        assertThat(res.singleUnsafe().size(),equalTo(3));
     }
  **/
 
@@ -836,35 +832,35 @@ public class ReactiveSeqTest {
     @Test
     public void ofTestInt(){
         assertThat(ReactiveSeq.ofInts(6)
-                             .single(),equalTo(6));
+                             .singleUnsafe(),equalTo(6));
     }
     @Test
     public void ofTestInteger(){
         assertThat(ReactiveSeq.ofInts(new Integer(6))
-                             .single(),equalTo(6));
+                             .singleUnsafe(),equalTo(6));
     }
     @Test
     public void ofDouble(){
         assertThat(ReactiveSeq.ofDoubles(6.0)
-                             .single(),equalTo(6.0));
+                             .singleUnsafe(),equalTo(6.0));
     }
 
     @Test
     public void ofTestObj(){
         assertThat(ReactiveSeq.of("a")
-                             .single(),equalTo("a"));
+                             .singleUnsafe(),equalTo("a"));
     }
     @Test
     public void intOpsTest(){
         assertThat(ReactiveSeq.ofInts(6)
-                             .single(),equalTo(6));
+                             .singleUnsafe(),equalTo(6));
     }
     @Test
     public void coflatMap(){
 
        assertThat(ReactiveSeq.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .single(),equalTo(6));
+                   .singleUnsafe(),equalTo(6));
 
     }
     @Test

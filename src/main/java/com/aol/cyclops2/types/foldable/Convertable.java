@@ -18,7 +18,7 @@ import cyclops.function.Fn0;
 import lombok.Value;
 
 /**
- * Interface that represents a single value that can be converted into a List, Stream or Optional
+ * Interface that represents a singleUnsafe value that can be converted into a List, Stream or Optional
  *
  * @author johnmcclean
  *

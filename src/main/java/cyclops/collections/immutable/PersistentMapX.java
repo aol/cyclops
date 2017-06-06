@@ -306,7 +306,7 @@ public interface PersistentMapX<K, V>
     /**
      * Convert this MapX toNested a ListX via the provided transformation function
      * 
-     * @param fn Mapping function toNested transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a singleUnsafe value
      * @return ListX of transformed values
      */
     default <T> ListX<T> toListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -317,7 +317,7 @@ public interface PersistentMapX<K, V>
     /**
      * Convert this MapX toNested a PersistentSetX via the provided transformation function
      * 
-     * @param fn Mapping function toNested transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a singleUnsafe value
      * @return PersistentSetX of transformed values
      */
     default <T> PersistentSetX<T> toPersistentSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -328,7 +328,7 @@ public interface PersistentMapX<K, V>
     /**
      * Convert this MapX toNested a POrderdSetX via the provided transformation function
      * 
-     * @param fn Mapping function toNested transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a singleUnsafe value
      * @return OrderedSetX of transformed values
      */
     default <T> OrderedSetX<T> toOrderedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -338,7 +338,7 @@ public interface PersistentMapX<K, V>
     /**
      * Convert this MapX toNested a QueueX via the provided transformation function
      * 
-     * @param fn Mapping function toNested transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a singleUnsafe value
      * @return QueueX of transformed values
      */
     default <T> PersistentQueueX<T> toPersistentQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -348,7 +348,7 @@ public interface PersistentMapX<K, V>
     /**
      * Convert this MapX toNested a LinkedListX via the provided transformation function
      * 
-     * @param fn Mapping function toNested transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a singleUnsafe value
      * @return LinkedListX of transformed values
      */
     default <T> LinkedListX<T> toLinkedListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -358,7 +358,7 @@ public interface PersistentMapX<K, V>
     /**
      * Convert this MapX toNested a VectorX via the provided transformation function
      * 
-     * @param fn Mapping function toNested transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a singleUnsafe value
      * @return VectorX of transformed values
      */
     default <T> VectorX<T> toVectorX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -367,7 +367,7 @@ public interface PersistentMapX<K, V>
     /**
      * Convert this MapX toNested a BagX via the provided transformation function
      * 
-     * @param fn Mapping function toNested transform each Map entry into a single value
+     * @param fn Mapping function toNested transform each Map entry into a singleUnsafe value
      * @return BagX of transformed values
      */
     default <T> BagX<T> toBagX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
