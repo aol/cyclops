@@ -1496,6 +1496,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return result.get();
     }
 
+    @Override
     public <R> R visit(Function<? super ReactiveSeq<T>,? extends R> sync,Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
                        Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure){
         switch(this.async){
