@@ -3098,7 +3098,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default Maybe<T> single() {
         final Iterator<T> it = iterator();
 
-        return Maybe.<Object>fromEval(Eval.later(() -> {
+        return Maybe.<Object>fromEvalNullable(Eval.later(() -> {
             if(it.hasNext()) {
                 Object res = it.next();
                 if(it.hasNext())

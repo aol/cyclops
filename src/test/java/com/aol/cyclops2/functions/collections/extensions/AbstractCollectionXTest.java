@@ -87,7 +87,7 @@ public abstract class AbstractCollectionXTest {
             return i==1;
         });
         assertFalse(set);
-        assertTrue( of(1,2,3).eager().filterNot(i->{
+        assertTrue( of(1,2,3).eager().lazy().filterNot(i->{
             set = true;
             return i==1;
         }).isLazy());
