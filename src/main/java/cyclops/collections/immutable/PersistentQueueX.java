@@ -5,7 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion;
+import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -39,7 +39,7 @@ import java.util.stream.Stream;
 
 public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                                     PQueue<T>,
-        LazyCollectionX<T>,
+                                    LazyCollectionX<T>,
                                     OnEmptySwitch<T, PQueue<T>>,
                                     Higher<PersistentQueueX.µ,T>{
 
@@ -99,7 +99,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      */
     public static PersistentQueueX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                .persistentQueueX(Conversion.LAZY);
+                .persistentQueueX(Evaluation.LAZY);
     }
 
     /**
@@ -113,7 +113,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      */
     public static PersistentQueueX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                .persistentQueueX(Conversion.LAZY);
+                .persistentQueueX(Evaluation.LAZY);
     }
 
     /**
@@ -133,7 +133,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      */
     static <U, T> PersistentQueueX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                .persistentQueueX(Conversion.LAZY);
+                .persistentQueueX(Evaluation.LAZY);
     }
 
     /**
@@ -147,7 +147,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                .persistentQueueX(Conversion.LAZY);
+                .persistentQueueX(Evaluation.LAZY);
     }
     
     /**
@@ -161,7 +161,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                .persistentQueueX(Conversion.LAZY);
+                .persistentQueueX(Evaluation.LAZY);
     }
 
     /**
@@ -175,17 +175,17 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     public static <T> PersistentQueueX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                .persistentQueueX(Conversion.LAZY);
+                .persistentQueueX(Evaluation.LAZY);
 
     }
 
     public static <T> PersistentQueueX<T> of(final T... values) {
-        return new LazyPQueueX<>(null,ReactiveSeq.of(values),Reducers.toPQueue());
+        return new LazyPQueueX<>(null,ReactiveSeq.of(values),Reducers.toPQueue(),Evaluation.LAZY);
     }
 
     public static <T> PersistentQueueX<T> empty() {
         return new LazyPQueueX<>(
-                                 AmortizedPQueue.empty(),null,Reducers.toPQueue());
+                                 AmortizedPQueue.empty(),null,Reducers.toPQueue(),Evaluation.LAZY);
     }
 
     public static <T> PersistentQueueX<T> singleton(final T value) {
@@ -202,7 +202,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      */
     public static <T> PersistentQueueX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                          .persistentQueueX(Conversion.LAZY);
+                          .persistentQueueX(Evaluation.LAZY);
     }
     PersistentQueueX<T> type(Reducer<? extends PQueue<T>> reducer);
 
@@ -221,7 +221,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * @return
      */
     public static <T> PersistentQueueX<T> persistentQueueX(ReactiveSeq<T> stream) {
-        return new LazyPQueueX<>(null,stream,Reducers.toPQueue());
+        return new LazyPQueueX<>(null,stream,Reducers.toPQueue(),Evaluation.LAZY);
     }
 
     public static <T> PersistentQueueX<T> fromIterable(final Iterable<T> iterable) {
@@ -229,12 +229,12 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
             return (PersistentQueueX) iterable;
         if (iterable instanceof PQueue)
             return new LazyPQueueX<>(
-                                     (PQueue) iterable,null,Reducers.toPQueue());
+                                     (PQueue) iterable,null,Reducers.toPQueue(),Evaluation.LAZY);
 
 
         return new LazyPQueueX<>(null,
                 ReactiveSeq.fromIterable(iterable),
-                Reducers.toPQueue());
+                Reducers.toPQueue(),Evaluation.LAZY);
     }
 
 

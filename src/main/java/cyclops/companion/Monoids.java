@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 public interface Monoids {
 
     /**
-     * To manage javac type inference first assign the monoid
+     * To manage javac type inference takeOne assign the monoid
      * <pre>
      * {@code
      *    
@@ -57,7 +57,7 @@ public interface Monoids {
     /**
      * Concatenate mutable collections
      * 
-     * To manage javac type inference first assign the Monoid
+     * To manage javac type inference takeOne assign the Monoid
      * <pre>
      * {@code
      *    
@@ -192,7 +192,7 @@ public interface Monoids {
      * If the supplied Collections are standard JDK mutable collections Colleciton b is appended toNested Collection a and a is returned.
      * 
      * 
-     * To manage javac type inference first assign the semigroup
+     * To manage javac type inference takeOne assign the semigroup
      * <pre>
      * {@code
      *    
@@ -284,7 +284,7 @@ public interface Monoids {
     }
     /**
      * @param zero Empty Collection of same type
-     * @return Combination of two Collection, first non-empty is returned
+     * @return Combination of two Collection, takeOne non-empty is returned
      */
     static <T,C extends Collection<T>> Monoid<C> firstNonEmpty(C zero) {
         return  Monoid.of(zero,Semigroups.firstNonEmpty());
@@ -297,19 +297,19 @@ public interface Monoids {
         return Monoid.of(zero,Semigroups.lastNonEmpty());
     }
     /**
-     * @return Combination of two Objects of same type, first non-null is returned
+     * @return Combination of two Objects of same type, takeOne non-null is returned
      */
     static <T> Monoid<T> firstNonNull() {
          return Monoid.of(null, Semigroups.firstNonNull());
     }
     /**
-     * @return Combine two CompletableFuture's by taking the first present
+     * @return Combine two CompletableFuture's by taking the takeOne present
      */
     static <T> Monoid<CompletableFuture<T>> firstCompleteCompletableFuture() {
         return Monoid.of(new CompletableFuture<T>(), Semigroups.firstCompleteCompletableFuture());
     }
     /**
-     * @return Combine two Future's by taking the first result
+     * @return Combine two Future's by taking the takeOne result
      */
     static <T> Monoid<Future<T>> firstCompleteFuture() {
        return Monoid.of(Future.future(), Semigroups.firstCompleteFuture());
@@ -319,19 +319,19 @@ public interface Monoids {
         return Monoid.of(new SimpleReact().of(),Semigroups.firstOfSimpleReact());
     }
     /**
-     * @return Combine two Future's by taking the first successful
+     * @return Combine two Future's by taking the takeOne successful
      */
     static <T> Monoid<Future<T>> firstSuccessfulFuture() {
         return Monoid.of(Future.future(), Semigroups.firstSuccessfulFuture());
     }
     /**
-     * @return Combine two Xor's by taking the first primary
+     * @return Combine two Xor's by taking the takeOne primary
      */
     static <ST,PT> Monoid<Xor<ST,PT>> firstPrimaryXor(ST zero) {
         return Monoid.of(Xor.secondary(zero), Semigroups.firstPrimaryXor());
     }
     /**
-     * @return Combine two Xor's by taking the first secondary
+     * @return Combine two Xor's by taking the takeOne secondary
      */
     static <ST,PT> Monoid<Xor<ST,PT>> firstSecondaryXor(PT zero) {
         return Monoid.of(Xor.primary(zero), Semigroups.firstSecondaryXor());
@@ -349,13 +349,13 @@ public interface Monoids {
         return Monoid.of(Xor.primary(zero), Semigroups.lastSecondaryXor());
     }
     /**
-     * @return Combine two Try's by taking the first primary
+     * @return Combine two Try's by taking the takeOne primary
      */
     static <T,X extends Throwable> Monoid<Try<T,X>> firstTrySuccess(X zero) {
         return Monoid.of(Try.failure(zero), Semigroups.firstTrySuccess());
     }
     /**
-     * @return Combine two Try's by taking the first secondary
+     * @return Combine two Try's by taking the takeOne secondary
      */
     static <T,X extends Throwable> Monoid<Try<T,X>> firstTryFailure(T zero) {
         return Monoid.of(Try.success(zero), Semigroups.firstTryFailure());
@@ -373,13 +373,13 @@ public interface Monoids {
         return Monoid.of(Try.success(zero), Semigroups.lastTryFailure());
     }
     /**
-     * @return Combine two Ior's by taking the first primary
+     * @return Combine two Ior's by taking the takeOne primary
      */
     static <ST,PT> Monoid<Ior<ST,PT>> firstPrimaryIor(ST zero) {
         return Monoid.of(Ior.secondary(zero), Semigroups.firstPrimaryIor());
     }
     /**
-     * @return Combine two Ior's by taking the first secondary
+     * @return Combine two Ior's by taking the takeOne secondary
      */
     static <ST,PT> Monoid<Ior<ST,PT>> firstSecondaryIor(PT zero) {
         return Monoid.of(Ior.primary(zero), Semigroups.firstSecondaryIor());
@@ -397,14 +397,14 @@ public interface Monoids {
         return Monoid.of(Ior.primary(zero), Semigroups.lastSecondaryIor());
     }
     /**
-     * @return Combine two Maybe's by taking the first present
+     * @return Combine two Maybe's by taking the takeOne present
      */
     static <T> Monoid<Maybe<T>> firstPresentMaybe() {
         return Monoid.of(Maybe.none(), Semigroups.firstPresentMaybe());
     }
 
     /**
-     * @return Combine two optionals by taking the first present
+     * @return Combine two optionals by taking the takeOne present
      */
     static <T> Monoid<Optional<T>> firstPresentOptional() {
         return Monoid.of(Optional.empty(), Semigroups.firstPresentOptional());

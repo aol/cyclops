@@ -1,6 +1,7 @@
 package com.aol.cyclops2.data.collections.extensions;
 
 import com.aol.cyclops2.types.factory.Unit;
+import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
@@ -33,7 +34,15 @@ import java.util.stream.Stream;
 public interface CollectionX<T> extends FoldableTraversable<T>,
                                         Collection<T> ,
                                         Unwrapable,
-        Unit<T> {
+                                        Unit<T> {
+
+    boolean isLazy();
+    boolean isEager();
+    Evaluation evaluation();
+
+    CollectionX<T> lazy();
+    CollectionX<T> eager();
+
 
     default <R> R collection(Function<? super CollectionX<T>,? extends R> fn){
         return fn.apply(this);
@@ -238,7 +247,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * @param index toNested look up element
      * @return Optional.empty if the index does not exist, otherwise the element at the index supplied is returned
      */
-    default Optional<T> getAtIndex(final int index) {
+    default Maybe<T> getAtIndex(final int index) {
         return stream().get(index);
     }
 
@@ -295,7 +304,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     @Override
     default Maybe<T> single(final Predicate<? super T> predicate) {
         return this.filter(predicate)
-                   .singleUnsafe();
+                   .single();
 
     }
 
@@ -304,14 +313,11 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      */
     @Override
     default Maybe<T> single() {
-        final Iterator<T> it = iterator();
-        if (it.hasNext()) {
-            final T result = it.next();
-            if (!it.hasNext())
-                return Optional.of(result);
-        }
-        return Optional.empty();
-
+       return stream().single();
+    }
+    @Override
+    default Maybe<T> takeOne() {
+        return stream().takeOne();
     }
 
     /* (non-Javadoc)

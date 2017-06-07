@@ -55,7 +55,7 @@ public class HeadAndTail<T> {
     }
 
     /**
-     * @return Head (first) value, will throw an exception if the head is not present
+     * @return Head (takeOne) value, will throw an exception if the head is not present
      */
     public T head() {
         return head.get();
@@ -70,7 +70,7 @@ public class HeadAndTail<T> {
     }
 
     /**
-     * @return Maybe.none if the head is not present, otherwise a Maybe.some containing the first value
+     * @return Maybe.none if the head is not present, otherwise a Maybe.some containing the takeOne value
      */
     public Maybe<T> headMaybe() {
         return isHeadPresent() ? Maybe.fromEval(Eval.later(head)) : Maybe.none();

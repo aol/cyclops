@@ -1,6 +1,9 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
+import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
+import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.DequeX;
 import cyclops.stream.ReactiveSeq;
 import lombok.EqualsAndHashCode;
@@ -38,28 +41,37 @@ import java.util.stream.Collector;
 public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements DequeX<T> {
 
 
-    public LazyDequeX(Deque<T> list, ReactiveSeq<T> seq, Collector<T, ?, Deque<T>> collector) {
-        super(list, seq, collector);
+    public LazyDequeX(Deque<T> list, ReactiveSeq<T> seq, Collector<T, ?, Deque<T>> collector,Evaluation strict) {
+        super(list, seq, collector,strict);
 
     }
-    public LazyDequeX(Deque<T> list, Collector<T, ?, Deque<T>> collector) {
-        super(list, null, collector);
+    public LazyDequeX(Deque<T> list, Collector<T, ?, Deque<T>> collector,Evaluation strict) {
+        super(list, null, collector,strict);
 
     }
 
-    public LazyDequeX(ReactiveSeq<T> seq, Collector<T, ?, Deque<T>> collector) {
-        super(null, seq, collector);
+    public LazyDequeX(ReactiveSeq<T> seq, Collector<T, ?, Deque<T>> collector,Evaluation strict) {
+        super(null, seq, collector,strict);
 
     }
 
     @Override
     public LazyDequeX<T> type(Collector<T, ?, Deque<T>> collector){
-        return (LazyDequeX)new LazyDequeX<T>(this.getList(),this.getSeq().get(),collector);
+        return (LazyDequeX)new LazyDequeX<T>(this.getList(),this.getSeq().get(),collector, evaluation());
     }
     //@Override
     public DequeX<T> materialize() {
         get();
         return this;
+    }
+    @Override
+    public DequeX<T> lazy() {
+        return new LazyDequeX<T>(getList(),getSeq().get(),getCollectorInternal(),Evaluation.LAZY) ;
+    }
+
+    @Override
+    public DequeX<T> eager() {
+        return new LazyDequeX<T>(getList(),getSeq().get(),getCollectorInternal(),Evaluation.EAGER) ;
     }
 
     @Override
@@ -72,13 +84,13 @@ public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements
     @Override
     public <X> LazyDequeX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyDequeX<X>((Deque)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
+        return new LazyDequeX<X>((Deque)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal(), evaluation());
     }
 
     @Override
     public <T1> LazyDequeX<T1> from(Collection<T1> c) {
         if(c instanceof Deque)
-            return new LazyDequeX<T1>((Deque)c,null,(Collector)this.getCollectorInternal());
+            return new LazyDequeX<T1>((Deque)c,null,(Collector)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 

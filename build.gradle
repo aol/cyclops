@@ -64,7 +64,7 @@ dependencies {
 	compile 'org.reactivestreams:reactive-streams:'+reactiveStreamsVersion
 	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
     testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
-    testCompile 'io.projectreactor:reactor-core:3.0.4.RELEASE'
+    compile 'io.projectreactor:reactor-core:3.0.4.RELEASE'
 	testCompile  'com.google.guava:guava:19.0'
     testCompile 'com.google.guava:guava-testlib:19.0'
 	testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'

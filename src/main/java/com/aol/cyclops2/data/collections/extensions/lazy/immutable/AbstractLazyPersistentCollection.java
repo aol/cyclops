@@ -3,6 +3,7 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
+import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
@@ -33,13 +34,17 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     protected final AtomicReference<ReactiveSeq<T>> seq;
     @Getter(AccessLevel.PROTECTED)
     private final Reducer<C> collectorInternal;
+
+    private final Evaluation strict;
     final AtomicBoolean updating = new AtomicBoolean(false);
     final AtomicReference<Throwable> error = new AtomicReference<>(null);
 
-    public AbstractLazyPersistentCollection(C list, ReactiveSeq<T> seq, Reducer<C> collector) {
+    public AbstractLazyPersistentCollection(C list, ReactiveSeq<T> seq, Reducer<C> collector,Evaluation strict) {
         this.list = list;
         this.seq = new AtomicReference<>(seq);
         this.collectorInternal = collector;
+        this.strict = strict;
+        handleStrict();
     }
 
 
@@ -52,7 +57,23 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
 
         return collectorInternal.mapReduce(toUse);
     }
+    @Override
+    public boolean isLazy() {
+        return strict == Evaluation.LAZY;
+    }
 
+    @Override
+    public boolean isEager() {
+        return strict == Evaluation.EAGER;
+    }
+    @Override
+    public Evaluation evaluation(){
+        return strict;
+    }
+    protected void handleStrict(){
+        if(isEager())
+            get();
+    }
     @Override
     public C get() {
         if (seq.get() != null) {

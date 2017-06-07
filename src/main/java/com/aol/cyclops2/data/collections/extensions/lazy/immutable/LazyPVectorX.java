@@ -1,8 +1,9 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
+import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.collections.immutable.VectorX;
-import cyclops.companion.Reducers;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PVector;
@@ -40,8 +41,8 @@ import java.util.function.Supplier;
 public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<T>> implements VectorX<T> {
 
 
-    public LazyPVectorX(PVector<T> list, ReactiveSeq<T> seq, Reducer<PVector<T>> reducer) {
-        super(list, seq, reducer);
+    public LazyPVectorX(PVector<T> list, ReactiveSeq<T> seq, Reducer<PVector<T>> reducer,Evaluation strict) {
+        super(list, seq, reducer,strict);
     }
 
 
@@ -56,24 +57,32 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
 
     @Override
     public VectorX<T> type(Reducer<? extends PVector<T>> reducer) {
-        return new LazyPVectorX<T>(list,seq.get(),Reducer.narrow(reducer));
+        return new LazyPVectorX<T>(list,seq.get(),Reducer.narrow(reducer), evaluation());
     }
 
     //  @Override
     public <X> LazyPVectorX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPVectorX<X>((PVector)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal());
+        return new LazyPVectorX<X>((PVector)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
     }
 
     @Override
     public <T1> LazyPVectorX<T1> from(Collection<T1> c) {
         if(c instanceof PVector)
-            return new LazyPVectorX<T1>((PVector)c,null,(Reducer)this.getCollectorInternal());
+            return new LazyPVectorX<T1>((PVector)c,null,(Reducer)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 
-   
-   
+
+    @Override
+    public VectorX<T> lazy() {
+        return new LazyPVectorX<T>(list,seq.get(),getCollectorInternal(), Evaluation.LAZY) ;
+    }
+
+    @Override
+    public VectorX<T> eager() {
+        return new LazyPVectorX<T>(list,seq.get(),getCollectorInternal(),Evaluation.EAGER) ;
+    }
 
     @Override
     public VectorX<T> minusAll(Collection<?> list) {

@@ -204,7 +204,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Return first Stream out of provided Streams that starts emitted results
+     * Return takeOne Stream out of provided Streams that starts emitted results
      *
      * @param futureStreams Streams toNested race
      * @return First Stream toNested skip emitting values
@@ -285,7 +285,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * In contast toNested EagerFutureStream#skip skipFutures will skip the first n entries
+     * In contast toNested EagerFutureStream#skip skipFutures will skip the takeOne n entries
      * of the underlying Stream of Futures.
      * <pre>
      * {@code
@@ -800,7 +800,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *            continued or removed
      * @return List of Completed results of currently active stage at full
      *         completion point or when breakout triggered (which ever comes
-     *         first). throws InterruptedException,ExecutionException
+     *         takeOne). throws InterruptedException,ExecutionException
      */
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
     default ListX<U> block(final Predicate<Status<U>> breakout) {
@@ -816,7 +816,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *            Predicate that determines whether the block should be
      *            continued or removed
      * @return Completed results of currently active stage at full completion
-     *         point or when breakout triggered (which ever comes first), in
+     *         point or when breakout triggered (which ever comes takeOne), in
      *         aggregated in form determined by collector throws
      *         InterruptedException,ExecutionException
      */
@@ -888,7 +888,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      *
      * In this example onFail recovers from the RuntimeException thrown when the
-     * input toNested the first 'transform' stage is 100.
+     * input toNested the takeOne 'transform' stage is 100.
      *
      * @param fn
      *            Recovery function, the exception is input, and the recovery

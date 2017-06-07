@@ -701,7 +701,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      *     //[fast,0l],[slow,1l]
      * }</pre>
-     * The first result will be fast and will have index 0 (the result index)
+     * The takeOne result will be fast and will have index 0 (the result index)
      *
      * Operating on futures
      * <pre>
@@ -712,7 +712,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      *     //[fast,1l],[slow,0l]
      * }</pre>
-     * The first result will still be fast, but the index will now be the skip index 1
+     * The takeOne result will still be fast, but the index will now be the skip index 1
      *
      * @return Access a set of operators that act on the underlying futures in this
      * Stream.
@@ -1981,7 +1981,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * FutureStream.of(1,2,3,4).limit(2)
      *
-     * Will result in a Stream of (1,2). Only the first two elements are used.
+     * Will result in a Stream of (1,2). Only the takeOne two elements are used.
      *
      * @param maxSize number of elements toNested take
      *
@@ -2053,7 +2053,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * FutureStream.of(1,2,3,4).skip(2)
      *
-     * Will result in a reactiveStream of (3,4). The first two elements are skipped.
+     * Will result in a reactiveStream of (3,4). The takeOne two elements are skipped.
      *
      * @param n Number of elements toNested skip
      *
@@ -3111,16 +3111,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                 .flatMapP(fn));
     }
 
-    @Override
-    default <R> FutureStream<R> flatMapP(final int maxConcurrency,final Function<? super U, ? extends Publisher<? extends R>> fn) {
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                .flatMapP(maxConcurrency,fn));
-    }
-    @Override
-    default <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory,Function<? super U, ? extends Publisher<? extends R>> mapper){
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                .flatMapP(maxConcurrency,factory,mapper));
-    }
 
 
     /*

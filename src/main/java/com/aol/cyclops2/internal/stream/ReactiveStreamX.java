@@ -2,6 +2,7 @@ package com.aol.cyclops2.internal.stream;
 
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.futurestream.Continuation;
+import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.util.ExceptionSoftener;
@@ -126,7 +127,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             return queue.stream().iterator();
 
         }
-        return new OperatorToIterable<>(source,this.defaultErrorHandler,async== BACKPRESSURE).iterator();
+        return new TestOperatorToIterable<>(source,this.defaultErrorHandler,async== BACKPRESSURE).iterator();
     }
 
     <X> ReactiveStreamX<X> createSeq(Operator<X> stream) {
@@ -402,144 +403,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return Spouts.lazyConcat(local);
     }
 
-    @Override
-    public final <R> ReactiveSeq<R> flatMapP(int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return flatMapP(maxConcurrency, QueueFactories.unboundedNonBlockingQueue(new DirectWaitStrategy<>()),fn);
-    }
-    public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory, Function<? super T, ? extends Publisher<? extends R>> mapper) {
-
-        final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
-
-        final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(()->factory.build(), c, maxConcurrency);
-
-
-
-        AtomicInteger closed = new AtomicInteger(0);
-        final ReactiveSeq<T> stream = stream();
-        long id = System.identityHashCode(stream);
-        Subscription sub = stream.map(mapper)
-                .forEachSubscribe(p -> {
-                    c.active.incrementAndGet();
-                    p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));
-
-                } , defaultErrorHandler , () -> {
-                    init.close();
-                });
-
-
-        AtomicInteger totalSent = new AtomicInteger(0);
-
-        Subscriber subscriber[] ={null};
-        return Spouts.from(new Publisher<R>(){
-
-            @Override
-            public void subscribe(Subscriber<? super R> s) {
-                {
-                    subscriber[0]=s;
-                    init.setErrorHandler(s::onError);
-                    sub.request(1);
-                }
-                List[] ancillaryData = {null};
-                s.onSubscribe(new StreamSubscription() {
-
-                    LongConsumer work =  r ->{
-                        if(!isOpen)
-                            return;
-
-                        long e = 0L;
-
-                        while(r>0) {
-
-                            int size = c.subscription.size();
-                            long finalR = size==0 ? 0 : r==Long.MAX_VALUE ? r :r / size ;
-
-
-                            int loops = 0;
-                            while(e<r) {
-
-                                if(!isOpen)
-                                    return;
-                                if(c.active.get()<maxConcurrency){
-                                    sub.request(1l);
-                                }
-                                try {
-                                    if(ancillaryData[0]!=null){
-                                        List<R> local = ancillaryData[0];
-                                        if(local.size()==0){
-                                            sub.cancel();
-                                            cancel();
-                                            s.onComplete();
-                                            return;
-                                        }
-                                        s.onNext(local.remove(0));
-                                        e++;
-                                        totalSent.incrementAndGet();
-
-                                    }else {
-                                        R value = init.getQueue().get();
-                                        s.onNext(value);
-                                        e++;
-                                        totalSent.incrementAndGet();
-
-                                    }
-
-                                } catch (Queue.QueueTimeoutException t) {
-
-                                    Thread.yield();
-                                } catch (Queue.ClosedQueueException t){
-
-                                    if(t.isDataPresent()){
-                                        ancillaryData[0]=t.getCurrentData();
-                                        List<R> local = ancillaryData[0];
-                                        if(local.size()==0){
-                                            sub.cancel();
-                                            cancel();
-                                            s.onComplete();
-                                            return;
-                                        }
-                                        s.onNext(local.remove(0));
-                                        e++;
-                                    }else {
-                                        sub.cancel();
-
-                                        cancel();
-                                        s.onComplete();
-                                        return;
-                                    }
-                                }catch( Exception t){
-
-
-                                    s.onComplete();
-                                    return;
-                                }
-
-                            }
-
-                            requested.accumulateAndGet(e,(a,b)->a-b);
-                            r=requested.get();
-                        }
-
-
-                    };
-                    @Override
-                    public void request(long n) {
-                        if(n<=0) {
-                            s.onError(new IllegalArgumentException("3.9 While the Subscription is not cancelled, Subscription.request(long n) MUST throw a java.lang.IllegalArgumentException if the argument is <= 0."));
-                            return;
-                        }
-                        singleActiveRequest(n,work);
-                    }
-
-                    @Override
-                    public void cancel() {
-                        sub.cancel();
-                    }
-                });
-
-            }
-        });
-
-    }
 
 
     @Override
@@ -1122,7 +985,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
                     if(wip.compareAndSet(false,true)){
                         try {
-                            //use the first consuming thread toNested tell this Stream onto the Queue
+                            //use the takeOne consuming thread toNested tell this Stream onto the Queue
                             s.request(1000-queue.size());
                         }finally {
                             wip.set(false);
@@ -1552,7 +1415,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return maybe;
     }
     @Override
-    public Maybe<T> first() {
+    public Maybe<T> takeOne() {
         return Maybe.fromPublisher(this);
 
     }

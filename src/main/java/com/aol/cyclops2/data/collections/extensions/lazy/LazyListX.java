@@ -1,6 +1,8 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
+import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 
@@ -37,19 +39,32 @@ import java.util.stream.Collector;
 public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements ListX<T> {
 
 
+    public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector,Evaluation strict) {
+        super(list, seq, collector,strict);
+
+    }
     public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector) {
-        super(list, seq, collector);
+       this(list, seq, collector,Evaluation.LAZY);
 
     }
 
     @Override
     public LazyListX<T> withCollector(Collector<T, ?, List<T>> collector){
-        return (LazyListX)new LazyListX<T>(this.getList(),this.getSeq().get(),collector);
+        return (LazyListX)new LazyListX<T>(this.getList(),this.getSeq().get(),collector, evaluation());
     }
     //@Override
     public ListX<T> materialize() {
         get();
         return this;
+    }
+    @Override
+    public ListX<T> lazy() {
+        return new LazyListX<T>(getList(),getSeq().get(),getCollectorInternal(),Evaluation.LAZY) ;
+    }
+
+    @Override
+    public ListX<T> eager() {
+        return new LazyListX<T>(getList(),getSeq().get(),getCollectorInternal(),Evaluation.EAGER) ;
     }
 
     @Override
@@ -127,6 +142,10 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
       return from(list);
     }
 
+
+
+
+
     @Override
     public Iterator<T> iterator() {
         return get().iterator();
@@ -134,14 +153,13 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
 
     @Override
     public <X> LazyListX<X> fromStream(ReactiveSeq<X> stream) {
-
-        return new LazyListX<X>((List)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
+        return new LazyListX<X>((List) getList(), ReactiveSeq.fromStream(stream), (Collector) this.getCollectorInternal(),this.evaluation());
     }
 
     @Override
     public <T1> LazyListX<T1> from(Collection<T1> c) {
         if(c instanceof List)
-            return new LazyListX<T1>((List)c,null,(Collector)this.getCollectorInternal());
+            return new LazyListX<T1>((List)c,null,(Collector)this.getCollectorInternal(),this.evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 

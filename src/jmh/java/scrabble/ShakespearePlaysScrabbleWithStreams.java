@@ -111,7 +111,7 @@ public abstract class ShakespearePlaysScrabbleWithStreams extends ShakespearePla
                         .sum();
 
         // Placing the word on the board
-        // Building the streams of first and last letters
+        // Building the streams of takeOne and last letters
         Function<String, IntStream> first3 = word -> word.chars().limit(3);
         Function<String, IntStream> last3 = word -> word.chars().skip(Integer.max(0, word.length() - 4));
 

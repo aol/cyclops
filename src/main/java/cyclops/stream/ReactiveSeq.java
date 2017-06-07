@@ -805,7 +805,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
                     if(ref.get()==null && ref.compareAndSet(null,Continuation.empty())){
                         try {
-                            //use the first consuming thread toNested tell this Stream onto the Queue
+                            //use the takeOne consuming thread toNested tell this Stream onto the Queue
                             this.spliterator().forEachRemaining(queue::offer);
                         }finally {
                             queue.close();
@@ -2020,25 +2020,25 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Lazy / reactive analogue of findFirst / findAny from JDK
      * For push based reactive-streams (created via Spouts.XXX) data will be pushed toNested the returned Maybe on arrival.
-     * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Maybe is first accessed.
+     * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Maybe is takeOne accessed.
      *
      * @return
      */
     Maybe<T> findOne();
 
     /**
-     * Lazy / reactive look up of first value , capturing the first error, if one occurs. If no values are
+     * Lazy / reactive look up of takeOne value , capturing the takeOne error, if one occurs. If no values are
      * present a NoSuchElementException is returned.
      *
      * For push based reactive-streams (created via Spouts.XXX) data will be pushed toNested the returned Either on arrival.
-     * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Either is first accessed.
+     * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Either is takeOne accessed.
 
      *
      * @return
      */
     Either<Throwable,T> findFirstOrError();
     /**
-     * @return first matching element, but order is not guaranteed
+     * @return takeOne matching element, but order is not guaranteed
      *
      *         <pre>
      * {@code
@@ -2304,7 +2304,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
-     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      *
      * <pre>
      * {@code
@@ -2328,7 +2328,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
-     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      *
      * <pre>
      * {@code
@@ -2527,9 +2527,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     <R> ReactiveSeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
 
-    <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory,Function<? super T, ? extends Publisher<? extends R>> mapper);
     <R> ReactiveSeq<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
-    <R> ReactiveSeq<R> flatMapP(int maxConcurrency,Function<? super T, ? extends Publisher<? extends R>> fn);
     /**
      * flatMap operation
      *
@@ -2919,7 +2917,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Turns this ReactiveSeq into a HotStream, a connectable Stream, being executed on a thread on the
      * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
-     * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedHotStream(Executor)}.
+     * immediately. For a hotStream that waits until the takeOne user streams connect @see {@link ReactiveSeq#primedHotStream(Executor)}.
      * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#pausableHotStream(Executor)}.
      * Turns this ReactiveSeq into a HotStream, a connectable Stream, being
      * executed on a thread on the supplied executor, that is producing data
@@ -2946,8 +2944,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Return a HotStream that will skip emitting data when the first connecting Stream connects.
-     * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
+     * Return a HotStream that will skip emitting data when the takeOne connecting Stream connects.
+     * Note this method creates a HotStream that starts emitting data only when the takeOne connecting Stream connects.
      *  For a hotStream that starts toNested emitted data immediately @see {@link ReactiveSeq#hotStream(Executor)}.
      * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
      * <pre>
@@ -2976,7 +2974,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Turns this ReactiveSeq into a HotStream, a connectable & pausable Stream, being executed on a thread on the
      * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
-     * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
+     * immediately. For a hotStream that waits until the takeOne user streams connect @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
      * The generated HotStream is pausable, for a unpausable HotStream (slightly faster execution) @see {@link ReactiveSeq#hotStream(Executor)}.
      * <pre>
      * {@code
@@ -3001,8 +2999,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Return a pausable HotStream that will skip emitting data when the first connecting Stream connects.
-     * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
+     * Return a pausable HotStream that will skip emitting data when the takeOne connecting Stream connects.
+     * Note this method creates a HotStream that starts emitting data only when the takeOne connecting Stream connects.
      *  For a hotStream that starts toNested emitted data immediately @see {@link ReactiveSeq#pausableHotStream(Executor)}.
      * The generated HotStream is pausable, for a unpausable HotStream @see {@link ReactiveSeq#primedHotStream(Executor)}.
      * <pre>
@@ -3035,7 +3033,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * @return first value in this Stream
+     * @return takeOne value in this Stream
      */
     @Override
     T firstValue();
@@ -3120,7 +3118,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     }
-    default Maybe<T> first() {
+    default Maybe<T> takeOne() {
         return Maybe.fromIterable(this);
 
     }
@@ -3142,7 +3140,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default Maybe<T> get(final long index) {
         return this.zipWithIndex()
                    .filter(t -> t.v2 == index)
-                   .first()
+                   .takeOne()
                    .map(t -> t.v1());
     }
 
@@ -4783,7 +4781,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                     if(wip.compareAndSet(false,true)){
                         try {
 
-                            //use the first consuming thread toNested tell this Stream onto the Queue
+                            //use the takeOne consuming thread toNested tell this Stream onto the Queue
                             if(!split.tryAdvance(topic::offer)){
                                 topic.close();
                                 return Continuation.empty();

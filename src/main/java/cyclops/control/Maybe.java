@@ -338,7 +338,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * </pre>
      *
      * @param pub Publisher to extract value from
-     * @return Maybe populated with first value from Publisher (Maybe.empty if Publisher empty)
+     * @return Maybe populated with takeOne value from Publisher (Maybe.empty if Publisher empty)
      */
     public static <T> Maybe<T> fromPublisher(final Publisher<T> pub) {
         return fromFuture(Future.fromPublisher(pub));
@@ -357,7 +357,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * }
      * </pre>
      * @param iterable Iterable  to extract value from
-     * @return Maybe populated with first value from Iterable (Maybe.empty if Publisher empty)
+     * @return Maybe populated with takeOne value from Iterable (Maybe.empty if Publisher empty)
      */
     static <T> Maybe<T> fromIterable(final Iterable<T> iterable) {
         return Maybe.fromEval(Eval.fromIterable(iterable));
@@ -794,7 +794,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
     /*
-     * Equivalent to combine, but accepts an Iterable and takes the first value
+     * Equivalent to combine, but accepts an Iterable and takes the takeOne value
      * only from that iterable. (non-Javadoc)
      *
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable,
@@ -810,7 +810,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
 
     /*
-     * Equivalent to combine, but accepts a Publisher and takes the first value
+     * Equivalent to combine, but accepts a Publisher and takes the takeOne value
      * only from that publisher. (non-Javadoc)
      *
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction,

@@ -345,7 +345,7 @@ public class ExtensionOperatorsRSTest {
 		Collection<Integer> col = Spouts.of(1,2,3,4,5)
 											.peek(System.out::println).to()
 											.lazyCollection();
-		System.out.println("first!");
+		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}
@@ -354,7 +354,7 @@ public class ExtensionOperatorsRSTest {
 		Collection<Integer> col = Spouts.of(1,2,3,4,5)
 											.peek(System.out::println).to()
 											.lazyCollectionSynchronized();
-		System.out.println("first!");
+		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}

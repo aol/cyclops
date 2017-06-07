@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 /**
  * A class that extends Monoid toNested include a map operation toNested map toNested the type
- * of the identity element first (toNested make reduction toNested immutable collections, for example, easier toNested
+ * of the identity element takeOne (toNested make reduction toNested immutable collections, for example, easier toNested
  * work with in Java 8 Streams).
  * 
  * @author johnmcclean

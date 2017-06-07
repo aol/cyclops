@@ -9,7 +9,9 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
@@ -20,84 +22,11 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
 public class AsyncRSJDKStreamTest {
-	protected <U> ReactiveSeq<U> of(U... array){
-		return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
-	}
-	@Test
-	public void flatMapPub1(){
-		for(int l=0;l<10_000;l++) {
-			System.out.println("************Iteration " + l);
-			System.out.println("************Iteration " + l);
-			System.out.println("************Iteration " + l);
+    protected <U> ReactiveSeq<U> of(U... array){
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
-			assertThat(ListX.of(5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7).size(),
-					equalTo(this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-							.flatMapP(i -> of(i, i * 2, i * 4)
-									.flatMapP(2,x -> of(5, 6, 7)))
-							.toListX().size()));
-
-		}
-	}
-	@Test
-	public void flatMapPub(){
-		for(int l=0;l<1_000;l++) {
-			System.out.println("************Iteration " + l);
-			System.out.println("************Iteration " + l);
-			System.out.println("************Iteration " + l);
-
-			System.out.println(this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-					.flatMapP(i -> of(i, i * 2, i * 4)
-							.flatMapP(x -> of(5, 6, 7)))
-					.toListX());
-
-		}
-	}
-	@Test
-	public void flatMapP(){
-		for(int l=0;l<1_000;l++) {
-			System.out.println("************Iteration " + l);
-			System.out.println("************Iteration " + l);
-			System.out.println("************Iteration " + l);
-			System.out.println(this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-					.flatMapP(i -> of(i, i * 2, i * 4)
-							.flatMapP(x -> of(5, 6, 7)))
-					.toListX());
-		}
-	}
-	@Test
-	public void flatMapP3(){
-		System.out.println(this.of(1,2)
-				.flatMapP(i->of(i,i*2,i*4)
-						.flatMapP(x->of(5,6,7)
-								.flatMapP(y->of(2,3,4))))
-				.toListX());
-	}
-	@Test
-	public void flatMapP2(){
-		for(int l=0;l<1_000;l++) {
-			System.out.println("************Iteration " + l);
-			System.out.println("************Iteration " + l);
-			System.out.println("************Iteration " + l);
-			System.out.println(this.of("1", "2")
-					.flatMapP(i -> of(1, 2,3))
-					.flatMapP(x -> of('a','b'))
-					.toListX());
-		}
-	}
-	@Test
-	public void flatMapP2a(){
-		for(int l=0;l<1_000;l++) {
-			System.out.println("************Iteration " + l);
-			System.out.println("************Iteration " + l);
-			System.out.println("************Iteration " + l);
-			System.out.println(this.of("1", "2","3")
-					.flatMapP(i -> of(1, 2,3,4,5))
-					.flatMapP(x -> of('a','b'))
-					.toListX());
-		}
-	}
-
+    }
 	@Test
 	public void testAnyMatch(){
 		assertThat(of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));

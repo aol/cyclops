@@ -11,7 +11,7 @@ import org.jooq.lambda.function.Consumer5;
  * 
  * @author johnmcclean
  *
- * @param <T1> Type of first input parameter
+ * @param <T1> Type of takeOne input parameter
  * @param <T2> Type of second input parameter
  * @param <T3> Type of third input parameter
  * @param <T4> Type of fourth input parameter
@@ -32,7 +32,7 @@ public interface C5<T1, T2, T3, T4, T5> {
     /**
      * Performs operation with input parameters
      * 
-     * @param a the first input parameter
+     * @param a the takeOne input parameter
      * @param b the second input parameter
      * @param c the third input parameter
      * @param d the fourth input parameter
@@ -48,9 +48,9 @@ public interface C5<T1, T2, T3, T4, T5> {
     }
 
     /**
-     * Partially apply the first input parameter to this C5
+     * Partially apply the takeOne input parameter to this C5
      * 
-     * @param s the first input parameter
+     * @param s the takeOne input parameter
      * @return A curried function that eventually resolves to a Consumer
      */
     default Function<T2, Function<T3, Function<T4, Consumer<T5>>>> apply(final T1 s) {
@@ -59,9 +59,9 @@ public interface C5<T1, T2, T3, T4, T5> {
     }
 
     /**
-     * Partially apply the first and second input parameters to this C5
+     * Partially apply the takeOne and second input parameters to this C5
      * 
-     * @param s the first input parameter
+     * @param s the takeOne input parameter
      * @param s2 the second input parameter
      * @return A curried function that eventually resolves to a Consumer
      */
@@ -72,9 +72,9 @@ public interface C5<T1, T2, T3, T4, T5> {
     }
 
     /**
-     *  Partially apply the first, second and third input parameters to this C5
+     *  Partially apply the takeOne, second and third input parameters to this C5
      * 
-     * @param s the first input parameter
+     * @param s the takeOne input parameter
      * @param s2 the second input parameter
      * @param s3 the third input parameter
      * @return A curried function that eventually resolves to a Consumer
@@ -88,9 +88,9 @@ public interface C5<T1, T2, T3, T4, T5> {
 
     /**
      * 
-     * Partially apply the first, second, third and fourth input parameters to this C5
+     * Partially apply the takeOne, second, third and fourth input parameters to this C5
      * 
-     * @param s the first input parameter
+     * @param s the takeOne input parameter
      * @param s2 the second input parameter
      * @param s3 the third input parameter
      * @param s4 the fourth input parameter

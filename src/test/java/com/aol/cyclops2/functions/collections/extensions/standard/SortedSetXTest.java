@@ -35,6 +35,7 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     }
     @Test
     public void tracking(){
+
         ReactiveSeq.fromStream(Stream.of(1,2))
                     .filter(this::include)
                     .elapsed()

@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
@@ -64,6 +65,31 @@ public class CollectionXImpl<T> implements LazyCollectionX<T> {
     @Override
     public boolean contains(final Object o) {
         return delegate.contains(o);
+    }
+
+    @Override
+    public boolean isLazy() {
+        return false;
+    }
+
+    @Override
+    public boolean isEager() {
+        return true;
+    }
+
+    @Override
+    public Evaluation evaluation() {
+        return Evaluation.EAGER;
+    }
+
+    @Override
+    public CollectionX<T> lazy() {
+        return this;
+    }
+
+    @Override
+    public CollectionX<T> eager() {
+        return this;
     }
 
     /**

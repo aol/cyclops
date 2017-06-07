@@ -62,6 +62,35 @@ public abstract class AbstractCollectionXTest {
             return i==1;
         });
         assertFalse(set);
+       assertTrue(of(1,2,3).filterNot(i->{
+            set = true;
+            return i==1;
+        }).isLazy());
+    }
+
+    @Test
+    public void isEager(){
+        of(1,2,3).eager().filterNot(i->{
+            set = true;
+            return i==1;
+        });
+        assertTrue(set);
+        assertTrue( of(1,2,3).eager().filterNot(i->{
+            set = true;
+            return i==1;
+        }).isEager());
+    }
+    @Test
+    public void isLazyViaEager(){
+        of(1,2,3).eager().lazy().filterNot(i->{
+            set = true;
+            return i==1;
+        });
+        assertFalse(set);
+        assertTrue( of(1,2,3).eager().filterNot(i->{
+            set = true;
+            return i==1;
+        }).isLazy());
     }
     @Test
     public void foldFuture(){
@@ -1116,7 +1145,7 @@ public abstract class AbstractCollectionXTest {
 		Collection<Integer> col = of(1,2,3,4,5)
 											.peek(System.out::println).to()
 											.lazyCollection();
-		System.out.println("first!");
+		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}
@@ -1125,7 +1154,7 @@ public abstract class AbstractCollectionXTest {
 		Collection<Integer> col = of(1,2,3,4,5)
 											.peek(System.out::println).to()
 											.lazyCollectionSynchronized();
-		System.out.println("first!");
+		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}

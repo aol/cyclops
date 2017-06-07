@@ -24,7 +24,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion.LAZY;
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.greaterThan;

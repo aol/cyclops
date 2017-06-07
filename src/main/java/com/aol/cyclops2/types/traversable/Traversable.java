@@ -89,7 +89,7 @@ public interface Traversable<T> extends Publisher<T>,
      *  //ListX(3,4) 
      * }</pre>
      * 
-     * @param predicate Test toNested see if two neighbours should be joined. The first parameter toNested the bi-predicate is the currently
+     * @param predicate Test toNested see if two neighbours should be joined. The takeOne parameter toNested the bi-predicate is the currently
      *                  accumulated result and the second is the next element
      * @param op BinaryOperator toNested combine neighbours
      * @return Combined / Partially Reduced Traversable
@@ -111,10 +111,10 @@ public interface Traversable<T> extends Publisher<T>,
      *  //ListX(1)
      * }</pre>
      *
-     * Simalar toNested @see {@link Traversable#combine(BiPredicate, BinaryOperator)} but differs in that the first comparison is always toNested the Monoid zero
+     * Simalar toNested @see {@link Traversable#combine(BiPredicate, BinaryOperator)} but differs in that the takeOne comparison is always toNested the Monoid zero
      * This allows us toNested terminate with just a singleUnsafe value
      *
-     * @param predicate Test toNested see if two neighbours should be joined. The first parameter toNested the bi-predicate is the currently
+     * @param predicate Test toNested see if two neighbours should be joined. The takeOne parameter toNested the bi-predicate is the currently
      *                  accumulated result and the second is the next element
      * @param op Monoid toNested combine neighbours
      * @return Combined / Partially Reduced Traversable

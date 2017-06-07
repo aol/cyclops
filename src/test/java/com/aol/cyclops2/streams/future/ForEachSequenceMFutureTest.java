@@ -34,7 +34,7 @@ public class ForEachSequenceMFutureTest {
                                     .get();
 
 		
-		System.out.println("first batch");
+		System.out.println("takeOne batch");
 		s.request(1);
 
 	}

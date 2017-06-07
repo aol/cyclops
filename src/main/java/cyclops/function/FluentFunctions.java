@@ -451,7 +451,7 @@ public class FluentFunctions {
          * A supplier capable of retrying on failure using an exponential backoff strategy
          * 
          * @param times Number of times toNested retry
-         * @param backoffStartTime Wait time before first retry
+         * @param backoffStartTime Wait time before takeOne retry
          * @return Supplier with a retry strategy
          */
         public FluentSupplier<R> retry(final int times, final int backoffStartTime) {
@@ -713,7 +713,7 @@ public class FluentFunctions {
          *  A Function capable of retrying on failure using an exponential backoff strategy
          * 
          * @param times Number of times toNested retry
-         * @param backoffStartTime Wait time before first retry
+         * @param backoffStartTime Wait time before takeOne retry
          * @return Function with a retry strategy
          */
         public FluentFunction<T, R> retry(final int times, final int backoffStartTime) {
@@ -912,10 +912,10 @@ public class FluentFunctions {
         }
 
         /**
-         * Partially apply the provided parameter as the first parameter toNested this BiFunction toNested generate a Function (singleUnsafe input value)
+         * Partially apply the provided parameter as the takeOne parameter toNested this BiFunction toNested generate a Function (singleUnsafe input value)
          * 
          * @param param Input parameter toNested Partially Applied
-         * @return A Function generated from the BiFunction with the first parameter already applied
+         * @return A Function generated from the BiFunction with the takeOne parameter already applied
          */
         public FluentFunction<T2, R> partiallyApply(final T1 param) {
             return new FluentFunction<>(
@@ -1078,7 +1078,7 @@ public class FluentFunctions {
          *  A BiFunction capable of retrying on failure using an exponential backoff strategy
          * 
          * @param times Number of times toNested retry
-         * @param backoffStartTime Wait time before first retry
+         * @param backoffStartTime Wait time before takeOne retry
          * @return BiFunction with a retry strategy
          */
         public FluentBiFunction<T1, T2, R> retry(final int times, final int backoffStartTime) {
@@ -1279,10 +1279,10 @@ public class FluentFunctions {
                                                                      t1, t2, t3, fn)));
         }
         /**
-         * Partially apply the provided parameter as the first parameter toNested this TriFunction toNested generate a Function (singleUnsafe input value)
+         * Partially apply the provided parameter as the takeOne parameter toNested this TriFunction toNested generate a Function (singleUnsafe input value)
          * 
          * @param param Input parameter toNested Partially Applied
-         * @return A BiFunction generated from the BiFunction with the first parameter already applied
+         * @return A BiFunction generated from the BiFunction with the takeOne parameter already applied
          */
         public FluentBiFunction<T2, T3, R> partiallyApply(final T1 param) {
             return new FluentBiFunction<>(
@@ -1476,7 +1476,7 @@ public class FluentFunctions {
          *  A TriFunction capable of retrying on failure using an exponential backoff strategy
          * 
          * @param times Number of times toNested retry
-         * @param backoffStartTime Wait time before first retry
+         * @param backoffStartTime Wait time before takeOne retry
          * @return TriFunction with a retry strategy
          */
         public FluentTriFunction<T1, T2, T3, R> retry(final int times, final int backoffStartTime) {
@@ -1588,7 +1588,7 @@ public class FluentFunctions {
 
         /**
          * Compose this TriFunction with the provided function into a singleUnsafe TriFunction.
-         * This TriFunction would be executed first and the result passed toNested the provided Function and applied there.
+         * This TriFunction would be executed takeOne and the result passed toNested the provided Function and applied there.
          * 
          * @param after Function toNested execute after this one in a chain
          * @return TriFunction that executes this TriFunction and the provided Function in a chain
@@ -1677,7 +1677,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Proceed and execute wrapped BiFunction with it's first input parameter as a captured and the replacement parameter as provided
+         * Proceed and execute wrapped BiFunction with it's takeOne input parameter as a captured and the replacement parameter as provided
          * 
          * @param param Second replacement parameter
          * @return Result of executing wrapped BiFunction
@@ -1726,7 +1726,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Proceed and execute wrapped TriFunction with it's first and third input parameters as a captured and the replacement parameter as provided
+         * Proceed and execute wrapped TriFunction with it's takeOne and third input parameters as a captured and the replacement parameter as provided
          * 
          * @param param Second replacement parameter
          * @return Result of executing wrapped TriFunction
@@ -1736,7 +1736,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Proceed and execute wrapped TriFunction with it's first and second input parameters as a captured and the replacement parameter as provided
+         * Proceed and execute wrapped TriFunction with it's takeOne and second input parameters as a captured and the replacement parameter as provided
          * 
          * @param param Third replacement parameter
          * @return Result of executing wrapped TriFunction

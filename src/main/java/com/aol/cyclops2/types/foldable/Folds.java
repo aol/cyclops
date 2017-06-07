@@ -168,7 +168,7 @@ public interface Folds<T> {
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
-     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
      * {@code 
@@ -195,7 +195,7 @@ public interface Folds<T> {
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
-     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
      * {@code 
@@ -395,7 +395,7 @@ public interface Folds<T> {
     }
 
     /**
-     * @return first matching element, but order is not guaranteed
+     * @return takeOne matching element, but order is not guaranteed
      * 
      *         <pre>
      * {@code
@@ -484,7 +484,7 @@ public interface Folds<T> {
      * }
      * </pre>
      * 
-     * @return first value in this Stream
+     * @return takeOne value in this Stream
      */
     default T firstValue() {
         return stream().firstValue();
@@ -539,7 +539,9 @@ public interface Folds<T> {
         return stream().single();
 
     }
-
+    default Maybe<T> takeOne(){
+        return stream().takeOne();
+    }
     /**
      * Return the elementAt index or Optional.empty
      * 

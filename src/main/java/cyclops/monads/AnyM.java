@@ -70,7 +70,7 @@ import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.stream.ToStream;
 import cyclops.companion.Optionals;
 
-import static com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion.LAZY;
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * 

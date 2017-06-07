@@ -498,7 +498,7 @@ public class CompletableFutures {
      *  
      * }
      * </pre>
-     * @param f CompletableFuture toNested combine with first element in Iterable (if present)
+     * @param f CompletableFuture toNested combine with takeOne element in Iterable (if present)
      * @param v Iterable toNested combine
      * @param fn Combining function
      * @return CompletableFuture combined with supplied Iterable

@@ -1,10 +1,9 @@
 package cyclops.collections.immutable;
 
 
-import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPSetX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion;
+import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 
 import cyclops.function.Monoid;
@@ -64,7 +63,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
      */
     public static PersistentSetX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end)
-                          .to().persistentSetX(Conversion.LAZY);
+                          .to().persistentSetX(Evaluation.LAZY);
     }
 
     /**
@@ -78,7 +77,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
      */
     public static PersistentSetX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end)
-                .to().persistentSetX(Conversion.LAZY);
+                .to().persistentSetX(Evaluation.LAZY);
     }
 
     /**
@@ -98,7 +97,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
      */
     static <U, T> PersistentSetX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
-                .to().persistentSetX(Conversion.LAZY);
+                .to().persistentSetX(Evaluation.LAZY);
     }
 
     /**
@@ -112,7 +111,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
 
         return ReactiveSeq.generate(s)
                           .limit(limit)
-                .to().persistentSetX(Conversion.LAZY);
+                .to().persistentSetX(Evaluation.LAZY);
     }
 
     /**
@@ -126,23 +125,23 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
     public static <T> PersistentSetX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
-                .to().persistentSetX(Conversion.LAZY);
+                .to().persistentSetX(Evaluation.LAZY);
 
     }
 
     public static <T> PersistentSetX<T> of(final T... values) {
 
-        return new LazyPSetX<>(null,ReactiveSeq.of(values),Reducers.toPSet());
+        return new LazyPSetX<>(null,ReactiveSeq.of(values),Reducers.toPSet(),Evaluation.LAZY);
     }
 
     public static <T> PersistentSetX<T> empty() {
         return new LazyPSetX<>(
-                               HashTreePSet.empty(),null,Reducers.toPSet());
+                               HashTreePSet.empty(),null,Reducers.toPSet(),Evaluation.LAZY);
     }
 
     public static <T> PersistentSetX<T> singleton(final T value) {
         return new LazyPSetX<>(
-                               HashTreePSet.singleton(value),null,Reducers.toPSet());
+                               HashTreePSet.singleton(value),null,Reducers.toPSet(),Evaluation.LAZY);
     }
     PersistentSetX<T> type(Reducer<? extends PSet<T>> reducer);
 
@@ -161,19 +160,19 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
      * @return
      */
     public static <T> PersistentSetX<T> persistentSetX(ReactiveSeq<T> stream) {
-        return new LazyPSetX<>(null,stream,Reducers.toPSet());
+        return new LazyPSetX<>(null,stream,Reducers.toPSet(),Evaluation.LAZY);
     }
     public static <T> PersistentSetX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof PersistentSetX)
             return (PersistentSetX) iterable;
         if (iterable instanceof PSet)
             return new LazyPSetX<>(
-                                   (PSet) iterable,null,Reducers.toPSet());
+                                   (PSet) iterable,null,Reducers.toPSet(),Evaluation.LAZY);
 
 
         return new LazyPSetX<>(null,
                 ReactiveSeq.fromIterable(iterable),
-                Reducers.toPSet());
+                Reducers.toPSet(),Evaluation.LAZY);
     }
 
     /**
@@ -185,7 +184,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
      */
     public static <T> PersistentSetX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher)
-                .to().persistentSetX(Conversion.LAZY);
+                .to().persistentSetX(Evaluation.LAZY);
     }
 
 
@@ -616,7 +615,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
 
         return this.stream()
                    .cycle(times)
-                .to().linkedListX(Conversion.LAZY);
+                .to().linkedListX(Evaluation.LAZY);
     }
 
     /* (non-Javadoc)
@@ -627,7 +626,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
 
         return this.stream()
                    .cycle(m, times)
-                .to().linkedListX(Conversion.LAZY);
+                .to().linkedListX(Evaluation.LAZY);
     }
 
     /* (non-Javadoc)
@@ -638,7 +637,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
 
         return this.stream()
                    .cycleWhile(predicate)
-                .to().linkedListX(Conversion.LAZY);
+                .to().linkedListX(Evaluation.LAZY);
     }
 
     /* (non-Javadoc)
@@ -649,7 +648,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
 
         return this.stream()
                    .cycleUntil(predicate)
-                .to().linkedListX(Conversion.LAZY);
+                .to().linkedListX(Evaluation.LAZY);
     }
 
     /* (non-Javadoc)

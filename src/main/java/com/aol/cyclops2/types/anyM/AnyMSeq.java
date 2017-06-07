@@ -396,7 +396,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
     
     /**
-     * @return The first value of this monad
+     * @return The takeOne value of this monad
      */
     default Value<T> toFirstValue() {
 

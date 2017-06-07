@@ -530,7 +530,7 @@ public class Optionals {
      *  
      * }
      * </pre>
-     * @param f Optional toNested combine with first element in Iterable (if present)
+     * @param f Optional toNested combine with takeOne element in Iterable (if present)
      * @param v Iterable toNested combine
      * @param fn Combining function
      * @return Optional combined with supplied Iterable, or empty Optional if no value present

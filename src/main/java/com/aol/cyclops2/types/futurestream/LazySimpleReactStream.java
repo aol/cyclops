@@ -363,7 +363,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * 
      * 
      * In this example onFail recovers from the RuntimeException thrown when the
-     * input toNested the first 'transform' stage is 100.
+     * input toNested the takeOne 'transform' stage is 100.
      * 
      * @param fn
      *            Recovery function, the exception is input, and the recovery

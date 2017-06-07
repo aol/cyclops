@@ -50,7 +50,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return iterable.iterator();
     }
 
-    public static enum Conversion { MATERIALIZED, LAZY }
+
 
 
 
@@ -87,112 +87,112 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return Streamable.fromIterable(iterable);
     }
     public PersistentQueueX<T> persistentQueueX(){
-        return persistentQueueX(Conversion.MATERIALIZED);
+        return persistentQueueX(Evaluation.EAGER);
     }
-    public PersistentQueueX<T> persistentQueueX(Conversion c) {
+    public PersistentQueueX<T> persistentQueueX(Evaluation c) {
         PersistentQueueX<T> res = PersistentQueueX.fromIterable(iterable);
-        if(c==Conversion.MATERIALIZED)
+        if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
     }
 
     public PersistentSetX<T> persistentSetX(){
-        return persistentSetX(Conversion.MATERIALIZED);
+        return persistentSetX(Evaluation.EAGER);
     }
 
-    public PersistentSetX<T> persistentSetX(Conversion c) {
+    public PersistentSetX<T> persistentSetX(Evaluation c) {
         PersistentSetX<T> res = PersistentSetX.fromIterable(iterable);
-        if(c==Conversion.MATERIALIZED)
+        if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
     }
 
     public OrderedSetX<T> orderedSetX(){
-        return orderedSetX(Conversion.MATERIALIZED);
+        return orderedSetX(Evaluation.EAGER);
     }
-    public OrderedSetX<T> orderedSetX(Conversion c) {
+    public OrderedSetX<T> orderedSetX(Evaluation c) {
         OrderedSetX<T> res = OrderedSetX.fromIterable(iterable);
-        if(c==Conversion.MATERIALIZED)
+        if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
     }
 
     public BagX<T> bagX(){
-        return bagX(Conversion.LAZY);
+        return bagX(Evaluation.LAZY);
     }
-    public BagX<T> bagX(Conversion c) {
+    public BagX<T> bagX(Evaluation c) {
         BagX<T> res = BagX.fromIterable(iterable);
-        if(c==Conversion.MATERIALIZED)
+        if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
     }
 
     public VectorX<T> vectorX(){
-        return vectorX(Conversion.MATERIALIZED);
+        return vectorX(Evaluation.EAGER);
     }
-    public VectorX<T> vectorX(Conversion c) {
+    public VectorX<T> vectorX(Evaluation c) {
         VectorX<T> res = VectorX.fromIterable(iterable);
-        if(c==Conversion.MATERIALIZED)
+        if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
     }
 
     public LinkedListX<T> linkedListX(){
-        return linkedListX(Conversion.MATERIALIZED);
+        return linkedListX(Evaluation.EAGER);
     }
-    public LinkedListX<T> linkedListX(Conversion c) {
+    public LinkedListX<T> linkedListX(Evaluation c) {
         LinkedListX<T> res = LinkedListX.fromIterable(iterable);
-        if(c==Conversion.MATERIALIZED)
+        if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
     }
 
     public DequeX<T> dequeX(){
-        return dequeX(Conversion.MATERIALIZED);
+        return dequeX(Evaluation.EAGER);
     }
-    public DequeX<T> dequeX(Conversion c) {
+    public DequeX<T> dequeX(Evaluation c) {
         DequeX<T> res = DequeX.fromIterable(iterable);
-        if(c==Conversion.MATERIALIZED)
+        if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
     }
     public SortedSetX<T> sortedSetX() {
-        return sortedSetX(Conversion.MATERIALIZED);
+        return sortedSetX(Evaluation.EAGER);
     }
-    public SortedSetX<T> sortedSetX(Conversion c) {
+    public SortedSetX<T> sortedSetX(Evaluation c) {
         SortedSetX<T> res = SortedSetX.fromIterable(iterable);
-        if(c==Conversion.MATERIALIZED)
+        if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
     }
 
     public SetX<T> setX(){
-        return setX(Conversion.MATERIALIZED);
+        return setX(Evaluation.EAGER);
     }
-    public SetX<T> setX(Conversion c) {
+    public SetX<T> setX(Evaluation c) {
         SetX<T> res = SetX.fromIterable(iterable);
-        if(c==Conversion.MATERIALIZED)
+        if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
     }
 
     public ListX<T> listX(){
-        return listX(Conversion.MATERIALIZED);
+        return listX(Evaluation.EAGER);
     }
-    public ListX<T> listX(Conversion c) {
+    public ListX<T> listX(Evaluation c) {
         ListX<T> res = ListX.fromIterable(iterable);
-        if(Conversion.MATERIALIZED==c) {
+        if(Evaluation.EAGER ==c) {
             return res.materialize();
         }
         return res;
     }
 
     public QueueX<T> queueX(){
-        return queueX(Conversion.MATERIALIZED);
+        return queueX(Evaluation.EAGER);
     }
-    public QueueX<T> queueX(Conversion c) {
+    public QueueX<T> queueX(Evaluation c) {
         QueueX<T> res = QueueX.fromIterable(iterable);
-        if(c==Conversion.MATERIALIZED)
+        if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
     }
@@ -225,12 +225,12 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return Eval.later(() -> listX());
     }
     public Maybe<T> firstValue() {
-        return Eval.later(() -> listX(Conversion.LAZY)).toMaybe()
+        return Eval.later(() -> listX(Evaluation.LAZY)).toMaybe()
                                        .flatMap(l->l.size()==0? Maybe.none() : Maybe.just(l.firstValue()));
     }
     /**
      * Lazily converts this ReactiveSeq into a Collection. This does not trigger
-     * the Stream. E.g. Collection is not thread safe on the first iteration.
+     * the Stream. E.g. Collection is not thread safe on the takeOne iteration.
      *
      * <pre>
      * {@code
@@ -241,7 +241,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
      *  col.forEach(System.out::println);
      * }
      *
-     * // Will print out "first!" before anything else
+     * // Will print out "takeOne!" before anything else
      * </pre>
      *
      * @return
@@ -261,7 +261,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
      *  col.forEach(System.out::println);
      * }
      *
-     * // Will print out "first!" before anything else
+     * // Will print out "takeOne!" before anything else
      * </pre>
      *
      * @return

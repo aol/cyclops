@@ -277,7 +277,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
         Collection<Integer> col = of(1,2,3,4,5)
                                     .toNested(s->s.lazyCollection())
                                   .singleUnsafe();
-        System.out.println("first!");
+        System.out.println("takeOne!");
         col.forEach(System.out::println);
         assertThat(col.size(),equalTo(5));
     }
@@ -287,7 +287,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
         Collection<Integer> col = of(1,2,3,4,5).toNested(s->s.lazyCollectionSynchronized())
 
                                     .singleUnsafe();
-        System.out.println("first!");
+        System.out.println("takeOne!");
         col.forEach(System.out::println);
         assertThat(col.size(),equalTo(5));
     }

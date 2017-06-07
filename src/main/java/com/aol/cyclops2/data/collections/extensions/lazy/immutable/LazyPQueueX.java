@@ -1,8 +1,9 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
+import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.collections.immutable.OrderedSetX;
 import cyclops.collections.immutable.PersistentQueueX;
-import cyclops.companion.Reducers;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PQueue;
@@ -42,8 +43,8 @@ import java.util.function.Supplier;
 public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>> implements PersistentQueueX<T> {
 
 
-    public LazyPQueueX(PQueue<T> list, ReactiveSeq<T> seq, Reducer<PQueue<T>> reducer) {
-        super(list, seq, reducer);
+    public LazyPQueueX(PQueue<T> list, ReactiveSeq<T> seq, Reducer<PQueue<T>> reducer,Evaluation strict) {
+        super(list, seq, reducer,strict);
     }
 
     
@@ -56,20 +57,30 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
 
     @Override
     public PersistentQueueX<T> type(Reducer<? extends PQueue<T>> reducer) {
-        return new LazyPQueueX<T>(list,seq.get(),Reducer.narrow(reducer));
+        return new LazyPQueueX<T>(list,seq.get(),Reducer.narrow(reducer), evaluation());
     }
 
     //  @Override
     public <X> LazyPQueueX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPQueueX<X>((PQueue)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal());
+        return new LazyPQueueX<X>((PQueue)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
     }
 
     @Override
     public <T1> LazyPQueueX<T1> from(Collection<T1> c) {
         if(c instanceof PQueue)
-            return new LazyPQueueX<T1>((PQueue)c,null,(Reducer)this.getCollectorInternal());
+            return new LazyPQueueX<T1>((PQueue)c,null,(Reducer)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
+    }
+
+    @Override
+    public PersistentQueueX<T> lazy() {
+        return new LazyPQueueX<T>(list,seq.get(),getCollectorInternal(),Evaluation.LAZY) ;
+    }
+
+    @Override
+    public PersistentQueueX<T> eager() {
+        return new LazyPQueueX<T>(list,seq.get(),getCollectorInternal(),Evaluation.EAGER) ;
     }
 
     @Override

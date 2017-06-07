@@ -145,7 +145,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
-     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
      * {
@@ -173,7 +173,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
-     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
      * {@code 
@@ -444,7 +444,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * @return first value in this Stream
+     * @return takeOne value in this Stream
      */
     default AnyM<W,T> firstValue() {
         return nestedFoldables().map(s -> s.firstValue());

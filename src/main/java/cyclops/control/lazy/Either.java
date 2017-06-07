@@ -65,7 +65,7 @@ import java.util.stream.Stream;
  *  Either's have two states
  *  Right : Most methods operate naturally on the primary type, if it is present. If it is not, nothing happens.
  *  Left : Most methods do nothing to the secondary type if it is present.
- *              To operate on the Left type first call swap() or use secondary analogs of the main operators.
+ *              To operate on the Left type takeOne call swap() or use secondary analogs of the main operators.
  *
  *  Instantiating an Either - Right
  *  <pre>

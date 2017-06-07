@@ -1,8 +1,9 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
+import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.collections.immutable.BagX;
 import cyclops.collections.immutable.OrderedSetX;
-import cyclops.companion.Reducers;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.POrderedSet;
@@ -42,8 +43,8 @@ import java.util.function.Supplier;
 public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrderedSet<T>> implements OrderedSetX<T> {
 
 
-    public LazyPOrderedSetX(POrderedSet<T> list, ReactiveSeq<T> seq, Reducer<POrderedSet<T>> reducer) {
-        super(list, seq, reducer);
+    public LazyPOrderedSetX(POrderedSet<T> list, ReactiveSeq<T> seq, Reducer<POrderedSet<T>> reducer,Evaluation strict) {
+        super(list, seq, reducer,strict);
 
 
     }
@@ -57,20 +58,29 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
 
     @Override
     public OrderedSetX<T> type(Reducer<? extends POrderedSet<T>> reducer) {
-        return new LazyPOrderedSetX<T>(list,seq.get(),Reducer.narrow(reducer));
+        return new LazyPOrderedSetX<T>(list,seq.get(),Reducer.narrow(reducer), evaluation());
     }
 
     //  @Override
     public <X> LazyPOrderedSetX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPOrderedSetX<X>((POrderedSet)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal());
+        return new LazyPOrderedSetX<X>((POrderedSet)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
     }
 
     @Override
     public <T1> LazyPOrderedSetX<T1> from(Collection<T1> c) {
         if(c instanceof POrderedSet)
-            return new LazyPOrderedSetX<T1>((POrderedSet)c,null,(Reducer)this.getCollectorInternal());
+            return new LazyPOrderedSetX<T1>((POrderedSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
+    }
+    @Override
+    public OrderedSetX<T> lazy() {
+        return new LazyPOrderedSetX<T>(list,seq.get(),getCollectorInternal(),Evaluation.LAZY) ;
+    }
+
+    @Override
+    public OrderedSetX<T> eager() {
+        return new LazyPOrderedSetX<T>(list,seq.get(),getCollectorInternal(),Evaluation.EAGER) ;
     }
 
   
