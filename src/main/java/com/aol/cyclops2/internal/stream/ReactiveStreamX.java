@@ -399,8 +399,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
-        ReactiveSeq<Publisher<R>> local = map((Function)fn);
-        return Spouts.lazyConcat(local);
+       // ReactiveSeq<Publisher<R>> local = map((Function)fn);
+        //return Spouts.lazyConcat(local);
+        return flatMapP(1,fn);
     }
     @Override
     public final <R> ReactiveSeq<R> flatMapP(int maxConcurency,final Function<? super T, ? extends Publisher<? extends R>> fn) {
@@ -938,8 +939,15 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public ReactiveSeq<T> mergeP(final Publisher<T>... publishers){
-        return Spouts.of(publishers).append(this).flatMapP(publishers.length+1,i->i);
+        Publisher<T>[] pubs = new Publisher[publishers.length+1];
+        pubs[0]=this;
+        System.arraycopy(publishers,0,pubs,1,publishers.length);
 
+        ReactiveStreamX<T> merged =(ReactiveStreamX<T>) Spouts.mergeLatest(pubs);
+        if(async==Type.SYNC || async ==Type.BACKPRESSURE)
+            return merged.withAsync(Type.BACKPRESSURE);
+        else
+            return merged.withAsync(Type.NO_BACKPRESSURE);
     }
     @Override
    public Topic<T> broadcast(){
@@ -1370,7 +1378,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public T singleUnsafe() {
-        return single().get();
+        return single().visit(s->s,()->{ throw new UnsupportedOperationException("singleUnsafe only works for Streams with a singleUnsafe value"); });
     }
 
     @Override
