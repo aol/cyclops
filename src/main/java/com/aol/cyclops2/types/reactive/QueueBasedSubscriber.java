@@ -31,7 +31,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * A reactive-streams reactiveSubscriber, backed by a cyclops2-react async.Queue, for merging data from multiple publishers into a single Stream
+ * A reactive-streams reactiveSubscriber, backed by a cyclops2-react async.Queue, for merging data from multiple publishers into a singleUnsafe Stream
  *
  * @author johnmcclean
  *
@@ -275,6 +275,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
                                 throw new ClosedQueueException(
                                         current);
                             }));
+
                     queue.close();
                 }
             }
@@ -284,6 +285,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     }
 
     public void close() {
+
         counter.completable = true;
 
         if (queue != null && counter.active.get() == 0) {
@@ -292,8 +294,10 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
                 queue.addContinuation(new Continuation(
                         () -> {
+
                             throw new ClosedQueueException();
                         }));
+
                 queue.close();
             }
         }

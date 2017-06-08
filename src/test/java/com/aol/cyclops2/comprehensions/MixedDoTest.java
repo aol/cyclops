@@ -23,7 +23,7 @@ public class MixedDoTest {
 		
 		
 		CompletableFuture<String> results1 = CompletableFutures.forEach2(future,
-																			a->CompletableFuture.completedFuture("first"),
+																			a->CompletableFuture.completedFuture("takeOne"),
 																		(String loadedData,String local)-> loadedData + ":" + local );
 		
 	
@@ -33,15 +33,15 @@ public class MixedDoTest {
 		
 		CompletableFuture<List<String>> results2 = CompletableFuture.supplyAsync(this::loadData)
 																  .<List<String>>thenApply(loadedData -> 
-																  				Stream.of("first","second")
+																  				Stream.of("takeOne","second")
 																  					  .map(local -> loadedData + ":" + local)
 																  					  .collect(Collectors.toList())
 																		  	);
 		
 		
 		
-		assertThat(results2.join(),equalTo(Arrays.asList("loaded:first", "loaded:second")));
-		assertThat(results1.join(),equalTo("loaded:first"));
+		assertThat(results2.join(),equalTo(Arrays.asList("loaded:takeOne", "loaded:second")));
+		assertThat(results1.join(),equalTo("loaded:takeOne"));
 	
 		
 	}
@@ -50,7 +50,7 @@ public class MixedDoTest {
 		
 		
 		
-		Stream<String> results1 = Streams.forEach2(Stream.of("first","second"),
+		Stream<String> results1 = Streams.forEach2(Stream.of("takeOne","second"),
 		                                               a->Stream.of(loadData()),
 									 				   (String local,String loadedData)-> loadedData + ":" + local );
 		
@@ -59,7 +59,7 @@ public class MixedDoTest {
 		
 		
 		
-		Stream<String> results2 = Stream.of("first","second")
+		Stream<String> results2 = Stream.of("takeOne","second")
 										.map(local -> CompletableFuture.supplyAsync(this::loadData).join() + ":" + local);
 		
 		

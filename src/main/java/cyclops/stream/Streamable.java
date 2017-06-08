@@ -15,6 +15,7 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.MapX;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
@@ -880,7 +881,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Split this Streamable after the first element (if present)
+     * Split this Streamable after the takeOne element (if present)
      * 
      * <pre>
      * {@code 
@@ -1368,7 +1369,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * True if a single element matches when Monad converted toNested a Stream
+     * True if a singleUnsafe element matches when Monad converted toNested a Stream
      * <pre>
      * {@code 
      * assertThat(Streamable.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
@@ -1501,7 +1502,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * @return first matching element,  but order is not guaranteed
+     * @return takeOne matching element,  but order is not guaranteed
      * <pre>
      * {@code
      * Streamable.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
@@ -1619,7 +1620,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /**
      * Reduce with multiple reducers in parallel
      * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
-     * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * To reduce over the values on the list, called streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
      * {@code 
@@ -1646,7 +1647,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /**
      * Reduce with multiple reducers in parallel
      * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
-     * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * To reduce over the values on the list, called streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
      * {@code 
@@ -2176,7 +2177,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     				.firstValue(),equalTo("hello"));
      * }
      * </pre>
-     * @return first value in this Stream
+     * @return takeOne value in this Stream
      */
     @Override
     default T firstValue() {
@@ -2186,15 +2187,15 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /**
      * <pre>
      * {@code 
-     * assertThat(Streamable.of(1).single(),equalTo(1));
+     * assertThat(Streamable.of(1).singleUnsafe(),equalTo(1));
      * }
      * </pre>
      * 
-     * @return a single value or an exception if 0/1 values in this Stream
+     * @return a singleUnsafe value or an exception if 0/1 values in this Stream
      */
     @Override
-    default T single() {
-        return reactiveSeq().single();
+    default T singleUnsafe() {
+        return reactiveSeq().singleUnsafe();
 
     }
 
@@ -2209,7 +2210,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return elementAt index
      */
     @Override
-    default Optional<T> get(final long index) {
+    default Maybe<T> get(final long index) {
         return reactiveSeq().get(index);
     }
 
@@ -2594,7 +2595,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      * 
      * @param size Max size of a batch
-     * @param time (Max) time period toNested build a single batch in
+     * @param time (Max) time period toNested build a singleUnsafe batch in
      * @param t time unit for batch
      * @return Streamable batched by size and time
      */
@@ -2603,7 +2604,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     *  Batch elements by size into a collection created by the supplied factory 
+     *  Batch elements by size into a toX created by the supplied factory
      * <pre>
      * {@code 
      * List<ArrayList<Integer>> list = of(1,2,3,4,5,6)
@@ -2612,7 +2613,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * @param size Max size of a batch
-     * @param time (Max) time period toNested build a single batch in
+     * @param time (Max) time period toNested build a singleUnsafe batch in
      * @param unit time unit for batch
      * @param factory Collection factory
      * @return Streamable batched by size and time
@@ -2632,7 +2633,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param time - time period toNested build a single batch in
+     * @param time - time period toNested build a singleUnsafe batch in
      * @param t  time unit for batch
      * @return Streamable batched into lists by time period
      */
@@ -2641,7 +2642,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Batch elements by time into a collection created by the supplied factory 
+     * Batch elements by time into a toX created by the supplied factory
      * 
      * <pre>
      * {@code 
@@ -2653,17 +2654,17 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param time - time period toNested build a single batch in
+     * @param time - time period toNested build a singleUnsafe batch in
      * @param unit time unit for batch
      * @param factory Collection factory
-     * @return Streamable batched into collection types by time period
+     * @return Streamable batched into toX types by time period
      */
     default <C extends Collection<? super T>> Streamable<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
         return fromStream(reactiveSeq().groupedByTime(time, unit, factory));
     }
 
     /**
-     * Batch elements in a Stream by size into a collection created by the supplied factory 
+     * Batch elements in a Stream by size into a toX created by the supplied factory
      * <pre>
      * {@code
      * assertThat(Streamable.of(1,1,1,1,1,1)
@@ -2676,7 +2677,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param size batch size
      * @param supplier Collection factory
-     * @return Streamable batched into collection types by size
+     * @return Streamable batched into toX types by size
      */
     @Override
     default <C extends Collection<? super T>> Streamable<C> grouped(final int size, final Supplier<C> supplier) {

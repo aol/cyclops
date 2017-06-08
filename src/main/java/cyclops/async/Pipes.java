@@ -113,7 +113,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Push a single value synchronously into the Adapter identified by the supplied Key,
+     * Push a singleUnsafe value synchronously into the Adapter identified by the supplied Key,
      * if it exists
      * 
      * <pre>
@@ -534,7 +534,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Register a Queue, and get back a listening LazyFutureStream that runs on a single thread
+     * Register a Queue, and get back a listening LazyFutureStream that runs on a singleUnsafe thread
      * (not the calling thread)
      * 
      * <pre>

@@ -65,7 +65,7 @@ import java.util.stream.Stream;
  *  Xor's have two states
  *  Primary : Most methods operate naturally on the primary type, if it is present. If it is not, nothing happens.
  *  Secondary : Most methods do nothing to the secondary type if it is present.
- *              To operate on the Secondary type first call swap() or use secondary analogs of the main operators.
+ *              To operate on the Secondary type takeOne call swap() or use secondary analogs of the main operators.
  *
  *  Instantiating an Xor - Primary
  *  <pre>
@@ -530,7 +530,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
         return visit(s -> secondary(secondary), p -> primary(p));
     }
     /**
-     *  Turn a collection of Xors into a single Xor with Lists of values.
+     *  Turn a toX of Xors into a singleUnsafe Xor with Lists of values.
      *  Primary and secondary types are swapped during this operation.
      *
      * <pre>
@@ -601,7 +601,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
 
     /**
-     *  Turn a collection of Xors into a single Ior with Lists of values.
+     *  Turn a toX of Xors into a singleUnsafe Ior with Lists of values.
      *
      * <pre>
      * {@code

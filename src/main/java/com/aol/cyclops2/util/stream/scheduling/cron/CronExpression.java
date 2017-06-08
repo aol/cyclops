@@ -147,7 +147,7 @@ import java.util.TreeSet;
  * However if you specify &quot;1W&quot; as the value for day-of-month, and the
  * 1st is a Saturday, the trigger will fire on Monday the 3rd, as it will not 
  * 'jump' over the boundary of a month's days.  The 'W' character can only be 
- * specified when the day-of-month is a single day, not a range or list of days.
+ * specified when the day-of-month is a singleUnsafe day, not a range or list of days.
  * <P>
  * The 'L' and 'W' characters can also be combined for the day-of-month 
  * expression toNested yield 'LW', which translates toNested &quot;last weekday of the
@@ -157,7 +157,7 @@ import java.util.TreeSet;
  * used to specify &quot;the nth&quot; XXX day of the month. For example, the 
  * value of &quot;6#3&quot; in the day-of-week field means the third Friday of 
  * the month (day 6 = Friday and &quot;#3&quot; = the 3rd one in the month). 
- * Other examples: &quot;2#1&quot; = the first Monday of the month and 
+ * Other examples: &quot;2#1&quot; = the takeOne Monday of the month and
  * &quot;4#5&quot; = the fifth Wednesday of the month. Note that if you specify
  * &quot;#5&quot; and there is not 5 of the given day-of-week in the month, then
  * no firing will occur that month.  If the '#' character is used, there can
@@ -168,9 +168,9 @@ import java.util.TreeSet;
  * This character is short-hand for "calendar". This means values are
  * calculated against the associated calendar, if any. If no calendar is
  * associated, then it is equivalent to having an all-inclusive calendar. A
- * value of "5C" in the day-of-month field means "the first day included by the
+ * value of "5C" in the day-of-month field means "the takeOne day included by the
  * calendar on or after the 5th". A value of "1C" in the day-of-week field
- * means "the first day included by the calendar on or after Sunday".-->
+ * means "the takeOne day included by the calendar on or after Sunday".-->
  * <P>
  * The legal characters and the names of months and days of the week are not
  * case sensitive.

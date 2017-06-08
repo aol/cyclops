@@ -153,27 +153,27 @@ public class SyncRSExtensionOperatorsTest {
 	}
 	@Test
 	public void singleTest(){
-		assertThat(of(1).single(),equalTo(1));
+		assertThat(of(1).singleUnsafe(),equalTo(1));
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void singleEmpty(){
-		of().single();
+		of().singleUnsafe();
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void single2(){
-		of(1,2).single();
+		of(1,2).singleUnsafe();
 	}
 	@Test
 	public void singleOptionalTest(){
-		assertThat(of(1).singleOptional().get(),equalTo(1));
+		assertThat(of(1).single().get(),equalTo(1));
 	}
 	@Test
 	public void singleOptionalEmpty(){
-		assertFalse(of().singleOptional().isPresent());
+		assertFalse(of().single().isPresent());
 	}
 	@Test
 	public void singleOptonal2(){
-		assertFalse(of(1,2).singleOptional().isPresent());
+		assertFalse(of(1,2).single().isPresent());
 	}
 	@Test
 	public void limitTime(){
@@ -349,7 +349,7 @@ public class SyncRSExtensionOperatorsTest {
 		Collection<Integer> col = of(1,2,3,4,5)
 											.peek(System.out::println).to()
 											.lazyCollection();
-		System.out.println("first!");
+		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}
@@ -358,7 +358,7 @@ public class SyncRSExtensionOperatorsTest {
 		Collection<Integer> col = of(1,2,3,4,5)
 											.peek(System.out::println).to()
 											.lazyCollectionSynchronized();
-		System.out.println("first!");
+		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}

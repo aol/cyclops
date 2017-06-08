@@ -3,8 +3,9 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion;
+import com.aol.cyclops2.types.foldable.Evaluation;
 
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
@@ -42,7 +43,7 @@ import java.util.stream.Stream;
  * 
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this collection
+ * @param <T> the type of elements held in this toX
  */
 public interface DequeX<T> extends To<DequeX<T>>,
                                    Deque<T>,
@@ -88,7 +89,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static DequeX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end)
                           .to()
-                          .dequeX(Conversion.LAZY);
+                          .dequeX(Evaluation.LAZY);
     }
 
     /**
@@ -103,7 +104,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static DequeX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end)
                           .to()
-                          .dequeX(Conversion.LAZY);
+                          .dequeX(Evaluation.LAZY);
     }
 
     /**
@@ -124,7 +125,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     static <U, T> DequeX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
                           .to()
-                          .dequeX(Conversion.LAZY);
+                          .dequeX(Evaluation.LAZY);
     }
     /**
      * Generate a DequeX from the provided value up toNested the provided limit number of times
@@ -138,7 +139,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return ReactiveSeq.fill(s)
                           .limit(limit)
                           .to()
-                          .dequeX(Conversion.LAZY);
+                          .dequeX(Evaluation.LAZY);
     }
 
     /**
@@ -153,7 +154,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return ReactiveSeq.generate(s)
                           .limit(limit)
                           .to()
-                          .dequeX(Conversion.LAZY);
+                          .dequeX(Evaluation.LAZY);
     }
 
     /**
@@ -168,7 +169,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
                           .to()
-                          .dequeX(Conversion.LAZY);
+                          .dequeX(Evaluation.LAZY);
 
     }
 
@@ -204,7 +205,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static <T> DequeX<T> of(final T... values) {
         return new LazyDequeX<T>(null,
                 ReactiveSeq.of(values),
-                defaultCollector());
+                defaultCollector(),Evaluation.LAZY);
     }
     /**
      * 
@@ -218,7 +219,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /**
-     * Construct a DequeX with a single value
+     * Construct a DequeX with a singleUnsafe value
      * 
      * <pre>
      * {@code 
@@ -244,7 +245,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static <T> DequeX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher)
                           .to()
-                          .dequeX(Conversion.LAZY);
+                          .dequeX(Evaluation.LAZY);
     }
 
     /**
@@ -264,7 +265,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static <T> DequeX<T> dequeX(ReactiveSeq<T> stream){
         return new LazyDequeX<T>(null,
                 stream,
-                defaultCollector());
+                defaultCollector(),Evaluation.LAZY);
     }
 
     /**
@@ -280,10 +281,10 @@ public interface DequeX<T> extends To<DequeX<T>>,
             return (DequeX) it;
         if (it instanceof Deque)
             return new LazyDequeX<T>(
-                                     (Deque) it, defaultCollector());
+                                     (Deque) it, defaultCollector(),Evaluation.LAZY);
         return new LazyDequeX<T>(null,
                                     ReactiveSeq.fromIterable(it),
-                                    defaultCollector());
+                                    defaultCollector(),Evaluation.LAZY);
     }
 
     /**
@@ -298,11 +299,11 @@ public interface DequeX<T> extends To<DequeX<T>>,
             return ((DequeX) it).type(collector);
         if (it instanceof Deque)
             return new LazyDequeX<T>(
-                                     (Deque) it, collector);
+                                     (Deque) it, collector,Evaluation.LAZY);
         return new LazyDequeX<T>(
                                  Streams.stream(it)
                                             .collect(collector),
-                                 collector);
+                                 collector,Evaluation.LAZY);
     }
 
     @Override
@@ -405,7 +406,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     @Override
     default <X> DequeX<X> fromStream(final ReactiveSeq<X> stream) {
         return new LazyDequeX<>(
-                                ReactiveSeq.fromStream(stream), getCollector());
+                                ReactiveSeq.fromStream(stream), getCollector(),Evaluation.LAZY);
     }
 
     /**
@@ -1268,6 +1269,50 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static <T> DequeX<T> narrow(final DequeX<? extends T> dequeX) {
         return (DequeX<T>) dequeX;
     }
+
+    @Override
+    default DequeX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return (DequeX<T>)LazyCollectionX.super.zip(combiner,app);
+    }
+
+    @Override
+    default <R> DequeX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (DequeX<R>)LazyCollectionX.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> DequeX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (DequeX<R>)LazyCollectionX.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> DequeX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (DequeX<R>)LazyCollectionX.super.zipWithP(fn);
+    }
+
+    @Override
+    default <T2, R> DequeX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (DequeX<R>)LazyCollectionX.super.zipP(publisher,fn);
+    }
+
+
+
+    @Override
+    default <U> DequeX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return (DequeX)LazyCollectionX.super.zipP(other);
+    }
+
+
+    @Override
+    default <S, U, R> DequeX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (DequeX<R>)LazyCollectionX.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4, R> DequeX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (DequeX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
+    }
+
 
     @UtilityClass
     public static class Instances {

@@ -6,11 +6,11 @@ import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 /**
- * A Fluent API for adding and removing collection elements
+ * A Fluent API for adding and removing toX elements
  * 
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this collection
+ * @param <T> the type of elements held in this toX
  */
 public interface FluentCollectionX<T> extends CollectionX<T> {
 
@@ -31,7 +31,7 @@ public interface FluentCollectionX<T> extends CollectionX<T> {
         return toUse;
     }
     /**
-     * Add an element to the collection
+     * Add an element to the toX
      * 
      * @param e Element to add
      * @return Collection with element added
@@ -57,7 +57,7 @@ public interface FluentCollectionX<T> extends CollectionX<T> {
     public FluentCollectionX<T> plusAll(Collection<? extends T> list);
 
     /**
-     * Remove the specified element from this collection
+     * Remove the specified element from this toX
      * 
      * @param e Element to remove
      * @return Collection with element removed
@@ -65,7 +65,7 @@ public interface FluentCollectionX<T> extends CollectionX<T> {
     public FluentCollectionX<T> minus(Object e);
 
     /**
-     * Remove all the specified elements from this collection
+     * Remove all the specified elements from this toX
      * 
      * @param list of elements to remove
      * @return Collection with the elements removed
@@ -73,10 +73,10 @@ public interface FluentCollectionX<T> extends CollectionX<T> {
     public FluentCollectionX<T> minusAll(Collection<?> list);
 
     /**
-     * Create a new instance of the same colleciton type from the supplied collection
+     * Create a new instance of the same colleciton type from the supplied toX
      * 
-     * @param col Collection data to populate the new collection
-     * @return Collection as the same type as this collection
+     * @param col Collection data to populate the new toX
+     * @return Collection as the same type as this toX
      */
     public <R> FluentCollectionX<R> unit(Collection<R> col);
 }

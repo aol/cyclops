@@ -86,7 +86,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                                 secondary, primary);
     }
     /**
-     * Construct an Ior that contains a single value extracted from the supplied reactive-streams Publisher
+     * Construct an Ior that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
 
      * <pre>
      * {@code
@@ -110,7 +110,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     }
 
     /**
-     * Construct an Ior that contains a single value extracted from the supplied Iterable
+     * Construct an Ior that contains a singleUnsafe value extracted from the supplied Iterable
      * <pre>
      * {@code
      *   List<Integer> list =  Arrays.asList(1,2,3);
@@ -598,7 +598,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     public boolean isBoth();
 
     /**
-     *  Turn a collection of Iors into a single Ior with Lists of values.
+     *  Turn a toX of Iors into a singleUnsafe Ior with Lists of values.
      *  Primary and secondary types are swapped during this operation.
      *
      * <pre>
@@ -696,7 +696,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     }
 
     /**
-     *  Turn a collection of Iors into a single Ior with Lists of values.
+     *  Turn a toX of Iors into a singleUnsafe Ior with Lists of values.
      *
      * <pre>
      * {@code

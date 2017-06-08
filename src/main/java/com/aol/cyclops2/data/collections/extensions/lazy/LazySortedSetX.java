@@ -1,6 +1,8 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
+import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.collections.mutable.SetX;
 import cyclops.collections.mutable.SortedSetX;
 import cyclops.stream.ReactiveSeq;
 
@@ -31,28 +33,36 @@ import java.util.stream.Collector;
  *
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this collection
+ * @param <T> the type of elements held in this toX
  */
 public class LazySortedSetX<T> extends AbstractLazyCollection<T,SortedSet<T>> implements SortedSetX<T> {
 
 
-    public LazySortedSetX(SortedSet<T> list, ReactiveSeq<T> seq, Collector<T, ?, SortedSet<T>> collector) {
-        super(list, seq, collector);
+    public LazySortedSetX(SortedSet<T> list, ReactiveSeq<T> seq, Collector<T, ?, SortedSet<T>> collector,Evaluation strict) {
+        super(list, seq, collector,strict);
 
     }
-    public LazySortedSetX(SortedSet<T> list, Collector<T, ?, SortedSet<T>> collector) {
-        super(list, null, collector);
+    public LazySortedSetX(SortedSet<T> list, Collector<T, ?, SortedSet<T>> collector,Evaluation strict) {
+        super(list, null, collector,strict);
 
     }
 
-    public LazySortedSetX(ReactiveSeq<T> seq, Collector<T, ?, SortedSet<T>> collector) {
-        super(null, seq, collector);
+    public LazySortedSetX(ReactiveSeq<T> seq, Collector<T, ?, SortedSet<T>> collector,Evaluation strict) {
+        super(null, seq, collector,strict);
 
+    }
+    @Override
+    public SortedSetX<T> lazy() {
+        return new LazySortedSetX<T>(getList(),getSeq().get(),getCollectorInternal(), Evaluation.LAZY) ;
     }
 
     @Override
+    public SortedSetX<T> eager() {
+        return new LazySortedSetX<T>(getList(),getSeq().get(),getCollectorInternal(),Evaluation.EAGER) ;
+    }
+    @Override
     public LazySortedSetX<T> type(Collector<T, ?, SortedSet<T>> collector){
-        return (LazySortedSetX)new LazySortedSetX<T>(this.getList(),this.getSeq().get(),collector);
+        return (LazySortedSetX)new LazySortedSetX<T>(this.getList(),this.getSeq().get(),collector, evaluation());
     }
     //@Override
     public SortedSetX<T> materialize() {
@@ -70,13 +80,13 @@ public class LazySortedSetX<T> extends AbstractLazyCollection<T,SortedSet<T>> im
     @Override
     public <X> LazySortedSetX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazySortedSetX<X>((SortedSet)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
+        return new LazySortedSetX<X>((SortedSet)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal(), evaluation());
     }
 
     @Override
     public <T1> LazySortedSetX<T1> from(Collection<T1> c) {
         if(c instanceof Set)
-            return new LazySortedSetX<T1>((SortedSet)c,null,(Collector)this.getCollectorInternal());
+            return new LazySortedSetX<T1>((SortedSet)c,null,(Collector)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 

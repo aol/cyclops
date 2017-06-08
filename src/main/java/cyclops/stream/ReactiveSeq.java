@@ -28,6 +28,7 @@ import cyclops.async.adapters.Queue;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.MapX;
 import cyclops.collections.immutable.VectorX;
+import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 
@@ -561,7 +562,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Efficiently construct a ReactiveSeq from a single value
+     * Efficiently construct a ReactiveSeq from a singleUnsafe value
      *
      * @param value Value toNested construct ReactiveSeq from
      * @return ReactiveSeq of one value
@@ -681,11 +682,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Construct a Stream consisting of a single value repeatedly infinitely (use take / drop etc toNested
+     * Construct a Stream consisting of a singleUnsafe value repeatedly infinitely (use take / drop etc toNested
      * switch toNested a finite Stream)
      *
      * @param t Value toNested fill Stream with
-     * @return Infinite ReactiveSeq consisting of a single value
+     * @return Infinite ReactiveSeq consisting of a singleUnsafe value
      */
     public static <T> ReactiveSeq<T> fill(T t){
         return ReactiveSeq.fromSpliterator(new FillSpliterator<T>(t));
@@ -804,7 +805,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
                     if(ref.get()==null && ref.compareAndSet(null,Continuation.empty())){
                         try {
-                            //use the first consuming thread toNested tell this Stream onto the Queue
+                            //use the takeOne consuming thread toNested tell this Stream onto the Queue
                             this.spliterator().forEachRemaining(queue::offer);
                         }finally {
                             queue.close();
@@ -1332,14 +1333,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param size Max size of a batch
-     * @param time (Max) time period toNested build a single batch in
+     * @param time (Max) time period toNested build a singleUnsafe batch in
      * @param t time unit for batch
      * @return ReactiveSeq batched by size and time
      */
     ReactiveSeq<ListX<T>> groupedBySizeAndTime(int size, long time, TimeUnit t);
 
     /**
-     * Batch elements by size into a collection created by the supplied factory
+     * Batch elements by size into a toX created by the supplied factory
      *
      * <pre>
      * {@code
@@ -1354,7 +1355,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param size
      *            Max size of a batch
      * @param time
-     *            (Max) time period toNested build a single batch in
+     *            (Max) time period toNested build a singleUnsafe batch in
      * @param unit
      *            time unit for batch
      * @param factory
@@ -1381,7 +1382,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param time
-     *            - time period toNested build a single batch in
+     *            - time period toNested build a singleUnsafe batch in
      * @param t
      *            time unit for batch
      * @return ReactiveSeq batched into lists by time period
@@ -1389,7 +1390,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<ListX<T>> groupedByTime(long time, TimeUnit t);
 
     /**
-     * Batch elements by time into a collection created by the supplied factory
+     * Batch elements by time into a toX created by the supplied factory
      *
      * <pre>
      * {@code
@@ -1402,17 +1403,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param time
-     *            - time period toNested build a single batch in
+     *            - time period toNested build a singleUnsafe batch in
      * @param unit
      *            time unit for batch
      * @param factory
      *            Collection factory
-     * @return ReactiveSeq batched into collection types by time period
+     * @return ReactiveSeq batched into toX types by time period
      */
     <C extends Collection<? super T>> ReactiveSeq<C> groupedByTime(long time, TimeUnit unit, Supplier<C> factory);
 
     /**
-     * Batch elements in a Stream by size into a collection created by the
+     * Batch elements in a Stream by size into a toX created by the
      * supplied factory
      *
      * <pre>
@@ -1426,7 +1427,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      * @param size batch size
      * @param supplier Collection factory
-     * @return ReactiveSeq batched into collection types by size
+     * @return ReactiveSeq batched into toX types by size
      */
     @Override
     <C extends Collection<? super T>> ReactiveSeq<C> grouped(int size, Supplier<C> supplier);
@@ -1924,7 +1925,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     boolean allMatch(Predicate<? super T> c);
 
     /**
-     * True if a single element matches when Monad converted toNested a Stream
+     * True if a singleUnsafe element matches when Monad converted toNested a Stream
      *
      * <pre>
      * {@code
@@ -2022,25 +2023,25 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Lazy / reactive analogue of findFirst / findAny from JDK
      * For push based reactive-streams (created via Spouts.XXX) data will be pushed toNested the returned Maybe on arrival.
-     * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Maybe is first accessed.
+     * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Maybe is takeOne accessed.
      *
      * @return
      */
     Maybe<T> findOne();
 
     /**
-     * Lazy / reactive look up of first value , capturing the first error, if one occurs. If no values are
+     * Lazy / reactive look up of takeOne value , capturing the takeOne error, if one occurs. If no values are
      * present a NoSuchElementException is returned.
      *
      * For push based reactive-streams (created via Spouts.XXX) data will be pushed toNested the returned Either on arrival.
-     * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Either is first accessed.
+     * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Either is takeOne accessed.
 
      *
      * @return
      */
     Either<Throwable,T> findFirstOrError();
     /**
-     * @return first matching element, but order is not guaranteed
+     * @return takeOne matching element, but order is not guaranteed
      *
      *         <pre>
      * {@code
@@ -2233,7 +2234,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }</pre>
      * <p>
      * <p>The following will take a reactiveStream of strings and concatenates them into a
-     * single string:
+     * singleUnsafe string:
      * <pre>{@code
      *     String concat = stringStream.collect(StringBuilder::new, StringBuilder::append,
      *                                          StringBuilder::append)
@@ -2254,7 +2255,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code Collector}.  A {@code Collector}
      * encapsulates the function used as arguments toNested
      * {@link #collect(Supplier, BiConsumer, BiConsumer)}, allowing for reuse of
-     * collection strategies and composition of collect operations such as
+     * toX strategies and composition of collect operations such as
      * multiple-level grouping or partitioning.
      * <p>
      * <p>If the reactiveStream is parallel, and the {@code Collector}
@@ -2306,7 +2307,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
-     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      *
      * <pre>
      * {@code
@@ -2330,7 +2331,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
-     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      *
      * <pre>
      * {@code
@@ -2529,7 +2530,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     <R> ReactiveSeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
 
-    <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory,Function<? super T, ? extends Publisher<? extends R>> mapper);
     <R> ReactiveSeq<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
     <R> ReactiveSeq<R> flatMapP(int maxConcurrency,Function<? super T, ? extends Publisher<? extends R>> fn);
     /**
@@ -2921,7 +2921,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Turns this ReactiveSeq into a HotStream, a connectable Stream, being executed on a thread on the
      * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
-     * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedHotStream(Executor)}.
+     * immediately. For a hotStream that waits until the takeOne user streams connect @see {@link ReactiveSeq#primedHotStream(Executor)}.
      * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#pausableHotStream(Executor)}.
      * Turns this ReactiveSeq into a HotStream, a connectable Stream, being
      * executed on a thread on the supplied executor, that is producing data
@@ -2948,8 +2948,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Return a HotStream that will skip emitting data when the first connecting Stream connects.
-     * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
+     * Return a HotStream that will skip emitting data when the takeOne connecting Stream connects.
+     * Note this method creates a HotStream that starts emitting data only when the takeOne connecting Stream connects.
      *  For a hotStream that starts toNested emitted data immediately @see {@link ReactiveSeq#hotStream(Executor)}.
      * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
      * <pre>
@@ -2978,7 +2978,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Turns this ReactiveSeq into a HotStream, a connectable & pausable Stream, being executed on a thread on the
      * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
-     * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
+     * immediately. For a hotStream that waits until the takeOne user streams connect @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
      * The generated HotStream is pausable, for a unpausable HotStream (slightly faster execution) @see {@link ReactiveSeq#hotStream(Executor)}.
      * <pre>
      * {@code
@@ -3003,8 +3003,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Return a pausable HotStream that will skip emitting data when the first connecting Stream connects.
-     * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
+     * Return a pausable HotStream that will skip emitting data when the takeOne connecting Stream connects.
+     * Note this method creates a HotStream that starts emitting data only when the takeOne connecting Stream connects.
      *  For a hotStream that starts toNested emitted data immediately @see {@link ReactiveSeq#pausableHotStream(Executor)}.
      * The generated HotStream is pausable, for a unpausable HotStream @see {@link ReactiveSeq#primedHotStream(Executor)}.
      * <pre>
@@ -3037,7 +3037,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * @return first value in this Stream
+     * @return takeOne value in this Stream
      */
     @Override
     T firstValue();
@@ -3047,21 +3047,21 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *
      *    //1
-     *    ReactiveSeq.of(1).single();
+     *    ReactiveSeq.of(1).singleUsafe();
      *
      *    //UnsupportedOperationException
-     *    ReactiveSeq.of().single();
+     *    ReactiveSeq.of().singleUnsafe();
      *
      *     //UnsupportedOperationException
-     *    ReactiveSeq.of(1,2,3).single();
+     *    ReactiveSeq.of(1,2,3).singleUnsafe();
      * }
      * </pre>
      *
-     * @return a single value or an UnsupportedOperationException if 0/1 values
+     * @return a singleUnsafe value or an UnsupportedOperationException if 0/1 values
      *         in this Stream
      */
     @Override
-    default T single() {
+    default T singleUnsafe() {
         final Iterator<T> it = iterator();
         if (it.hasNext()) {
             final T result = it.next();
@@ -3069,12 +3069,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 return result;
         }
         throw new UnsupportedOperationException(
-                                                "single only works for Streams with a single value");
+                                                "singleUnsafe only works for Streams with a singleUnsafe value");
 
     }
 
     @Override
-    default T single(final Predicate<? super T> predicate) {
+    default Maybe<T> single(final Predicate<? super T> predicate) {
         return this.filter(predicate)
                    .single();
 
@@ -3084,29 +3084,46 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *
-     *    //Optional[1]
-     *    ReactiveSeq.of(1).singleOptional();
+     *    //Maybe[1]
+     *    ReactiveSeq.of(1).singleUnsafe();
      *
-     *    //Optional.empty
-     *    ReactiveSeq.of().singleOpional();
+     *    //Maybe.none
+     *    ReactiveSeq.of().singleUnsafe();
      *
-     *     //Optional.empty
-     *    ReactiveSeq.of(1,2,3).singleOptional();
+     *     //Maybe.none
+     *    ReactiveSeq.of(1,2,3).singleUnsafe();
      * }
      * </pre>
      *
-     * @return An Optional with single value if this Stream has exactly one
-     *         element, otherwise Optional Empty
+     * @return An Maybe with singleUnsafe value if this Stream has exactly one
+     *         element, otherwise Maybe.none
      */
     @Override
-    default Optional<T> singleOptional() {
+    default Maybe<T> single() {
         final Iterator<T> it = iterator();
-        if (it.hasNext()) {
-            final T result = it.next();
-            if (!it.hasNext())
-                return Optional.of(result);
-        }
-        return Optional.empty();
+
+        return Maybe.<Object>fromEvalNullable(Eval.later(() -> {
+            if(it.hasNext()) {
+                Object res = it.next();
+                if(it.hasNext())
+                    return null;
+                if(res==null)
+                    res = Queue.NILL;
+                return res;
+            }
+            else
+             return null;
+        })).<T>map(i->{
+            if(i==Queue.NILL)
+                return null;
+            return (T)i;
+        });
+
+
+
+    }
+    default Maybe<T> takeOne() {
+        return Maybe.fromIterable(this);
 
     }
 
@@ -3124,10 +3141,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return elementAt index
      */
     @Override
-    default Optional<T> get(final long index) {
+    default Maybe<T> get(final long index) {
         return this.zipWithIndex()
                    .filter(t -> t.v2 == index)
-                   .findFirst()
+                   .takeOne()
                    .map(t -> t.v1());
     }
 
@@ -3828,7 +3845,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Generate the permutations based on values in the ReactiveSeq Makes use of
-     * Streamable toNested store intermediate stages in a collection
+     * Streamable toNested store intermediate stages in a toX
      *
      *
      * @return Permutations from this ReactiveSeq
@@ -4486,7 +4503,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (ReactiveSeq)FoldableTraversable.super.zipP(other);
+        return (ReactiveSeq)FoldableTraversable.super.zipP(other, Tuple::tuple);
     }
 
     @Override
@@ -4501,7 +4518,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured toNested publish asynchronously, users can use the overloaded @see {@link IterableFunctor#mergePublisher(Collection, QueueFactory)}
-     * method toNested forEachAsync asynchronously also. Max concurrency is determined by the publishers collection size, along with a default limit of 5k queued values before
+     * method toNested forEachAsync asynchronously also. Max concurrency is determined by the publishers toX size, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param publishers Publishers toNested merge
@@ -4579,7 +4596,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         init.addContinuation(continuation);
         return ReactiveSeq.fromStream(init.jdkStream());
     }
-
+    <R> R visit(Function<? super ReactiveSeq<T>,? extends R> sync,Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
+                       Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure);
     /**
      * Broadcast the contents of this Stream toNested multiple downstream Streams (determined by supplier parameter).
      * For pull based Streams this Stream will be buffered.
@@ -4767,7 +4785,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                     if(wip.compareAndSet(false,true)){
                         try {
 
-                            //use the first consuming thread toNested tell this Stream onto the Queue
+                            //use the takeOne consuming thread toNested tell this Stream onto the Queue
                             if(!split.tryAdvance(topic::offer)){
                                 topic.close();
                                 return Continuation.empty();

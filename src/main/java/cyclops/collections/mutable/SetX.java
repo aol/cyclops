@@ -1,8 +1,9 @@
 package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.LazySetX;
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion;
+import com.aol.cyclops2.types.foldable.Evaluation;
 
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
@@ -45,7 +46,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
 
         return ReactiveSeq.range(start, end)
                           .to()
-                          .setX(Conversion.LAZY);
+                          .setX(Evaluation.LAZY);
     }
 
     /**
@@ -59,7 +60,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
      */
     public static SetX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .setX(Conversion.LAZY);
+                          .setX(Evaluation.LAZY);
     }
 
     /**
@@ -79,7 +80,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
      */
     static <U, T> SetX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .setX(Conversion.LAZY);
+                          .setX(Evaluation.LAZY);
     }
 
     /**
@@ -93,7 +94,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .setX(Conversion.LAZY);
+                          .setX(Evaluation.LAZY);
     }
 
     /**
@@ -107,7 +108,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
     public static <T> SetX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .setX(Conversion.LAZY);
+                          .setX(Evaluation.LAZY);
 
     }
 
@@ -133,7 +134,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
     public static <T> SetX<T> of(final T... values) {
       return new LazySetX<T>(null,
                 ReactiveSeq.of(values),
-                defaultCollector());
+                defaultCollector(),Evaluation.LAZY);
     }
     public static <T> SetX<T> fromIterator(final Iterator<T> it) {
         return fromIterable(()->it);
@@ -151,7 +152,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
      */
     public static <T> SetX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                          .setX(Conversion.LAZY);
+                          .setX(Evaluation.LAZY);
     }
     /**
      *
@@ -170,7 +171,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
     public static <T> SetX<T> setX(ReactiveSeq<T> stream){
         return new LazySetX<T>(null,
                 stream,
-                defaultCollector());
+                defaultCollector(),Evaluation.LAZY);
     }
 
 
@@ -180,9 +181,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
             return (SetX) it;
         if (it instanceof Set)
             return new LazySetX<T>(
-                                   (Set) it, defaultCollector());
+                                   (Set) it, defaultCollector(),Evaluation.LAZY);
         return new LazySetX<T>(null,ReactiveSeq.fromIterable(it),
-                                          defaultCollector());
+                                          defaultCollector(),Evaluation.LAZY);
     }
 
     public static <T> SetX<T> fromIterable(final Collector<T, ?, Set<T>> collector, final Iterable<T> it) {
@@ -190,10 +191,10 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
             return ((SetX) it).type(collector);
         if (it instanceof Set)
             return new LazySetX<T>(
-                                   (Set) it, collector);
+                                   (Set) it, collector,Evaluation.LAZY);
         return new LazySetX<T>(null,
                                 ReactiveSeq.fromIterable(it),
-                                collector);
+                                collector,Evaluation.LAZY);
     }
 
     @Override
@@ -316,7 +317,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
      * {@code 
      *  SetX.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .listX(Conversion.LAZY)
+                   .listX(Evaluation.LAZY)
                    
      *  //ListX(3,4) 
      * }</pre>
@@ -365,7 +366,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
     @Override
     default <X> SetX<X> fromStream(final ReactiveSeq<X> stream) {
         return new LazySetX<>(
-                              stream.collect(getCollector()), getCollector());
+                              stream.collect(getCollector()), getCollector(),Evaluation.LAZY);
     }
 
     /* (non-Javadoc)
@@ -592,7 +593,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
         return this.stream()
                    .cycle(times)
                    .to()
-                   .listX(Conversion.LAZY);
+                   .listX(Evaluation.LAZY);
     }
 
     /* (non-Javadoc)
@@ -604,7 +605,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
         return this.stream()
                    .cycle(m, times)
                    .to()
-                   .listX(Conversion.LAZY);
+                   .listX(Evaluation.LAZY);
     }
 
     /* (non-Javadoc)
@@ -616,7 +617,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
         return this.stream()
                    .cycleWhile(predicate)
                    .to()
-                   .listX(Conversion.LAZY);
+                   .listX(Evaluation.LAZY);
     }
 
     /* (non-Javadoc)
@@ -628,7 +629,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
         return this.stream()
                    .cycleUntil(predicate)
                    .to()
-                   .listX(Conversion.LAZY);
+                   .listX(Evaluation.LAZY);
     }
 
     /* (non-Javadoc)
@@ -1038,6 +1039,49 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmpty
     @Override
     default SetX<T> plusLoop(Supplier<Optional<T>> supplier) {
         return (SetX<T>)LazyCollectionX.super.plusLoop(supplier);
+    }
+
+    @Override
+    default SetX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return (SetX<T>)LazyCollectionX.super.zip(combiner,app);
+    }
+
+    @Override
+    default <R> SetX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (SetX<R>)LazyCollectionX.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> SetX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (SetX<R>)LazyCollectionX.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> SetX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (SetX<R>)LazyCollectionX.super.zipWithP(fn);
+    }
+
+    @Override
+    default <T2, R> SetX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (SetX<R>)LazyCollectionX.super.zipP(publisher,fn);
+    }
+
+
+
+    @Override
+    default <U> SetX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return (SetX)LazyCollectionX.super.zipP(other);
+    }
+
+
+    @Override
+    default <S, U, R> SetX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (SetX<R>)LazyCollectionX.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4, R> SetX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (SetX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
 
     /**

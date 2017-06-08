@@ -8,16 +8,68 @@ import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Test;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
+
+import java.util.concurrent.ForkJoinPool;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<Witness.reactiveSeq>{
     int count =0;
 
+    boolean complete = false;
+    @Test
+    public void asyncTest(){
+        complete = false;
+        System.out.println("Start");
+        AnyM.fromStream(Spouts.async(ReactiveSeq.of(1,2,3,4,5),ForkJoinPool.commonPool()))
+                      .forEach(System.out::println,System.err::println,()->complete=true);
+        System.out.println("Set up");
+        assertFalse(complete);
+        while(!complete){
+            Thread.yield();
+        }
+        assertTrue(complete);
+
+    }
+
+    @Test
+    public void asyncReactiveTest(){
+        complete = false;
+        System.out.println("Start");
+        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ForkJoinPool.commonPool())
+                .forEach(System.out::println,System.err::println,()->complete=true);
+
+        System.out.println("Set up");
+        assertFalse(complete);
+        while(!complete){
+            Thread.yield();
+        }
+        assertTrue(complete);
+
+    }
+    @Test
+    public void asyncReactiveTestAnyM(){
+        complete = false;
+        System.out.println("Start");
+
+
+         AnyM.fromStream(Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ForkJoinPool.commonPool()))
+                 .map(i->i*2)
+                 .sliding(1)
+                 .forEach(System.out::println,System.err::println,()->complete=true);
+
+        System.out.println("Set up");
+        assertFalse(complete);
+        while(!complete){
+            Thread.yield();
+        }
+        assertTrue(complete);
+
+    }
     @Test
     public void materialize(){
         ListX<Integer> d= of(1, 2, 3).cycleUntil(next->count++==6).toListX();

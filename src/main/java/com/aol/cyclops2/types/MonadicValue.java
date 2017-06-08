@@ -17,7 +17,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
- * A type that represents a Monad that wraps a single value
+ * A type that represents a Monad that wraps a singleUnsafe value
  * 
  * @author johnmcclean
  *
@@ -48,7 +48,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
 
     /**
      * Perform a coflatMap operation. The mapping function accepts this MonadicValue and returns
-     * a single value toNested be wrapped inside a Monad.
+     * a singleUnsafe value toNested be wrapped inside a Monad.
      * 
      * <pre>
      * {@code 
@@ -394,7 +394,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);*/
 
     /**
-     * A flattening transformation operation that takes the first value from the returned Iterable.
+     * A flattening transformation operation that takes the takeOne value from the returned Iterable.
      * 
      * <pre>
      * {@code 
@@ -420,7 +420,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     }
 
     /**
-     * A flattening transformation operation that takes the first value from the returned Publisher.
+     * A flattening transformation operation that takes the takeOne value from the returned Publisher.
      * <pre>
      * {@code 
      *   FutureW.ofResult(1).map(i->i+2).flatMapP(i->Flux.just(()->i*3,20);

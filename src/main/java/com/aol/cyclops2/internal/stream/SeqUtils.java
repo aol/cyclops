@@ -75,10 +75,10 @@ public class SeqUtils {
     }
 
     /**
-      * Projects an immutable collection of this reactiveStream. Initial iteration over the collection is not thread safe
+      * Projects an immutable toX of this reactiveStream. Initial iteration over the toX is not thread safe
       * (can't be performed by multiple threads concurrently) subsequent iterations are.
       *
-      * @return An immutable collection of this reactiveStream.
+      * @return An immutable toX of this reactiveStream.
       */
     public static final <A> CollectionX<A> toLazyCollection(final Stream<A> stream) {
         return toLazyCollection(stream.iterator());

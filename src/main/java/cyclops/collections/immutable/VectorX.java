@@ -5,8 +5,9 @@ import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion;
+import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -107,7 +108,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static VectorX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                          .vectorX(Conversion.LAZY);
+                          .vectorX(Evaluation.LAZY);
     }
 
     /**
@@ -121,7 +122,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static VectorX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .vectorX(Conversion.LAZY);
+                          .vectorX(Evaluation.LAZY);
     }
 
     /**
@@ -141,7 +142,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     static <U, T> VectorX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .vectorX(Conversion.LAZY);
+                          .vectorX(Evaluation.LAZY);
     }
 
     /**
@@ -155,7 +156,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .vectorX(Conversion.LAZY);
+                          .vectorX(Evaluation.LAZY);
     }  
     /**
      * Generate a VectorX from the provided value up toNested the provided limit number of times
@@ -168,7 +169,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                          .vectorX(Conversion.LAZY);
+                          .vectorX(Evaluation.LAZY);
     }
 
     /**
@@ -182,7 +183,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     public static <T> VectorX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .vectorX(Conversion.LAZY);
+                          .vectorX(Evaluation.LAZY);
 
     }
 
@@ -206,7 +207,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @return new PVector
      */
     public static <T> VectorX<T> of(final T... values) {
-        return new LazyPVectorX<>(null,ReactiveSeq.of(values),Reducers.toPVector());
+        return new LazyPVectorX<>(null,ReactiveSeq.of(values),Reducers.toPVector(),Evaluation.LAZY);
     }
     /**
      * 
@@ -231,28 +232,28 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> empty() {
         return new LazyPVectorX<T>(
-                                  TreePVector.empty(),null,Reducers.toPVector());
+                                  TreePVector.empty(),null,Reducers.toPVector(),Evaluation.LAZY);
     }
 
     /**
-     * Construct a PVector containing a single value
+     * Construct a PVector containing a singleUnsafe value
      * </pre>
      * {@code 
-     *    List<String> single = PVectors.singleton("1");
+     *    List<String> singleUnsafe = PVectors.singleton("1");
      *    
      *    //or
      *    
-     *    PVector<String> single = PVectors.singleton("1");
+     *    PVector<String> singleUnsafe = PVectors.singleton("1");
      * 
      * }
      * </pre>
      * 
      * @param value Single value for PVector
-     * @return PVector with a single value
+     * @return PVector with a singleUnsafe value
      */
     public static <T> VectorX<T> singleton(final T value) {
         return new LazyPVectorX<>(
-                                  TreePVector.singleton(value),null,Reducers.toPVector());
+                                  TreePVector.singleton(value),null,Reducers.toPVector(),Evaluation.LAZY);
     }
 
     /**
@@ -264,7 +265,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                          .vectorX(Conversion.LAZY);
+                          .vectorX(Evaluation.LAZY);
     }
 
     public static <T> VectorX<T> fromIterable(final Iterable<T> iterable) {
@@ -272,11 +273,11 @@ public interface VectorX<T> extends To<VectorX<T>>,
             return (VectorX) iterable;
         if (iterable instanceof PVector)
             return new LazyPVectorX<>(
-                                      (PVector) iterable,null,Reducers.toPVector());
+                                      (PVector) iterable,null,Reducers.toPVector(),Evaluation.LAZY);
 
         return new LazyPVectorX<>(null,
                 ReactiveSeq.fromIterable(iterable),
-                Reducers.toPVector());
+                Reducers.toPVector(),Evaluation.LAZY);
     }
     VectorX<T> type(Reducer<? extends PVector<T>> reducer);
 
@@ -296,7 +297,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> vectorX(ReactiveSeq<T> stream) {
 
-        return new LazyPVectorX<T>(null,stream,Reducers.toPVector());
+        return new LazyPVectorX<T>(null,stream,Reducers.toPVector(),Evaluation.LAZY);
     }
 
 
@@ -1162,6 +1163,49 @@ public interface VectorX<T> extends To<VectorX<T>>,
     default VectorX<T> plusLoop(Supplier<Optional<T>> supplier) {
         return (VectorX<T>)LazyCollectionX.super.plusLoop(supplier);
     }
+    @Override
+    default VectorX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return (VectorX<T>)LazyCollectionX.super.zip(combiner,app);
+    }
+
+    @Override
+    default <R> VectorX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (VectorX<R>)LazyCollectionX.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> VectorX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (VectorX<R>)LazyCollectionX.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> VectorX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (VectorX<R>)LazyCollectionX.super.zipWithP(fn);
+    }
+
+    @Override
+    default <T2, R> VectorX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (VectorX<R>)LazyCollectionX.super.zipP(publisher,fn);
+    }
+
+
+
+    @Override
+    default <U> VectorX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return (VectorX)LazyCollectionX.super.zipP(other);
+    }
+
+
+    @Override
+    default <S, U, R> VectorX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (VectorX<R>)LazyCollectionX.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4, R> VectorX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (VectorX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
+    }
+
 
     /**
      * Companion class for creating Type Class instances for working with PVectors

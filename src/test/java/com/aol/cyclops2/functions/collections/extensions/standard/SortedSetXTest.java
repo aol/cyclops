@@ -35,6 +35,7 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     }
     @Test
     public void tracking(){
+
         ReactiveSeq.fromStream(Stream.of(1,2))
                     .filter(this::include)
                     .elapsed()
@@ -68,7 +69,7 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     public void coflatMap(){
        assertThat(SortedSetX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .single(),equalTo(6));
+                   .singleUnsafe(),equalTo(6));
         
     }
    

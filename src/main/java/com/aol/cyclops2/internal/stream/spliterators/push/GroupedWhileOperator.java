@@ -86,7 +86,7 @@ public class GroupedWhileOperator<T,C extends Collection<? super T>,R> extends B
                             onError.accept(t);
                         }
                     }
-                    sub.cancel();
+                    //sub.cancel();
                     onComplete.run();
                 });
         return sub;

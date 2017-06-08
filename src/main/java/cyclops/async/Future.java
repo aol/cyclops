@@ -153,7 +153,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Select the first Future to complete
+     * Select the takeOne Future to complete
      *
      * @see CompletableFuture#anyOf(CompletableFuture...)
      * @param fts FutureWs to race
@@ -248,7 +248,7 @@ public class Future<T> implements To<Future<T>>,
 
     }
     /**
-     * Select the first Future to return with a successful result
+     * Select the takeOne Future to return with a successful result
      *
      * <pre>
      * {@code
@@ -284,7 +284,7 @@ public class Future<T> implements To<Future<T>>,
 
     }
     /**
-     * Construct a Future asyncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
+     * Construct a Future asyncrhonously that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
      *
      *
      * <pre>
@@ -310,7 +310,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Construct a Future asyncrhonously that contains a single value extracted from the supplied Iterable
+     * Construct a Future asyncrhonously that contains a singleUnsafe value extracted from the supplied Iterable
      * <pre>
      * {@code
      *  ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
@@ -332,7 +332,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Construct a Future syncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
+     * Construct a Future syncrhonously that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
@@ -376,7 +376,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Construct a Future syncrhonously that contains a single value extracted from the supplied Iterable
+     * Construct a Future syncrhonously that contains a singleUnsafe value extracted from the supplied Iterable
      *
      * <pre>
      * {@code
@@ -563,7 +563,7 @@ public class Future<T> implements To<Future<T>>,
        return Future.of(CompletableFutures.accumulateSuccess(fts.map(Future::getFuture), reducer));
     }
     /**
-     * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see cyclops2.Reducers}
+     * Asynchronously accumulate the results of Futures, a singleUnsafe failure will cause a failed result, using the supplied Reducer {@see cyclops2.Reducers}
      * <pre>
      * {@code
      *
@@ -629,7 +629,7 @@ public class Future<T> implements To<Future<T>>,
      * Asynchronously accumulate the results of a batch of Futures which using the supplied mapping function to
      * convert the data from each Future before reducing them using the supplied supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * A single Failure results in a Failed  Future.
+     * A singleUnsafe Failure results in a Failed  Future.
      *
      * <pre>
      * {@code
@@ -654,7 +654,7 @@ public class Future<T> implements To<Future<T>>,
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }
      *
-     * A single Failure results in a Failed  Future.
+     * A singleUnsafe Failure results in a Failed  Future.
      *
      * <pre>
      * {@code
@@ -1290,7 +1290,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /*
-     * Equivalent to combine, but accepts an Iterable and takes the first value
+     * Equivalent to combine, but accepts an Iterable and takes the takeOne value
      * only from that iterable. (non-Javadoc)
      *
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable,
@@ -1303,7 +1303,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /*
-     * Equivalent to combine, but accepts a Publisher and takes the first value
+     * Equivalent to combine, but accepts a Publisher and takes the takeOne value
      * only from that publisher.
      *
      * (non-Javadoc)
@@ -1341,6 +1341,9 @@ public class Future<T> implements To<Future<T>>,
      */
     public static <T> Future<T> ofSupplier(final Supplier<T> s, final Executor ex) {
         return Future.of(CompletableFuture.supplyAsync(s, ex));
+    }
+    public static <T> Future<T> async(final Executor ex,final Supplier<T> s) {
+        return ofSupplier(s,ex);
     }
 
 

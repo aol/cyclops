@@ -188,7 +188,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     @Override
     public void cancel() {
         this.subscription.closeAll();
-        //also need toNested mark cancelled =true and check during collection
+        //also need toNested mark cancelled =true and check during toX
     }
 
     @Override
@@ -257,10 +257,15 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     }
 
     @Override
+    public <R> R visit(Function<? super ReactiveSeq<U>, ? extends R> sync, Function<? super ReactiveSeq<U>, ? extends R> reactiveStreams, Function<? super ReactiveSeq<U>, ? extends R> asyncNoBackPressure) {
+        return sync.apply(this);
+    }
+
+    @Override
     public Collectable<U> collectors() {
         //in order for tasks toNested be executed concurrently we need toNested make sure that collect is
         //ultimately called via LazyStream#collect. Passing 'this' directly into Seq results in 'this' being returned
-        //Seq implements the collection extensions on SeqImpl, so we need toNested construct a SeqImpl with this as the Stream.
+        //Seq implements the toX extensions on SeqImpl, so we need toNested construct a SeqImpl with this as the Stream.
         return Seq.seq(new DelegateStream<U>(
                                              this));
     }

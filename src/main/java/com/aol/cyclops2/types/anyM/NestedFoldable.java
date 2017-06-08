@@ -8,6 +8,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
@@ -144,7 +145,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
-     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
      * {
@@ -172,7 +173,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
-     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
+     * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
      * {@code 
@@ -443,7 +444,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * @return first value in this Stream
+     * @return takeOne value in this Stream
      */
     default AnyM<W,T> firstValue() {
         return nestedFoldables().map(s -> s.firstValue());
@@ -454,25 +455,25 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * {@code 
      *    
      *    //1
-     *    ReactiveSeq.of(1).single(); 
+     *    ReactiveSeq.of(1).singleUnsafe();
      *    
      *    //UnsupportedOperationException
-     *    ReactiveSeq.of().single();
+     *    ReactiveSeq.of().singleUnsafe();
      *     
      *     //UnsupportedOperationException
-     *    ReactiveSeq.of(1,2,3).single();
+     *    ReactiveSeq.of(1,2,3).singleUnsafe();
      * }
      * </pre>
      * 
-     * @return a single value or an UnsupportedOperationException if 0/1 values
+     * @return a singleUnsafe value or an UnsupportedOperationException if 0/1 values
      *         in this Stream
      */
-    default AnyM<W,T> single() {
-        return nestedFoldables().map(s -> s.single());
+    default AnyM<W,T> singleUnsafe() {
+        return nestedFoldables().map(s -> s.singleUnsafe());
 
     }
 
-    default AnyM<W,T> single(final Predicate<? super T> predicate) {
+    default AnyM<W,Maybe<T>> single(final Predicate<? super T> predicate) {
         return nestedFoldables().map(s -> s.single(predicate));
     }
 
@@ -481,21 +482,21 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * {@code 
      *    
      *    //Optional[1]
-     *    ReactiveSeq.of(1).singleOptional(); 
+     *    ReactiveSeq.of(1).singleUnsafe();
      *    
      *    //Optional.empty
      *    ReactiveSeq.of().singleOpional();
      *     
      *     //Optional.empty
-     *    ReactiveSeq.of(1,2,3).singleOptional();
+     *    ReactiveSeq.of(1,2,3).singleUnsafe();
      * }
      * </pre>
      * 
-     * @return An Optional with single value if this Stream has exactly one
+     * @return An Optional with singleUnsafe value if this Stream has exactly one
      *         element, otherwise Optional Empty
      */
-    default AnyM<W,Optional<T>> singleOptional() {
-        return nestedFoldables().map(s -> s.singleOptional());
+    default AnyM<W,Maybe<T>> single() {
+        return nestedFoldables().map(s -> s.single());
     }
 
     /**
@@ -511,7 +512,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            toNested extract element from
      * @return elementAt index
      */
-    default AnyM<W,Optional<T>> get(final long index) {
+    default AnyM<W,Maybe<T>> get(final long index) {
         return nestedFoldables().map(s -> s.get(index));
         
     }

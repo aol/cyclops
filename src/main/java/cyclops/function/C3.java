@@ -11,7 +11,7 @@ import org.jooq.lambda.function.Consumer3;
  * 
  * @author johnmcclean
  *
- * @param <S1> Type of first input parameter
+ * @param <S1> Type of takeOne input parameter
  * @param <S2> Type of second input parameter
  * @param <S3> Type of third input parameter
  */
@@ -30,7 +30,7 @@ public interface C3<S1, S2, S3> {
     /**
      * Performs operation with input parameters
      *
-     * @param a the first input parameter
+     * @param a the takeOne input parameter
      * @param b the second input parameter
      * @param c the third input parameter
      */
@@ -44,9 +44,9 @@ public interface C3<S1, S2, S3> {
     }
 
     /**
-     * Partially apply the first input parameter toNested this C3
+     * Partially apply the takeOne input parameter toNested this C3
      * 
-     * @param s the first input parameter
+     * @param s the takeOne input parameter
      * @return A curried function that returns a Consumer
      */
     default Function<S2, Consumer<S3>> apply(final S1 s) {
@@ -55,9 +55,9 @@ public interface C3<S1, S2, S3> {
     }
 
     /**
-     * Partially apply the first and second input parameter toNested this C3
+     * Partially apply the takeOne and second input parameter toNested this C3
      * 
-     * @param s the first input parameter
+     * @param s the takeOne input parameter
      * @param s2 the second input parameter
      * @return A Consumer that accepts the third parameter
      */

@@ -149,8 +149,9 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapPSanity(){
-       Spouts.of(1,2,3).flatMapP(3,i->Spouts.of(10,20,30,40,50,60,70,80,90)).printOut();
+       Spouts.of(1,2,3).flatMapP(i->Spouts.of(10,20,30,40,50,60,70,80,90)).printOut();
     }
+
 
     @Test
     public void concurrentFlatMapP1(){
@@ -180,6 +181,21 @@ public class FlatMapPublisherTest {
             }
             assertThat(one,equalTo(3));
             assertThat(two,equalTo(3));
+        }
+    }
+    @Test
+    public void concurrentFlatMapP2(){
+        for(int k=0;k<500;k++) {
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+             System.out.println(Spouts.of(1, 2, 3)
+                    .flatMapP(3,i -> nextAsync()).toListX());
+
         }
     }
     @Test
@@ -247,6 +263,7 @@ public class FlatMapPublisherTest {
             assertThat(two,equalTo(3));
         }
     }
+
 
     @Test
     public void range(){
@@ -504,6 +521,7 @@ public class FlatMapPublisherTest {
         }
 
     }
+    /**
     @Test
     public void flatMapPAsyncRS2Conc(){
         for(int k=0;k<1000;k++) {
@@ -536,6 +554,7 @@ public class FlatMapPublisherTest {
         }
 
     }
+     **/
     @Test
     public void arrayConcat(){
         for(int k=0;k<1000;k++) {

@@ -25,7 +25,7 @@ public class ForEachTest {
 	@Test
 	public void forEachX(){
 		Subscription s = Streams.forEach(Spouts.of(1,2,3), 2, System.out::println);
-		System.out.println("first batch");
+		System.out.println("takeOne batch");
 		s.request(1);
 	}
 	@Test
@@ -50,7 +50,7 @@ public class ForEachTest {
 		
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
-		System.out.println("first batch");
+		System.out.println("takeOne batch");
 		s.request(1);
 		assertThat(list,hasItems(1,2,3));
 		assertThat(list.size(),equalTo(3));
@@ -69,7 +69,7 @@ public class ForEachTest {
 		
 		assertThat(list,hasItems(1,2));
 		assertThat(list.size(),equalTo(2));
-		System.out.println("first batch");
+		System.out.println("takeOne batch");
 		s.request(1);
 		assertFalse(complete);
 		assertThat(list,hasItems(1,2,3));

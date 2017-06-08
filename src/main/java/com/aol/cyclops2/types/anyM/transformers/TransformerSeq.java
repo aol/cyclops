@@ -2,20 +2,21 @@ package com.aol.cyclops2.types.anyM.transformers;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Random;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
+import java.util.concurrent.TimeUnit;
+import java.util.function.*;
+import java.util.stream.*;
 
 import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.functor.FilterableTransformable;
+import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collections.immutable.*;
+import cyclops.control.Trampoline;
+import cyclops.function.Fn3;
+import cyclops.function.Fn4;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -149,9 +150,173 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
 
+
+    @Override
+    default Traversable<T> removeAllS(final Stream<? extends T> stream) {
+        final AnyM<W,Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.removeAllS(stream));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <U> Traversable<U> cast(final Class<? extends U> type) {
+        AnyM<W, Traversable<U>> zipped = transformerStream().map(s -> (Traversable)s.cast(type));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <U> Traversable<U> ofType(final Class<? extends U> type) {
+        AnyM<W, Traversable<U>> zipped = transformerStream().map(s -> (Traversable)s.ofType(type));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default Traversable<T> removeAllI(final Iterable<? extends T> it) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.removeAllI(it));
+        return unitAnyM(zipped);
+    }
+
+
+    @Override
+    default Traversable<T> removeAll(final T... values) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.removeAll(values));
+        return unitAnyM(zipped);
+    }
+
+
+    @Override
+    default Traversable<T> filterNot(final Predicate<? super T> predicate) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.filterNot(predicate));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default Traversable<T> peek(final Consumer<? super T> c) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.peek(c));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default Traversable<T> retainAllI(final Iterable<? extends T> it) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable) s.retainAllI(it));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default Traversable<T> notNull() {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.notNull());
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default Traversable<T> retainAllS(final Stream<? extends T> stream) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.retainAllS(stream));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default Traversable<T> retainAll(final T... values) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.retainAll(values));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <R> Traversable<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> (Traversable)s.trampoline(mapper));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <R> Traversable<R> retry(final Function<? super T, ? extends R> fn) {
+        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> (Traversable)s.retry(fn));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <R> Traversable<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> (Traversable)s.retry(fn,retries,delay,timeUnit));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default Traversable<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> s.combine(op,predicate));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default Traversable<T> drop(final long num) {
+        return skip(num);
+    }
+
+    @Override
+    default Traversable<T> take(final long num) {
+        return limit(num);
+    }
+
+
+    @Override
+    default Traversable<T> recover(final Function<? super Throwable, ? extends T> fn) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> s.recover(fn));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <EX extends Throwable> Traversable<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> s.recover(exceptionClass,fn));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default Traversable<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> s.zip(combiner,app));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <R> Traversable<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> s.zipWith(fn));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <R> Traversable<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> s.zipWithS(fn));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <R> Traversable<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> s.zipWithP(fn));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <T2, R> Traversable<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> s.zipP(publisher,fn));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <U> Traversable<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        AnyM<W, Traversable<Tuple2<T, U>>> zipped = transformerStream().map(s -> s.zipP(other));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <S, U, R> Traversable<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> s.zip3(second, third, fn3));
+        return unitAnyM(zipped);
+    }
+
+    @Override
+    default <T2, T3, T4, R> Traversable<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> s.zip4(second, third,fourth, fn));
+        return unitAnyM(zipped);
+    }
+
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
-     */
+         * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
+         */
     @Override
     default <U, R> Traversable<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);

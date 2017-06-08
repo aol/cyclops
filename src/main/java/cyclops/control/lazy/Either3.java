@@ -22,6 +22,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import java.util.*;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -50,6 +51,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
         return mv3.toOptional().isPresent()? Either3.right(mv3.get()) : Either3.left1(null);
 
     }
+
 
     /**
      * Create a reactive CompletableEither
@@ -194,7 +196,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
                         .recover(t->Either3.<Throwable,LT2,RT>left1(t.getCause()))));
     }
     /**
-     *  Turn a collection of Either3 into a single Either with Lists of values.
+     *  Turn a toX of Either3 into a singleUnsafe Either with Lists of values.
      *
      * <pre>
      * {@code

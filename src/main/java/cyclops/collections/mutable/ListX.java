@@ -4,10 +4,12 @@ import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion;
+import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Trampoline;
 import cyclops.function.Fn3;
@@ -42,7 +44,7 @@ import static cyclops.monads.Witness.list;
  * 
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this collection
+ * @param <T> the type of elements held in this toX
  */
 public interface ListX<T> extends To<ListX<T>>,
                                   List<T>,
@@ -367,7 +369,7 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     public static ListX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                          .listX(Conversion.LAZY);
+                          .listX(Evaluation.LAZY);
     }
 
     /**
@@ -381,7 +383,7 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     public static ListX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .listX(Conversion.LAZY);
+                          .listX(Evaluation.LAZY);
     }
 
     /**
@@ -402,7 +404,7 @@ public interface ListX<T> extends To<ListX<T>>,
     static <U, T> ListX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
                           .to()
-                          .listX(Conversion.LAZY);
+                          .listX(Evaluation.LAZY);
     }
     /**
      * Generate a ListX from the provided value up toNested the provided limit number of times
@@ -416,7 +418,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return ReactiveSeq.fill(s)
                           .limit(limit)
                           .to()
-                          .listX(Conversion.LAZY);
+                          .listX(Evaluation.LAZY);
     }
 
     /**
@@ -431,7 +433,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return ReactiveSeq.generate(s)
                           .limit(limit)
                           .to()
-                          .listX(Conversion.LAZY);
+                          .listX(Evaluation.LAZY);
     }
 
     /**
@@ -446,7 +448,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
                           .to()
-                          .listX(Conversion.LAZY);
+                          .listX(Evaluation.LAZY);
 
     }
     @Override
@@ -593,7 +595,7 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     public static <T> ListX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                          .listX(Conversion.LAZY);
+                          .listX(Evaluation.LAZY);
     }
     /**
      *
@@ -743,7 +745,7 @@ public interface ListX<T> extends To<ListX<T>>,
      *  ListX.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
                    .to()
-                   .listX(Conversion.LAZY)
+                   .listX(Evaluation.LAZY)
                    
      *  //ListX(3,4) 
      * }</pre>
@@ -1598,6 +1600,49 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     public static <T> ListX<T> narrow(final ListX<? extends T> listX) {
         return (ListX<T>) listX;
+    }
+
+    @Override
+    default ListX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return (ListX<T>)LazyCollectionX.super.zip(combiner,app);
+    }
+
+    @Override
+    default <R> ListX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (ListX<R>)LazyCollectionX.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> ListX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (ListX<R>)LazyCollectionX.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> ListX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (ListX<R>)LazyCollectionX.super.zipWithP(fn);
+    }
+
+    @Override
+    default <T2, R> ListX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (ListX<R>)LazyCollectionX.super.zipP(publisher,fn);
+    }
+
+
+
+    @Override
+    default <U> ListX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return (ListX)LazyCollectionX.super.zipP(other);
+    }
+
+
+    @Override
+    default <S, U, R> ListX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (ListX<R>)LazyCollectionX.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4, R> ListX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (ListX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
 
 }

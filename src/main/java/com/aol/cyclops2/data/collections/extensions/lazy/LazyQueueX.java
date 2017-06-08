@@ -1,6 +1,8 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
+import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.QueueX;
 import cyclops.stream.ReactiveSeq;
 import lombok.EqualsAndHashCode;
@@ -32,23 +34,23 @@ import java.util.stream.Collector;
  *
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this collection
+ * @param <T> the type of elements held in this toX
  */
 @EqualsAndHashCode(of = { "queue" })
 public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements QueueX<T> {
 
 
-    public LazyQueueX(Queue<T> list, ReactiveSeq<T> seq, Collector<T, ?, Queue<T>> collector) {
-        super(list, seq, collector);
+    public LazyQueueX(Queue<T> list, ReactiveSeq<T> seq, Collector<T, ?, Queue<T>> collector,Evaluation strict) {
+        super(list, seq, collector,strict);
 
     }
-    public LazyQueueX(Queue<T> list, Collector<T, ?, Queue<T>> collector) {
-        super(list, null, collector);
+    public LazyQueueX(Queue<T> list, Collector<T, ?, Queue<T>> collector,Evaluation strict) {
+        super(list, null, collector,strict);
 
     }
 
-    public LazyQueueX(ReactiveSeq<T> seq, Collector<T, ?, Queue<T>> collector) {
-        super(null, seq, collector);
+    public LazyQueueX(ReactiveSeq<T> seq, Collector<T, ?, Queue<T>> collector,Evaluation strict) {
+        super(null, seq, collector,strict);
 
     }
 
@@ -59,7 +61,16 @@ public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements
 
     @Override
     public LazyQueueX<T> withCollector(Collector<T, ?, Queue<T>> collector){
-        return (LazyQueueX)new LazyQueueX<T>(this.getList(),this.getSeq().get(),collector);
+        return (LazyQueueX)new LazyQueueX<T>(this.getList(),this.getSeq().get(),collector, evaluation());
+    }
+    @Override
+    public QueueX<T> lazy() {
+        return new LazyQueueX<T>(getList(),getSeq().get(),getCollectorInternal(), Evaluation.LAZY) ;
+    }
+
+    @Override
+    public QueueX<T> eager() {
+        return new LazyQueueX<T>(getList(),getSeq().get(),getCollectorInternal(),Evaluation.EAGER) ;
     }
     //@Override
     public QueueX<T> materialize() {
@@ -77,13 +88,13 @@ public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements
     @Override
     public <X> LazyQueueX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyQueueX<X>((Deque)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal());
+        return new LazyQueueX<X>((Deque)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal(), evaluation());
     }
 
     @Override
     public <T1> LazyQueueX<T1> from(Collection<T1> c) {
         if(c instanceof Queue)
-            return new LazyQueueX<T1>((Queue)c,null,(Collector)this.getCollectorInternal());
+            return new LazyQueueX<T1>((Queue)c,null,(Collector)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 

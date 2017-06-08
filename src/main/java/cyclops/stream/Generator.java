@@ -259,8 +259,14 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
             stopped.local = local;
             return new Generator<T>(stopped,value,null );
         }
+        public Generator<T> stop(){
+            Suspended<T> stopped = new Suspended<>();
 
-        public Suspended<T> copy() {
+            stopped.local = local;
+            return new Generator<T>(stopped,Maybe.none(),null );
+        }
+
+        Suspended<T> copy() {
            Suspended<T> res =  parent!=null ? new Suspended<T>(parent.copy()) : new Suspended<>();
            res.local =local;
            res.value = value;

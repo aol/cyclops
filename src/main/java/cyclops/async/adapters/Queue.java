@@ -472,10 +472,10 @@ public class Queue<T> implements Adapter<T> {
             return currentData != null;
         }
 
-        @Override
+       /** @Override
         public Throwable fillInStackTrace() {
             return this;
-        }
+        }**/
 
     }
 
@@ -509,7 +509,7 @@ public class Queue<T> implements Adapter<T> {
     }
 
     /**
-     * Add a single data point toNested the queue
+     * Add a singleUnsafe data point toNested the queue
      * 
      * If the queue is a bounded queue and is full, will return false
      * 
@@ -533,7 +533,7 @@ public class Queue<T> implements Adapter<T> {
     }
 
     /**
-     * Offer a single datapoint toNested this Queue
+     * Offer a singleUnsafe datapoint toNested this Queue
      * 
      * If the queue is a bounded queue and is full it will block until space comes available or until
      * offer time out is reached (default is Integer.MAX_VALUE DAYS).
@@ -568,7 +568,7 @@ public class Queue<T> implements Adapter<T> {
         return false;
     }
 
-    private Object nillSafe(final T data) {
+    public  static <T> T nillSafe(final T data) {
 
         if (NILL == data)
             return null;
@@ -576,9 +576,9 @@ public class Queue<T> implements Adapter<T> {
             return data;
     }
 
-    private Object nullSafe(final T data) {
+    public  static <T> T nullSafe(final T data) {
         if (data == null)
-            return NILL;
+            return (T)NILL;
         else
             return data;
     }

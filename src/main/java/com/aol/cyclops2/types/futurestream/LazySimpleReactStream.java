@@ -101,7 +101,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     </pre>
      *
      * React transform allows event reactors toNested be chained. Unlike React with, which
-     * returns a collection of Future references, React transform is a fluent
+     * returns a toX of Future references, React transform is a fluent
      * interface that returns the React builder - allowing further reactors toNested
      * be added toNested the chain.
      * 
@@ -235,9 +235,9 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     }
 
     /**
-     * Allows aggregate values in a Stream toNested be flatten into a single Stream.
+     * Allows aggregate values in a Stream toNested be flatten into a singleUnsafe Stream.
      * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
-     * into a single flattened reactiveStream
+     * into a singleUnsafe flattened reactiveStream
      * 
      * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
      * @return SimpleReactStream
@@ -363,7 +363,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * 
      * 
      * In this example onFail recovers from the RuntimeException thrown when the
-     * input toNested the first 'transform' stage is 100.
+     * input toNested the takeOne 'transform' stage is 100.
      * 
      * @param fn
      *            Recovery function, the exception is input, and the recovery

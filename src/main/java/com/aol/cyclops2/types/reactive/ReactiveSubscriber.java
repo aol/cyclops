@@ -84,7 +84,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
     public void onSubscribe(final Subscription s) {
         Objects.requireNonNull(s);
         if(streamCreated)
-              throw new IllegalStateException("Subscription passed after downstream Stream created. Subscribe with this Subscriber first, then extract the Stream");
+              throw new IllegalStateException("Subscription passed after downstream Stream created. Subscribe with this Subscriber takeOne, then extract the Stream");
 
 
         this.subscription = s;

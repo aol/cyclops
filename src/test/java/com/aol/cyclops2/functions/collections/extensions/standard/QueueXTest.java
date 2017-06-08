@@ -30,7 +30,7 @@ public class QueueXTest extends CollectionXTestsWithNulls {
     public void coflatMap(){
        assertThat(QueueX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .single(),equalTo(6));
+                   .singleUnsafe(),equalTo(6));
         
     }
     /*

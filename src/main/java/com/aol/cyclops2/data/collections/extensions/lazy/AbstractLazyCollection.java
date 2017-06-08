@@ -3,10 +3,12 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
+import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.experimental.Wither;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -28,14 +30,21 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
     private final AtomicReference<ReactiveSeq<T>> seq = new AtomicReference<>(null);
     @Getter(AccessLevel.PROTECTED)
     private final Collector<T, ?, C> collectorInternal;
+
+    //@Getter//(AccessLevel.PROTECTED)
+    private final Evaluation strict;
     final AtomicBoolean updating = new AtomicBoolean(false);
     final AtomicReference<Throwable> error = new AtomicReference<>(null);
 
-    public AbstractLazyCollection(C list, ReactiveSeq<T> seq, Collector<T, ?, C> collector) {
+
+    public AbstractLazyCollection(C list, ReactiveSeq<T> seq, Collector<T, ?, C> collector,Evaluation strict) {
         this.list = list;
         this.seq.set(seq);
         this.collectorInternal = collector;
+        this.strict = strict;
+        handleStrict();
     }
+
 
 
     @Override
@@ -78,6 +87,24 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
     }
 
 
+    @Override
+    public boolean isLazy() {
+        return strict == Evaluation.LAZY;
+    }
+
+    @Override
+    public boolean isEager() {
+        return strict == Evaluation.EAGER;
+    }
+    @Override
+    public Evaluation evaluation(){
+        return strict;
+    }
+
+    protected void handleStrict(){
+        if(isEager())
+            get();
+    }
 
     @Override
     public Iterator<T> iterator() {

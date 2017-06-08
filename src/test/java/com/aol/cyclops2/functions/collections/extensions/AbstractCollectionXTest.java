@@ -62,6 +62,35 @@ public abstract class AbstractCollectionXTest {
             return i==1;
         });
         assertFalse(set);
+       assertTrue(of(1,2,3).filterNot(i->{
+            set = true;
+            return i==1;
+        }).isLazy());
+    }
+
+    @Test
+    public void isEager(){
+        of(1,2,3).eager().filterNot(i->{
+            set = true;
+            return i==1;
+        });
+        assertTrue(set);
+        assertTrue( of(1,2,3).eager().filterNot(i->{
+            set = true;
+            return i==1;
+        }).isEager());
+    }
+    @Test
+    public void isLazyViaEager(){
+        of(1,2,3).eager().lazy().filterNot(i->{
+            set = true;
+            return i==1;
+        });
+        assertFalse(set);
+        assertTrue( of(1,2,3).eager().lazy().filterNot(i->{
+            set = true;
+            return i==1;
+        }).isLazy());
     }
     @Test
     public void foldFuture(){
@@ -529,7 +558,9 @@ public abstract class AbstractCollectionXTest {
 	}
 	@Test
 	public void dropRight(){
-		assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
+
+	    assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
+        assertThat(of(1,2,3).dropRight(1).toList().size(),equalTo(2));
 	}
 	@Test
 	public void dropRightEmpty(){
@@ -939,27 +970,27 @@ public abstract class AbstractCollectionXTest {
 	}
 	@Test
 	public void singleTest(){
-		assertThat(of(1).single(),equalTo(1));
+		assertThat(of(1).singleUnsafe(),equalTo(1));
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void singleEmpty(){
-		of().single();
+		of().singleUnsafe();
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void single2(){
-		of(1,2).single();
+		of(1,2).singleUnsafe();
 	}
 	@Test
 	public void singleOptionalTest(){
-		assertThat(of(1).singleOptional().get(),equalTo(1));
+		assertThat(of(1).single().get(),equalTo(1));
 	}
 	@Test
 	public void singleOptionalEmpty(){
-		assertFalse(of().singleOptional().isPresent());
+		assertFalse(of().single().isPresent());
 	}
 	@Test
 	public void singleOptonal2(){
-		assertFalse(of(1,2).singleOptional().isPresent());
+		assertFalse(of(1,2).single().isPresent());
 	}
 	
 	@Test
@@ -1114,7 +1145,7 @@ public abstract class AbstractCollectionXTest {
 		Collection<Integer> col = of(1,2,3,4,5)
 											.peek(System.out::println).to()
 											.lazyCollection();
-		System.out.println("first!");
+		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}
@@ -1123,7 +1154,7 @@ public abstract class AbstractCollectionXTest {
 		Collection<Integer> col = of(1,2,3,4,5)
 											.peek(System.out::println).to()
 											.lazyCollectionSynchronized();
-		System.out.println("first!");
+		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}
@@ -1673,14 +1704,14 @@ public abstract class AbstractCollectionXTest {
 	        public void groupedFunctionNoOrder(){
 	            assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").count(),equalTo((2L)));
 	            assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").filter(t->t.v1.equals("a"))
-	                            .map(t->t.v2).map(ReactiveSeq::fromStream).map(ReactiveSeq::toListX).single(),
+	                            .map(t->t.v2).map(ReactiveSeq::fromStream).map(ReactiveSeq::toListX).singleUnsafe(),
 	                                equalTo((ListX.of(1,2))));
 	        }
 	        @Test
 	        public void groupedFunctionCollectorNoOrder(){
 	            assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b", CyclopsCollectors.toListX()).count(),equalTo((2L)));
 	            assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b", CyclopsCollectors.toListX()).filter(t->t.v1.equals("a"))
-	                    .map(t->t.v2).single(),
+	                    .map(t->t.v2).singleUnsafe(),
 	                        equalTo((Arrays.asList(1,2))));
 	        }
 	        @Test

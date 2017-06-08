@@ -3,8 +3,9 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion;
+import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.function.Monoid;
@@ -78,7 +79,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     */
     public static QueueX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX(Evaluation.LAZY);
     }
 
     /**
@@ -92,7 +93,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     public static QueueX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX(Evaluation.LAZY);
     }
 
     /**
@@ -112,7 +113,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     static <U, T> QueueX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX(Evaluation.LAZY);
     }
 
     /**
@@ -126,7 +127,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX(Evaluation.LAZY);
     }
     /**
      * Generate a QueueX from the provided value up toNested the provided limit number of times
@@ -139,7 +140,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX(Evaluation.LAZY);
     }
     /**
      * Create a QueueX by iterative application of a function toNested an initial element up toNested the supplied limit number of times
@@ -152,7 +153,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     public static <T> QueueX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX(Evaluation.LAZY);
 
     }
 
@@ -165,7 +166,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     public static <T> QueueX<T> of(final T... values) {
         return new LazyQueueX<T>(null,
                 ReactiveSeq.of(values),
-                defaultCollector());
+                defaultCollector(),Evaluation.LAZY);
     }
     /**
      * 
@@ -190,7 +191,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     public static <T> QueueX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                          .queueX(Conversion.LAZY);
+                          .queueX(Evaluation.LAZY);
     }
 
     /**
@@ -210,7 +211,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     public static <T> QueueX<T> queueX(ReactiveSeq<T> stream){
         return new LazyQueueX<T>(null,
                 stream,
-                defaultCollector());
+                defaultCollector(),Evaluation.LAZY);
     }
     default AnyMSeq<queue,T> anyM(){
         return AnyM.fromQueue(this);
@@ -225,10 +226,10 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
             return (QueueX) it;
         if (it instanceof Queue)
             return new LazyQueueX<T>(
-                                     (Queue) it, defaultCollector());
+                                     (Queue) it, defaultCollector(),Evaluation.LAZY);
         return new LazyQueueX<T>(null,
                                  ReactiveSeq.fromIterable(it),
-                                            defaultCollector());
+                                            defaultCollector(),Evaluation.LAZY);
     }
 
     public static <T> QueueX<T> fromIterable(final Collector<T, ?, Queue<T>> collector, final Iterable<T> it) {
@@ -236,11 +237,11 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
             return ((QueueX) it).withCollector(collector);
         if (it instanceof Deque)
             return new LazyQueueX<T>(
-                                     (Queue) it, collector);
+                                     (Queue) it, collector,Evaluation.LAZY);
         return new LazyQueueX<T>(
                 null,
                 ReactiveSeq.fromIterable(it),
-                collector);
+                collector,Evaluation.LAZY);
     }
 
     QueueX<T> withCollector(Collector<T, ?, Queue<T>> collector);
@@ -364,7 +365,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     @Override
     default <X> QueueX<X> fromStream(final ReactiveSeq<X> stream) {
         return new LazyQueueX<>(
-                                stream.collect(getCollector()), getCollector());
+                                stream.collect(getCollector()), getCollector(),Evaluation.LAZY);
     }
 
     /**
@@ -1106,6 +1107,49 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     public static <T> QueueX<T> narrow(final QueueX<? extends T> queueX) {
         return (QueueX<T>) queueX;
+    }
+
+    @Override
+    default QueueX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return (QueueX<T>)LazyCollectionX.super.zip(combiner,app);
+    }
+
+    @Override
+    default <R> QueueX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (QueueX<R>)LazyCollectionX.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> QueueX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (QueueX<R>)LazyCollectionX.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> QueueX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (QueueX<R>)LazyCollectionX.super.zipWithP(fn);
+    }
+
+    @Override
+    default <T2, R> QueueX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (QueueX<R>)LazyCollectionX.super.zipP(publisher,fn);
+    }
+
+
+
+    @Override
+    default <U> QueueX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return (QueueX)LazyCollectionX.super.zipP(other);
+    }
+
+
+    @Override
+    default <S, U, R> QueueX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (QueueX<R>)LazyCollectionX.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4, R> QueueX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (QueueX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
 
     /**

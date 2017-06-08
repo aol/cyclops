@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -65,7 +66,7 @@ import java.util.stream.Stream;
  *  Either's have two states
  *  Right : Most methods operate naturally on the primary type, if it is present. If it is not, nothing happens.
  *  Left : Most methods do nothing to the secondary type if it is present.
- *              To operate on the Left type first call swap() or use secondary analogs of the main operators.
+ *              To operate on the Left type takeOne call swap() or use secondary analogs of the main operators.
  *
  *  Instantiating an Either - Right
  *  <pre>
@@ -122,6 +123,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     }
 
+    static <RT> Either<Throwable,RT> async( final Executor ex, final Supplier<RT> s){
+        return fromFuture(Future.ofSupplier(s,ex));
+    }
     /**
      * Create a reactive CompletableEither
      *
@@ -326,7 +330,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     }
 
     /**
-     *  Turn a collection of Eithers into a single Either with Lists of values.
+     *  Turn a toX of Eithers into a singleUnsafe Either with Lists of values.
      *
      * <pre>
      * {@code

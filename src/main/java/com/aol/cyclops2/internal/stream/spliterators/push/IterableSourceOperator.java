@@ -47,7 +47,7 @@ public class IterableSourceOperator<T> implements Operator<T> {
                         if (!completed.get()) {
                             completed.set(true);
                             onComplete.run();
-                            cancel();
+
                         }
                         return;
 
@@ -79,7 +79,7 @@ public class IterableSourceOperator<T> implements Operator<T> {
                 requested.set(0);
                 completed.set(true);
                 onComplete.run();
-                cancel();
+
             }
 
             @Override

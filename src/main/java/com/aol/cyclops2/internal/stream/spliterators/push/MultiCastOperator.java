@@ -36,15 +36,15 @@ public class MultiCastOperator<T> extends BaseOperator<T,T> {
 
         };
         /**
-        (source.forEachAsync(e -> {
+        (source.forEachAsync(pendingRequests -> {
                         for(int i=0;i<subs.size();i++){
                             if(subs.get(i).isActive())
-                                registeredOnNext.get(i).accept(e);
+                                registeredOnNext.get(i).accept(pendingRequests);
                         }
 
 
                     }
-                    , e->registeredOnError.forEach(t->t.accept(e)), ()->registeredOnComplete.forEach(n->n.run())));
+                    , pendingRequests->registeredOnError.forEach(t->t.accept(pendingRequests)), ()->registeredOnComplete.forEach(n->n.run())));
         **/
         return result;
 

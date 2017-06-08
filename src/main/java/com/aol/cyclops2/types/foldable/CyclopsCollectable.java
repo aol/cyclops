@@ -217,7 +217,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
     }
 
     /**
-     * True if a single element matches when Monad converted toNested a Stream
+     * True if a singleUnsafe element matches when Monad converted toNested a Stream
      * 
      * <pre>
      * {@code 

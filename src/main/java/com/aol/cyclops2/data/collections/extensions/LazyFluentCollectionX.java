@@ -9,13 +9,13 @@ import cyclops.stream.ReactiveSeq;
 
 
 /**
- * A Lazy Collection with a fluent api. Extended operators act eagerly, direct operations on a collection
+ * A Lazy Collection with a fluent api. Extended operators act eagerly, direct operations on a toX
  * to add, remove or retrieve elements should be eager unless otherwise stated.
  *
  *
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this collection
+ * @param <T> the type of elements held in this toX
  */
 public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
 
@@ -23,7 +23,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
 
 
     /**
-     * @return This collection with any queued Lazy Operations materialized
+     * @return This toX with any queued Lazy Operations materialized
      */
     LazyFluentCollectionX<T> materialize();
     /**
@@ -42,13 +42,13 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * </pre>
      * Calling reactiveStream(Flux) on a LazySetX results in a LazySetX etc.
      *
-     * The same collection / reduction method will be used in the newly created Object. I.e. Calling  reactiveStream(Flux) on
-     * a collection which as an Immutable Collector  will result in an Immutable Collection.
+     * The same toX / reduction method will be used in the newly created Object. I.e. Calling  reactiveStream(Flux) on
+     * a toX which as an Immutable Collector  will result in an Immutable Collection.
      *
 
      *
-     * @param stream Flux to create new collection from
-     * @return New collection from Flux
+     * @param stream Flux to create new toX from
+     * @return New toX from Flux
      */
     <X> FluentCollectionX<X> stream(ReactiveSeq<X> stream);
 

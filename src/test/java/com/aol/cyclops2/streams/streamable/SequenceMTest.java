@@ -133,15 +133,15 @@ public class SequenceMTest {
 	}
 	@Test
 	public void singleTest(){
-		assertThat(Streamable.of(1).single(),equalTo(1));
+		assertThat(Streamable.of(1).singleUnsafe(),equalTo(1));
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void singleEmpty(){
-		Streamable.of().single();
+		Streamable.of().singleUnsafe();
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void single2(){
-		Streamable.of(1,2).single();
+		Streamable.of(1,2).singleUnsafe();
 	}
 	@Test
 	public void limitTime(){
@@ -293,7 +293,7 @@ public class SequenceMTest {
 		Collection<Integer> col = Streamable.of(1,2,3,4,5)
 											.peek(System.out::println).to()
 											.lazyCollection();
-		System.out.println("first!");
+		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}
@@ -302,7 +302,7 @@ public class SequenceMTest {
 		Collection<Integer> col = Streamable.of(1,2,3,4,5)
 											.peek(System.out::println).to()
 											.lazyCollectionSynchronized();
-		System.out.println("first!");
+		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}

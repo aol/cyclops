@@ -52,7 +52,7 @@ public class EagerFutureStreamFunctions {
     }
 
     /**
-     * Return first Stream out of provided Streams that starts emitted results 
+     * Return takeOne Stream out of provided Streams that starts emitted results
      * 
      * @param futureStreams Streams toNested race
      * @return First Stream toNested skip emitting values

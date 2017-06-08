@@ -7,7 +7,7 @@ import cyclops.collections.immutable.LinkedListX;
 import lombok.AllArgsConstructor;
 
 /**
- * Class that returned to blocking predicates for short circuiting result collection
+ * Class that returned to blocking predicates for short circuiting result toX
  * 
  * @author johnmcclean
  *

@@ -1,8 +1,10 @@
 package com.aol.cyclops2.data.collections.extensions;
 
 import com.aol.cyclops2.types.factory.Unit;
+import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import cyclops.collections.immutable.VectorX;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -32,9 +34,17 @@ import java.util.stream.Stream;
 public interface CollectionX<T> extends FoldableTraversable<T>,
                                         Collection<T> ,
                                         Unwrapable,
-        Unit<T> {
+                                        Unit<T> {
 
-    default <R extends Collection<T>> R collection(Function<? super CollectionX<T>,? extends R> fn){
+    boolean isLazy();
+    boolean isEager();
+    Evaluation evaluation();
+
+    CollectionX<T> lazy();
+    CollectionX<T> eager();
+
+
+    default <R> R toX(Function<? super CollectionX<T>,? extends R> fn){
         return fn.apply(this);
     }
     @Override
@@ -48,9 +58,8 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     }
 
 
-    default <R> CollectionX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
-        return this.flatMap(fn.andThen(ReactiveSeq::fromPublisher));
-    }
+    <R> CollectionX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
+    <R> CollectionX<R> flatMapP(int maxConcurecy,Function<? super T, ? extends Publisher<? extends R>> fn);
     /**
      * Create a CollectionX from the supplied Collection
      * 
@@ -237,7 +246,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * @param index toNested look up element
      * @return Optional.empty if the index does not exist, otherwise the element at the index supplied is returned
      */
-    default Optional<T> getAtIndex(final int index) {
+    default Maybe<T> getAtIndex(final int index) {
         return stream().get(index);
     }
 
@@ -251,7 +260,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     }
 
     /**
-     * @return The head of this collection
+     * @return The head of this toX
      */
     default T head() {
         return iterator().next();
@@ -272,10 +281,10 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     CollectionX<T> reverse();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#single()
+     * @see com.aol.cyclops2.types.foldable.Folds#singleUnsafe()
      */
     @Override
-    default T single() {
+    default T singleUnsafe() {
 
         final Iterator<T> it = iterator();
         if (it.hasNext()) {
@@ -284,33 +293,30 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
                 return result;
         }
         throw new UnsupportedOperationException(
-                                                "single only works for Streams with a single value");
+                                                "singleUnsafe only works for Streams with a singleUnsafe value");
 
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#single(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.foldable.Folds#singleUnsafe(java.util.function.Predicate)
      */
     @Override
-    default T single(final Predicate<? super T> predicate) {
+    default Maybe<T> single(final Predicate<? super T> predicate) {
         return this.filter(predicate)
                    .single();
 
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#singleOptional()
+     * @see com.aol.cyclops2.types.foldable.Folds#singleUnsafe()
      */
     @Override
-    default Optional<T> singleOptional() {
-        final Iterator<T> it = iterator();
-        if (it.hasNext()) {
-            final T result = it.next();
-            if (!it.hasNext())
-                return Optional.of(result);
-        }
-        return Optional.empty();
-
+    default Maybe<T> single() {
+       return stream().single();
+    }
+    @Override
+    default Maybe<T> takeOne() {
+        return stream().takeOne();
     }
 
     /* (non-Javadoc)
@@ -350,11 +356,11 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     <R> CollectionX<R> map(Function<? super T, ? extends R> mapper);
 
     /**
-     * Perform a flatMap operation on this collection. Results from the returned Iterables (from the
-     * provided transformation function) are flattened into the resulting collection.
+     * Perform a flatMap operation on this toX. Results from the returned Iterables (from the
+     * provided transformation function) are flattened into the resulting toX.
      * 
      * @param mapper Transformation function toNested be applied (and flattened)
-     * @return A collection containing the flattened results of the transformation function
+     * @return A toX containing the flattened results of the transformation function
      */
     <R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
 
@@ -447,11 +453,11 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     CollectionX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op);
 
     /**
-     * Zip (merge) this collection with the supplied Iterable into a Colleciton containing Tuples
-     * Each Tuple contains one element from this collection and one from the other
+     * Zip (merge) this toX with the supplied Iterable into a Colleciton containing Tuples
+     * Each Tuple contains one element from this toX and one from the other
      * 
      * @param other Collection toNested merge with this one
-     * @return Merged collection
+     * @return Merged toX
      */
     @Override
     <U> CollectionX<Tuple2<T, U>> zip(Iterable<? extends U> other);

@@ -47,7 +47,7 @@ public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{// , __<T1, T2>{
         return fn.apply(this);
     }
     /**
-     * Apply the provided BiFunction passing this as the first parameter
+     * Apply the provided BiFunction passing this as the takeOne parameter
      * This allows a fluent api without narrowing or unwrapping simulated Higher Kinded Types
      *
      * @param biFn BiFunction toNested execute

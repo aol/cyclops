@@ -135,7 +135,7 @@ public class SimplePerfCheck {
 	@Test
 	public void jsListPrepend(){
 		long skip = System.currentTimeMillis();
-		javaslang.collection.List<Integer> list = javaslang.collection.List.empty();
+		javaslang.toX.List<Integer> list = javaslang.toX.List.empty();
 		for(int i=0;i<1_000_000;i++){
 			list = list.prepend(i);
 		}
@@ -148,7 +148,7 @@ public class SimplePerfCheck {
 	@Test
 	public void jsListMap(){
 		
-		javaslang.collection.List<Integer> list = javaslang.collection.List.empty();
+		javaslang.toX.List<Integer> list = javaslang.toX.List.empty();
 		for(int i=0;i<10_000;i++){
 			list = list.prepend(i);
 		}

@@ -1,5 +1,6 @@
 package cyclops.streams.push.async;
 
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Test;
@@ -45,17 +46,18 @@ public class AsyncJDKStreamTest {
     }
     @Test
     public void flatMapPub1(){
-        for(int l=0;l<10_000;l++) {
-            System.out.println("************Iteration " + l);
-            System.out.println("************Iteration " + l);
-            System.out.println("************Iteration " + l);
+	    for(int l=0;l<1000;l++) {
+		    System.out.println("************Iteration " + l);
+		    System.out.println("************Iteration " + l);
+		    System.out.println("************Iteration " + l);
 
-            System.out.println(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP(i -> of(i, i * 2, i * 4)
-                            .flatMapP(2,x -> rs(5, 6, 7)))
-                    .toListX());
+		    assertThat(ListX.of(5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7).size(),
+				    equalTo(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+						    .flatMapP(i -> rs(i, i * 2, i * 4)
+								    .flatMapP(x -> rs(5, 6, 7)))
+						    .toListX().size()));
 
-        }
+	    }
     }
     @Test
     public void flatMapPub(){

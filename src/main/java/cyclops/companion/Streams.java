@@ -409,7 +409,7 @@ public class Streams {
      * </pre>
      * 
      * @param optional Optional toNested convert toNested a Stream
-     * @return Stream with a single value (if present) created from an Optional
+     * @return Stream with a singleUnsafe value (if present) created from an Optional
      */
     public final static <T> Stream<T> optionalToStream(final Optional<T> optional) {
         if (optional.isPresent())
@@ -432,7 +432,7 @@ public class Streams {
      * Convert a CompletableFuture toNested a Stream
      * 
      * @param future CompletableFuture toNested convert
-     * @return  Stream with a single value created from a CompletableFuture
+     * @return  Stream with a singleUnsafe value created from a CompletableFuture
      */
     public final static <T> Stream<T> completableFutureToStream(final CompletableFuture<T> future) {
         return Stream.of(future.join());
@@ -2499,10 +2499,10 @@ public class Streams {
     }
 
     /**
-      * Projects an immutable collection of this reactiveStream. Initial iteration over the collection is not thread safe
+      * Projects an immutable toX of this reactiveStream. Initial iteration over the toX is not thread safe
       * (can't be performed by multiple threads concurrently) subsequent iterations are.
       *
-      * @return An immutable collection of this reactiveStream.
+      * @return An immutable toX of this reactiveStream.
       */
     public static final <A> CollectionX<A> toLazyCollection(final Stream<A> stream) {
         return SeqUtils.toLazyCollection(stream.iterator());
@@ -2615,7 +2615,7 @@ public class Streams {
      * 
      * @param stream Stream toNested group
      * @param predicate Predicate toNested determine grouping
-     * @param factory Supplier toNested create collection for groupings
+     * @param factory Supplier toNested create toX for groupings
      * @return Stream grouped into Collections determined by predicate
      */
     public final static <T, C extends Collection<? super T>> Stream<C> groupedWhile(final Stream<T> stream, final Predicate<? super T> predicate,
@@ -2670,7 +2670,7 @@ public class Streams {
      * @param size Max group size 
      * @param time Max group time
      * @param t Time unit for max group time
-     * @param factory Supplier toNested create collection for groupings
+     * @param factory Supplier toNested create toX for groupings
      * @return Stream grouped by time and size
      */
     public final static <T, C extends Collection<? super T>> Stream<C> groupedBySizeAndTime(final Stream<T> stream, final int size, final long time,

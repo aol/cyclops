@@ -30,4 +30,9 @@ public class SetXTest extends AbstractAnyMSeqTest<Witness.set>{
     public void whenGreaterThan2() {
        
     }
+
+    @Test
+    public void testRetry(){
+        of(1,2,3).retry(i->i+2).printOut();
+    }
 }

@@ -1,8 +1,9 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
+import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.collections.immutable.PersistentSetX;
-import cyclops.companion.Reducers;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PSet;
@@ -37,14 +38,14 @@ import java.util.function.Supplier;
  *
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this collection
+ * @param <T> the type of elements held in this toX
  */
 public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> implements PersistentSetX<T> {
 
 
 
-    public LazyPSetX(PSet<T> list, ReactiveSeq<T> seq, Reducer<PSet<T>> reducer) {
-        super(list, seq, reducer);
+    public LazyPSetX(PSet<T> list, ReactiveSeq<T> seq, Reducer<PSet<T>> reducer,Evaluation strict) {
+        super(list, seq, reducer,strict);
 
 
     }
@@ -58,23 +59,31 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
 
     @Override
     public PersistentSetX<T> type(Reducer<? extends PSet<T>> reducer) {
-        return new LazyPSetX<T>(list,seq.get(),Reducer.narrow(reducer));
+        return new LazyPSetX<T>(list,seq.get(),Reducer.narrow(reducer), evaluation());
     }
 
     //  @Override
     public <X> LazyPSetX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPSetX<X>((PSet)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal());
+        return new LazyPSetX<X>((PSet)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
     }
 
     @Override
     public <T1> LazyPSetX<T1> from(Collection<T1> c) {
         if(c instanceof PSet)
-            return new LazyPSetX<T1>((PSet)c,null,(Reducer)this.getCollectorInternal());
+            return new LazyPSetX<T1>((PSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 
+    @Override
+    public PersistentSetX<T> lazy() {
+        return new LazyPSetX<T>(list,seq.get(),getCollectorInternal(), Evaluation.LAZY) ;
+    }
 
+    @Override
+    public PersistentSetX<T> eager() {
+        return new LazyPSetX<T>(list,seq.get(),getCollectorInternal(),Evaluation.EAGER) ;
+    }
     @Override
     public PersistentSetX<T> plus(T e) {
         return from(get().plus(e));

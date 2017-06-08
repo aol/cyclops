@@ -44,7 +44,7 @@ public class TryTest {
 	@Test
     public void recover(){
 
-        final String result = Try.withCatch(() -> "first", RuntimeException.class)
+        final String result = Try.withCatch(() -> "takeOne", RuntimeException.class)
                 .recoverWith(__ -> Try.<String,RuntimeException>success("ignored")
                         .retry(i->"retry"))
                 .get();

@@ -11,7 +11,7 @@ import cyclops.control.Trampoline;
  * 
  * @author johnmcclean
  *
- * @param <T1> The first input type this BiTransformable accepts
+ * @param <T1> The takeOne input type this BiTransformable accepts
  * @param <T2> The second input type this BiTransformable accepts
  */
 public interface BiTransformable<T1, T2> {
@@ -27,7 +27,7 @@ public interface BiTransformable<T1, T2> {
      * }
      * </pre>
      * 
-     * @param fn1 transformation function for the first type
+     * @param fn1 transformation function for the takeOne type
      * @param fn2 transformation function for the second type
      * @return New BiTransformable containing transformed data
      */
@@ -43,7 +43,7 @@ public interface BiTransformable<T1, T2> {
      * }
      * </pre>
      * 
-     * @param c1 consumer for the first type
+     * @param c1 consumer for the takeOne type
      * @param c2 consumer for the second type
      * @return New BiTransformable with the same data
      */
@@ -76,7 +76,7 @@ public interface BiTransformable<T1, T2> {
     /**
      * Perform a tail-call optimized recursive transformation operation across two data points simultaneously
      * 
-     * @param mapper1 transformation function for the first type
+     * @param mapper1 transformation function for the takeOne type
      * @param mapper2 transformation function for the second type
      * @return New BiTransformable containing transformed data
      */

@@ -27,7 +27,7 @@ import com.aol.cyclops2.types.mixins.TupleWrapper;
 import lombok.experimental.UtilityClass;
 
 /**
- * Class that holds Reducers, Monoids with a type conversion for reducing a dataset toNested a single value.
+ * Class that holds Reducers, Monoids with a type conversion for reducing a dataset toNested a singleUnsafe value.
  * 
  * Primary use case is the reduction of Streams toNested persistent collections
  * 

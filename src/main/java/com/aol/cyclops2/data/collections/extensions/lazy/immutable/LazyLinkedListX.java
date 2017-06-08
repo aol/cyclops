@@ -1,8 +1,8 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
+import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.immutable.LinkedListX;
-import cyclops.companion.Reducers;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.ConsPStack;
@@ -39,45 +39,46 @@ import java.util.function.Supplier;
  *
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this collection
+ * @param <T> the type of elements held in this toX
  */
 public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStack<T>> implements LinkedListX<T> {
 
+    private final FoldToList<T> generator;
 
-    public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer) {
-        super(list, seq, reducer);
+    public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer, FoldToList<T> generator,Evaluation strict) {
+        super(strict,list, seq, reducer);
+        this.generator = generator;
+
+        handleStrict();
+
 
 
     }
+    public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer,Evaluation strict) {
+        super(strict,list, seq, reducer);
+        this.generator = new PStackGeneator<>();
+        handleStrict();
 
-    private static <E> PStack<E> from(final Iterator<E> i,int depth) {
 
-        if(!i.hasNext())
-            return ConsPStack.empty();
-        E e = i.next();
-        return  from(i,depth++).plus(e);
     }
+    public class PStackGeneator<T> implements FoldToList<T> {
+         public PStack<T> from(final Iterator<T> i,int depth) {
+
+            if(!i.hasNext())
+                return ConsPStack.empty();
+            T e = i.next();
+            return  from(i,depth++).plus(e);
+        }
+    }
+   
     public PStack<T> materializeList(ReactiveSeq<T> toUse){
 
-
-        PStack<T> res = from(toUse.iterator(),0);
+        PStack<T> res = generator.from(toUse.iterator(),0);
         return new LazyLinkedListX<T>(
-                res,null, this.getCollectorInternal());
+                res,null, this.getCollectorInternal(),generator, evaluation());
 
     }
-    public PStack<T> materializeList2(ReactiveSeq<T> toUse){
-        PStack<T> res = ConsPStack.<T> empty();
-
-
-        final Iterator<T> it = toUse.iterator();
-
-        while (it.hasNext())
-            res = res.plus(it.next());
-
-        return new LazyLinkedListX<T>(res,null, this.getCollectorInternal());
-
-    }
-
+    
 
     //@Override
     public LinkedListX<T> materialize() {
@@ -87,21 +88,31 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
 
 
     @Override
+    public LinkedListX<T> lazy() {
+        return new LazyLinkedListX<T>(list,seq.get(),getCollectorInternal(),Evaluation.LAZY) ;
+    }
+
+    @Override
+    public LinkedListX<T> eager() {
+        return new LazyLinkedListX<T>(list,seq.get(),getCollectorInternal(),Evaluation.EAGER) ;
+    }
+
+    @Override
     public LinkedListX<T> type(Reducer<? extends PStack<T>> reducer) {
-        return new LazyLinkedListX<T>(list,seq.get(),Reducer.narrow(reducer));
+        return new LazyLinkedListX<T>(list,seq.get(),Reducer.narrow(reducer),generator, evaluation());
     }
 
     //  @Override
     public <X> LazyLinkedListX<X> fromStream(ReactiveSeq<X> stream) {
 
         Reducer<PStack<T>> reducer = getCollectorInternal();
-        return new LazyLinkedListX<X>((PStack<X>)getList(),(ReactiveSeq)stream,(Reducer)reducer);
+        return new LazyLinkedListX<X>((PStack<X>)getList(),(ReactiveSeq)stream,(Reducer)reducer,(FoldToList)generator, evaluation());
     }
 
     @Override
     public <T1> LazyLinkedListX<T1> from(Collection<T1> c) {
         if(c instanceof PStack)
-            return new LazyLinkedListX<T1>((PStack)c,null,(Reducer)getCollectorInternal());
+            return new LazyLinkedListX<T1>((PStack)c,null,(Reducer)getCollectorInternal(),(FoldToList)generator, evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 

@@ -38,14 +38,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.*;
 
-import static com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion.LAZY;
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * 
  * Wrapper for Any Monad type
  * 
  * There are two subsclass of AnyM - @see {@link AnyMValue} and  @see {@link AnyMSeq}. 
- * AnyMValue is used to represent Monads that wrap a single value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Xor}, {@link Try}, {@link Ior}, {@link FeatureToggle}
+ * AnyMValue is used to represent Monads that wrap a singleUnsafe value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Xor}, {@link Try}, {@link Ior}, {@link FeatureToggle}
  * AnyMSeq is used to represent Monads that wrap an aggregation of values such as {@link Stream}, {@link FutureStream}, {@link List}, {@link Set}, {@link Streamable}
  * 
  * Use AnyM to create your monad wrapper.
@@ -300,7 +300,7 @@ public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
 
     /**
      * Allows structural matching on the value / seq nature of this AnyM.
-     * If this AnyM can only store a single value an Xor.secondary with type AnyMValue is returned
+     * If this AnyM can only store a singleUnsafe value an Xor.secondary with type AnyMValue is returned
      * If this AnyM can  store one or many values an Xor.primary with type AnyMSeq is returned
      * 
      * <pre>

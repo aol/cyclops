@@ -57,10 +57,10 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
             });
 
             public void forEachRemaining(Consumer<? super T> action) {
-                if(async || active)
+               // if(async || active)
                     Iterator.super.forEachRemaining(action);
-                else
-                      source.subscribeAll(action,defaultErrorHandler,()->{});
+               // else
+                 //     source.subscribeAll(action,defaultErrorHandler,()->{});
             }
 
 

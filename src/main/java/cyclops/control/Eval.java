@@ -78,7 +78,9 @@ public interface Eval<T> extends To<Eval<T>>,
 
     public static class µ {
     }
-
+    static <T> Eval<T> async(final Executor ex, final Supplier<T> s){
+        return fromFuture(Future.ofSupplier(s,ex));
+    }
     default <W extends WitnessType<W>> EvalT<W, T> liftM(W witness) {
         return EvalT.of(witness.adapter().unit(this));
     }
@@ -265,7 +267,7 @@ public interface Eval<T> extends To<Eval<T>>,
     }
 
     /**
-     * Turn a collection of Evals into a single Eval with a List of values.
+     * Turn a toX of Evals into a singleUnsafe Eval with a List of values.
      *
      * <pre>
      * {@code
@@ -275,7 +277,7 @@ public interface Eval<T> extends To<Eval<T>>,
      * }
      * </pre>
      *
-     * @param evals Collection of evals to convert into a single eval with a List of values
+     * @param evals Collection of evals to convert into a singleUnsafe eval with a List of values
      * @return  Eval with a  list of values
      */
     public static <T> Eval<ListX<T>> sequence(final CollectionX<Eval<T>> evals) {
@@ -284,7 +286,7 @@ public interface Eval<T> extends To<Eval<T>>,
     }
 
     /**
-     * Turn a Stream of Evals into a single Eval with a Stream of values.
+     * Turn a Stream of Evals into a singleUnsafe Eval with a Stream of values.
      *
      * <pre>
      * {@code
@@ -294,7 +296,7 @@ public interface Eval<T> extends To<Eval<T>>,
      * }
      * </pre>
      *
-     * @param evals Collection of evals to convert into a single eval with a List of values
+     * @param evals Collection of evals to convert into a singleUnsafe eval with a List of values
      * @return  Eval with a  list of values
      */
     public static <T> Eval<ReactiveSeq<T>> sequence(final Stream<? extends Eval<T>> evals) {
@@ -538,7 +540,7 @@ public interface Eval<T> extends To<Eval<T>>,
         return (Eval<R>) MonadicValue.super.combine(app, fn);
     }
 
-    /* Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
+    /* Equivalent to combine, but accepts an Iterable and takes the takeOne value only from that iterable.
      * (non-Javadoc)
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
@@ -548,7 +550,7 @@ public interface Eval<T> extends To<Eval<T>>,
         return (Eval<R>) MonadicValue.super.zip(app, fn);
     }
 
-    /* Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
+    /* Equivalent to combine, but accepts a Publisher and takes the takeOne value only from that publisher.
      *
      * (non-Javadoc)
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)

@@ -655,7 +655,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Generate the permutations based on values in the FutureStream
-     * Makes use of Streamable toNested store intermediate stages in a collection
+     * Makes use of Streamable toNested store intermediate stages in a toX
      *
      *
      * @return Permutations from this FutureStream
@@ -701,7 +701,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      *     //[fast,0l],[slow,1l]
      * }</pre>
-     * The first result will be fast and will have index 0 (the result index)
+     * The takeOne result will be fast and will have index 0 (the result index)
      *
      * Operating on futures
      * <pre>
@@ -712,7 +712,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      *     //[fast,1l],[slow,0l]
      * }</pre>
-     * The first result will still be fast, but the index will now be the skip index 1
+     * The takeOne result will still be fast, but the index will now be the skip index 1
      *
      * @return Access a set of operators that act on the underlying futures in this
      * Stream.
@@ -774,7 +774,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * @return an Iterator that chunks all completed elements from this reactiveStream since last it.next() call into a collection
+     * @return an Iterator that chunks all completed elements from this reactiveStream since last it.next() call into a toX
      */
     default Iterator<Collection<U>> chunkLastReadIterator() {
 
@@ -813,7 +813,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * @return a Stream that batches all completed elements from this reactiveStream since last read attempt into a collection
+     * @return a Stream that batches all completed elements from this reactiveStream since last read attempt into a toX
      */
     default FutureStream<Collection<U>> chunkSinceLastRead() {
         final Queue queue = this.withQueueFactory(QueueFactories.unboundedQueue())
@@ -1183,7 +1183,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Convert between an Lazy and Eager SimpleReact Stream, can be used toNested take
-     * advantages of each approach during a single Stream
+     * advantages of each approach during a singleUnsafe Stream
      *
      * Allows callers toNested take advantage of functionality only available in
      * SimpleReactStreams such as allOf
@@ -1270,7 +1270,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Can be used toNested debounce (accept a single data point from a unit of time)
+     * Can be used toNested debounce (accept a singleUnsafe data point from a unit of time)
      * data. This drops data. For a method that slows emissions and keeps data
      * #see#onePer
      *
@@ -1320,7 +1320,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *            Function takes a supplier, which can be used repeatedly toNested get
      *            the next value from the Stream. If there are no more values, a
      *            ClosedQueueException will be thrown. This function should
-     *            return a Supplier which creates a collection of the batched
+     *            return a Supplier which creates a toX of the batched
      *            values
      * @return Stream of batched values
      */
@@ -1391,7 +1391,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @param size
      *            Size of batch
      * @param supplier
-     *            Create the batch holding collection
+     *            Create the batch holding toX
      * @return Stream of Collections
      */
     @Override
@@ -1637,7 +1637,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Merges this reactiveStream and the supplied Streams into a single Stream where the next value
+     * Merges this reactiveStream and the supplied Streams into a singleUnsafe Stream where the next value
      * is the next returned across any of the involved Streams. Suitable for merging infinite streams
      *
      * <pre>
@@ -1661,7 +1661,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Merges this reactiveStream and the supplied Streams into a single Stream where the next value
+     * Merges this reactiveStream and the supplied Streams into a singleUnsafe Stream where the next value
      * is the next returned across any of the involved Streams. Suitable for merging infinite streams
      *
      * <pre>
@@ -1981,7 +1981,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * FutureStream.of(1,2,3,4).limit(2)
      *
-     * Will result in a Stream of (1,2). Only the first two elements are used.
+     * Will result in a Stream of (1,2). Only the takeOne two elements are used.
      *
      * @param maxSize number of elements toNested take
      *
@@ -2053,7 +2053,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * FutureStream.of(1,2,3,4).skip(2)
      *
-     * Will result in a reactiveStream of (3,4). The first two elements are skipped.
+     * Will result in a reactiveStream of (3,4). The takeOne two elements are skipped.
      *
      * @param n Number of elements toNested skip
      *
@@ -3110,16 +3110,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(ReactiveSeq.oneShotStream(stream())
                 .flatMapP(fn));
     }
-
     @Override
-    default <R> FutureStream<R> flatMapP(final int maxConcurrency,final Function<? super U, ? extends Publisher<? extends R>> fn) {
+    default <R> FutureStream<R> flatMapP(int maxConcurrency,final Function<? super U, ? extends Publisher<? extends R>> fn) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                 .flatMapP(maxConcurrency,fn));
-    }
-    @Override
-    default <R> ReactiveSeq<R> flatMapP(final int maxConcurrency, final QueueFactory<R> factory,Function<? super U, ? extends Publisher<? extends R>> mapper){
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                .flatMapP(maxConcurrency,factory,mapper));
     }
 
 

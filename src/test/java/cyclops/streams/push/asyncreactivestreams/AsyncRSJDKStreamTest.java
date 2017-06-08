@@ -1,5 +1,6 @@
 package cyclops.streams.push.asyncreactivestreams;
 
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Test;
@@ -8,7 +9,9 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
@@ -19,10 +22,11 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
 public class AsyncRSJDKStreamTest {
-	protected <U> ReactiveSeq<U> of(U... array){
-		return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
-	}
+    protected <U> ReactiveSeq<U> of(U... array){
+        return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+
+    }
 	@Test
 	public void testAnyMatch(){
 		assertThat(of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));

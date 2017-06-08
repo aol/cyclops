@@ -45,7 +45,7 @@ public class IteratePredicateOperator<T> implements Operator<T> {
                             next.accept(current[0]);
                             delivered++;
                         } else {
-                            cancel();
+
                             onComplete.run();
                             return;
                         }

@@ -167,7 +167,7 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Add a single datapoint toNested this Queue
+     * Add a singleUnsafe datapoint toNested this Queue
      * 
      * @param data data toNested add
      * @return self

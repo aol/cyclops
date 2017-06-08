@@ -204,7 +204,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Return first Stream out of provided Streams that starts emitted results
+     * Return takeOne Stream out of provided Streams that starts emitted results
      *
      * @param futureStreams Streams toNested race
      * @return First Stream toNested skip emitting values
@@ -285,7 +285,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * In contast toNested EagerFutureStream#skip skipFutures will skip the first n entries
+     * In contast toNested EagerFutureStream#skip skipFutures will skip the takeOne n entries
      * of the underlying Stream of Futures.
      * <pre>
      * {@code
@@ -485,7 +485,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     </pre>
      *
      * React transform allows event reactors toNested be chained. Unlike React with, which
-     * returns a collection of Future references, React transform is a fluent
+     * returns a toX of Future references, React transform is a fluent
      * interface that returns the React builder - allowing further reactors toNested
      * be added toNested the chain.
      *
@@ -617,9 +617,9 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Allows aggregate values in a Stream toNested be flatten into a single Stream.
+     * Allows aggregate values in a Stream toNested be flatten into a singleUnsafe Stream.
      * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
-     * into a single flattened reactiveStream
+     * into a singleUnsafe flattened reactiveStream
      *
      * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
      * @return SimpleReactStream
@@ -800,7 +800,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *            continued or removed
      * @return List of Completed results of currently active stage at full
      *         completion point or when breakout triggered (which ever comes
-     *         first). throws InterruptedException,ExecutionException
+     *         takeOne). throws InterruptedException,ExecutionException
      */
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
     default ListX<U> block(final Predicate<Status<U>> breakout) {
@@ -816,7 +816,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *            Predicate that determines whether the block should be
      *            continued or removed
      * @return Completed results of currently active stage at full completion
-     *         point or when breakout triggered (which ever comes first), in
+     *         point or when breakout triggered (which ever comes takeOne), in
      *         aggregated in form determined by collector throws
      *         InterruptedException,ExecutionException
      */
@@ -888,7 +888,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      *
      * In this example onFail recovers from the RuntimeException thrown when the
-     * input toNested the first 'transform' stage is 100.
+     * input toNested the takeOne 'transform' stage is 100.
      *
      * @param fn
      *            Recovery function, the exception is input, and the recovery
@@ -1056,7 +1056,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
 
     /**
      * Convert between an Lazy and Eager future reactiveStream,
-     * can be used toNested take advantages of each approach during a single Stream
+     * can be used toNested take advantages of each approach during a singleUnsafe Stream
      *
      * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
      */

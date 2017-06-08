@@ -120,7 +120,7 @@ public class ScanLeftTakeRight extends ShakespearePlaysScrabble {
         ;
 
         // Placing the word on the board
-        // Building the streams of first and last letters
+        // Building the streams of takeOne and last letters
         Function<String, ReactiveSeq<Integer>> first3 =
                 word -> chars(word).limit(3) ;
         Function<String, ReactiveSeq<Integer>> last3 =
@@ -153,9 +153,9 @@ public class ScanLeftTakeRight extends ShakespearePlaysScrabble {
                 score ->
                         ReactiveSeq.fromIterable(shakespeareWords)
                                 .filter(scrabbleWords::contains)
-                                .filter(word -> checkBlanks.apply(word).single())
+                                .filter(word -> checkBlanks.apply(word).singleUnsafe())
                                 .scanLeft(new TreeMap<Integer, List<String>>(Comparator.reverseOrder()), (map, word) -> {
-                                    Integer key = score.apply(word).single() ;
+                                    Integer key = score.apply(word).singleUnsafe() ;
                                     List<String> list = map.get(key) ;
                                     if (list == null) {
                                         list = new ArrayList<>() ;
@@ -178,7 +178,7 @@ public class ScanLeftTakeRight extends ShakespearePlaysScrabble {
                             return list;
                         })
                         .takeRight(1)
-                        .single() ;
+                        .singleUnsafe() ;
 
 
 //        System.out.println(finalList2); 

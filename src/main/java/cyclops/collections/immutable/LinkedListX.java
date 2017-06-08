@@ -1,11 +1,13 @@
 package cyclops.collections.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.foldable.ConvertableSequence.Conversion;
+import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -51,6 +53,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
     public static class µ {
     }
+
+    @Override
+    LinkedListX<T> lazy();
+    @Override
+    LinkedListX<T> eager();
 
     /**
      * Widen a PStackType nested inside another HKT encoded type
@@ -104,7 +111,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static LinkedListX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX(Evaluation.LAZY);
     }
 
     /**
@@ -118,7 +125,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static LinkedListX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX(Evaluation.LAZY);
     }
 
     /**
@@ -138,7 +145,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     static <U, T> LinkedListX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX(Evaluation.LAZY);
     }
 
     /**
@@ -152,7 +159,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX(Evaluation.LAZY);
     }
 
     /**
@@ -166,7 +173,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX(Evaluation.LAZY);
     }
     
     /**
@@ -180,7 +187,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     public static <T> LinkedListX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX(Evaluation.LAZY);
     }
 
 
@@ -201,7 +208,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @return
      */
     public static <T> LinkedListX<T> linkedListX(ReactiveSeq<T> stream) {
-        return new LazyLinkedListX<T>(null,stream,Reducers.toPStack());
+        return new LazyLinkedListX<T>(null,stream,Reducers.toPStack(),Evaluation.LAZY);
     }
 
 
@@ -228,7 +235,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @SafeVarargs
     public static <T> LinkedListX<T> of(final T... values) {
         return new LazyLinkedListX<>(null,
-                                 ReactiveSeq.of(values),Reducers.toPStack());
+                                 ReactiveSeq.of(values),Reducers.toPStack(), Evaluation.LAZY);
     }
     /**
      * 
@@ -249,7 +256,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                .linkedListX(Conversion.LAZY);
+                .linkedListX(Evaluation.LAZY);
     }
 
     public static <T> LinkedListX<T> fromIterable(final Iterable<T> iterable) {
@@ -257,9 +264,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return (LinkedListX) iterable;
         if (iterable instanceof PStack)
             return new LazyLinkedListX<T>(
-                    (PStack) iterable,null,Reducers.toPStack());
+                    (PStack) iterable,null,Reducers.toPStack(),Evaluation.LAZY);
 
-        return new LazyLinkedListX<>(null,ReactiveSeq.fromIterable(iterable),Reducers.toPStack());
+        return new LazyLinkedListX<>(null,ReactiveSeq.fromIterable(iterable),Reducers.toPStack(),Evaluation.LAZY);
 
     }
 
@@ -281,28 +288,28 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> empty() {
         return new LazyLinkedListX<>(
-                                 ConsPStack.empty(),null,Reducers.toPStack());
+                                 ConsPStack.empty(),null,Reducers.toPStack(),Evaluation.LAZY);
     }
 
     /**
-     * Construct a PStack containing a single value
+     * Construct a PStack containing a singleUnsafe value
      * </pre>
      * {@code 
-     *    List<String> single = PStacks.singleton("1");
+     *    List<String> singleUnsafe = PStacks.singleton("1");
      *    
      *    //or
      *    
-     *    PStack<String> single = PStacks.singleton("1");
+     *    PStack<String> singleUnsafe = PStacks.singleton("1");
      * 
      * }
      * </pre>
      * 
      * @param value Single value for PVector
-     * @return PVector with a single value
+     * @return PVector with a singleUnsafe value
      */
     public static <T> LinkedListX<T> singleton(final T value){
         return new LazyLinkedListX<>(
-                                 ConsPStack.singleton(value),null,Reducers.toPStack());
+                                 ConsPStack.singleton(value),null,Reducers.toPStack(),Evaluation.LAZY);
     }
 
     /**
@@ -1211,6 +1218,50 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     default LinkedListX<T> plusLoop(Supplier<Optional<T>> supplier) {
         return (LinkedListX<T>)LazyCollectionX.super.plusLoop(supplier);
     }
+
+    @Override
+    default LinkedListX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return (LinkedListX<T>)LazyCollectionX.super.zip(combiner,app);
+    }
+
+    @Override
+    default <R> LinkedListX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (LinkedListX<R>)LazyCollectionX.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> LinkedListX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (LinkedListX<R>)LazyCollectionX.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> LinkedListX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (LinkedListX<R>)LazyCollectionX.super.zipWithP(fn);
+    }
+
+    @Override
+    default <T2, R> LinkedListX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (LinkedListX<R>)LazyCollectionX.super.zipP(publisher,fn);
+    }
+
+
+
+    @Override
+    default <U> LinkedListX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return (LinkedListX)LazyCollectionX.super.zipP(other);
+    }
+
+
+    @Override
+    default <S, U, R> LinkedListX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (LinkedListX<R>)LazyCollectionX.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4, R> LinkedListX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (LinkedListX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
+    }
+
     /**
      * Companion class for creating Type Class instances for working with PStacks
      * @author johnmcclean

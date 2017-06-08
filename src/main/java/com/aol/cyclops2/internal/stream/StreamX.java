@@ -12,10 +12,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 
 import java.util.*;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 
@@ -170,6 +167,10 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
                 .limit(times)
                 .flatMap(i -> createSeq(copy(), reversible));
 
+    }
+    public <R> R visit(Function<? super ReactiveSeq<T>,? extends R> sync, Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
+                       Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure){
+        return sync.apply(this);
     }
 
 }

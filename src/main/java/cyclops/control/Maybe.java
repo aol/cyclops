@@ -8,6 +8,7 @@ import com.aol.cyclops2.types.recoverable.Recoverable;
 import cyclops.companion.Monoids;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.async.Future;
+import cyclops.control.lazy.Either;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
@@ -41,6 +42,7 @@ import org.reactivestreams.Subscription;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collectors;
@@ -111,7 +113,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
     default <W extends WitnessType<W>> MaybeT<W, T> liftM(W witness) {
         return MaybeT.of(witness.adapter().unit(this));
     }
-
+    static <T> Maybe<T> async(final Executor ex, final Supplier<T> s){
+        return fromFuture(Future.ofSupplier(s,ex));
+    }
     public static class µ {
     }
     default AnyM<Witness.maybe,T> anyM(){
@@ -290,7 +294,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     final static Maybe EMPTY = new Nothing<>();
 
     /**
-     * @return Get the empty Maybe (single instance)
+     * @return Get the empty Maybe (singleUnsafe instance)
      */
     @SuppressWarnings("unchecked")
     static <T> Maybe<T> none() {
@@ -321,7 +325,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
     /**
-     * Construct a Maybe  that contains a single value extracted from the supplied reactive-streams Publisher
+     * Construct a Maybe  that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
@@ -334,14 +338,14 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * </pre>
      *
      * @param pub Publisher to extract value from
-     * @return Maybe populated with first value from Publisher (Maybe.empty if Publisher empty)
+     * @return Maybe populated with takeOne value from Publisher (Maybe.empty if Publisher empty)
      */
     public static <T> Maybe<T> fromPublisher(final Publisher<T> pub) {
         return fromFuture(Future.fromPublisher(pub));
     }
 
     /**
-     *  Construct a Maybe  that contains a single value extracted from the supplied Iterable
+     *  Construct a Maybe  that contains a singleUnsafe value extracted from the supplied Iterable
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
@@ -353,10 +357,10 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * }
      * </pre>
      * @param iterable Iterable  to extract value from
-     * @return Maybe populated with first value from Iterable (Maybe.empty if Publisher empty)
+     * @return Maybe populated with takeOne value from Iterable (Maybe.empty if Publisher empty)
      */
     static <T> Maybe<T> fromIterable(final Iterable<T> iterable) {
-        return Maybe.fromEval(Eval.fromIterable(iterable));
+        return Maybe.fromEvalNullable(Eval.fromIterable(iterable));
     }
 
     static <R> Maybe<R> fromStream(Stream<? extends R> apply) {
@@ -790,7 +794,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
     /*
-     * Equivalent to combine, but accepts an Iterable and takes the first value
+     * Equivalent to combine, but accepts an Iterable and takes the takeOne value
      * only from that iterable. (non-Javadoc)
      *
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable,
@@ -806,7 +810,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
 
     /*
-     * Equivalent to combine, but accepts a Publisher and takes the first value
+     * Equivalent to combine, but accepts a Publisher and takes the takeOne value
      * only from that publisher. (non-Javadoc)
      *
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction,
