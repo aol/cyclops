@@ -33,12 +33,11 @@ public class AsyncRSFlatMapPTest {
         return Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool()));
 
     }
-/**
     @Test
     public void simple(){
         of(1,2,3).flatMapP(1,i->flux(5,6,7)).peek(e->System.out.println("e " + e)).printOut();
     }
- **/
+
     @Test
     public void fluxTest(){
        List<String> list = flux(1,2,3,4)

@@ -51,6 +51,25 @@ import static org.junit.Assert.fail;
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
+    @Test
+    public void takeOne(){
+
+        assertThat(ReactiveSeq.of()
+                        .takeOne().isPresent(),equalTo(false));
+        assertThat(ReactiveSeq.of(1,2,3)
+                              .takeOne().get(),equalTo(1));
+        assertThat(ListX.of(1,2,3)
+                              .takeOne().get(),equalTo(1));
+
+        assertThat(ReactiveSeq.of(1,2,3)
+                              .get(0).get(),equalTo(1));
+        assertThat(ListX.of(1,2,3)
+                              .get(0l).get(),equalTo(1));
+        assertThat(ReactiveSeq.of(1,2,3)
+                .get(1).get(),equalTo(2));
+        assertThat(ListX.of(1,2,3)
+                        .get(1l).get(),equalTo(2));
+    }
 
     @Test
     public void cycleWhile(){

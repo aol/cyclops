@@ -360,7 +360,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @return Maybe populated with takeOne value from Iterable (Maybe.empty if Publisher empty)
      */
     static <T> Maybe<T> fromIterable(final Iterable<T> iterable) {
-        return Maybe.fromEval(Eval.fromIterable(iterable));
+        return Maybe.fromEvalNullable(Eval.fromIterable(iterable));
     }
 
     static <R> Maybe<R> fromStream(Stream<? extends R> apply) {

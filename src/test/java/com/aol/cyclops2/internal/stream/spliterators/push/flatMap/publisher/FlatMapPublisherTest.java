@@ -76,7 +76,7 @@ public class FlatMapPublisherTest {
 
 
             Assert.assertThat(flux(1)
-                            .flatMapP(in -> flux(10, 20, 30))
+                            .flatMapP(2,in -> flux(10, 20, 30))
                             .toList(),
                     Matchers.equalTo(Arrays.asList(10, 20, 30)));
         }
@@ -152,7 +152,7 @@ public class FlatMapPublisherTest {
        Spouts.of(1,2,3).flatMapP(i->Spouts.of(10,20,30,40,50,60,70,80,90)).printOut();
     }
 
-    /**
+
     @Test
     public void concurrentFlatMapP1(){
         for(int k=0;k<500;k++) {
@@ -249,7 +249,7 @@ public class FlatMapPublisherTest {
         }
     }
 
-     **/
+
     @Test
     public void range(){
 
