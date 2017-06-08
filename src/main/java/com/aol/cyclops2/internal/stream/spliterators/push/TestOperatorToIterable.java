@@ -42,7 +42,7 @@ public class TestOperatorToIterable<T,R>  implements Iterable<T> {
             volatile boolean requested = false;
             volatile  boolean awaiting = false;
             StreamSubscription sub = source.subscribe(e ->{
-               // System.out.println("Recieved " + e);
+               // System.out.println("Recieved " + pendingRequests);
                 if(numRecieved.incrementAndGet()> numRequested.get()){
                     System.err.println("Too many onNext " +numRecieved.get() + " " + numRequested.get());
                 }

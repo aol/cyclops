@@ -63,8 +63,8 @@ public class AsyncRSFlatMapPTest {
         for(int l=0;l<10_000;l++) {
             System.out.println("Starting!");
             ListX<Integer> it = this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP( i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
-                            .flatMapP( x -> of2(5, 6, 7, 7, 8, 9)))
+                    .flatMapP(4, i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
+                            .flatMapP(4, x -> of2(5, 6, 7, 7, 8, 9)))
                     .toListX();
             System.out.println("Size =  " + it.size());
         }
@@ -74,8 +74,8 @@ public class AsyncRSFlatMapPTest {
     public void flatMapPIt(){
         for(int l=0;l<10_000;l++) {
             Iterator<Integer> it = this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP( i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
-                            .flatMapP( x -> of2(5, 6, 7, 7, 8, 9)))
+                    .flatMapP( 4,i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
+                            .flatMapP( 4,x -> of2(5, 6, 7, 7, 8, 9)))
                     .iterator();
             assertThat("Iteration " + l,ListX.fromIterator(it).size(),equalTo(480));
         }

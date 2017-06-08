@@ -32,10 +32,6 @@ public class LazyArrayConcatonatingOperator<IN> implements Operator<IN> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        QueueX<StreamSubscription> subs = QueueX.empty();
-        int index[] = {0};
-        boolean[] finished = {false};
-
 
         LazyConcat[] ref = {null};
         StreamSubscription sub = new StreamSubscription() {

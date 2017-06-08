@@ -568,7 +568,7 @@ public class Queue<T> implements Adapter<T> {
         return false;
     }
 
-    private Object nillSafe(final T data) {
+    public  static <T> T nillSafe(final T data) {
 
         if (NILL == data)
             return null;
@@ -576,9 +576,9 @@ public class Queue<T> implements Adapter<T> {
             return data;
     }
 
-    private Object nullSafe(final T data) {
+    public  static <T> T nullSafe(final T data) {
         if (data == null)
-            return NILL;
+            return (T)NILL;
         else
             return data;
     }

@@ -55,8 +55,6 @@ public class LazyConcat<IN> {
 
     public void request(long n) {
 
-
-
         if(!sub.isOpen){
             return;
         }

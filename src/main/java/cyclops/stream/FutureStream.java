@@ -3110,7 +3110,11 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(ReactiveSeq.oneShotStream(stream())
                 .flatMapP(fn));
     }
-
+    @Override
+    default <R> FutureStream<R> flatMapP(int maxConcurrency,final Function<? super U, ? extends Publisher<? extends R>> fn) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .flatMapP(maxConcurrency,fn));
+    }
 
 
     /*
