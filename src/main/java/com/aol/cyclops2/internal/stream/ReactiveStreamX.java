@@ -127,7 +127,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             return queue.stream().iterator();
 
         }
-        return new TestOperatorToIterable<>(source,this.defaultErrorHandler,async== BACKPRESSURE).iterator();
+        return new OperatorToIterable<>(source,this.defaultErrorHandler,async== BACKPRESSURE).iterator();
     }
 
     <X> ReactiveStreamX<X> createSeq(Operator<X> stream) {

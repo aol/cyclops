@@ -184,6 +184,21 @@ public class FlatMapPublisherTest {
         }
     }
     @Test
+    public void concurrentFlatMapP2(){
+        for(int k=0;k<500;k++) {
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k);
+            System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+             System.out.println(Spouts.of(1, 2, 3)
+                    .flatMapP(3,i -> nextAsync()).toListX());
+
+        }
+    }
+    @Test
     public void concurrentFlatMapP(){
         for(int k=0;k<500;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);

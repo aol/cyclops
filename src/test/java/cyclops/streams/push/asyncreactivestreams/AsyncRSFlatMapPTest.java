@@ -48,7 +48,7 @@ public class AsyncRSFlatMapPTest {
     }
     @Test
     public void fluxList(){
-        for(int l=0;l<10_000;l++) {
+        for(int l=0;l<1000;l++) {
             System.out.println("Starting!");
             List<Integer> it = this.flux(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                     .flatMap(i -> flux(i, i * 2, i * 4, 5, 6, 7, 8, 9)
@@ -58,8 +58,20 @@ public class AsyncRSFlatMapPTest {
         }
     }
     @Test
+    public void nestedSync(){
+        System.out.println(of(1, 2, 3)
+                .flatMapP(2,i -> Spouts.of(5,6).flatMapP(2,k->Spouts.of(8,9))).toListX());
+    }
+    @Test
+    public void failing(){
+        System.out.println(Spouts.of(1, 2, 3)
+                .flatMapP(2,i -> Spouts.of(5,6)).toListX());
+        System.out.println(of(1, 2, 3)
+                .flatMapP(2,i -> of(5,6)).toListX());
+    }
+    @Test
     public void flatMapPList(){
-        for(int l=0;l<10_000;l++) {
+        for(int l=0;l<1_000;l++) {
             System.out.println("Starting!");
             ListX<Integer> it = this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                     .flatMapP(4, i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
@@ -71,7 +83,7 @@ public class AsyncRSFlatMapPTest {
 
     @Test
     public void flatMapPIt(){
-        for(int l=0;l<10_000;l++) {
+        for(int l=0;l<1_000;l++) {
             Iterator<Integer> it = this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                     .flatMapP( 4,i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
                             .flatMapP( 4,x -> of2(5, 6, 7, 7, 8, 9)))
@@ -81,7 +93,7 @@ public class AsyncRSFlatMapPTest {
     }
     @Test
     public void flatMapPIterate(){
-        for(int l=0;l<10_000;l++) {
+        for(int l=0;l<10;l++) {
             System.out.println("Iteration " + l);
             Iterator<Integer> it = this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                     .flatMapP( i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
@@ -97,7 +109,7 @@ public class AsyncRSFlatMapPTest {
     @Test
     public void flatMapPIterateNoConc(){
         // int l = 0;
-        for(int l=0;l<10_000;l++)
+        for(int l=0;l<1_000;l++)
         {
             System.out.println("Iteration " + l);
             Iterator<Integer> it = this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -118,12 +130,11 @@ public class AsyncRSFlatMapPTest {
                         .flatMapP(k->of(k)))
                 .iterator();
 
-        ListX.fromIterator(it).printOut();
         assertThat(ListX.fromIterator(it).size(),equalTo(8));
     }
     @Test
     public void flatMapPub1(){
-        for(int l=0;l<10_000;l++) {
+        for(int l=0;l<1_000;l++) {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);

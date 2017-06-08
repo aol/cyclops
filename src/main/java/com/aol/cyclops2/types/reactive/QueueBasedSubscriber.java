@@ -275,7 +275,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
                                 throw new ClosedQueueException(
                                         current);
                             }));
-                    System.out.println("Queue Close in QBS " + counter.active.get());
+
                     queue.close();
                 }
             }
@@ -285,7 +285,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     }
 
     public void close() {
-        System.out.println("QBS Closing.. " +counter.active.get() + " t"+Thread.currentThread().getId());
+
         counter.completable = true;
 
         if (queue != null && counter.active.get() == 0) {
@@ -294,10 +294,10 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
                 queue.addContinuation(new Continuation(
                         () -> {
-                            System.out.println("Closing by exception! "+ " t"+Thread.currentThread().getId());
+
                             throw new ClosedQueueException();
                         }));
-                System.out.println("Closing  QBS " + counter.active.get() + " size " + queue.size()+ " t"+Thread.currentThread().getId());
+
                 queue.close();
             }
         }

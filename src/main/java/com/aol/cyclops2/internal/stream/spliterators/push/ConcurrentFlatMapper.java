@@ -53,9 +53,11 @@ public class ConcurrentFlatMapper<T, R> {
         this.mapper = mapper;
         this.maxConcurrency = maxConcurrency;
 
+
     }
 
     public void request(long n) {
+
         if(!sub.isOpen)
             return;
         if (processAll)
@@ -69,6 +71,7 @@ public class ConcurrentFlatMapper<T, R> {
             long sum = a+b;
             return sum <0L ? Long.MAX_VALUE : sum;
         });
+
         handleMainPublisher();
     }
 
@@ -186,25 +189,32 @@ public class ConcurrentFlatMapper<T, R> {
         }
 
         void sendMissingRequests() {
-            if (missing != 0L && running && sub.isOpen)
+
+            if (missing != 0L && running && sub.isOpen) {
+
                 sub.request(missing);
+            }
         }
 
 
         int recalcConcurrentRequests(int missed) {
+
             if(!rerun){
                 return wip.addAndGet(-missed);
             }
             return missed;
         }
         boolean complete(boolean empty) {
+
             if (!sub.isOpen)
                 return true;
+
 
             if(completed && empty) {
                 onComplete.run();
                 return true;
             }
+
             return false;
         }
     }
@@ -213,8 +223,10 @@ public class ConcurrentFlatMapper<T, R> {
         int incomingRequests = 1;
 
         do {
+
             List<ActiveSubscriber> localActiveSubs = activeList;
             SubscriberRequests state = new SubscriberRequests(!running,0l,requested.get(),0L,false,null);
+
             if (state.complete(activeList.isEmpty()))
                 return;
 
@@ -222,6 +234,7 @@ public class ConcurrentFlatMapper<T, R> {
                 if (processRequests(localActiveSubs, state))
                     return;
             }
+
             if (noActiveRequestsAndSubscriptions(state)) {
                 localActiveSubs = activeList;
                 if (cleanupSubsAndReqs(localActiveSubs, state))
@@ -229,6 +242,7 @@ public class ConcurrentFlatMapper<T, R> {
             }
             state.sendMissingRequests();
             incomingRequests =state.recalcConcurrentRequests(incomingRequests);
+
         } while (incomingRequests != 0);
     }
 
@@ -286,10 +300,13 @@ public class ConcurrentFlatMapper<T, R> {
 
         @Override
         public void onNext(R t) {
+
             if (wip.compareAndSet(0, 1)) {
                 long localRequested = requested.get();
 
+
                 if (localRequested != 0L) {
+
                     onNext.accept(t);
                     if (localRequested != Long.MAX_VALUE) {
                         requested.decrementAndGet();
