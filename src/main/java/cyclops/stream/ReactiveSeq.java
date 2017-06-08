@@ -4500,7 +4500,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (ReactiveSeq)FoldableTraversable.super.zipP(other);
+        return (ReactiveSeq)FoldableTraversable.super.zipP(other, Tuple::tuple);
     }
 
     @Override

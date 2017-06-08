@@ -69,7 +69,7 @@ public class FlatMapPublisher<T, R> extends BaseOperator<T, R> {
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-
+            subscribe(onNext,onError,onComplete).request(Long.MAX_VALUE);
     }
 
 }

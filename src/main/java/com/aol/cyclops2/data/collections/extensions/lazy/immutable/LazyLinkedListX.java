@@ -46,14 +46,18 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
     private final FoldToList<T> generator;
 
     public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer, FoldToList<T> generator,Evaluation strict) {
-        super(list, seq, reducer,strict);
+        super(strict,list, seq, reducer);
         this.generator = generator;
+
+        handleStrict();
+
 
 
     }
     public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer,Evaluation strict) {
-        super(list, seq, reducer,strict);
+        super(strict,list, seq, reducer);
         this.generator = new PStackGeneator<>();
+        handleStrict();
 
 
     }
@@ -68,7 +72,6 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
     }
    
     public PStack<T> materializeList(ReactiveSeq<T> toUse){
-
 
         PStack<T> res = generator.from(toUse.iterator(),0);
         return new LazyLinkedListX<T>(

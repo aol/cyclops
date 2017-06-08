@@ -46,6 +46,13 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
         this.strict = strict;
         handleStrict();
     }
+     AbstractLazyPersistentCollection(Evaluation strict,C list, ReactiveSeq<T> seq, Reducer<C> collector) {
+        this.list = list;
+        this.seq = new AtomicReference<>(seq);
+        this.collectorInternal = collector;
+        this.strict = strict;
+
+    }
 
 
     @Override
