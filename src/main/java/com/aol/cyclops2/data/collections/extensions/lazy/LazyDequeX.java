@@ -35,7 +35,7 @@ import java.util.stream.Collector;
  *
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this collection
+ * @param <T> the type of elements held in this toX
  */
 @EqualsAndHashCode(of = { "deque" })
 public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements DequeX<T> {

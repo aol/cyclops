@@ -938,15 +938,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public ReactiveSeq<T> mergeP(final Publisher<T>... publishers){
-        Publisher<T>[] pubs = new Publisher[publishers.length+1];
-        pubs[0]=this;
-        System.arraycopy(publishers,0,pubs,1,publishers.length);
+        return Spouts.of(publishers).append(this).flatMapP(publishers.length+1,i->i);
 
-        ReactiveStreamX<T> merged =(ReactiveStreamX<T>) Spouts.mergeLatest(pubs);
-        if(async== SYNC || async == BACKPRESSURE)
-            return merged.withAsync(BACKPRESSURE);
-        else
-            return merged.withAsync(Type.NO_BACKPRESSURE);
     }
     @Override
    public Topic<T> broadcast(){
@@ -1064,9 +1057,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                                     .map(s -> ReactiveSeq.fromIterable(s).cycle(Long.MAX_VALUE))
                                     .flatMap(i->i);
         return createSeq(new IterableSourceOperator<T>(cycling), SYNC);
- /**
-        return ReactiveSeq.fromIterator(this.iterator()).cycle();
-  **/
+
 
     }
 

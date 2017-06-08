@@ -1340,7 +1340,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<ListX<T>> groupedBySizeAndTime(int size, long time, TimeUnit t);
 
     /**
-     * Batch elements by size into a collection created by the supplied factory
+     * Batch elements by size into a toX created by the supplied factory
      *
      * <pre>
      * {@code
@@ -1390,7 +1390,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<ListX<T>> groupedByTime(long time, TimeUnit t);
 
     /**
-     * Batch elements by time into a collection created by the supplied factory
+     * Batch elements by time into a toX created by the supplied factory
      *
      * <pre>
      * {@code
@@ -1408,12 +1408,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            time unit for batch
      * @param factory
      *            Collection factory
-     * @return ReactiveSeq batched into collection types by time period
+     * @return ReactiveSeq batched into toX types by time period
      */
     <C extends Collection<? super T>> ReactiveSeq<C> groupedByTime(long time, TimeUnit unit, Supplier<C> factory);
 
     /**
-     * Batch elements in a Stream by size into a collection created by the
+     * Batch elements in a Stream by size into a toX created by the
      * supplied factory
      *
      * <pre>
@@ -1427,7 +1427,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      * @param size batch size
      * @param supplier Collection factory
-     * @return ReactiveSeq batched into collection types by size
+     * @return ReactiveSeq batched into toX types by size
      */
     @Override
     <C extends Collection<? super T>> ReactiveSeq<C> grouped(int size, Supplier<C> supplier);
@@ -2252,7 +2252,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code Collector}.  A {@code Collector}
      * encapsulates the function used as arguments toNested
      * {@link #collect(Supplier, BiConsumer, BiConsumer)}, allowing for reuse of
-     * collection strategies and composition of collect operations such as
+     * toX strategies and composition of collect operations such as
      * multiple-level grouping or partitioning.
      * <p>
      * <p>If the reactiveStream is parallel, and the {@code Collector}
@@ -3842,7 +3842,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Generate the permutations based on values in the ReactiveSeq Makes use of
-     * Streamable toNested store intermediate stages in a collection
+     * Streamable toNested store intermediate stages in a toX
      *
      *
      * @return Permutations from this ReactiveSeq
@@ -4515,7 +4515,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured toNested publish asynchronously, users can use the overloaded @see {@link IterableFunctor#mergePublisher(Collection, QueueFactory)}
-     * method toNested forEachAsync asynchronously also. Max concurrency is determined by the publishers collection size, along with a default limit of 5k queued values before
+     * method toNested forEachAsync asynchronously also. Max concurrency is determined by the publishers toX size, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param publishers Publishers toNested merge

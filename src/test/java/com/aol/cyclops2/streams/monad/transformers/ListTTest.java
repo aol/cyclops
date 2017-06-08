@@ -7,12 +7,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import cyclops.Converters;
 import cyclops.monads.Witness;
-import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -32,7 +30,7 @@ public class ListTTest {
 
         AnyM<Witness.optional, IndexedSequenceX<Integer>> anyM = streamT.unwrap();
         Optional<IndexedSequenceX<Integer>> opt = Witness.optional(anyM);
-        Optional<LinkedList<Integer>> list = opt.map(s -> s.collection(Converters::LinkedList));
+        Optional<LinkedList<Integer>> list = opt.map(s -> s.toX(Converters::LinkedList));
 
 	}
 	@Test

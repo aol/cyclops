@@ -33,7 +33,7 @@ import java.util.stream.Collector;
  *
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this collection
+ * @param <T> the type of elements held in this toX
  */
 public class LazySortedSetX<T> extends AbstractLazyCollection<T,SortedSet<T>> implements SortedSetX<T> {
 

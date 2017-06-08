@@ -5,6 +5,8 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.functor.FilterableTransformable;
 import com.aol.cyclops2.types.functor.TransformerTraversable;
 import cyclops.collections.immutable.VectorX;
+import cyclops.function.Fn3;
+import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
@@ -29,11 +31,11 @@ import java.util.stream.*;
  * @param <T> The data type of the elements in this Traversable
  */
 public interface Traversable<T> extends Publisher<T>,
-        OnEmpty<T>,
-        Zippable<T>,
-        IterableFilterable<T>,
-        FilterableTransformable<T>,
-        TransformerTraversable<T>,
+                                        OnEmpty<T>,
+                                        Zippable<T>,
+                                        IterableFilterable<T>,
+                                        FilterableTransformable<T>,
+                                        TransformerTraversable<T>,
                                         Sequential<T>{
 
     default DoubleStream mapToDouble(ToDoubleFunction<? super T> fn){
@@ -46,7 +48,55 @@ public interface Traversable<T> extends Publisher<T>,
         return this.stream().mapToInt(fn);
     }
 
+    @Override
+    default Traversable<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return traversable().zip(combiner,app);
+    }
 
+    @Override
+    default <R> Traversable<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return traversable().zipWith(fn);
+    }
+
+    @Override
+    default <R> Traversable<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return traversable().zipWithS(fn);
+    }
+
+    @Override
+    default <R> Traversable<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return traversable().zipWithP(fn);
+    }
+
+    @Override
+    default <T2, R> Traversable<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return traversable().zipP(publisher,fn);
+    }
+
+    @Override
+    default <U, R> Traversable<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return traversable().zipS(other,zipper);
+    }
+
+    @Override
+    default <U> Traversable<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return traversable().zipP(other);
+    }
+
+    @Override
+    default <U> Traversable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
+        return traversable().zip(other);
+    }
+
+    @Override
+    default <S, U, R> Traversable<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return traversable().zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4, R> Traversable<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return traversable().zip4(second,third,fourth,fn);
+    }
 
     /**
      * @return This Traversable converted toNested a Stream
@@ -317,7 +367,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Batch elements in a Stream by size into a collection created by the
+     * Batch elements in a Stream by size into a toX created by the
      * supplied factory
      * 
      * <pre>
@@ -331,7 +381,7 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      * @param size batch size
      * @param supplier Collection factory
-     * @return SequenceM batched into collection types by size
+     * @return SequenceM batched into toX types by size
      */
     default <C extends Collection<? super T>> Traversable<C> grouped(final int size, final Supplier<C> supplier) {
         return traversable().grouped(size, supplier);
@@ -488,7 +538,7 @@ public interface Traversable<T> extends Publisher<T>,
      * Group this Traversable by the provided classifying function and collected by the provided Collector
      * 
      * @param classifier Grouping function
-     * @param downstream Collector toNested create the grouping collection
+     * @param downstream Collector toNested create the grouping toX
      * @return Traversable of grouped data
      */
     default <K, A, D> Traversable<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,

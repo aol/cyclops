@@ -485,7 +485,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     </pre>
      *
      * React transform allows event reactors toNested be chained. Unlike React with, which
-     * returns a collection of Future references, React transform is a fluent
+     * returns a toX of Future references, React transform is a fluent
      * interface that returns the React builder - allowing further reactors toNested
      * be added toNested the chain.
      *

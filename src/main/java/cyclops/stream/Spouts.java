@@ -249,7 +249,12 @@ public interface Spouts {
     static <T> ReactiveSeq<T> mergeLatest(Publisher<? extends Publisher<T>> publisher){
         return mergeLatest((Publisher[])ReactiveSeq.fromPublisher(publisher).toArray(s->new Publisher[s]));
     }
+    static <T> ReactiveSeq<T> mergeLatest(int maxConcurrency,Publisher<T>... array){
+        return Spouts.of(array).flatMapP(maxConcurrency,i->i);
+    }
     static <T> ReactiveSeq<T> mergeLatest(Publisher<T>... array){
+        return Spouts.of(array).flatMapP(i->i);
+        /**
         Operator<T>[] op = new Operator[array.length];
         for(int i=0;i<array.length;i++){
             if(array[i] instanceof ReactiveStreamX){
@@ -260,6 +265,7 @@ public interface Spouts {
             }
         }
         return new ReactiveStreamX<T>(new MergeLatestOperator<T>(op), Type.BACKPRESSURE);
+         **/
     }
     static <T> ReactiveSeq<T> amb(ListX<? extends Publisher<? extends T>> list){
         return amb(list.toArray(new ReactiveSeq[0]));

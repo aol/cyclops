@@ -68,7 +68,7 @@ public interface Semigroups {
      * 
      * }
      * </pre> 
-     * @return A Semigroup that can combine any mutable collection type
+     * @return A Semigroup that can combine any mutable toX type
      */
     static <T, C extends Collection<T>> Semigroup<C> mutableCollectionConcat() {
         return (a, b) -> {
@@ -192,7 +192,7 @@ public interface Semigroups {
 
     /**
      * This Semigroup will attempt toNested combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
-     * or a pCollection persisent collection a new Collection type is created that contains the entries from both supplied collections.
+     * or a pCollection persisent toX a new Collection type is created that contains the entries from both supplied collections.
      * If the supplied Collections are standard JDK mutable collections Colleciton b is appended toNested Collection a and a is returned.
      * 
      * 

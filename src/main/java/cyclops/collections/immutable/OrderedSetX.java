@@ -2,6 +2,7 @@ package cyclops.collections.immutable;
 
 
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPOrderedSetX;
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
 
@@ -1058,6 +1059,49 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     static <T> OrderedSetX<T> fromIterator(Iterator<T> iterator) {
         return fromIterable(()->iterator);
     }
+    @Override
+    default OrderedSetX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return (OrderedSetX<T>)LazyCollectionX.super.zip(combiner,app);
+    }
+
+    @Override
+    default <R> OrderedSetX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (OrderedSetX<R>)LazyCollectionX.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> OrderedSetX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (OrderedSetX<R>)LazyCollectionX.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> OrderedSetX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (OrderedSetX<R>)LazyCollectionX.super.zipWithP(fn);
+    }
+
+    @Override
+    default <T2, R> OrderedSetX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (OrderedSetX<R>)LazyCollectionX.super.zipP(publisher,fn);
+    }
+
+
+
+    @Override
+    default <U> OrderedSetX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return (OrderedSetX)LazyCollectionX.super.zipP(other);
+    }
+
+
+    @Override
+    default <S, U, R> OrderedSetX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (OrderedSetX<R>)LazyCollectionX.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4, R> OrderedSetX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (OrderedSetX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
+    }
+
 
 
 }

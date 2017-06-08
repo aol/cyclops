@@ -267,7 +267,7 @@ public interface Eval<T> extends To<Eval<T>>,
     }
 
     /**
-     * Turn a collection of Evals into a singleUnsafe Eval with a List of values.
+     * Turn a toX of Evals into a singleUnsafe Eval with a List of values.
      *
      * <pre>
      * {@code

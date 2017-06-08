@@ -44,7 +44,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     CollectionX<T> eager();
 
 
-    default <R> R collection(Function<? super CollectionX<T>,? extends R> fn){
+    default <R> R toX(Function<? super CollectionX<T>,? extends R> fn){
         return fn.apply(this);
     }
     @Override
@@ -58,9 +58,8 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     }
 
 
-    default <R> CollectionX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
-        return this.flatMap(fn.andThen(ReactiveSeq::fromPublisher));
-    }
+    <R> CollectionX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
+    <R> CollectionX<R> flatMapP(int maxConcurecy,Function<? super T, ? extends Publisher<? extends R>> fn);
     /**
      * Create a CollectionX from the supplied Collection
      * 
@@ -261,7 +260,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     }
 
     /**
-     * @return The head of this collection
+     * @return The head of this toX
      */
     default T head() {
         return iterator().next();
@@ -357,11 +356,11 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     <R> CollectionX<R> map(Function<? super T, ? extends R> mapper);
 
     /**
-     * Perform a flatMap operation on this collection. Results from the returned Iterables (from the
-     * provided transformation function) are flattened into the resulting collection.
+     * Perform a flatMap operation on this toX. Results from the returned Iterables (from the
+     * provided transformation function) are flattened into the resulting toX.
      * 
      * @param mapper Transformation function toNested be applied (and flattened)
-     * @return A collection containing the flattened results of the transformation function
+     * @return A toX containing the flattened results of the transformation function
      */
     <R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
 
@@ -454,11 +453,11 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     CollectionX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op);
 
     /**
-     * Zip (merge) this collection with the supplied Iterable into a Colleciton containing Tuples
-     * Each Tuple contains one element from this collection and one from the other
+     * Zip (merge) this toX with the supplied Iterable into a Colleciton containing Tuples
+     * Each Tuple contains one element from this toX and one from the other
      * 
      * @param other Collection toNested merge with this one
-     * @return Merged collection
+     * @return Merged toX
      */
     @Override
     <U> CollectionX<Tuple2<T, U>> zip(Iterable<? extends U> other);

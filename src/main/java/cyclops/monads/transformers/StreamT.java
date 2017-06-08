@@ -1,6 +1,7 @@
 package cyclops.monads.transformers;
 
 
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.traversable.Traversable;
@@ -19,8 +20,10 @@ import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -831,5 +834,177 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return this.flatMapT(in->value1.apply(in)
                 .filter(in2->filterFunction.apply(in,in2))
                 .map(in2->yieldingFunction.apply(in,in2)));
+    }
+
+    @Override
+    public StreamT<W,T> prependS(Stream<? extends T> stream) {
+        return (StreamT) FoldableTransformerSeq.super.prependS(stream);
+    }
+
+    @Override
+    public StreamT<W,T> append(T... values) {
+        return (StreamT) FoldableTransformerSeq.super.append(values);
+    }
+
+    @Override
+    public StreamT<W,T> append(T value) {
+        return (StreamT) FoldableTransformerSeq.super.append(value);
+    }
+
+    @Override
+    public StreamT<W,T> prepend(T value) {
+        return (StreamT) FoldableTransformerSeq.super.prepend(value);
+    }
+
+    @Override
+    public StreamT<W,T> prepend(T... values) {
+        return (StreamT) FoldableTransformerSeq.super.prepend(values);
+    }
+
+    @Override
+    public StreamT<W,T> insertAt(int pos, T... values) {
+        return (StreamT) FoldableTransformerSeq.super.insertAt(pos,values);
+    }
+
+    @Override
+    public StreamT<W,T> deleteBetween(int start, int end) {
+        return (StreamT) FoldableTransformerSeq.super.deleteBetween(start,end);
+    }
+
+    @Override
+    public StreamT<W,T> insertAtS(int pos, Stream<T> stream) {
+        return (StreamT) FoldableTransformerSeq.super.insertAtS(pos,stream);
+    }
+
+
+    @Override
+    public StreamT<W,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
+        return (StreamT) FoldableTransformerSeq.super.zip(combiner,app);
+    }
+
+    @Override
+    public <R> StreamT<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (StreamT) FoldableTransformerSeq.super.zipWith(fn);
+    }
+
+    @Override
+    public <R> StreamT<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (StreamT) FoldableTransformerSeq.super.zipWithS(fn);
+    }
+
+    @Override
+    public <R> StreamT<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (StreamT) FoldableTransformerSeq.super.zipWithP(fn);
+    }
+
+    @Override
+    public <T2, R> StreamT<W,R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (StreamT) FoldableTransformerSeq.super.zipP(publisher,fn);
+    }
+
+    @Override
+    public <U> StreamT<W,Tuple2<T, U>> zipP(Publisher<? extends U> other) {
+        return (StreamT) FoldableTransformerSeq.super.zipP(other);
+    }
+
+    @Override
+    public <S, U, R> StreamT<W,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (StreamT) FoldableTransformerSeq.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    public <T2, T3, T4, R> StreamT<W,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (StreamT) FoldableTransformerSeq.super.zip4(second,third,fourth,fn);
+    }
+
+
+    @Override
+    public StreamT<W,T> removeAllS(final Stream<? extends T> stream) {
+        return (StreamT) FoldableTransformerSeq.super.removeAllS(stream);
+    }
+
+    @Override
+    public <U> StreamT<W,U> cast(final Class<? extends U> type) {
+        return (StreamT) FoldableTransformerSeq.super.cast(type);
+    }
+
+    @Override
+    public <U> StreamT<W,U> ofType(final Class<? extends U> type) {
+        return (StreamT) FoldableTransformerSeq.super.ofType(type);
+    }
+
+    @Override
+    public StreamT<W,T> removeAllI(final Iterable<? extends T> it) {
+        return (StreamT) FoldableTransformerSeq.super.removeAllI(it);
+    }
+
+
+    @Override
+    public StreamT<W,T> removeAll(final T... values) {
+        return (StreamT) FoldableTransformerSeq.super.removeAll(values);
+    }
+
+
+    @Override
+    public StreamT<W,T> filterNot(final Predicate<? super T> predicate) {
+        return (StreamT) FoldableTransformerSeq.super.filterNot(predicate);
+    }
+
+
+
+    @Override
+    public StreamT<W,T> retainAllI(final Iterable<? extends T> it) {
+        return (StreamT) FoldableTransformerSeq.super.retainAllI(it);
+    }
+
+    @Override
+    public StreamT<W,T> notNull() {
+        return (StreamT) FoldableTransformerSeq.super.notNull();
+    }
+
+    @Override
+    public StreamT<W,T> retainAllS(final Stream<? extends T> stream) {
+        return (StreamT) FoldableTransformerSeq.super.retainAllS(stream);
+    }
+
+    @Override
+    public StreamT<W,T> retainAll(final T... values) {
+        return (StreamT) FoldableTransformerSeq.super.retainAll(values);
+    }
+
+
+
+
+    @Override
+    public <R> StreamT<W,R> retry(final Function<? super T, ? extends R> fn) {
+        return (StreamT) FoldableTransformerSeq.super.retry(fn);
+    }
+
+    @Override
+    public <R> StreamT<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (StreamT) FoldableTransformerSeq.super.retry(fn,retries,delay,timeUnit);
+    }
+
+
+
+    @Override
+    public StreamT<W,T> drop(final long num) {
+        return skip(num);
+    }
+
+    @Override
+    public StreamT<W,T> take(final long num) {
+        return limit(num);
+    }
+
+
+    @Override
+    public StreamT<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
+        return (StreamT) FoldableTransformerSeq.super.recover(fn);
+    }
+
+    @Override
+    public <EX extends Throwable> StreamT<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
+        return (StreamT) FoldableTransformerSeq.super.recover(exceptionClass,fn);
     }
 }

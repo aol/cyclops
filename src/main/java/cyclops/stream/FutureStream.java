@@ -655,7 +655,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Generate the permutations based on values in the FutureStream
-     * Makes use of Streamable toNested store intermediate stages in a collection
+     * Makes use of Streamable toNested store intermediate stages in a toX
      *
      *
      * @return Permutations from this FutureStream
@@ -774,7 +774,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * @return an Iterator that chunks all completed elements from this reactiveStream since last it.next() call into a collection
+     * @return an Iterator that chunks all completed elements from this reactiveStream since last it.next() call into a toX
      */
     default Iterator<Collection<U>> chunkLastReadIterator() {
 
@@ -813,7 +813,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * @return a Stream that batches all completed elements from this reactiveStream since last read attempt into a collection
+     * @return a Stream that batches all completed elements from this reactiveStream since last read attempt into a toX
      */
     default FutureStream<Collection<U>> chunkSinceLastRead() {
         final Queue queue = this.withQueueFactory(QueueFactories.unboundedQueue())
@@ -1320,7 +1320,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *            Function takes a supplier, which can be used repeatedly toNested get
      *            the next value from the Stream. If there are no more values, a
      *            ClosedQueueException will be thrown. This function should
-     *            return a Supplier which creates a collection of the batched
+     *            return a Supplier which creates a toX of the batched
      *            values
      * @return Stream of batched values
      */
@@ -1391,7 +1391,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @param size
      *            Size of batch
      * @param supplier
-     *            Create the batch holding collection
+     *            Create the batch holding toX
      * @return Stream of Collections
      */
     @Override

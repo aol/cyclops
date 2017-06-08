@@ -18,6 +18,7 @@ import com.aol.cyclops2.types.*;
 
 
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
+import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.async.adapters.QueueFactory;
@@ -1034,7 +1035,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
     @Override
     default <R> AnyMSeq<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (AnyMSeq<W,R>)AnyM.super.retry(fn);
+        return (AnyMSeq<W,R>)AnyM.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override
@@ -1127,6 +1128,48 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     	return (AnyMSeq<W,T>) stream().mergeP(publishers).anyM();
     }
 
+    @Override
+    default AnyMSeq<W,T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return fromIterable(FoldableTraversable.super.zip(combiner,app));
+    }
+
+    @Override
+    default <R> AnyMSeq<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return fromIterable(FoldableTraversable.super.zipWith(fn));
+    }
+
+    @Override
+    default <R> AnyMSeq<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return fromIterable(FoldableTraversable.super.zipWithS(fn));
+    }
+
+    @Override
+    default <R> AnyMSeq<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return fromIterable(FoldableTraversable.super.zipWithP(fn));
+    }
+
+    @Override
+    default <T2, R> AnyMSeq<W,R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return fromIterable(FoldableTraversable.super.zipP(publisher,fn));
+    }
+
+
+
+    @Override
+    default <U> AnyMSeq<W,Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return fromIterable(FoldableTraversable.super.zipP(other));
+    }
+
+
+    @Override
+    default <S, U, R> AnyMSeq<W,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return fromIterable(FoldableTraversable.super.zip3(second,third,fn3));
+    }
+
+    @Override
+    default <T2, T3, T4, R> AnyMSeq<W,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return fromIterable(FoldableTraversable.super.zip4(second,third,fourth,fn));
+    }
 
 
 

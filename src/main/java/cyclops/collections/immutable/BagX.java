@@ -2,6 +2,7 @@ package cyclops.collections.immutable;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
@@ -34,7 +35,7 @@ import java.util.stream.Stream;
 /**
  *
  * A Lazy and Reactive Wrapper for Pesistent Bags (immutable collections like Sets that can contain duplicates).
- * BagX is lazy - chainging functional operations such as map / filter / flatMap only results in the collection
+ * BagX is lazy - chainging functional operations such as map / filter / flatMap only results in the toX
  * being traversed once. It is materialized and cached on takeOne access (or via {@link BagX#materialize()}
  *
  * It is also possible to populate BagX asynchronously using reactive-streams publishers such as those created via the
@@ -1077,4 +1078,47 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     static <T> BagX<T> fromIterator(Iterator<T> iterator) {
         return fromIterable(()->iterator);
     }
+    @Override
+    default BagX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return (BagX<T>)LazyCollectionX.super.zip(combiner,app);
+    }
+
+    @Override
+    default <R> BagX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (BagX<R>)LazyCollectionX.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> BagX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (BagX<R>)LazyCollectionX.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> BagX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (BagX<R>)LazyCollectionX.super.zipWithP(fn);
+    }
+
+    @Override
+    default <T2, R> BagX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (BagX<R>)LazyCollectionX.super.zipP(publisher,fn);
+    }
+
+
+
+    @Override
+    default <U> BagX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return (BagX)LazyCollectionX.super.zipP(other);
+    }
+
+
+    @Override
+    default <S, U, R> BagX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (BagX<R>)LazyCollectionX.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4, R> BagX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (BagX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
+    }
+
 }

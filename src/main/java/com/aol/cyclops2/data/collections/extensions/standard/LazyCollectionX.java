@@ -3,6 +3,7 @@ package com.aol.cyclops2.data.collections.extensions.standard;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -12,9 +13,14 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.functor.Transformable;
+import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
+import cyclops.function.Fn3;
+import cyclops.function.Fn4;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -27,13 +33,82 @@ import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import org.reactivestreams.Publisher;
 
 public interface LazyCollectionX<T> extends FluentCollectionX<T> {
-    
-    
-   
+
+    //Add to each collection type : also check AnyMSeq
+    @Override
+    default <R> LazyCollectionX<R> flatMapP(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn){
+        return fromStream(stream().flatMapP(maxConcurency,fn));
+    }
+
+    @Override
+    default <R> LazyCollectionX<R> retry(final Function<? super T, ? extends R> fn) {
+        return fromStream(stream().retry(fn));
+    }
+
+    @Override
+    default LazyCollectionX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
+        return fromStream(stream().combine(op,predicate));
+    }
+
+    @Override
+    default <R> LazyCollectionX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return fromStream(stream().retry(fn,retries,delay,timeUnit));
+    }
+
+    @Override
+    default LazyCollectionX<T> recover(final Function<? super Throwable, ? extends T> fn) {
+        return fromStream(stream().recover(fn));
+    }
+
+    @Override
+    default <EX extends Throwable> LazyCollectionX<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
+        return fromStream(stream().recover(exceptionClass,fn));
+    }
+
+    @Override
+    default LazyCollectionX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return fromStream(stream().zip(combiner,app));
+    }
+
+    @Override
+    default <R> LazyCollectionX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return fromStream(stream().zipWith(fn));
+    }
+
+    @Override
+    default <R> LazyCollectionX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return fromStream(stream().zipWithS(fn));
+    }
+
+    @Override
+    default <R> LazyCollectionX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return fromStream(stream().zipWithP(fn));
+    }
+
+    @Override
+    default <T2, R> LazyCollectionX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return fromStream(stream().zipP(publisher,fn));
+    }
+
+    @Override
+    default <U> LazyCollectionX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return fromStream(stream().zipP(other));
+    }
+
+    @Override
+    default <S, U, R> LazyCollectionX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return fromStream(stream().zip3(second,third,fn3));
+    }
+
+    @Override
+    default <T2, T3, T4, R> LazyCollectionX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return fromStream(stream().zip4(second,third,fourth,fn));
+    }
+    //Add to each collection type
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#reduce(java.lang.Object, java.util.function.BiFunction)
-     */
+             * @see com.aol.cyclops2.types.foldable.Folds#reduce(java.lang.Object, java.util.function.BiFunction)
+             */
     @Override
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
         return stream().reduce(identity, accumulator);

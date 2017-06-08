@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  *
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this collection
+ * @param <T> the type of elements held in this toX
  */
 public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrderedSet<T>> implements OrderedSetX<T> {
 

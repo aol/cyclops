@@ -3,6 +3,7 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.immutable.VectorX;
@@ -1106,6 +1107,49 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     public static <T> QueueX<T> narrow(final QueueX<? extends T> queueX) {
         return (QueueX<T>) queueX;
+    }
+
+    @Override
+    default QueueX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return (QueueX<T>)LazyCollectionX.super.zip(combiner,app);
+    }
+
+    @Override
+    default <R> QueueX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (QueueX<R>)LazyCollectionX.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> QueueX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (QueueX<R>)LazyCollectionX.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> QueueX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (QueueX<R>)LazyCollectionX.super.zipWithP(fn);
+    }
+
+    @Override
+    default <T2, R> QueueX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (QueueX<R>)LazyCollectionX.super.zipP(publisher,fn);
+    }
+
+
+
+    @Override
+    default <U> QueueX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
+        return (QueueX)LazyCollectionX.super.zipP(other);
+    }
+
+
+    @Override
+    default <S, U, R> QueueX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (QueueX<R>)LazyCollectionX.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4, R> QueueX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (QueueX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
 
     /**

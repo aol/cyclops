@@ -2604,7 +2604,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     *  Batch elements by size into a collection created by the supplied factory 
+     *  Batch elements by size into a toX created by the supplied factory
      * <pre>
      * {@code 
      * List<ArrayList<Integer>> list = of(1,2,3,4,5,6)
@@ -2642,7 +2642,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Batch elements by time into a collection created by the supplied factory 
+     * Batch elements by time into a toX created by the supplied factory
      * 
      * <pre>
      * {@code 
@@ -2657,14 +2657,14 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param time - time period toNested build a singleUnsafe batch in
      * @param unit time unit for batch
      * @param factory Collection factory
-     * @return Streamable batched into collection types by time period
+     * @return Streamable batched into toX types by time period
      */
     default <C extends Collection<? super T>> Streamable<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
         return fromStream(reactiveSeq().groupedByTime(time, unit, factory));
     }
 
     /**
-     * Batch elements in a Stream by size into a collection created by the supplied factory 
+     * Batch elements in a Stream by size into a toX created by the supplied factory
      * <pre>
      * {@code
      * assertThat(Streamable.of(1,1,1,1,1,1)
@@ -2677,7 +2677,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param size batch size
      * @param supplier Collection factory
-     * @return Streamable batched into collection types by size
+     * @return Streamable batched into toX types by size
      */
     @Override
     default <C extends Collection<? super T>> Streamable<C> grouped(final int size, final Supplier<C> supplier) {

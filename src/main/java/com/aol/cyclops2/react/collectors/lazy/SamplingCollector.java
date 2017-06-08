@@ -29,7 +29,7 @@ public class SamplingCollector<T> implements LazyResultConsumer<T> {
 
     /**
      * 
-     * @param sampleRate Modulus of sampleRate will determine result collection
+     * @param sampleRate Modulus of sampleRate will determine result toX
      * @param consumer  SamplingCollector won't actually collect results, it passes control to another consumer when triggered.
      */
     public SamplingCollector(final int sampleRate, final LazyResultConsumer<T> consumer) {

@@ -11,7 +11,7 @@ import java.util.function.Predicate;
  * 
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this collection
+ * @param <T> the type of elements held in this toX
  */
 public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
 

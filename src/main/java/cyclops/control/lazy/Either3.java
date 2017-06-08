@@ -196,7 +196,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
                         .recover(t->Either3.<Throwable,LT2,RT>left1(t.getCause()))));
     }
     /**
-     *  Turn a collection of Either3 into a singleUnsafe Either with Lists of values.
+     *  Turn a toX of Either3 into a singleUnsafe Either with Lists of values.
      *
      * <pre>
      * {@code

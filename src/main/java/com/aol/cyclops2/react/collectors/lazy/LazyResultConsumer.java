@@ -15,10 +15,10 @@ import com.aol.cyclops2.internal.react.async.future.FastFuture;
 public interface LazyResultConsumer<T> extends Consumer<FastFuture<T>> {
 
     /**
-     * Used to generate a new instance for result collection - populates the supplied Collection
+     * Used to generate a new instance for result toX - populates the supplied Collection
      * 
      * @param t Collection to be populated
-     * @return Consumer that will populate the collection
+     * @return Consumer that will populate the toX
      */
     public LazyResultConsumer<T> withResults(Collection<FastFuture<T>> t);
 

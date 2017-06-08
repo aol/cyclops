@@ -19,7 +19,7 @@ import cyclops.collections.mutable.MapX;
 import com.aol.cyclops2.types.stream.HotStream;
 
 /**
- * Represents a type that may be reducable (foldable) toNested a singleUnsafe value or collection
+ * Represents a type that may be reducable (foldable) toNested a singleUnsafe value or toX
  * 
  * @author johnmcclean
  *

@@ -329,7 +329,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     }
 
     /**
-     *  Turn a collection of Eithers into a singleUnsafe Either with Lists of values.
+     *  Turn a toX of Eithers into a singleUnsafe Either with Lists of values.
      *
      * <pre>
      * {@code

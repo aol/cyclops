@@ -1,6 +1,7 @@
 package cyclops.monads.transformers;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -11,6 +12,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import com.aol.cyclops2.types.traversable.FoldableTraversable;
@@ -31,6 +34,8 @@ import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
 import com.aol.cyclops2.types.foldable.CyclopsCollectable;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 
 /**
  * Monad Transformer for Java Lists
@@ -43,7 +48,7 @@ import com.aol.cyclops2.types.foldable.CyclopsCollectable;
  *       AnyM<optional, IndexedSequenceX<Integer>> anyM = listT.unwrap();
  *
          Optional<IndexedSequenceX<Integer>> opt = Witness.optional(anyM);
-         Optional<LinkedList<Integer>> list = opt.map(s -> s.collection(Converters::LinkedList));
+         Optional<LinkedList<Integer>> list = opt.map(s -> s.toX(Converters::LinkedList));
  *     }
  *
  *
@@ -849,4 +854,178 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
                 .filter(in2->filterFunction.apply(in,in2))
                 .map(in2->yieldingFunction.apply(in,in2)));
     }
+
+
+    @Override
+    public ListT<W,T> prependS(Stream<? extends T> stream) {
+        return (ListT) FoldableTransformerSeq.super.prependS(stream);
+    }
+
+    @Override
+    public ListT<W,T> append(T... values) {
+        return (ListT) FoldableTransformerSeq.super.append(values);
+    }
+
+    @Override
+    public ListT<W,T> append(T value) {
+        return (ListT) FoldableTransformerSeq.super.append(value);
+    }
+
+    @Override
+    public ListT<W,T> prepend(T value) {
+        return (ListT) FoldableTransformerSeq.super.prepend(value);
+    }
+
+    @Override
+    public ListT<W,T> prepend(T... values) {
+        return (ListT) FoldableTransformerSeq.super.prepend(values);
+    }
+
+    @Override
+    public ListT<W,T> insertAt(int pos, T... values) {
+        return (ListT) FoldableTransformerSeq.super.insertAt(pos,values);
+    }
+
+    @Override
+    public ListT<W,T> deleteBetween(int start, int end) {
+        return (ListT) FoldableTransformerSeq.super.deleteBetween(start,end);
+    }
+
+    @Override
+    public ListT<W,T> insertAtS(int pos, Stream<T> stream) {
+        return (ListT) FoldableTransformerSeq.super.insertAtS(pos,stream);
+    }
+
+
+    @Override
+    public ListT<W,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
+        return (ListT) FoldableTransformerSeq.super.zip(combiner,app);
+    }
+
+    @Override
+    public <R> ListT<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (ListT) FoldableTransformerSeq.super.zipWith(fn);
+    }
+
+    @Override
+    public <R> ListT<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (ListT) FoldableTransformerSeq.super.zipWithS(fn);
+    }
+
+    @Override
+    public <R> ListT<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (ListT) FoldableTransformerSeq.super.zipWithP(fn);
+    }
+
+    @Override
+    public <T2, R> ListT<W,R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (ListT) FoldableTransformerSeq.super.zipP(publisher,fn);
+    }
+
+    @Override
+    public <U> ListT<W,Tuple2<T, U>> zipP(Publisher<? extends U> other) {
+        return (ListT) FoldableTransformerSeq.super.zipP(other);
+    }
+
+    @Override
+    public <S, U, R> ListT<W,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (ListT) FoldableTransformerSeq.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    public <T2, T3, T4, R> ListT<W,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (ListT) FoldableTransformerSeq.super.zip4(second,third,fourth,fn);
+    }
+
+
+    @Override
+    public ListT<W,T> removeAllS(final Stream<? extends T> stream) {
+        return (ListT) FoldableTransformerSeq.super.removeAllS(stream);
+    }
+
+    @Override
+    public <U> ListT<W,U> cast(final Class<? extends U> type) {
+        return (ListT) FoldableTransformerSeq.super.cast(type);
+    }
+
+    @Override
+    public <U> ListT<W,U> ofType(final Class<? extends U> type) {
+        return (ListT) FoldableTransformerSeq.super.ofType(type);
+    }
+
+    @Override
+    public ListT<W,T> removeAllI(final Iterable<? extends T> it) {
+        return (ListT) FoldableTransformerSeq.super.removeAllI(it);
+    }
+
+
+    @Override
+    public ListT<W,T> removeAll(final T... values) {
+        return (ListT) FoldableTransformerSeq.super.removeAll(values);
+    }
+
+
+    @Override
+    public ListT<W,T> filterNot(final Predicate<? super T> predicate) {
+        return (ListT) FoldableTransformerSeq.super.filterNot(predicate);
+    }
+
+
+
+    @Override
+    public ListT<W,T> retainAllI(final Iterable<? extends T> it) {
+        return (ListT) FoldableTransformerSeq.super.retainAllI(it);
+    }
+
+    @Override
+    public ListT<W,T> notNull() {
+        return (ListT) FoldableTransformerSeq.super.notNull();
+    }
+
+    @Override
+    public ListT<W,T> retainAllS(final Stream<? extends T> stream) {
+        return (ListT) FoldableTransformerSeq.super.retainAllS(stream);
+    }
+
+    @Override
+    public ListT<W,T> retainAll(final T... values) {
+        return (ListT) FoldableTransformerSeq.super.retainAll(values);
+    }
+
+
+
+
+    @Override
+    public <R> ListT<W,R> retry(final Function<? super T, ? extends R> fn) {
+        return (ListT) FoldableTransformerSeq.super.retry(fn);
+    }
+
+    @Override
+    public <R> ListT<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (ListT) FoldableTransformerSeq.super.retry(fn,retries,delay,timeUnit);
+    }
+
+
+
+    @Override
+    public ListT<W,T> drop(final long num) {
+        return skip(num);
+    }
+
+    @Override
+    public ListT<W,T> take(final long num) {
+        return limit(num);
+    }
+
+
+    @Override
+    public ListT<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
+        return (ListT) FoldableTransformerSeq.super.recover(fn);
+    }
+
+    @Override
+    public <EX extends Throwable> ListT<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
+        return (ListT) FoldableTransformerSeq.super.recover(exceptionClass,fn);
+    }
+
 }

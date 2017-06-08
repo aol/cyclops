@@ -598,7 +598,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     public boolean isBoth();
 
     /**
-     *  Turn a collection of Iors into a singleUnsafe Ior with Lists of values.
+     *  Turn a toX of Iors into a singleUnsafe Ior with Lists of values.
      *  Primary and secondary types are swapped during this operation.
      *
      * <pre>
@@ -696,7 +696,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     }
 
     /**
-     *  Turn a collection of Iors into a singleUnsafe Ior with Lists of values.
+     *  Turn a toX of Iors into a singleUnsafe Ior with Lists of values.
      *
      * <pre>
      * {@code
