@@ -982,6 +982,13 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
             assertEquals(tuple(2, "two"), s3.get(1));
         }
 
+	@Test
+	public void testSortedDuplicate() {
+	    AnyMSeq<W,Tuple2<Integer, String>> t3 = of(tuple(1, "two"), tuple(1, "one"));
+	    List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toList();
+	    assertEquals(2, s3.size());
+	}
+
         @Test
         public void zip2(){
             List<Tuple2<Integer,Integer>> list =

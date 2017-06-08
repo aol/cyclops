@@ -1676,8 +1676,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
    default  ReactiveSeq<T> sorted(Comparator<? super T> c){
 
-            final Supplier<TreeSet<T>> supplier =  () -> new TreeSet<T>(c);
-            return coflatMap(r-> r.collect(Collectors.toCollection(supplier))  )
+            return coflatMap(r-> {
+		    List<T> list = r.collect(Collectors.toList());
+		    list.sort(c);
+		    return list;
+		    })
                     .flatMap(col->col.stream());
 
 
