@@ -53,7 +53,7 @@ public class RangeIntOperator implements Operator<Integer> {
                         if (!completed.get()) {
                             completed.set(true);
                             onComplete.run();
-                            cancel();
+
                             return;
                         }
 

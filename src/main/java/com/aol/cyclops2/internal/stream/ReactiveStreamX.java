@@ -399,9 +399,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
-       // ReactiveSeq<Publisher<R>> local = map((Function)fn);
-        //return Spouts.lazyConcat(local);
-        return flatMapP(1,fn);
+        ReactiveSeq<Publisher<R>> local = map((Function)fn);
+        return Spouts.lazyConcat(local);
+
     }
     @Override
     public final <R> ReactiveSeq<R> flatMapP(int maxConcurency,final Function<? super T, ? extends Publisher<? extends R>> fn) {

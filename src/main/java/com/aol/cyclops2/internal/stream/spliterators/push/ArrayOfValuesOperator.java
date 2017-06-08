@@ -52,7 +52,7 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
                         if (!completeSent.get()) {
                             completeSent.set(true);
                             onComplete.run();
-                          
+
                             return;
                         }
 
@@ -89,7 +89,7 @@ public class ArrayOfValuesOperator<T> implements Operator<T> {
                 if(!completeSent.get()) {
                     completeSent.set(true);
                     onComplete.run();
-                    cancel();
+
                 }
             }
 

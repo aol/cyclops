@@ -315,18 +315,18 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void testSinglePredicateOfQsuperT() {
-        assertThat(of(1,11).single(i->i>10).singleUnsafe(),equalTo(11));
+        assertThat(of(1,11).single(i->i>10).singleUnsafe(),equalTo(Maybe.just(11)));
     }
 
     @Test
     public void testSingleOptional() {
         
-        assertThat(of(1,11).single().stream().toListX(),equalTo(ListX.of(Optional.empty())));
+        assertThat(of(1,11).single().stream().toListX(),equalTo(ListX.of(Maybe.none())));
     }
 
     @Test
     public void testGet() {
-        assertThat(of(1).get(0).stream().singleUnsafe(),equalTo(Optional.of(1)));
+        assertThat(of(1).get(0).stream().singleUnsafe(),equalTo(Maybe.of(1)));
     }
 
     @Test

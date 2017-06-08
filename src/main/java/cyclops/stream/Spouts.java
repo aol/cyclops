@@ -254,6 +254,7 @@ public interface Spouts {
     }
     static <T> ReactiveSeq<T> mergeLatest(Publisher<T>... array){
 
+
         Operator<T>[] op = new Operator[array.length];
         for(int i=0;i<array.length;i++){
             if(array[i] instanceof ReactiveStreamX){
@@ -264,6 +265,7 @@ public interface Spouts {
             }
         }
         return new ReactiveStreamX<T>(new MergeLatestOperator<T>(op), Type.BACKPRESSURE);
+
 
     }
     static <T> ReactiveSeq<T> amb(ListX<? extends Publisher<? extends T>> list){

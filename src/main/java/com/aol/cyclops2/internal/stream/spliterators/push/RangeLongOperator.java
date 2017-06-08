@@ -51,7 +51,7 @@ public class RangeLongOperator implements Operator<Long> {
                         if (!completed.get()) {
                             completed.set(true);
                             onComplete.run();
-                            cancel();
+
 
                         }
                         return;
