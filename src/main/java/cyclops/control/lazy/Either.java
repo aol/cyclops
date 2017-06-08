@@ -34,10 +34,11 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
- * A totally Lazy Either implementation with tail call optimization for map and flatMap operators.
+ * A totally Lazy Either implementation with tail call optimization for map and flatMap operators. Either can operate reactively (i.e. suppports data arriving asynchronsouly
+ the monadic chain of computations will only be executed once data arrives).
  * 
- * 'Right' (or primary type) biased disjunct union. Often called Either, but in a generics heavy Java world Either is half the length of Either.
- * 
+ * 'Right' (or primary type) biased disjunct union. 
+ 
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
  *  
  *  Either is used to represent values that can be one of two states (for example a validation result, lazy everything is ok - or we have an error).
