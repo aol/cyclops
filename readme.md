@@ -207,14 +207,14 @@ ReactiveSeq<List<Integer>> seq = Spouts.of(1,2,3)
 [via cyclops-rx](https://github.com/aol/cyclops/tree/master/cyclops-rx)
 ```java
 
-ReactiveSeq<List<Integer>> seq = Observables.of(1,2,3)
-                                            .to(lift(new Observable.Operator<Integer,Integer>(){
-                                                    @Override
-                                                    public Subscriber<? super Integer> call(Subscriber<? super Integer> subscriber) {
-                                                          return subscriber; // operator code
-                                                    }
-                                               }))
-                                            .map(i->i+1)
+ReactiveSeq<Integer> seq = Observables.of(1,2,3)
+                                      .to(lift(new Observable.Operator<Integer,Integer>(){
+                                              @Override
+                                              public Subscriber<? super Integer> call(Subscriber<? super Integer> subscriber) {
+                                                     return subscriber; // operator code
+                                              }
+                                       }))
+                                       .map(i->i+1)
 ```
 
 
