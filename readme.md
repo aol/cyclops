@@ -237,17 +237,26 @@ ReactiveSeq<Integer> seq = Observables.of(1,2,3)
 
 cyclops defines reactive (push/ event drive) and coreactive (iterative / interactive) Streaming capabilities via the interface ReactiveSeq.
 
-There are 4 concrete implementations for this interface :-
+There are 4 concrete implementations for this interface included in cyclops-react :-
+
+
 
 | concrete type | factories | description | characteristics |
 |------|-------------|-------------|-----------------|
 | ReactiveStreamX    | Spouts | Asynchronous push based Streams. Optionally back-pressure aware (via reactive-streams)              | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded                |
 | StreamX    | ReactiveSeq | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Coreactive (pull), Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
-| OneShotStreamX    | Streams | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
+| OneShotStreamX    | Streams | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are not replayable. Backed by j.u.s.Stream             | Lazy, parallel option, integrated primitive support, Higher kinded               |
 | FutureStream     | LazyReact | Asynchronous and parallel stream             | Lazy, async, parallel, Reactive                 |
 
+Additional implementations provided in cyclops integration modules
 
-Interfaces
+| concrete type | factories | description | characteristics |
+|------|-------------|-------------|-----------------|
+| FluxReactiveSeq    | Fluxs | Asynchronous push based Streams, non-blocking back-pressure aware (via reactive-streams)              | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator Fusion                |
+| ObservableReactiveSeq    | Observables |  Asynchronous push based Streams             | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded              |
+
+
+Classes / Interfaces that represent the API (cyclops-react) 
 
 | type | description | characteristics |
 |------|-------------|-----------------|
