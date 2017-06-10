@@ -60,6 +60,10 @@ compile 'com.aol.simplereact:cyclops-react:x.y.z'
 
 ## Streaming
 
+cyclops-react defines an interface ReactiveSeq for advanced Streaming operations. Multiple implementations are provided for synchronous / asynchronous and sequential / parallel streaming within cyclops-react. Use ReactiveSeq.XXX creational methods to build synchronous Streams, or Spouts.XXX creational methods to build asynchronous Streams. For parallel Streaming consider FutureStream.builder().
+
+For alternative implenations backed by popular 3rd party Streaming libraries (such as RxJava Observables and Reactor Flux) see [cyclops integration modules](https://github.com/aol/cyclops). It is also possible to fluently use operators defined in 3rd party libraries with ReactiveSeq (e.g. to fluently make use of any operator defined on Flux).
+
 Sequential Streams, with retry and forEach result + error.
 
 ```java
@@ -173,6 +177,45 @@ Backpressure free : Event Driven Push based Streams
 ```
 The Spouts observeOn and async operators create event driven Streams that do not have the overhead of managing backpressure. In the above example the first result is pushed asynchronously into the reactive Maybe type.
 
+## To create a synchronous Stream via Kotlinesque Sequence Generators
+
+[More info](https://github.com/aol/cyclops-react/issues/616)
+
+```java
+ReactiveSeq.generate(suspend(times(10),s-> {
+            System.out.println("Top level - should repeat after sequence completes!");
+            return s.yield(1,
+                           () -> s.yield(2),
+                           () -> s.yield(3),
+                           () -> s.yield(4));
+                       }))
+           .take(6)
+           .printOut(); 
+```
+## To make use of Operators from Reactor
+
+[via cyclops-reactor](https://github.com/aol/cyclops/tree/master/cyclops-reactor)
+
+```java
+import static cyclops.streams.ReactorOperators.flux;
+ReactiveSeq<List<Integer>> seq = Spouts.of(1,2,3)
+                                       .map(i->i+1)
+                                       .to(flux(o->o.buffer(10)));
+```
+## To create a ReactiveSeq instance backed by an RxJava Observable
+
+[via cyclops-rx](https://github.com/aol/cyclops/tree/master/cyclops-rx)
+```java
+
+ReactiveSeq<List<Integer>> seq = Observables.of(1,2,3)
+                                            .to(lift(new Observable.Operator<Integer,Integer>(){
+                                                    @Override
+                                                    public Subscriber<? super Integer> call(Subscriber<? super Integer> subscriber) {
+                                                          return subscriber; // operator code
+                                                    }
+                                               }))
+                                            .map(i->i+1)
+```
 
 
 # 2.x Type dictionary
