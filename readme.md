@@ -11,6 +11,7 @@ This is the 2.x branch for 1.x click the link below
 
 # Getting cyclops-react
 
+* The latest version is [cyclops-react:2.0.0-RC1](http://mvnrepository.com/artifact/com.aol.simplereact/cyclops-react/2.0.0-RC1)
 * [![Maven Central : cyclops-react](https://maven-badges.herokuapp.com/maven-central/com.aol.simplereact/cyclops-react/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aol.simple-react/cyclops-react)
 
 * Stackoverflow tag [cyclops-react](http://stackoverflow.com/search?q=cyclops-react)
