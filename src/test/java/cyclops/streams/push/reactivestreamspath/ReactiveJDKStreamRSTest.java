@@ -96,14 +96,6 @@ public class ReactiveJDKStreamRSTest {
 		assertThat(d.size(),is(3));
 	}
 
-	@Test
-	public void testDistinctReactiveSeqSingleEntryMultipleDuplicates(){
-		List<String> names = Arrays.asList("Java", "C", "C", "C");
-		ListX<String> d = ReactiveSeq.fromIterable(names).distinct(n -> n + ":" + n).toListX();
-		assertThat(d.size(),is(2));
-	}
-
-
 
 	@Test
 	public void testLimit(){
