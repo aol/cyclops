@@ -1,5 +1,6 @@
 package cyclops.streams.push.reactivestreamspath;
 
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
@@ -78,7 +80,16 @@ public class ReactiveJDKStreamRSTest {
 		assertThat(of(1,1,1,2,1).distinct().to(Streamable::fromStream).collect(Collectors.toList()),hasItem(1));
 		assertThat(of(1,1,1,2,1).distinct().to(Streamable::fromStream).collect(Collectors.toList()),hasItem(2));
 	}
-	
+
+	@Test
+	public void testDistinctReactiveSeq(){
+		List<String> names = Arrays.asList("Java", "C");
+		ListX<String> d = ReactiveSeq.fromIterable(names).distinct(n -> n + ":" + n).toListX();
+		assertThat(d.size(),is(2));
+	}
+
+
+
 	@Test
 	public void testLimit(){
 		assertThat(of(1,2,3,4,5).limit(2).to(Streamable::fromStream).collect(Collectors.toList()).size(),equalTo(2));
