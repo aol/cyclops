@@ -25,10 +25,7 @@ public class SkipSpliterator<T> extends Spliterators.AbstractSpliterator<T> impl
             source.tryAdvance(e->{});
 
         }
-
         source.forEachRemaining(action);
-
-
     }
 
 

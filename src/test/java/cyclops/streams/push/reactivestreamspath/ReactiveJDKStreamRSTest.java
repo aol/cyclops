@@ -88,6 +88,21 @@ public class ReactiveJDKStreamRSTest {
 		assertThat(d.size(),is(2));
 	}
 
+	@Test
+	public void testDistinctReactiveSeqMultipleDuplicates(){
+		List<String> names = Arrays.asList("Java", "C", "Java", "Java","java", "java");
+		ListX<String> d = ReactiveSeq.fromIterable(names).distinct(n -> n + ":" + n).toListX();
+		System.out.println(d);
+		assertThat(d.size(),is(3));
+	}
+
+	@Test
+	public void testDistinctReactiveSeqSingleEntryMultipleDuplicates(){
+		List<String> names = Arrays.asList("Java", "C", "C", "C");
+		ListX<String> d = ReactiveSeq.fromIterable(names).distinct(n -> n + ":" + n).toListX();
+		assertThat(d.size(),is(2));
+	}
+
 
 
 	@Test
@@ -229,7 +244,4 @@ public class ReactiveJDKStreamRSTest {
 		of(1).map(it->it+100).peek(it -> val=it).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(val,equalTo(101));
 	}
-		
-
-
 }
