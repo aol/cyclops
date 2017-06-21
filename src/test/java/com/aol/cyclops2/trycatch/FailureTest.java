@@ -18,11 +18,11 @@ import org.junit.Test;
 
 import cyclops.control.Maybe;
 import cyclops.control.Try;
-import cyclops.control.Try.Failure;
+
 
 public class FailureTest {
 
-	Failure<Integer,FileNotFoundException> failure;
+	Try<Integer,FileNotFoundException> failure;
 	FileNotFoundException error = new FileNotFoundException();
 	@Before
 	public void setup(){
@@ -56,19 +56,19 @@ public class FailureTest {
 
 	@Test
 	public void testRecoverWithFor() {
-		assertThat(failure.recoverWithFor(FileNotFoundException.class, e-> Try.success(10)),equalTo(Try.success(10)));
+		assertThat(failure.recoverFlatMapFor(FileNotFoundException.class, e-> Try.success(10)),equalTo(Try.success(10)));
 	}
 	@Test
 	public void testRecoverWithForSubclass() {
-		Failure<Integer,IOException> failure = Try.failure(error);
-		assertThat(failure.recoverWithFor(FileSystemException.class, e-> Try.success(10)),equalTo(Try.failure(error)));
-		assertThat(failure.recoverWithFor(FileNotFoundException.class, e-> Try.success(10)),equalTo(Try.success(10)));
-		
+		Try<Integer,IOException> failure = Try.failure(error);
+		assertThat(failure.recoverFlatMapFor(FileSystemException.class, e-> Try.success(10)),equalTo(Try.failure(error)));
+		assertThat(failure.recoverFlatMapFor(FileNotFoundException.class, e-> Try.success(10)),equalTo(Try.success(10)));
+
 	}
-	
+
 	@Test
 	public void testRecoverWithForIgnore() {
-		assertThat(failure.recoverWithFor((Class)RuntimeException.class, e-> Try.success(10)),equalTo(failure));
+		assertThat(failure.recoverFlatMapFor((Class)RuntimeException.class, e-> Try.success(10)),equalTo(failure));
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class FailureTest {
 	}
 	@Test
 	public void testRecoverForInherited() {
-		Failure<Integer,IOException> failure = Try.failure(error);
+		Try<Integer,IOException> failure = Try.failure(error);
 		assertThat(failure.recoverFor(FileSystemException.class, e-> 10),equalTo(Try.failure(error)));
 		assertThat(failure.recoverFor(FileNotFoundException.class, e-> 10),equalTo(Try.success(10)));
 		
@@ -99,7 +99,7 @@ public class FailureTest {
 
 	@Test
 	public void testRecoverWith() {
-		assertThat(failure.recoverWith(e-> Try.success(10)),equalTo(Try.success(10)));
+		assertThat(failure.recoverFlatMap(e-> Try.success(10)),equalTo(Try.success(10)));
 	}
 
 
@@ -159,7 +159,7 @@ public class FailureTest {
 	}
 	@Test
 	public void testOnFailClassOfQextendsXConsumerOfXInherited() {
-		Failure<Integer,IOException> failure =  Try.failure(error);
+		Try<Integer,IOException> failure =  Try.failure(error);
 		errorCaptured = null;
 		failure.onFail(FileNotFoundException.class, e -> errorCaptured =e);
 		assertThat(error,equalTo(errorCaptured));

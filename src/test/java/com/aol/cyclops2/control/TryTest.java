@@ -45,7 +45,7 @@ public class TryTest {
     public void recover(){
 
         final String result = Try.withCatch(() -> "takeOne", RuntimeException.class)
-                .recoverWith(__ -> Try.<String,RuntimeException>success("ignored")
+                .recoverFlatMap(__ -> Try.<String,RuntimeException>success("ignored")
                         .retry(i->"retry"))
                 .get();
         Try.withCatch(() -> "hello", RuntimeException.class)

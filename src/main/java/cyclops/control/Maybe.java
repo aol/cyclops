@@ -1149,7 +1149,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
         }
 
         /* (non-Javadoc)
-         * @see cyclops2.control.Maybe#recoverWith(java.util.function.Supplier)
+         * @see cyclops2.control.Maybe#recoverFlatMap(java.util.function.Supplier)
          */
         @Override
         public Maybe<T> recoverWith(Supplier<? extends Maybe<T>> fn) {

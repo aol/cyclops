@@ -665,8 +665,15 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param fn Recovery FlatMap function. Map from a failure to a Success
      * @return Success from recovery function
      */
-    public Try<T, X> recoverWith(Function<? super X, ? extends Try<T, X>> fn){
+    public Try<T, X> recoverFlatMap(Function<? super X, ? extends Try<T, X>> fn){
         return new Try<>(xor.secondaryToPrimayFlatMap(fn.andThen(t->t.xor)));
+    }
+    public Try<T, X> recoverFlatMapFor(Class<? extends X> t,Function<? super X, ? extends Try<T, X>> fn){
+        return new Try<T,X>(xor.secondaryToPrimayFlatMap(x->{
+            if (t.isAssignableFrom(x.getClass()))
+                return fn.apply(x).xor;
+            return xor;
+        }));
     }
 
     /**

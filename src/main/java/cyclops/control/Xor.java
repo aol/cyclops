@@ -18,6 +18,9 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.FluentFunctions;
 import cyclops.monads.AnyM;
+import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.MaybeT;
+import cyclops.monads.transformers.XorT;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -114,8 +117,12 @@ import java.util.stream.Stream;
  */
 public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                                      MonadicValue<PT>,
-        BiTransformable<ST,PT> {
+                                     BiTransformable<ST,PT> {
 
+
+    default <W extends WitnessType<W>> XorT<W, ST,PT> liftM(W witness) {
+        return XorT.of(witness.adapter().unit(this));
+    }
 
     /**
      * Static method useful as a method reference for fluent consumption of any value type stored in this Either

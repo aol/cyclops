@@ -20,11 +20,11 @@ import org.junit.Test;
 
 import cyclops.control.Maybe;
 import cyclops.control.Try;
-import cyclops.control.Try.Success;
+
 
 public class SuccessTest {
 
-	Success<Integer,FileNotFoundException> success;
+	Try<Integer,FileNotFoundException> success;
 	final Integer value = 10;
 	
 	
@@ -88,12 +88,12 @@ public class SuccessTest {
 
 	@Test
 	public void testRecoverWith() {
-		assertThat(success.recoverWith(e->Try.success(20)),equalTo(success));
+		assertThat(success.recoverFlatMap(e->Try.success(20)),equalTo(success));
 	}
 
 	@Test
 	public void testRecoverFor() {
-		Success<Integer,IOException> success = Try.success(20);
+		Try<Integer,IOException> success = Try.success(20);
 		assertThat(success.recoverFor(FileSystemException.class, e-> 10),equalTo(Try.success(20)));
 		assertThat(success.recoverFor(FileNotFoundException.class, e-> 15),equalTo(Try.success(20)));
 		assertThat(success.recoverFor(IOException.class,e->30),equalTo(success));
@@ -101,7 +101,7 @@ public class SuccessTest {
 
 	@Test
 	public void testRecoverWithFor() {
-		assertThat(success.recoverWithFor(FileNotFoundException.class,e->Try.success(20)),equalTo(success));
+		assertThat(success.recoverFlatMapFor(FileNotFoundException.class,e->Try.success(20)),equalTo(success));
 	}
 	@Test
 	public void testFlatten() {
@@ -161,7 +161,7 @@ public class SuccessTest {
 
 	@Test
 	public void testOnFailClassOfQsuperXConsumerOfX() {
-		Success<Integer,IOException> success = Try.success(10);
+		Try<Integer,IOException> success = Try.success(10);
 		errorCaptured = null;
 		success.onFail(FileNotFoundException.class,e -> errorCaptured =e);
 		assertThat(errorCaptured,is(nullValue()));
