@@ -204,9 +204,15 @@ public interface Value<T> extends Folds<T>,
         return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(secondary);
     }
 
+    /**
+     * Lazily convert this Value to an Either.right instance
+     */
     default <LT> Either<LT,T> toRight(){
         return Either.fromIterable(this);
     }
+    /**
+     * Lazily convert this Value to an Either.left instance
+     */
     default <RT> Either<T,RT> toLeft(){
         return Either.<RT,T>fromIterable(this)
                      .swap();
