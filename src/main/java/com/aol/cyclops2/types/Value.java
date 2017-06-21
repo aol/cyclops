@@ -216,8 +216,7 @@ public interface Value<T> extends Folds<T>,
      * @return This Value converted to a Try. If this Value is empty the Try will contain a NoSuchElementException
      */
     default Try<T, Throwable> toTry() {
-        return toXor().visit(secondary -> Try.failure(new NoSuchElementException()), primary -> Try.success(primary));
-
+        return Try.fromPublisher(this);
     }
 
     /**
