@@ -10,6 +10,7 @@ import java.util.function.UnaryOperator;
 
 import com.aol.cyclops2.types.foldable.Convertable;
 import com.aol.cyclops2.types.foldable.Folds;
+import cyclops.control.lazy.Either;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -203,6 +204,13 @@ public interface Value<T> extends Folds<T>,
         return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(secondary);
     }
 
+    default <LT> Either<LT,T> toRight(){
+        return Either.fromIterable(this);
+    }
+    default <RT> Either<T,RT> toLeft(){
+        return Either.<RT,T>fromIterable(this)
+                     .swap();
+    }
     /**
      * @param throwable Exception to use if this Value is empty
      * @return Try that has the same value as this Value or the provided Exception

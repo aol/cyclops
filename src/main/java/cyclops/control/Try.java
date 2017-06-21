@@ -800,7 +800,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         }
 
     }
-   
+
 
     /**
      * Try to execute supplied Runnable and will Catch specified Excpetions or java.lang.Exception
