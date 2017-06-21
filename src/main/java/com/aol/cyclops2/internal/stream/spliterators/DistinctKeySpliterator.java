@@ -34,7 +34,7 @@ public class DistinctKeySpliterator<IN,T,U> extends BaseComposableSpliterator<IN
         final Consumer<? super IN> toUse = apply(action);
         source.forEachRemaining(e->{
 
-            if(!values.add(keyExtractor.apply(e))){
+            if(values.add(keyExtractor.apply(e))){
                 toUse.accept(e);
             }
         });
