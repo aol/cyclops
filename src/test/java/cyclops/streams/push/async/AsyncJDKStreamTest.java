@@ -39,6 +39,19 @@ public class AsyncJDKStreamTest {
         return Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool()));
 
     }
+	@Test
+	public void testDistinctReactiveSeq(){
+
+		ListX<String> d = of("Java", "C").distinct(n -> n + ":" + n).toListX();
+		assertThat(d.size(),equalTo(2));
+	}
+
+	@Test
+	public void testDistinctReactiveSeqMultipleDuplicates(){
+		ListX<String> d = of("Java", "C", "Java", "Java","java", "java").distinct(n -> n + ":" + n).toListX();
+		System.out.println(d);
+		assertThat(d.size(),equalTo(3));
+	}
     @Test
     public void fluxConcatMap(){
         System.out.println(Flux.just(1,2,3).concatMap(i->Flux.just(i+100,200))
