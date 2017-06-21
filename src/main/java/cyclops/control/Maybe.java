@@ -218,6 +218,10 @@ public interface Maybe<T> extends To<Maybe<T>>,
             return complete.isDone();
         }
 
+
+        public boolean completeAsNone(){
+            return complete(null);
+        }
         @Override
         public boolean complete(ORG done) {
             return complete.complete(done);
