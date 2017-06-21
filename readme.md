@@ -257,6 +257,7 @@ Additional implementations provided in cyclops integration modules
 | ObservableReactiveSeq    | Observables |  Asynchronous push based Streams             | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded              |
 
 Additional implementations provided in cyclops integration modules for RxJava 2
+
 | concrete type | factories | description | characteristics |
 |------|-------------|-------------|-----------------|
 | ObservableReactiveSeq    | Observables |  Asynchronous push based Streams             | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator Fusion               |
