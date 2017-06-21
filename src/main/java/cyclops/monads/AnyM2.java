@@ -70,10 +70,10 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  */
 public interface AnyM2<W extends WitnessType<W>,T,T2> extends   AnyM<W,T>,
                                                                 Unwrapable,
-        EmptyUnit<T>,
+                                                                EmptyUnit<T>,
                                                                 Unit<T>,
-        Folds<T>,
-        Transformable<T>,
+                                                                Folds<T>,
+                                                                Transformable<T>,
                                                                 ToStream<T>,
                                                                 Zippable<T>,
                                                                 Publisher<T> {

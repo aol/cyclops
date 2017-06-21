@@ -146,11 +146,15 @@ import cyclops.function.Fn3;
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
 public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                                                       Recoverable<X,T>,
-                                                      MonadicValue<T> {
+                                                      MonadicValue<T>{
 
 
     final Xor<X,T> xor;
-    
+
+    public Xor<X,T> asXor(){
+        return xor;
+    }
+
     public Try<T,X> recover(Supplier<? extends T> s){
         return recover(t->s.get());
     }
