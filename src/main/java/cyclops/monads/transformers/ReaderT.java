@@ -23,7 +23,7 @@ import java.util.function.*;
 public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<W,T,R>>,
         Transformable<R>, Fn1<T,R> {
 
-    private final AnyM2<W,Reader<T,R>,T> run;
+    private final AnyM2<W,T,Reader<T,R>> run;
 
 
 
@@ -33,15 +33,15 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
      * @return The wrapped AnyM
      */
 
-    public AnyM2<W,Reader<T,R>,T> unwrap() {
+    public AnyM2<W,T,Reader<T,R>> unwrap() {
         return run;
     }
 
-    public <R2> R2 unwrapTo(Function<? super AnyM2<W,Reader<T,R>,T>, ? extends R2> fn) {
+    public <R2> R2 unwrapTo(Function<? super AnyM2<W,T,Reader<T,R>>, ? extends R2> fn) {
         return unwrap().to2(fn);
     }
 
-    private ReaderT(final AnyM2<W,Reader<T,R>,T> run) {
+    private ReaderT(final AnyM2<W,T,Reader<T,R>> run) {
         this.run = run;
     }
 
@@ -117,7 +117,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
      * @param monads AnyM that contains a monad wrapping an Future
      * @return FutureWT
      */
-    public static <W extends WitnessType<W>,T,R> ReaderT<W,T,R> of(final AnyM2<W,Reader<T,R>,T> monads) {
+    public static <W extends WitnessType<W>,T,R> ReaderT<W,T,R> of(final AnyM2<W,T,Reader<T,R>> monads) {
         return new ReaderT<>(
                                  monads);
     }
