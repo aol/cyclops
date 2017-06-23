@@ -156,6 +156,8 @@ import com.aol.cyclops2.util.ExceptionSoftener;
  * }
  * </pre>
  *
+ * Use {@link Try#transform(Function)} for custom operations
+ *
  *
  * @author johnmcclean
  *
@@ -831,6 +833,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     public AnyMValue2<tryType,X,T> anyM2(){
         return AnyM.fromTry(this);
     }
+
     public AnyMValue<maybe,T> anyM(){
         return AnyM.fromMaybe(this);
     }

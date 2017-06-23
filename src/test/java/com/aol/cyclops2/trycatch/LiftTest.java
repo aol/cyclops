@@ -34,7 +34,7 @@ public class LiftTest {
 	public void testLiftError(){
 		AnyMFn2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
-		AnyM<tryType,Integer> result = divide.apply(success(2, ArithmeticException.class),Try.success(0,ArithmeticException.class).anyM());
+		AnyM<tryType,Integer> result = divide.apply(success(2, ArithmeticException.class),Try.success(0,ArithmeticException.class).anyM2());
 		System.out.println(result);
 		assertThat(result.<Try<Integer,ArithmeticException>>unwrap().isFailure(),equalTo(true));
 	}
@@ -43,7 +43,7 @@ public class LiftTest {
 	public void testLiftErrorAndStream(){
 		AnyMFn2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
-		AnyM<tryType,Integer> result = divide.apply(success(20, ArithmeticException.class), Try.success(4).anyM());
+		AnyM<tryType,Integer> result = divide.apply(success(20, ArithmeticException.class), Try.success(4).anyM2());
 		System.out.println(result);
 		assertThat(result.<Try<Integer,ArithmeticException>>unwrap().isFailure(),equalTo(false));
 	}
@@ -53,7 +53,7 @@ public class LiftTest {
 
 		AnyMFn2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
-		AnyM<tryType,Integer> result = divide.apply(Try.success(2, ArithmeticException.class).anyM(), Try.success(4).anyM());
+		AnyM<tryType,Integer> result = divide.apply(Try.success(2, ArithmeticException.class).anyM2(), Try.success(4).anyM2());
 		
 		assertThat(result.<Try<List<Integer>,ArithmeticException>>unwrap().get(),equalTo(0));
 		
@@ -63,7 +63,7 @@ public class LiftTest {
 	public void testLiftNoExceptionType(){
 		AnyMFn2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
-		AnyM<tryType,Integer> result = divide.apply(Try.success(2).anyM(),Try.success(0).anyM());
+		AnyM<tryType,Integer> result = divide.apply(Try.success(2).anyM2(),Try.success(0).anyM2());
 		System.out.println(result);
 		fail("exception should be thrown");
 	}

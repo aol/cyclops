@@ -344,11 +344,7 @@ public class MaybeTest implements Printable {
         assertThat(just.recover(() -> 20), equalTo(Maybe.of(10)));
         assertThat(none.recover(() -> 10), equalTo(Maybe.of(10)));
     }
-    @Test
-    public void testRecoverFn() {
-        assertThat(just.recover(__ -> 20), equalTo(Maybe.of(10)));
-        assertThat(none.recover(__ -> 10), equalTo(Maybe.of(10)));
-    }
+   
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {

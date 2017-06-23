@@ -34,7 +34,7 @@ import lombok.AllArgsConstructor;
  * @param <T> Data type of element in this value
  */
 @FunctionalInterface
-public interface Value<T> extends //Folds<T>,
+public interface Value<T> extends   Folds<T>,
                                     Convertable<T>,
                                     Publisher<T>,
                                     Predicate<T> {

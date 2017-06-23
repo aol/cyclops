@@ -1,6 +1,7 @@
 package com.aol.cyclops2.control.transformers;
 
 
+import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.CompletableFutures;
@@ -17,6 +18,8 @@ import cyclops.control.Xor;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
+import cyclops.monads.Witness.completableFuture;
+import cyclops.monads.Witness.optional;
 import cyclops.monads.transformers.CompletableFutureT;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Before;
@@ -25,6 +28,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -35,16 +39,17 @@ import static org.junit.Assert.*;
 
 public class CompletableFutureTTest implements Printable {
 
-	CompletableFutureT<Witness.optional,Integer> just;
-	CompletableFutureT<Witness.optional,Integer> none;
-	CompletableFutureT<Witness.optional,Integer> one;
+	CompletableFutureT<optional,Integer> just;
+	CompletableFutureT<optional,Integer> none;
+	CompletableFutureT<optional,Integer> one;
 	@Before
 	public void setUp() throws Exception {
 
 
-		just = CompletableFutures.liftM(CompletableFutures.ofResult(10),Witness.optional.INSTANCE);
+		just = CompletableFutures.liftM(CompletableFutures.ofResult(10), optional.INSTANCE);
 		none = CompletableFutureT.of(AnyM.ofNullable(null));
-		one = CompletableFutureT.of(AnyM.ofNullable(Future.ofResult(1)));
+        AnyMValue<optional, CompletableFuture<Integer>> x = AnyM.ofNullable(CompletableFuture.completedFuture(1));
+		one = CompletableFutureT.of(x);
 	}
 	
 	@Test
@@ -153,7 +158,7 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
     public void testConvertTo() {
-        AnyM<Witness.optional,Stream<Integer>> toStream = just.visit(m->Stream.of(m),()->Stream.of());
+        AnyM<optional,Stream<Integer>> toStream = just.visit(m->Stream.of(m),()->Stream.of());
 
         assertThat(toStream.stream().flatMap(i->i).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }

@@ -111,10 +111,9 @@ import java.util.stream.*;
  */
 public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Stream<T>,
-        OnEmptySwitch<T, Stream<T>>,
+                                        OnEmptySwitch<T, Stream<T>>,
                                         FoldableTraversable<T>,
-        Unit<T>,
-
+                                        Unit<T>,
                                         Higher<ReactiveSeq.µ,T> {
 
 
