@@ -19,7 +19,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.hkt.Convert;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.anyM.AnyMValue2;
@@ -32,8 +31,6 @@ import cyclops.control.lazy.Either;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
-import cyclops.monads.WitnessType;
-import cyclops.monads.transformers.MaybeT;
 import cyclops.stream.ReactiveSeq;
 import lombok.*;
 import lombok.experimental.Wither;
@@ -49,7 +46,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 
 /**
  * Light weight Try Monad
- * 
+ *
  * Fail fast behaviour with more explicit declararions required compared to
  *  with scala.util.Try and javaslang.monad.Try. This is probably closer
  *  to how most Java devs currently handle exceptions.
@@ -91,15 +88,15 @@ import com.aol.cyclops2.util.ExceptionSoftener;
  * {@code
  *
  * Try.withCatch(()-> exceptional2())
-                        .map(i->i+" woo!")
-                        .onFail(System.out::println)
-                        .orElse("public");
+.map(i->i+" woo!")
+.onFail(System.out::println)
+.orElse("public");
 
  *  //"hello world woo!"
  *
  *  private String exceptional2() throws RuntimeException{
-        return "hello world";
-    }
+return "hello world";
+}
  * }
  * </pre>
  *
@@ -111,11 +108,11 @@ import com.aol.cyclops2.util.ExceptionSoftener;
  *  //Only catch IOExceptions
  *
  *  Try.runWithCatch(this::exceptional,IOException.class)
-        .onFail(System.err::println);
+.onFail(System.err::println);
 
-    private void exceptional() throws IOException{
-        throw new IOException();
-    }
+private void exceptional() throws IOException{
+throw new IOException();
+}
  *
  * }
  * </pre>
@@ -125,39 +122,24 @@ import com.aol.cyclops2.util.ExceptionSoftener;
  * {@code
  *
  *   Try.catchExceptions(FileNotFoundException.class,IOException.class)
-         .init(()->new BufferedReader(new FileReader("file.txt")))
-         .tryWithResources(this::read)
-         .map(this::processData)
-         .recover(e->"public);
+.init(()->new BufferedReader(new FileReader("file.txt")))
+.tryWithResources(this::read)
+.map(this::processData)
+.recover(e->"public);
  *
  * }
  * </pre>
  *
- * By default Try does not catch exception within it's operators such as map / flatMap, to catch Exceptions in ongoing operations use @see {@link Try#success(Object, Class...)}
+ * By public Try does not catch exception within it's operators such as map / flatMap, to catch Exceptions in ongoing operations use @see {@link Try#of(Object, Class...)}
  * <pre>
  * {@code
- *  Try.success(2, RuntimeException.class)
-       .map(i->{throw new RuntimeException();});
+ *  Try.of(2, RuntimeException.class)
+.map(i->{throw new RuntimeException();});
 
-    //Failure[RuntimeException]
+//Failure[RuntimeException]
  *
  * }
  * </pre>
- *
- * Try implements Maybe which allows Exceptions to be hidden in situations we were only care about the success value
- *
- * <pre>
- * {@code
- *  Maybe<Integer> hasValue = Try.success(2, RuntimeException.class)
-                                 .map(i->{throw new RuntimeException();});
-
-    //Failure[RuntimeException]
- *
- * }
- * </pre>
- *
- * Use {@link Try#transform(Function)} for custom operations
- *
  *
  * @author johnmcclean
  *
@@ -165,11 +147,10 @@ import com.aol.cyclops2.util.ExceptionSoftener;
  * @param <X> Base Error type
  */
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
-public class Try<T, X extends Throwable> implements   Maybe<T>,
+public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                                                       RecoverableFrom<X,T>,
                                                       MonadicValue<T>{
 
-    @Wither
     final Xor<X,T> xor;
     private final Class<? extends Throwable>[] classes;
 
@@ -178,47 +159,6 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     }
 
 
-    public <R> R transform(Function<? super Try<T,X>,? extends R> reduce){
-        return reduce.apply(this);
-    }
-    @Override
-    public <R> Maybe<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMap(i-> Maybe.fromIterable(mapper.apply(i)));
-    }
-
-    @Override
-    public <R> Maybe<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return flatMap(i-> Maybe.fromPublisher(mapper.apply(i)));
-    }
-
-    @Override
-    public Maybe<T> toMaybe() {
-        return Maybe.fromPublisher(this);
-    }
-
-
-
-    @Override
-    public Try<T,X> recover(T value) {
-
-        return this.recover(x->value);
-    }
-
-    @Override
-    public Try<T,X> recoverWith(Supplier<? extends Maybe<T>> fn) {
-        return this.recoverFlatMap(i->(Try)fn.get().toTry());
-    }
-
-    @Override
-    public <R> R visit(Function<? super T, ? extends R> some, Supplier<? extends R> none) {
-        return this.visit(some,x->none.get());
-    }
-
-    @Override
-    public Try<T,X> combineEager(Monoid<T> monoid, MonadicValue<? extends T> v2) {
-        return (Try)Maybe.super.combineEager(monoid,v2);
-    }
-
     /**
      *  Turn a list of Trys into a single Try with Lists of values.
      *  Primary and failure types are swapped during this operation.
@@ -226,10 +166,10 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * <pre>
      * {@code
      *  Try<Integer,NoSuchElementException> just  = Try.success(10);
-        Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+    Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
      *
      *  Xor<ListX<Integer>,ListX<NoSuchElementException>> xors =Try.sequenceFailures(ListX.of(just,none,Try.success(1)));
-        //[Primary[NoSuchElementException]]
+    //[Primary[NoSuchElementException]]
      *
      * }
      * </pre>
@@ -247,10 +187,10 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * <pre>
      * {@code
      *  Try<Integer,NoSuchElementException>  just  = Try.success(10);
-      Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+    Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
 
      *  Xor<?,PersistentSetX<String>> xors = Try.accumulateFailures(ListX.of(just,none,Try.success(1)),Reducers.<String>toPersistentSetX());
-       //Primary[PersistentSetX[NoSuchElementException]]]
+    //Primary[PersistentSetX[NoSuchElementException]]]
      * }
      * </pre>
      * @param xors Collection of Iors to accumulate failure values
@@ -268,10 +208,10 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * <pre>
      * {@code
      *  Try<Integer,NoSuchElementException> just  = Try.success(10);
-        Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+    Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
 
      *   Xor<?,String> xors = Try.accumulateFailures(ListX.of(just,none,Try.failure("1")),i->""+i,Monoids.stringConcat);
-        //Primary[NoSuchElementException]]
+    //Primary[NoSuchElementException]]
      *
      * }
      * </pre>
@@ -284,7 +224,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * @return Try populated with the accumulate Secondary operation
      */
     public static <ST extends Throwable, PT, R> Xor<?, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Function<? super ST, R> mapper,
-                                                           final Monoid<R> reducer) {
+                                                                             final Monoid<R> reducer) {
         return sequenceFailures(xors).map(s -> s.map(mapper)
                 .reduce(reducer));
     }
@@ -297,11 +237,11 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * {@code
      *
      * Try<Integer,NoSuchElementException> just  = Try.success(10);
-       Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+    Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
 
 
      * Xor<ListX<String>,ListX<Integer>> xors =Try.sequenceSuccess(ListX.of(just,none,Try.success(1)));
-      //Primary(ListX.of(10,1)));
+    //Primary(ListX.of(10,1)));
      *
      * }</pre>
      *
@@ -319,10 +259,10 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * <pre>
      * {@code
      *  Try<Integer,NoSuchElementException> just  = Try.success(10);
-        Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+    Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
 
      *  Try<PersistentSetX<Integer>,Throwable> xors =Try.accumulateSuccesses(ListX.of(just,none,Try.success(1)),Reducers.toPersistentSetX());
-        //Primary[PersistentSetX[10,1]]
+    //Primary[PersistentSetX[10,1]]
      * }
      * </pre>
      * @param Trys Collection of Iors to accumulate success values
@@ -341,10 +281,10 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * <pre>
      * {@code
      *  Try<Integer,NoSuchElementException> just  = Try.success(10);
-        Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+    Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
 
      *  Xor<?,String> iors = Try.accumulateSuccesses(ListX.of(just,none,Try.success(1)),i->""+i,Monoids.stringConcat);
-       //Primary["101"]
+    //Primary["101"]
      * }
      * </pre>
      *
@@ -355,7 +295,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * @return Try populated with the accumulate success operation
      */
     public static <ST extends Throwable, PT, R> Xor<?, R> accumulateSuccesses(final CollectionX<Try<PT,ST>> xors, final Function<? super PT, R> mapper,
-                                                            final Monoid<R> reducer) {
+                                                                              final Monoid<R> reducer) {
         return sequenceSuccess(xors).map(s -> s.map(mapper)
                 .reduce(reducer));
     }
@@ -366,10 +306,10 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * <pre>
      * {@code
      *  Try<Integer,NoSuchElementException> just  = Try.success(10);
-        Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+    Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
      *
      *  Try<?,Integer> xors = Try.accumulateSuccesses(Monoids.intSum,ListX.of(just,none,Try.success(1)));
-       //Primary[11]
+    //Primary[11]
      *
      * }
      * </pre>
@@ -390,7 +330,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * {@code
      * Try.accumulateFailures(ListX.of(Try.failure(new NoSuchElementException());,
      * Try.failure(new NoSuchElementException());
-       Try.success("success")),Semigroups.stringConcat)
+    Try.success("success")),Semigroups.stringConcat)
 
      * //Primary[NoSuchElementException, NoSuchElementException]
      * }
@@ -421,9 +361,9 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
 
-        Try<Integer,Throwable> attempt = Try.fromPublisher(reactiveStream, RuntimeException.class);
+    Try<Integer,Throwable> attempt = Try.fromPublisher(reactiveStream, RuntimeException.class);
 
-        //Try[1]
+    //Try[1]
      *
      * }
      * </pre>
@@ -453,9 +393,9 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
 
-        Try<Integer,Throwable> attempt = Try.fromPublisher(reactiveStream);
+    Try<Integer,Throwable> attempt = Try.fromPublisher(reactiveStream);
 
-        //Try[1]
+    //Try[1]
      *
      * }
      * </pre>
@@ -475,9 +415,9 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
 
-        Try<Integer,Throwable> attempt = Try.fromIterable(reactiveStream);
+    Try<Integer,Throwable> attempt = Try.fromIterable(reactiveStream);
 
-        //Try[1]
+    //Try[1]
      *
      * }
      * </pre>
@@ -491,57 +431,57 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
 
     @Override
     public <R> Try<R,X> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (Try<R,X>)Maybe.super.zipWith(fn);
+        return (Try<R,X>)MonadicValue.super.zipWith(fn);
     }
 
     @Override
     public <R> Try<R,X> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (Try<R,X>)Maybe.super.zipWithS(fn);
+        return (Try<R,X>)MonadicValue.super.zipWithS(fn);
     }
 
     @Override
     public <R> Try<R,X> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (Try<R,X>)Maybe.super.zipWithP(fn);
+        return (Try<R,X>)MonadicValue.super.zipWithP(fn);
     }
 
     @Override
     public <R> Try<R,X> retry(final Function<? super T, ? extends R> fn) {
-        return (Try)Maybe.super.retry(fn);
+        return (Try<R,X>)MonadicValue.super.retry(fn);
     }
 
     @Override
     public <U> Try<Tuple2<T, U>,X> zipP(final Publisher<? extends U> other) {
-        return (Try)Maybe.super.zipP(other);
+        return (Try)MonadicValue.super.zipP(other);
     }
 
     @Override
     public <R> Try<R,X> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (Try)Maybe.super.retry(fn,retries,delay,timeUnit);
+        return (Try<R,X>)MonadicValue.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override
     public <S, U> Try<Tuple3<T, S, U>,X> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-        return (Try)Maybe.super.zip3(second,third);
+        return (Try)MonadicValue.super.zip3(second,third);
     }
 
     @Override
     public <S, U, R> Try<R,X> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (Try)Maybe.super.zip3(second,third,fn3);
+        return (Try<R,X>)MonadicValue.super.zip3(second,third,fn3);
     }
 
     @Override
     public <T2, T3, T4> Try<Tuple4<T, T2, T3, T4>,X> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
-        return (Try)Maybe.super.zip4(second,third,fourth);
+        return (Try)MonadicValue.super.zip4(second,third,fourth);
     }
 
     @Override
     public <T2, T3, T4, R> Try<R,X> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (Try)Maybe.super.zip4(second,third,fourth,fn);
+        return (Try<R,X>)MonadicValue.super.zip4(second,third,fourth,fn);
     }
 
     @Override
     public <R> Try<R,X> flatMapS(final Function<? super T, ? extends Stream<? extends R>> mapper) {
-        return (Try)Maybe.super.flatMapS(mapper);
+        return (Try<R,X>)MonadicValue.super.flatMapS(mapper);
     }
 
     /* (non-Javadoc)
@@ -549,10 +489,10 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     @Override
     public <T2, R1, R2, R3, R> Try<R,X> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        return (Try)Maybe.super.forEach4(value1, value2, value3, yieldingFunction);
+                                                 BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+                                                 Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                 Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return (Try<R,X>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -560,12 +500,12 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     @Override
     public <T2, R1, R2, R3, R> Try<R,X> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                 BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+                                                 Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                 Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                 Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
-        return (Try)Maybe.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
+        return (Try<R,X>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -573,10 +513,10 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     @Override
     public <T2, R1, R2, R> Try<R,X> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+                                             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-        return (Try)Maybe.super.forEach3(value1, value2, yieldingFunction);
+        return (Try<R,X>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -584,11 +524,11 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     @Override
     public <T2, R1, R2, R> Try<R,X> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+                                             Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-        return (Try)Maybe.super.forEach3(value1, value2, filterFunction, yieldingFunction);
+        return (Try<R,X>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -596,9 +536,9 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     @Override
     public <R1, R> Try<R,X> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+                                     BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
-        return (Try)Maybe.super.forEach2(value1, yieldingFunction);
+        return (Try<R,X>)MonadicValue.super.forEach2(value1, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -606,9 +546,9 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     @Override
     public <R1, R> Try<R,X> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, Boolean> filterFunction,
-            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        return (Try)Maybe.super.forEach2(value1, filterFunction, yieldingFunction);
+                                     BiFunction<? super T, ? super R1, Boolean> filterFunction,
+                                     BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        return (Try<R,X>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
@@ -652,7 +592,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     @Override
     public <R> Try<R, X> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
         return mapper.andThen(r -> unit(r))
-                     .apply(this);
+                .apply(this);
     }
 
     //cojoin
@@ -676,12 +616,12 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      *  Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
      *
      *
-        assertThat(just.combine(add,none),equalTo(Try.success(10)));
-        assertThat(none.combine(add,just),equalTo(Try.success(0)));
-        assertThat(none.combine(add,none),equalTo(Try.success(0)));
-        assertThat(just.combine(add,Try.success(10)),equalTo(Try.success(20)));
-        Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-        assertThat(just.combine(firstNonNull,Try.success(null)),equalTo(just));
+    assertThat(just.combine(add,none),equalTo(Try.success(10)));
+    assertThat(none.combine(add,just),equalTo(Try.success(0)));
+    assertThat(none.combine(add,none),equalTo(Try.success(0)));
+    assertThat(just.combine(add,Try.success(10)),equalTo(Try.success(20)));
+    Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+    assertThat(just.combine(firstNonNull,Try.success(null)),equalTo(just));
 
      * }
      * </pre>
@@ -693,7 +633,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     public Try<T, X> combine(final Monoid<T> monoid, final Try<? extends T, X> v2) {
         return unit(this.forEach2( t1 -> v2, (t1, t2) -> monoid
-                                                            .apply(t1, t2)).orElseGet(() -> this.orElseGet(() -> monoid.zero())));
+                .apply(t1, t2)).orElseGet(() -> this.orElseGet(() -> monoid.zero())));
     }
 
 
@@ -702,7 +642,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     @Override
     public Try<T,X> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (Try<T,X>)Maybe.super.zip(combiner, app);
+        return (Try<T,X>)MonadicValue.super.zip(combiner, app);
     }
 
     /* (non-Javadoc)
@@ -710,7 +650,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     @Override
     public <U> Try<U, X> cast(final Class<? extends U> type) {
-        return (Try) Maybe.super.cast(type);
+        return (Try<U, X>) MonadicValue.super.cast(type);
     }
 
     /* (non-Javadoc)
@@ -718,7 +658,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     @Override
     public <R> Try<R, X> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Try) Maybe.super.trampoline(mapper);
+        return (Try<R, X>) MonadicValue.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)
@@ -727,7 +667,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     @Override
     public <U> Maybe<U> ofType(final Class<? extends U> type) {
 
-        return (Maybe<U>) Maybe.super.ofType(type);
+        return (Maybe<U>) MonadicValue.super.ofType(type);
     }
 
     /* (non-Javadoc)
@@ -736,7 +676,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     @Override
     public Maybe<T> filterNot(final Predicate<? super T> fn) {
 
-        return (Maybe<T>) Maybe.super.filterNot(fn);
+        return (Maybe<T>) MonadicValue.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
@@ -745,7 +685,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     @Override
     public Maybe<T> notNull() {
 
-        return (Maybe<T>) Maybe.super.notNull();
+        return (Maybe<T>) MonadicValue.super.notNull();
     }
 
     /**
@@ -761,7 +701,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     public static <T, X extends Throwable> Try<T, X> failure(final X error) {
         return new Try<>(Xor.secondary(
-                             error),new Class[0]);
+                error),new Class[0]);
     }
 
     /**
@@ -778,7 +718,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     public static <T, X extends Throwable> Try<T, X> success(final T value) {
         return new Try<>(Xor.primary(
-                             value),new Class[0]);
+                value),new Class[0]);
     }
     public static <T, X extends Throwable> Try<T, X> success(final T value,final Class<? extends Throwable>... classes) {
         return new Try<>(Xor.primary(
@@ -793,7 +733,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
             return Xor.primary(get());
         else
             return Xor.<X, T> secondary(this.toFailedOptional()
-                                            .get());
+                    .get());
     }
 
     /* (non-Javadoc)
@@ -830,12 +770,8 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     /**
      * @return This monad, wrapped as AnyM of Success
      */
-    public AnyMValue2<tryType,X,T> anyM2(){
+    public AnyMValue2<tryType,X,T> anyM(){
         return AnyM.fromTry(this);
-    }
-
-    public AnyMValue<maybe,T> anyM(){
-        return AnyM.fromMaybe(this);
     }
 
 
@@ -918,7 +854,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     public Try<T, X> onFail(Class<? extends X> t, Consumer<X> consumer){
         return new Try<>(xor.secondaryPeek(error->{
             if (t.isAssignableFrom(error.getClass()))
-                 consumer.accept(error);
+                consumer.accept(error);
         }),classes);
     }
 
@@ -956,7 +892,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     public Try<T, X> recoverFor(Class<? extends X> t, Function<? super X, ? extends T> fn){
         return new Try<T,X>(xor.secondaryToPrimayFlatMap(x->{
             if (t.isAssignableFrom(x.getClass()))
-                 return Xor.primary(fn.apply(x));
+                return Xor.primary(fn.apply(x));
             return xor;
         }),classes);
     }
@@ -1051,7 +987,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     @Override
     public Iterator<T> iterator() {
 
-        return Maybe.super.iterator();
+        return MonadicValue.super.iterator();
     }
 
 
@@ -1073,8 +1009,8 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
             if (classes.length == 0)
                 return Try.failure((X) t);
             val error = Stream.of(classes)
-                              .filter(c -> c.isAssignableFrom(t.getClass()))
-                              .findFirst();
+                    .filter(c -> c.isAssignableFrom(t.getClass()))
+                    .findFirst();
             if (error.isPresent())
                 return Try.failure((X) t);
             else
@@ -1103,8 +1039,8 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
             if (classes.length == 0)
                 return Try.failure((X) t);
             val error = Stream.of(classes)
-                              .filter(c -> c.isAssignableFrom(t.getClass()))
-                              .findFirst();
+                    .filter(c -> c.isAssignableFrom(t.getClass()))
+                    .findFirst();
             if (error.isPresent())
                 return Try.failure((X) t);
             else
@@ -1123,7 +1059,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     @SafeVarargs
     public static <X extends Throwable> Init<X> catchExceptions(final Class<? extends X>... classes) {
         return new MyInit<X>(
-                             (Class[]) classes);
+                (Class[]) classes);
     }
 
     @AllArgsConstructor
@@ -1138,7 +1074,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
         @Override
         public <V> TryCatch<V, X> init(final CheckedSupplier<V, X> input) {
             return new MyTryCatch(
-                                  classes, input);
+                    classes, input);
         }
 
         @Override
@@ -1161,13 +1097,13 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
         @Override
         public <T> AndFinally<T, V, X> tryThis(final CheckedFunction<V, T, X> catchBlock) {
             return new MyFinallyBlock<>(
-                                        classes, inputSupplier, catchBlock);
+                    classes, inputSupplier, catchBlock);
         }
 
         @Override
         public <T> Try<T, X> tryWithResources(final CheckedFunction<V, T, X> catchBlock) {
             return new MyFinallyBlock<>(
-                                        classes, inputSupplier, catchBlock).close();
+                    classes, inputSupplier, catchBlock).close();
         }
 
     }
@@ -1210,10 +1146,10 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
         private void _invokeClose(final Object in) {
 
             Try.withCatch(() -> in.getClass()
-                                  .getMethod("close"))
-               .filter(m -> m != null)
-               .flatMap(m -> Try.withCatch(() -> m.invoke(in))
-                                .filter(o -> o != null));
+                    .getMethod("close"))
+                    .filter(m -> m != null)
+                    .flatMap(m -> Try.withCatch(() -> m.invoke(in))
+                            .filter(o -> o != null));
 
         }
 
@@ -1334,8 +1270,8 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
          * Create a finally block that auto-closes any Closeables specified during init
          *  including those inside an Iterable
          *
-        * @return New Try capturing return data or Exception
-        */
+         * @return New Try capturing return data or Exception
+         */
         Try<T, X> close();
     }
 
@@ -1371,7 +1307,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
      */
     @Override
     public <T2, R> Try<R, X> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (Try) Maybe.super.combine(app, fn);
+        return (Try<R, X>) MonadicValue.super.combine(app, fn);
     }
 
     /**
@@ -1391,7 +1327,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     /**
      * Equivalent to ap, but accepts a Publisher and takes the takeOne value
      * only from that publisher.
-     * 
+     *
      * @param app
      * @param fn
      * @return
@@ -1409,7 +1345,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     @Override
     public <U, R> Try<R, X> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (Try) Maybe.super.zipS(other, zipper);
+        return (Try<R, X>) MonadicValue.super.zipS(other, zipper);
     }
 
     /* (non-Javadoc)
@@ -1418,7 +1354,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     @Override
     public <U> Try<Tuple2<T, U>, X> zipS(final Stream<? extends U> other) {
 
-        return (Try) Maybe.super.zipS(other);
+        return (Try) MonadicValue.super.zipS(other);
     }
 
 
@@ -1429,7 +1365,7 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
     @Override
     public <U> Try<Tuple2<T, U>, X> zip(final Iterable<? extends U> other) {
 
-        return (Try) Maybe.super.zip(other);
+        return (Try) MonadicValue.super.zip(other);
     }
 
     private <R> R safeApply(T in,final Function<? super T,? extends R> s) {
@@ -1450,5 +1386,27 @@ public class Try<T, X extends Throwable> implements   Maybe<T>,
             return findFirst.get();
         ExceptionSoftener.throwSoftenedException(t);
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return xor.visit(s->"Failure["+s.toString()+"]",p->"Success["+p.toString()+"]");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Try<?, ?> aTry = (Try<?, ?>) o;
+
+        if (!xor.equals(aTry.xor)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return xor.hashCode();
     }
 }

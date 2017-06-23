@@ -5,7 +5,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Reader;
 import cyclops.control.Trampoline;
 import cyclops.function.*;
-import cyclops.monads.AnyM2;
+import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 
 import java.util.function.*;
@@ -23,7 +23,7 @@ import java.util.function.*;
 public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<W,T,R>>,
         Transformable<R>, Fn1<T,R> {
 
-    private final AnyM2<W,T,Reader<T,R>> run;
+    private final AnyM<W,Reader<T,R>> run;
 
 
 
@@ -33,15 +33,15 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
      * @return The wrapped AnyM
      */
 
-    public AnyM2<W,T,Reader<T,R>> unwrap() {
+    public AnyM<W,Reader<T,R>> unwrap() {
         return run;
     }
 
-    public <R2> R2 unwrapTo(Function<? super AnyM2<W,T,Reader<T,R>>, ? extends R2> fn) {
-        return unwrap().to2(fn);
+    public <R2> R2 unwrapTo(Function<? super AnyM<W,Reader<T,R>>, ? extends R2> fn) {
+        return unwrap().to(fn);
     }
 
-    private ReaderT(final AnyM2<W,T,Reader<T,R>> run) {
+    private ReaderT(final AnyM<W,Reader<T,R>> run) {
         this.run = run;
     }
 
@@ -117,7 +117,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
      * @param monads AnyM that contains a monad wrapping an Future
      * @return FutureWT
      */
-    public static <W extends WitnessType<W>,T,R> ReaderT<W,T,R> of(final AnyM2<W,T,Reader<T,R>> monads) {
+    public static <W extends WitnessType<W>,T,R> ReaderT<W,T,R> of(final AnyM<W,Reader<T,R>> monads) {
         return new ReaderT<>(
                                  monads);
     }

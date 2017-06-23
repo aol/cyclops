@@ -41,7 +41,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapList(){
-        for(int i=0;i<100000;i++){
+        for(int i=0;i<100_000;i++){
             System.out.println("Iteration " + i);
             List<Integer> list = flux(1)
                     .flatMapP(in -> of(1, 2, 3))

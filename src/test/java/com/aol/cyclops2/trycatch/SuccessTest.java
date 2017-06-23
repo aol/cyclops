@@ -107,12 +107,12 @@ public class SuccessTest {
 	public void testFlatten() {
 		
 		assertThat(Try.<Try<Integer,FileNotFoundException>,FileNotFoundException>success(success)
-				      .transform(Try::flatten),equalTo(success));
+				      .to(Try::flatten),equalTo(success));
 	}
 	@Test
 	public void testFlattenFailure() {
 		FileNotFoundException error = new FileNotFoundException();
-		assertThat(Try.<Try<Integer,FileNotFoundException>,FileNotFoundException>success(Try.failure(error)).transform(Try::flatten),equalTo(Try.failure(error)));
+		assertThat(Try.<Try<Integer,FileNotFoundException>,FileNotFoundException>success(Try.failure(error)).to(Try::flatten),equalTo(Try.failure(error)));
 	}
 
 	@Test

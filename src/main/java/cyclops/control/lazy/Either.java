@@ -1738,7 +1738,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                 return ((Lazy)obj).equals(this);
             }
             if(obj instanceof Primary){
-                return value.equals(((Primary)obj).get());
+                return value.get().equals(((Primary)obj).get());
             }
             if (getClass() != obj.getClass())
                 return false;

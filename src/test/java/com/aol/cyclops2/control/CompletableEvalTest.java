@@ -263,7 +263,7 @@ public class CompletableEvalTest {
 
 	@Test
 	public void testToTryClassOfXArray() {
-		assertTrue(none.toTry(Throwable.class).isSuccess());
+		assertFalse(none.toTry(Throwable.class).isSuccess());
 	}
 
 	@Test
