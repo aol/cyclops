@@ -841,6 +841,10 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         Objects.requireNonNull(trySomething);
         return fromTry(Try.success(trySomething));
     }
+    public static <T, X extends Throwable> AnyMValue2<tryType,X,T> success(final T trySomething,final Class<? extends Throwable>... classes) {
+        Objects.requireNonNull(trySomething);
+        return fromTry(Try.success(trySomething,classes));
+    }
     public static <T, X extends Throwable> AnyMValue2<tryType,X,T> failure(final X trySomething) {
         Objects.requireNonNull(trySomething);
         return fromTry(Try.failure(trySomething));

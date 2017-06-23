@@ -33,7 +33,7 @@ public class TryTest {
 	@Test
 	public void ongoing(){
 
-	    assertTrue(Try.of(2, RuntimeException.class)
+	    assertTrue(Try.success(2, RuntimeException.class)
 	       .map(i->{throw new RuntimeException();}).isFailure());
 	       
 	}

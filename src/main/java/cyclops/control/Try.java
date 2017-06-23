@@ -32,6 +32,7 @@ import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import lombok.*;
+import lombok.experimental.Wither;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -145,12 +146,14 @@ import com.aol.cyclops2.util.ExceptionSoftener;
  * @param <X> Base Error type
  */
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
+
 public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                                                       Recoverable<X,T>,
                                                       MonadicValue<T>{
 
-
+    @Wither
     final Xor<X,T> xor;
+    private final Class<? extends Throwable>[] classes;
 
     public Xor<X,T> asXor(){
         return xor;
@@ -350,7 +353,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
     public static <T, X extends Throwable> Try<T, X> fromXor(final Xor<X,T> pub) {
-        return new Try<>(pub);
+        return new Try<>(pub,new Class[0]);
     }
     /**
      * Construct a Try  that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher, will catch any Exceptions
@@ -381,7 +384,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                 return (X) t;
             else
                 throw ExceptionSoftener.throwSoftenedException(t);
-        }));
+        }),classes);
     }
 
     /**
@@ -402,7 +405,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return Try populated with takeOne value from Publisher
      */
     public static <T> Try<T, Throwable> fromPublisher(final Publisher<T> pub) {
-        return new Try<>(Either.fromPublisher(pub));
+        return new Try<>(Either.fromPublisher(pub),new Class[0]);
     }
 
 
@@ -424,7 +427,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return Try populated with takeOne value from Iterable
      */
     public static <T, X extends Throwable> Try<T, X> fromIterable(final Iterable<T> iterable) {
-        return new Try<>(Either.fromIterable(iterable));
+        return new Try<>(Either.fromIterable(iterable), new Class[0]);
     }
 
     @Override
@@ -699,7 +702,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      */
     public static <T, X extends Throwable> Try<T, X> failure(final X error) {
         return new Try<>(Xor.secondary(
-                             error));
+                             error),new Class[0]);
     }
 
     /**
@@ -714,10 +717,13 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param value Successful value
      * @return new Success with value
      */
-
     public static <T, X extends Throwable> Try<T, X> success(final T value) {
         return new Try<>(Xor.primary(
-                             value));
+                             value),new Class[0]);
+    }
+    public static <T, X extends Throwable> Try<T, X> success(final T value,final Class<? extends Throwable>... classes) {
+        return new Try<>(Xor.primary(
+                value),classes);
     }
 
     /**
@@ -812,7 +818,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
     @Override
     public <R> Try<R, X> map(Function<? super T, ? extends R> fn){
-        return new Try<>(xor).map(fn);
+        return new Try<>(xor.map(i->safeApply(i, fn)),classes);
     }
 
     /**
@@ -820,7 +826,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return Try returned from FlatMap fn
      */
     public <R> Try<R, X> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> fn){
-        return new Try<>(xor.flatMap(fn));
+        return new Try<>(xor.flatMap(i->safeApply(i, fn)),classes);
     }
 
     /**
@@ -838,7 +844,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return this
      */
     public Try<T, X> onFail(Consumer<? super X> consumer){
-        return new Try<>(xor.secondaryPeek(consumer));
+        return new Try<>(xor.secondaryPeek(consumer),classes);
     }
 
     /**
@@ -850,7 +856,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return new Try<>(xor.secondaryPeek(error->{
             if (t.isAssignableFrom(error.getClass()))
                  consumer.accept(error);
-        }));
+        }),classes);
     }
 
     /**
@@ -858,7 +864,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return new Try
      */
     public Try<T, X> recover(Function<? super X, ? extends T> fn){
-        return new Try<>(xor.secondaryToPrimayMap(fn));
+        return new Try<>(xor.secondaryToPrimayMap(fn),classes);
     }
 
     /**
@@ -868,14 +874,14 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return Success from recovery function
      */
     public Try<T, X> recoverFlatMap(Function<? super X, ? extends Try<T, X>> fn){
-        return new Try<>(xor.secondaryToPrimayFlatMap(fn.andThen(t->t.xor)));
+        return new Try<>(xor.secondaryToPrimayFlatMap(fn.andThen(t->t.xor)),classes);
     }
     public Try<T, X> recoverFlatMapFor(Class<? extends X> t,Function<? super X, ? extends Try<T, X>> fn){
         return new Try<T,X>(xor.secondaryToPrimayFlatMap(x->{
             if (t.isAssignableFrom(x.getClass()))
                 return fn.apply(x).xor;
             return xor;
-        }));
+        }),classes);
     }
 
     /**
@@ -889,7 +895,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
             if (t.isAssignableFrom(x.getClass()))
                  return Xor.primary(fn.apply(x));
             return xor;
-        }));
+        }),classes);
     }
 
 
@@ -1316,7 +1322,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     @Override
     public <T2, R> Try<R, X> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return new Try<R, X>(xor.zip(app, fn));
+        return new Try<R, X>(xor.zip(app, fn),classes);
     }
 
     /**
@@ -1329,7 +1335,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      */
     @Override
     public <T2, R> Try<R, X> zipP( final Publisher<? extends T2> app,final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return new Try<R, X>(xor.zipP(app, fn));
+        return new Try<R, X>(xor.zipP(app, fn),classes);
     }
 
 
@@ -1363,4 +1369,23 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return (Try) MonadicValue.super.zip(other);
     }
 
+    private <R> R safeApply(T in,final Function<? super T,? extends R> s) {
+        try {
+            return s.apply(in);
+        } catch (final Throwable t) {
+            return (R) Try.failure(orThrow(Stream.of(classes)
+                            .filter(c -> c.isAssignableFrom(t.getClass()))
+                            .map(c -> t)
+                            .findFirst(),
+                    t));
+
+        }
+    }
+
+    private Throwable orThrow(final Optional<Throwable> findFirst, final Throwable t) {
+        if (findFirst.isPresent())
+            return findFirst.get();
+        ExceptionSoftener.throwSoftenedException(t);
+        return null;
+    }
 }
