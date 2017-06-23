@@ -24,7 +24,9 @@ public class LiftTest {
 	public void testLift(){
 		AnyMFn2<tryType,Integer,Integer,Integer> add =	AnyM.liftF2(this::add);
 		
-		AnyM<tryType,Integer> result = add.apply(Try.of(2, RuntimeException.class).anyM(), Try.of(3,RuntimeException.class).anyM());
+		AnyM<tryType,Integer> result = add.apply(Try.success(2)
+								                    .anyM(), Try.success(3)
+                                                                .anyM());
 		assertThat(result.<Try<Integer,RuntimeException>>unwrap().get(),equalTo(5));
 	}
 	

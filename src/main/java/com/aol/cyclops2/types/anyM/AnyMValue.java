@@ -366,5 +366,38 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
 
-    
+    @Override
+    default <T2, R1, R2, R3, R> AnyMValue<W,R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2, final Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3, final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return (AnyMValue<W,R>)MonadicValue.super.forEach4(value1,value2,value3,yieldingFunction);
+    }
+
+    @Override
+    default <T2, R1, R2, R3, R> AnyMValue<W,R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2, final Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3, final Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction, final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return (AnyMValue<W,R>)MonadicValue.super.forEach4(value1,value2,value3,filterFunction,yieldingFunction);
+    }
+
+    @Override
+    default <T2, R1, R2, R> AnyMValue<W,R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2, final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        return (AnyMValue<W,R>)MonadicValue.super.forEach3(value1,value2,yieldingFunction);
+    }
+
+    @Override
+    default <T2, R1, R2, R> AnyMValue<W,R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2, final Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction, final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        return (AnyMValue<W,R>)MonadicValue.super.forEach3(value1,value2,filterFunction,yieldingFunction);
+    }
+
+    @Override
+    default <R1, R> AnyMValue<W,R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        return (AnyMValue<W,R>)MonadicValue.super.forEach2(value1,yieldingFunction);
+    }
+
+    @Override
+    default <R1, R> AnyMValue<W,R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, Boolean> filterFunction, final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        return (AnyMValue<W,R>)MonadicValue.super.forEach2(value1,filterFunction,yieldingFunction);
+    }
+
+    @Override
+    default AnyMValue<W,T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
+        return (AnyMValue<W,T>)MonadicValue.super.combineEager(monoid,v2);
+    }
 }

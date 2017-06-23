@@ -256,7 +256,9 @@ public class  ConvertableSequence<T> implements ToStream<T> {
      *
      * <pre>
      * {@code
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5).peek(System.out::println).lazyCollectionSynchronized();
+     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
+     *                                       .peek(System.out::println)
+     *                                       .lazyCollectionSynchronized();
      *
      *  col.forEach(System.out::println);
      * }

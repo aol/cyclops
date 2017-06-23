@@ -40,7 +40,7 @@ public interface Fn0< R> extends Function0<R>{
     }
 
     default Fn0<Future<R>> lift(Executor ex){
-       return ()-> Future.ofSupplier(()->apply(),ex);
+       return ()-> Future.of(()->apply(),ex);
     }
     default Fn0<   Try<R,Throwable>> liftTry(){
        return ()->  Try.withCatch(()->apply(),Throwable.class);

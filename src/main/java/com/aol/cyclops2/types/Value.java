@@ -34,7 +34,7 @@ import lombok.AllArgsConstructor;
  * @param <T> Data type of element in this value
  */
 @FunctionalInterface
-public interface Value<T> extends Folds<T>,
+public interface Value<T> extends //Folds<T>,
                                     Convertable<T>,
                                     Publisher<T>,
                                     Predicate<T> {
@@ -155,9 +155,10 @@ public interface Value<T> extends Folds<T>,
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.foldable.Folds#reactiveStream()
      */
-    @Override
+ //   @Override
     default ReactiveSeq<T> stream() {
-        return ReactiveSeq.of(Try.withCatch(() -> get(), NoSuchElementException.class))
+        return ReactiveSeq.generate(()->Try.withCatch(() -> get(), NoSuchElementException.class))
+                          .take(1)
                           .filter(Try::isSuccess)
                           .map(Try::get);
     }
@@ -203,6 +204,9 @@ public interface Value<T> extends Folds<T>,
         final Optional<T> o = toOptional();
         return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(secondary);
     }
+    default  Either<Throwable, T> toEither() {
+       return Either.fromPublisher(this);
+    }
 
     /**
      * Lazily convert this Value to an Either.right instance
@@ -222,7 +226,7 @@ public interface Value<T> extends Folds<T>,
      * @return Try that has the same value as this Value or the provided Exception
      */
     default <X extends Throwable> Try<T, X> toTry(final X throwable) {
-        return toXor().visit(secondary -> Try.failure(throwable), primary -> Try.success(primary));
+        return Try.fromXor(toTry().asXor().secondaryMap(t->throwable));
 
     }
 
@@ -240,7 +244,7 @@ public interface Value<T> extends Folds<T>,
      * @return This Value to converted to a Try.
      */
     default <X extends Throwable> Try<T, X> toTry(final Class<X>... classes) {
-        return Try.withCatch(() -> get(), classes);
+        return Try.fromPublisher(this,classes);
     }
 
 
@@ -256,7 +260,9 @@ public interface Value<T> extends Folds<T>,
     }
 
 
-
+    default Eval<T> toEval() {
+        return Eval.fromPublisher(this);
+    }
     /**
      * Return the value, evaluated right now.
      * @return value evaluated from this object.
@@ -281,11 +287,15 @@ public interface Value<T> extends Folds<T>,
         return Eval.always(this);
     }
 
+    default Maybe<T> toMaybe() {
+        return Maybe.fromPublisher(this);
+    }
+
     /**
      * Returns a function result or a supplier result. The takeOne one if the function isn't null and the second one if it is.
      * @return new Maybe with the result of a function or supplier.
      */
-    default Maybe<T> toMaybe() {
+    default Maybe<T> toMaybeEager() {
         return visit(p -> Maybe.ofNullable(p), () -> Maybe.none());
     }
 

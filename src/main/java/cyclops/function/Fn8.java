@@ -88,7 +88,7 @@ public interface Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> extends Fn1<T1, Fn1<T2, 
     }
     default Fn8<T1, T2, T3, T4, T5, T6, T7,T8,Future<R>> lift8(Executor ex) {
 
-        return (s1, s2, s3, s4, s5,s6,s7,s8) -> Future.ofSupplier(() -> apply(s1, s2, s3, s4, s5,s6,s7,s8), ex);
+        return (s1, s2, s3, s4, s5,s6,s7,s8) -> Future.of(() -> apply(s1, s2, s3, s4, s5,s6,s7,s8), ex);
     }
 
     default Fn8<T1, T2, T3, T4, T5, T6, T7, T8,Try<R, Throwable>> liftTry8() {

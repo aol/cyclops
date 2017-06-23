@@ -36,7 +36,7 @@ public interface Fn3<S1, S2, S3, R> extends Fn1<S1,Fn1<S2,Fn1<S3,R>>> {
     }
     default Fn3<S1, S2, S3, Future<R>> lift3(Executor ex){
         Fn3<S1, S2, S3, R> host = this;
-       return (s1,s2,s3)-> Future.ofSupplier(()->host.apply(s1,s2,s3),ex);
+       return (s1,s2,s3)-> Future.of(()->host.apply(s1,s2,s3),ex);
     }
     default Fn3<S1, S2, S3, Try<R,Throwable>> liftTry3(){
         Fn3<S1, S2, S3, R> host = this;

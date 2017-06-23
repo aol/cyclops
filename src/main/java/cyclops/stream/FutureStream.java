@@ -327,7 +327,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     default <R> Future<R> foldFuture(Function<? super FoldableTraversable<U>,? extends R> fn){
-        return Future.ofSupplier(()->fn.apply(this),getSimpleReact().getExecutor());
+        return Future.of(()->fn.apply(this),getSimpleReact().getExecutor());
     }
 
     default ReactiveStreamsTerminalFutureOperations<U> futureOperations(){

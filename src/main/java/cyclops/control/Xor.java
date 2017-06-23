@@ -588,6 +588,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
         Xor<String,Integer> none = Xor.secondary("none");
 
      *  Xor<?,String> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.secondary("1")),i->""+i,Monoids.stringConcat);
+
         //Xor.primary("none1")
      *
      * }

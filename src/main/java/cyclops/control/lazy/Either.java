@@ -124,7 +124,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     }
 
     static <RT> Either<Throwable,RT> async( final Executor ex, final Supplier<RT> s){
-        return fromFuture(Future.ofSupplier(s,ex));
+        return fromFuture(Future.of(s,ex));
     }
     /**
      * Create a reactive CompletableEither

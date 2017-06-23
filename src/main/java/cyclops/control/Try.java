@@ -18,13 +18,18 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.Value;
+import com.aol.cyclops2.types.anyM.AnyMValue2;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.recoverable.Recoverable;
 import cyclops.async.Future;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.lazy.Either;
+import cyclops.function.*;
 import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import lombok.*;
 import org.jooq.lambda.tuple.Tuple;
@@ -33,13 +38,9 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import cyclops.function.Monoid;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.function.Curry;
-import cyclops.function.Fn4;
-import cyclops.function.Fn3;
 
 /**
  * Light weight Try Monad
@@ -155,8 +156,201 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return xor;
     }
 
+
+    /**
+     *  Turn a list of Trys into a single Try with Lists of values.
+     *  Primary and failure types are swapped during this operation.
+     *
+     * <pre>
+     * {@code
+     *  Try<Integer,NoSuchElementException> just  = Try.success(10);
+        Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+     *
+     *  Xor<ListX<Integer>,ListX<NoSuchElementException>> xors =Try.sequenceFailures(ListX.of(just,none,Try.success(1)));
+        //[Primary[NoSuchElementException]]
+     *
+     * }
+     * </pre>
+     *
+     *
+     * @param xors Trys to sequence
+     * @return Try sequenced and swapped
+     */
+    public static <ST extends Throwable, PT> Xor<ListX<PT>, ListX<ST>> sequenceFailures(final CollectionX<Try<PT,ST>> xors) {
+        return Xor.sequenceSecondary(xors.map(t->t.xor));
+    }
+    /**
+     * Accumulate the result of the Secondary types in the Collection of Trys provided using the supplied Reducer  {@see cyclops2.Reducers}.
+     *
+     * <pre>
+     * {@code
+     *  Try<Integer,NoSuchElementException>  just  = Try.success(10);
+      Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+
+     *  Xor<?,PersistentSetX<String>> xors = Try.accumulateFailures(ListX.of(just,none,Try.success(1)),Reducers.<String>toPersistentSetX());
+       //Primary[PersistentSetX[NoSuchElementException]]]
+     * }
+     * </pre>
+     * @param xors Collection of Iors to accumulate failure values
+     * @param reducer Reducer to accumulate results
+     * @return Try populated with the accumulate failure operation
+     */
+    public static <ST extends Throwable, PT, R> Xor<?, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Reducer<R> reducer) {
+        return sequenceFailures(xors).map(s -> s.mapReduce(reducer));
+    }
+    /**
+     * Accumulate the results only from those Trys which have a Secondary type present, using the supplied mapping function to
+     * convert the data from each Try before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }..
+     *
+     * <pre>
+     * {@code
+     *  Try<Integer,NoSuchElementException> just  = Try.success(10);
+        Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+
+     *   Xor<?,String> xors = Try.accumulateFailures(ListX.of(just,none,Try.failure("1")),i->""+i,Monoids.stringConcat);
+        //Primary[NoSuchElementException]]
+     *
+     * }
+     * </pre>
+     *
+     *
+     *
+     * @param xors Collection of Iors to accumulate failure values
+     * @param mapper Mapping function to be applied to the result of each Ior
+     * @param reducer Semigroup to combine values from each Ior
+     * @return Try populated with the accumulate Secondary operation
+     */
+    public static <ST extends Throwable, PT, R> Xor<?, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Function<? super ST, R> mapper,
+                                                           final Monoid<R> reducer) {
+        return sequenceFailures(xors).map(s -> s.map(mapper)
+                .reduce(reducer));
+    }
+
+
+    /**
+     *  Turn a toX of Trys into a single Ior with Lists of values.
+     *
+     * <pre>
+     * {@code
+     *
+     * Try<Integer,NoSuchElementException> just  = Try.success(10);
+       Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+
+
+     * Xor<ListX<String>,ListX<Integer>> xors =Try.sequenceSuccess(ListX.of(just,none,Try.success(1)));
+      //Primary(ListX.of(10,1)));
+     *
+     * }</pre>
+     *
+     *
+     *
+     * @param iors Trys to sequence
+     * @return Try Sequenced
+     */
+    public static <ST extends Throwable, PT> Xor<ListX<ST>, ListX<PT>> sequenceSuccess(final CollectionX<Try<PT,ST>> xors) {
+        return Xor.sequencePrimary(xors.map(t->t.xor));
+    }
+    /**
+     * Accumulate the result of the Primary types in the Collection of Trys provided using the supplied Reducer  {@see cyclops2.Reducers}.
+
+     * <pre>
+     * {@code
+     *  Try<Integer,NoSuchElementException> just  = Try.success(10);
+        Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+
+     *  Try<PersistentSetX<Integer>,Throwable> xors =Try.accumulateSuccesses(ListX.of(just,none,Try.success(1)),Reducers.toPersistentSetX());
+        //Primary[PersistentSetX[10,1]]
+     * }
+     * </pre>
+     * @param Trys Collection of Iors to accumulate success values
+     * @param reducer Reducer to accumulate results
+     * @return Try populated with the accumulate success operation
+     */
+    public static <ST extends Throwable, PT, R> Xor<?, R> accumulateSuccesses(final CollectionX<Try<PT,ST>> xors, final Reducer<R> reducer) {
+        return sequenceSuccess(xors).map(s -> s.mapReduce(reducer));
+    }
+
+    /**\
+     * Accumulate the results only from those Iors which have a Primary type present, using the supplied mapping function to
+     * convert the data from each Try before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }..
+     *
+     * <pre>
+     * {@code
+     *  Try<Integer,NoSuchElementException> just  = Try.success(10);
+        Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+
+     *  Xor<?,String> iors = Try.accumulateSuccesses(ListX.of(just,none,Try.success(1)),i->""+i,Monoids.stringConcat);
+       //Primary["101"]
+     * }
+     * </pre>
+     *
+     *
+     * @param xors Collection of Iors to accumulate success values
+     * @param mapper Mapping function to be applied to the result of each Ior
+     * @param reducer Reducer to accumulate results
+     * @return Try populated with the accumulate success operation
+     */
+    public static <ST extends Throwable, PT, R> Xor<?, R> accumulateSuccesses(final CollectionX<Try<PT,ST>> xors, final Function<? super PT, R> mapper,
+                                                            final Monoid<R> reducer) {
+        return sequenceSuccess(xors).map(s -> s.map(mapper)
+                .reduce(reducer));
+    }
+    /**
+     *  Accumulate the results only from those Trys which have a Primary type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
+     *
+     * <pre>
+     * {@code
+     *  Try<Integer,NoSuchElementException> just  = Try.success(10);
+        Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
+     *
+     *  Try<?,Integer> xors = Try.accumulateSuccesses(Monoids.intSum,ListX.of(just,none,Try.success(1)));
+       //Primary[11]
+     *
+     * }
+     * </pre>
+     *
+     * @param xors Collection of Trys to accumulate success values
+     * @param reducer  Reducer to accumulate results
+     * @return  Try populated with the accumulate success operation
+     */
+    public static <ST extends Throwable, PT> Xor<?, PT> accumulateSuccesses(final Monoid<PT> reducer,final CollectionX<Try<PT,ST>> xors) {
+        return sequenceSuccess(xors).map(s -> s.reduce(reducer));
+    }
+
+    /**
+     *
+     * Accumulate the results only from those Trys which have a Secondary type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
+     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
+     * <pre>
+     * {@code
+     * Try.accumulateFailures(ListX.of(Try.failure(new NoSuchElementException());,
+     * Try.failure(new NoSuchElementException());
+       Try.success("success")),Semigroups.stringConcat)
+
+     * //Primary[NoSuchElementException, NoSuchElementException]
+     * }
+     * </pre>
+
+     * @param xors Collection of Trys to accumulate failure values
+     * @param reducer  Semigroup to combine values from each Try
+     * @return Try populated with the accumulate Secondary operation
+     */
+    public static <ST extends Throwable, PT> Xor<?, ST> accumulateFailures(final Monoid<ST> reducer,final CollectionX<Try<PT,ST>> xors) {
+        return sequenceFailures(xors).map(s -> s.reduce(reducer));
+    }
+
+
+
     public Try<T,X> recover(Supplier<? extends T> s){
         return recover(t->s.get());
+    }
+
+
+    public static <T, X extends Throwable> Try<T, X> fromXor(final Xor<X,T> pub) {
+        return new Try<>(pub);
     }
     /**
      * Construct a Try  that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher, will catch any Exceptions
@@ -177,9 +371,17 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      */
     @SafeVarargs
     public static <T, X extends Throwable> Try<T, X> fromPublisher(final Publisher<T> pub, final Class<X>... classes) {
-        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
-        pub.subscribe(sub);
-        return sub.toTry(classes);
+        return new Try<T,X>(Either.fromPublisher(pub).<X>secondaryMap(t->{
+            if (classes.length == 0)
+                return (X) t;
+            val error = Stream.of(classes)
+                    .filter(c -> c.isAssignableFrom(t.getClass()))
+                    .findFirst();
+            if (error.isPresent())
+                return (X) t;
+            else
+                throw ExceptionSoftener.throwSoftenedException(t);
+        }));
     }
 
     /**
@@ -563,7 +765,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     /**
      * @return This monad, wrapped as AnyM of Success
      */
-    public AnyMValue<tryType,T> anyM(){
+    public AnyMValue2<tryType,X,T> anyM(){
         return AnyM.fromTry(this);
     }
 

@@ -188,7 +188,7 @@ public class Future<T> implements To<Future<T>>,
      * <pre>
      * {@code
      *
-     * Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.ofSupplier(()->1),Future.future(),Future.future());
+     * Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.of(()->1),Future.future(),Future.future());
 
 
         strings.get().size()
@@ -221,7 +221,7 @@ public class Future<T> implements To<Future<T>>,
      * <pre>
      * {@code
      *
-     * Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.ofSupplier(()->1),Future.future(),Future.future());
+     * Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.of(()->1),Future.future(),Future.future());
 
 
     strings.get().size()
@@ -253,7 +253,7 @@ public class Future<T> implements To<Future<T>>,
      * <pre>
      * {@code
      * Future<Integer> ft = Future.future();
-       Future<Integer> result = Future.firstSuccess(Future.ofSupplier(()->1),ft);
+       Future<Integer> result = Future.firstSuccess(Future.of(()->1),ft);
 
        ft.complete(10);
        result.get() //1
@@ -327,7 +327,7 @@ public class Future<T> implements To<Future<T>>,
      */
     public static <T> Future<T> fromIterable(final Iterable<T> iterable, final Executor ex) {
 
-        return Future.ofSupplier(() -> Eval.fromIterable(iterable))
+        return Future.of(() -> Eval.fromIterable(iterable))
                       .map(e -> e.get());
     }
 
@@ -420,7 +420,7 @@ public class Future<T> implements To<Future<T>>,
      * @return Future populated with lazy the value or error in provided Try
      */
     public static <T, X extends Throwable> Future<T> fromTry(final Try<T, X> value) {
-        return Future.ofSupplier(value);
+        return Future.of(value);
     }
 
     /**
@@ -1325,7 +1325,7 @@ public class Future<T> implements To<Future<T>>,
      *            Supplier to asynchronously populate results from
      * @return Future asynchronously populated from the Supplier
      */
-    public static <T> Future<T> ofSupplier(final Supplier<T> s) {
+    public static <T> Future<T> of(final Supplier<T> s) {
         return Future.of(CompletableFuture.supplyAsync(s));
     }
 
@@ -1339,11 +1339,11 @@ public class Future<T> implements To<Future<T>>,
      *            Executro to asynchronously populate results with
      * @return Future asynchronously populated from the Supplier
      */
-    public static <T> Future<T> ofSupplier(final Supplier<T> s, final Executor ex) {
+    public static <T> Future<T> of(final Supplier<T> s, final Executor ex) {
         return Future.of(CompletableFuture.supplyAsync(s, ex));
     }
     public static <T> Future<T> async(final Executor ex,final Supplier<T> s) {
-        return ofSupplier(s,ex);
+        return of(s,ex);
     }
 
 

@@ -54,10 +54,10 @@ public interface FoldableTraversable<T> extends Traversable<T>,
      */
     default <R> Future<R> foldFuture(Executor ex,Function<? super FoldableTraversable<T>,? extends R> fn){
 
-        return Future.ofSupplier(()->fn.apply(this),ex);
+        return Future.of(()->fn.apply(this),ex);
     }
     default Future<Void> runFuture(Executor ex, Consumer<? super FoldableTraversable<T>> fn){
-        return Future.ofSupplier(()-> { fn.accept(this); return null;},ex);
+        return Future.of(()-> { fn.accept(this); return null;},ex);
     }
 
     /**

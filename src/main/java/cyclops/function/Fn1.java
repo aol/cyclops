@@ -12,7 +12,6 @@ import cyclops.control.*;
 
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.function.FluentFunctions.Advice1;
 import cyclops.monads.function.AnyMFn1;
 
 import cyclops.monads.transformers.FutureT;
@@ -70,7 +69,7 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
        return (T1)-> Maybe.fromLazy(Eval.later(()-> Maybe.ofNullable(apply(T1))));
     }
     default Fn1<T1, Future<R>> lift(Executor ex){
-       return (T1)-> Future.ofSupplier(()->apply(T1),ex);
+       return (T1)-> Future.of(()->apply(T1),ex);
     }
     default Fn1<T1, Try<R,Throwable>> liftTry(){
        return (T1)->  Try.withCatch(()->apply(T1),Throwable.class);

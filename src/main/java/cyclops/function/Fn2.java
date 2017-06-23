@@ -43,7 +43,7 @@ public interface Fn2<T1, T2, R> extends BiFunction<T1,T2,R> {
     }
     default Fn2<T1, T2, Future<R>> lift(Executor ex){
         Fn2<T1, T2,  R> host = this;
-       return (T1,T2)-> Future.ofSupplier(()->host.apply(T1,T2),ex);
+       return (T1,T2)-> Future.of(()->host.apply(T1,T2),ex);
     }
     default Fn2<T1, T2,  Try<R,Throwable>> liftTry(){
         Fn2<T1, T2,  R> host = this;
