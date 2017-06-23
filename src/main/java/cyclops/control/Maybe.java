@@ -106,7 +106,7 @@ import java.util.stream.Stream;
  */
 public interface Maybe<T> extends To<Maybe<T>>,
                                   MonadicValue<T>,
-        Recoverable<Void,T>,
+                                  Recoverable<T>,
                                   Higher<Maybe.µ,T> {
 
     default <W extends WitnessType<W>> MaybeT<W, T> liftM(W witness) {
@@ -930,9 +930,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     boolean isPresent();
 
 
-    default Maybe<T> recover(Function<? super Void,? extends T> rec){
-        return recover(()->rec.apply(null));
-    }
+
     Maybe<T> recover(Supplier<? extends T> value);
 
     Maybe<T> recover(T value);

@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
 import com.aol.cyclops2.types.recoverable.Recoverable;
+import com.aol.cyclops2.types.recoverable.RecoverableFrom;
 import cyclops.companion.Monoids;
 import cyclops.collections.box.Mutable;
 import cyclops.control.*;
@@ -68,9 +69,9 @@ import java.util.stream.Stream;
 @EqualsAndHashCode
 public class Future<T> implements To<Future<T>>,
                                   MonadicValue<T>,
-        Completable<T>,
+                                  Completable<T>,
                                   Higher<Future.µ,T>,
-        Recoverable<Throwable,T> {
+                                  RecoverableFrom<Throwable,T> {
 
     public static class µ {
     }

@@ -78,7 +78,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     @Override
     default AnyMValue2<W,T2,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
         
-        return (AnyMValue2<W,T2,T>)AnyM2.super.zip(combiner, app);
+        return (AnyMValue2<W,T2,T>)AnyMValue.super.zip(combiner, app);
     }
 
 
@@ -202,7 +202,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     @Override
     default <U> AnyMValue2<W,T2,U> cast(final Class<? extends U> type) {
 
-        return (AnyMValue2<W,T2,U>) AnyM2.super.cast(type);
+        return (AnyMValue2<W,T2,U>) AnyMValue.super.cast(type);
     }
 
     /* (non-Javadoc)
@@ -211,7 +211,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     @Override
     default <R> AnyMValue2<W,T2,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (AnyMValue2<W,T2,R>) AnyM2.super.trampoline(mapper);
+        return (AnyMValue2<W,T2,R>) AnyMValue.super.trampoline(mapper);
     }
 
 
@@ -272,13 +272,13 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
      */
     @Override
     default AnyMValue<W,List<T>> aggregate(AnyM<W, T> next){
-        return (AnyMValue<W,List<T>>)AnyM2.super.aggregate(next);
+        return (AnyMValue<W,List<T>>)AnyMValue.super.aggregate(next);
     }
 
 
     @Override
     default <R> AnyMValue2<W,T2,R> flatMapA(Function<? super T, ? extends AnyM<W, ? extends R>> fn){
-        return  (AnyMValue2<W,T2,R>)AnyM2.super.flatMapA(fn);
+        return  (AnyMValue2<W,T2,R>)AnyMValue.super.flatMapA(fn);
 
     }
 
@@ -355,7 +355,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
         if (this.unwrap() instanceof Zippable) {
             return (AnyMValue2<W, T2,R>) adapter().unit(((Zippable) unwrap()).zip(app, fn));
         }
-        return (AnyMValue2<W,T2,R>) AnyM2.super.zip(app, fn);
+        return (AnyMValue2<W,T2,R>) AnyMValue.super.zip(app, fn);
     }
 
     /* (non-Javadoc)
@@ -366,7 +366,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
         if (this.unwrap() instanceof Zippable) {
             return (AnyMValue2<W, T2,R>) adapter().unit(((Zippable) unwrap()).zipP(app,fn));
         }
-        return (AnyMValue2<W,T2,R>) AnyM2.super.zipP(app,fn);
+        return (AnyMValue2<W,T2,R>) AnyMValue.super.zipP(app,fn);
     }
 
     
@@ -417,5 +417,5 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
         return (AnyMValue2<W,T2,T>)AnyMValue.super.combineEager(monoid,v2);
     }
 
-  
+
 }
