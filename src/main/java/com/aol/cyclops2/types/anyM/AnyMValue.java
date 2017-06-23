@@ -72,7 +72,10 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
         return (AnyMValue<W,T>)MonadicValue.super.zip(combiner, app);
     }
 
-
+    @Override
+    default int arity() {
+        return 1;
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
      */

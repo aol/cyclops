@@ -271,7 +271,8 @@ public class Eval2Test {
 
 	@Test
 	public void testToTryClassOfXArray() {
-		assertTrue(none.toTry(Throwable.class).isSuccess());
+		System.out.println(none.toTry(Throwable.class));
+		assertFalse(none.toTry(Throwable.class).isSuccess());
 	}
 
 	@Test

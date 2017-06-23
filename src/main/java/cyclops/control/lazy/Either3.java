@@ -487,6 +487,10 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
                            r->Xor.primary(r));
      }
 
+    @Override
+    default int arity() {
+        return 3;
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Filters#ofType(java.lang.Class)

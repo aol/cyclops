@@ -244,6 +244,10 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
         return new Primary<>(
                              value);
     }
+    @Override
+    default int arity() {
+        return 2;
+    }
 
     @Override
     default <R> Xor<ST,R> zipWith(Iterable<Function<? super PT, ? extends R>> fn) {
@@ -1344,5 +1348,6 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
         }
 
     }
+
 
 }

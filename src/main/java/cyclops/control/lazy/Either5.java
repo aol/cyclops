@@ -495,6 +495,10 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                             middle);
     }
     @Override
+    default int arity() {
+        return 5;
+    }
+    @Override
     default <R> Either5<LT1,LT2,LT3,LT4,R> zipWith(Iterable<Function<? super RT, ? extends R>> fn) {
         return (Either5<LT1,LT2,LT3,LT4,R>)MonadicValue.super.zipWith(fn);
     }

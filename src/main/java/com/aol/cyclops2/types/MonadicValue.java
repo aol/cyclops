@@ -26,6 +26,9 @@ import java.util.stream.Stream;
 public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Filters<T>, Zippable<T>{
 
 
+    default int arity(){
+        return 1;
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
      */

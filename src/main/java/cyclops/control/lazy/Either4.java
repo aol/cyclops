@@ -514,6 +514,10 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
         });
     }
+    @Override
+    default int arity() {
+        return 4;
+    }
     default < RT1> Either4<LT1, LT2, LT3,RT1> flatMapP(Function<? super RT, ? extends Publisher<? extends RT1>> mapper){
         return this.flatMap(a -> {
             final Publisher<? extends RT1> publisher = mapper.apply(a);

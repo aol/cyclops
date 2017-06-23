@@ -131,7 +131,7 @@ public interface Witness {
     public static <ST,T> Ior<ST,T> ior(AnyM<ior,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <X extends Throwable,T> Try<T,X> Try(AnyM<tryType,? extends T> anyM){
+    public static <X extends Throwable,T> Try<T,X> Try(AnyM2<tryType,X,? extends T> anyM){
         return anyM.unwrap();
     }
 

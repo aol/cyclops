@@ -1,6 +1,7 @@
 package com.aol.cyclops2.control.anym;
 
 import com.aol.cyclops2.Matchers;
+import com.aol.cyclops2.types.anyM.AnyMValue2;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import cyclops.control.*;
@@ -292,13 +293,25 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("AnyMValue[10]"));
-		assertThat(none.mkString(),equalTo("AnyMValue[]"));
+		if(just instanceof AnyMValue2)
+		    assertThat(just.mkString(),equalTo("AnyMValue2[10]"));
+		else
+            assertThat(just.mkString(),equalTo("AnyMValue[10]"));
+        if(none instanceof AnyMValue2)
+		    assertThat(none.mkString(),equalTo("AnyMValue2[]"));
+        else
+            assertThat(none.mkString(),equalTo("AnyMValue[]"));
 	}
 	@Test
     public void testToString() {
-        assertThat(just.toString(),equalTo("AnyMValue[10]"));
-        assertThat(none.toString(),equalTo("AnyMValue[]"));
+        if(just instanceof AnyMValue2)
+            assertThat(just.toString(),equalTo("AnyMValue2[10]"));
+        else
+            assertThat(just.mkString(),equalTo("AnyMValue[10]"));
+        if(none instanceof AnyMValue2)
+            assertThat(none.toString(),equalTo("AnyMValue2[]"));
+        else
+            assertThat(none.mkString(),equalTo("AnyMValue[]"));
     }
 	LazyReact react = new LazyReact();
 

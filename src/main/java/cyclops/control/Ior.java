@@ -225,6 +225,11 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     }
 
     @Override
+    default int arity() {
+        return 2;
+    }
+
+    @Override
     default <S, U> Ior<ST,Tuple3<PT, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
         return (Ior)MonadicValue.super.zip3(second,third);
     }

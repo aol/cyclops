@@ -250,7 +250,10 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     default AnyMValue2<W,T2,T> peek(Consumer<? super T> c){
         return (AnyMValue2<W,T2,T>)AnyM2.super.peek(c);
     }
-
+    @Override
+    default int arity() {
+        return 1;
+    }
 
     @Override
     default boolean isPresent() {

@@ -1389,6 +1389,10 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     @Override
+    public String mkString(){
+        return toString();
+    }
+    @Override
     public String toString() {
         return xor.visit(s->"Failure["+s.toString()+"]",p->"Success["+p.toString()+"]");
     }
@@ -1408,5 +1412,10 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     @Override
     public int hashCode() {
         return xor.hashCode();
+    }
+
+    @Override
+    public int arity() {
+        return 2;
     }
 }

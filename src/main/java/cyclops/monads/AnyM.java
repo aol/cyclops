@@ -885,6 +885,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
     public static <W extends Witness.MonadicValueWitness<W>,T> AnyMValue<W,T> fromMonadicValue(final MonadicValue<T> eval,W witness) {
         Objects.requireNonNull(eval);
+        if(eval.arity()==2)
+            return AnyMFactory.instance.value2(eval,witness);
         return AnyMFactory.instance.value(eval, witness);
 
     }
