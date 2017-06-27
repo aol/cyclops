@@ -372,7 +372,28 @@ public abstract class Unrestricted<T> {
         return resume().secondaryMap(decoder);
     }
 
+    public  <B> Unrestricted<Tuple2<T,B>> zip(Unrestricted<B> b){
 
+        Xor<Transformable<Unrestricted<T>>, T> first = resume();
+        Xor<Transformable<Unrestricted<B>>, B> second = b.resume();
+
+        if(first.isSecondary() && second.isSecondary()) {
+            return suspend(first.secondaryGet().map(a1->{
+               return suspend(second.secondaryGet().map(b1->a1.zip(b1)));
+            }));
+        }
+        if(first.isPrimary() && second.isPrimary()){
+            return done(Tuple.tuple(first.get(),second.get()));
+        }
+        if(first.isSecondary() && second.isPrimary()){
+            return suspend(first.secondaryGet().map(a1->a1.zip(b)));
+
+        }
+        if(first.isPrimary() && second.isSecondary()){
+            return suspend(second.secondaryGet().map(a1->done(first.get()).zip(b)));
+        }
+        return null;
+    }
 
     /*
      * Functor and HKT decoder for Free

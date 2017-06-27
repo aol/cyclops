@@ -2,6 +2,8 @@ package cyclops.typeclasses.free;
 
 import com.aol.cyclops2.hkt.Higher;
 
+import com.aol.cyclops2.types.functor.Transformable;
+import cyclops.control.Unrestricted;
 import cyclops.control.Xor;
 import cyclops.control.lazy.Either3;
 import cyclops.function.Fn3;
@@ -417,7 +419,28 @@ public abstract class Free<F, T> {
     public final <R> Xor<R, T> resume(final Functor<F> functor, Function<Higher<F,Free<F,T>>,R> decoder) {
         return resume(functor).secondaryMap(decoder);
     }
+    public  <B> Free<F,Tuple2<T,B>> zip(Functor<F> f,Free<F,B> b){
 
+        Xor<Higher<F, Free<F, T>>, T> first = resume(f);
+        Xor<Higher<F, Free<F, B>>, B> second = b.resume(f);
+
+        if(first.isSecondary() && second.isSecondary()) {
+            return suspend(f.mapRev(first.secondaryGet(),a1->{
+                return suspend(f.mapRev(second.secondaryGet(),b1->a1.zip(f,b1)));
+            }));
+        }
+        if(first.isPrimary() && second.isPrimary()){
+            return done(Tuple.tuple(first.get(),second.get()));
+        }
+        if(first.isSecondary() && second.isPrimary()){
+            return suspend(f.mapRev(first.secondaryGet(),a1->a1.zip(f,b)));
+
+        }
+        if(first.isPrimary() && second.isSecondary()){
+            return suspend(f.mapRev(second.secondaryGet(),a1->Free.<F,T>done(first.get()).zip(f,b)));
+        }
+        return null;
+    }
 
 
     /*

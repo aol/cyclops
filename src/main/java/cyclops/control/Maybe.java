@@ -406,7 +406,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     default Trampoline<Maybe<T>> toTrampoline() {
         return Trampoline.more(()->Trampoline.done(this));
     }
-    
+
     /**
      * Construct a Maybe from the supplied Eval
      *
@@ -1238,11 +1238,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
                 }
             });
         }
-        @Override
-        public Trampoline<T> toTrampoline(Supplier<T> defaultValue) {
-            return lazy.map(m->m.orElseGet(defaultValue))
-                    .toTrampoline();
-        }
+
 
         @Override
         public Trampoline<Maybe<T>> toTrampoline() {
@@ -1272,11 +1268,6 @@ public interface Maybe<T> extends To<Maybe<T>>,
             };
         }
 
-        @Override
-        public Trampoline<T> toTrampoline(T defaultValue) {
-            return lazy.map(m->m.orElse(defaultValue))
-                       .toTrampoline();
-        }
 
         @Override
         public Maybe<T> recover(final T value) {
