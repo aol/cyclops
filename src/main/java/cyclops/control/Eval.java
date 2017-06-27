@@ -73,10 +73,10 @@ import java.util.stream.Stream;
  */
 public interface Eval<T> extends To<Eval<T>>,
                                     MonadicValue<T>,
-                                    Higher<Eval.µ ,T> {
+                                    Higher<Eval.Mu,T> {
 
 
-    public static class µ {
+    public static class Mu {
     }
     static <T> Eval<T> async(final Executor ex, final Supplier<T> s){
         return fromFuture(Future.ofSupplier(s,ex));
@@ -95,7 +95,7 @@ public interface Eval<T> extends To<Eval<T>>,
      * @param future HKT encoded list into a OptionalType
      * @return Eval
      */
-    public static <T> Eval<T> narrowK(final Higher<Eval.µ, T> future) {
+    public static <T> Eval<T> narrowK(final Higher<Mu, T> future) {
         return (Eval<T>)future;
     }
     /**
@@ -1124,7 +1124,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return A functor for Evals
          */
-        public static <T,R>Functor<µ> functor(){
+        public static <T,R>Functor<Mu> functor(){
             BiFunction<Eval<T>,Function<? super T, ? extends R>,Eval<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -1144,8 +1144,8 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return A factory for Evals
          */
-        public static <T> Pure<µ> unit(){
-            return General.<Eval.µ,T>unit(Instances::of);
+        public static <T> Pure<Mu> unit(){
+            return General.<Mu,T>unit(Instances::of);
         }
         /**
          *
@@ -1184,7 +1184,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return A zipper for Evals
          */
-        public static <T,R> Applicative<Eval.µ> applicative(){
+        public static <T,R> Applicative<Mu> applicative(){
             BiFunction<Eval< Function<T, R>>,Eval<T>,Eval<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -1214,9 +1214,9 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return Type class with monad functions for Evals
          */
-        public static <T,R> Monad<µ> monad(){
+        public static <T,R> Monad<Mu> monad(){
 
-            BiFunction<Higher<Eval.µ,T>,Function<? super T, ? extends Higher<Eval.µ,R>>,Higher<Eval.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<Mu,T>,Function<? super T, ? extends Higher<Mu,R>>,Higher<Mu,R>> flatMap = Instances::flatMap;
             return General.monad(applicative(), flatMap);
         }
         /**
@@ -1236,7 +1236,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<µ> monadZero(){
+        public static <T,R> MonadZero<Mu> monadZero(){
 
             return General.monadZero(monad(), Eval.now(null));
         }
@@ -1252,12 +1252,12 @@ public interface Eval<T> extends To<Eval<T>>,
          * </pre>
          * @return Type class for combining Evals by concatenation
          */
-        public static <T> MonadPlus<µ> monadPlus(){
+        public static <T> MonadPlus<Mu> monadPlus(){
             Monoid<Eval<T>> mn = Monoid.of(Eval.now(null), (a,b)->a.get()!=null?a :b);
             Monoid<Eval<T>> m = Monoid.of(mn.zero(), (f,g)->
                     mn.apply(Eval.narrow(f), Eval.narrow(g)));
 
-            Monoid<Higher<Eval.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<Mu,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -1276,15 +1276,15 @@ public interface Eval<T> extends To<Eval<T>>,
          * @param m Monoid to use for combining Evals
          * @return Type class for combining Evals
          */
-        public static <T> MonadPlus<Eval.µ> monadPlus(Monoid<Eval<T>> m){
-            Monoid<Higher<Eval.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<Mu> monadPlus(Monoid<Eval<T>> m){
+            Monoid<Higher<Mu,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<µ> traverse(){
+        public static <C2,T> Traverse<Mu> traverse(){
 
             return General.traverseByTraverse(applicative(), Instances::traverseA);
         }
@@ -1304,14 +1304,14 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<µ> foldable(){
-            BiFunction<Monoid<T>,Higher<Eval.µ,T>,T> foldRightFn =  (m,l)-> Eval.narrowK(l).orElse(m.zero());
-            BiFunction<Monoid<T>,Higher<Eval.µ,T>,T> foldLeftFn = (m,l)-> Eval.narrowK(l).orElse(m.zero());
+        public static <T> Foldable<Mu> foldable(){
+            BiFunction<Monoid<T>,Higher<Mu,T>,T> foldRightFn =  (m, l)-> Eval.narrowK(l).orElse(m.zero());
+            BiFunction<Monoid<T>,Higher<Mu,T>,T> foldLeftFn = (m, l)-> Eval.narrowK(l).orElse(m.zero());
             return General.foldable(foldRightFn, foldLeftFn);
         }
 
-        public static <T> Comonad<µ> comonad(){
-            Function<? super Higher<Eval.µ, T>, ? extends T> extractFn = maybe -> maybe.convert(Eval::narrowK).get();
+        public static <T> Comonad<Mu> comonad(){
+            Function<? super Higher<Mu, T>, ? extends T> extractFn = maybe -> maybe.convert(Eval::narrowK).get();
             return General.comonad(functor(), unit(), extractFn);
         }
         private <T> Eval<T> of(T value){
@@ -1321,7 +1321,7 @@ public interface Eval<T> extends To<Eval<T>>,
             return lt.combine(maybe, (a,b)->a.apply(b));
 
         }
-        private static <T,R> Higher<Eval.µ,R> flatMap( Higher<Eval.µ,T> lt, Function<? super T, ? extends  Higher<Eval.µ,R>> fn){
+        private static <T,R> Higher<Mu,R> flatMap(Higher<Mu,T> lt, Function<? super T, ? extends  Higher<Mu,R>> fn){
             return Eval.narrowK(lt).flatMap(fn.andThen(Eval::narrowK));
         }
         private static <T,R> Eval<R> map(Eval<T> lt, Function<? super T, ? extends R> fn){
@@ -1329,8 +1329,8 @@ public interface Eval<T> extends To<Eval<T>>,
         }
 
 
-        private static <C2,T,R> Higher<C2, Higher<Eval.µ, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
-                                                                        Higher<Eval.µ, T> ds){
+        private static <C2,T,R> Higher<C2, Higher<Mu, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
+                                                                    Higher<Mu, T> ds){
 
             Eval<T> eval = Eval.narrowK(ds);
             return applicative.map(Eval::now, fn.apply(eval.get()));

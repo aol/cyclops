@@ -9,7 +9,6 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Trampoline;
 import cyclops.function.Fn3;
@@ -52,9 +51,9 @@ public interface ListX<T> extends To<ListX<T>>,
                                   MutableSequenceX<T>,
                                   Comparable<T>,
                                   OnEmptySwitch<T, List<T>>,
-                                  Higher<ListX.µ,T> {
+                                  Higher<ListX.Mu,T> {
 
-    public static class µ {
+    public static class Mu {
     }
 
     /**
@@ -63,7 +62,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @param deque HKT encoded list into a ListX
      * @return ListX
      */
-    public static <T> ListX<T> narrowK(final Higher<ListX.µ, T> list) {
+    public static <T> ListX<T> narrowK(final Higher<Mu, T> list) {
         return (ListX<T>)list;
     }
     static class Instances {
@@ -95,7 +94,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *
          * @return A functor for Lists
          */
-        public static <T,R>Functor<µ> functor(){
+        public static <T,R>Functor<Mu> functor(){
             BiFunction<ListX<T>,Function<? super T, ? extends R>,ListX<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -114,8 +113,8 @@ public interface ListX<T> extends To<ListX<T>>,
          *
          * @return A factory for Lists
          */
-        public static <T> Pure<µ> unit(){
-            return General.<ListX.µ,T>unit(Instances::of);
+        public static <T> Pure<Mu> unit(){
+            return General.<Mu,T>unit(Instances::of);
         }
         /**
          *
@@ -154,7 +153,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *
          * @return A zipper for Lists
          */
-        public static <T,R> Applicative<µ> zippingApplicative(){
+        public static <T,R> Applicative<Mu> zippingApplicative(){
             BiFunction<ListX< Function<T, R>>,ListX<T>,ListX<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -184,9 +183,9 @@ public interface ListX<T> extends To<ListX<T>>,
          *
          * @return Type class with monad functions for Lists
          */
-        public static <T,R> Monad<µ> monad(){
+        public static <T,R> Monad<Mu> monad(){
 
-            BiFunction<Higher<ListX.µ,T>,Function<? super T, ? extends Higher<ListX.µ,R>>,Higher<ListX.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<Mu,T>,Function<? super T, ? extends Higher<Mu,R>>,Higher<Mu,R>> flatMap = Instances::flatMap;
             return General.monad(zippingApplicative(), flatMap);
         }
         /**
@@ -206,7 +205,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<µ> monadZero(){
+        public static <T,R> MonadZero<Mu> monadZero(){
 
             return General.monadZero(monad(), ListX.empty());
         }
@@ -222,9 +221,9 @@ public interface ListX<T> extends To<ListX<T>>,
          * </pre>
          * @return Type class for combining Lists by concatenation
          */
-        public static <T> MonadPlus<µ> monadPlus(){
+        public static <T> MonadPlus<Mu> monadPlus(){
             Monoid<ListX<T>> m = Monoid.of(ListX.empty(), Instances::concat);
-            Monoid<Higher<ListX.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<Mu,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -243,15 +242,15 @@ public interface ListX<T> extends To<ListX<T>>,
          * @param m Monoid toNested use for combining Lists
          * @return Type class for combining Lists
          */
-        public static <T> MonadPlus<ListX.µ> monadPlus(Monoid<ListX<T>> m){
-            Monoid<Higher<ListX.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<Mu> monadPlus(Monoid<ListX<T>> m){
+            Monoid<Higher<Mu,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<µ> traverse(){
+        public static <C2,T> Traverse<Mu> traverse(){
             BiFunction<Applicative<C2>,ListX<Higher<C2, T>>,Higher<C2, ListX<T>>> sequenceFn = (ap,list) -> {
 
                 Higher<C2,ListX<T>> identity = ap.unit(ListX.empty());
@@ -267,7 +266,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
 
             };
-            BiFunction<Applicative<C2>,Higher<ListX.µ,Higher<C2, T>>,Higher<C2, Higher<ListX.µ,T>>> sequenceNarrow  =
+            BiFunction<Applicative<C2>,Higher<Mu,Higher<C2, T>>,Higher<C2, Higher<Mu,T>>> sequenceNarrow  =
                     (a,b) -> Instances.widen2(sequenceFn.apply(a, Instances.narrowK(b)));
             return General.traverse(zippingApplicative(), sequenceNarrow);
         }
@@ -287,9 +286,9 @@ public interface ListX<T> extends To<ListX<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<µ> foldable(){
-            BiFunction<Monoid<T>,Higher<ListX.µ,T>,T> foldRightFn =  (m,l)-> ListX.fromIterable(narrow(l)).foldRight(m);
-            BiFunction<Monoid<T>,Higher<ListX.µ,T>,T> foldLeftFn = (m,l)-> ListX.fromIterable(narrow(l)).reduce(m);
+        public static <T> Foldable<Mu> foldable(){
+            BiFunction<Monoid<T>,Higher<Mu,T>,T> foldRightFn =  (m, l)-> ListX.fromIterable(narrow(l)).foldRight(m);
+            BiFunction<Monoid<T>,Higher<Mu,T>,T> foldLeftFn = (m, l)-> ListX.fromIterable(narrow(l)).reduce(m);
             return General.foldable(foldRightFn, foldLeftFn);
         }
 
@@ -302,7 +301,7 @@ public interface ListX<T> extends To<ListX<T>>,
         private static <T,R> ListX<R> ap(ListX<Function< T, R>> lt,  ListX<T> list){
             return ListX.fromIterable(lt).zip(list,(a,b)->a.apply(b));
         }
-        private static <T,R> Higher<ListX.µ,R> flatMap( Higher<ListX.µ,T> lt, Function<? super T, ? extends  Higher<ListX.µ,R>> fn){
+        private static <T,R> Higher<Mu,R> flatMap(Higher<Mu,T> lt, Function<? super T, ? extends  Higher<Mu,R>> fn){
             return ListX.fromIterable(Instances.narrowK(lt)).flatMap(fn.andThen(Instances::narrowK));
         }
         private static <T,R> ListX<R> map(ListX<T> lt, Function<? super T, ? extends R> fn){
@@ -317,7 +316,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * @param flux HTK encoded type containing  a List toNested widen
          * @return HKT encoded type with a widened List
          */
-        public static <C2, T> Higher<C2, Higher<ListX.µ, T>> widen2(Higher<C2, ListX<T>> flux) {
+        public static <C2, T> Higher<C2, Higher<Mu, T>> widen2(Higher<C2, ListX<T>> flux) {
             // a functor could be used (if C2 is a functor / one exists for C2 type)
             // instead of casting
             // cast seems safer as Higher<ListX.Mu,T> must be a ListX
@@ -332,7 +331,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * @param future HKT encoded list into a ListType
          * @return ListType
          */
-        public static <T> ListX<T> narrowK(final Higher<ListX.µ, T> future) {
+        public static <T> ListX<T> narrowK(final Higher<Mu, T> future) {
             return (ListX<T>) future;
         }
 
@@ -342,7 +341,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * @param List Type Constructor toNested convert back into narrowed type
          * @return List from Higher Kinded Type
          */
-        public static <T> ListX<T> narrow(final Higher<ListX.µ, T> completableList) {
+        public static <T> ListX<T> narrow(final Higher<Mu, T> completableList) {
 
             return ((ListX<T>) completableList);//.narrow();
 

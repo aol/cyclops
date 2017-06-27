@@ -125,7 +125,7 @@ public class PStacksTest {
     
     @Test
     public void traverse(){
-       Maybe<Higher<LinkedListX.µ, Integer>> res = LinkedListX.Instances.traverse()
+       Maybe<Higher<LinkedListX.Mu, Integer>> res = LinkedListX.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), LinkedListX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
        

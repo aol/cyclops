@@ -124,7 +124,7 @@ public class MaybesTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<Maybe.µ, Integer>> res = Maybe.Instances.traverse()
+       Maybe<Higher<Maybe.Mu, Integer>> res = Maybe.Instances.traverse()
                                                           .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), Maybe.just(1))
                                                           .convert(Maybe::narrowK);
        

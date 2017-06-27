@@ -127,7 +127,7 @@ public class ListsTest {
     
     @Test
     public void traverse(){
-       Maybe<Higher<ListX.µ, Integer>> res = ListX.Instances.traverse()
+       Maybe<Higher<ListX.Mu, Integer>> res = ListX.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), ListX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
        

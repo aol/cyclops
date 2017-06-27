@@ -128,7 +128,7 @@ public class FutureWsTest {
     
     @Test
     public void traverse(){
-       Maybe<Higher<Future.µ, Integer>> res = Future.Instances.traverse()
+       Maybe<Higher<Future.Mu, Integer>> res = Future.Instances.traverse()
                                                                .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), Future.ofResult(1))
                                                               .convert(Maybe::narrowK);
        

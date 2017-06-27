@@ -125,7 +125,7 @@ public class PQueuesTest {
     
     @Test
     public void traverse(){
-       Maybe<Higher<PersistentQueueX.µ, Integer>> res = PersistentQueueX.Instances.traverse()
+       Maybe<Higher<PersistentQueueX.Mu, Integer>> res = PersistentQueueX.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), PersistentQueueX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
        

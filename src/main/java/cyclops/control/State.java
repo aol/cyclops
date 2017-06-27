@@ -13,10 +13,10 @@ import java.util.function.Function;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class State<S, T> {
-    public static class µ {
+    public static class Mu {
     }
 
-    private final Fn1<S, Free<Fn0.SupplierKind.µ,Tuple2<S, T>>> runState;
+    private final Fn1<S, Free<Fn0.SupplierKind.Mu,Tuple2<S, T>>> runState;
 
 
     public Tuple2<S, T> run(S s) {
@@ -46,7 +46,7 @@ public final class State<S, T> {
     public <R> State<S, R> mapState(Function<Tuple2<S,T>, Tuple2<S, R>> fn) {
         return suspended(s -> runState.apply(s).map(t -> fn.apply(t)));
     }
-    private static <S, T> State<S, T> suspended(Fn1<? super S, Free<Fn0.SupplierKind.µ,Tuple2<S, T>>> runF) {
+    private static <S, T> State<S, T> suspended(Fn1<? super S, Free<Fn0.SupplierKind.Mu,Tuple2<S, T>>> runF) {
         return new State<>(s -> Fn0.suspend(Lambda.λK(()->runF.apply(s))));
     }
 

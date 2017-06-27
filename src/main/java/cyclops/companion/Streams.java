@@ -2863,7 +2863,7 @@ public class Streams {
          *
          * @return A functor for Streams
          */
-        public static <T,R>Functor<StreamKind.µ> functor(){
+        public static <T,R>Functor<StreamKind.Mu> functor(){
             BiFunction<StreamKind<T>,Function<? super T, ? extends R>,StreamKind<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -2882,8 +2882,8 @@ public class Streams {
          *
          * @return A factory for Streams
          */
-        public static <T> Pure<StreamKind.µ> unit(){
-            return General.<StreamKind.µ,T>unit(Instances::of);
+        public static <T> Pure<StreamKind.Mu> unit(){
+            return General.<StreamKind.Mu,T>unit(Instances::of);
         }
         /**
          *
@@ -2921,7 +2921,7 @@ public class Streams {
          *
          * @return A zipper for Streams
          */
-        public static <T,R> Applicative<StreamKind.µ> zippingApplicative(){
+        public static <T,R> Applicative<StreamKind.Mu> zippingApplicative(){
             BiFunction<StreamKind< Function<T, R>>,StreamKind<T>,StreamKind<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -2951,9 +2951,9 @@ public class Streams {
          *
          * @return Type class with monad functions for Streams
          */
-        public static <T,R> Monad<StreamKind.µ> monad(){
+        public static <T,R> Monad<StreamKind.Mu> monad(){
 
-            BiFunction<Higher<StreamKind.µ,T>,Function<? super T, ? extends Higher<StreamKind.µ,R>>,Higher<StreamKind.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<StreamKind.Mu,T>,Function<? super T, ? extends Higher<StreamKind.Mu,R>>,Higher<StreamKind.Mu,R>> flatMap = Instances::flatMap;
             return General.monad(zippingApplicative(), flatMap);
         }
         /**
@@ -2973,10 +2973,10 @@ public class Streams {
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<StreamKind.µ> monadZero(){
-            BiFunction<Higher<StreamKind.µ,T>,Predicate<? super T>,Higher<StreamKind.µ,T>> filter = Instances::filter;
-            Supplier<Higher<StreamKind.µ, T>> zero = ()->StreamKind.widen(Stream.of());
-            return General.<StreamKind.µ,T,R>monadZero(monad(), zero,filter);
+        public static <T,R> MonadZero<StreamKind.Mu> monadZero(){
+            BiFunction<Higher<StreamKind.Mu,T>,Predicate<? super T>,Higher<StreamKind.Mu,T>> filter = Instances::filter;
+            Supplier<Higher<StreamKind.Mu, T>> zero = ()->StreamKind.widen(Stream.of());
+            return General.<StreamKind.Mu,T,R>monadZero(monad(), zero,filter);
         }
         /**
          * <pre>
@@ -2990,9 +2990,9 @@ public class Streams {
          * </pre>
          * @return Type class for combining Streams by concatenation
          */
-        public static <T> MonadPlus<StreamKind.µ> monadPlus(){
+        public static <T> MonadPlus<StreamKind.Mu> monadPlus(){
             Monoid<StreamKind<T>> m = Monoid.of(StreamKind.widen(Stream.of()), Instances::concat);
-            Monoid<Higher<StreamKind.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<StreamKind.Mu,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -3011,15 +3011,15 @@ public class Streams {
          * @param m Monoid toNested use for combining Streams
          * @return Type class for combining Streams
          */
-        public static <T> MonadPlus<StreamKind.µ> monadPlus(Monoid<StreamKind<T>> m){
-            Monoid<Higher<StreamKind.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<StreamKind.Mu> monadPlus(Monoid<StreamKind<T>> m){
+            Monoid<Higher<StreamKind.Mu,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<StreamKind.µ> traverse(){
+        public static <C2,T> Traverse<StreamKind.Mu> traverse(){
             BiFunction<Applicative<C2>,StreamKind<Higher<C2, T>>,Higher<C2, StreamKind<T>>> sequenceFn = (ap,list) -> {
 
                 Higher<C2,StreamKind<T>> identity = ap.unit(StreamKind.widen(Stream.of()));
@@ -3034,7 +3034,7 @@ public class Streams {
 
 
             };
-            BiFunction<Applicative<C2>,Higher<StreamKind.µ,Higher<C2, T>>,Higher<C2, Higher<StreamKind.µ,T>>> sequenceNarrow  =
+            BiFunction<Applicative<C2>,Higher<StreamKind.Mu,Higher<C2, T>>,Higher<C2, Higher<StreamKind.Mu,T>>> sequenceNarrow  =
                     (a,b) -> StreamKind.widen2(sequenceFn.apply(a, StreamKind.narrowK(b)));
             return General.traverse(zippingApplicative(), sequenceNarrow);
         }
@@ -3054,9 +3054,9 @@ public class Streams {
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<StreamKind.µ> foldable(){
-            BiFunction<Monoid<T>,Higher<StreamKind.µ,T>,T> foldRightFn =  (m,l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).foldRight(m);
-            BiFunction<Monoid<T>,Higher<StreamKind.µ,T>,T> foldLeftFn = (m,l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).reduce(m);
+        public static <T> Foldable<StreamKind.Mu> foldable(){
+            BiFunction<Monoid<T>,Higher<StreamKind.Mu,T>,T> foldRightFn =  (m, l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).foldRight(m);
+            BiFunction<Monoid<T>,Higher<StreamKind.Mu,T>,T> foldLeftFn = (m, l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).reduce(m);
             return General.foldable(foldRightFn, foldLeftFn);
         }
 
@@ -3069,13 +3069,13 @@ public class Streams {
         private static <T,R> StreamKind<R> ap(StreamKind<Function< T, R>> lt, StreamKind<T> list){
             return StreamKind.widen(Streams.zipStream(lt,list,(a,b)->a.apply(b)));
         }
-        private static <T,R> Higher<StreamKind.µ,R> flatMap(Higher<StreamKind.µ,T> lt, Function<? super T, ? extends  Higher<StreamKind.µ,R>> fn){
+        private static <T,R> Higher<StreamKind.Mu,R> flatMap(Higher<StreamKind.Mu,T> lt, Function<? super T, ? extends  Higher<StreamKind.Mu,R>> fn){
             return StreamKind.widen(StreamKind.narrow(lt).flatMap(fn.andThen(StreamKind::narrow)));
         }
         private static <T,R> StreamKind<R> map(StreamKind<T> lt, Function<? super T, ? extends R> fn){
             return StreamKind.widen(lt.map(fn));
         }
-        private static <T> StreamKind<T> filter(Higher<StreamKind.µ,T> lt, Predicate<? super T> fn){
+        private static <T> StreamKind<T> filter(Higher<StreamKind.Mu,T> lt, Predicate<? super T> fn){
             return StreamKind.widen(StreamKind.narrowK(lt).filter(fn));
         }
     }
@@ -3089,14 +3089,14 @@ public class Streams {
      * @param <T> Data type stored within the Stream
      */
 
-    public static interface StreamKind<T> extends Higher<StreamKind.µ, T>, Stream<T> {
+    public static interface StreamKind<T> extends Higher<StreamKind.Mu, T>, Stream<T> {
         /**
          * Witness type
          *
          * @author johnmcclean
          *
          */
-        public static class µ {
+        public static class Mu {
         }
 
         public static <T> StreamKind<T> of(T... elements){
@@ -3124,7 +3124,7 @@ public class Streams {
          * @param stream HTK encoded type containing  a Stream toNested widen
          * @return HKT encoded type with a widened Stream
          */
-        public static <C2,T> Higher<C2, Higher<StreamKind.µ,T>> widen2(Higher<C2, StreamKind<T>> stream){
+        public static <C2,T> Higher<C2, Higher<Mu,T>> widen2(Higher<C2, StreamKind<T>> stream){
             //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
             //cast seems safer as Higher<StreamKind.Mu,T> must be a StreamKind
             return (Higher)stream;
@@ -3135,7 +3135,7 @@ public class Streams {
          * @param stream HKT encoded Stream into a StreamKind
          * @return StreamKind
          */
-        public static <T> StreamKind<T> narrowK(final Higher<StreamKind.µ, T> stream) {
+        public static <T> StreamKind<T> narrowK(final Higher<Mu, T> stream) {
             return (StreamKind<T>)stream;
         }
         /**
@@ -3144,7 +3144,7 @@ public class Streams {
          * @param Stream Type Constructor toNested convert back into narrowed type
          * @return StreamX from Higher Kinded Type
          */
-        public static <T> Stream<T> narrow(final Higher<StreamKind.µ, T> stream) {
+        public static <T> Stream<T> narrow(final Higher<Mu, T> stream) {
             if (stream instanceof Stream)
                 return (Stream) stream;
             final Box<T> type = (Box<T>) stream;

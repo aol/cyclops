@@ -131,7 +131,7 @@ public class OptionalsTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<OptionalKind.µ, Integer>> res = Optionals.Instances.traverse()
+       Maybe<Higher<OptionalKind.Mu, Integer>> res = Optionals.Instances.traverse()
                                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)-> Maybe.just(a*2), OptionalKind.of(1))
                                                                          .convert(Maybe::narrowK);
        

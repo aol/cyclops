@@ -129,7 +129,7 @@ public class EvalsTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<Eval.µ, Integer>> res = Eval.Instances.traverse()
+       Maybe<Higher<Eval.Mu, Integer>> res = Eval.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), Eval.now(1))
                                                          .convert(Maybe::narrowK);
        

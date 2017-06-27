@@ -134,7 +134,7 @@ public class StreamsTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<StreamKind.µ, Integer>> res = Streams.Instances.traverse()
+       Maybe<Higher<StreamKind.Mu, Integer>> res = Streams.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), StreamKind.of(1,2,3))
                                                          .convert(Maybe::narrowK);
        
