@@ -77,7 +77,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      */
     public static <C2,T> Higher<C2, Higher<PersistentQueueX.µ,T>> widen2(Higher<C2, PersistentQueueX<T>> list){
         //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<PQueueType.µ,T> must be a PQueueType
+        //cast seems safer as Higher<PQueueType.Mu,T> must be a PQueueType
         return (Higher)list;
     }
     /**

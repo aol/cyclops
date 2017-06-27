@@ -25,8 +25,8 @@ public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{// , __<T1, T2>{
      * This allows a fluent api without narrowing or unwrapping simulated Higher Kinded Types
      * <pre>
      * {@code
-     *  Functor<ListType.µ> f = TypeClasses.General
-    .<ListType.µ,List<?>>functor(ListType::narrow,(list,fn)->ListX.fromIterable(list).map(fn));
+     *  Functor<ListType.Mu> f = TypeClasses.General
+    .<ListType.Mu,List<?>>functor(ListType::narrow,(list,fn)->ListX.fromIterable(list).map(fn));
 
     List<Integer> mapped2 = f.map(a->a+1, ListType.widen(Arrays.asList(1,2,3)))
     .then_(f::map,λ(this::mult3))

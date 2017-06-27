@@ -55,7 +55,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     public static <C2,T> Higher<C2, Higher<QueueX.µ,T>> widen2(Higher<C2, QueueX<T>> queue){
         //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<QueueType.µ,T> must be a ListType
+        //cast seems safer as Higher<QueueType.Mu,T> must be a ListType
         return (Higher)queue;
     }
     /**

@@ -830,7 +830,7 @@ public class Optionals {
      /**
      * Simulates Higher Kinded Types for Optional's
      *
-     * OptionalKind is a Optional and a Higher Kinded Type (OptionalKind.µ,T)
+     * OptionalKind is a Optional and a Higher Kinded Type (OptionalKind.Mu,T)
      *
      * @author johnmcclean
      *
@@ -891,7 +891,7 @@ public class Optionals {
          * @return Optional from Higher Kinded Type
          */
         public static <T> Optional<T> narrowK(final Higher<OptionalKind.µ, T> Optional) {
-            //has toNested be an OptionalKind as only OptionalKind can implement Higher<OptionalKind.µ, T>
+            //has toNested be an OptionalKind as only OptionalKind can implement Higher<OptionalKind.Mu, T>
             return ((OptionalKind<T>)Optional).boxed;
 
         }

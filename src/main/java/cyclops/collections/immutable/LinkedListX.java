@@ -67,7 +67,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <C2,T> Higher<C2, Higher<LinkedListX.µ,T>> widen2(Higher<C2, LinkedListX<T>> list){
         //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<PStackType.µ,T> must be a PStackType
+        //cast seems safer as Higher<PStackType.Mu,T> must be a PStackType
         return (Higher)list;
     }
     /**

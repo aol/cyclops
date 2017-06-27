@@ -63,7 +63,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      */
     public static <C2,T> Higher<C2, Higher<DequeX.µ,T>> widen2(Higher<C2, DequeX<T>> list){
         //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<DequeType.µ,T> must be a ListType
+        //cast seems safer as Higher<DequeType.Mu,T> must be a ListType
         return (Higher)list;
     }
 

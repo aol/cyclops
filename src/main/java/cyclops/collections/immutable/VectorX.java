@@ -67,7 +67,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <C2,T> Higher<C2, Higher<VectorX.µ,T>> widen2(Higher<C2, VectorX<T>> list){
         //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<PVectorType.µ,T> must be a PVectorType
+        //cast seems safer as Higher<PVectorType.Mu,T> must be a PVectorType
         return (Higher)list;
     }
     /**

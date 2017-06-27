@@ -320,7 +320,7 @@ public interface ListX<T> extends To<ListX<T>>,
         public static <C2, T> Higher<C2, Higher<ListX.µ, T>> widen2(Higher<C2, ListX<T>> flux) {
             // a functor could be used (if C2 is a functor / one exists for C2 type)
             // instead of casting
-            // cast seems safer as Higher<ListX.µ,T> must be a ListX
+            // cast seems safer as Higher<ListX.Mu,T> must be a ListX
             return (Higher) flux;
         }
 

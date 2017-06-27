@@ -3082,7 +3082,7 @@ public class Streams {
     /**
      * Simulates Higher Kinded Types for Stream's
      *
-     * StreamKind is a Stream and a Higher Kinded Type (StreamKind.µ,T)
+     * StreamKind is a Stream and a Higher Kinded Type (StreamKind.Mu,T)
      *
      * @author johnmcclean
      *
@@ -3126,7 +3126,7 @@ public class Streams {
          */
         public static <C2,T> Higher<C2, Higher<StreamKind.µ,T>> widen2(Higher<C2, StreamKind<T>> stream){
             //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-            //cast seems safer as Higher<StreamKind.µ,T> must be a StreamKind
+            //cast seems safer as Higher<StreamKind.Mu,T> must be a StreamKind
             return (Higher)stream;
         }
         /**

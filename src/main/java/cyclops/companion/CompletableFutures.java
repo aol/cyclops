@@ -793,7 +793,7 @@ public class CompletableFutures {
     /**
      * Simulates Higher Kinded Types for CompletableFuture's
      *
-     * CompletableFutureKind is a CompletableFuture and a Higher Kinded Type (CompletableFutureKind.µ,T)
+     * CompletableFutureKind is a CompletableFuture and a Higher Kinded Type (CompletableFutureKind.Mu,T)
      *
      * @author johnmcclean
      *
