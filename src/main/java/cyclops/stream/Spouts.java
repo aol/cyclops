@@ -526,7 +526,7 @@ public interface Spouts {
          *
          * @return A functor for Lists
          */
-        public static <T,R>Functor<ReactiveSeq.µ> functor(){
+        public static <T,R>Functor<ReactiveSeq.Mu> functor(){
             BiFunction<ReactiveSeq<T>,Function<? super T, ? extends R>,ReactiveSeq<R>> map = Spouts.Instances::map;
             return General.functor(map);
         }
@@ -545,8 +545,8 @@ public interface Spouts {
          *
          * @return A factory for Lists
          */
-        public static <T> Pure<ReactiveSeq.µ> unit(){
-            return General.<ReactiveSeq.µ,T>unit(Spouts.Instances::of);
+        public static <T> Pure<ReactiveSeq.Mu> unit(){
+            return General.<ReactiveSeq.Mu,T>unit(Spouts.Instances::of);
         }
         /**
          *
@@ -585,7 +585,7 @@ public interface Spouts {
          *
          * @return A zipper for Lists
          */
-        public static <T,R> Applicative<ReactiveSeq.µ> zippingApplicative(){
+        public static <T,R> Applicative<ReactiveSeq.Mu> zippingApplicative(){
             BiFunction<ReactiveSeq< Function<T, R>>,ReactiveSeq<T>,ReactiveSeq<R>> ap = Spouts.Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -615,9 +615,9 @@ public interface Spouts {
          *
          * @return Type class with monad functions for Lists
          */
-        public static <T,R> Monad<ReactiveSeq.µ> monad(){
+        public static <T,R> Monad<ReactiveSeq.Mu> monad(){
 
-            BiFunction<Higher<ReactiveSeq.µ,T>,Function<? super T, ? extends Higher<ReactiveSeq.µ,R>>,Higher<ReactiveSeq.µ,R>> flatMap = Spouts.Instances::flatMap;
+            BiFunction<Higher<ReactiveSeq.Mu,T>,Function<? super T, ? extends Higher<ReactiveSeq.Mu,R>>,Higher<ReactiveSeq.Mu,R>> flatMap = Spouts.Instances::flatMap;
             return General.monad(zippingApplicative(), flatMap);
         }
         /**
@@ -637,7 +637,7 @@ public interface Spouts {
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<ReactiveSeq.µ> monadZero(){
+        public static <T,R> MonadZero<ReactiveSeq.Mu> monadZero(){
 
             return General.monadZero(monad(), ReactiveSeq.empty());
         }
@@ -653,9 +653,9 @@ public interface Spouts {
          * </pre>
          * @return Type class for combining Lists by concatenation
          */
-        public static <T> MonadPlus<ReactiveSeq.µ> monadPlus(){
+        public static <T> MonadPlus<ReactiveSeq.Mu> monadPlus(){
             Monoid<ReactiveSeq<T>> m = Monoid.of(ReactiveSeq.empty(), Spouts.Instances::concat);
-            Monoid<Higher<ReactiveSeq.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<ReactiveSeq.Mu,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -674,15 +674,15 @@ public interface Spouts {
          * @param m Monoid toNested use for combining Lists
          * @return Type class for combining Lists
          */
-        public static <T> MonadPlus<ReactiveSeq.µ> monadPlus(Monoid<ReactiveSeq<T>> m){
-            Monoid<Higher<ReactiveSeq.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<ReactiveSeq.Mu> monadPlus(Monoid<ReactiveSeq<T>> m){
+            Monoid<Higher<ReactiveSeq.Mu,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<ReactiveSeq.µ> traverse(){
+        public static <C2,T> Traverse<ReactiveSeq.Mu> traverse(){
             BiFunction<Applicative<C2>,ReactiveSeq<Higher<C2, T>>,Higher<C2, ReactiveSeq<T>>> sequenceFn = (ap,list) -> {
 
                 Higher<C2,ReactiveSeq<T>> identity = ap.unit(Spouts.empty());
@@ -698,7 +698,7 @@ public interface Spouts {
 
 
             };
-            BiFunction<Applicative<C2>,Higher<ReactiveSeq.µ,Higher<C2, T>>,Higher<C2, Higher<ReactiveSeq.µ,T>>> sequenceNarrow  =
+            BiFunction<Applicative<C2>,Higher<ReactiveSeq.Mu,Higher<C2, T>>,Higher<C2, Higher<ReactiveSeq.Mu,T>>> sequenceNarrow  =
                     (a,b) -> ReactiveSeq.Instances.widen2(sequenceFn.apply(a, ReactiveSeq.narrowK(b)));
             return General.traverse(zippingApplicative(), sequenceNarrow);
         }
@@ -718,9 +718,9 @@ public interface Spouts {
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<ReactiveSeq.µ> foldable(){
-            BiFunction<Monoid<T>,Higher<ReactiveSeq.µ,T>,T> foldRightFn =  (m,l)-> narrow(l).foldRight(m);
-            BiFunction<Monoid<T>,Higher<ReactiveSeq.µ,T>,T> foldLeftFn = (m,l)-> narrow(l).reduce(m);
+        public static <T> Foldable<ReactiveSeq.Mu> foldable(){
+            BiFunction<Monoid<T>,Higher<ReactiveSeq.Mu,T>,T> foldRightFn =  (m, l)-> narrow(l).foldRight(m);
+            BiFunction<Monoid<T>,Higher<ReactiveSeq.Mu,T>,T> foldLeftFn = (m, l)-> narrow(l).reduce(m);
             return General.foldable(foldRightFn, foldLeftFn);
         }
 
@@ -733,7 +733,7 @@ public interface Spouts {
         private static <T,R> ReactiveSeq<R> ap(ReactiveSeq<Function< T, R>> lt,  ReactiveSeq<T> list){
             return lt.zip(list,(a,b)->a.apply(b));
         }
-        private static <T,R> Higher<ReactiveSeq.µ,R> flatMap( Higher<ReactiveSeq.µ,T> lt, Function<? super T, ? extends  Higher<ReactiveSeq.µ,R>> fn){
+        private static <T,R> Higher<ReactiveSeq.Mu,R> flatMap(Higher<ReactiveSeq.Mu,T> lt, Function<? super T, ? extends  Higher<ReactiveSeq.Mu,R>> fn){
             return ReactiveSeq.narrowK(lt).flatMap(fn.andThen(ReactiveSeq::narrowK));
         }
         private static <T,R> ReactiveSeq<R> map(ReactiveSeq<T> lt, Function<? super T, ? extends R> fn){
@@ -748,10 +748,10 @@ public interface Spouts {
          * @param flux HTK encoded type containing  a List toNested widen
          * @return HKT encoded type with a widened List
          */
-        public static <C2, T> Higher<C2, Higher<ReactiveSeq.µ, T>> widen2(Higher<C2, ReactiveSeq<T>> flux) {
+        public static <C2, T> Higher<C2, Higher<ReactiveSeq.Mu, T>> widen2(Higher<C2, ReactiveSeq<T>> flux) {
             // a functor could be used (if C2 is a functor / one exists for C2 type)
             // instead of casting
-            // cast seems safer as Higher<ReactiveSeq.µ,T> must be a ReactiveSeq
+            // cast seems safer as Higher<ReactiveSeq.Mu,T> must be a ReactiveSeq
             return (Higher) flux;
         }
 
@@ -765,7 +765,7 @@ public interface Spouts {
          * @param List Type Constructor toNested convert back into narrowed type
          * @return List from Higher Kinded Type
          */
-        public static <T> ReactiveSeq<T> narrow(final Higher<ReactiveSeq.µ, T> completableList) {
+        public static <T> ReactiveSeq<T> narrow(final Higher<ReactiveSeq.Mu, T> completableList) {
 
             return ((ReactiveSeq<T>) completableList);//.narrow();
 
@@ -777,7 +777,7 @@ public interface Spouts {
      * @param future HKT encoded list into a ReactiveSeq
      * @return ReactiveSeq
      */
-    public static <T> ReactiveSeq<T> narrowK(final Higher<ReactiveSeq.µ, T> future) {
+    public static <T> ReactiveSeq<T> narrowK(final Higher<ReactiveSeq.Mu, T> future) {
         return (ReactiveSeq<T>) future;
     }
 

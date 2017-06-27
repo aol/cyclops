@@ -11,7 +11,7 @@ import java.util.function.BinaryOperator;
  * 
  * @author johnmcclean
  *
- * @param <CRE> The core type of the foldable (e.g. the HKT witness type, not the generic type : ListType.µ)
+ * @param <CRE> The core type of the foldable (e.g. the HKT witness type, not the generic type : ListType.Mu)
  */
 public interface Foldable<CRE> {
 

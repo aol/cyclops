@@ -125,7 +125,7 @@ public class DequesTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<DequeX.µ, Integer>> res = DequeX.Instances.traverse()
+       Maybe<Higher<DequeX.Mu, Integer>> res = DequeX.Instances.traverse()
                                                            .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), DequeX.of(1,2,3))
                                                             .convert(Maybe::narrowK);
        

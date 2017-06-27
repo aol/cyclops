@@ -34,7 +34,7 @@ import org.jooq.lambda.tuple.Tuple4;
 
 @FunctionalInterface
 public interface Fn1<T1,  R> extends Function1<T1,R> {
-    static class µ {}
+    static class Mu {}
     public static <T1,  T3,R> Fn1<T1, R> λ(final Fn1<T1, R> triFunc){
         return triFunc;
     }

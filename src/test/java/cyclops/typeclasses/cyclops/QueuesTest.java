@@ -125,7 +125,7 @@ public class QueuesTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<QueueX.µ, Integer>> res = QueueX.Instances.traverse()
+       Maybe<Higher<QueueX.Mu, Integer>> res = QueueX.Instances.traverse()
                                                            .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), QueueX.of(1,2,3))
                                                             .convert(Maybe::narrowK);
        

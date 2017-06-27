@@ -126,7 +126,7 @@ public class PVectorsTest {
     
     @Test
     public void traverse(){
-       Maybe<Higher<VectorX.µ, Integer>> res = VectorX.Instances.traverse()
+       Maybe<Higher<VectorX.Mu, Integer>> res = VectorX.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), VectorX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
        

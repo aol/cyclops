@@ -134,7 +134,7 @@ public class CompletableFuturesTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<CompletableFutureKind.µ, Integer>> res = CompletableFutures.Instances.traverse()
+       Maybe<Higher<CompletableFutureKind.Mu, Integer>> res = CompletableFutures.Instances.traverse()
                                                                           .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), CompletableFutureKind.completedFuture(1))
                                                                          .convert(Maybe::narrowK);
        

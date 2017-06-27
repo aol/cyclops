@@ -49,9 +49,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
                                      OnEmptySwitch<T, 
                                      PVector<T>>,
                                      Comparable<T>,
-                                     Higher<VectorX.µ,T>{
+                                     Higher<VectorX.Mu,T>{
 
-    public static class µ {
+    public static class Mu {
     }
 
 
@@ -65,9 +65,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @param list HTK encoded type containing  a PVector toNested widen
      * @return HKT encoded type with a widened PVector
      */
-    public static <C2,T> Higher<C2, Higher<VectorX.µ,T>> widen2(Higher<C2, VectorX<T>> list){
+    public static <C2,T> Higher<C2, Higher<Mu,T>> widen2(Higher<C2, VectorX<T>> list){
         //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<PVectorType.µ,T> must be a PVectorType
+        //cast seems safer as Higher<PVectorType.Mu,T> must be a PVectorType
         return (Higher)list;
     }
     /**
@@ -76,7 +76,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @param list HKT encoded list into a PVectorType
      * @return PVectorType
      */
-    public static <T> VectorX<T> narrowK(final Higher<VectorX.µ, T> list) {
+    public static <T> VectorX<T> narrowK(final Higher<Mu, T> list) {
         return (VectorX<T>)list;
     }
     /**
@@ -1244,7 +1244,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * @return A functor for PVectors
          */
-        public static <T,R>Functor<µ> functor(){
+        public static <T,R>Functor<Mu> functor(){
             BiFunction<VectorX<T>,Function<? super T, ? extends R>,VectorX<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -1263,8 +1263,8 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * @return A factory for PVectors
          */
-        public static  <T> Pure<µ> unit(){
-            return General.<VectorX.µ,T>unit(Instances::of);
+        public static  <T> Pure<Mu> unit(){
+            return General.<Mu,T>unit(Instances::of);
         }
         /**
          *
@@ -1303,7 +1303,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * @return A zipper for PVectors
          */
-        public static <T,R> Applicative<µ> zippingApplicative(){
+        public static <T,R> Applicative<Mu> zippingApplicative(){
             BiFunction<VectorX< Function<T, R>>,VectorX<T>,VectorX<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -1333,9 +1333,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * @return Type class with monad functions for PVectors
          */
-        public static <T,R> Monad<µ> monad(){
+        public static <T,R> Monad<Mu> monad(){
 
-            BiFunction<Higher<VectorX.µ,T>,Function<? super T, ? extends Higher<VectorX.µ,R>>,Higher<VectorX.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<Mu,T>,Function<? super T, ? extends Higher<Mu,R>>,Higher<Mu,R>> flatMap = Instances::flatMap;
             return General.monad(zippingApplicative(), flatMap);
         }
         /**
@@ -1355,7 +1355,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<µ> monadZero(){
+        public static <T,R> MonadZero<Mu> monadZero(){
 
             return General.monadZero(monad(), VectorX.empty());
         }
@@ -1371,9 +1371,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * </pre>
          * @return Type class for combining PVectors by concatenation
          */
-        public static <T> MonadPlus<µ> monadPlus(){
+        public static <T> MonadPlus<Mu> monadPlus(){
             Monoid<VectorX<T>> m = Monoid.of(VectorX.empty(), Instances::concat);
-            Monoid<Higher<VectorX.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<Mu,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -1392,15 +1392,15 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * @param m Monoid toNested use for combining PVectors
          * @return Type class for combining PVectors
          */
-        public static <T> MonadPlus<VectorX.µ> monadPlus(Monoid<VectorX<T>> m){
-            Monoid<Higher<VectorX.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<Mu> monadPlus(Monoid<VectorX<T>> m){
+            Monoid<Higher<Mu,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<µ> traverse(){
+        public static <C2,T> Traverse<Mu> traverse(){
             BiFunction<Applicative<C2>,VectorX<Higher<C2, T>>,Higher<C2, VectorX<T>>> sequenceFn = (ap, list) -> {
 
                 Higher<C2,VectorX<T>> identity = ap.unit(VectorX.empty());
@@ -1416,7 +1416,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
 
             };
-            BiFunction<Applicative<C2>,Higher<VectorX.µ,Higher<C2, T>>,Higher<C2, Higher<VectorX.µ,T>>> sequenceNarrow  =
+            BiFunction<Applicative<C2>,Higher<Mu,Higher<C2, T>>,Higher<C2, Higher<Mu,T>>> sequenceNarrow  =
                     (a,b) -> VectorX.widen2(sequenceFn.apply(a, VectorX.narrowK(b)));
             return General.traverse(zippingApplicative(), sequenceNarrow);
         }
@@ -1436,9 +1436,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<µ> foldable(){
-            BiFunction<Monoid<T>,Higher<VectorX.µ,T>,T> foldRightFn =  (m, l)-> VectorX.narrowK(l).foldRight(m);
-            BiFunction<Monoid<T>,Higher<VectorX.µ,T>,T> foldLeftFn = (m, l)-> VectorX.narrowK(l).reduce(m);
+        public static <T> Foldable<Mu> foldable(){
+            BiFunction<Monoid<T>,Higher<Mu,T>,T> foldRightFn =  (m, l)-> VectorX.narrowK(l).foldRight(m);
+            BiFunction<Monoid<T>,Higher<Mu,T>,T> foldLeftFn = (m, l)-> VectorX.narrowK(l).reduce(m);
             return General.foldable(foldRightFn, foldLeftFn);
         }
 
@@ -1452,7 +1452,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
         private static <T,R> VectorX<R> ap(VectorX<Function< T, R>> lt, VectorX<T> list){
             return VectorX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
         }
-        private static <T,R> Higher<µ,R> flatMap(Higher<VectorX.µ,T> lt, Function<? super T, ? extends  Higher<VectorX.µ,R>> fn){
+        private static <T,R> Higher<Mu,R> flatMap(Higher<Mu,T> lt, Function<? super T, ? extends  Higher<Mu,R>> fn){
             return VectorX.narrowK(lt).flatMap(fn.andThen(VectorX::narrowK));
         }
         private static <T,R> VectorX<R> map(VectorX<T> lt, Function<? super T, ? extends R> fn){

@@ -8,7 +8,7 @@ import com.aol.cyclops2.hkt.Higher;
  * 
  * @author johnmcclean
  *
- * @param <CRE> The core type of the unit (e.g. the HKT witness type, not the generic type : ListType.µ)
+ * @param <CRE> The core type of the unit (e.g. the HKT witness type, not the generic type : ListType.Mu)
  */
 @FunctionalInterface
 public interface Pure<CRE> {

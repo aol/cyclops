@@ -89,7 +89,7 @@ public interface Fn0< R> extends Function0<R>{
         default <R1> Fn0<R1> coflatMap(final Function<? super Supplier<? super R>, ? extends  R1> f) {
             return () -> f.apply(this);
         }
-        default Free<SupplierKind.µ, R> free(){
+        default Free<SupplierKind.Mu, R> free(){
             return suspend(() -> Free.done(get()));
         }
         default Fn0<ReactiveSeq<R>> liftStream() {
@@ -118,14 +118,14 @@ public interface Fn0< R> extends Function0<R>{
             return () -> VectorX.of(apply());
         }
     }
-    public static <A> Free<SupplierKind.µ, A> suspend(final SupplierKind<Free<SupplierKind.µ, A>> f){
+    public static <A> Free<SupplierKind.Mu, A> suspend(final SupplierKind<Free<SupplierKind.Mu, A>> f){
         return Free.suspend(f);
     }
-    public static <A> A run(final Free<SupplierKind.µ, A> f){
-        return f.go(a -> ((Fn0<Free<SupplierKind.µ, A>>)a).apply(), Fn0.Instances.functor);
+    public static <A> A run(final Free<SupplierKind.Mu, A> f){
+        return f.go(a -> ((Fn0<Free<SupplierKind.Mu, A>>)a).apply(), Fn0.Instances.functor);
     }
-    static interface SupplierKind<R> extends Fn0<R>, Higher<SupplierKind.µ,R> {
-        static class µ {
+    static interface SupplierKind<R> extends Fn0<R>, Higher<SupplierKind.Mu,R> {
+        static class Mu {
         }
 
         default <R1> R1 kindTo(Function<? super SupplierKind<R>,? extends R1> reduce){
@@ -143,7 +143,7 @@ public interface Fn0< R> extends Function0<R>{
             default <R1> SupplierKind<R1> coflatMap(final Function<? super Supplier<? super R>, ? extends  R1> f) {
                 return () -> f.apply(this);
             }
-            default Free<SupplierKind.µ, R> free(){
+            default Free<Mu, R> free(){
                 return suspend(() -> Free.done(get()));
             }
             default SupplierKind<ReactiveSeq<R>> liftStream() {
@@ -170,10 +170,10 @@ public interface Fn0< R> extends Function0<R>{
     }
     static class Instances {
 
-        public static final Functor<SupplierKind.µ> functor =
-                new Functor<SupplierKind.µ>() {
+        public static final Functor<SupplierKind.Mu> functor =
+                new Functor<SupplierKind.Mu>() {
                     @Override
-                    public <T, R> SupplierKind<R> map(Function<? super T, ? extends R> f, Higher<SupplierKind.µ, T> fa) {
+                    public <T, R> SupplierKind<R> map(Function<? super T, ? extends R> f, Higher<SupplierKind.Mu, T> fa) {
                         return ((SupplierKind<T>) fa).map(f);
                     }
                 };
