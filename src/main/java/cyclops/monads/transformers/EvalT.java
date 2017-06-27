@@ -176,7 +176,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.map(Eval::completedEval);
-    	List<Integer> results = optTAdd2.apply(EvalWT.of(streamOpt))
+    	List<Integer> results = optTAdd2.applyHKT(EvalWT.of(streamOpt))
     									.unwrap()
     									.<Stream<Eval<Integer>>>unwrap()
     									.map(Eval::join)
@@ -214,7 +214,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     	
     	Eval<Eval<Integer>> two = Eval.completedEval(Eval.completedEval(2));
     	AnyMSeq<Eval<Integer>> Eval=  AnyM.fromEvalW(two);
-    	List<Integer> results = optTAdd2.apply(EvalWT.of(streamOpt),EvalWT.of(Eval))
+    	List<Integer> results = optTAdd2.applyHKT(EvalWT.of(streamOpt),EvalWT.of(Eval))
     									.unwrap()
     									.<Stream<Eval<Integer>>>unwrap()
     									.map(Eval::join)

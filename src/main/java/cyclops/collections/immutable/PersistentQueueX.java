@@ -1318,7 +1318,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          * {@code
          *   PersistentQueueX<Integer> list = PQueues.unit()
         .unit("hello")
-        .apply(h->PQueues.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->PQueues.functor().map((String v) ->v.length(), h))
         .convert(PersistentQueueX::narrowK);
          *
          * }
@@ -1374,8 +1374,8 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
         PersistentQueueX<Integer> list = PQueues.unit()
         .unit("hello")
-        .apply(h->PQueues.functor().map((String v) ->v.length(), h))
-        .apply(h->PQueues.zippingApplicative().ap(listFn, h))
+        .applyHKT(h->PQueues.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->PQueues.zippingApplicative().ap(listFn, h))
         .convert(PersistentQueueX::narrowK);
 
         //Arrays.asPQueue("hello".length()*2))
@@ -1406,7 +1406,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          * {@code
          *    PersistentQueueX<Integer> list = PQueues.unit()
         .unit("hello")
-        .apply(h->PQueues.monad().flatMap((String v) ->PQueues.unit().unit(v.length()), h))
+        .applyHKT(h->PQueues.monad().flatMap((String v) ->PQueues.unit().unit(v.length()), h))
         .convert(PersistentQueueX::narrowK);
 
         //Arrays.asPQueue("hello".length())
@@ -1427,7 +1427,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          * {@code
          *  PersistentQueueX<String> list = PQueues.unit()
         .unit("hello")
-        .apply(h->PQueues.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->PQueues.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(PersistentQueueX::narrowK);
 
         //Arrays.asPQueue("hello"));

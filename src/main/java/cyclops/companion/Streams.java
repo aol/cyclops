@@ -1112,7 +1112,7 @@ public class Streams {
      *  }</pre>
     
      * @param stream Stream toNested skip elements from
-     * @param predicate toNested apply
+     * @param predicate toNested applyHKT
      * @return Stream with elements skipped
      */
     public static <U> Stream<U> skipUntil(final Stream<U> stream, final Predicate<? super U> predicate) {
@@ -2688,7 +2688,7 @@ public class Streams {
      * @see ReactiveSeq#debounce(long, TimeUnit)
      * 
      * @param stream Stream toNested debounce
-     * @param time Time toNested apply debouncing over
+     * @param time Time toNested applyHKT debouncing over
      * @param t Time unit for debounce period
      * @return Stream with debouncing applied
      */
@@ -2854,7 +2854,7 @@ public class Streams {
          * {@code
          *   StreamKind<Integer> list = Streams.unit()
         .unit("hello")
-        .apply(h->Streams.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Streams.functor().map((String v) ->v.length(), h))
         .convert(StreamKind::narrow);
          *
          * }
@@ -2909,8 +2909,8 @@ public class Streams {
 
         StreamKind<Integer> list = Streams.unit()
         .unit("hello")
-        .apply(h->Streams.functor().map((String v) ->v.length(), h))
-        .apply(h->Streams.zippingApplicative().ap(listFn, h))
+        .applyHKT(h->Streams.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Streams.zippingApplicative().ap(listFn, h))
         .convert(StreamKind::narrow);
 
         //Stream.of("hello".length()*2))
@@ -2941,7 +2941,7 @@ public class Streams {
          * {@code
          *    StreamKind<Integer> list = Streams.unit()
         .unit("hello")
-        .apply(h->Streams.monad().flatMap((String v) ->Streams.unit().unit(v.length()), h))
+        .applyHKT(h->Streams.monad().flatMap((String v) ->Streams.unit().unit(v.length()), h))
         .convert(StreamKind::narrow);
 
         //Stream.of("hello".length())
@@ -2962,7 +2962,7 @@ public class Streams {
          * {@code
          *  StreamKind<String> list = Streams.unit()
         .unit("hello")
-        .apply(h->Streams.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->Streams.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(StreamKind::narrow);
 
         //Stream.of("hello"));

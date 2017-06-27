@@ -299,7 +299,7 @@ public class ExceptionSoftener {
      * 
      * <pre>
      * {@code 
-     * Data loaded = ExceptionSoftener.softenFunction(this::load).apply(fileName);
+     * Data loaded = ExceptionSoftener.softenFunction(this::load).applyHKT(fileName);
     
     	public Data load(String file) throws IOException
      * </pre>
@@ -324,7 +324,7 @@ public class ExceptionSoftener {
      * 
      * <pre>
      * {@code 
-     *  int loaded = ExceptionSoftener.softenFunction(this::load).apply(id);
+     *  int loaded = ExceptionSoftener.softenFunction(this::load).applyHKT(id);
     
     	public int load(int it) throws IOException
      * </pre>
@@ -349,7 +349,7 @@ public class ExceptionSoftener {
      * 
      * <pre>
      * {@code 
-     *  long loaded = ExceptionSoftener.softenFunction(this::load).apply(id);
+     *  long loaded = ExceptionSoftener.softenFunction(this::load).applyHKT(id);
     
     	public long load(long it) throws IOException
      * </pre>
@@ -374,7 +374,7 @@ public class ExceptionSoftener {
      * 
      * <pre>
      * {@code 
-     *  double loaded = ExceptionSoftener.softenFunction(this::load).apply(id);
+     *  double loaded = ExceptionSoftener.softenFunction(this::load).applyHKT(id);
     
     	public double load(double it) throws IOException
      * </pre>
@@ -399,7 +399,7 @@ public class ExceptionSoftener {
      * 
      * <pre>
      * {@code 
-     *  double loaded = ExceptionSoftener.softenFunction(this::load).apply(id);
+     *  double loaded = ExceptionSoftener.softenFunction(this::load).applyHKT(id);
     
     	public double load(long it) throws IOException
      * </pre>
@@ -424,7 +424,7 @@ public class ExceptionSoftener {
      * 
      * <pre>
      * {@code 
-     *  int loaded = ExceptionSoftener.softenFunction(this::load).apply(id);
+     *  int loaded = ExceptionSoftener.softenFunction(this::load).applyHKT(id);
     
     	public int load(long it) throws IOException
      * </pre>
@@ -449,7 +449,7 @@ public class ExceptionSoftener {
      * 
      * <pre>
      * {@code 
-     *  double loaded = ExceptionSoftener.softenFunction(this::load).apply(id);
+     *  double loaded = ExceptionSoftener.softenFunction(this::load).applyHKT(id);
     
     	public double load(int it) throws IOException
      * </pre>
@@ -474,7 +474,7 @@ public class ExceptionSoftener {
      * 
      * <pre>
      * {@code 
-     *  double loaded = ExceptionSoftener.softenFunction(this::load).apply(id);
+     *  double loaded = ExceptionSoftener.softenFunction(this::load).applyHKT(id);
     
     	public long load(int it) throws IOException
      * </pre>
@@ -499,7 +499,7 @@ public class ExceptionSoftener {
      * 
      * <pre>
      * {@code 
-     *  int loaded = ExceptionSoftener.softenFunction(this::load).apply(id);
+     *  int loaded = ExceptionSoftener.softenFunction(this::load).applyHKT(id);
     
     	public int load(double it) throws IOException
      * </pre>
@@ -524,7 +524,7 @@ public class ExceptionSoftener {
      * 
      * <pre>
      * {@code 
-     *  long loaded = ExceptionSoftener.softenFunction(this::load).apply(id);
+     *  long loaded = ExceptionSoftener.softenFunction(this::load).applyHKT(id);
     
     	public long load(double it) throws IOException
      * </pre>
@@ -550,7 +550,7 @@ public class ExceptionSoftener {
      * {@code
      * 
     	
-    	ExceptionSoftener.softenBiFunction(this::loadDir).apply(".core","/tmp/dir");
+    	ExceptionSoftener.softenBiFunction(this::loadDir).applyHKT(".core","/tmp/dir");
      * 
      *  public String loadDir(String fileExt,String dir) throws IOException
      *  

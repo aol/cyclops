@@ -30,7 +30,7 @@ public class FutureWsTest {
         
         Future<Integer> opt = Future.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Future.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->Future.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(Future::narrowK);
         
         assertThat(opt.join(),equalTo(Future.ofResult("hello".length()).join()));
@@ -52,8 +52,8 @@ public class FutureWsTest {
         
         Future<Integer> opt = Future.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Future.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h->Future.Instances.applicative().ap(optFn, h))
+                                     .applyHKT(h->Future.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->Future.Instances.applicative().ap(optFn, h))
                                      .convert(Future::narrowK);
         
         assertThat(opt.join(),equalTo(Future.ofResult("hello".length()*2).join()));
@@ -69,7 +69,7 @@ public class FutureWsTest {
         
         Future<Integer> opt = Future.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Future.Instances.monad().flatMap((String v) ->Future.Instances.unit().unit(v.length()), h))
+                                     .applyHKT(h->Future.Instances.monad().flatMap((String v) ->Future.Instances.unit().unit(v.length()), h))
                                      .convert(Future::narrowK);
         
         assertThat(opt.join(),equalTo(Future.ofResult("hello".length()).join()));
@@ -79,7 +79,7 @@ public class FutureWsTest {
         
         Future<String> opt = Future.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Future.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h->Future.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(Future::narrowK);
         
         assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello").join()));
@@ -89,7 +89,7 @@ public class FutureWsTest {
         
         Future<String> opt = Future.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Future.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h->Future.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(Future::narrowK);
         
         assertFalse(opt.toCompletableFuture().isDone());

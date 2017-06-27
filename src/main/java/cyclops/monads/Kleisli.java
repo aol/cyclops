@@ -53,7 +53,7 @@ public interface Kleisli<W extends WitnessType<W>,T,R> extends Fn1<T,AnyM<W,R>>,
 
         k1.flatMap(i-> kleisli(t-> ReactiveSeq.of(t+i)
                                               .anyM(), reactiveSeq.INSTANCE))
-          .apply(10)
+          .applyHKT(10)
           .forEach(System.out::println);
 
         10

@@ -662,7 +662,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * @param iterable3
      *            Nested Stream toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
@@ -757,7 +757,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * @param iterable2
      *            Nested Stream toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
@@ -837,7 +837,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * @param iterable1
      *            Nested Stream toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both

@@ -16,7 +16,7 @@ import java.util.function.Function;
        .build();
 
  * BiFunction<Integer,Integer,Integer> s = Memoize.memoizeBiFunction( (a,b)->a + ++called,
- * 													(key,fn)-> cache.get(key,()->fn.apply(key)); 
+ * 													(key,fn)-> cache.get(key,()->fn.applyHKT(key));
  * }
  * </pre>
  *

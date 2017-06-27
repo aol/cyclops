@@ -1180,7 +1180,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          * {@code
          *   QueueX<Integer> queue = Queues.unit()
         .unit("hello")
-        .apply(h->Queues.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Queues.functor().map((String v) ->v.length(), h))
         .convert(QueueX::narrowK);
          *
          * }
@@ -1236,8 +1236,8 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         QueueX<Integer> queue = Queues.unit()
         .unit("hello")
-        .apply(h->Queues.functor().map((String v) ->v.length(), h))
-        .apply(h->Queues.zippingApplicative().ap(queueFn, h))
+        .applyHKT(h->Queues.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Queues.zippingApplicative().ap(queueFn, h))
         .convert(QueueX::narrowK);
 
         //QueueX.of("hello".length()*2))
@@ -1268,7 +1268,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          * {@code
          *    QueueX<Integer> queue = Queues.unit()
         .unit("hello")
-        .apply(h->Queues.monad().flatMap((String v) ->Queues.unit().unit(v.length()), h))
+        .applyHKT(h->Queues.monad().flatMap((String v) ->Queues.unit().unit(v.length()), h))
         .convert(QueueX::narrowK);
 
         //QueueX.of("hello".length())
@@ -1289,7 +1289,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          * {@code
          *  QueueX<String> queue = Queues.unit()
         .unit("hello")
-        .apply(h->Queues.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->Queues.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(QueueX::narrowK);
 
         //QueueX.of("hello"));

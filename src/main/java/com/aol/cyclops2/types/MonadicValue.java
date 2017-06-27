@@ -2,6 +2,7 @@ package com.aol.cyclops2.types;
 
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.functor.Transformable;
+import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.control.Maybe;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
@@ -24,7 +25,6 @@ import java.util.stream.Stream;
  * @param <T> Data type of element stored inside this Monad
  */
 public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Filters<T>, Zippable<T>{
-
 
     default int arity(){
         return 1;
@@ -164,7 +164,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param value3
      *            Nested MonadicValue toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
@@ -253,7 +253,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param value2
      *            Nested MonadicValue toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
@@ -327,7 +327,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param monad1
      *            Nested monadic type toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both

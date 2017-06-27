@@ -147,7 +147,7 @@ public class Predicates {
 
      * 
      * Eval<Integer> result = Xors.future(FutureW.ofResult(1))
-                                         .matches(c-> c.is( when(some(1)), apply(10)), c->c.is(when(instanceOf(RuntimeException.class)), apply(2)),otherwise(3));
+                                         .matches(c-> c.is( when(some(1)), applyHKT(10)), c->c.is(when(instanceOf(RuntimeException.class)), applyHKT(2)),otherwise(3));
         
        //Eval[10]
      * 

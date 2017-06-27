@@ -2850,7 +2850,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * <pre>
      * {@code 
-     * given(serviceMock.apply(anyInt())).willThrow(
+     * given(serviceMock.applyHKT(anyInt())).willThrow(
     			new RuntimeException(new SocketException("First")),
     			new RuntimeException(new IOException("Second"))).willReturn(
     			"42");

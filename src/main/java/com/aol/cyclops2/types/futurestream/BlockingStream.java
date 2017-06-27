@@ -21,8 +21,8 @@ public interface BlockingStream<U> {
      * <pre>
      * {@code 
     	List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-    			.apply((it) -> it * 100)
-    			.apply((it) -> "*" + it)
+    			.applyHKT((it) -> it * 100)
+    			.applyHKT((it) -> "*" + it)
     			.block();
     	}
     			

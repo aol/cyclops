@@ -231,7 +231,7 @@ public interface Semigroups {
      * <pre>
      * {@code 
      *  BinaryOperator<Zippable<Integer>> sumInts = Semigroups.combineZippables(Semigroups.intSum);
-        sumInts.apply(ListX.of(1,2,3), ListX.of(4,5,6));
+        sumInts.applyHKT(ListX.of(1,2,3), ListX.of(4,5,6));
         
         //List[5,7,9];
      * 

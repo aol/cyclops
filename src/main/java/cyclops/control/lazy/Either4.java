@@ -211,7 +211,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * </pre>
      *
      * @param either Either to consume value for
-     * @return Consumer we can apply to consume value
+     * @return Consumer we can applyHKT to consume value
      */
     static <X, LT1 extends X, LT2 extends X, LT3 extends X, RT extends X> Consumer<Consumer<? super X>> consumeAny(
             Either4<LT1, LT2, LT3, RT> either) {
@@ -546,7 +546,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * Filter this Either4 resulting in a Maybe#none if it is not a Right instance or if the predicate does not
      * hold. Otherwise results in a Maybe containing the current value
      *
-     * @param test Predicate to apply to filter this Either4
+     * @param test Predicate to applyHKT to filter this Either4
      * @return Maybe containing the current value if this is a Right instance and the predicate holds, otherwise Maybe#none
      */
     Maybe<RT> filter(Predicate<? super RT> test);

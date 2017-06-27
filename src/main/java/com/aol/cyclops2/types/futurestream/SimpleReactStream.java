@@ -418,7 +418,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * where filter has been applied in earlier stages. (As Filter completes the Stream for events that are filtered out, they
      * potentially shortcircuit the completion of the stage).
      *
-     * @param fn Function toNested apply when any of the previous events complete
+     * @param fn Function toNested applyHKT when any of the previous events complete
      * @return Next stage in the reactiveStream
      */
     default <R> SimpleReactStream<R> anyOf(final Function<? super U, ? extends R> fn) {
@@ -639,7 +639,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      * React <b>with</b>
      *
-     * Asynchronously apply the function supplied toNested the currently active event
+     * Asynchronously applyHKT the function supplied toNested the currently active event
      * tasks in the dataflow.
      *
      * While most methods in this class are fluent, and return a reference toNested a
@@ -863,7 +863,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * onFail allows disaster recovery for each task (a separate onFail should
      * be configured for each react phase that can fail). E.g. if reading data
      * from an external service fails, but default value is acceptable - onFail
-     * is a suitable mechanism toNested set the default value. Asynchronously apply
+     * is a suitable mechanism toNested set the default value. Asynchronously applyHKT
      * the function supplied toNested the currently active event tasks in the
      * dataflow.
      *

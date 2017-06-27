@@ -29,7 +29,7 @@ public class MaybesTest {
         
         Maybe<Integer> opt = Maybe.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Maybe.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->Maybe.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(Maybe::narrowK);
         
         assertThat(opt,equalTo(Maybe.of("hello".length())));
@@ -49,8 +49,8 @@ public class MaybesTest {
         
         Maybe<Integer> opt = Maybe.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Maybe.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h->Maybe.Instances.applicative().ap(optFn, h))
+                                     .applyHKT(h->Maybe.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->Maybe.Instances.applicative().ap(optFn, h))
                                      .convert(Maybe::narrowK);
         
         assertThat(opt,equalTo(Maybe.of("hello".length()*2)));
@@ -66,7 +66,7 @@ public class MaybesTest {
         
         Maybe<Integer> opt = Maybe.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Maybe.Instances.monad().flatMap((String v) ->Maybe.Instances.unit().unit(v.length()), h))
+                                     .applyHKT(h->Maybe.Instances.monad().flatMap((String v) ->Maybe.Instances.unit().unit(v.length()), h))
                                      .convert(Maybe::narrowK);
         
         assertThat(opt,equalTo(Maybe.of("hello".length())));
@@ -76,7 +76,7 @@ public class MaybesTest {
         
         Maybe<String> opt = Maybe.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Maybe.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h->Maybe.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(Maybe::narrowK);
         
         assertThat(opt,equalTo(Maybe.of("hello")));
@@ -86,7 +86,7 @@ public class MaybesTest {
         
         Maybe<String> opt = Maybe.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Maybe.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h->Maybe.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(Maybe::narrowK);
         
         assertThat(opt,equalTo(Maybe.none()));

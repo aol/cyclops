@@ -67,11 +67,11 @@ public interface Fn3<S1, S2, S3, R> extends Fn1<S1,Fn1<S2,Fn1<S3,R>>> {
         called=0;
         Fn3<Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
                                                         .name("myFunction")
-                                                        .memoize((key,f)->cache.get(key,()->f.apply(key)));
+                                                        .memoize((key,f)->cache.get(key,()->f.applyHKT(key)));
 
-        fn.apply(10,1,4);
-        fn.apply(10,1,4);
-        fn.apply(10,1,4);
+        fn.applyHKT(10,1,4);
+        fn.applyHKT(10,1,4);
+        fn.applyHKT(10,1,4);
 
         assertThat(called,equalTo(1));
      *

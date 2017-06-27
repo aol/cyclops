@@ -254,6 +254,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
             return either.flatMap(mapper);
         }
 
+
         @Override
         public boolean isRight() {
             return either.isRight();
@@ -429,7 +430,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * </pre>
      *
      * @param either Either to consume value for
-     * @return Consumer we can apply to consume value
+     * @return Consumer we can applyHKT to consume value
      */
     static <X, LT extends X, M extends X, RT extends X>  Consumer<Consumer<? super X>> consumeAny(Either<LT, RT> either){
         return in->visitAny(in,either);
@@ -449,6 +450,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
             return x;
         };
         return visitAny(either,fn);
+    }
+    default Trampoline<RT> toTrampoline(Supplier<RT> defaultValue) {
+        return Trampoline.more(()->Trampoline.done(get()));
+    }
+    default Trampoline<RT> toTrampoline(RT defaultValue) {
+        return Trampoline.more(()->Trampoline.done(get()));
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.control.Xor#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)

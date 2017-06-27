@@ -187,7 +187,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
-    	List<Integer> results = optTAdd2.apply(FutureWT.of(streamOpt))
+    	List<Integer> results = optTAdd2.applyHKT(FutureWT.of(streamOpt))
     									.unwrap()
     									.<Stream<Future<Integer>>>unwrap()
     									.map(Future::join)
@@ -225,7 +225,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     	
     	Future<Future<Integer>> two = Future.completedFuture(Future.completedFuture(2));
     	AnyMSeq<Future<Integer>> future=  AnyM.fromFuture(two);
-    	List<Integer> results = optTAdd2.apply(FutureWT.of(streamOpt),FutureWT.of(future))
+    	List<Integer> results = optTAdd2.applyHKT(FutureWT.of(streamOpt),FutureWT.of(future))
     									.unwrap()
     									.<Stream<Future<Integer>>>unwrap()
     									.map(Future::join)

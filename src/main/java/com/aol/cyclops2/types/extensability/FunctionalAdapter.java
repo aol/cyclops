@@ -25,7 +25,7 @@ import lombok.AllArgsConstructor;
  *  OptionComprehender<Option> {
  *    
  *     public Object map(Option o, Function fn){
- *        return o.map( a-> fn.apply(a));
+ *        return o.map( a-> fn.applyHKT(a));
  *     }
  *     
  * }

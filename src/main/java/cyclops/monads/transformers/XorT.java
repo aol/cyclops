@@ -179,7 +179,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<Maybe<Integer>> streamOpt = reactiveStream.map(Maybe::completedMaybe);
-    	List<Integer> results = optTAdd2.apply(MaybeWT.of(streamOpt))
+    	List<Integer> results = optTAdd2.applyHKT(MaybeWT.of(streamOpt))
     									.unwrap()
     									.<Stream<Maybe<Integer>>>unwrap()
     									.map(Maybe::join)
@@ -217,7 +217,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     	
     	Maybe<Maybe<Integer>> two = Maybe.completedMaybe(Maybe.completedMaybe(2));
     	AnyMSeq<Maybe<Integer>> Maybe=  AnyM.fromMaybeW(two);
-    	List<Integer> results = optTAdd2.apply(MaybeWT.of(streamOpt),MaybeWT.of(Maybe))
+    	List<Integer> results = optTAdd2.applyHKT(MaybeWT.of(streamOpt),MaybeWT.of(Maybe))
     									.unwrap()
     									.<Stream<Maybe<Integer>>>unwrap()
     									.map(Maybe::join)

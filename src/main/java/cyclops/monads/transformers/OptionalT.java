@@ -180,7 +180,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.map(Optional::completedOptional);
-    	List<Integer> results = optTAdd2.apply(OptionalWT.of(streamOpt))
+    	List<Integer> results = optTAdd2.applyHKT(OptionalWT.of(streamOpt))
     									.unwrap()
     									.<Stream<Optional<Integer>>>unwrap()
     									.map(Optional::join)
@@ -218,7 +218,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     	
     	Optional<Optional<Integer>> two = Optional.completedOptional(Optional.completedOptional(2));
     	AnyMSeq<Optional<Integer>> Optional=  AnyM.fromOptionalW(two);
-    	List<Integer> results = optTAdd2.apply(OptionalWT.of(streamOpt),OptionalWT.of(Optional))
+    	List<Integer> results = optTAdd2.applyHKT(OptionalWT.of(streamOpt),OptionalWT.of(Optional))
     									.unwrap()
     									.<Stream<Optional<Integer>>>unwrap()
     									.map(Optional::join)

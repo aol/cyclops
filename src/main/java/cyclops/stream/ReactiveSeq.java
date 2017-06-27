@@ -1445,7 +1445,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param predicate
-     *            Batch until predicate holds, apply open next batch
+     *            Batch until predicate holds, applyHKT open next batch
      * @return ReactiveSeq batched into lists determined by the predicate supplied
      */
     @Override
@@ -1467,7 +1467,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param predicate
-     *            Batch while predicate holds, apply open next batch
+     *            Batch while predicate holds, applyHKT open next batch
      * @return ReactiveSeq batched into lists determined by the predicate supplied
      */
     @Override
@@ -1487,7 +1487,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param predicate
-     *            Batch while predicate holds, apply open next batch
+     *            Batch while predicate holds, applyHKT open next batch
      * @param factory
      *            Collection factory
      * @return ReactiveSeq batched into collections determined by the predicate
@@ -1511,7 +1511,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param predicate
-     *            Batch until predicate holds, apply open next batch
+     *            Batch until predicate holds, applyHKT open next batch
      * @param factory
      *            Collection factory
      * @return ReactiveSeq batched into collections determined by the predicate
@@ -2261,7 +2261,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * is {@link Collector.Characteristics#CONCURRENT concurrent}, and
      * lazy the reactiveStream is unordered or the collector is
      * {@link Collector.Characteristics#UNORDERED unordered},
-     * apply a concurrent reduction will be performed (see {@link Collector} for
+     * applyHKT a concurrent reduction will be performed (see {@link Collector} for
      * details on concurrent reduction.)
      * <p>
      * <p>This is a <a href="package-summary.html#StreamOps">terminal
@@ -3669,7 +3669,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * @param time Time toNested apply debouncing over
+     * @param time Time toNested applyHKT debouncing over
      * @param t Time unit for debounce period
      * @return ReactiveSeq with debouncing applied
      */
@@ -3767,7 +3767,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * given(serviceMock.apply(anyInt())).willThrow(
+     * given(serviceMock.applyHKT(anyInt())).willThrow(
      * 				new RuntimeException(new SocketException("First")),
      * 				new RuntimeException(new IOException("Second"))).willReturn(
      * 				"42");
@@ -3796,7 +3796,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * given(serviceMock.apply(anyInt())).willThrow(
+     * given(serviceMock.applyHKT(anyInt())).willThrow(
      * 				new RuntimeException(new SocketException("First")),
      * 				new RuntimeException(new IOException("Second"))).willReturn(
      * 				"42");
@@ -4127,7 +4127,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param stream3
      *            Nested Stream toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
@@ -4224,7 +4224,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param stream2
      *            Nested Stream toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
@@ -4313,7 +4313,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param stream1
      *            Nested Stream toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
@@ -4857,7 +4857,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          *   ReactiveSeq<Integer> list = ReactiveSeq.Instances.unit()
         .unit("hello")
-        .apply(h->Lists.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
         .convert(ReactiveSeq::narrowK);
          *
          * }
@@ -4913,8 +4913,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
-        .apply(h->Lists.functor().map((String v) ->v.length(), h))
-        .apply(h->Lists.zippingApplicative().ap(listFn, h))
+        .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Lists.zippingApplicative().ap(listFn, h))
         .convert(ReactiveSeq::narrowK);
 
         //Arrays.asList("hello".length()*2))
@@ -4945,7 +4945,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          *    ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
-        .apply(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
+        .applyHKT(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
         .convert(ReactiveSeq::narrowK);
 
         //Arrays.asList("hello".length())
@@ -4966,7 +4966,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          *  ReactiveSeq<String> list = Lists.unit()
         .unit("hello")
-        .apply(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(ReactiveSeq::narrowK);
 
         //Arrays.asList("hello"));

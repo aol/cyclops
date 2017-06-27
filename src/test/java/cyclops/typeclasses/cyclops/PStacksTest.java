@@ -29,7 +29,7 @@ public class PStacksTest {
         
         LinkedListX<Integer> list = LinkedListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> LinkedListX.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> LinkedListX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(LinkedListX::narrowK);
         
         assertThat(list,equalTo(LinkedListX.of("hello".length())));
@@ -49,8 +49,8 @@ public class PStacksTest {
         
         LinkedListX<Integer> list = LinkedListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> LinkedListX.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h-> LinkedListX.Instances.zippingApplicative().ap(listFn, h))
+                                     .applyHKT(h-> LinkedListX.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> LinkedListX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(LinkedListX::narrowK);
         
         assertThat(list,equalTo(LinkedListX.of("hello".length()*2)));
@@ -66,7 +66,7 @@ public class PStacksTest {
         
         LinkedListX<Integer> list = LinkedListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> LinkedListX.Instances.monad().flatMap((String v) -> LinkedListX.Instances.unit().unit(v.length()), h))
+                                     .applyHKT(h-> LinkedListX.Instances.monad().flatMap((String v) -> LinkedListX.Instances.unit().unit(v.length()), h))
                                      .convert(LinkedListX::narrowK);
         
         assertThat(list,equalTo(LinkedListX.of("hello".length())));
@@ -76,7 +76,7 @@ public class PStacksTest {
         
         LinkedListX<String> list = LinkedListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> LinkedListX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h-> LinkedListX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(LinkedListX::narrowK);
         
         assertThat(list,equalTo(LinkedListX.of("hello")));
@@ -86,7 +86,7 @@ public class PStacksTest {
         
         LinkedListX<String> list = LinkedListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> LinkedListX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h-> LinkedListX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(LinkedListX::narrowK);
         
         assertThat(list,equalTo(LinkedListX.empty()));

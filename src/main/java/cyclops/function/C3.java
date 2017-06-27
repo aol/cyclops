@@ -44,7 +44,7 @@ public interface C3<S1, S2, S3> {
     }
 
     /**
-     * Partially apply the takeOne input parameter toNested this C3
+     * Partially applyHKT the takeOne input parameter toNested this C3
      * 
      * @param s the takeOne input parameter
      * @return A curried function that returns a Consumer
@@ -55,7 +55,7 @@ public interface C3<S1, S2, S3> {
     }
 
     /**
-     * Partially apply the takeOne and second input parameter toNested this C3
+     * Partially applyHKT the takeOne and second input parameter toNested this C3
      * 
      * @param s the takeOne input parameter
      * @param s2 the second input parameter

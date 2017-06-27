@@ -1235,7 +1235,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * {@code
          *   VectorX<Integer> list = PVectors.unit()
         .unit("hello")
-        .apply(h->PVectors.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->PVectors.functor().map((String v) ->v.length(), h))
         .convert(VectorX::narrowK);
          *
          * }
@@ -1291,8 +1291,8 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         VectorX<Integer> list = PVectors.unit()
         .unit("hello")
-        .apply(h->PVectors.functor().map((String v) ->v.length(), h))
-        .apply(h->PVectors.zippingApplicative().ap(listFn, h))
+        .applyHKT(h->PVectors.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->PVectors.zippingApplicative().ap(listFn, h))
         .convert(VectorX::narrowK);
 
         //Arrays.asPVector("hello".length()*2))
@@ -1323,7 +1323,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * {@code
          *    VectorX<Integer> list = PVectors.unit()
         .unit("hello")
-        .apply(h->PVectors.monad().flatMap((String v) ->PVectors.unit().unit(v.length()), h))
+        .applyHKT(h->PVectors.monad().flatMap((String v) ->PVectors.unit().unit(v.length()), h))
         .convert(VectorX::narrowK);
 
         //Arrays.asPVector("hello".length())
@@ -1344,7 +1344,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * {@code
          *  VectorX<String> list = PVectors.unit()
         .unit("hello")
-        .apply(h->PVectors.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->PVectors.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(VectorX::narrowK);
 
         //Arrays.asPVector("hello"));

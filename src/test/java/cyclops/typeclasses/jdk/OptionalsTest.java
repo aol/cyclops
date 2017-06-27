@@ -16,6 +16,7 @@ import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 
+import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;
 
 
@@ -36,7 +37,7 @@ public class OptionalsTest {
         
         OptionalKind<Integer> opt = Optionals.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Optionals.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->Optionals.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(OptionalKind::narrow);
         
         assertThat(opt,equalTo(Optional.of("hello".length())));
@@ -56,8 +57,8 @@ public class OptionalsTest {
         
         OptionalKind<Integer> opt = Optionals.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Optionals.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h->Optionals.Instances.applicative().ap(optFn, h))
+                                     .applyHKT(h->Optionals.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->Optionals.Instances.applicative().ap(optFn, h))
                                      .convert(OptionalKind::narrow);
         
         assertThat(opt,equalTo(Optional.of("hello".length()*2)));
@@ -68,12 +69,21 @@ public class OptionalsTest {
                                             .<Integer,Integer>flatMap(i->widen(Optional.of(i*2)), widen(Optional.of(3)))
                                             .convert(OptionalKind::narrow);
     }
+
+    @Test
+    public void functorSimple(){
+
+        Functor<OptionalKind.µ> functor = Optionals.Instances.functor();
+        Higher<OptionalKind.µ, Integer> hkt = functor.map(i -> i * 2, OptionalKind.widen(Optional.of(3)));
+        Optional<Integer> opt = OptionalKind.narrowK(hkt);
+    }
+
     @Test
     public void monad(){
         
         OptionalKind<Integer> opt = Optionals.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Optionals.Instances.monad().flatMap((String v) ->Optionals.Instances.unit().unit(v.length()), h))
+                                     .applyHKT(h->Optionals.Instances.monad().flatMap((String v) ->Optionals.Instances.unit().unit(v.length()), h))
                                      .convert(OptionalKind::narrow);
         
         assertThat(opt,equalTo(Optional.of("hello".length())));
@@ -83,7 +93,7 @@ public class OptionalsTest {
         
         OptionalKind<String> opt = Optionals.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Optionals.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h->Optionals.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(OptionalKind::narrow);
         
         assertThat(opt,equalTo(Optional.of("hello")));
@@ -93,7 +103,7 @@ public class OptionalsTest {
         
         OptionalKind<String> opt = Optionals.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Optionals.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h->Optionals.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(OptionalKind::narrow);
         
         assertThat(opt,equalTo(Optional.empty()));

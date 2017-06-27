@@ -30,7 +30,7 @@ public class PVectorsTest {
         
         VectorX<Integer> list = VectorX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> VectorX.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> VectorX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(VectorX::narrowK);
         
         assertThat(list,equalTo(VectorX.of("hello".length())));
@@ -50,8 +50,8 @@ public class PVectorsTest {
         
         VectorX<Integer> list = VectorX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> VectorX.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h-> VectorX.Instances.zippingApplicative().ap(listFn, h))
+                                     .applyHKT(h-> VectorX.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> VectorX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(VectorX::narrowK);
         
         assertThat(list,equalTo(VectorX.of("hello".length()*2)));
@@ -67,7 +67,7 @@ public class PVectorsTest {
         
         VectorX<Integer> list = VectorX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> VectorX.Instances.monad().flatMap((String v) -> VectorX.Instances.unit().unit(v.length()), h))
+                                     .applyHKT(h-> VectorX.Instances.monad().flatMap((String v) -> VectorX.Instances.unit().unit(v.length()), h))
                                      .convert(VectorX::narrowK);
         
         assertThat(list,equalTo(VectorX.of("hello".length())));
@@ -77,7 +77,7 @@ public class PVectorsTest {
         
         VectorX<String> list = VectorX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> VectorX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h-> VectorX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(VectorX::narrowK);
         
         assertThat(list,equalTo(VectorX.of("hello")));
@@ -87,7 +87,7 @@ public class PVectorsTest {
         
         VectorX<String> list = VectorX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> VectorX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h-> VectorX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(VectorX::narrowK);
         
         assertThat(list,equalTo(VectorX.empty()));

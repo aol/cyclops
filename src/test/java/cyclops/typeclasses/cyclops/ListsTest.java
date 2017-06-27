@@ -11,6 +11,7 @@ import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
+import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;
 
 
@@ -31,7 +32,7 @@ public class ListsTest {
         
         ListX<Integer> list = ListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->ListX.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->ListX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(ListX::narrowK);
         
         assertThat(list,equalTo(Arrays.asList("hello".length())));
@@ -51,24 +52,33 @@ public class ListsTest {
         
         ListX<Integer> list = ListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->ListX.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h->ListX.Instances.zippingApplicative().ap(listFn, h))
+                                     .applyHKT(h->ListX.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->ListX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(ListX::narrowK);
         
         assertThat(list,equalTo(Arrays.asList("hello".length()*2)));
     }
     @Test
     public void monadSimple(){
+
        ListX<Integer> list  = ListX.Instances.monad()
                                       .flatMap(i->ListX.range(0,i),ListX.of(1,2,3))
                                       .convert(ListX::narrowK);
+    }
+    @Test
+    public void functorSimple(){
+
+        Functor<ListX.µ> functor = ListX.Instances.functor();
+        Higher<ListX.µ, Integer> hkt = functor.map(i -> i * 2, ListX.of(1, 2, 3));
+        ListX<Integer> list =  hkt.convert(ListX::narrowK);
+
     }
     @Test
     public void monad(){
         
         ListX<Integer> list = ListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->ListX.Instances.monad().flatMap((String v) ->ListX.Instances.unit().unit(v.length()), h))
+                                     .applyHKT(h->ListX.Instances.monad().flatMap((String v) ->ListX.Instances.unit().unit(v.length()), h))
                                      .convert(ListX::narrowK);
         
         assertThat(list,equalTo(Arrays.asList("hello".length())));
@@ -78,7 +88,7 @@ public class ListsTest {
         
         ListX<String> list = ListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->ListX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h->ListX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(ListX::narrowK);
         
         assertThat(list,equalTo(Arrays.asList("hello")));
@@ -88,7 +98,7 @@ public class ListsTest {
         
         ListX<String> list = ListX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->ListX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h->ListX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(ListX::narrowK);
         
         assertThat(list,equalTo(Arrays.asList()));

@@ -204,7 +204,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * {@code 
      *    AnyM<optional,Function<Integer,Integer>> add = AnyM.fromNullable(this::add2);
      *    add.to(AnyM::ap)
-     *       .apply(AnyM.ofNullable(10));
+     *       .applyHKT(AnyM.ofNullable(10));
      *   
      *    //AnyM[12] //add 2
      * 
@@ -212,25 +212,25 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * </pre>
      * 
      * @param fn Function inside an Applicative
-     * @return Function toNested apply an Applicative's value toNested function
+     * @return Function toNested applyHKT an Applicative's value toNested function
      */
     public static <W extends WitnessType<W>,T2,T,R> Function<AnyM2<W,T2,T>,AnyM2<W,T2,R>> ap(AnyM2<W, T2,Function<T, R>> fn){
         return apply->(AnyM2<W,T2,R>)apply.adapter().ap(fn,apply);
     }
     /**
-     * Applicative ap2 method toNested use fluently toNested apply toNested a curried function
+     * Applicative ap2 method toNested use fluently toNested applyHKT toNested a curried function
      * <pre>
      * {@code 
      *    AnyM<optional,Function<Integer,Function<Integer,Integer>>> add = AnyM.fromNullable(Curry.curry2(this::add));
      *    add.to(AnyM::ap2)
-     *       .apply(AnyM.ofNullable(10),AnyM.ofNullable(20));
+     *       .applyHKT(AnyM.ofNullable(10),AnyM.ofNullable(20));
      *   
      *    //AnyM[30] //add together
      * 
      * }
      * </pre>
      * @param fn Curried function inside an Applicative
-     * @return Function toNested apply two Applicative's values toNested a function
+     * @return Function toNested applyHKT two Applicative's values toNested a function
      */
     public static <W extends WitnessType<W>,T2,T,R,T3> BiFunction<AnyM2<W,T3,T>,AnyM2<W,T3,T2>,AnyM2<W,T3,R>> ap2(AnyM2<W, T3,Function<T, Function<T2, R>>> fn){
         return (apply1,apply2)->(AnyM2<W,T3,R>)apply1.adapter().ap2(fn,apply1,apply2);
@@ -477,7 +477,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         </pre>
      * 
      * @param seq Collection of Monads
-     * @param fn Function to apply 
+     * @param fn Function to applyHKT
      * @return Monad with a list
      */
     public static <W extends WitnessType<W>,T, T2,R> AnyM2<W,T2,ListX<R>> traverse(final Collection<? extends AnyM2<W, T2,T>> seq, final Function<? super T, ? extends R> fn, W w) {
@@ -493,7 +493,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
        
         BiFunction<AnyM2<W,T2,Stream<T>>,AnyM2<W,T2,T>,AnyM2<W,T2,Stream<T>>> combineToStream = (acc, next) -> (AnyM2)c.ap2(c.unit(Lambda.l2((Stream<T> a)->(T b)->ReactiveSeq.concat(a,ReactiveSeq.of(b)))),acc,next);
 
-        BinaryOperator<AnyM2<W,T2,Stream<T>>> combineStreams = (a, b)-> (AnyM2<W,T2,Stream<T>>)a.zip(b,(z1, z2)->(Stream<T>)ReactiveSeq.concat(z1,z2)); // a.apply(b, (s1,s2)->s1);
+        BinaryOperator<AnyM2<W,T2,Stream<T>>> combineStreams = (a, b)-> (AnyM2<W,T2,Stream<T>>)a.zip(b,(z1, z2)->(Stream<T>)ReactiveSeq.concat(z1,z2)); // a.applyHKT(b, (s1,s2)->s1);
 
         return stream.reduce(identity,combineToStream,combineStreams);
     }
@@ -526,7 +526,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
    * <pre>{@code
    *  BiFunction<AnyM<Integer>,AnyM<Integer>,AnyM<Integer>> add = Monads.liftF2(this::add);
    *   
-   *  Optional<Integer> result = add.apply(getBase(),getIncrease());
+   *  Optional<Integer> result = add.applyHKT(getBase(),getIncrease());
    *  
    *   private Integer add(Integer a, Integer b){
               return a+b;
@@ -595,7 +595,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
   
 
   /**
-   * Lift a Curried Function {@code(2 levels a->b->fn.apply(a,b) )} into Monadic form
+   * Lift a Curried Function {@code(2 levels a->b->fn.applyHKT(a,b) )} into Monadic form
    * 
    * @param fn Function to lift
    * @return Lifted function 
@@ -607,7 +607,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
   }
 
   /**
-   * Lift a Curried Function {@code(3 levels a->b->c->fn.apply(a,b,c) )} into Monadic form
+   * Lift a Curried Function {@code(3 levels a->b->c->fn.applyHKT(a,b,c) )} into Monadic form
    * 
    * @param fn Function to lift
    * @return Lifted function 
@@ -620,7 +620,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
   }
 
   /**
-   * Lift a Curried Function {@code(4 levels a->b->c->d->fn.apply(a,b,c,d) )} into Monadic form
+   * Lift a Curried Function {@code(4 levels a->b->c->d->fn.applyHKT(a,b,c,d) )} into Monadic form
    * 
    * @param fn Function to lift
    * @return Lifted function 
@@ -635,7 +635,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
   }
 
   /**
-   * Lift a Curried Function {@code (5 levels a->b->c->d->e->fn.apply(a,b,c,d,e) ) }into Monadic form
+   * Lift a Curried Function {@code (5 levels a->b->c->d->e->fn.applyHKT(a,b,c,d,e) ) }into Monadic form
    * 
    * @param fn Function to lift
    * @return Lifted function 

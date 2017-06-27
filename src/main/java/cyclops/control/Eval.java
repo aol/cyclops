@@ -32,9 +32,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -337,7 +335,7 @@ public interface Eval<T> extends To<Eval<T>>,
      *
      * @param evals Collection of Evals to accumulate
      * @param mapper Funtion to map Eval contents to type required by Semigroup accumulator
-     * @param reducer Combiner function to apply to converted values
+     * @param reducer Combiner function to applyHKT to converted values
      * @return  Eval with a value
      */
     public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Function<? super T, R> mapper, final Monoid<R> reducer) {
@@ -359,11 +357,15 @@ public interface Eval<T> extends To<Eval<T>>,
      *
      *
      * @param evals Collection of Evals to accumulate
-     * @param reducer Combiner function to apply to converted values
+     * @param reducer Combiner function to applyHKT to converted values
      * @return Eval with a value
      */
     public static <T> Eval<T> accumulate(final Monoid<T> reducer,final CollectionX<Eval<T>> evals) {
         return sequence(evals).map(s -> s.reduce(reducer));
+    }
+
+    default Trampoline<T> toTrampoline(){
+        return Trampoline.more(()->Trampoline.done(get()));
     }
 
     @Override
@@ -389,8 +391,9 @@ public interface Eval<T> extends To<Eval<T>>,
     @Override
     public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
-    default VectorX<Function<Object, Object>> steps() {
-        return VectorX.of(__ -> get());
+
+    default ArrayList<Function<Object, Object>> steps() {
+        return Module.Rec.arrayList(__ -> get());
     }
 
     /* (non-Javadoc)
@@ -726,10 +729,10 @@ public interface Eval<T> extends To<Eval<T>>,
         public static class Later<T> extends Rec<T> implements Eval<T> {
 
             Later(final Function<Object, ? extends T> s) {
-                super(VectorX.of(Rec.raw(Memoize.memoizeFunction(s))));
+                super(arrayList(Rec.raw(Memoize.memoizeFunction(s))));
             }
 
-            Later(final VectorX<Function<Object, Object>> s) {
+            Later(final ArrayList<Function<Object, Object>> s) {
                 super(s);
 
             }
@@ -738,15 +741,14 @@ public interface Eval<T> extends To<Eval<T>>,
             public <R> Eval<R> map(final Function<? super T, ? extends R> mapper) {
 
                 return new Later<R>(
-                                    super.fns.plus(Rec.raw(Memoize.memoizeFunction(mapper))));
+                                    plus(super.fns,Rec.raw(Memoize.memoizeFunction(mapper))));
             }
 
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
                 final RecFunction s = __ -> asEval(mapper.apply(super.applyRec())).steps();
 
-                return new Later<R>(
-                                    VectorX.of(s));
+                return new Later<R>(arrayList(s));
 
             }
 
@@ -796,13 +798,14 @@ public interface Eval<T> extends To<Eval<T>>,
 
         }
 
-        public static class Always<T> extends Rec<T>implements Eval<T> {
+
+        public static class Always<T> extends Rec<T> implements Eval<T> {
 
             Always(final Function<Object, ? extends T> s) {
-                super(VectorX.of(Rec.raw(s)));
+                super(arrayList(Rec.raw(s)));
             }
 
-            Always(final VectorX<Function<Object, Object>> s) {
+            Always(final ArrayList<Function<Object, Object>> s) {
                 super(s);
 
             }
@@ -811,7 +814,7 @@ public interface Eval<T> extends To<Eval<T>>,
             public <R> Eval<R> map(final Function<? super T, ? extends R> mapper) {
 
                 return new Always<R>(
-                                     fns.plus(Rec.raw(mapper)));
+                                     plus(fns,Rec.raw(mapper)));
 
             }
 
@@ -820,7 +823,7 @@ public interface Eval<T> extends To<Eval<T>>,
                 final RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
 
                 return new Always<R>(
-                                     VectorX.of(s));
+                                     arrayList(s));
             }
 
             @Override
@@ -1041,11 +1044,23 @@ public interface Eval<T> extends To<Eval<T>>,
         }
 
         private static class Rec<T> {
-            final VectorX<Function<Object, Object>> fns;
+            final ArrayList<Function<Object, Object>> fns;
             private final static Object VOID = new Object();
 
-            Rec(final VectorX<Function<Object, Object>> s) {
+            Rec(final ArrayList<Function<Object, Object>> s) {
                 fns = s;
+            }
+
+            public static <T> ArrayList<T> arrayList(T... values){
+                ArrayList<T> arrayList = new ArrayList(values.length);
+                for(T next : values) {
+                    arrayList.add(next);
+                }
+                return arrayList;
+            }
+            public static <T> ArrayList<T> plus(ArrayList<T> list, T value){
+                list.add(value);
+                return list;
             }
 
             private static Function<Object, Object> raw(final Function<?, ?> fn) {
@@ -1056,9 +1071,45 @@ public interface Eval<T> extends To<Eval<T>>,
 
             }
 
-            public VectorX<Function<Object, Object>> steps() {
+            public ArrayList<Function<Object, Object>> steps() {
                 return fns;
             }
+            public Trampoline<T> toTrampoline(){
+                return new Trampoline<T>() {
+                    @Override
+                    public T get() {
+                        return Rec.this.get();
+                    }
+
+                    @Override
+                    public boolean complete(){
+                        return false;
+                    }
+
+                    public Trampoline<T> bounce() {
+                        Object input = init();
+                        for (int i=0; i< fns.size();i++) {
+
+                                final Function<Object, Object> next = fns.get(i);
+                                if (next instanceof RecFunction) {
+                                    List<Function<Object, Object>> remaining = fns.subList(i+1,fns.size());
+                                    ArrayList<Function<Object, Object>> nextSteps = (ArrayList) ((RecFunction) next).apply(VOID);
+                                    nextSteps.addAll(remaining);
+                                   return new Later(nextSteps).toTrampoline();
+                                } else {
+                                    input = next.apply(input);
+
+
+                                }
+
+
+                        }
+                        return Trampoline.done((T) input);
+
+                    }
+                };
+            }
+
 
             public Object init(){
                 return VOID;
@@ -1066,11 +1117,12 @@ public interface Eval<T> extends To<Eval<T>>,
             T applyRec() {
                 Object input = init();
                 for (final Function<Object, Object> n : fns) {
-                    final DequeX<Function<Object, Object>> newFns = DequeX.of(n);
+                    final Deque<Function<Object, Object>> newFns = new ArrayDeque();
+                    newFns.add(n);
                     while (newFns.size() > 0) {
                         final Function<Object, Object> next = newFns.pop();
                         if (next instanceof RecFunction) {
-                            newFns.plusAll((List) ((RecFunction) next).apply(VOID));
+                            newFns.addAll((List) ((RecFunction) next).apply(VOID));
                         } else
                             input = next.apply(input);
 
@@ -1115,7 +1167,7 @@ public interface Eval<T> extends To<Eval<T>>,
          * {@code
          *   Eval<Integer> list = Evals.unit()
         .unit("hello")
-        .apply(h->Evals.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Evals.functor().map((String v) ->v.length(), h))
         .convert(Eval::narrowK);
          *
          * }
@@ -1172,8 +1224,8 @@ public interface Eval<T> extends To<Eval<T>>,
 
         Eval<Integer> list = Evals.unit()
         .unit("hello")
-        .apply(h->Evals.functor().map((String v) ->v.length(), h))
-        .apply(h->Evals.applicative().ap(listFn, h))
+        .applyHKT(h->Evals.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Evals.applicative().ap(listFn, h))
         .convert(Eval::narrowK);
 
         //Arrays.asEval("hello".length()*2))
@@ -1204,7 +1256,7 @@ public interface Eval<T> extends To<Eval<T>>,
          * {@code
          *    Eval<Integer> list = Evals.unit()
         .unit("hello")
-        .apply(h->Evals.monad().flatMap((String v) ->Evals.unit().unit(v.length()), h))
+        .applyHKT(h->Evals.monad().flatMap((String v) ->Evals.unit().unit(v.length()), h))
         .convert(Eval::narrowK);
 
         //Arrays.asEval("hello".length())
@@ -1225,7 +1277,7 @@ public interface Eval<T> extends To<Eval<T>>,
          * {@code
          *  Eval<String> list = Evals.unit()
         .unit("hello")
-        .apply(h->Evals.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->Evals.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(Eval::narrowK);
 
         //Arrays.asEval("hello"));

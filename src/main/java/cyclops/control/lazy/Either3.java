@@ -314,7 +314,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
      * </pre>
      *
      * @param either Either to consume value for
-     * @return Consumer we can apply to consume value
+     * @return Consumer we can applyHKT to consume value
      */
     static <X, LT extends X, M extends X, RT extends X>  Consumer<Consumer<? super X>> consumeAny(Either3<LT, M, RT> either){
         return in->visitAny(in,either);
@@ -414,7 +414,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
      * Filter this Either3 resulting in a Maybe#none if it is not a Right instance or if the predicate does not
      * hold. Otherwise results in a Maybe containing the current value
      *
-     * @param test Predicate to apply to filter this Either3
+     * @param test Predicate to applyHKT to filter this Either3
      * @return Maybe containing the current value if this is a Right instance and the predicate holds, otherwise Maybe#none
      */
     Maybe<RT> filter(Predicate<? super RT> test);

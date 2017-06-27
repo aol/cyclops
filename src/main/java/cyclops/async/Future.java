@@ -1056,7 +1056,7 @@ public class Future<T> implements To<Future<T>>,
     /**
      * Returns a new Future that, when this Future completes exceptionally is
      * executed with this Future exception as the argument to the supplied
-     * function. Otherwise, if this Future completes normally, apply the
+     * function. Otherwise, if this Future completes normally, applyHKT the
      * returned Future also completes normally with the same value.
      *
      * <pre>
@@ -1437,7 +1437,7 @@ public class Future<T> implements To<Future<T>>,
          * {@code
          *   Future<Integer> future = FutureWs.unit()
         .unit("hello")
-        .apply(h->FutureWs.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->FutureWs.functor().map((String v) ->v.length(), h))
         .convert(Future::narrowK);
          *
          * }
@@ -1493,8 +1493,8 @@ public class Future<T> implements To<Future<T>>,
 
         Future<Integer> future = FutureWs.unit()
         .unit("hello")
-        .apply(h->FutureWs.functor().map((String v) ->v.length(), h))
-        .apply(h->FutureWs.applicative().ap(futureFn, h))
+        .applyHKT(h->FutureWs.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->FutureWs.applicative().ap(futureFn, h))
         .convert(Future::narrowK);
 
         //FutureW("hello".length()*2))
@@ -1525,7 +1525,7 @@ public class Future<T> implements To<Future<T>>,
          * {@code
          *    Future<Integer> future = FutureWs.unit()
         .unit("hello")
-        .apply(h->FutureWs.monad().flatMap((String v) ->FutureWs.unit().unit(v.length()), h))
+        .applyHKT(h->FutureWs.monad().flatMap((String v) ->FutureWs.unit().unit(v.length()), h))
         .convert(Future::narrowK);
 
         //FutureW("hello".length())
@@ -1546,7 +1546,7 @@ public class Future<T> implements To<Future<T>>,
          * {@code
          *  Future<String> future = FutureWs.unit()
         .unit("hello")
-        .apply(h->FutureWs.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->FutureWs.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(Future::narrowK);
 
         //FutureW["hello"]

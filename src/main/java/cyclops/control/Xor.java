@@ -1,8 +1,11 @@
 package cyclops.control;
 
+import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
 import cyclops.collections.immutable.LinkedListX;
+import cyclops.companion.Monoids;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Semigroups;
@@ -18,12 +21,20 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.FluentFunctions;
 import cyclops.monads.AnyM;
+import cyclops.monads.Witness.xor;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.MaybeT;
 import cyclops.monads.transformers.XorT;
 import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.instances.General;
+import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -117,7 +128,8 @@ import java.util.stream.Stream;
  */
 public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                                      MonadicValue<PT>,
-                                     BiTransformable<ST,PT> {
+                                     BiTransformable<ST,PT>,
+                                     Higher2<xor,ST,PT> {
 
 
     default <W extends WitnessType<W>> XorT<W, ST,PT> liftM(W witness) {
@@ -137,7 +149,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * </pre>
      *
      * @param either Xor to consume value for
-     * @return Consumer we can apply to consume value
+     * @return Consumer we can applyHKT to consume value
      */
     static <X, LT extends X, M extends X, RT extends X>  Consumer<Consumer<? super X>> consumeAny(Xor<LT,RT> either){
         return in->visitAny(in,either);
@@ -157,6 +169,13 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
             return x;
         };
         return visitAny(either,fn);
+    }
+
+    public static <ST,T> Xor<ST,T> narrowK2(final Higher2<xor, ST,T> xor) {
+        return (Xor<ST,T>)xor;
+    }
+    public static <ST,T> Xor<ST,T> narrowK(final Higher<Higher<xor, ST>,T> xor) {
+        return (Xor<ST,T>)xor;
     }
     /**
      * Construct a Primary Xor from the supplied publisher
@@ -376,7 +395,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#fromEither5()
      */
-    default AnyMValue<Witness.xor,PT> anyM() {
+    default AnyMValue<xor,PT> anyM() {
         return AnyM.fromXor(this);
     }
 
@@ -559,7 +578,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * @return Xor sequenced and swapped
      */
     public static <ST, PT> Xor<ListX<PT>, ListX<ST>> sequenceSecondary(final CollectionX<Xor<ST, PT>> xors) {
-        return AnyM.sequence(xors.stream().filter(Xor::isSecondary).map(i->AnyM.fromXor(i.swap())).toListX(),Witness.xor.INSTANCE)
+        return AnyM.sequence(xors.stream().filter(Xor::isSecondary).map(i->AnyM.fromXor(i.swap())).toListX(), xor.INSTANCE)
                     .to(Witness::xor);
     }
     /**
@@ -633,7 +652,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * @return Xor Sequenced
      */
     public static <ST, PT> Xor<ListX<ST>, ListX<PT>> sequencePrimary(final CollectionX<Xor<ST, PT>> xors) {
-        return AnyM.sequence(xors.stream().filter(Xor::isPrimary).map(AnyM::fromXor).toListX(),Witness.xor.INSTANCE)
+        return AnyM.sequence(xors.stream().filter(Xor::isPrimary).map(AnyM::fromXor).toListX(), xor.INSTANCE)
                     .to(Witness::xor);
     }
     /**

@@ -1290,7 +1290,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * {@code
          *   LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
-        .apply(h->PStacks.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->PStacks.functor().map((String v) ->v.length(), h))
         .convert(LinkedListX::narrowK);
          *
          * }
@@ -1346,8 +1346,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
         LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
-        .apply(h->PStacks.functor().map((String v) ->v.length(), h))
-        .apply(h->PStacks.zippingApplicative().ap(listFn, h))
+        .applyHKT(h->PStacks.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->PStacks.zippingApplicative().ap(listFn, h))
         .convert(LinkedListX::narrowK);
 
         //Arrays.asPStack("hello".length()*2))
@@ -1378,7 +1378,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * {@code
          *    LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
-        .apply(h->PStacks.monad().flatMap((String v) ->PStacks.unit().unit(v.length()), h))
+        .applyHKT(h->PStacks.monad().flatMap((String v) ->PStacks.unit().unit(v.length()), h))
         .convert(LinkedListX::narrowK);
 
         //Arrays.asPStack("hello".length())
@@ -1399,7 +1399,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * {@code
          *  LinkedListX<String> list = PStacks.unit()
         .unit("hello")
-        .apply(h->PStacks.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->PStacks.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(LinkedListX::narrowK);
 
         //Arrays.asPStack("hello"));

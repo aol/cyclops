@@ -19,6 +19,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.anyM.AnyMValue2;
@@ -149,7 +150,9 @@ throw new IOException();
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
 public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                                                       RecoverableFrom<X,T>,
-                                                      MonadicValue<T>{
+                                                      MonadicValue<T>,
+                                                      Higher2<Witness.tryType,T,X> {
+
 
     final Xor<X,T> xor;
     private final Class<? extends Throwable>[] classes;

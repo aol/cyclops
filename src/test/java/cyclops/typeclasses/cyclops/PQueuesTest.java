@@ -29,7 +29,7 @@ public class PQueuesTest {
         
         PersistentQueueX<Integer> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> PersistentQueueX.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> PersistentQueueX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(PersistentQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello".length()).toArray()));
@@ -49,8 +49,8 @@ public class PQueuesTest {
         
         PersistentQueueX<Integer> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> PersistentQueueX.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h-> PersistentQueueX.Instances.zippingApplicative().ap(listFn, h))
+                                     .applyHKT(h-> PersistentQueueX.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> PersistentQueueX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(PersistentQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello".length()*2).toArray()));
@@ -66,7 +66,7 @@ public class PQueuesTest {
         
         PersistentQueueX<Integer> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> PersistentQueueX.Instances.monad().flatMap((String v) -> PersistentQueueX.Instances.unit().unit(v.length()), h))
+                                     .applyHKT(h-> PersistentQueueX.Instances.monad().flatMap((String v) -> PersistentQueueX.Instances.unit().unit(v.length()), h))
                                      .convert(PersistentQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello".length()).toArray()));
@@ -76,7 +76,7 @@ public class PQueuesTest {
         
         PersistentQueueX<String> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> PersistentQueueX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h-> PersistentQueueX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(PersistentQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello").toArray()));
@@ -86,7 +86,7 @@ public class PQueuesTest {
         
         PersistentQueueX<String> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> PersistentQueueX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h-> PersistentQueueX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(PersistentQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PersistentQueueX.empty().toArray()));

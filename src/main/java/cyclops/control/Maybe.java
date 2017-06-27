@@ -117,6 +117,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
     public static class µ {
     }
+
+
     default AnyM<Witness.maybe,T> anyM(){
         return AnyM.fromMaybe(this);
     }
@@ -401,6 +403,10 @@ public interface Maybe<T> extends To<Maybe<T>>,
                            eval);
     }
 
+    default Trampoline<Maybe<T>> toTrampoline() {
+        return Trampoline.more(()->Trampoline.done(this));
+    }
+    
     /**
      * Construct a Maybe from the supplied Eval
      *
@@ -1232,6 +1238,45 @@ public interface Maybe<T> extends To<Maybe<T>>,
                 }
             });
         }
+        @Override
+        public Trampoline<T> toTrampoline(Supplier<T> defaultValue) {
+            return lazy.map(m->m.orElseGet(defaultValue))
+                    .toTrampoline();
+        }
+
+        @Override
+        public Trampoline<Maybe<T>> toTrampoline() {
+            Trampoline<Maybe<T>> trampoline = lazy.toTrampoline();
+            return new Trampoline<Maybe<T>>() {
+                @Override
+                public Maybe<T> get() {
+                    Maybe<T> maybe = lazy.get();
+                    while (maybe instanceof Lazy) {
+                        maybe = ((Lazy<T>) maybe).lazy.get();
+                    }
+                    return maybe;
+                }
+                @Override
+                public boolean complete(){
+                    return false;
+                }
+                @Override
+                public Trampoline<Maybe<T>> bounce() {
+                    Maybe<T> maybe = lazy.get();
+                    if(maybe instanceof Lazy){
+                        return maybe.toTrampoline();
+                    }
+                    return Trampoline.done(maybe);
+
+                }
+            };
+        }
+
+        @Override
+        public Trampoline<T> toTrampoline(T defaultValue) {
+            return lazy.map(m->m.orElse(defaultValue))
+                       .toTrampoline();
+        }
 
         @Override
         public Maybe<T> recover(final T value) {
@@ -1338,18 +1383,13 @@ public interface Maybe<T> extends To<Maybe<T>>,
             Eval<? extends Maybe<? extends R>> res = lazy.map(m -> m.flatMapI(mapper));
             Eval<Maybe<R>> narrowed = (Eval)res;
             return Maybe.<R>fromLazy(narrowed);
-         /**   final Maybe<R> m = Maybe.super.flatMapI(mapper);
-            return new Lazy(
-                            Eval.later(() -> m.get()));
-          **/
+
         }
 
         @Override
         public <R> Maybe<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
             return Maybe.fromLazy(lazy.map(m->m.flatMapP(mapper)));
-          /**  final Maybe<R> m = (Lazy<R>) Maybe.super.flatMapP(mapper);
-            return new Lazy(
-                            Eval.later(() -> m.get()));**/
+
         }
 
     }
@@ -1480,7 +1520,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * {@code
          *   Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
-        .apply(h->Maybes.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Maybes.functor().map((String v) ->v.length(), h))
         .convert(Maybe::narrowK);
          *
          * }
@@ -1536,8 +1576,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
         Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
-        .apply(h->Maybes.functor().map((String v) ->v.length(), h))
-        .apply(h->Maybes.applicative().ap(maybeFn, h))
+        .applyHKT(h->Maybes.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Maybes.applicative().ap(maybeFn, h))
         .convert(Maybe::narrowK);
 
         //Maybe.just("hello".length()*2))
@@ -1568,7 +1608,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * {@code
          *    Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
-        .apply(h->Maybes.monad().flatMap((String v) ->Maybes.unit().unit(v.length()), h))
+        .applyHKT(h->Maybes.monad().flatMap((String v) ->Maybes.unit().unit(v.length()), h))
         .convert(Maybe::narrowK);
 
         //Maybe.just("hello".length())
@@ -1589,7 +1629,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * {@code
          *  Maybe<String> maybe = Maybes.unit()
         .unit("hello")
-        .apply(h->Maybes.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->Maybes.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(Maybe::narrowK);
 
         //Maybe.just("hello"));

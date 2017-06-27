@@ -59,7 +59,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
      * </pre>
      *
      * @param either Xor to consume value for
-     * @return Consumer we can apply to consume value
+     * @return Consumer we can applyHKT to consume value
      */
     static <X, LT extends X, M extends X, RT extends X>  Consumer<Consumer<? super X>> consumeAny(Ior<LT,RT> either){
         return in->visitAny(in,either);

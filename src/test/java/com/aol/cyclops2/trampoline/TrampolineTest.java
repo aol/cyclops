@@ -24,8 +24,17 @@ public class TrampolineTest {
 		assertThat(loop(500000,10).result(),equalTo(446198426));
 		
 	}
+    Trampoline<Integer> loop2(int times,int sum){
+
+	    System.out.println("Loop-B " + times + " : " + sum);
+        if(times==0)
+            return Trampoline.done(sum);
+        else
+            return Trampoline.more(()->loop2(times-1,sum+times));
+    }
+
 	Trampoline<Integer> loop(int times,int sum){
-		
+        System.out.println("Loop-A " + times + " : " + sum);
 		if(times==0)
 			return Trampoline.done(sum);
 		else
@@ -46,7 +55,13 @@ public class TrampolineTest {
 			return loop1(times-1,sum+times);
 	}
 	
-	
+
+	@Test
+    public void interleave(){
+	    Trampoline<Integer> looping = loop(500000,5);
+	    Trampoline<Integer> looping2 = loop2(500000,5);
+	    System.out.println(looping.zip(looping2).get());
+    }
 	
 	List results;
 	@Test
