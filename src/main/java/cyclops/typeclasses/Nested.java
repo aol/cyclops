@@ -10,6 +10,7 @@ import cyclops.monads.Witness.optional;
 import cyclops.typeclasses.functor.Compose;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -58,6 +59,7 @@ import java.util.function.Function;
  * @param <T> Nested Data Type
  */
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
+@EqualsAndHashCode(of={"nested"})
 public class Nested<W1,W2,T> {
 
     private final Higher<W1,Higher<W2,T>> nested;
@@ -109,19 +111,15 @@ public class Nested<W1,W2,T> {
        return sequence().map(fn);
     }
 
-    public  Higher<W1,T> foldRight(Monoid<T> monoid, Higher<W2, T> ds){
+    public  Higher<W1,T> foldRight(Monoid<T> monoid){
         return def1.functor().map(a -> def2.foldable().foldRight(monoid, a), nested);
     }
-    public  Higher<W1,T> foldLeft(Monoid<T> monoid, Higher<W2, T> ds){
+    public  Higher<W1,T> foldLeft(Monoid<T> monoid){
         return def1.functor().map(a -> def2.foldable().foldLeft(monoid, a), nested);
     }
     public String toString(){
         return "Nested["+nested.toString()+"]";
     }
 
-    public static void main(String[] args){
-        Nested<list,optional,Integer> listOfOptionalInt = Nested.of(ListX.of(Optionals.OptionalKind.of(2)),ListX.Instances.definitions(),Optionals.Instances.definitions());
-        System.out.println(listOfOptionalInt.map(i->i*2));
-        System.out.println(listOfOptionalInt.sequence());
-    }
+
 }

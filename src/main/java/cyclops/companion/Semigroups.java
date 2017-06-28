@@ -502,7 +502,9 @@ public interface Semigroups {
     /**
      * Combine two Integers by adding one toNested a (can be used toNested count Integers in a Collection or Stream)
      */
-    static Semigroup<Integer> intCount = (a, b) -> a + 1;
+    static Semigroup<Integer> intCount = (a, b) -> {
+        return a + 1;
+    };
     /**
      * Combine two Longs by adding one toNested a (can be used toNested count Integers in a Collection or Stream)
      */
