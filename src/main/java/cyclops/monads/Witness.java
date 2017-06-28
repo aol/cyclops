@@ -436,11 +436,11 @@ public interface Witness {
         }
 
     }
-    public static enum coYoneda implements WitnessType<coYoneda>{
+    public static enum coyoneda implements WitnessType<coyoneda>{
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<coYoneda> adapter() {
+        public FunctionalAdapter<coyoneda> adapter() {
             return null;
         }
 

@@ -47,9 +47,17 @@ public  class AsyncReactiveStreamXTest {
 		return Spouts.async(s->{
 		    new Thread(()-> {
 				for (U next : array) {
-					s.onNext(next);
-					if(index[0]++>100)
-					    break;
+				    boolean sent = false;
+				    while(!sent) {
+                        try {
+                            s.onNext(next);
+                            sent = true;
+                            if (index[0]++ > 100)
+                                break;
+                        } catch (NullPointerException e) {
+                          //reactive-streams subscription may not initialized
+                        }
+                    }
 				}
 				s.onComplete();
 			}).start();
