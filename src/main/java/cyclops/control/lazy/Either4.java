@@ -339,10 +339,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * @return Either constructed from the supplied Publisher
      */
     public static <T1,T2,T> Either4<Throwable, T1, T2, T> fromPublisher(final Publisher<T> pub) {
-        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
-        pub.subscribe(sub);
-        Either4<Throwable, T1,T2, Xor<Throwable,T>> xor = Either4.rightEval(Eval.later(()->sub.toXor()));
-        return  xor.flatMap(x->x.visit(Either4::left1,Either4::right));
+        return fromFuture(Future.fromPublisher(pub));
     }
     /**
      * Construct a Right Either4 from the supplied Iterable
@@ -522,14 +519,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         return 4;
     }
     default < RT1> Either4<LT1, LT2, LT3,RT1> flatMapP(Function<? super RT, ? extends Publisher<? extends RT1>> mapper){
-        return this.flatMap(a -> {
-            final Publisher<? extends RT1> publisher = mapper.apply(a);
-            final ValueSubscriber<RT1> sub = ValueSubscriber.subscriber();
-
-            publisher.subscribe(sub);
-            return unit(sub.get());
-
-        });
+        return this.flatMap(a -> fromPublisher(mapper.apply(a)));
     }
 
     /**

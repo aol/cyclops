@@ -666,7 +666,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      */
     @Override
     default <R> Either<LT, R> flatMapP(Function<? super RT, ? extends Publisher<? extends R>> mapper) {
-        return (Either<LT, R>) Xor.super.flatMapP(mapper);
+        return this.flatMap(a -> fromPublisher(mapper.apply(a)));
     }
 
     /*

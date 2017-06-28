@@ -46,6 +46,7 @@ import org.reactivestreams.Publisher;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import com.aol.cyclops2.util.ExceptionSoftener;
+import org.reactivestreams.Subscriber;
 
 /**
  * Light weight Try Monad
@@ -167,6 +168,13 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     public Trampoline<Xor<X,T>> toTrampoline() {
         return xor.toTrampoline();
     }
+
+
+    @Override
+    public void subscribe(Subscriber<? super T> sub) {
+        xor.subscribe(sub);
+    }
+
     /**
      *  Turn a list of Trys into a single Try with Lists of values.
      *  Primary and failure types are swapped during this operation.
@@ -492,9 +500,24 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return (Try<R,X>)MonadicValue.super.flatMapS(mapper);
     }
 
+    @Override
+    public Try<T,X> combineEager(Monoid<T> monoid, MonadicValue<? extends T> v2) {
+        return (Try<T,X>)MonadicValue.super.combineEager(monoid,v2);
+    }
+
+    @Override
+    public <R> Try<R,X> flatMapI(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return new Try<>(xor.flatMapI(mapper),this.classes);
+    }
+
+    @Override
+    public <R> Try<R,X> flatMapP(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return new Try<>(xor.flatMapP(mapper),this.classes);
+    }
+
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
-     */
+         * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
+         */
     @Override
     public <T2, R1, R2, R3, R> Try<R,X> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                  BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,

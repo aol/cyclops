@@ -353,10 +353,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @return Either constructed from the supplied Publisher
      */
     public static <T1,T2,T3,T> Either5<Throwable, T1, T2,T3, T> fromPublisher(final Publisher<T> pub) {
-        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
-        pub.subscribe(sub);
-        Either5<Throwable, T1,T2,T3, Xor<Throwable,T>> xor = Either5.rightEval(Eval.later(()->sub.toXor()));
-        return  xor.flatMap(x->x.visit(Either5::left1,Either5::right));
+        return fromFuture(Future.fromPublisher(pub));
     }
     /**
      * Construct a Right Either4 from the supplied Iterable
@@ -563,14 +560,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         });
     }
     default < RT1> Either5<LT1, LT2, LT3,LT4,RT1> flatMapP(Function<? super RT, ? extends Publisher<? extends RT1>> mapper){
-        return this.flatMap(a -> {
-            final Publisher<? extends RT1> publisher = mapper.apply(a);
-            final ValueSubscriber<RT1> sub = ValueSubscriber.subscriber();
-
-            publisher.subscribe(sub);
-            return unit(sub.get());
-
-        });
+        return this.flatMap(a -> fromPublisher(mapper.apply(a)));
     }
 
     /**
@@ -2056,10 +2046,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
             return absent.get();
         }
 
-        @Override
-        public void subscribe(final Subscriber<? super PT> s) {
 
-        }
 
         @Override
         public boolean test(final PT t) {

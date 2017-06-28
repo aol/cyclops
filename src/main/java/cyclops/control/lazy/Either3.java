@@ -275,10 +275,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
      * @return Either constructed from the supplied Publisher
      */
     public static <T1,T> Either3<Throwable, T1, T> fromPublisher(final Publisher<T> pub) {
-        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
-        pub.subscribe(sub);
-        Either3<Throwable, T1, Xor<Throwable,T>> xor = Either3.rightEval(Eval.later(()->sub.toXor()));
-        return  xor.flatMap(x->x.visit(Either3::left1,Either3::right));
+        return fromFuture(Future.fromPublisher(pub));
     }
     /**
      * Construct a Right Either3 from the supplied Iterable
@@ -438,14 +435,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
         });
     }
     default < RT1> Either3<LT1, LT2, RT1>  flatMapP(Function<? super RT, ? extends Publisher<? extends RT1>> mapper){
-        return this.flatMap(a -> {
-            final Publisher<? extends RT1> publisher = mapper.apply(a);
-            final ValueSubscriber<RT1> sub = ValueSubscriber.subscriber();
-
-            publisher.subscribe(sub);
-            return unit(sub.get());
-
-        });
+        return this.flatMap(a -> fromPublisher(mapper.apply(a)));
     }
     /**
      * @return Swap the middle and the right types
@@ -1317,10 +1307,6 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
             return absent.get();
         }
 
-        @Override
-        public void subscribe(final Subscriber<? super PT> s) {
-
-        }
 
         @Override
         public boolean test(final PT t) {
