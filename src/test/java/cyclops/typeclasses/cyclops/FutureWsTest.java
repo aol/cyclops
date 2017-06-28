@@ -7,6 +7,8 @@ import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.future;
 import org.junit.Test;
 
 import static cyclops.function.Lambda.l1;
@@ -128,7 +130,7 @@ public class FutureWsTest {
     
     @Test
     public void traverse(){
-       Maybe<Higher<Future.µ, Integer>> res = Future.Instances.traverse()
+       Maybe<Higher<future, Integer>> res = Future.Instances.traverse()
                                                                .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), Future.ofResult(1))
                                                               .convert(Maybe::narrowK);
        

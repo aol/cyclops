@@ -10,6 +10,8 @@ import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.linkedListX;
 import org.junit.Test;
 
 
@@ -125,7 +127,7 @@ public class PStacksTest {
     
     @Test
     public void traverse(){
-       Maybe<Higher<LinkedListX.µ, Integer>> res = LinkedListX.Instances.traverse()
+       Maybe<Higher<linkedListX, Integer>> res = LinkedListX.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), LinkedListX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
        

@@ -9,6 +9,8 @@ import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.maybe;
 import org.junit.Test;
 
 
@@ -124,7 +126,7 @@ public class MaybesTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<Maybe.µ, Integer>> res = Maybe.Instances.traverse()
+       Maybe<Higher<maybe, Integer>> res = Maybe.Instances.traverse()
                                                           .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), Maybe.just(1))
                                                           .convert(Maybe::narrowK);
        

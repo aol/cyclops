@@ -62,6 +62,13 @@ public class TrampolineTest {
 	    Trampoline<Integer> looping2 = loop2(500000,5);
 	    System.out.println(looping.zip(looping2).get());
     }
+    @Test
+    public void interleave3(){
+        Trampoline<Integer> looping = loop(50000,5);
+        Trampoline<Integer> looping2 = loop2(50000,5);
+        Trampoline<Integer> looping3 = loop2(50000,5);
+        System.out.println(looping.zip(looping2,looping3).get());
+    }
 	
 	List results;
 	@Test

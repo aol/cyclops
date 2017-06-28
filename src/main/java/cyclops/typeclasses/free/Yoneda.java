@@ -1,11 +1,13 @@
 package cyclops.typeclasses.free;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.yoneda;
 import cyclops.typeclasses.functor.Functor;
 
 import java.util.function.Function;
 
-public interface Yoneda<U,T> extends Higher<Higher<Yoneda.µ, U>, T> {
+public interface Yoneda<U,T> extends Higher<Higher<yoneda, U>, T> {
 
     public static class µ {}
 

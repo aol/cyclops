@@ -29,10 +29,12 @@ import com.aol.cyclops2.types.recoverable.RecoverableFrom;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.lazy.Either;
+import cyclops.control.lazy.Either4;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.free.Free;
 import lombok.*;
 import lombok.experimental.Wither;
 import org.jooq.lambda.tuple.Tuple;
@@ -151,7 +153,7 @@ throw new IOException();
 public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                                                       RecoverableFrom<X,T>,
                                                       MonadicValue<T>,
-                                                      Higher2<Witness.tryType,T,X> {
+                                                      Higher2<tryType,T,X> {
 
 
     final Xor<X,T> xor;
@@ -162,6 +164,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
 
+    public Trampoline<Xor<X,T>> toTrampoline() {
+        return xor.toTrampoline();
+    }
     /**
      *  Turn a list of Trys into a single Try with Lists of values.
      *  Primary and failure types are swapped during this operation.

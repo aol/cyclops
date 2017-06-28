@@ -17,6 +17,8 @@ import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.completableFuture;
 import org.junit.Test;
 
 
@@ -134,7 +136,7 @@ public class CompletableFuturesTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<CompletableFutureKind.µ, Integer>> res = CompletableFutures.Instances.traverse()
+       Maybe<Higher<completableFuture, Integer>> res = CompletableFutures.Instances.traverse()
                                                                           .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), CompletableFutureKind.completedFuture(1))
                                                                          .convert(Maybe::narrowK);
        

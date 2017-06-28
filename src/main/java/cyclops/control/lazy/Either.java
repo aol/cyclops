@@ -680,6 +680,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         return (Either<LT, R>) Xor.super.coflatMap(mapper);
     }
 
+    default Trampoline<Xor<LT,RT>> toTrampoline() {
+        return (Trampoline)toEitherTrampoline();
+    }
+    default Trampoline<Either<LT,RT>> toEitherTrampoline() {
+        return Trampoline.more(()->Trampoline.done(this));
+    }
     // cojoin
     /*
      * (non-Javadoc)
@@ -1258,7 +1264,33 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
             return new Lazy<>(
                               lazy);
         }
+        @Override
+        public Trampoline<Either<ST,PT>> toEitherTrampoline() {
+            Trampoline<Either<ST,PT>> trampoline = lazy.toTrampoline();
+            return new Trampoline<Either<ST,PT>>() {
+                @Override
+                public Either<ST,PT> get() {
+                    Either<ST,PT> either = lazy.get();
+                    while (either instanceof Either.Lazy) {
+                        either = ((Either.Lazy<ST,PT>) either).lazy.get();
+                    }
+                    return either;
+                }
+                @Override
+                public boolean complete(){
+                    return false;
+                }
+                @Override
+                public Trampoline<Either<ST,PT>> bounce() {
+                    Either<ST,PT> either = lazy.get();
+                    if(either instanceof Either.Lazy){
+                        return either.toEitherTrampoline();
+                    }
+                    return Trampoline.done(either);
 
+                }
+            };
+        }
 
 
         public Either<ST, PT> resolve() {

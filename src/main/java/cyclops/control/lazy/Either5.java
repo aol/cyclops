@@ -494,6 +494,9 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         return new Left3<>(
                             middle);
     }
+    default Trampoline<Either5<LT1,LT2,LT3,LT4,RT>> toTrampoline() {
+        return Trampoline.more(()->Trampoline.done(this));
+    }
     @Override
     default int arity() {
         return 5;
@@ -1004,6 +1007,33 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         }
 
+        @Override
+        public Trampoline<Either5<ST,M,M2,M3,PT>> toTrampoline() {
+            Trampoline<Either5<ST,M,M2,M3,PT>> trampoline = lazy.toTrampoline();
+            return new Trampoline<Either5<ST,M,M2,M3,PT>>() {
+                @Override
+                public Either5<ST,M,M2,M3,PT> get() {
+                    Either5<ST,M,M2,M3,PT> either = lazy.get();
+                    while (either instanceof Either5.Lazy) {
+                        either = ((Either5.Lazy<ST,M,M2,M3,PT>) either).lazy.get();
+                    }
+                    return either;
+                }
+                @Override
+                public boolean complete(){
+                    return false;
+                }
+                @Override
+                public Trampoline<Either5<ST,M,M2,M3,PT>> bounce() {
+                    Either5<ST,M,M2,M3,PT> either = lazy.get();
+                    if(either instanceof Either5.Lazy){
+                        return either.toTrampoline();
+                    }
+                    return Trampoline.done(either);
+
+                }
+            };
+        }
         @Override
         public PT get() {
             return trampoline().get();

@@ -10,6 +10,8 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.eval;
 import org.junit.Test;
 
 
@@ -129,7 +131,7 @@ public class EvalsTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<Eval.µ, Integer>> res = Eval.Instances.traverse()
+       Maybe<Higher<eval, Integer>> res = Eval.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), Eval.now(1))
                                                          .convert(Maybe::narrowK);
        

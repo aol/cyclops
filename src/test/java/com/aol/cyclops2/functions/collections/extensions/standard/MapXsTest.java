@@ -19,6 +19,10 @@ import cyclops.collections.mutable.SortedSetX;
 public class MapXsTest {
 
     @Test
+    public void toStringTest(){
+        assertThat(MapXs.of(1,3).toString(),equalTo("MapX[{1=3}]"));
+    }
+    @Test
     public void toListX(){
         MapX.empty().forEach(1l,System.out::println);
         MapX<String,Integer> maps = MapXs.of("a",1,"b",2);

@@ -10,6 +10,8 @@ import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.vectorX;
 import org.junit.Test;
 
 
@@ -126,7 +128,7 @@ public class PVectorsTest {
     
     @Test
     public void traverse(){
-       Maybe<Higher<VectorX.µ, Integer>> res = VectorX.Instances.traverse()
+       Maybe<Higher<vectorX, Integer>> res = VectorX.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), VectorX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
        

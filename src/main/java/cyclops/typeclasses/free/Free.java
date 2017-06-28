@@ -420,29 +420,90 @@ public abstract class Free<F, T> {
         return resume(functor).secondaryMap(decoder);
     }
     public  <B> Free<F,Tuple2<T,B>> zip(Functor<F> f,Free<F,B> b){
+        return zip(f,b,Tuple::tuple);
+    }
+    public  <B,R> Free<F,R> zip(Functor<F> f,Free<F,B> b,BiFunction<? super T,? super B,? extends R> zipper){
 
         Xor<Higher<F, Free<F, T>>, T> first = resume(f);
         Xor<Higher<F, Free<F, B>>, B> second = b.resume(f);
 
         if(first.isSecondary() && second.isSecondary()) {
             return suspend(f.mapRev(first.secondaryGet(),a1->{
-                return suspend(f.mapRev(second.secondaryGet(),b1->a1.zip(f,b1)));
+                return suspend(f.mapRev(second.secondaryGet(),b1->a1.zip(f,b1,zipper)));
             }));
         }
         if(first.isPrimary() && second.isPrimary()){
-            return done(Tuple.tuple(first.get(),second.get()));
+            return done(zipper.apply(first.get(),second.get()));
         }
         if(first.isSecondary() && second.isPrimary()){
-            return suspend(f.mapRev(first.secondaryGet(),a1->a1.zip(f,b)));
+            return suspend(f.mapRev(first.secondaryGet(),a1->a1.zip(f,b,zipper)));
 
         }
         if(first.isPrimary() && second.isSecondary()){
-            return suspend(f.mapRev(second.secondaryGet(),a1->Free.<F,T>done(first.get()).zip(f,b)));
+            return suspend(f.mapRev(second.secondaryGet(),a1->Free.<F,T>done(first.get()).zip(f,b,zipper)));
         }
         return null;
     }
 
+    public  <B,C> Free<F,Tuple3<T,B,C>> zip(Functor<F> f,Free<F,B> b, Free<F,C> c){
+        return zip(f,b,c,(x,y,z)->Tuple.tuple(x,y,z));
 
+    }
+    public  <B,C,R> Free<F,R> zip(Functor<F> f,Free<F,B> b, Free<F,C> c, Fn3<? super T, ? super B, ? super C,? extends R> fn){
+
+        Xor<Higher<F, Free<F, T>>, T> first = resume(f);
+        Xor<Higher<F, Free<F, B>>, B> second = b.resume(f);
+        Xor<Higher<F, Free<F, C>>, C> third = c.resume(f);
+
+        if(first.isSecondary() && second.isSecondary() && third.isSecondary()) {
+            return suspend(f.mapRev(first.secondaryGet(),a1->{
+                return suspend(f.mapRev(second.secondaryGet(),b1->{
+                    return suspend(f.mapRev(third.secondaryGet(),c1->a1.zip(f,b1,c1,fn)));
+                }));
+            }));
+        }
+
+        if(first.isPrimary() && second.isPrimary() && third.isPrimary()){
+            return done(fn.apply(first.get(),second.get(),third.get()));
+        }
+
+        if(first.isSecondary() && second.isPrimary() && third.isPrimary()){
+            return suspend(f.mapRev(first.secondaryGet(),a1->a1.zip(f,b,c,fn)));
+        }
+        if(first.isPrimary() && second.isSecondary() && third.isPrimary()){
+
+            return suspend(f.mapRev(second.secondaryGet(),b1->this.zip(f,b1,c,fn)));
+
+
+
+        }
+        if(first.isPrimary() && second.isPrimary() && third.isSecondary()){
+            return suspend(f.mapRev(third.secondaryGet(),c1->this.zip(f,b,c1,fn)));
+        }
+
+
+        if(first.isPrimary() && second.isSecondary() && third.isSecondary()){
+            return suspend(f.mapRev(second.secondaryGet(),b1->{
+                return suspend(f.mapRev(third.secondaryGet(),c1->this.zip(f,b1,c1,fn)));
+            }));
+
+        }
+        if(first.isSecondary() && second.isPrimary() && third.isSecondary()){
+            return suspend(f.mapRev(first.secondaryGet(),a1->{
+
+                return suspend(f.mapRev(third.secondaryGet(),c1->a1.zip(f,b,c1,fn)));
+
+            }));
+        }
+        if(first.isSecondary() && second.isSecondary() && third.isPrimary()){
+            return suspend(f.mapRev(first.secondaryGet(),a1->{
+                return suspend(f.mapRev(second.secondaryGet(),b1->a1.zip(f,b1,c,fn)));
+
+            }));
+        }
+        //unreachable
+        return null;
+    }
     /*
      * Functor and HKT decoder for Free
      */

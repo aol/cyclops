@@ -9,6 +9,8 @@ import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.persistentQueueX;
 import org.junit.Test;
 
 
@@ -125,11 +127,11 @@ public class PQueuesTest {
     
     @Test
     public void traverse(){
-       Maybe<Higher<PersistentQueueX.µ, Integer>> res = PersistentQueueX.Instances.traverse()
+       Maybe<Higher<persistentQueueX, Integer>> res = PersistentQueueX.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), PersistentQueueX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
-       
-       
+
+
        assertThat(res.map(q-> PersistentQueueX.narrowK(q)
                                        .toArray()).get(),equalTo(Maybe.just(PersistentQueueX.of(2,4,6).toArray()).get()));
     }

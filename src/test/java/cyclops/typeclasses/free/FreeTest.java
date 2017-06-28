@@ -8,6 +8,8 @@ import static cyclops.function.Fn0.SupplierKind;
 
 import cyclops.control.Xor;
 import cyclops.function.Fn0;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.supplier;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
@@ -17,17 +19,17 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public final class FreeTest {
-    private static Free<SupplierKind.µ, Long> fibonacci(long i){
+    private static Free<supplier, Long> fibonacci(long i){
         return fibonacci(i,1,0);
     }
 
-    private static Free<SupplierKind.µ, Long> fibonacci(long n, long a, long b) {
+    private static Free<supplier, Long> fibonacci(long n, long a, long b) {
         return n == 0 ? Free.done(b) : λK( ()->fibonacci(n-1, a+b, a))
                                         .kindTo(Fn0::suspend)
                                         .flatMap(i->λK( ()->fibonacci(n-1, a+b, a))
                                                 .kindTo(Fn0::suspend));
     }
-    static Free<SupplierKind.µ, Long> fib(final Long n){
+    static Free<supplier, Long> fib(final Long n){
 
         if(n < 2){
             return Free.done(2L);

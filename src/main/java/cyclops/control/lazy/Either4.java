@@ -514,6 +514,9 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
         });
     }
+    default Trampoline<Either4<LT1,LT2,LT3,RT>> toTrampoline() {
+        return Trampoline.more(()->Trampoline.done(this));
+    }
     @Override
     default int arity() {
         return 4;
@@ -948,6 +951,33 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return Maybe.fromEval(Eval.later(() -> resolve().filter(test)))
                         .flatMap(Function.identity());
 
+        }
+        @Override
+        public Trampoline<Either4<ST,M,M2,PT>> toTrampoline() {
+            Trampoline<Either4<ST,M,M2,PT>> trampoline = lazy.toTrampoline();
+            return new Trampoline<Either4<ST,M,M2,PT>>() {
+                @Override
+                public Either4<ST,M,M2,PT> get() {
+                    Either4<ST,M,M2,PT> either = lazy.get();
+                    while (either instanceof Either4.Lazy) {
+                        either = ((Either4.Lazy<ST,M,M2,PT>) either).lazy.get();
+                    }
+                    return either;
+                }
+                @Override
+                public boolean complete(){
+                    return false;
+                }
+                @Override
+                public Trampoline<Either4<ST,M,M2,PT>> bounce() {
+                    Either4<ST,M,M2,PT> either = lazy.get();
+                    if(either instanceof Either4.Lazy){
+                        return either.toTrampoline();
+                    }
+                    return Trampoline.done(either);
+
+                }
+            };
         }
 
         @Override

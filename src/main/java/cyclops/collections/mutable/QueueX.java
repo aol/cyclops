@@ -10,6 +10,7 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.queue;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -36,12 +37,11 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
-        LazyCollectionX<T>,
+                                   LazyCollectionX<T>,
                                     OnEmptySwitch<T, Queue<T>>,
-                                    Higher<QueueX.µ,T>{
+                                    Higher<queue,T>{
 
-    public static class µ {
-    }
+
 
     static <T> Collector<T, ?, Queue<T>> defaultCollector() {
         return java.util.stream.Collectors.toCollection(() -> new LinkedList<>());
@@ -53,9 +53,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * @param  queue HTK encoded type containing  a List toNested widen
      * @return HKT encoded type with a widened List
      */
-    public static <C2,T> Higher<C2, Higher<QueueX.µ,T>> widen2(Higher<C2, QueueX<T>> queue){
+    public static <C2,T> Higher<C2, Higher<queue,T>> widen2(Higher<C2, QueueX<T>> queue){
         //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<QueueType.µ,T> must be a ListType
+        //cast seems safer as Higher<QueueType.queue,T> must be a ListType
         return (Higher)queue;
     }
     /**
@@ -64,7 +64,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * @param queue HKT encoded list into a QueueType
      * @return QueueType
      */
-    public static <T> QueueX<T> narrowK(final Higher<QueueX.µ, T> queue) {
+    public static <T> QueueX<T> narrowK(final Higher<queue, T> queue) {
         return (QueueX<T>)queue;
     }
 
@@ -1189,7 +1189,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          *
          * @return A functor for Queues
          */
-        public static <T,R>Functor<QueueX.µ> functor(){
+        public static <T,R>Functor<queue> functor(){
             BiFunction<QueueX<T>,Function<? super T, ? extends R>,QueueX<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -1208,8 +1208,8 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          *
          * @return A factory for Queues
          */
-        public static <T> Pure<QueueX.µ> unit(){
-            return General.<QueueX.µ,T>unit(Instances::of);
+        public static <T> Pure<queue> unit(){
+            return General.<queue,T>unit(Instances::of);
         }
         /**
          *
@@ -1248,7 +1248,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          *
          * @return A zipper for Queues
          */
-        public static <T,R> Applicative<µ> zippingApplicative(){
+        public static <T,R> Applicative<queue> zippingApplicative(){
             BiFunction<QueueX< Function<T, R>>,QueueX<T>,QueueX<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -1278,9 +1278,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          *
          * @return Type class with monad functions for Queues
          */
-        public static <T,R> Monad<µ> monad(){
+        public static <T,R> Monad<queue> monad(){
 
-            BiFunction<Higher<QueueX.µ,T>,Function<? super T, ? extends Higher<QueueX.µ,R>>,Higher<QueueX.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<queue,T>,Function<? super T, ? extends Higher<queue,R>>,Higher<queue,R>> flatMap = Instances::flatMap;
             return General.monad(zippingApplicative(), flatMap);
         }
         /**
@@ -1300,7 +1300,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<µ> monadZero(){
+        public static <T,R> MonadZero<queue> monadZero(){
 
             return General.monadZero(monad(), QueueX.empty());
         }
@@ -1316,9 +1316,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          * </pre>
          * @return Type class for combining Queues by concatenation
          */
-        public static <T> MonadPlus<µ> monadPlus(){
+        public static <T> MonadPlus<queue> monadPlus(){
             Monoid<QueueX<T>> m = Monoid.of(QueueX.empty(), Instances::concat);
-            Monoid<Higher<QueueX.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<queue,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -1337,15 +1337,15 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          * @param m Monoid toNested use for combining Queues
          * @return Type class for combining Queues
          */
-        public static <T> MonadPlus<QueueX.µ> monadPlus(Monoid<QueueX<T>> m){
-            Monoid<Higher<QueueX.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<queue> monadPlus(Monoid<QueueX<T>> m){
+            Monoid<Higher<queue,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<µ> traverse(){
+        public static <C2,T> Traverse<queue> traverse(){
             BiFunction<Applicative<C2>,QueueX<Higher<C2, T>>,Higher<C2, QueueX<T>>> sequenceFn = (ap,queue) -> {
 
                 Higher<C2,QueueX<T>> identity = ap.unit(QueueX.of());
@@ -1361,7 +1361,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
 
             };
-            BiFunction<Applicative<C2>,Higher<QueueX.µ,Higher<C2, T>>,Higher<C2, Higher<QueueX.µ,T>>> sequenceNarrow  =
+            BiFunction<Applicative<C2>,Higher<queue,Higher<C2, T>>,Higher<C2, Higher<queue,T>>> sequenceNarrow  =
                     (a,b) -> QueueX.widen2(sequenceFn.apply(a, QueueX.narrowK(b)));
             return General.traverse(zippingApplicative(), sequenceNarrow);
         }
@@ -1381,9 +1381,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<µ> foldable(){
-            BiFunction<Monoid<T>,Higher<QueueX.µ,T>,T> foldRightFn =  (m,l)-> QueueX.narrowK(l).foldRight(m);
-            BiFunction<Monoid<T>,Higher<QueueX.µ,T>,T> foldLeftFn = (m,l)-> QueueX.narrowK(l).reduce(m);
+        public static <T> Foldable<queue> foldable(){
+            BiFunction<Monoid<T>,Higher<queue,T>,T> foldRightFn =  (m,l)-> QueueX.narrowK(l).foldRight(m);
+            BiFunction<Monoid<T>,Higher<queue,T>,T> foldLeftFn = (m,l)-> QueueX.narrowK(l).reduce(m);
             return General.foldable(foldRightFn, foldLeftFn);
         }
 
@@ -1396,7 +1396,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         private static <T,R> QueueX<R> ap(QueueX<Function< T, R>> lt,  QueueX<T> queue){
             return lt.zip(queue,(a,b)->a.apply(b));
         }
-        private static <T,R> Higher<QueueX.µ,R> flatMap( Higher<QueueX.µ,T> lt, Function<? super T, ? extends  Higher<QueueX.µ,R>> fn){
+        private static <T,R> Higher<queue,R> flatMap( Higher<queue,T> lt, Function<? super T, ? extends  Higher<queue,R>> fn){
             return QueueX.narrowK(lt).flatMap(fn.andThen(QueueX::narrowK));
         }
         private static <T,R> QueueX<R> map(QueueX<T> lt, Function<? super T, ? extends R> fn){

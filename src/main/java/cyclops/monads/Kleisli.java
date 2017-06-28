@@ -23,9 +23,6 @@ import java.util.function.Function;
 public interface Kleisli<W extends WitnessType<W>,T,R> extends Fn1<T,AnyM<W,R>>,
                                                                 Transformable<R>{
 
-    static class µ {
-    }
-
     default Kleisli<W,T,R> local(Function<? super R, ? extends R> local){
         return kleisli(t->apply(t).map(r->local.apply(r)));
     }

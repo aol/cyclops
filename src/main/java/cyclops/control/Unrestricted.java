@@ -373,25 +373,87 @@ public abstract class Unrestricted<T> {
     }
 
     public  <B> Unrestricted<Tuple2<T,B>> zip(Unrestricted<B> b){
+        return zip(b,(x,y)->Tuple.tuple(x,y));
+    }
+    public  <B,R> Unrestricted<R> zip(Unrestricted<B> b,BiFunction<? super T,? super B,? extends R> zipper){
 
         Xor<Transformable<Unrestricted<T>>, T> first = resume();
         Xor<Transformable<Unrestricted<B>>, B> second = b.resume();
 
         if(first.isSecondary() && second.isSecondary()) {
             return suspend(first.secondaryGet().map(a1->{
-               return suspend(second.secondaryGet().map(b1->a1.zip(b1)));
+               return suspend(second.secondaryGet().map(b1->a1.zip(b1,zipper)));
             }));
         }
         if(first.isPrimary() && second.isPrimary()){
-            return done(Tuple.tuple(first.get(),second.get()));
+            return done(zipper.apply(first.get(),second.get()));
         }
         if(first.isSecondary() && second.isPrimary()){
-            return suspend(first.secondaryGet().map(a1->a1.zip(b)));
+            return suspend(first.secondaryGet().map(a1->a1.zip(b,zipper)));
 
         }
         if(first.isPrimary() && second.isSecondary()){
-            return suspend(second.secondaryGet().map(a1->done(first.get()).zip(b)));
+            return suspend(second.secondaryGet().map(a1->this.zip(b,zipper)));
         }
+        return null;
+    }
+    public  <B,C> Unrestricted<Tuple3<T,B,C>> zip(Unrestricted<B> b, Unrestricted<C> c){
+        return zip(b,c,(x,y,z)->Tuple.tuple(x,y,z));
+
+    }
+    public  <B,C,R> Unrestricted<R> zip(Unrestricted<B> b, Unrestricted<C> c, Fn3<? super T, ? super B, ? super C,? extends R> fn){
+
+        Xor<Transformable<Unrestricted<T>>,T> first = resume();
+        Xor<Transformable<Unrestricted<B>>,B> second = b.resume();
+        Xor<Transformable<Unrestricted<C>>,C> third = c.resume();
+
+        if(first.isSecondary() && second.isSecondary() && third.isSecondary()) {
+            return suspend(first.secondaryGet().map(a1->{
+                return suspend(second.secondaryGet().map(b1->{
+                    return suspend(third.secondaryGet().map(c1->a1.zip(b1,c1,fn)));
+                }));
+            }));
+        }
+
+        if(first.isPrimary() && second.isPrimary() && third.isPrimary()){
+            return done(fn.apply(first.get(),second.get(),third.get()));
+        }
+
+        if(first.isSecondary() && second.isPrimary() && third.isPrimary()){
+            return suspend(first.secondaryGet().map(a1->a1.zip(b,c,fn)));
+        }
+        if(first.isPrimary() && second.isSecondary() && third.isPrimary()){
+
+                return suspend(second.secondaryGet().map(b1->this.zip(b1,c,fn)));
+
+
+
+        }
+        if(first.isPrimary() && second.isPrimary() && third.isSecondary()){
+              return suspend(third.secondaryGet().map(c1->this.zip(b,c1,fn)));
+        }
+
+
+        if(first.isPrimary() && second.isSecondary() && third.isSecondary()){
+            return suspend(second.secondaryGet().map(b1->{
+                return suspend(third.secondaryGet().map(c1->this.zip(b1,c1,fn)));
+            }));
+
+        }
+        if(first.isSecondary() && second.isPrimary() && third.isSecondary()){
+            return suspend(first.secondaryGet().map(a1->{
+
+                    return suspend(third.secondaryGet().map(c1->a1.zip(b,c1,fn)));
+
+            }));
+        }
+        if(first.isSecondary() && second.isSecondary() && third.isPrimary()){
+            return suspend(first.secondaryGet().map(a1->{
+                return suspend(second.secondaryGet().map(b1->a1.zip(b1,c,fn)));
+
+            }));
+        }
+        //unreachable
         return null;
     }
 

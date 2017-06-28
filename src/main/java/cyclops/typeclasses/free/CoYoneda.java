@@ -3,6 +3,8 @@ package cyclops.typeclasses.free;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.hkt.Higher3;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.coYoneda;
 import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -11,9 +13,9 @@ import java.util.function.Function;
 
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class CoYoneda<F, T, R> implements Higher3<CoYoneda.µ, F, T, R> {
+public class CoYoneda<F, T, R> implements Higher3<coYoneda, F, T, R> {
 
-    public static class µ {}
+
 
     private final Function<? super T,? extends R> function;
     private final Higher<F, T> higher;
@@ -30,10 +32,10 @@ public class CoYoneda<F, T, R> implements Higher3<CoYoneda.µ, F, T, R> {
         };
     }
 
-    public static <F,T,R> CoYoneda<F,T,R> narrowK3(Higher3<CoYoneda.µ, F, T, R> higher){
+    public static <F,T,R> CoYoneda<F,T,R> narrowK3(Higher3<coYoneda, F, T, R> higher){
         return (CoYoneda<F,T,R>)higher;
     }
-    public static <F,T,R> CoYoneda<F,T,R> narrowK( Higher<Higher2<µ, F, T>, R>  higher){
+    public static <F,T,R> CoYoneda<F,T,R> narrowK( Higher<Higher2<coYoneda, F, T>, R>  higher){
         return (CoYoneda<F,T,R>)higher;
     }
 
@@ -47,10 +49,10 @@ public class CoYoneda<F, T, R> implements Higher3<CoYoneda.µ, F, T, R> {
     
     public static class Instances{
         
-        public <F, T1, R> Functor<Higher2<CoYoneda.µ, F, T1>> functor(){
-            return new Functor<Higher2<CoYoneda.µ, F, T1>>() {
+        public <F, T1, R> Functor<Higher2<coYoneda, F, T1>> functor(){
+            return new Functor<Higher2<coYoneda, F, T1>>() {
                 @Override
-                public <T, R> Higher<Higher2<µ, F, T1>, R> map(Function<? super T, ? extends R> fn, Higher<Higher2<µ, F, T1>, T> ds) {
+                public <T, R> Higher<Higher2<coYoneda, F, T1>, R> map(Function<? super T, ? extends R> fn, Higher<Higher2<coYoneda, F, T1>, T> ds) {
                     return ds.convert(CoYoneda::narrowK).map(fn);
                 }
             };

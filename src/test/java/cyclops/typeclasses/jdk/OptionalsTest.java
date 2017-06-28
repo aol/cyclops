@@ -16,6 +16,8 @@ import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.optional;
 import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;
 
@@ -73,8 +75,8 @@ public class OptionalsTest {
     @Test
     public void functorSimple(){
 
-        Functor<OptionalKind.µ> functor = Optionals.Instances.functor();
-        Higher<OptionalKind.µ, Integer> hkt = functor.map(i -> i * 2, OptionalKind.widen(Optional.of(3)));
+        Functor<optional> functor = Optionals.Instances.functor();
+        Higher<optional, Integer> hkt = functor.map(i -> i * 2, OptionalKind.widen(Optional.of(3)));
         Optional<Integer> opt = OptionalKind.narrowK(hkt);
     }
 
@@ -141,7 +143,7 @@ public class OptionalsTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<OptionalKind.µ, Integer>> res = Optionals.Instances.traverse()
+       Maybe<Higher<optional, Integer>> res = Optionals.Instances.traverse()
                                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)-> Maybe.just(a*2), OptionalKind.of(1))
                                                                          .convert(Maybe::narrowK);
        

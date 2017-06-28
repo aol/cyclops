@@ -418,4 +418,40 @@ public interface Witness {
         }
         
     }
+    public static enum supplier implements WitnessType<supplier>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<supplier> adapter() {
+            return null;
+        }
+
     }
+    public static enum yoneda implements WitnessType<yoneda>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<yoneda> adapter() {
+            return null;
+        }
+
+    }
+    public static enum coYoneda implements WitnessType<coYoneda>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<coYoneda> adapter() {
+            return null;
+        }
+
+    }
+    public static enum kleisli implements WitnessType<kleisli>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<kleisli> adapter() {
+            return null;
+        }
+
+    }
+}

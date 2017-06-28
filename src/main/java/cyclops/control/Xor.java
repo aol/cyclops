@@ -6,6 +6,7 @@ import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
+import cyclops.control.lazy.Either4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Semigroups;
@@ -1028,6 +1029,10 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     default <R> Xor<ST, R> trampoline(final Function<? super PT, ? extends Trampoline<? extends R>> mapper) {
 
         return (Xor<ST, R>) MonadicValue.super.trampoline(mapper);
+    }
+
+    default Trampoline<Xor<ST,PT>> toTrampoline() {
+        return Trampoline.more(()->Trampoline.done(this));
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)

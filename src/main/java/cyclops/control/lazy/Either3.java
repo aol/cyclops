@@ -39,9 +39,9 @@ import java.util.stream.Stream;
  * @param <LT2> Left2 type
  * @param <RT> Right type (operations are performed on this type if present)
  */
-public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
-        BiTransformable<LT2, RT>,
-        To<Either3<LT1, LT2, RT>>,
+public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
+                                                BiTransformable<LT2, RT>,
+                                                To<Either3<LT1, LT2, RT>>,
                                                 Supplier<RT>{
     
     static <LT1,LT2,RT> Either3<LT1,LT2,RT> fromMonadicValue(MonadicValue<RT> mv3){
@@ -508,6 +508,10 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
         return (Maybe<RT>)MonadicValue.super.filterNot(predicate);
     }
 
+    default Trampoline<Either3<LT1,LT2,RT>> toTrampoline() {
+        return Trampoline.more(()->Trampoline.done(this));
+    }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Filters#notNull()
      */
@@ -879,6 +883,33 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
             return Either3.fromLazy(lazy.map(m->m.flatMap(mapper)));
 
 
+        }
+        @Override
+        public Trampoline<Either3<ST,M,PT>> toTrampoline() {
+            Trampoline<Either3<ST,M,PT>> trampoline = lazy.toTrampoline();
+            return new Trampoline<Either3<ST,M,PT>>() {
+                @Override
+                public Either3<ST,M,PT> get() {
+                    Either3<ST,M,PT> either = lazy.get();
+                    while (either instanceof Either3.Lazy) {
+                        either = ((Either3.Lazy<ST,M,PT>) either).lazy.get();
+                    }
+                    return either;
+                }
+                @Override
+                public boolean complete(){
+                    return false;
+                }
+                @Override
+                public Trampoline<Either3<ST,M,PT>> bounce() {
+                    Either3<ST,M,PT> either = lazy.get();
+                    if(either instanceof Either3.Lazy){
+                        return either.toTrampoline();
+                    }
+                    return Trampoline.done(either);
+
+                }
+            };
         }
 
         @Override

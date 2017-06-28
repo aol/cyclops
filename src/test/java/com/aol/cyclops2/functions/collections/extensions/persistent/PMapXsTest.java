@@ -16,6 +16,10 @@ import cyclops.collections.mutable.ListX;
 import cyclops.companion.MapXs;
 public class PMapXsTest {
     @Test
+    public void toStringTest(){
+        assertThat(PersistentMapXs.of(1,3).toString(),equalTo("PersistentMapX[{1=3}]"));
+    }
+    @Test
     public void toPStackX(){
         PersistentMapX<String,Integer> maps = PersistentMapXs.of("a",1,"b",2);
         LinkedListX<String> strs = maps.toLinkedListX(t->""+t.v1+t.v2);

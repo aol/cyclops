@@ -11,6 +11,8 @@ import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.list;
 import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;
 
@@ -68,8 +70,8 @@ public class ListsTest {
     @Test
     public void functorSimple(){
 
-        Functor<ListX.µ> functor = ListX.Instances.functor();
-        Higher<ListX.µ, Integer> hkt = functor.map(i -> i * 2, ListX.of(1, 2, 3));
+        Functor<list> functor = ListX.Instances.functor();
+        Higher<list, Integer> hkt = functor.map(i -> i * 2, ListX.of(1, 2, 3));
         ListX<Integer> list =  hkt.convert(ListX::narrowK);
 
     }
@@ -137,7 +139,7 @@ public class ListsTest {
     
     @Test
     public void traverse(){
-       Maybe<Higher<ListX.µ, Integer>> res = ListX.Instances.traverse()
+       Maybe<Higher<list, Integer>> res = ListX.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), ListX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
        

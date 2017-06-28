@@ -11,6 +11,7 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.persistentQueueX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -42,16 +43,14 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                                     PQueue<T>,
                                     LazyCollectionX<T>,
                                     OnEmptySwitch<T, PQueue<T>>,
-                                    Higher<PersistentQueueX.µ,T>{
+                                    Higher<persistentQueueX,T>{
 
 
     static <T> PersistentQueueX<T> fromIterator(Iterator<T> iterator) {
         return fromIterable(()->iterator);
     }
 
-    public static class µ {
-    }
-
+    
     /**
      * Narrow a covariant PersistentQueueX
      * 
@@ -75,9 +74,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * @param list HTK encoded type containing  a PQueue toNested widen
      * @return HKT encoded type with a widened PQueue
      */
-    public static <C2,T> Higher<C2, Higher<PersistentQueueX.µ,T>> widen2(Higher<C2, PersistentQueueX<T>> list){
+    public static <C2,T> Higher<C2, Higher<persistentQueueX,T>> widen2(Higher<C2, PersistentQueueX<T>> list){
         //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<PQueueType.µ,T> must be a PQueueType
+        //cast seems safer as Higher<persistentQueueX,T> must be a PQueueType
         return (Higher)list;
     }
     /**
@@ -86,7 +85,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * @param list HKT encoded list into a PQueueType
      * @return PQueueType
      */
-    public static <T> PersistentQueueX<T> narrowK(final Higher<PersistentQueueX.µ, T> list) {
+    public static <T> PersistentQueueX<T> narrowK(final Higher<persistentQueueX, T> list) {
         return (PersistentQueueX<T>)list;
     }
     /**
@@ -1327,7 +1326,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          *
          * @return A functor for PQueues
          */
-        public static <T,R>Functor<µ> functor(){
+        public static <T,R>Functor<persistentQueueX> functor(){
             BiFunction<PersistentQueueX<T>,Function<? super T, ? extends R>,PersistentQueueX<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -1346,8 +1345,8 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          *
          * @return A factory for PQueues
          */
-        public static <T> Pure<µ> unit(){
-            return General.<PersistentQueueX.µ,T>unit(Instances::of);
+        public static <T> Pure<persistentQueueX> unit(){
+            return General.<persistentQueueX,T>unit(Instances::of);
         }
         /**
          *
@@ -1386,7 +1385,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          *
          * @return A zipper for PQueues
          */
-        public static <T,R> Applicative<PersistentQueueX.µ> zippingApplicative(){
+        public static <T,R> Applicative<persistentQueueX> zippingApplicative(){
             BiFunction<PersistentQueueX< Function<T, R>>,PersistentQueueX<T>,PersistentQueueX<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -1416,9 +1415,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          *
          * @return Type class with monad functions for PQueues
          */
-        public static <T,R> Monad<µ> monad(){
+        public static <T,R> Monad<persistentQueueX> monad(){
 
-            BiFunction<Higher<PersistentQueueX.µ,T>,Function<? super T, ? extends Higher<PersistentQueueX.µ,R>>,Higher<PersistentQueueX.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<persistentQueueX,T>,Function<? super T, ? extends Higher<persistentQueueX,R>>,Higher<persistentQueueX,R>> flatMap = Instances::flatMap;
             return General.monad(zippingApplicative(), flatMap);
         }
         /**
@@ -1438,7 +1437,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<µ> monadZero(){
+        public static <T,R> MonadZero<persistentQueueX> monadZero(){
 
             return General.monadZero(monad(), PersistentQueueX.empty());
         }
@@ -1454,9 +1453,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          * </pre>
          * @return Type class for combining PQueues by concatenation
          */
-        public static <T> MonadPlus<PersistentQueueX.µ> monadPlus(){
+        public static <T> MonadPlus<persistentQueueX> monadPlus(){
             Monoid<PersistentQueueX<T>> m = Monoid.of(PersistentQueueX.empty(), Instances::concat);
-            Monoid<Higher<PersistentQueueX.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<persistentQueueX,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -1475,15 +1474,15 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          * @param m Monoid toNested use for combining PQueues
          * @return Type class for combining PQueues
          */
-        public static <T> MonadPlus<µ> monadPlus(Monoid<PersistentQueueX<T>> m){
-            Monoid<Higher<PersistentQueueX.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<persistentQueueX> monadPlus(Monoid<PersistentQueueX<T>> m){
+            Monoid<Higher<persistentQueueX,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<µ> traverse(){
+        public static <C2,T> Traverse<persistentQueueX> traverse(){
             BiFunction<Applicative<C2>,PersistentQueueX<Higher<C2, T>>,Higher<C2, PersistentQueueX<T>>> sequenceFn = (ap, list) -> {
 
                 Higher<C2,PersistentQueueX<T>> identity = ap.unit(PersistentQueueX.empty());
@@ -1499,7 +1498,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
 
             };
-            BiFunction<Applicative<C2>,Higher<PersistentQueueX.µ,Higher<C2, T>>,Higher<C2, Higher<PersistentQueueX.µ,T>>> sequenceNarrow  =
+            BiFunction<Applicative<C2>,Higher<persistentQueueX,Higher<C2, T>>,Higher<C2, Higher<persistentQueueX,T>>> sequenceNarrow  =
                     (a,b) -> PersistentQueueX.widen2(sequenceFn.apply(a, PersistentQueueX.narrowK(b)));
             return General.traverse(zippingApplicative(), sequenceNarrow);
         }
@@ -1519,9 +1518,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<µ> foldable(){
-            BiFunction<Monoid<T>,Higher<PersistentQueueX.µ,T>,T> foldRightFn =  (m, l)-> PersistentQueueX.narrowK(l).foldRight(m);
-            BiFunction<Monoid<T>,Higher<µ,T>,T> foldLeftFn = (m, l)-> PersistentQueueX.narrowK(l).reduce(m);
+        public static <T> Foldable<persistentQueueX> foldable(){
+            BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldRightFn =  (m, l)-> PersistentQueueX.narrowK(l).foldRight(m);
+            BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldLeftFn = (m, l)-> PersistentQueueX.narrowK(l).reduce(m);
             return General.foldable(foldRightFn, foldLeftFn);
         }
 
@@ -1535,7 +1534,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         private static <T,R> PersistentQueueX<R> ap(PersistentQueueX<Function< T, R>> lt, PersistentQueueX<T> list){
             return PersistentQueueX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
         }
-        private static <T,R> Higher<PersistentQueueX.µ,R> flatMap(Higher<PersistentQueueX.µ,T> lt, Function<? super T, ? extends  Higher<PersistentQueueX.µ,R>> fn){
+        private static <T,R> Higher<persistentQueueX,R> flatMap(Higher<persistentQueueX,T> lt, Function<? super T, ? extends  Higher<persistentQueueX,R>> fn){
             return PersistentQueueX.fromIterable(PersistentQueueX.narrowK(lt)).flatMap(fn.andThen(PersistentQueueX::narrowK));
         }
         private static <T,R> PersistentQueueX<R> map(PersistentQueueX<T> lt, Function<? super T, ? extends R> fn){

@@ -12,6 +12,7 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
+import cyclops.monads.Witness.optional;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.OptionalT;
 import cyclops.typeclasses.Pure;
@@ -386,7 +387,7 @@ public class Optionals {
      * @return  Optional with a List of values
      */
     public static <T> Optional<ReactiveSeq<T>> sequence(final Stream<Optional<T>> opts) {
-        return AnyM.sequence(opts.map(AnyM::fromOptional), Witness.optional.INSTANCE)
+        return AnyM.sequence(opts.map(AnyM::fromOptional), optional.INSTANCE)
                    .map(ReactiveSeq::fromStream)
                    .to(Witness::optional);
 
@@ -614,7 +615,7 @@ public class Optionals {
          *
          * @return A functor for Optionals
          */
-        public static <T,R>Functor<OptionalKind.µ> functor(){
+        public static <T,R>Functor<optional> functor(){
             BiFunction<OptionalKind<T>,Function<? super T, ? extends R>,OptionalKind<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -633,8 +634,8 @@ public class Optionals {
          *
          * @return A factory for Optionals
          */
-        public static <T> Pure<OptionalKind.µ> unit(){
-            return General.<OptionalKind.µ,T>unit(Instances::of);
+        public static <T> Pure<optional> unit(){
+            return General.<optional,T>unit(Instances::of);
         }
         /**
          *
@@ -673,7 +674,7 @@ public class Optionals {
          *
          * @return A zipper for Optionals
          */
-        public static <T,R> Applicative<OptionalKind.µ> applicative(){
+        public static <T,R> Applicative<optional> applicative(){
             BiFunction<OptionalKind< Function<T, R>>,OptionalKind<T>,OptionalKind<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -703,9 +704,9 @@ public class Optionals {
          *
          * @return Type class with monad functions for Optionals
          */
-        public static <T,R> Monad<OptionalKind.µ> monad(){
+        public static <T,R> Monad<optional> monad(){
 
-            BiFunction<Higher<OptionalKind.µ,T>,Function<? super T, ? extends Higher<OptionalKind.µ,R>>,Higher<OptionalKind.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<optional,T>,Function<? super T, ? extends Higher<optional,R>>,Higher<optional,R>> flatMap = Instances::flatMap;
             return General.monad(applicative(), flatMap);
         }
         /**
@@ -725,7 +726,7 @@ public class Optionals {
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<OptionalKind.µ> monadZero(){
+        public static <T,R> MonadZero<optional> monadZero(){
 
             return General.monadZero(monad(), OptionalKind.empty());
         }
@@ -741,12 +742,12 @@ public class Optionals {
          * </pre>
          * @return Type class for combining Optionals by concatenation
          */
-        public static <T> MonadPlus<OptionalKind.µ> monadPlus(){
+        public static <T> MonadPlus<optional> monadPlus(){
             Monoid<Optional<T>> mn = Monoids.firstPresentOptional();
             Monoid<OptionalKind<T>> m = Monoid.of(OptionalKind.widen(mn.zero()), (f, g)-> OptionalKind.widen(
                     mn.apply(OptionalKind.narrowK(f), OptionalKind.narrowK(g))));
 
-            Monoid<Higher<OptionalKind.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<optional,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -765,15 +766,15 @@ public class Optionals {
          * @param m Monoid toNested use for combining Optionals
          * @return Type class for combining Optionals
          */
-        public static <T> MonadPlus<OptionalKind.µ> monadPlus(Monoid<OptionalKind<T>> m){
-            Monoid<Higher<OptionalKind.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<optional> monadPlus(Monoid<OptionalKind<T>> m){
+            Monoid<Higher<optional,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<OptionalKind.µ> traverse(){
+        public static <C2,T> Traverse<optional> traverse(){
 
             return General.traverseByTraverse(applicative(), Instances::traverseA);
         }
@@ -793,13 +794,13 @@ public class Optionals {
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<OptionalKind.µ> foldable(){
-            BiFunction<Monoid<T>,Higher<OptionalKind.µ,T>,T> foldRightFn =  (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
-            BiFunction<Monoid<T>,Higher<OptionalKind.µ,T>,T> foldLeftFn = (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
+        public static <T> Foldable<optional> foldable(){
+            BiFunction<Monoid<T>,Higher<optional,T>,T> foldRightFn =  (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
+            BiFunction<Monoid<T>,Higher<optional,T>,T> foldLeftFn = (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
             return General.foldable(foldRightFn, foldLeftFn);
         }
-        public static <T> Comonad<OptionalKind.µ> comonad(){
-            Function<? super Higher<OptionalKind.µ, T>, ? extends T> extractFn = maybe -> maybe.convert(OptionalKind::narrow).get();
+        public static <T> Comonad<optional> comonad(){
+            Function<? super Higher<optional, T>, ? extends T> extractFn = maybe -> maybe.convert(OptionalKind::narrow).get();
             return General.comonad(functor(), unit(), extractFn);
         }
 
@@ -810,7 +811,7 @@ public class Optionals {
             return OptionalKind.widen(Maybe.fromOptionalKind(lt).combine(Maybe.fromOptionalKind(list), (a, b)->a.apply(b)).toOptional());
 
         }
-        private static <T,R> Higher<OptionalKind.µ,R> flatMap(Higher<OptionalKind.µ,T> lt, Function<? super T, ? extends  Higher<OptionalKind.µ,R>> fn){
+        private static <T,R> Higher<optional,R> flatMap(Higher<optional,T> lt, Function<? super T, ? extends  Higher<optional,R>> fn){
             return OptionalKind.widen(OptionalKind.narrow(lt).flatMap(fn.andThen(OptionalKind::narrowK)));
         }
         private static <T,R> OptionalKind<R> map(OptionalKind<T> lt, Function<? super T, ? extends R> fn){
@@ -818,8 +819,8 @@ public class Optionals {
         }
 
 
-        private static <C2,T,R> Higher<C2, Higher<OptionalKind.µ, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
-                                                                                Higher<OptionalKind.µ, T> ds){
+        private static <C2,T,R> Higher<C2, Higher<optional, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
+                                                                                Higher<optional, T> ds){
             Optional<T> opt = OptionalKind.narrowK(ds);
             return opt.isPresent() ?   applicative.map(OptionalKind::of, fn.apply(opt.get())) :
                     applicative.unit(OptionalKind.empty());
@@ -830,24 +831,17 @@ public class Optionals {
      /**
      * Simulates Higher Kinded Types for Optional's
      *
-     * OptionalKind is a Optional and a Higher Kinded Type (OptionalKind.µ,T)
+     * OptionalKind is a Optional and a Higher Kinded Type (optional,T)
      *
      * @author johnmcclean
      *
      * @param <T> Data type stored within the Optional
      */
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class OptionalKind<T> implements Higher<OptionalKind.µ, T> {
+    public static final class OptionalKind<T> implements Higher<optional, T> {
         private final Optional<T> boxed;
 
-        /**
-         * Witness type
-         *
-         * @author johnmcclean
-         *
-         */
-        public static class µ {
-        }
+       
         /**
          * @return An HKT encoded empty Optional
          */
@@ -881,7 +875,7 @@ public class Optionals {
          * @param future HKT encoded list into a OptionalKind
          * @return OptionalKind
          */
-        public static <T> OptionalKind<T> narrow(final Higher<OptionalKind.µ, T> future) {
+        public static <T> OptionalKind<T> narrow(final Higher<optional, T> future) {
             return (OptionalKind<T>)future;
         }
         /**
@@ -890,8 +884,8 @@ public class Optionals {
          * @param Optional Type Constructor toNested convert back into narrowed type
          * @return Optional from Higher Kinded Type
          */
-        public static <T> Optional<T> narrowK(final Higher<OptionalKind.µ, T> Optional) {
-            //has toNested be an OptionalKind as only OptionalKind can implement Higher<OptionalKind.µ, T>
+        public static <T> Optional<T> narrowK(final Higher<optional, T> Optional) {
+            //has toNested be an OptionalKind as only OptionalKind can implement Higher<optional, T>
             return ((OptionalKind<T>)Optional).boxed;
 
         }

@@ -13,6 +13,7 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
+import cyclops.monads.Witness.future;
 import cyclops.monads.transformers.FutureT;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
@@ -70,11 +71,10 @@ import java.util.stream.Stream;
 public class Future<T> implements To<Future<T>>,
                                   MonadicValue<T>,
                                   Completable<T>,
-                                  Higher<Future.µ,T>,
+                                  Higher<future,T>,
                                   RecoverableFrom<Throwable,T> {
 
-    public static class µ {
-    }
+    
     public <W extends WitnessType<W>> FutureT<W, T> liftM(W witness) {
         return FutureT.of(witness.adapter().unit(this));
     }
@@ -130,7 +130,7 @@ public class Future<T> implements To<Future<T>>,
      * @param future HKT encoded list into a FutureType
      * @return FutureType
      */
-    public static <T> Future<T> narrowK(final Higher<Future.µ, T> future) {
+    public static <T> Future<T> narrowK(final Higher<future, T> future) {
         return (Future<T>)future;
     }
 
@@ -1446,7 +1446,7 @@ public class Future<T> implements To<Future<T>>,
          *
          * @return A functor for FutureWs
          */
-        public static <T,R>Functor<µ> functor(){
+        public static <T,R>Functor<future> functor(){
             BiFunction<Future<T>,Function<? super T, ? extends R>,Future<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -1465,8 +1465,8 @@ public class Future<T> implements To<Future<T>>,
          *
          * @return A factory for FutureWs
          */
-        public static <T> Pure<µ> unit(){
-            return General.<Future.µ,T>unit(Instances::of);
+        public static <T> Pure<future> unit(){
+            return General.<future,T>unit(Instances::of);
         }
         /**
          *
@@ -1505,7 +1505,7 @@ public class Future<T> implements To<Future<T>>,
          *
          * @return A zipper for FutureWs
          */
-        public static <T,R> Applicative<Future.µ> applicative(){
+        public static <T,R> Applicative<future> applicative(){
             BiFunction<Future< Function<T, R>>,Future<T>,Future<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -1535,9 +1535,9 @@ public class Future<T> implements To<Future<T>>,
          *
          * @return Type class with monad functions for FutureWs
          */
-        public static <T,R> Monad<µ> monad(){
+        public static <T,R> Monad<future> monad(){
 
-            BiFunction<Higher<Future.µ,T>,Function<? super T, ? extends Higher<Future.µ,R>>,Higher<Future.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<future,T>,Function<? super T, ? extends Higher<future,R>>,Higher<future,R>> flatMap = Instances::flatMap;
             return General.monad(applicative(), flatMap);
         }
         /**
@@ -1557,7 +1557,7 @@ public class Future<T> implements To<Future<T>>,
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<µ> monadZero(){
+        public static <T,R> MonadZero<future> monadZero(){
 
             return General.monadZero(monad(), Future.future());
         }
@@ -1573,12 +1573,12 @@ public class Future<T> implements To<Future<T>>,
          * </pre>
          * @return Type class for combining FutureWs by concatenation
          */
-        public static <T> MonadPlus<Future.µ> monadPlus(){
+        public static <T> MonadPlus<future> monadPlus(){
             Monoid<Future<T>> mn = Monoids.firstSuccessfulFuture();
             Monoid<Future<T>> m = Monoid.of(mn.zero(), (f,g)->
                     mn.apply(Future.narrowK(f), Future.narrowK(g)));
 
-            Monoid<Higher<Future.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<future,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -1597,15 +1597,15 @@ public class Future<T> implements To<Future<T>>,
          * @param m Monoid to use for combining FutureWs
          * @return Type class for combining FutureWs
          */
-        public static <T> MonadPlus<µ> monadPlus(Monoid<Future<T>> m){
-            Monoid<Higher<Future.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<future> monadPlus(Monoid<Future<T>> m){
+            Monoid<Higher<future,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<µ> traverse(){
+        public static <C2,T> Traverse<future> traverse(){
 
             return General.traverseByTraverse(applicative(), Instances::traverseA);
         }
@@ -1625,13 +1625,13 @@ public class Future<T> implements To<Future<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<µ> foldable(){
-            BiFunction<Monoid<T>,Higher<Future.µ,T>,T> foldRightFn =  (m,l)-> m.apply(m.zero(), Future.narrowK(l).get());
-            BiFunction<Monoid<T>,Higher<Future.µ,T>,T> foldLeftFn = (m,l)->  m.apply(m.zero(), Future.narrowK(l).get());
+        public static <T> Foldable<future> foldable(){
+            BiFunction<Monoid<T>,Higher<future,T>,T> foldRightFn =  (m,l)-> m.apply(m.zero(), Future.narrowK(l).get());
+            BiFunction<Monoid<T>,Higher<future,T>,T> foldLeftFn = (m,l)->  m.apply(m.zero(), Future.narrowK(l).get());
             return General.foldable(foldRightFn, foldLeftFn);
         }
-        public static <T> Comonad<µ> comonad(){
-            Function<? super Higher<Future.µ, T>, ? extends T> extractFn = maybe -> maybe.convert(Future::narrowK).get();
+        public static <T> Comonad<future> comonad(){
+            Function<? super Higher<future, T>, ? extends T> extractFn = maybe -> maybe.convert(Future::narrowK).get();
             return General.comonad(functor(), unit(), extractFn);
         }
 
@@ -1642,7 +1642,7 @@ public class Future<T> implements To<Future<T>>,
             return lt.combine(future, (a,b)->a.apply(b));
 
         }
-        private static <T,R> Higher<Future.µ,R> flatMap( Higher<Future.µ,T> lt, Function<? super T, ? extends  Higher<Future.µ,R>> fn){
+        private static <T,R> Higher<future,R> flatMap( Higher<future,T> lt, Function<? super T, ? extends  Higher<future,R>> fn){
             return Future.narrowK(lt).flatMap(fn.andThen(Future::narrowK));
         }
         private static <T,R> Future<R> map(Future<T> lt, Function<? super T, ? extends R> fn){
@@ -1650,8 +1650,8 @@ public class Future<T> implements To<Future<T>>,
         }
 
 
-        private static <C2,T,R> Higher<C2, Higher<Future.µ, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
-                                                                          Higher<Future.µ, T> ds){
+        private static <C2,T,R> Higher<C2, Higher<future, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
+                                                                          Higher<future, T> ds){
             Future<T> future = Future.narrowK(ds);
             return applicative.map(Future::ofResult, fn.apply(future.get()));
         }

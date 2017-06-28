@@ -13,6 +13,7 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
+import cyclops.monads.Witness.completableFuture;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.CompletableFutureT;
 import cyclops.typeclasses.Pure;
@@ -221,7 +222,7 @@ public class CompletableFutures {
      * @return Future with a Stream
      */
     public static <T> CompletableFuture<ReactiveSeq<T>> sequence(final Stream<CompletableFuture<T>> fts) {
-        return AnyM.sequence(fts.map(AnyM::fromCompletableFuture), Witness.completableFuture.INSTANCE)
+        return AnyM.sequence(fts.map(AnyM::fromCompletableFuture), completableFuture.INSTANCE)
                 .map(ReactiveSeq::fromStream)
                 .to(Witness::completableFuture);
         
@@ -580,7 +581,7 @@ public class CompletableFutures {
          *
          * @return A functor for CompletableFutures
          */
-        public static <T,R>Functor<CompletableFutureKind.µ> functor(){
+        public static <T,R>Functor<completableFuture> functor(){
             BiFunction<CompletableFutureKind<T>,Function<? super T, ? extends R>,CompletableFutureKind<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -599,8 +600,8 @@ public class CompletableFutures {
          *
          * @return A factory for CompletableFutures
          */
-        public static <T> Pure<CompletableFutureKind.µ> unit(){
-            return General.<CompletableFutureKind.µ,T>unit(Instances::of);
+        public static <T> Pure<completableFuture> unit(){
+            return General.<completableFuture,T>unit(Instances::of);
         }
         /**
          *
@@ -638,7 +639,7 @@ public class CompletableFutures {
          *
          * @return A zipper for CompletableFutures
          */
-        public static <T,R> Applicative<CompletableFutureKind.µ> applicative(){
+        public static <T,R> Applicative<completableFuture> applicative(){
             BiFunction<CompletableFutureKind< Function<T, R>>,CompletableFutureKind<T>,CompletableFutureKind<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -668,9 +669,9 @@ public class CompletableFutures {
          *
          * @return Type class with monad functions for CompletableFutures
          */
-        public static <T,R> Monad<CompletableFutureKind.µ> monad(){
+        public static <T,R> Monad<completableFuture> monad(){
 
-            BiFunction<Higher<CompletableFutureKind.µ,T>,Function<? super T, ? extends Higher<CompletableFutureKind.µ,R>>,Higher<CompletableFutureKind.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<completableFuture,T>,Function<? super T, ? extends Higher<completableFuture,R>>,Higher<completableFuture,R>> flatMap = Instances::flatMap;
             return General.monad(applicative(), flatMap);
         }
         /**
@@ -690,7 +691,7 @@ public class CompletableFutures {
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<CompletableFutureKind.µ> monadZero(){
+        public static <T,R> MonadZero<completableFuture> monadZero(){
 
             return General.monadZero(monad(), CompletableFutureKind.widen(new CompletableFuture<T>()));
         }
@@ -706,12 +707,12 @@ public class CompletableFutures {
          * </pre>
          * @return Type class for combining CompletableFutures by concatenation
          */
-        public static <T> MonadPlus<CompletableFutureKind.µ> monadPlus(){
+        public static <T> MonadPlus<completableFuture> monadPlus(){
             Monoid<CompletableFuture<T>> mn = Monoids.firstCompleteCompletableFuture();
             Monoid<CompletableFutureKind<T>> m = Monoid.of(CompletableFutureKind.widen(mn.zero()), (f, g)-> CompletableFutureKind.widen(
                     mn.apply(CompletableFutureKind.narrowK(f), CompletableFutureKind.narrowK(g))));
 
-            Monoid<Higher<CompletableFutureKind.µ,?>> m2= (Monoid)m;
+            Monoid<Higher<completableFuture,?>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -730,15 +731,15 @@ public class CompletableFutures {
          * @param m Monoid toNested use for combining CompletableFutures
          * @return Type class for combining CompletableFutures
          */
-        public static  <T> MonadPlus<CompletableFutureKind.µ> monadPlus(Monoid<CompletableFutureKind<T>> m){
-            Monoid<Higher<CompletableFutureKind.µ,?>> m2= (Monoid)m;
+        public static  <T> MonadPlus<completableFuture> monadPlus(Monoid<CompletableFutureKind<T>> m){
+            Monoid<Higher<completableFuture,?>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<CompletableFutureKind.µ> traverse(){
+        public static <C2,T> Traverse<completableFuture> traverse(){
 
             return General.traverseByTraverse(applicative(), Instances::traverseA);
         }
@@ -758,13 +759,13 @@ public class CompletableFutures {
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<CompletableFutureKind.µ> foldable(){
-            BiFunction<Monoid<T>,Higher<CompletableFutureKind.µ,T>,T> foldRightFn =  (m, l)-> m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
-            BiFunction<Monoid<T>,Higher<CompletableFutureKind.µ,T>,T> foldLeftFn = (m, l)->  m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
+        public static <T> Foldable<completableFuture> foldable(){
+            BiFunction<Monoid<T>,Higher<completableFuture,T>,T> foldRightFn =  (m, l)-> m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
+            BiFunction<Monoid<T>,Higher<completableFuture,T>,T> foldLeftFn = (m, l)->  m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
             return General.foldable(foldRightFn, foldLeftFn);
         }
-        public static <T> Comonad<CompletableFutureKind.µ> comonad(){
-            Function<? super Higher<CompletableFutureKind.µ, T>, ? extends T> extractFn = maybe -> maybe.convert(CompletableFutureKind::narrowK).join();
+        public static <T> Comonad<completableFuture> comonad(){
+            Function<? super Higher<completableFuture, T>, ? extends T> extractFn = maybe -> maybe.convert(CompletableFutureKind::narrowK).join();
             return General.comonad(functor(), unit(), extractFn);
         }
 
@@ -775,7 +776,7 @@ public class CompletableFutures {
             return CompletableFutureKind.widen(lt.thenCombine(future, (a, b)->a.apply(b)));
 
         }
-        private static <T,R> Higher<CompletableFutureKind.µ,R> flatMap(Higher<CompletableFutureKind.µ,T> lt, Function<? super T, ? extends  Higher<CompletableFutureKind.µ,R>> fn){
+        private static <T,R> Higher<completableFuture,R> flatMap(Higher<completableFuture,T> lt, Function<? super T, ? extends  Higher<completableFuture,R>> fn){
             return CompletableFutureKind.widen(CompletableFutureKind.narrow(lt).thenCompose(fn.andThen(CompletableFutureKind::narrowK)));
         }
         private static <T,R> CompletableFutureKind<R> map(CompletableFutureKind<T> lt, Function<? super T, ? extends R> fn){
@@ -783,8 +784,8 @@ public class CompletableFutures {
         }
 
 
-        private static <C2,T,R> Higher<C2, Higher<CompletableFutureKind.µ, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
-                                                                                         Higher<CompletableFutureKind.µ, T> ds){
+        private static <C2,T,R> Higher<C2, Higher<completableFuture, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
+                                                                                         Higher<completableFuture, T> ds){
             CompletableFuture<T> future = CompletableFutureKind.narrowK(ds);
             return applicative.map(CompletableFutureKind::completedFuture, fn.apply(future.join()));
         }
@@ -793,23 +794,16 @@ public class CompletableFutures {
     /**
      * Simulates Higher Kinded Types for CompletableFuture's
      *
-     * CompletableFutureKind is a CompletableFuture and a Higher Kinded Type (CompletableFutureKind.µ,T)
+     * CompletableFutureKind is a CompletableFuture and a Higher Kinded Type (Witness.completableFuture,T)
      *
      * @author johnmcclean
      *
      * @param <T> Data type stored within the CompletableFuture
      */
 
-    public static interface CompletableFutureKind<T> extends Higher<CompletableFutureKind.µ, T>, CompletionStage<T> {
+    public static interface CompletableFutureKind<T> extends Higher<completableFuture, T>, CompletionStage<T> {
 
-        /**
-         * Witness type
-         *
-         * @author johnmcclean
-         *
-         */
-        public static class µ {
-        }
+
 
         /**
          * Construct a HKT encoded completed CompletableFuture
@@ -844,7 +838,7 @@ public class CompletableFutures {
          * @param future HKT encoded list into a CompletableFutureKind
          * @return CompletableFutureKind
          */
-        public static <T> CompletableFutureKind<T> narrow(final Higher<CompletableFutureKind.µ, T> future) {
+        public static <T> CompletableFutureKind<T> narrow(final Higher<completableFuture, T> future) {
             return (CompletableFutureKind<T>)future;
         }
 
@@ -854,7 +848,7 @@ public class CompletableFutures {
          * @param CompletableFuture Type Constructor toNested convert back into narrowed type
          * @return CompletableFuture from Higher Kinded Type
          */
-        public static <T> CompletableFuture<T> narrowK(final Higher<CompletableFutureKind.µ, T> completableFuture) {
+        public static <T> CompletableFuture<T> narrowK(final Higher<completableFuture, T> completableFuture) {
             if (completableFuture instanceof CompletionStage) {
                 final CompletionStage<T> ft = (CompletionStage<T>) completableFuture;
                 return CompletableFuture.completedFuture(1)

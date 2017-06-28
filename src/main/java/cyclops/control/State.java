@@ -1,6 +1,8 @@
 package cyclops.control;
 
 import cyclops.control.Maybe.Nothing;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.supplier;
 import cyclops.typeclasses.free.Free;
 import cyclops.function.*;
 import lombok.AccessLevel;
@@ -16,7 +18,7 @@ public final class State<S, T> {
     public static class µ {
     }
 
-    private final Fn1<S, Free<Fn0.SupplierKind.µ,Tuple2<S, T>>> runState;
+    private final Fn1<S, Free<supplier,Tuple2<S, T>>> runState;
 
 
     public Tuple2<S, T> run(S s) {
@@ -46,7 +48,7 @@ public final class State<S, T> {
     public <R> State<S, R> mapState(Function<Tuple2<S,T>, Tuple2<S, R>> fn) {
         return suspended(s -> runState.apply(s).map(t -> fn.apply(t)));
     }
-    private static <S, T> State<S, T> suspended(Fn1<? super S, Free<Fn0.SupplierKind.µ,Tuple2<S, T>>> runF) {
+    private static <S, T> State<S, T> suspended(Fn1<? super S, Free<supplier,Tuple2<S, T>>> runF) {
         return new State<>(s -> Fn0.suspend(Lambda.λK(()->runF.apply(s))));
     }
 
