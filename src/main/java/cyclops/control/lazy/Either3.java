@@ -1224,6 +1224,10 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
             return this;
 
         }
+        @Override
+        public void subscribe(final Subscriber<? super PT> s) {
+            s.onComplete();
+        }
 
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
@@ -1472,7 +1476,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
 
         @Override
         public void subscribe(final Subscriber<? super PT> s) {
-
+                s.onComplete();
         }
 
         @Override

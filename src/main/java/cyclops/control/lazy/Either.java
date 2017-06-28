@@ -1260,6 +1260,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         private final Eval<Either<ST, PT>> lazy;
 
+        public Eval<Xor<ST, PT>> nestedEval(){
+            return (Eval)lazy;
+        }
         private static <ST, PT> Lazy<ST, PT> lazy(Eval<Either<ST, PT>> lazy) {
             return new Lazy<>(
                               lazy);

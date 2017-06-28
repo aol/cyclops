@@ -39,21 +39,7 @@ public class FlatMapPublisherTest {
 
 
     }
-    @Test
-    public void flatMapList(){
-        for(int i=0;i<100_000;i++){
-            System.out.println("Iteration " + i);
-            List<Integer> list = flux(1)
-                    .flatMapP(in -> of(1, 2, 3))
-                    .toList();
-            System.out.println("List is " + list);
-            Assert.assertThat(list,
-                    Matchers.hasItems(1, 2, 3));
-            Assert.assertThat(list.size(),
-                    equalTo(3));
-        }
 
-    }
     @Test
     public void flatMapPublisher() throws InterruptedException{
         //of(1,2,3)

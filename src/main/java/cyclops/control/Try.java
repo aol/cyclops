@@ -47,6 +47,7 @@ import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 /**
  * Light weight Try Monad
@@ -172,7 +173,37 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
     @Override
     public void subscribe(Subscriber<? super T> sub) {
-        xor.subscribe(sub);
+
+        xor.nestedEval().subscribe(new Subscriber<Xor<X, T>>() {
+            boolean onCompleteSent = false;
+            @Override
+            public void onSubscribe(Subscription s) {
+                sub.onSubscribe(s);
+            }
+
+            @Override
+            public void onNext(Xor<X, T> pts) {
+                if(pts.isPrimary()){
+                    sub.onNext(pts.get());
+                }else if(!onCompleteSent){
+                    sub.onError(pts.secondaryGet());
+
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                sub.onError(t);
+            }
+
+            @Override
+            public void onComplete() {
+                if(!onCompleteSent){
+                    sub.onComplete();
+                    onCompleteSent =true;
+                }
+            }
+        });
     }
 
     /**
@@ -760,11 +791,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return Convert this Try to an Xor with the error type as the secondary value
      */
     public Xor<X, T> toXorWithError() {
-        if (isSuccess())
-            return Xor.primary(get());
-        else
-            return Xor.<X, T> secondary(this.toFailedOptional()
-                    .get());
+        return xor;
     }
 
     /* (non-Javadoc)

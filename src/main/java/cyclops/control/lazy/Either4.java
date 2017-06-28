@@ -1304,6 +1304,10 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return this;
 
         }
+        @Override
+        public void subscribe(final Subscriber<? super PT> s) {
+            s.onComplete();
+        }
 
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
@@ -1394,10 +1398,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return absent.get();
         }
 
-        @Override
-        public void subscribe(final Subscriber<? super PT> s) {
 
-        }
 
         @Override
         public boolean test(final PT t) {
@@ -1497,7 +1498,10 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             throw new NoSuchElementException(
                                              "Attempt to access right value on a Middle Either4");
         }
-
+        @Override
+        public void subscribe(final Subscriber<? super PT> s) {
+            s.onComplete();
+        }
         @Override
         public <RT1> Either4<ST, M, M2,RT1> flatMap(
                 final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
@@ -1570,10 +1574,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return absent.get();
         }
 
-        @Override
-        public void subscribe(final Subscriber<? super PT> s) {
-
-        }
 
         @Override
         public boolean test(final PT t) {
@@ -1670,6 +1670,10 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return Maybe.none();
 
         }
+        @Override
+        public void subscribe(final Subscriber<? super PT> s) {
+            s.onComplete();
+        }
 
         @Override
         public PT get() {
@@ -1750,11 +1754,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         @Override
         public <R> R visit(final Function<? super PT, ? extends R> present, final Supplier<? extends R> absent) {
             return absent.get();
-        }
-
-        @Override
-        public void subscribe(final Subscriber<? super PT> s) {
-
         }
 
         @Override

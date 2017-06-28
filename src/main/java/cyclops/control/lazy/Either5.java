@@ -1479,7 +1479,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         @Override
         public void subscribe(final Subscriber<? super PT> s) {
-
+            s.onComplete();
         }
 
         @Override
@@ -1665,7 +1665,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         @Override
         public void subscribe(final Subscriber<? super PT> s) {
-
+            s.onComplete();
         }
 
         @Override
@@ -1859,7 +1859,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         @Override
         public void subscribe(final Subscriber<? super PT> s) {
-
+            s.onComplete();
         }
 
         @Override

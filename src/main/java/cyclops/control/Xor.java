@@ -6,6 +6,7 @@ import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
+import cyclops.control.lazy.Either;
 import cyclops.control.lazy.Either4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -137,6 +138,9 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
         return XorT.of(witness.adapter().unit(this));
     }
 
+    default Eval<Xor<ST, PT>> nestedEval(){
+        return Eval.later(()->this);
+    }
     /**
      * Static method useful as a method reference for fluent consumption of any value type stored in this Either
      * (will capture the lowest common type)
