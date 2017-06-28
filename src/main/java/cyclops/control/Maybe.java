@@ -1,6 +1,7 @@
 package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
@@ -1491,7 +1492,59 @@ public interface Maybe<T> extends To<Maybe<T>>,
     @UtilityClass
     public static class Instances {
 
+        public static InstanceDefinitions<maybe> definitions(){
+            return new InstanceDefinitions<maybe>() {
+                @Override
+                public <T, R> Functor<maybe> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<maybe> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<maybe> applicative() {
+                    return Instances.applicative();
+                }
+
+                @Override
+                public <T, R> Monad<maybe> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<maybe>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<maybe>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<maybe>> monadPlus(Monoid<Higher<maybe, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Traverse<maybe> traverse() {
+                    return Instances.traverse();
+                }
+
+                @Override
+                public <T> Foldable<maybe> foldable() {
+                    return Instances.foldable();
+                }
+
+                @Override
+                public <T> Maybe<Comonad<maybe>> comonad() {
+                    return Maybe.just(Instances.comonad());
+                }
+            };
+        }
 
         /**
          *

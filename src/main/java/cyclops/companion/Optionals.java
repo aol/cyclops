@@ -8,6 +8,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
@@ -585,7 +586,59 @@ public class Optionals {
      */
     @UtilityClass
     public static class Instances {
+        public static InstanceDefinitions<optional> definitions(){
+            return new InstanceDefinitions<optional>() {
+                @Override
+                public <T, R> Functor<optional> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<optional> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<optional> applicative() {
+                    return Instances.applicative();
+                }
+
+                @Override
+                public <T, R> Monad<optional> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<optional>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<optional>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<optional>> monadPlus(Monoid<Higher<optional, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Traverse<optional> traverse() {
+                    return Instances.traverse();
+                }
+
+                @Override
+                public <T> Foldable<optional> foldable() {
+                    return Instances.foldable();
+                }
+
+                @Override
+                public <T> Maybe<Comonad<optional>> comonad() {
+                    return Maybe.just(Instances.comonad());
+                }
+            };
+        }
 
         /**
          *

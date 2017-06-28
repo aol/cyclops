@@ -1,10 +1,10 @@
 package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
-import com.aol.cyclops2.types.recoverable.Recoverable;
 import com.aol.cyclops2.types.recoverable.RecoverableFrom;
 import cyclops.companion.Monoids;
 import cyclops.collections.box.Mutable;
@@ -1416,7 +1416,59 @@ public class Future<T> implements To<Future<T>>,
      */
     @UtilityClass
     public static class Instances {
+        public static InstanceDefinitions<future> definitions(){
+            return new InstanceDefinitions<future>() {
+                @Override
+                public <T, R> Functor<future> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<future> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<future> applicative() {
+                    return Instances.applicative();
+                }
+
+                @Override
+                public <T, R> Monad<future> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<future>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<future>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<future>> monadPlus(Monoid<Higher<future, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Traverse<future> traverse() {
+                    return Instances.traverse();
+                }
+
+                @Override
+                public <T> Foldable<future> foldable() {
+                    return Instances.foldable();
+                }
+
+                @Override
+                public <T> Maybe<Comonad<future>> comonad() {
+                    return Maybe.just(Instances.comonad());
+                }
+            };
+        }
 
         /**
          *
@@ -1446,7 +1498,7 @@ public class Future<T> implements To<Future<T>>,
          *
          * @return A functor for FutureWs
          */
-        public static <T,R>Functor<future> functor(){
+        public static <T,R> Functor<future> functor(){
             BiFunction<Future<T>,Function<? super T, ? extends R>,Future<R>> map = Instances::map;
             return General.functor(map);
         }

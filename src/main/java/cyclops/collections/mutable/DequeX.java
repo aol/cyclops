@@ -3,15 +3,16 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
 
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.deque;
 import cyclops.stream.ReactiveSeq;
 import cyclops.companion.Streams;
@@ -22,6 +23,7 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
@@ -1315,7 +1317,59 @@ public interface DequeX<T> extends To<DequeX<T>>,
     @UtilityClass
     public static class Instances {
 
+        public static InstanceDefinitions<deque> definitions(){
+            return new InstanceDefinitions<deque>() {
+                @Override
+                public <T, R> Functor<deque> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<deque> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<deque> applicative() {
+                    return Instances.zippingApplicative();
+                }
+
+                @Override
+                public <T, R> Monad<deque> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<deque>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<deque>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<deque>> monadPlus(Monoid<Higher<deque, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Traverse<deque> traverse() {
+                    return Instances.traverse();
+                }
+
+                @Override
+                public <T> Foldable<deque> foldable() {
+                    return Instances.foldable();
+                }
+
+                @Override
+                public <T> Maybe<Comonad<deque>> comonad() {
+                    return Maybe.none();
+                }
+            };
+        }
         /**
          *
          * Transform a list, mulitplying every element by 2

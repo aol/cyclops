@@ -2,13 +2,12 @@ package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
@@ -1138,7 +1137,59 @@ public interface Eval<T> extends To<Eval<T>>,
     @UtilityClass
     public static class Instances {
 
+        public static InstanceDefinitions<eval> definitions(){
+            return new InstanceDefinitions<eval>() {
+                @Override
+                public <T, R> Functor<eval> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<eval> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<eval> applicative() {
+                    return Instances.applicative();
+                }
+
+                @Override
+                public <T, R> Monad<eval> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<eval>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<eval>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<eval>> monadPlus(Monoid<Higher<eval, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Traverse<eval> traverse() {
+                    return Instances.traverse();
+                }
+
+                @Override
+                public <T> Foldable<eval> foldable() {
+                    return Instances.foldable();
+                }
+
+                @Override
+                public <T> Maybe<Comonad<eval>> comonad() {
+                    return Maybe.just(Instances.comonad());
+                }
+            };
+        }
         /**
          *
          * Transform a list, mulitplying every element by 2

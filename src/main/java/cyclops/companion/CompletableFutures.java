@@ -8,7 +8,9 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.async.Future;
+import cyclops.control.Maybe;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
@@ -551,7 +553,59 @@ public class CompletableFutures {
      */
     @UtilityClass
     public static class Instances {
+        public static InstanceDefinitions<completableFuture> definitions(){
+            return new InstanceDefinitions<completableFuture>() {
+                @Override
+                public <T, R> Functor<completableFuture> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<completableFuture> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<completableFuture> applicative() {
+                    return Instances.applicative();
+                }
+
+                @Override
+                public <T, R> Monad<completableFuture> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<completableFuture>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<completableFuture>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<completableFuture>> monadPlus(Monoid<Higher<completableFuture, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Traverse<completableFuture> traverse() {
+                    return Instances.traverse();
+                }
+
+                @Override
+                public <T> Foldable<completableFuture> foldable() {
+                    return Instances.foldable();
+                }
+
+                @Override
+                public <T> Maybe<Comonad<completableFuture>> comonad() {
+                    return Maybe.just(Instances.comonad());
+                }
+            };
+        }
 
         /**
          *

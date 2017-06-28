@@ -1,18 +1,18 @@
 package cyclops.collections.immutable;
 
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.linkedListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -26,6 +26,7 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
@@ -1270,7 +1271,59 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @UtilityClass
     public static class Instances {
 
+        public static InstanceDefinitions<linkedListX> definitions(){
+            return new InstanceDefinitions<linkedListX>() {
+                @Override
+                public <T, R> Functor<linkedListX> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<linkedListX> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<linkedListX> applicative() {
+                    return Instances.zippingApplicative();
+                }
+
+                @Override
+                public <T, R> Monad<linkedListX> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<linkedListX>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<linkedListX>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<linkedListX>> monadPlus(Monoid<Higher<linkedListX, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Traverse<linkedListX> traverse() {
+                    return Instances.traverse();
+                }
+
+                @Override
+                public <T> Foldable<linkedListX> foldable() {
+                    return Instances.foldable();
+                }
+
+                @Override
+                public <T> Maybe<Comonad<linkedListX>> comonad() {
+                    return Maybe.none();
+                }
+            };
+        }
         /**
          *
          * Transform a list, mulitplying every element by 2

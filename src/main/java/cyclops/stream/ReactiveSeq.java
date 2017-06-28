@@ -3,6 +3,7 @@ package cyclops.stream;
 
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import com.aol.cyclops2.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
@@ -43,6 +44,7 @@ import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.StreamT;
 import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
@@ -4836,6 +4838,59 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     static class Instances {
+        public static InstanceDefinitions<reactiveSeq> definitions(){
+            return new InstanceDefinitions<reactiveSeq>() {
+                @Override
+                public <T, R> Functor<reactiveSeq> functor() {
+                    return Instances.functor();
+                }
+
+                @Override
+                public <T> Pure<reactiveSeq> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<reactiveSeq> applicative() {
+                    return Instances.zippingApplicative();
+                }
+
+                @Override
+                public <T, R> Monad<reactiveSeq> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<reactiveSeq>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<reactiveSeq>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<reactiveSeq>> monadPlus(Monoid<Higher<reactiveSeq, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Traverse<reactiveSeq> traverse() {
+                    return Instances.traverse();
+                }
+
+                @Override
+                public <T> Foldable<reactiveSeq> foldable() {
+                    return Instances.foldable();
+                }
+
+                @Override
+                public <T> Maybe<Comonad<reactiveSeq>> comonad() {
+                    return Maybe.none();
+                }
+            };
+        }
         /**
          *
          * Transform a list, mulitplying every element by 2

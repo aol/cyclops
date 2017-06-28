@@ -1,8 +1,10 @@
 package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.collections.immutable.VectorX;
+import cyclops.control.Maybe;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
@@ -20,6 +22,7 @@ import com.aol.cyclops2.types.stream.NonPausableHotStream;
 import com.aol.cyclops2.types.stream.PausableHotStream;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
@@ -2834,7 +2837,59 @@ public class Streams {
     @UtilityClass
     public static class Instances {
 
+        public static InstanceDefinitions<stream> definitions(){
+            return new InstanceDefinitions<stream>() {
+                @Override
+                public <T, R> Functor<stream> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<stream> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<stream> applicative() {
+                    return Instances.zippingApplicative();
+                }
+
+                @Override
+                public <T, R> Monad<stream> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<stream>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<stream>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<stream>> monadPlus(Monoid<Higher<stream, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Traverse<stream> traverse() {
+                    return Instances.traverse();
+                }
+
+                @Override
+                public <T> Foldable<stream> foldable() {
+                    return Instances.foldable();
+                }
+
+                @Override
+                public <T> Maybe<Comonad<stream>> comonad() {
+                    return Maybe.none();
+                }
+            };
+        }
         /**
          *
          * Transform a list, mulitplying every element by 2

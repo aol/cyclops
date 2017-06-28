@@ -4,14 +4,15 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.persistentQueueX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -22,6 +23,7 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
@@ -1296,7 +1298,59 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      */
     @UtilityClass
     public static class Instances {
+        public static InstanceDefinitions<persistentQueueX> definitions(){
+            return new InstanceDefinitions<persistentQueueX>() {
+                @Override
+                public <T, R> Functor<persistentQueueX> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<persistentQueueX> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<persistentQueueX> applicative() {
+                    return Instances.zippingApplicative();
+                }
+
+                @Override
+                public <T, R> Monad<persistentQueueX> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<persistentQueueX>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<persistentQueueX>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<persistentQueueX>> monadPlus(Monoid<Higher<persistentQueueX, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Traverse<persistentQueueX> traverse() {
+                    return Instances.traverse();
+                }
+
+                @Override
+                public <T> Foldable<persistentQueueX> foldable() {
+                    return Instances.foldable();
+                }
+
+                @Override
+                public <T> Maybe<Comonad<persistentQueueX>> comonad() {
+                    return Maybe.none();
+                }
+            };
+        }
 
         /**
          *
