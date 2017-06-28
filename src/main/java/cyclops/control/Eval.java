@@ -29,6 +29,8 @@ import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.pcollections.PVector;
+import org.pcollections.TreePVector;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -391,8 +393,8 @@ public interface Eval<T> extends To<Eval<T>>,
     public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
 
-    default ArrayList<Function<Object, Object>> steps() {
-        return Module.Rec.arrayList(__ -> get());
+    default PVector<Function<Object, Object>> steps() {
+        return TreePVector.singleton(__ -> get());
     }
 
     /* (non-Javadoc)
@@ -728,10 +730,10 @@ public interface Eval<T> extends To<Eval<T>>,
         public static class Later<T> extends Rec<T> implements Eval<T> {
 
             Later(final Function<Object, ? extends T> s) {
-                super(arrayList(Rec.raw(Memoize.memoizeFunction(s))));
+                super(TreePVector.singleton(Rec.raw(Memoize.memoizeFunction(s))));
             }
 
-            Later(final ArrayList<Function<Object, Object>> s) {
+            Later(final PVector<Function<Object, Object>> s) {
                 super(s);
 
             }
@@ -740,14 +742,14 @@ public interface Eval<T> extends To<Eval<T>>,
             public <R> Eval<R> map(final Function<? super T, ? extends R> mapper) {
 
                 return new Later<R>(
-                                    plus(super.fns,Rec.raw(Memoize.memoizeFunction(mapper))));
+                                    super.fns.plus(Rec.raw(Memoize.memoizeFunction(mapper))));
             }
 
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
                 final RecFunction s = __ -> asEval(mapper.apply(super.applyRec())).steps();
 
-                return new Later<R>(arrayList(s));
+                return new Later<R>(TreePVector.singleton(s));
 
             }
 
@@ -801,10 +803,10 @@ public interface Eval<T> extends To<Eval<T>>,
         public static class Always<T> extends Rec<T> implements Eval<T> {
 
             Always(final Function<Object, ? extends T> s) {
-                super(arrayList(Rec.raw(s)));
+                super(TreePVector.singleton(Rec.raw(s)));
             }
 
-            Always(final ArrayList<Function<Object, Object>> s) {
+            Always(final PVector<Function<Object, Object>> s) {
                 super(s);
 
             }
@@ -813,7 +815,7 @@ public interface Eval<T> extends To<Eval<T>>,
             public <R> Eval<R> map(final Function<? super T, ? extends R> mapper) {
 
                 return new Always<R>(
-                                     plus(fns,Rec.raw(mapper)));
+                                     fns.plus(Rec.raw(mapper)));
 
             }
 
@@ -822,7 +824,7 @@ public interface Eval<T> extends To<Eval<T>>,
                 final RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
 
                 return new Always<R>(
-                                     arrayList(s));
+                                     TreePVector.singleton(s));
             }
 
             @Override
@@ -1043,24 +1045,14 @@ public interface Eval<T> extends To<Eval<T>>,
         }
 
         private static class Rec<T> {
-            final ArrayList<Function<Object, Object>> fns;
+            final PVector<Function<Object, Object>> fns;
             private final static Object VOID = new Object();
 
-            Rec(final ArrayList<Function<Object, Object>> s) {
+            Rec(final PVector<Function<Object, Object>> s) {
                 fns = s;
             }
 
-            public static <T> ArrayList<T> arrayList(T... values){
-                ArrayList<T> arrayList = new ArrayList(values.length);
-                for(T next : values) {
-                    arrayList.add(next);
-                }
-                return arrayList;
-            }
-            public static <T> ArrayList<T> plus(ArrayList<T> list, T value){
-                list.add(value);
-                return list;
-            }
+
 
             private static Function<Object, Object> raw(final Function<?, ?> fn) {
                 return (Function<Object, Object>) fn;
@@ -1070,7 +1062,7 @@ public interface Eval<T> extends To<Eval<T>>,
 
             }
 
-            public ArrayList<Function<Object, Object>> steps() {
+            public  PVector<Function<Object, Object>> steps() {
                 return fns;
             }
             public Trampoline<T> toTrampoline(){
@@ -1091,8 +1083,8 @@ public interface Eval<T> extends To<Eval<T>>,
 
                                 final Function<Object, Object> next = fns.get(i);
                                 if (next instanceof RecFunction) {
-                                    List<Function<Object, Object>> remaining = fns.subList(i+1,fns.size());
-                                    ArrayList<Function<Object, Object>> nextSteps = (ArrayList) ((RecFunction) next).apply(VOID);
+                                    PVector<Function<Object, Object>> remaining = fns.subList(i+1,fns.size());
+                                    PVector<Function<Object, Object>> nextSteps = (PVector) ((RecFunction) next).apply(VOID);
                                     nextSteps.addAll(remaining);
                                    return new Later(nextSteps).toTrampoline();
                                 } else {
