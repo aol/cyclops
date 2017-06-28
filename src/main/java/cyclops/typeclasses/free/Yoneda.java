@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 public interface Yoneda<U,T> extends Higher<Higher<yoneda, U>, T> {
 
-    public static class µ {}
+
 
     public static <U,T> Yoneda<U,T> of(Higher<U,T> hkt, Functor<U> functor){
         return new Yoneda<U,T>(){

@@ -5,6 +5,8 @@ import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.monads.Witness;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -53,8 +55,10 @@ public interface VectorX<T> extends To<VectorX<T>>,
                                      PVector<T>>,
                                      Comparable<T>,
                                      Higher<vectorX,T>{
-    
 
+    default Active<vectorX,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
+    }
 
     default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {
         return ListT.of(witness.adapter().unit(this));
@@ -249,7 +253,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * }
      * </pre>
      * 
-     * @param value Single value for PVector
+     * @param value Active value for PVector
      * @return PVector with a singleUnsafe value
      */
     public static <T> VectorX<T> singleton(final T value) {

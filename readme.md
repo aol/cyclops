@@ -286,7 +286,7 @@ Classes / Interfaces that represent the API (cyclops-react)
 | type | description | characteristics |
 |------|-------------|-----------------|
 | Maybe     | Lazy analogue of Optional (Just/None)             |  Optionally Reactive or Coreactive, Lazy, tail recursive,sum type, Higher kinded               |
-| Try     | Represents a value or an exception. Only specified Exceptions are caught on creation by default.            | Eager, avoids error hiding                 |
+| Try     | Represents a value or an exception. Only specified Exceptions are caught on creation by default.            | Eager or Lazy, Optionally reactive, optionally tail recursive, avoids error hiding                 |
 | Ior     | Inclusive Or, maybe one of two values or both            | Eager, sum and product type                 |
 | Xor     | Exclusive Or, maybe one of two values, eager analogue of Either            | Eager, sum type                 |
 | Either     | Lazy Either type maybe one of two values, lazy analogue of Xor            | Optionally Reactive or Coreactive, Lazy, tail recursive, sum type                 |
@@ -338,11 +338,11 @@ completableMaybe.complete(value)
 | type | description | characteristics |
 |------|-------------|-----------------|
 | Eval     | Lazy evaluation, optional caching            | Optionally Reactive or Coreactive, Lazy, tail recursive, Higher kinded                 |
-| Trampoline     | Easy to use trampoline implementations (see also Free using SupplierKind)            | Lazy                |
+| Trampoline     | Easy to use trampoline implementations (see also Free using SupplierKind)            | Lazy, tail recursive, concurrent                |
 | Writer     | Monad / Wrapper type that supports the accumulation of a values using a Monoid            | Eager                |
 | State     | State Monad to manage state  / state transformations in a functional manner (backed by Free)            | Lazy                |
 | ReaderWriterState     | Monad transformer encompassing behaviour from Reader, Writer and State Monads (backed by Free)            | Lazy                |
-| Unrestricted     | "Java Friendly" implementation of the Free monad for Java, facilitates functional interpreters.         | Lazy                |
+| Unrestricted     | "Java Friendly" implementation of the Free monad for Java, facilitates functional interpreters.         | Lazy, concurrent                |
 
 ## cyclops.collections.box
 
@@ -392,12 +392,13 @@ completableMaybe.complete(value)
 
 | type | description | characteristics |
 |------|-------------|-----------------|
-| ListT     | Type safe list transformer of manipulating lists in a monadic context            | Higher kinded                 |
-| StreamT     | Type safe Stream transformer of manipulating Streams in a monadic context            | Higher kinded                 |
-| FutureT     | Type safe future transformer of manipulating futures in a monadic context            | Higher kinded                 |
-| CompletableFutureT     | Type safe CompletableFuture transformer of manipulating futures in a monadic context     | Higher kinded |
-| OptionalT     | Type safe Optional transformer of manipulating optionals in a monadic context          | Higher kinded                |
-| MaybeT     | Type safe Maybe transformer of manipulating Maybes in a monadic context            | Higher kinded                 |
+| ListT     | Type safe list transformer for manipulating lists in a monadic context            | Higher kinded                 |
+| StreamT     | Type safe Stream transformer for manipulating Streams in a monadic context            | Higher kinded                 |
+| FutureT     | Type safe future transformer for manipulating futures in a monadic context            | Higher kinded                 |
+| CompletableFutureT     | Type safe CompletableFuture transformer for manipulating futures in a monadic context     | Higher kinded |
+| OptionalT     | Type safe Optional transformer for manipulating optionals in a monadic context          | Higher kinded                |
+| XorT     | Type safe Monad transformer for manipulating Xors & Eithers in a monadic context            | Higher kinded                 |
+| MaybeT     | Type safe Maybe transformer for manipulating Maybes in a monadic context            | Higher kinded                 |
 | EvalT     | Type safe Eval transformer of manipulating Evals in a monadic context            | Higher kinded                 |
 
 
@@ -414,7 +415,11 @@ completableMaybe.complete(value)
 | MonadZero     | Filter a monad (e.g. like Optional.filter)            | Higher kinded                 |
 | MonadPlus     | Combine two monads            | Higher kinded                 |
 | Comonad     | Extract values from a context and extend functions to operat at monadic level            | Higher kinded                 |
-| Free     | Higher kinded implementation of the Free monad for Java, facilitates functional interpreters. Free + SupplierKind (higher kinded Fn0) = a more advanced Trampoline implementation.            | Lazy                |
+| Nested     | Work cleanly with nested types (such as a List of Streams etc)      | Higher kinded ,Lazy              |
+| Active     | Work cleanly with type classes (captures both the Higher kinded type and all it's type classes to simplify access)      | Higher kinded ,Lazy              |
+| Free     | Higher kinded implementation of the Free monad for Java, facilitates functional interpreters. Free + SupplierKind (higher kinded Fn0) = a more advanced Trampoline implementation.            | Higher kinded ,Lazy,  tail recursive, concurrent                |
+| Yoneda     | Higher kinded implementation of the Yoneda lemma  | Higher kinded ,Lazy                |
+| Coyoneda     | Higher kinded implementation of Coyoneda,provides a functor instance for HKT encoded data types, useful when working with Free            |Higher kinded , Lazy             |
 
 
 

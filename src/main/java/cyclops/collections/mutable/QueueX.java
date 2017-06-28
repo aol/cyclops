@@ -3,6 +3,8 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.monads.Witness;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -44,7 +46,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                                     Higher<queue,T>{
 
 
-
+    default Active<queue,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
+    }
     static <T> Collector<T, ?, Queue<T>> defaultCollector() {
         return java.util.stream.Collectors.toCollection(() -> new LinkedList<>());
     }

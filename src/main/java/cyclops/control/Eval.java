@@ -2,6 +2,7 @@ package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
@@ -75,7 +76,9 @@ public interface Eval<T> extends To<Eval<T>>,
                                     MonadicValue<T>,
                                     Higher<eval ,T> {
 
-
+    default Active<eval,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
+    }
     static <T> Eval<T> async(final Executor ex, final Supplier<T> s){
         return fromFuture(Future.of(s,ex));
     }

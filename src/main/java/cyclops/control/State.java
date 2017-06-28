@@ -15,8 +15,7 @@ import java.util.function.Function;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class State<S, T> {
-    public static class µ {
-    }
+
 
     private final Fn1<S, Free<supplier,Tuple2<S, T>>> runState;
 

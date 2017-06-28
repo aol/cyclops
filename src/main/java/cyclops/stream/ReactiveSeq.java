@@ -3,6 +3,8 @@ package cyclops.stream;
 
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.collections.mutable.DequeX;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.*;
@@ -120,7 +122,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
 
-
+    default Active<reactiveSeq,T> allTypeclasses(){
+        return Active.of(this, this.visit(sync->Instances.definitions(),rs->Spouts.Instances.definitions(),ac->Spouts.Instances.definitions()));
+    }
 
 
 
@@ -4288,7 +4292,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * crossJoin two Streams forming a cartesian product over both
      * @param other Stream toNested crossJoin
-     * @return Single Stream with each pair across both Streams in a Tuple
+     * @return Active Stream with each pair across both Streams in a Tuple
      */
     default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(ReactiveSeq<? extends U> other) {
         return forEach2(a->other, Tuple::tuple);

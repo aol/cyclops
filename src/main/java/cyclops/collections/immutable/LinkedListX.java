@@ -4,6 +4,9 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.collections.mutable.DequeX;
+import cyclops.monads.Witness;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -53,7 +56,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                     Higher<linkedListX,T> {
 
 
-
+    default Active<linkedListX,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
+    }
 
     @Override
     LinkedListX<T> lazy();
@@ -305,7 +310,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * }
      * </pre>
      * 
-     * @param value Single value for PVector
+     * @param value Active value for PVector
      * @return PVector with a singleUnsafe value
      */
     public static <T> LinkedListX<T> singleton(final T value){

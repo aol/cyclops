@@ -4,6 +4,8 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.monads.Witness;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -47,6 +49,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                                     OnEmptySwitch<T, PQueue<T>>,
                                     Higher<persistentQueueX,T>{
 
+    default Active<persistentQueueX,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
+    }
 
     static <T> PersistentQueueX<T> fromIterator(Iterator<T> iterator) {
         return fromIterable(()->iterator);

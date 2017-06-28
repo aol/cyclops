@@ -3,6 +3,8 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.monads.Witness;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -54,7 +56,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
                                    OnEmptySwitch<T, Deque<T>>,
                                    Higher<deque,T>{
 
-
+    default Active<deque,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
+    }
     /**
      * Widen a DequeType nested inside another HKT encoded type
      *
@@ -228,7 +232,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * }</pre>
      * 
      * 
-     * @param value Single value
+     * @param value Active value
      * @return DequeX
      */
     public static <T> DequeX<T> singleton(final T value) {

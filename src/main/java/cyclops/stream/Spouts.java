@@ -1,6 +1,7 @@
 package cyclops.stream;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX.Type;
@@ -41,6 +42,7 @@ import java.util.stream.Stream;
  */
 
 public interface Spouts {
+
 
     /**
      * Create an Subscriber for Observable style asynchronous push based Streams.

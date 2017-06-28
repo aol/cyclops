@@ -7,7 +7,7 @@ import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import lombok.AllArgsConstructor;
 
 /**
- * Single consumer / multiple producer future pool
+ * Active consumer / multiple producer future pool
  * 
  * @author johnmcclean
  *

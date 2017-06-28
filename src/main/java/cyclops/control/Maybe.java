@@ -1,6 +1,7 @@
 package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
@@ -112,6 +113,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
                                   Recoverable<T>,
                                   Higher<maybe,T> {
 
+    default Active<maybe,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
+    }
     default <W extends WitnessType<W>> MaybeT<W, T> liftM(W witness) {
         return MaybeT.of(witness.adapter().unit(this));
     }

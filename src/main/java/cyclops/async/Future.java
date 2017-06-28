@@ -1,6 +1,8 @@
 package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.collections.immutable.PersistentQueueX;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
@@ -74,7 +76,9 @@ public class Future<T> implements To<Future<T>>,
                                   Higher<future,T>,
                                   RecoverableFrom<Throwable,T> {
 
-    
+    public Active<future,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
+    }
     public <W extends WitnessType<W>> FutureT<W, T> liftM(W witness) {
         return FutureT.of(witness.adapter().unit(this));
     }

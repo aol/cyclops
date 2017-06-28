@@ -4,6 +4,7 @@ import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
@@ -56,7 +57,10 @@ public interface ListX<T> extends To<ListX<T>>,
                                   OnEmptySwitch<T, List<T>>,
                                   Higher<list,T> {
 
-  
+
+    default Active<list,T> allTypeclasses(){
+        return Active.of(this,Instances.definitions());
+    }
 
     /**
      * Convert the raw Higher Kinded Type for ListX types into the ListX type definition class
