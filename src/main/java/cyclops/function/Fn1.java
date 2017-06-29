@@ -184,7 +184,7 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
         return in->apply(in);
     }
 
-    interface FunctionalOperations<T1,R> extends Fn1<T1,R>,Higher<Higher<reader,T1>,R>{
+    interface FunctionalOperations<T1,R> extends Fn1<T1,R>{
 
 
         default <V> Fn1<T1, V> apply(final Function<? super T1,? extends Function<? super R,? extends V>> applicative) {
@@ -286,8 +286,8 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
             return in -> VectorX.of(apply(in));
         }
     }
-    public static <T,R> FunctionalOperations<T,  R> narrowK(Higher<Higher<reader,T>,R> hkt){
-        return (FunctionalOperations<T,R>)hkt;
+    public static <T,R> Reader<T,  R> narrowK(Higher<Higher<reader,T>,R> hkt){
+        return (Reader<T,R>)hkt;
     }
     public static class Instances{
 
@@ -295,9 +295,9 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
             return new Functor<Higher<reader,IN>>(){
                 @Override
                 public <T, R> Higher<Higher<reader, IN>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<reader,IN>, T> ds) {
-                    FunctionalOperations<IN, T> fn1 = narrowK(ds);
-                    Fn1<IN, R> res = fn1.map(fn);
-                    return res.functionOps();
+                    Reader<IN, T> fn1 = narrowK(ds);
+                    Reader<IN, R> res = fn1.map(fn);
+                    return res;
                 }
             };
         }
@@ -306,7 +306,7 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
             return new Pure<Higher<reader,IN>>() {
                 @Override
                 public <R> Higher<Higher<reader, IN>, R> unit(R value) {
-                    FunctionalOperations<IN,R> fn = __ -> value;
+                    Reader<IN,R> fn = __ -> value;
                     return fn;
                 }
             };
@@ -317,9 +317,9 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
 
                 @Override
                 public <T, R> Higher<Higher<reader, IN>, R> ap(Higher<Higher<reader, IN>, ? extends Function<T, R>> fn, Higher<Higher<reader, IN>, T> apply) {
-                    FunctionalOperations<IN,? extends Function<T, R>> f = Fn1.narrowK(fn);
-                    FunctionalOperations<IN, T> ap = Fn1.narrowK(apply);
-                    FunctionalOperations<IN,R> res = in->f.apply(in).apply(ap.apply(in));
+                    Reader<IN,? extends Function<T, R>> f = Fn1.narrowK(fn);
+                    Reader<IN, T> ap = Fn1.narrowK(apply);
+                    Reader<IN,R> res = in->f.apply(in).apply(ap.apply(in));
                     return res;
                 }
 
@@ -354,9 +354,9 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
 
                 @Override
                 public <T, R> Higher<Higher<reader, IN>, R> flatMap(Function<? super T, ? extends Higher<Higher<reader, IN>, R>> fn, Higher<Higher<reader, IN>, T> ds) {
-                    FunctionalOperations<IN, T> mapper = Fn1.narrowK(ds);
+                    Reader<IN, T> mapper = Fn1.narrowK(ds);
                     Fn1<IN, R> res = mapper.flatMap(fn.andThen(Fn1::narrowK));
-                    return res.functionOps();
+                    return res.reader();
                 }
             };
 

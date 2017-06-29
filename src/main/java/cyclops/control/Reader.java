@@ -3,11 +3,14 @@ package cyclops.control;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.FluentFunctions;
 import cyclops.function.Fn1;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.reader;
 
 /**
  * An interface that represents the Reader monad
@@ -24,7 +27,7 @@ import cyclops.function.Fn4;
  * @param <T> Current input type of Function
  * @param <R> Current return type of Function
  */
-public interface Reader<T, R> extends Fn1<T, R>, Transformable<R> {
+public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<reader,T>,R> {
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.functor.Transformable#map(java.util.function.Function)
