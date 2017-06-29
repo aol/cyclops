@@ -838,7 +838,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      */
     @Override
     public T get(){
-        return xor.get();
+        return xor.visit(s->{throw ExceptionSoftener.throwSoftenedException(s);},
+                                t->t);
     }
 
     /**
@@ -875,7 +876,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
     @Override
     public <R> Try<R, X> map(Function<? super T, ? extends R> fn){
-        return new Try<>(xor.map(i->safeApply(i, fn)),classes);
+        return new Try<>(xor.flatMap(i->safeApply(i, fn)),classes);
     }
 
     /**
@@ -883,7 +884,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return Try returned from FlatMap fn
      */
     public <R> Try<R, X> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> fn){
-        return new Try<>(xor.flatMap(i->safeApply(i, fn)),classes);
+        return new Try<>(xor.flatMap(i->safeApplyM(i, fn)),classes);
     }
 
     /**
@@ -1425,12 +1426,23 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
         return (Try) MonadicValue.super.zip(other);
     }
-
-    private <R> R safeApply(T in,final Function<? super T,? extends R> s) {
+    private <R> MonadicValue<? extends R> safeApplyM(T in,final Function<? super T,? extends MonadicValue<? extends R>> s) {
         try {
             return s.apply(in);
         } catch (final Throwable t) {
-            return (R) Try.failure(orThrow(Stream.of(classes)
+            return (Xor) Xor.secondary(orThrow(Stream.of(classes)
+                            .filter(c -> c.isAssignableFrom(t.getClass()))
+                            .map(c -> t)
+                            .findFirst(),
+                    t));
+
+        }
+    }
+    private <R> Xor<X,R> safeApply(T in,final Function<? super T,? extends R> s) {
+        try {
+            return Xor.primary(s.apply(in));
+        } catch (final Throwable t) {
+            return (Xor) Xor.secondary(orThrow(Stream.of(classes)
                             .filter(c -> c.isAssignableFrom(t.getClass()))
                             .map(c -> t)
                             .findFirst(),
