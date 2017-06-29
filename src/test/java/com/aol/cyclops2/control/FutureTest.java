@@ -256,7 +256,7 @@ public class FutureTest {
     }
     @Test
     public void testAccumulateSuccessSemigroup() {
-        Future<Integer> maybes = Future.accumulateSuccess(Monoids.intCount,ListX.of(just,none, Future.ofResult(1)));
+        Future<Integer> maybes = Future.accumulateSuccess(Monoid.of(0,(a,b)->a+1),ListX.of(just,none, Future.ofResult(1)));
         
         assertThat(maybes.get(),equalTo(2));
     }
