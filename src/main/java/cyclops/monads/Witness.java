@@ -418,6 +418,16 @@ public interface Witness {
         }
         
     }
+
+    public static enum reader implements WitnessType<reader>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<reader> adapter() {
+            return null;
+        }
+
+    }
     public static enum supplier implements WitnessType<supplier>{
         INSTANCE;
 

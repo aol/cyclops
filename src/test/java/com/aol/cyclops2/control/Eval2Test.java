@@ -65,7 +65,8 @@ public class Eval2Test {
     }
     @Test
     public void combine(){
-     
+
+	    just.combineEager(Monoids.intCount,Eval.now(10)).printOut();
         
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
         assertThat(just.combineEager(add,Eval.now(10)),equalTo(Eval.now(20)));

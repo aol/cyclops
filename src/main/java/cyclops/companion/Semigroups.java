@@ -494,25 +494,7 @@ public interface Semigroups {
     static <T, T2 extends Comparable<T>> Semigroup<T2> maxComparable() {
         return (a, b) -> a.compareTo((T) b) > 0 ? a : b;
     }
-
-    /**
-     * Combine two BigIntegers by adding one toNested a (can be used toNested count BigIntegers in a Collection or Stream)
-     */
-    static Semigroup<BigInteger> bigIntCount = (a, b) -> a.add(BigInteger.ONE);
-    /**
-     * Combine two Integers by adding one toNested a (can be used toNested count Integers in a Collection or Stream)
-     */
-    static Semigroup<Integer> intCount = (a, b) -> {
-        return a + 1;
-    };
-    /**
-     * Combine two Longs by adding one toNested a (can be used toNested count Integers in a Collection or Stream)
-     */
-    static Semigroup<Long> longCount = (a, b) -> a + 1;
-    /**
-     * Combine two Double by adding one toNested a (can be used toNested count Double in a Collection or Stream)
-     */
-    static Semigroup<Double> doubleCount = (a, b) -> a + 1;
+    
     /**
      * Combine two Integers by summing them
      */
