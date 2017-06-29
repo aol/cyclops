@@ -16,6 +16,7 @@ import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.ior;
 import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
@@ -55,6 +56,9 @@ import java.util.stream.Stream;
  */
 public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransformable<ST, PT> ,Higher2<ior,ST,PT> {
 
+    default Active<Higher<ior,ST>,PT> allTypeclasses(){
+        return Active.of(this, Ior.Instances.definitions());
+    }
 
     /**
      * Static method useful as a method reference for fluent consumption of any value type stored in this Either
@@ -1478,13 +1482,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                 }
 
                 @Override
-                public <C2, T> Traverse<Higher<ior, L>> traverse() {
-                    return Instances.traverse();
+                public <C2, T> Maybe<Traverse<Higher<ior, L>>> traverse() {
+                    return Maybe.just(Instances.traverse());
                 }
 
                 @Override
-                public <T> Foldable<Higher<ior, L>> foldable() {
-                    return Instances.foldable();
+                public <T> Maybe<Foldable<Higher<ior, L>>> foldable() {
+                    return Maybe.just(Instances.foldable());
                 }
 
                 @Override

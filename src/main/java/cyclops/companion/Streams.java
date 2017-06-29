@@ -2875,13 +2875,13 @@ public class Streams {
                 }
 
                 @Override
-                public <C2, T> Traverse<stream> traverse() {
-                    return Instances.traverse();
+                public <C2, T> Maybe<Traverse<stream>> traverse() {
+                    return Maybe.just(Instances.traverse());
                 }
 
                 @Override
-                public <T> Foldable<stream> foldable() {
-                    return Instances.foldable();
+                public <T> Maybe<Foldable<stream>> foldable() {
+                    return Maybe.just(Instances.foldable());
                 }
 
                 @Override

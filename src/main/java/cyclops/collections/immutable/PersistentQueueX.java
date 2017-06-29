@@ -1341,13 +1341,13 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 }
 
                 @Override
-                public <C2, T> Traverse<persistentQueueX> traverse() {
-                    return Instances.traverse();
+                public <C2, T> Maybe<Traverse<persistentQueueX>> traverse() {
+                    return Maybe.just(Instances.traverse());
                 }
 
                 @Override
-                public <T> Foldable<persistentQueueX> foldable() {
-                    return Instances.foldable();
+                public <T> Maybe<Foldable<persistentQueueX>> foldable() {
+                    return Maybe.just(Instances.foldable());
                 }
 
                 @Override

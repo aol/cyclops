@@ -1178,13 +1178,13 @@ public interface Eval<T> extends To<Eval<T>>,
                 }
 
                 @Override
-                public <C2, T> Traverse<eval> traverse() {
-                    return Instances.traverse();
+                public <C2, T> Maybe<Traverse<eval>> traverse() {
+                    return Maybe.just(Instances.traverse());
                 }
 
                 @Override
-                public <T> Foldable<eval> foldable() {
-                    return Instances.foldable();
+                public <T> Maybe<Foldable<eval>> foldable() {
+                    return Maybe.just(Instances.foldable());
                 }
 
                 @Override

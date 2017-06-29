@@ -4,6 +4,7 @@ import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.monads.Witness;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.Zippable;
@@ -111,13 +112,13 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
 
                 @Override
-                public <C2, T> Traverse<list> traverse() {
-                    return Instances.traverse();
+                public <C2, T> Maybe<Traverse<list>> traverse() {
+                    return Maybe.just(Instances.traverse());
                 }
 
                 @Override
-                public <T> Foldable<list> foldable() {
-                    return Instances.foldable();
+                public <T> Maybe<Foldable<list>> foldable() {
+                    return Maybe.just(Instances.foldable());
                 }
 
                 @Override

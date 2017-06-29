@@ -1258,13 +1258,13 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 }
 
                 @Override
-                public <C2, T> Traverse<vectorX> traverse() {
-                    return Instances.traverse();
+                public <C2, T> Maybe<Traverse<vectorX>> traverse() {
+                    return Maybe.just(Instances.traverse());
                 }
 
                 @Override
-                public <T> Foldable<vectorX> foldable() {
-                    return Instances.foldable();
+                public <T> Maybe<Foldable<vectorX>> foldable() {
+                    return Maybe.just(Instances.foldable());
                 }
 
                 @Override

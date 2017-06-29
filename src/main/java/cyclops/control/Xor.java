@@ -6,8 +6,6 @@ import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
-import cyclops.control.lazy.Either;
-import cyclops.control.lazy.Either4;
 import cyclops.function.*;
 import cyclops.companion.Semigroups;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
@@ -20,19 +18,17 @@ import cyclops.companion.Streams;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.xor;
 import cyclops.monads.WitnessType;
-import cyclops.monads.transformers.MaybeT;
 import cyclops.monads.transformers.XorT;
 import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -130,6 +126,9 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                                      Higher2<xor,ST,PT> {
 
 
+    default Active<Higher<xor,ST>,PT> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
+    }
     default <W extends WitnessType<W>> XorT<W, ST,PT> liftM(W witness) {
         return XorT.of(witness.adapter().unit(this));
     }
@@ -1413,13 +1412,13 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                 }
 
                 @Override
-                public <C2, T> Traverse<Higher<xor, L>> traverse() {
-                    return Instances.traverse();
+                public <C2, T> Maybe<Traverse<Higher<xor, L>>> traverse() {
+                    return Maybe.just(Instances.traverse());
                 }
 
                 @Override
-                public <T> Foldable<Higher<xor, L>> foldable() {
-                    return Instances.foldable();
+                public <T> Maybe<Foldable<Higher<xor, L>>> foldable() {
+                    return Maybe.just(Instances.foldable());
                 }
 
                 @Override

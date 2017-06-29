@@ -3,7 +3,6 @@ package cyclops.stream;
 
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.mutable.DequeX;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
@@ -4880,13 +4879,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 }
 
                 @Override
-                public <C2, T> Traverse<reactiveSeq> traverse() {
-                    return Instances.traverse();
+                public <C2, T> Maybe<Traverse<reactiveSeq>> traverse() {
+                    return Maybe.just(Instances.traverse());
                 }
 
                 @Override
-                public <T> Foldable<reactiveSeq> foldable() {
-                    return Instances.foldable();
+                public <T> Maybe<Foldable<reactiveSeq>> foldable() {
+                    return Maybe.just(Instances.foldable());
                 }
 
                 @Override

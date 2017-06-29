@@ -2,10 +2,12 @@ package cyclops.typeclasses;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
@@ -32,7 +34,9 @@ import java.util.function.Predicate;
 @EqualsAndHashCode(of={"single"})
 public class Active<W,T> {
 
+
     private final Higher<W,T> single;
+    @Getter
     private final InstanceDefinitions<W> def1;
 
     public static <W,T> Active<W,T> of(Higher<W,T> single, InstanceDefinitions<W> def1){
@@ -64,22 +68,22 @@ public class Active<W,T> {
         return of(def1.applicative().ap(fn,single),def1);
     }
 
-    public T foldRight(Monoid<T> monoid){
-        return def1.foldable().foldRight(monoid,single);
+    public Maybe<T> foldRight(Monoid<T> monoid){
+        return def1.foldable().map(f->f.foldRight(monoid,single));
     }
 
 
-    public T foldRight(T identity, BinaryOperator<T> semigroup){
-        return def1.foldable().foldRight(Monoid.fromBiFunction(identity, semigroup),single);
+    public Maybe<T> foldRight(T identity, BinaryOperator<T> semigroup){
+        return def1.foldable().map(f->f.foldRight(Monoid.fromBiFunction(identity, semigroup),single));
     }
 
-    public T foldLeft(Monoid<T> monoid){
-        return def1.foldable().foldLeft(monoid,single);
+    public Maybe<T> foldLeft(Monoid<T> monoid){
+        return def1.foldable().map(f->f.foldLeft(monoid,single));
     }
 
 
-    public   T foldLeft(T identity, BinaryOperator<T> semigroup){
-        return def1.foldable().foldLeft(identity,semigroup,single);
+    public   Maybe<T> foldLeft(T identity, BinaryOperator<T> semigroup){
+        return def1.foldable().map(f->f.foldLeft(identity,semigroup,single));
     }
     public String toString(){
         return "Active["+single.toString()+"]";

@@ -1,7 +1,6 @@
 package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.*;
@@ -1438,7 +1437,7 @@ public class Future<T> implements To<Future<T>>,
                 }
 
                 @Override
-                public <T, R> Monad<future> monad() {
+                public <T, R> Monad<Higher<Witness.tryType, L>> monad() {
                     return Instances.monad();
                 }
 
