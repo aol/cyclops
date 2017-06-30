@@ -4,9 +4,11 @@ package cyclops.typeclasses;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Optionals;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.optional;
+import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Compose;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -103,8 +105,8 @@ public class Nested<W1,W2,T> {
     }
 
 
-    public  Nested<W2, W1, T> sequence(){
-        Higher<W2, Higher<W1, T>> res = def1.traverse().sequenceA(def2.applicative(), nested);
+    public Nested<W2, W1, T> sequence(){
+        Higher<W2, Higher<W1, T>> res = def1.traverse().get().sequenceA(def2.applicative(), nested);
         return of(res,def2,def1);
     }
     public  <R> Nested<W2, W1, R> traverse(Function<? super T,? extends R> fn){
@@ -112,10 +114,10 @@ public class Nested<W1,W2,T> {
     }
 
     public  Higher<W1,T> foldRight(Monoid<T> monoid){
-        return def1.functor().map(a -> def2.foldable().foldRight(monoid, a), nested);
+        return def1.functor().map(a -> def2.foldable().get().foldRight(monoid, a), nested);
     }
     public  Higher<W1,T> foldLeft(Monoid<T> monoid){
-        return def1.functor().map(a -> def2.foldable().foldLeft(monoid, a), nested);
+        return def1.functor().map(a -> def2.foldable().get().foldLeft(monoid, a), nested);
     }
     public String toString(){
         return "Nested["+nested.toString()+"]";

@@ -1437,7 +1437,7 @@ public class Future<T> implements To<Future<T>>,
                 }
 
                 @Override
-                public <T, R> Monad<Higher<Witness.tryType, L>> monad() {
+                public <T, R> Monad<future> monad() {
                     return Instances.monad();
                 }
 
@@ -1457,13 +1457,13 @@ public class Future<T> implements To<Future<T>>,
                 }
 
                 @Override
-                public <C2, T> Traverse<future> traverse() {
-                    return Instances.traverse();
+                public <C2, T> Maybe<Traverse<future>> traverse() {
+                    return Maybe.just(Instances.traverse());
                 }
 
                 @Override
-                public <T> Foldable<future> foldable() {
-                    return Instances.foldable();
+                public <T> Maybe<Foldable<future>> foldable() {
+                    return Maybe.just(Instances.foldable());
                 }
 
                 @Override
