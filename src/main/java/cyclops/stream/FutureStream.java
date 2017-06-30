@@ -327,7 +327,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     default <R> Future<R> foldFuture(Function<? super FoldableTraversable<U>,? extends R> fn){
-        return Future.ofSupplier(()->fn.apply(this),getSimpleReact().getExecutor());
+        return Future.of(()->fn.apply(this),getSimpleReact().getExecutor());
     }
 
     default ReactiveStreamsTerminalFutureOperations<U> futureOperations(){
@@ -1103,9 +1103,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     public FutureStream<U> maxActive(int concurrentTasks);
 
     /*
-     * Equivalent functionally toNested map / apply but always applied on the completing thread (from the previous stage)
+     * Equivalent functionally toNested map / applyHKT but always applied on the completing thread (from the previous stage)
      *
-     * When autoOptimize functionality is enabled, thenSync is the default behaviour for apply / map operations
+     * When autoOptimize functionality is enabled, thenSync is the default behaviour for applyHKT / map operations
      *
      * <pre>
      * {@code
@@ -1441,7 +1441,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * }
      * </pre>
      *
-     * Will emit 1 on skip, apply 2 after an hour, 3 after 2 hours and so on.
+     * Will emit 1 on skip, applyHKT 2 after an hour, 3 after 2 hours and so on.
      *
      * However all 4 numbers will be populated in the Stream immediately.
      *
@@ -1608,7 +1608,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @return Next stage in reactiveStream
      *
      * @see
-     * com.aol.simple.react.reactiveStream.traits.FutureStream#apply(java.util.function
+     * com.aol.simple.react.reactiveStream.traits.FutureStream#applyHKT(java.util.function
      * .Function)
      */
     @Override

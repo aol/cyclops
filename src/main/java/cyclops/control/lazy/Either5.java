@@ -222,7 +222,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * </pre>
      *
      * @param either Either to consume value for
-     * @return Consumer we can apply to consume value
+     * @return Consumer we can applyHKT to consume value
      */
     static <X, LT1 extends X, LT2 extends X, LT3 extends X, LT4 extends X, RT extends X> Consumer<Consumer<? super X>> consumeAny(
             Either5<LT1, LT2, LT3, LT4, RT> either) {
@@ -353,10 +353,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @return Either constructed from the supplied Publisher
      */
     public static <T1,T2,T3,T> Either5<Throwable, T1, T2,T3, T> fromPublisher(final Publisher<T> pub) {
-        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
-        pub.subscribe(sub);
-        Either5<Throwable, T1,T2,T3, Xor<Throwable,T>> xor = Either5.rightEval(Eval.later(()->sub.toXor()));
-        return  xor.flatMap(x->x.visit(Either5::left1,Either5::right));
+        return fromFuture(Future.fromPublisher(pub));
     }
     /**
      * Construct a Right Either4 from the supplied Iterable
@@ -494,6 +491,13 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         return new Left3<>(
                             middle);
     }
+    default Trampoline<Either5<LT1,LT2,LT3,LT4,RT>> toTrampoline() {
+        return Trampoline.more(()->Trampoline.done(this));
+    }
+    @Override
+    default int arity() {
+        return 5;
+    }
     @Override
     default <R> Either5<LT1,LT2,LT3,LT4,R> zipWith(Iterable<Function<? super RT, ? extends R>> fn) {
         return (Either5<LT1,LT2,LT3,LT4,R>)MonadicValue.super.zipWith(fn);
@@ -556,14 +560,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         });
     }
     default < RT1> Either5<LT1, LT2, LT3,LT4,RT1> flatMapP(Function<? super RT, ? extends Publisher<? extends RT1>> mapper){
-        return this.flatMap(a -> {
-            final Publisher<? extends RT1> publisher = mapper.apply(a);
-            final ValueSubscriber<RT1> sub = ValueSubscriber.subscriber();
-
-            publisher.subscribe(sub);
-            return unit(sub.get());
-
-        });
+        return this.flatMap(a -> fromPublisher(mapper.apply(a)));
     }
 
     /**
@@ -584,7 +581,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * Filter this Either4 resulting in a Maybe#none if it is not a Right instance or if the predicate does not
      * hold. Otherwise results in a Maybe containing the current value
      *
-     * @param test Predicate to apply to filter this Either4
+     * @param test Predicate to applyHKT to filter this Either4
      * @return Maybe containing the current value if this is a Right instance and the predicate holds, otherwise Maybe#none
      */
     Maybe<RT> filter(Predicate<? super RT> test);
@@ -1000,6 +997,33 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         }
 
+        @Override
+        public Trampoline<Either5<ST,M,M2,M3,PT>> toTrampoline() {
+            Trampoline<Either5<ST,M,M2,M3,PT>> trampoline = lazy.toTrampoline();
+            return new Trampoline<Either5<ST,M,M2,M3,PT>>() {
+                @Override
+                public Either5<ST,M,M2,M3,PT> get() {
+                    Either5<ST,M,M2,M3,PT> either = lazy.get();
+                    while (either instanceof Either5.Lazy) {
+                        either = ((Either5.Lazy<ST,M,M2,M3,PT>) either).lazy.get();
+                    }
+                    return either;
+                }
+                @Override
+                public boolean complete(){
+                    return false;
+                }
+                @Override
+                public Trampoline<Either5<ST,M,M2,M3,PT>> bounce() {
+                    Either5<ST,M,M2,M3,PT> either = lazy.get();
+                    if(either instanceof Either5.Lazy){
+                        return either.toTrampoline();
+                    }
+                    return Trampoline.done(either);
+
+                }
+            };
+        }
         @Override
         public PT get() {
             return trampoline().get();
@@ -1455,7 +1479,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         @Override
         public void subscribe(final Subscriber<? super PT> s) {
-
+            s.onComplete();
         }
 
         @Override
@@ -1641,7 +1665,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         @Override
         public void subscribe(final Subscriber<? super PT> s) {
-
+            s.onComplete();
         }
 
         @Override
@@ -1835,7 +1859,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         @Override
         public void subscribe(final Subscriber<? super PT> s) {
-
+            s.onComplete();
         }
 
         @Override
@@ -2022,10 +2046,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
             return absent.get();
         }
 
-        @Override
-        public void subscribe(final Subscriber<? super PT> s) {
 
-        }
 
         @Override
         public boolean test(final PT t) {

@@ -2,17 +2,18 @@ package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.Active;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
+import cyclops.monads.Witness.eval;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.EvalT;
 import cyclops.stream.ReactiveSeq;
@@ -28,13 +29,13 @@ import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.pcollections.PVector;
+import org.pcollections.TreePVector;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -73,19 +74,19 @@ import java.util.stream.Stream;
  */
 public interface Eval<T> extends To<Eval<T>>,
                                     MonadicValue<T>,
-                                    Higher<Eval.µ ,T> {
+                                    Higher<eval ,T> {
 
-
-    public static class µ {
+    default Active<eval,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
     }
     static <T> Eval<T> async(final Executor ex, final Supplier<T> s){
-        return fromFuture(Future.ofSupplier(s,ex));
+        return fromFuture(Future.of(s,ex));
     }
     default <W extends WitnessType<W>> EvalT<W, T> liftM(W witness) {
         return EvalT.of(witness.adapter().unit(this));
     }
 
-    default AnyM<Witness.eval,T> anyM(){
+    default AnyM<eval,T> anyM(){
         return AnyM.fromEval(this);
     }
 
@@ -95,7 +96,7 @@ public interface Eval<T> extends To<Eval<T>>,
      * @param future HKT encoded list into a OptionalType
      * @return Eval
      */
-    public static <T> Eval<T> narrowK(final Higher<Eval.µ, T> future) {
+    public static <T> Eval<T> narrowK(final Higher<eval, T> future) {
         return (Eval<T>)future;
     }
     /**
@@ -300,7 +301,7 @@ public interface Eval<T> extends To<Eval<T>>,
      * @return  Eval with a  list of values
      */
     public static <T> Eval<ReactiveSeq<T>> sequence(final Stream<? extends Eval<T>> evals) {
-        return AnyM.sequence(evals.map(AnyM::fromEval),Witness.eval.INSTANCE)
+        return AnyM.sequence(evals.map(AnyM::fromEval), eval.INSTANCE)
                    .map(ReactiveSeq::fromStream)
                    .to(Witness::eval);
     }
@@ -337,7 +338,7 @@ public interface Eval<T> extends To<Eval<T>>,
      *
      * @param evals Collection of Evals to accumulate
      * @param mapper Funtion to map Eval contents to type required by Semigroup accumulator
-     * @param reducer Combiner function to apply to converted values
+     * @param reducer Combiner function to applyHKT to converted values
      * @return  Eval with a value
      */
     public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Function<? super T, R> mapper, final Monoid<R> reducer) {
@@ -359,11 +360,15 @@ public interface Eval<T> extends To<Eval<T>>,
      *
      *
      * @param evals Collection of Evals to accumulate
-     * @param reducer Combiner function to apply to converted values
+     * @param reducer Combiner function to applyHKT to converted values
      * @return Eval with a value
      */
     public static <T> Eval<T> accumulate(final Monoid<T> reducer,final CollectionX<Eval<T>> evals) {
         return sequence(evals).map(s -> s.reduce(reducer));
+    }
+
+    default Trampoline<T> toTrampoline(){
+        return Trampoline.more(()->Trampoline.done(get()));
     }
 
     @Override
@@ -389,8 +394,9 @@ public interface Eval<T> extends To<Eval<T>>,
     @Override
     public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
-    default VectorX<Function<Object, Object>> steps() {
-        return VectorX.of(__ -> get());
+
+    default PVector<Function<Object, Object>> steps() {
+        return TreePVector.singleton(__ -> get());
     }
 
     /* (non-Javadoc)
@@ -726,10 +732,10 @@ public interface Eval<T> extends To<Eval<T>>,
         public static class Later<T> extends Rec<T> implements Eval<T> {
 
             Later(final Function<Object, ? extends T> s) {
-                super(VectorX.of(Rec.raw(Memoize.memoizeFunction(s))));
+                super(TreePVector.singleton(Rec.raw(Memoize.memoizeFunction(s))));
             }
 
-            Later(final VectorX<Function<Object, Object>> s) {
+            Later(final PVector<Function<Object, Object>> s) {
                 super(s);
 
             }
@@ -745,8 +751,7 @@ public interface Eval<T> extends To<Eval<T>>,
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
                 final RecFunction s = __ -> asEval(mapper.apply(super.applyRec())).steps();
 
-                return new Later<R>(
-                                    VectorX.of(s));
+                return new Later<R>(TreePVector.singleton(s));
 
             }
 
@@ -796,13 +801,14 @@ public interface Eval<T> extends To<Eval<T>>,
 
         }
 
-        public static class Always<T> extends Rec<T>implements Eval<T> {
+
+        public static class Always<T> extends Rec<T> implements Eval<T> {
 
             Always(final Function<Object, ? extends T> s) {
-                super(VectorX.of(Rec.raw(s)));
+                super(TreePVector.singleton(Rec.raw(s)));
             }
 
-            Always(final VectorX<Function<Object, Object>> s) {
+            Always(final PVector<Function<Object, Object>> s) {
                 super(s);
 
             }
@@ -820,7 +826,7 @@ public interface Eval<T> extends To<Eval<T>>,
                 final RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
 
                 return new Always<R>(
-                                     VectorX.of(s));
+                                     TreePVector.singleton(s));
             }
 
             @Override
@@ -1041,12 +1047,14 @@ public interface Eval<T> extends To<Eval<T>>,
         }
 
         private static class Rec<T> {
-            final VectorX<Function<Object, Object>> fns;
+            final PVector<Function<Object, Object>> fns;
             private final static Object VOID = new Object();
 
-            Rec(final VectorX<Function<Object, Object>> s) {
+            Rec(final PVector<Function<Object, Object>> s) {
                 fns = s;
             }
+
+
 
             private static Function<Object, Object> raw(final Function<?, ?> fn) {
                 return (Function<Object, Object>) fn;
@@ -1056,9 +1064,45 @@ public interface Eval<T> extends To<Eval<T>>,
 
             }
 
-            public VectorX<Function<Object, Object>> steps() {
+            public  PVector<Function<Object, Object>> steps() {
                 return fns;
             }
+            public Trampoline<T> toTrampoline(){
+                return new Trampoline<T>() {
+                    @Override
+                    public T get() {
+                        return Rec.this.get();
+                    }
+
+                    @Override
+                    public boolean complete(){
+                        return false;
+                    }
+
+                    public Trampoline<T> bounce() {
+                        Object input = init();
+                        for (int i=0; i< fns.size();i++) {
+
+                                final Function<Object, Object> next = fns.get(i);
+                                if (next instanceof RecFunction) {
+                                    PVector<Function<Object, Object>> remaining = fns.subList(i+1,fns.size());
+                                    PVector<Function<Object, Object>> nextSteps = (PVector) ((RecFunction) next).apply(VOID);
+                                    nextSteps.addAll(remaining);
+                                   return new Later(nextSteps).toTrampoline();
+                                } else {
+                                    input = next.apply(input);
+
+
+                                }
+
+
+                        }
+                        return Trampoline.done((T) input);
+
+                    }
+                };
+            }
+
 
             public Object init(){
                 return VOID;
@@ -1066,11 +1110,12 @@ public interface Eval<T> extends To<Eval<T>>,
             T applyRec() {
                 Object input = init();
                 for (final Function<Object, Object> n : fns) {
-                    final DequeX<Function<Object, Object>> newFns = DequeX.of(n);
+                    final Deque<Function<Object, Object>> newFns = new ArrayDeque();
+                    newFns.add(n);
                     while (newFns.size() > 0) {
                         final Function<Object, Object> next = newFns.pop();
                         if (next instanceof RecFunction) {
-                            newFns.plusAll((List) ((RecFunction) next).apply(VOID));
+                            newFns.addAll((List) ((RecFunction) next).apply(VOID));
                         } else
                             input = next.apply(input);
 
@@ -1095,7 +1140,59 @@ public interface Eval<T> extends To<Eval<T>>,
     @UtilityClass
     public static class Instances {
 
+        public static InstanceDefinitions<eval> definitions(){
+            return new InstanceDefinitions<eval>() {
+                @Override
+                public <T, R> Functor<eval> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<eval> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<eval> applicative() {
+                    return Instances.applicative();
+                }
+
+                @Override
+                public <T, R> Monad<eval> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<eval>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<eval>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<eval>> monadPlus(Monoid<Higher<eval, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Maybe<Traverse<eval>> traverse() {
+                    return Maybe.just(Instances.traverse());
+                }
+
+                @Override
+                public <T> Maybe<Foldable<eval>> foldable() {
+                    return Maybe.just(Instances.foldable());
+                }
+
+                @Override
+                public <T> Maybe<Comonad<eval>> comonad() {
+                    return Maybe.just(Instances.comonad());
+                }
+            };
+        }
         /**
          *
          * Transform a list, mulitplying every element by 2
@@ -1115,7 +1212,7 @@ public interface Eval<T> extends To<Eval<T>>,
          * {@code
          *   Eval<Integer> list = Evals.unit()
         .unit("hello")
-        .apply(h->Evals.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Evals.functor().map((String v) ->v.length(), h))
         .convert(Eval::narrowK);
          *
          * }
@@ -1124,7 +1221,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return A functor for Evals
          */
-        public static <T,R>Functor<µ> functor(){
+        public static <T,R>Functor<eval> functor(){
             BiFunction<Eval<T>,Function<? super T, ? extends R>,Eval<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -1144,8 +1241,8 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return A factory for Evals
          */
-        public static <T> Pure<µ> unit(){
-            return General.<Eval.µ,T>unit(Instances::of);
+        public static <T> Pure<eval> unit(){
+            return General.<eval,T>unit(Instances::of);
         }
         /**
          *
@@ -1172,8 +1269,8 @@ public interface Eval<T> extends To<Eval<T>>,
 
         Eval<Integer> list = Evals.unit()
         .unit("hello")
-        .apply(h->Evals.functor().map((String v) ->v.length(), h))
-        .apply(h->Evals.applicative().ap(listFn, h))
+        .applyHKT(h->Evals.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Evals.applicative().ap(listFn, h))
         .convert(Eval::narrowK);
 
         //Arrays.asEval("hello".length()*2))
@@ -1184,7 +1281,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return A zipper for Evals
          */
-        public static <T,R> Applicative<Eval.µ> applicative(){
+        public static <T,R> Applicative<eval> applicative(){
             BiFunction<Eval< Function<T, R>>,Eval<T>,Eval<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -1204,7 +1301,7 @@ public interface Eval<T> extends To<Eval<T>>,
          * {@code
          *    Eval<Integer> list = Evals.unit()
         .unit("hello")
-        .apply(h->Evals.monad().flatMap((String v) ->Evals.unit().unit(v.length()), h))
+        .applyHKT(h->Evals.monad().flatMap((String v) ->Evals.unit().unit(v.length()), h))
         .convert(Eval::narrowK);
 
         //Arrays.asEval("hello".length())
@@ -1214,9 +1311,9 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return Type class with monad functions for Evals
          */
-        public static <T,R> Monad<µ> monad(){
+        public static <T,R> Monad<eval> monad(){
 
-            BiFunction<Higher<Eval.µ,T>,Function<? super T, ? extends Higher<Eval.µ,R>>,Higher<Eval.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<eval,T>,Function<? super T, ? extends Higher<eval,R>>,Higher<eval,R>> flatMap = Instances::flatMap;
             return General.monad(applicative(), flatMap);
         }
         /**
@@ -1225,7 +1322,7 @@ public interface Eval<T> extends To<Eval<T>>,
          * {@code
          *  Eval<String> list = Evals.unit()
         .unit("hello")
-        .apply(h->Evals.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->Evals.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(Eval::narrowK);
 
         //Arrays.asEval("hello"));
@@ -1236,7 +1333,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<µ> monadZero(){
+        public static <T,R> MonadZero<eval> monadZero(){
 
             return General.monadZero(monad(), Eval.now(null));
         }
@@ -1252,12 +1349,12 @@ public interface Eval<T> extends To<Eval<T>>,
          * </pre>
          * @return Type class for combining Evals by concatenation
          */
-        public static <T> MonadPlus<µ> monadPlus(){
+        public static <T> MonadPlus<eval> monadPlus(){
             Monoid<Eval<T>> mn = Monoid.of(Eval.now(null), (a,b)->a.get()!=null?a :b);
             Monoid<Eval<T>> m = Monoid.of(mn.zero(), (f,g)->
                     mn.apply(Eval.narrow(f), Eval.narrow(g)));
 
-            Monoid<Higher<Eval.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<eval,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -1276,15 +1373,15 @@ public interface Eval<T> extends To<Eval<T>>,
          * @param m Monoid to use for combining Evals
          * @return Type class for combining Evals
          */
-        public static <T> MonadPlus<Eval.µ> monadPlus(Monoid<Eval<T>> m){
-            Monoid<Higher<Eval.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<eval> monadPlus(Monoid<Eval<T>> m){
+            Monoid<Higher<eval,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<µ> traverse(){
+        public static <C2,T> Traverse<eval> traverse(){
 
             return General.traverseByTraverse(applicative(), Instances::traverseA);
         }
@@ -1304,14 +1401,14 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<µ> foldable(){
-            BiFunction<Monoid<T>,Higher<Eval.µ,T>,T> foldRightFn =  (m,l)-> Eval.narrowK(l).orElse(m.zero());
-            BiFunction<Monoid<T>,Higher<Eval.µ,T>,T> foldLeftFn = (m,l)-> Eval.narrowK(l).orElse(m.zero());
+        public static <T> Foldable<eval> foldable(){
+            BiFunction<Monoid<T>,Higher<eval,T>,T> foldRightFn =  (m,l)-> Eval.narrowK(l).orElse(m.zero());
+            BiFunction<Monoid<T>,Higher<eval,T>,T> foldLeftFn = (m,l)-> Eval.narrowK(l).orElse(m.zero());
             return General.foldable(foldRightFn, foldLeftFn);
         }
 
-        public static <T> Comonad<µ> comonad(){
-            Function<? super Higher<Eval.µ, T>, ? extends T> extractFn = maybe -> maybe.convert(Eval::narrowK).get();
+        public static <T> Comonad<eval> comonad(){
+            Function<? super Higher<eval, T>, ? extends T> extractFn = maybe -> maybe.convert(Eval::narrowK).get();
             return General.comonad(functor(), unit(), extractFn);
         }
         private <T> Eval<T> of(T value){
@@ -1321,7 +1418,7 @@ public interface Eval<T> extends To<Eval<T>>,
             return lt.combine(maybe, (a,b)->a.apply(b));
 
         }
-        private static <T,R> Higher<Eval.µ,R> flatMap( Higher<Eval.µ,T> lt, Function<? super T, ? extends  Higher<Eval.µ,R>> fn){
+        private static <T,R> Higher<eval,R> flatMap( Higher<eval,T> lt, Function<? super T, ? extends  Higher<eval,R>> fn){
             return Eval.narrowK(lt).flatMap(fn.andThen(Eval::narrowK));
         }
         private static <T,R> Eval<R> map(Eval<T> lt, Function<? super T, ? extends R> fn){
@@ -1329,8 +1426,8 @@ public interface Eval<T> extends To<Eval<T>>,
         }
 
 
-        private static <C2,T,R> Higher<C2, Higher<Eval.µ, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
-                                                                        Higher<Eval.µ, T> ds){
+        private static <C2,T,R> Higher<C2, Higher<eval, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
+                                                                        Higher<eval, T> ds){
 
             Eval<T> eval = Eval.narrowK(ds);
             return applicative.map(Eval::now, fn.apply(eval.get()));

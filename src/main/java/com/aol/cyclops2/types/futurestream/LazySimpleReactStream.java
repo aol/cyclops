@@ -338,7 +338,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * onFail allows disaster recovery for each task (a separate onFail should
      * be configured for each react phase that can fail). E.g. if reading data
      * from an external service fails, but default value is acceptable - onFail
-     * is a suitable mechanism toNested set the default value. Asynchronously apply
+     * is a suitable mechanism toNested set the default value. Asynchronously applyHKT
      * the function supplied toNested the currently active event tasks in the
      * dataflow.
      * 

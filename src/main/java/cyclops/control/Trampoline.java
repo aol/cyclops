@@ -2,10 +2,21 @@ package cyclops.control;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.Value;
+import cyclops.control.lazy.Either;
+import cyclops.function.Fn3;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+
+import static javafx.scene.input.KeyCode.R;
+import static org.jooq.lambda.tuple.Tuple.tuple;
 
 /**
  * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl 
@@ -75,6 +86,82 @@ import com.aol.cyclops2.types.Value;
 @FunctionalInterface
 public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
 
+    default <R> R visit(Function<? super Trampoline<T>,? extends R> more, Function<? super T, ? extends R> done){
+        return complete() ? done.apply(get()) : more.apply(this.bounce());
+    }
+
+    default  <B> Trampoline<Tuple2<T,B>> zip(Trampoline<B> b){
+        return zip(b,(x,y)->Tuple.tuple(x,y));
+
+    }
+    default  <B,R> Trampoline<R> zip(Trampoline<B> b,BiFunction<? super T,? super B,? extends R> zipper){
+
+        Xor<Trampoline<T>,T> first = resume();
+        Xor<Trampoline<B>,B> second = b.resume();
+
+        if(first.isSecondary() && second.isSecondary()) {
+            return Trampoline.more(()->first.secondaryGet().zip(second.secondaryGet(),zipper));
+        }
+        if(first.isPrimary() && second.isPrimary()){
+            return Trampoline.done(zipper.apply(first.get(),second.get()));
+        }
+        if(first.isSecondary() && second.isPrimary()){
+            return Trampoline.more(()->first.secondaryGet().zip(b,zipper));
+        }
+        if(first.isPrimary() && second.isSecondary()){
+            return Trampoline.more(()->this.zip(second.secondaryGet(),zipper));
+        }
+        //unreachable
+        return null;
+
+    }
+    default  <B,C> Trampoline<Tuple3<T,B,C>> zip(Trampoline<B> b, Trampoline<C> c){
+        return zip(b,c,(x,y,z)->Tuple.tuple(x,y,z));
+
+    }
+    default  <B,C,R> Trampoline<R> zip(Trampoline<B> b, Trampoline<C> c, Fn3<? super T, ? super B, ? super C,? extends R> fn){
+
+        Xor<Trampoline<T>,T> first = resume();
+        Xor<Trampoline<B>,B> second = b.resume();
+        Xor<Trampoline<C>,C> third = c.resume();
+
+        if(first.isSecondary() && second.isSecondary() && third.isSecondary()) {
+            return Trampoline.more(()->first.secondaryGet().zip(second.secondaryGet(),third.secondaryGet(),fn));
+        }
+        if(first.isPrimary() && second.isPrimary() && third.isPrimary()){
+            return Trampoline.done(fn.apply(first.get(),second.get(),third.get()));
+        }
+
+        if(first.isSecondary() && second.isPrimary() && third.isPrimary()){
+            return Trampoline.more(()->first.secondaryGet().zip(b,c,fn));
+        }
+        if(first.isPrimary() && second.isSecondary() && third.isPrimary()){
+            return Trampoline.more(()->this.zip(second.secondaryGet(),c,fn));
+        }
+        if(first.isPrimary() && second.isPrimary() && third.isSecondary()){
+            return Trampoline.more(()->this.zip(b,third.secondaryGet(),fn));
+        }
+
+
+        if(first.isPrimary() && second.isSecondary() && third.isSecondary()){
+            return Trampoline.more(()->this.zip(second.secondaryGet(),third.secondaryGet(),fn));
+        }
+        if(first.isSecondary() && second.isPrimary() && third.isSecondary()){
+            return Trampoline.more(()->first.secondaryGet().zip(b,third.secondaryGet(),fn));
+        }
+        if(first.isSecondary() && second.isSecondary() && third.isPrimary()){
+            return Trampoline.more(()->first.secondaryGet().zip(second.secondaryGet(),c,fn));
+        }
+        //unreachable
+        return null;
+    }
+
+    default Xor<Trampoline<T>,T> resume(){
+        return this.visit(Xor::secondary,Xor::primary);
+    }
+
+
+
     /**
      * @return next stage in Trampolining
      */
@@ -94,6 +181,7 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
      */
     @Override
     T get();
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Value#iterator()
@@ -130,6 +218,7 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
      */
     public static <T> Trampoline<T> more(final Trampoline<Trampoline<T>> trampoline) {
         return new Trampoline<T>() {
+
 
             @Override
             public boolean complete() {

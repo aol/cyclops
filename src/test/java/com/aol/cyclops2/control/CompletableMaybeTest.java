@@ -367,7 +367,7 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future
-                .ofSupplier(() -> just.visit(f -> Stream.of((int) f), () -> Stream.of()));
+                .of(() -> just.visit(f -> Stream.of((int) f), () -> Stream.of()));
 
         assertThat(async.get().collect(Collectors.toList()), equalTo(ListX.of(10)));
     }

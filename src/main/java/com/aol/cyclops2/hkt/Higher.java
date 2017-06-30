@@ -40,10 +40,10 @@ public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{// , __<T1, T2>{
      * @param param 1st parameter toNested pass toNested BiFunction
      * @return Result of executing the provided BiFunction
      */
-    default <T3,R> Higher<T1,R> apply_(BiFunction<? super T3,? super Higher<T1,T2>,? extends Higher<T1,R>> biFn, T3 param ){
+    default <T3,R> Higher<T1,R> applyHKT_(BiFunction<? super T3,? super Higher<T1,T2>,? extends Higher<T1,R>> biFn, T3 param ){
         return biFn.apply(param,this);
     }
-    default <R> Higher<T1,R> apply(Function<? super Higher<T1,T2>,? extends Higher<T1,R>> fn){
+    default <R> Higher<T1,R> applyHKT(Function<? super Higher<T1,T2>,? extends Higher<T1,R>> fn){
         return fn.apply(this);
     }
     /**
@@ -54,7 +54,7 @@ public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{// , __<T1, T2>{
      * @param param 2nd parameter toNested pass toNested BiFunction
      * @return Result of executing the provided BiFunction
      */
-    default <T3,R> Higher<T1,R> apply(T3 param,BiFunction<? super Higher<T1,T2>,? super T3,? extends Higher<T1,R>> biFn ){
+    default <T3,R> Higher<T1,R> applyHKT(T3 param, BiFunction<? super Higher<T1,T2>,? super T3,? extends Higher<T1,R>> biFn ){
         return biFn.apply(this,param);
     }
 

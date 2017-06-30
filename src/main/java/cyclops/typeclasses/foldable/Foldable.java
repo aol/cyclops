@@ -33,7 +33,7 @@ public interface Foldable<CRE> {
      * @return reduced value
      */
     default <T>  T foldRight(T identity, BinaryOperator<T> semigroup, Higher<CRE, T> ds){
-        return foldLeft(Monoid.fromBiFunction(identity, semigroup),ds);
+        return foldRight(Monoid.fromBiFunction(identity, semigroup),ds);
     }
     /**
      * Starting from the left combine each value in turn with an accumulator

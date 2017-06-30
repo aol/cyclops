@@ -3,6 +3,8 @@ package cyclops.stream;
 
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.Active;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import com.aol.cyclops2.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
@@ -43,6 +45,7 @@ import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.StreamT;
 import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
@@ -111,17 +114,16 @@ import java.util.stream.*;
  */
 public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Stream<T>,
-        OnEmptySwitch<T, Stream<T>>,
+                                        OnEmptySwitch<T, Stream<T>>,
                                         FoldableTraversable<T>,
-        Unit<T>,
+                                        Unit<T>,
+                                        Higher<reactiveSeq,T> {
 
-                                        Higher<ReactiveSeq.µ,T> {
 
 
-    public static class µ {
+    default Active<reactiveSeq,T> allTypeclasses(){
+        return Active.of(this, this.visit(sync->Instances.definitions(),rs->Spouts.Instances.definitions(),ac->Spouts.Instances.definitions()));
     }
-
-
 
 
 
@@ -1446,7 +1448,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param predicate
-     *            Batch until predicate holds, apply open next batch
+     *            Batch until predicate holds, applyHKT open next batch
      * @return ReactiveSeq batched into lists determined by the predicate supplied
      */
     @Override
@@ -1468,7 +1470,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param predicate
-     *            Batch while predicate holds, apply open next batch
+     *            Batch while predicate holds, applyHKT open next batch
      * @return ReactiveSeq batched into lists determined by the predicate supplied
      */
     @Override
@@ -1488,7 +1490,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param predicate
-     *            Batch while predicate holds, apply open next batch
+     *            Batch while predicate holds, applyHKT open next batch
      * @param factory
      *            Collection factory
      * @return ReactiveSeq batched into collections determined by the predicate
@@ -1512,7 +1514,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param predicate
-     *            Batch until predicate holds, apply open next batch
+     *            Batch until predicate holds, applyHKT open next batch
      * @param factory
      *            Collection factory
      * @return ReactiveSeq batched into collections determined by the predicate
@@ -2262,7 +2264,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * is {@link Collector.Characteristics#CONCURRENT concurrent}, and
      * lazy the reactiveStream is unordered or the collector is
      * {@link Collector.Characteristics#UNORDERED unordered},
-     * apply a concurrent reduction will be performed (see {@link Collector} for
+     * applyHKT a concurrent reduction will be performed (see {@link Collector} for
      * details on concurrent reduction.)
      * <p>
      * <p>This is a <a href="package-summary.html#StreamOps">terminal
@@ -3538,10 +3540,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * unzip4(ReactiveSeq.of(new Tuple4(1, "a", 2l,'µ'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
+     * unzip4(ReactiveSeq.of(new Tuple4(1, "a", 2l,'reactiveSeq'), new Tuple4(2, "b", 3l,'y'), new Tuple4(3,
      * 						"c", 4l,'x')));
      * 		}
-     * 		// ReactiveSeq[1,2,3], ReactiveSeq[a,b,c], ReactiveSeq[2l,3l,4l], ReactiveSeq[µ,y,x]
+     * 		// ReactiveSeq[1,2,3], ReactiveSeq[a,b,c], ReactiveSeq[2l,3l,4l], ReactiveSeq[reactiveSeq,y,x]
      * </pre>
      */
     public static <T1, T2, T3, T4> Tuple4<ReactiveSeq<T1>, ReactiveSeq<T2>, ReactiveSeq<T3>, ReactiveSeq<T4>> unzip4(
@@ -3670,7 +3672,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * @param time Time toNested apply debouncing over
+     * @param time Time toNested applyHKT debouncing over
      * @param t Time unit for debounce period
      * @return ReactiveSeq with debouncing applied
      */
@@ -3768,7 +3770,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * given(serviceMock.apply(anyInt())).willThrow(
+     * given(serviceMock.applyHKT(anyInt())).willThrow(
      * 				new RuntimeException(new SocketException("First")),
      * 				new RuntimeException(new IOException("Second"))).willReturn(
      * 				"42");
@@ -3797,7 +3799,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * given(serviceMock.apply(anyInt())).willThrow(
+     * given(serviceMock.applyHKT(anyInt())).willThrow(
      * 				new RuntimeException(new SocketException("First")),
      * 				new RuntimeException(new IOException("Second"))).willReturn(
      * 				"42");
@@ -4128,7 +4130,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param stream3
      *            Nested Stream toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
@@ -4225,7 +4227,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param stream2
      *            Nested Stream toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
@@ -4289,7 +4291,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * crossJoin two Streams forming a cartesian product over both
      * @param other Stream toNested crossJoin
-     * @return Single Stream with each pair across both Streams in a Tuple
+     * @return Active Stream with each pair across both Streams in a Tuple
      */
     default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(ReactiveSeq<? extends U> other) {
         return forEach2(a->other, Tuple::tuple);
@@ -4314,7 +4316,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param stream1
      *            Nested Stream toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
@@ -4839,6 +4841,59 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     static class Instances {
+        public static InstanceDefinitions<reactiveSeq> definitions(){
+            return new InstanceDefinitions<reactiveSeq>() {
+                @Override
+                public <T, R> Functor<reactiveSeq> functor() {
+                    return Instances.functor();
+                }
+
+                @Override
+                public <T> Pure<reactiveSeq> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<reactiveSeq> applicative() {
+                    return Instances.zippingApplicative();
+                }
+
+                @Override
+                public <T, R> Monad<reactiveSeq> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<reactiveSeq>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<reactiveSeq>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<reactiveSeq>> monadPlus(Monoid<Higher<reactiveSeq, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Maybe<Traverse<reactiveSeq>> traverse() {
+                    return Maybe.just(Instances.traverse());
+                }
+
+                @Override
+                public <T> Maybe<Foldable<reactiveSeq>> foldable() {
+                    return Maybe.just(Instances.foldable());
+                }
+
+                @Override
+                public <T> Maybe<Comonad<reactiveSeq>> comonad() {
+                    return Maybe.none();
+                }
+            };
+        }
         /**
          *
          * Transform a list, mulitplying every element by 2
@@ -4858,7 +4913,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          *   ReactiveSeq<Integer> list = ReactiveSeq.Instances.unit()
         .unit("hello")
-        .apply(h->Lists.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
         .convert(ReactiveSeq::narrowK);
          *
          * }
@@ -4867,7 +4922,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *
          * @return A functor for Lists
          */
-        public static <T,R>Functor<µ> functor(){
+        public static <T,R>Functor<reactiveSeq> functor(){
             BiFunction<ReactiveSeq<T>,Function<? super T, ? extends R>,ReactiveSeq<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -4886,8 +4941,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *
          * @return A factory for Lists
          */
-        public static <T> Pure<µ> unit(){
-            return General.<ReactiveSeq.µ,T>unit(Instances::of);
+        public static <T> Pure<reactiveSeq> unit(){
+            return General.<reactiveSeq,T>unit(Instances::of);
         }
         /**
          *
@@ -4914,8 +4969,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
-        .apply(h->Lists.functor().map((String v) ->v.length(), h))
-        .apply(h->Lists.zippingApplicative().ap(listFn, h))
+        .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Lists.zippingApplicative().ap(listFn, h))
         .convert(ReactiveSeq::narrowK);
 
         //Arrays.asList("hello".length()*2))
@@ -4926,7 +4981,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *
          * @return A zipper for Lists
          */
-        public static <T,R> Applicative<µ> zippingApplicative(){
+        public static <T,R> Applicative<reactiveSeq> zippingApplicative(){
             BiFunction<ReactiveSeq< Function<T, R>>,ReactiveSeq<T>,ReactiveSeq<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -4946,7 +5001,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          *    ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
-        .apply(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
+        .applyHKT(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
         .convert(ReactiveSeq::narrowK);
 
         //Arrays.asList("hello".length())
@@ -4956,9 +5011,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *
          * @return Type class with monad functions for Lists
          */
-        public static <T,R> Monad<µ> monad(){
+        public static <T,R> Monad<reactiveSeq> monad(){
 
-            BiFunction<Higher<ReactiveSeq.µ,T>,Function<? super T, ? extends Higher<ReactiveSeq.µ,R>>,Higher<ReactiveSeq.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<reactiveSeq,T>,Function<? super T, ? extends Higher<reactiveSeq,R>>,Higher<reactiveSeq,R>> flatMap = Instances::flatMap;
             return General.monad(zippingApplicative(), flatMap);
         }
         /**
@@ -4967,7 +5022,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          *  ReactiveSeq<String> list = Lists.unit()
         .unit("hello")
-        .apply(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(ReactiveSeq::narrowK);
 
         //Arrays.asList("hello"));
@@ -4978,7 +5033,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<µ> monadZero(){
+        public static <T,R> MonadZero<reactiveSeq> monadZero(){
 
             return General.monadZero(monad(), ReactiveSeq.empty());
         }
@@ -4994,9 +5049,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * </pre>
          * @return Type class for combining Lists by concatenation
          */
-        public static <T> MonadPlus<µ> monadPlus(){
+        public static <T> MonadPlus<reactiveSeq> monadPlus(){
             Monoid<ReactiveSeq<T>> m = Monoid.of(ReactiveSeq.empty(), Instances::concat);
-            Monoid<Higher<ReactiveSeq.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<reactiveSeq,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -5015,15 +5070,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * @param m Monoid toNested use for combining Lists
          * @return Type class for combining Lists
          */
-        public static <T> MonadPlus<µ> monadPlus(Monoid<ReactiveSeq<T>> m){
-            Monoid<Higher<ReactiveSeq.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<reactiveSeq> monadPlus(Monoid<ReactiveSeq<T>> m){
+            Monoid<Higher<reactiveSeq,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<µ> traverse(){
+        public static <C2,T> Traverse<reactiveSeq> traverse(){
             BiFunction<Applicative<C2>,ReactiveSeq<Higher<C2, T>>,Higher<C2, ReactiveSeq<T>>> sequenceFn = (ap,list) -> {
 
                 Higher<C2,ReactiveSeq<T>> identity = ap.unit(ReactiveSeq.empty());
@@ -5039,7 +5094,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
             };
-            BiFunction<Applicative<C2>,Higher<ReactiveSeq.µ,Higher<C2, T>>,Higher<C2, Higher<ReactiveSeq.µ,T>>> sequenceNarrow  =
+            BiFunction<Applicative<C2>,Higher<reactiveSeq,Higher<C2, T>>,Higher<C2, Higher<reactiveSeq,T>>> sequenceNarrow  =
                     (a,b) -> Instances.widen2(sequenceFn.apply(a, ReactiveSeq.narrowK(b)));
             return General.traverse(zippingApplicative(), sequenceNarrow);
         }
@@ -5059,9 +5114,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<µ> foldable(){
-            BiFunction<Monoid<T>,Higher<ReactiveSeq.µ,T>,T> foldRightFn =  (m,l)-> narrow(l).foldRight(m);
-            BiFunction<Monoid<T>,Higher<ReactiveSeq.µ,T>,T> foldLeftFn = (m,l)-> narrow(l).reduce(m);
+        public static <T> Foldable<reactiveSeq> foldable(){
+            BiFunction<Monoid<T>,Higher<reactiveSeq,T>,T> foldRightFn =  (m,l)-> narrow(l).foldRight(m);
+            BiFunction<Monoid<T>,Higher<reactiveSeq,T>,T> foldLeftFn = (m,l)-> narrow(l).reduce(m);
             return General.foldable(foldRightFn, foldLeftFn);
         }
 
@@ -5074,7 +5129,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         private static <T,R> ReactiveSeq<R> ap(ReactiveSeq<Function< T, R>> lt,  ReactiveSeq<T> list){
             return lt.zip(list,(a,b)->a.apply(b));
         }
-        private static <T,R> Higher<ReactiveSeq.µ,R> flatMap( Higher<ReactiveSeq.µ,T> lt, Function<? super T, ? extends  Higher<ReactiveSeq.µ,R>> fn){
+        private static <T,R> Higher<reactiveSeq,R> flatMap( Higher<reactiveSeq,T> lt, Function<? super T, ? extends  Higher<reactiveSeq,R>> fn){
             return ReactiveSeq.narrowK(lt).flatMap(fn.andThen(ReactiveSeq::narrowK));
         }
         private static <T,R> ReactiveSeq<R> map(ReactiveSeq<T> lt, Function<? super T, ? extends R> fn){
@@ -5089,10 +5144,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * @param flux HTK encoded type containing  a List toNested widen
          * @return HKT encoded type with a widened List
          */
-        public static <C2, T> Higher<C2, Higher<ReactiveSeq.µ, T>> widen2(Higher<C2, ReactiveSeq<T>> flux) {
+        public static <C2, T> Higher<C2, Higher<reactiveSeq, T>> widen2(Higher<C2, ReactiveSeq<T>> flux) {
             // a functor could be used (if C2 is a functor / one exists for C2 type)
             // instead of casting
-            // cast seems safer as Higher<ReactiveSeq.µ,T> must be a ReactiveSeq
+            // cast seems safer as Higher<reactiveSeq,T> must be a ReactiveSeq
             return (Higher) flux;
         }
 
@@ -5106,7 +5161,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * @param List Type Constructor toNested convert back into narrowed type
          * @return List from Higher Kinded Type
          */
-        public static <T> ReactiveSeq<T> narrow(final Higher<ReactiveSeq.µ, T> completableList) {
+        public static <T> ReactiveSeq<T> narrow(final Higher<reactiveSeq, T> completableList) {
 
             return ((ReactiveSeq<T>) completableList);//.narrow();
 
@@ -5118,7 +5173,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param future HKT encoded list into a ReactiveSeq
      * @return ReactiveSeq
      */
-    public static <T> ReactiveSeq<T> narrowK(final Higher<ReactiveSeq.µ, T> future) {
+    public static <T> ReactiveSeq<T> narrowK(final Higher<reactiveSeq, T> future) {
         return (ReactiveSeq<T>) future;
     }
 

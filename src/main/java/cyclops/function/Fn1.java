@@ -7,12 +7,16 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher2;
 import cyclops.collections.immutable.VectorX;
+import cyclops.companion.CompletableFutures;
 import cyclops.control.*;
 
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.function.FluentFunctions.Advice1;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.reader;
 import cyclops.monads.function.AnyMFn1;
 
 import cyclops.monads.transformers.FutureT;
@@ -26,6 +30,12 @@ import cyclops.async.Future;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.Traverse;
 import org.jooq.lambda.function.Function1;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -34,7 +44,7 @@ import org.jooq.lambda.tuple.Tuple4;
 
 @FunctionalInterface
 public interface Fn1<T1,  R> extends Function1<T1,R> {
-    static class µ {}
+
     public static <T1,  T3,R> Fn1<T1, R> λ(final Fn1<T1, R> triFunc){
         return triFunc;
     }
@@ -70,7 +80,7 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
        return (T1)-> Maybe.fromLazy(Eval.later(()-> Maybe.ofNullable(apply(T1))));
     }
     default Fn1<T1, Future<R>> lift(Executor ex){
-       return (T1)-> Future.ofSupplier(()->apply(T1),ex);
+       return (T1)-> Future.of(()->apply(T1),ex);
     }
     default Fn1<T1, Try<R,Throwable>> liftTry(){
        return (T1)->  Try.withCatch(()->apply(T1),Throwable.class);
@@ -174,7 +184,7 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
         return in->apply(in);
     }
 
-    interface FunctionalOperations<T1,R> extends Fn1<T1,R> {
+    interface FunctionalOperations<T1,R> extends Fn1<T1,R>{
 
 
         default <V> Fn1<T1, V> apply(final Function<? super T1,? extends Function<? super R,? extends V>> applicative) {
@@ -276,5 +286,6 @@ public interface Fn1<T1,  R> extends Function1<T1,R> {
             return in -> VectorX.of(apply(in));
         }
     }
+
 
 }

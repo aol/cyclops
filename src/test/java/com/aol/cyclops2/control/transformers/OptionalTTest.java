@@ -1,6 +1,7 @@
 package com.aol.cyclops2.control.transformers;
 
 
+import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.companion.Optionals;
 import cyclops.companion.Reducers;
@@ -16,6 +17,7 @@ import cyclops.control.Xor;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
+import cyclops.monads.Witness.optional;
 import cyclops.monads.transformers.OptionalT;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Before;
@@ -34,16 +36,16 @@ import static org.junit.Assert.*;
 
 public class OptionalTTest implements Printable {
 
-	OptionalT<Witness.optional,Integer> just;
-	OptionalT<Witness.optional,Integer> none;
-	OptionalT<Witness.optional,Integer> one;
+	OptionalT<optional,Integer> just;
+	OptionalT<optional,Integer> none;
+	OptionalT<optional,Integer> one;
 	@Before
 	public void setUp() throws Exception {
 
 
-		just = Optionals.liftM(Optional.of(10),Witness.optional.INSTANCE);
+		just = Optionals.liftM(Optional.of(10), optional.INSTANCE);
 		none = OptionalT.of(AnyM.ofNullable(null));
-		one = OptionalT.of(AnyM.ofNullable(Maybe.just(1)));
+		one = OptionalT.of(AnyM.ofNullable(Optional.of(1)));
 	}
 	
 	@Test
@@ -152,7 +154,7 @@ public class OptionalTTest implements Printable {
 
 	@Test
     public void testConvertTo() {
-        AnyM<Witness.optional,Stream<Integer>> toStream = just.visit(m->Stream.of(m),()->Stream.of());
+        AnyM<optional,Stream<Integer>> toStream = just.visit(m->Stream.of(m),()->Stream.of());
 
         assertThat(toStream.stream().flatMap(i->i).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }

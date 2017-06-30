@@ -5,9 +5,13 @@ import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.monads.Witness;
+import cyclops.typeclasses.Active;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -24,6 +28,7 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
@@ -49,11 +54,11 @@ public interface VectorX<T> extends To<VectorX<T>>,
                                      OnEmptySwitch<T, 
                                      PVector<T>>,
                                      Comparable<T>,
-                                     Higher<VectorX.µ,T>{
+                                     Higher<vectorX,T>{
 
-    public static class µ {
+    default Active<vectorX,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
     }
-
 
     default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {
         return ListT.of(witness.adapter().unit(this));
@@ -65,9 +70,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @param list HTK encoded type containing  a PVector toNested widen
      * @return HKT encoded type with a widened PVector
      */
-    public static <C2,T> Higher<C2, Higher<VectorX.µ,T>> widen2(Higher<C2, VectorX<T>> list){
+    public static <C2,T> Higher<C2, Higher<vectorX,T>> widen2(Higher<C2, VectorX<T>> list){
         //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<PVectorType.µ,T> must be a PVectorType
+        //cast seems safer as Higher<PVectorType.vectorX,T> must be a PVectorType
         return (Higher)list;
     }
     /**
@@ -76,7 +81,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @param list HKT encoded list into a PVectorType
      * @return PVectorType
      */
-    public static <T> VectorX<T> narrowK(final Higher<VectorX.µ, T> list) {
+    public static <T> VectorX<T> narrowK(final Higher<vectorX, T> list) {
         return (VectorX<T>)list;
     }
     /**
@@ -248,7 +253,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * }
      * </pre>
      * 
-     * @param value Single value for PVector
+     * @param value Active value for PVector
      * @return PVector with a singleUnsafe value
      */
     public static <T> VectorX<T> singleton(final T value) {
@@ -1215,7 +1220,59 @@ public interface VectorX<T> extends To<VectorX<T>>,
     @UtilityClass
     public static class Instances {
 
+        public static InstanceDefinitions<vectorX> definitions(){
+            return new InstanceDefinitions<vectorX>() {
+                @Override
+                public <T, R> Functor<vectorX> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<vectorX> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<vectorX> applicative() {
+                    return Instances.zippingApplicative();
+                }
+
+                @Override
+                public <T, R> Monad<vectorX> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<vectorX>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<vectorX>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<vectorX>> monadPlus(Monoid<Higher<vectorX, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Maybe<Traverse<vectorX>> traverse() {
+                    return Maybe.just(Instances.traverse());
+                }
+
+                @Override
+                public <T> Maybe<Foldable<vectorX>> foldable() {
+                    return Maybe.just(Instances.foldable());
+                }
+
+                @Override
+                public <T> Maybe<Comonad<vectorX>> comonad() {
+                    return Maybe.none();
+                }
+            };
+        }
         /**
          *
          * Transform a list, mulitplying every element by 2
@@ -1235,7 +1292,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * {@code
          *   VectorX<Integer> list = PVectors.unit()
         .unit("hello")
-        .apply(h->PVectors.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->PVectors.functor().map((String v) ->v.length(), h))
         .convert(VectorX::narrowK);
          *
          * }
@@ -1244,7 +1301,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * @return A functor for PVectors
          */
-        public static <T,R>Functor<µ> functor(){
+        public static <T,R>Functor<vectorX> functor(){
             BiFunction<VectorX<T>,Function<? super T, ? extends R>,VectorX<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -1263,8 +1320,8 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * @return A factory for PVectors
          */
-        public static  <T> Pure<µ> unit(){
-            return General.<VectorX.µ,T>unit(Instances::of);
+        public static  <T> Pure<vectorX> unit(){
+            return General.<vectorX,T>unit(Instances::of);
         }
         /**
          *
@@ -1291,8 +1348,8 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         VectorX<Integer> list = PVectors.unit()
         .unit("hello")
-        .apply(h->PVectors.functor().map((String v) ->v.length(), h))
-        .apply(h->PVectors.zippingApplicative().ap(listFn, h))
+        .applyHKT(h->PVectors.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->PVectors.zippingApplicative().ap(listFn, h))
         .convert(VectorX::narrowK);
 
         //Arrays.asPVector("hello".length()*2))
@@ -1303,7 +1360,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * @return A zipper for PVectors
          */
-        public static <T,R> Applicative<µ> zippingApplicative(){
+        public static <T,R> Applicative<vectorX> zippingApplicative(){
             BiFunction<VectorX< Function<T, R>>,VectorX<T>,VectorX<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -1323,7 +1380,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * {@code
          *    VectorX<Integer> list = PVectors.unit()
         .unit("hello")
-        .apply(h->PVectors.monad().flatMap((String v) ->PVectors.unit().unit(v.length()), h))
+        .applyHKT(h->PVectors.monad().flatMap((String v) ->PVectors.unit().unit(v.length()), h))
         .convert(VectorX::narrowK);
 
         //Arrays.asPVector("hello".length())
@@ -1333,9 +1390,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * @return Type class with monad functions for PVectors
          */
-        public static <T,R> Monad<µ> monad(){
+        public static <T,R> Monad<vectorX> monad(){
 
-            BiFunction<Higher<VectorX.µ,T>,Function<? super T, ? extends Higher<VectorX.µ,R>>,Higher<VectorX.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<vectorX,T>,Function<? super T, ? extends Higher<vectorX,R>>,Higher<vectorX,R>> flatMap = Instances::flatMap;
             return General.monad(zippingApplicative(), flatMap);
         }
         /**
@@ -1344,7 +1401,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * {@code
          *  VectorX<String> list = PVectors.unit()
         .unit("hello")
-        .apply(h->PVectors.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->PVectors.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(VectorX::narrowK);
 
         //Arrays.asPVector("hello"));
@@ -1355,7 +1412,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<µ> monadZero(){
+        public static <T,R> MonadZero<vectorX> monadZero(){
 
             return General.monadZero(monad(), VectorX.empty());
         }
@@ -1371,9 +1428,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * </pre>
          * @return Type class for combining PVectors by concatenation
          */
-        public static <T> MonadPlus<µ> monadPlus(){
+        public static <T> MonadPlus<vectorX> monadPlus(){
             Monoid<VectorX<T>> m = Monoid.of(VectorX.empty(), Instances::concat);
-            Monoid<Higher<VectorX.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<vectorX,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -1392,15 +1449,15 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * @param m Monoid toNested use for combining PVectors
          * @return Type class for combining PVectors
          */
-        public static <T> MonadPlus<VectorX.µ> monadPlus(Monoid<VectorX<T>> m){
-            Monoid<Higher<VectorX.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<vectorX> monadPlus(Monoid<VectorX<T>> m){
+            Monoid<Higher<vectorX,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<µ> traverse(){
+        public static <C2,T> Traverse<vectorX> traverse(){
             BiFunction<Applicative<C2>,VectorX<Higher<C2, T>>,Higher<C2, VectorX<T>>> sequenceFn = (ap, list) -> {
 
                 Higher<C2,VectorX<T>> identity = ap.unit(VectorX.empty());
@@ -1416,7 +1473,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
 
             };
-            BiFunction<Applicative<C2>,Higher<VectorX.µ,Higher<C2, T>>,Higher<C2, Higher<VectorX.µ,T>>> sequenceNarrow  =
+            BiFunction<Applicative<C2>,Higher<vectorX,Higher<C2, T>>,Higher<C2, Higher<vectorX,T>>> sequenceNarrow  =
                     (a,b) -> VectorX.widen2(sequenceFn.apply(a, VectorX.narrowK(b)));
             return General.traverse(zippingApplicative(), sequenceNarrow);
         }
@@ -1436,9 +1493,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<µ> foldable(){
-            BiFunction<Monoid<T>,Higher<VectorX.µ,T>,T> foldRightFn =  (m, l)-> VectorX.narrowK(l).foldRight(m);
-            BiFunction<Monoid<T>,Higher<VectorX.µ,T>,T> foldLeftFn = (m, l)-> VectorX.narrowK(l).reduce(m);
+        public static <T> Foldable<vectorX> foldable(){
+            BiFunction<Monoid<T>,Higher<vectorX,T>,T> foldRightFn =  (m, l)-> VectorX.narrowK(l).foldRight(m);
+            BiFunction<Monoid<T>,Higher<vectorX,T>,T> foldLeftFn = (m, l)-> VectorX.narrowK(l).reduce(m);
             return General.foldable(foldRightFn, foldLeftFn);
         }
 
@@ -1452,7 +1509,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
         private static <T,R> VectorX<R> ap(VectorX<Function< T, R>> lt, VectorX<T> list){
             return VectorX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
         }
-        private static <T,R> Higher<µ,R> flatMap(Higher<VectorX.µ,T> lt, Function<? super T, ? extends  Higher<VectorX.µ,R>> fn){
+        private static <T,R> Higher<vectorX,R> flatMap(Higher<vectorX,T> lt, Function<? super T, ? extends  Higher<vectorX,R>> fn){
             return VectorX.narrowK(lt).flatMap(fn.andThen(VectorX::narrowK));
         }
         private static <T,R> VectorX<R> map(VectorX<T> lt, Function<? super T, ? extends R> fn){

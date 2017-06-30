@@ -491,7 +491,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     * 
     * @param seed - identity value 
     * @param function folding function
-    * @return Single reduced value
+    * @return Active reduced value
     */
     @Override
     default <U> U foldRight(final U seed, final BiFunction<? super T, ? super U, ? extends U> function) {
@@ -2850,7 +2850,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * <pre>
      * {@code 
-     * given(serviceMock.apply(anyInt())).willThrow(
+     * given(serviceMock.applyHKT(anyInt())).willThrow(
     			new RuntimeException(new SocketException("First")),
     			new RuntimeException(new IOException("Second"))).willReturn(
     			"42");

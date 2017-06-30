@@ -1,13 +1,16 @@
 package cyclops.collections.immutable;
 
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.monads.Witness;
+import cyclops.typeclasses.Active;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -25,6 +28,7 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
 import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
@@ -48,10 +52,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                     LazyCollectionX<T>,
                                     IndexedSequenceX<T>,
                                     OnEmptySwitch<T, PStack<T>>,
-                                    Higher<LinkedListX.µ,T> {
+                                    Higher<linkedListX,T> {
 
 
-    public static class µ {
+    default Active<linkedListX,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
     }
 
     @Override
@@ -65,9 +70,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @param list HTK encoded type containing  a PStack toNested widen
      * @return HKT encoded type with a widened PStack
      */
-    public static <C2,T> Higher<C2, Higher<LinkedListX.µ,T>> widen2(Higher<C2, LinkedListX<T>> list){
+    public static <C2,T> Higher<C2, Higher<linkedListX,T>> widen2(Higher<C2, LinkedListX<T>> list){
         //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<PStackType.µ,T> must be a PStackType
+        //cast seems safer as Higher<PStackType.linkedListX,T> must be a PStackType
         return (Higher)list;
     }
     /**
@@ -76,7 +81,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @param list HKT encoded list into a PStackType
      * @return PStackType
      */
-    public static <T> LinkedListX<T> narrowK(final Higher<LinkedListX.µ, T> list) {
+    public static <T> LinkedListX<T> narrowK(final Higher<linkedListX, T> list) {
         return (LinkedListX<T>)list;
     }
 
@@ -304,7 +309,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * }
      * </pre>
      * 
-     * @param value Single value for PVector
+     * @param value Active value for PVector
      * @return PVector with a singleUnsafe value
      */
     public static <T> LinkedListX<T> singleton(final T value){
@@ -1270,7 +1275,59 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @UtilityClass
     public static class Instances {
 
+        public static InstanceDefinitions<linkedListX> definitions(){
+            return new InstanceDefinitions<linkedListX>() {
+                @Override
+                public <T, R> Functor<linkedListX> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<linkedListX> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<linkedListX> applicative() {
+                    return Instances.zippingApplicative();
+                }
+
+                @Override
+                public <T, R> Monad<linkedListX> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<linkedListX>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<linkedListX>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<linkedListX>> monadPlus(Monoid<Higher<linkedListX, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Maybe<Traverse<linkedListX>> traverse() {
+                    return Maybe.just(Instances.traverse());
+                }
+
+                @Override
+                public <T> Maybe<Foldable<linkedListX>> foldable() {
+                    return Maybe.just(Instances.foldable());
+                }
+
+                @Override
+                public <T> Maybe<Comonad<linkedListX>> comonad() {
+                    return Maybe.none();
+                }
+            };
+        }
         /**
          *
          * Transform a list, mulitplying every element by 2
@@ -1290,7 +1347,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * {@code
          *   LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
-        .apply(h->PStacks.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->PStacks.functor().map((String v) ->v.length(), h))
         .convert(LinkedListX::narrowK);
          *
          * }
@@ -1299,7 +1356,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *
          * @return A functor for PStacks
          */
-        public static <T,R>Functor<µ> functor(){
+        public static <T,R>Functor<linkedListX> functor(){
             BiFunction<LinkedListX<T>,Function<? super T, ? extends R>,LinkedListX<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -1318,8 +1375,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *
          * @return A factory for PStacks
          */
-        public static <T> Pure<µ> unit(){
-            return General.<LinkedListX.µ,T>unit(Instances::of);
+        public static <T> Pure<linkedListX> unit(){
+            return General.<linkedListX,T>unit(Instances::of);
         }
         /**
          *
@@ -1346,8 +1403,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
         LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
-        .apply(h->PStacks.functor().map((String v) ->v.length(), h))
-        .apply(h->PStacks.zippingApplicative().ap(listFn, h))
+        .applyHKT(h->PStacks.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->PStacks.zippingApplicative().ap(listFn, h))
         .convert(LinkedListX::narrowK);
 
         //Arrays.asPStack("hello".length()*2))
@@ -1358,7 +1415,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *
          * @return A zipper for PStacks
          */
-        public static <T,R> Applicative<LinkedListX.µ> zippingApplicative(){
+        public static <T,R> Applicative<linkedListX> zippingApplicative(){
             BiFunction<LinkedListX< Function<T, R>>,LinkedListX<T>,LinkedListX<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -1378,7 +1435,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * {@code
          *    LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
-        .apply(h->PStacks.monad().flatMap((String v) ->PStacks.unit().unit(v.length()), h))
+        .applyHKT(h->PStacks.monad().flatMap((String v) ->PStacks.unit().unit(v.length()), h))
         .convert(LinkedListX::narrowK);
 
         //Arrays.asPStack("hello".length())
@@ -1388,9 +1445,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *
          * @return Type class with monad functions for PStacks
          */
-        public static <T,R> Monad<µ> monad(){
+        public static <T,R> Monad<linkedListX> monad(){
 
-            BiFunction<Higher<LinkedListX.µ,T>,Function<? super T, ? extends Higher<LinkedListX.µ,R>>,Higher<LinkedListX.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<linkedListX,T>,Function<? super T, ? extends Higher<linkedListX,R>>,Higher<linkedListX,R>> flatMap = Instances::flatMap;
             return General.monad(zippingApplicative(), flatMap);
         }
         /**
@@ -1399,7 +1456,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * {@code
          *  LinkedListX<String> list = PStacks.unit()
         .unit("hello")
-        .apply(h->PStacks.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->PStacks.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(LinkedListX::narrowK);
 
         //Arrays.asPStack("hello"));
@@ -1410,7 +1467,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<µ> monadZero(){
+        public static <T,R> MonadZero<linkedListX> monadZero(){
 
             return General.monadZero(monad(), LinkedListX.empty());
         }
@@ -1426,9 +1483,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * </pre>
          * @return Type class for combining PStacks by concatenation
          */
-        public static <T> MonadPlus<LinkedListX.µ> monadPlus(){
+        public static <T> MonadPlus<linkedListX> monadPlus(){
             Monoid<LinkedListX<T>> m = Monoid.of(LinkedListX.empty(), Instances::concat);
-            Monoid<Higher<LinkedListX.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<linkedListX,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -1447,15 +1504,15 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * @param m Monoid toNested use for combining PStacks
          * @return Type class for combining PStacks
          */
-        public static <T> MonadPlus<µ> monadPlus(Monoid<LinkedListX<T>> m){
-            Monoid<Higher<LinkedListX.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<linkedListX> monadPlus(Monoid<LinkedListX<T>> m){
+            Monoid<Higher<linkedListX,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<µ> traverse(){
+        public static <C2,T> Traverse<linkedListX> traverse(){
             BiFunction<Applicative<C2>,LinkedListX<Higher<C2, T>>,Higher<C2, LinkedListX<T>>> sequenceFn = (ap, list) -> {
 
                 Higher<C2,LinkedListX<T>> identity = ap.unit(LinkedListX.empty());
@@ -1473,7 +1530,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
 
             };
-            BiFunction<Applicative<C2>,Higher<LinkedListX.µ,Higher<C2, T>>,Higher<C2, Higher<LinkedListX.µ,T>>> sequenceNarrow  =
+            BiFunction<Applicative<C2>,Higher<linkedListX,Higher<C2, T>>,Higher<C2, Higher<linkedListX,T>>> sequenceNarrow  =
                     (a,b) -> LinkedListX.widen2(sequenceFn.apply(a, LinkedListX.narrowK(b)));
             return General.traverse(zippingApplicative(), sequenceNarrow);
         }
@@ -1493,9 +1550,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<µ> foldable(){
-            BiFunction<Monoid<T>,Higher<LinkedListX.µ,T>,T> foldRightFn =  (m, l)-> LinkedListX.narrowK(l).foldRight(m);
-            BiFunction<Monoid<T>,Higher<LinkedListX.µ,T>,T> foldLeftFn = (m, l)-> LinkedListX.narrowK(l).reduce(m);
+        public static <T> Foldable<linkedListX> foldable(){
+            BiFunction<Monoid<T>,Higher<linkedListX,T>,T> foldRightFn =  (m, l)-> LinkedListX.narrowK(l).foldRight(m);
+            BiFunction<Monoid<T>,Higher<linkedListX,T>,T> foldLeftFn = (m, l)-> LinkedListX.narrowK(l).reduce(m);
             return General.foldable(foldRightFn, foldLeftFn);
         }
 
@@ -1509,7 +1566,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         private static <T,R> LinkedListX<R> ap(LinkedListX<Function< T, R>> lt, LinkedListX<T> list){
             return LinkedListX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
         }
-        private static <T,R> Higher<LinkedListX.µ,R> flatMap(Higher<LinkedListX.µ,T> lt, Function<? super T, ? extends  Higher<LinkedListX.µ,R>> fn){
+        private static <T,R> Higher<linkedListX,R> flatMap(Higher<linkedListX,T> lt, Function<? super T, ? extends  Higher<linkedListX,R>> fn){
             return LinkedListX.fromIterable(LinkedListX.narrowK(lt)).flatMap(fn.andThen(LinkedListX::narrowK));
         }
         private static <T,R> LinkedListX<R> map(LinkedListX<T> lt, Function<? super T, ? extends R> fn){

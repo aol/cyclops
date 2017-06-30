@@ -74,13 +74,13 @@ public class AsyncJDKStreamTest {
     }
     @Test
     public void flatMapPub(){
-        for(int l=0;l<1_000;l++) {
+        for(int l=0;l<100_000;l++) {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
 
            System.out.println(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP(i -> of(i, i * 2, i * 4)
+                    .flatMapP(i -> rs(i, i * 2, i * 4)
                             .flatMapP(x -> rs(5, 6, 7)))
                     .toListX());
 

@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import cyclops.async.Future;
 
 import cyclops.function.Fn0;
+import cyclops.stream.ReactiveSeq;
 import lombok.Value;
 
 /**
@@ -134,8 +135,8 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
     /**
      * @return Stream containing value returned by get(), Empty Stream if null
      */
-    default Stream<T> toStream() {
-        return Stream.of(toOptional())
+    default ReactiveSeq<T> toStream() {
+        return ReactiveSeq.of(toOptional())
                      .filter(Optional::isPresent)
                      .map(Optional::get);
     }

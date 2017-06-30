@@ -42,9 +42,9 @@ public class TransformersValuesTest {
     public void liftM(){
 
         //Asynchronously generated string concatonated with another, inside a list
-        Future.ofSupplier(()->"Asynchronously generated string ")
+        Future.of(()->"Asynchronously generated string ")
                 .liftM(Witness.list.INSTANCE)
-                .forEach2M(a->Future.ofSupplier(()->a+"concatonated with another, inside a list")
+                .forEach2M(a->Future.of(()->a+"concatonated with another, inside a list")
                                 .liftM(Witness.list.INSTANCE),
                         (a,b)->b)
                 .printOut();

@@ -359,7 +359,7 @@ public class StreamSource {
         return new StreamSource();
     }
     /**
-     * A builder for pushable Streams that apply backpressure if producing Streams exceed the capacity of consuming Streams.
+     * A builder for pushable Streams that applyHKT backpressure if producing Streams exceed the capacity of consuming Streams.
      * 
      * In this backpresure is applied by using a LinkedBlockingQueue. @see cyclops2.reactiveStream.StreamSource#ofMultiple(QueueFactory)
      * For more granular management of Adapter based backpressure. Adapters can be backed by non-blocking data structures and different backpressure strategies applied
@@ -385,7 +385,7 @@ public class StreamSource {
     public static StreamSource of(final int backPressureAfter) {
         if (backPressureAfter < 1)
             throw new IllegalArgumentException(
-                                               "Can't apply back pressure after less than 1 event");
+                                               "Can't applyHKT back pressure after less than 1 event");
         return new StreamSource(
                                 backPressureAfter, true);
     }

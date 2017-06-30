@@ -48,7 +48,7 @@ public interface C5<T1, T2, T3, T4, T5> {
     }
 
     /**
-     * Partially apply the takeOne input parameter to this C5
+     * Partially applyHKT the takeOne input parameter to this C5
      * 
      * @param s the takeOne input parameter
      * @return A curried function that eventually resolves to a Consumer
@@ -59,7 +59,7 @@ public interface C5<T1, T2, T3, T4, T5> {
     }
 
     /**
-     * Partially apply the takeOne and second input parameters to this C5
+     * Partially applyHKT the takeOne and second input parameters to this C5
      * 
      * @param s the takeOne input parameter
      * @param s2 the second input parameter
@@ -72,7 +72,7 @@ public interface C5<T1, T2, T3, T4, T5> {
     }
 
     /**
-     *  Partially apply the takeOne, second and third input parameters to this C5
+     *  Partially applyHKT the takeOne, second and third input parameters to this C5
      * 
      * @param s the takeOne input parameter
      * @param s2 the second input parameter
@@ -88,7 +88,7 @@ public interface C5<T1, T2, T3, T4, T5> {
 
     /**
      * 
-     * Partially apply the takeOne, second, third and fourth input parameters to this C5
+     * Partially applyHKT the takeOne, second, third and fourth input parameters to this C5
      * 
      * @param s the takeOne input parameter
      * @param s2 the second input parameter

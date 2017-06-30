@@ -3,20 +3,20 @@ import org.gradle.api.artifacts.maven.MavenDeployment
 buildscript {
 	repositories {
 		jcenter()
-		
+
 	}
 
 	dependencies {
 		classpath 'com.bmuschko:gradle-nexus-plugin:2.2'
-	
+
 	}
 }
 plugins {
 	id 'me.champeau.gradle.jmh' version '0.2.0'
- }
+}
 def custom ={ "$rootDir/gradle/${it}.gradle"} //find custom plugins locally
 
- 
+
 apply plugin: 'me.champeau.gradle.jmh'
 apply plugin: 'java'
 apply plugin: 'eclipse'
@@ -28,9 +28,9 @@ apply from: custom('jacoco-version')
 sourceCompatibility = 1.8
 
 jar {
-    manifest {
-        attributes 'Implementation-Title': 'simple-react', 'Implementation-Version': version
-    }
+	manifest {
+		attributes 'Implementation-Title': 'simple-react', 'Implementation-Version': version
+	}
 }
 
 apply from: custom('jacoco-config')
@@ -38,19 +38,19 @@ apply from: custom('jacoco-excludes')
 
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 	jcenter()
 
 }
 
 if (JavaVersion.current().isJava8Compatible()) {
-    allprojects {
-      tasks.withType(Javadoc) {
-        options.addStringOption('Xdoclint:none', '-quiet')
-      }
-    }
-  }
- 
+	allprojects {
+		tasks.withType(Javadoc) {
+			options.addStringOption('Xdoclint:none', '-quiet')
+		}
+	}
+}
+
 
 configurations {
 	provided
@@ -63,20 +63,22 @@ dependencies {
 	compile 'org.agrona:Agrona:'+agronaVersion
 	compile 'org.reactivestreams:reactive-streams:'+reactiveStreamsVersion
 	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
-    testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
-    testCompile 'io.projectreactor:reactor-core:3.0.4.RELEASE'
+	testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
+	testCompile 'io.projectreactor:reactor-core:3.0.7.RELEASE'
+//	testCompile 'io.projectreactor.addons:reactor-test:3.0.7.RELEASE'
 	testCompile  'com.google.guava:guava:19.0'
-    testCompile 'com.google.guava:guava-testlib:19.0'
+	testCompile 'com.google.guava:guava-testlib:19.0'
 	testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:hamcrestVersion
 	testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
 	testCompile 'io.vertx:vertx-core:3.0.0'
 	testCompile group: 'org.testng', name: 'testng', version:'5.14.10'
-    testCompile 'io.javaslang:javaslang:2.0.2'
+	testCompile 'io.javaslang:javaslang:2.0.2'
+//    testCompile "org.assertj:assertj-core:3.6.1"
 	jmh 'com.github.akarnokd:ixjava:1.0.0-RC5'
-	
-	
+
+
 
 }
 
@@ -86,59 +88,59 @@ sourceSets {
 	test.runtimeClasspath += [configurations.provided]
 }
 jacocoTestReport {
-    afterEvaluate {
-        classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/aol/cyclops2/util/stream/scheduling/cron/**'])
-        })
-    }
+	afterEvaluate {
+		classDirectories = files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: ['com/aol/cyclops2/util/stream/scheduling/cron/**'])
+		})
+	}
 }
 jmh {
 	jmhVersion = '1.14'
 	humanOutputFile = null
-    include = ".*scrabble*"
+	include = ".*scrabble*"
 }
 
 
 task testNG(type: Test) {
-    useTestNG {}
+	useTestNG {}
 	testLogging {
 		events "started","passed", "skipped", "failed"//, "standardOut", "standardError"
 	}
-    reports.html.destination = file("$buildDir/reports/test")
+	reports.html.destination = file("$buildDir/reports/test")
 }
 
 
 task testSuite(type: Test) {
 
-    include '**/*TestSuite.class'
-    reports.junitXml.destination = "$buildDir/reports/test"
-    reports.html.destination = "$buildDir/reports/test"
- }
+	include '**/*TestSuite.class'
+	reports.junitXml.destination = "$buildDir/reports/test"
+	reports.html.destination = "$buildDir/reports/test"
+}
 
- 
+
 
 test {
-        reports.html.destination = file("$buildDir/reports/test")
-    
-    //    dependsOn testNG
-     //   dependsOn testSuite
-        forkEvery = 1
-		//maxParallelForks = Runtime.runtime.availableProcessors()
-        testLogging {
-            events "started","passed", "skipped", "failed"//, "standardOut", "standardError"
-        }
+	reports.html.destination = file("$buildDir/reports/test")
+
+	//    dependsOn testNG
+	//   dependsOn testSuite
+	forkEvery = 1
+	//maxParallelForks = Runtime.runtime.availableProcessors()
+	testLogging {
+		events "started","passed", "skipped", "failed"//, "standardOut", "standardError"
+	}
 }
 eclipse.classpath.plusConfigurations += [configurations.provided]  // Eclipse users only
 
 test {
-    systemProperties 'property': 'value'
+	systemProperties 'property': 'value'
 }
 
 javadoc {
-    configure((CoreJavadocOptions) getOptions()) {
-        addStringOption('sourcepath', "/Sources/jool-0.9.11-sources.jar")
-    }
-    exclude '**/internal/**'
+	configure((CoreJavadocOptions) getOptions()) {
+		addStringOption('sourcepath', "/Sources/jool-0.9.11-sources.jar")
+	}
+	exclude '**/internal/**'
 }
 modifyPom {
 	project {
@@ -150,11 +152,11 @@ modifyPom {
 		groupId 'com.aol.simplereact'
 		artifactId 'cyclops-react'
 		version "$version"
-		
+
 		scm {
 			url 'scm:git@github.com:aol/simple-react.git'
-            connection 'scm:git@github.com:aol/simple-react.git'
-            developerConnection 'scm:git@github.com:aol/simple-react.git'
+			connection 'scm:git@github.com:aol/simple-react.git'
+			developerConnection 'scm:git@github.com:aol/simple-react.git'
 		}
 
 		licenses {

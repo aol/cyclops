@@ -115,7 +115,7 @@ public class ReactPool<REACTOR extends ReactBuilder> {
     /**
      * @param fn Function that operates on a REACTOR - typically will build an execute a Stream using that REACTOR. 
      * 				This method will extract and return the REACTOR to the pool.
-     * @return typically will return the result of Stream execution (result of fn.apply(reactor))
+     * @return typically will return the result of Stream execution (result of fn.applyHKT(reactor))
      */
     public <T> T react(final Function<? super REACTOR, ? extends T> fn) {
         REACTOR reactor = null;

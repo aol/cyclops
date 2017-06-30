@@ -211,7 +211,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * </pre>
      *
      * @param either Either to consume value for
-     * @return Consumer we can apply to consume value
+     * @return Consumer we can applyHKT to consume value
      */
     static <X, LT1 extends X, LT2 extends X, LT3 extends X, RT extends X> Consumer<Consumer<? super X>> consumeAny(
             Either4<LT1, LT2, LT3, RT> either) {
@@ -339,10 +339,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * @return Either constructed from the supplied Publisher
      */
     public static <T1,T2,T> Either4<Throwable, T1, T2, T> fromPublisher(final Publisher<T> pub) {
-        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
-        pub.subscribe(sub);
-        Either4<Throwable, T1,T2, Xor<Throwable,T>> xor = Either4.rightEval(Eval.later(()->sub.toXor()));
-        return  xor.flatMap(x->x.visit(Either4::left1,Either4::right));
+        return fromFuture(Future.fromPublisher(pub));
     }
     /**
      * Construct a Right Either4 from the supplied Iterable
@@ -514,15 +511,15 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
         });
     }
+    default Trampoline<Either4<LT1,LT2,LT3,RT>> toTrampoline() {
+        return Trampoline.more(()->Trampoline.done(this));
+    }
+    @Override
+    default int arity() {
+        return 4;
+    }
     default < RT1> Either4<LT1, LT2, LT3,RT1> flatMapP(Function<? super RT, ? extends Publisher<? extends RT1>> mapper){
-        return this.flatMap(a -> {
-            final Publisher<? extends RT1> publisher = mapper.apply(a);
-            final ValueSubscriber<RT1> sub = ValueSubscriber.subscriber();
-
-            publisher.subscribe(sub);
-            return unit(sub.get());
-
-        });
+        return this.flatMap(a -> fromPublisher(mapper.apply(a)));
     }
 
     /**
@@ -542,7 +539,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * Filter this Either4 resulting in a Maybe#none if it is not a Right instance or if the predicate does not
      * hold. Otherwise results in a Maybe containing the current value
      *
-     * @param test Predicate to apply to filter this Either4
+     * @param test Predicate to applyHKT to filter this Either4
      * @return Maybe containing the current value if this is a Right instance and the predicate holds, otherwise Maybe#none
      */
     Maybe<RT> filter(Predicate<? super RT> test);
@@ -945,6 +942,33 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                         .flatMap(Function.identity());
 
         }
+        @Override
+        public Trampoline<Either4<ST,M,M2,PT>> toTrampoline() {
+            Trampoline<Either4<ST,M,M2,PT>> trampoline = lazy.toTrampoline();
+            return new Trampoline<Either4<ST,M,M2,PT>>() {
+                @Override
+                public Either4<ST,M,M2,PT> get() {
+                    Either4<ST,M,M2,PT> either = lazy.get();
+                    while (either instanceof Either4.Lazy) {
+                        either = ((Either4.Lazy<ST,M,M2,PT>) either).lazy.get();
+                    }
+                    return either;
+                }
+                @Override
+                public boolean complete(){
+                    return false;
+                }
+                @Override
+                public Trampoline<Either4<ST,M,M2,PT>> bounce() {
+                    Either4<ST,M,M2,PT> either = lazy.get();
+                    if(either instanceof Either4.Lazy){
+                        return either.toTrampoline();
+                    }
+                    return Trampoline.done(either);
+
+                }
+            };
+        }
 
         @Override
         public PT get() {
@@ -1280,6 +1304,10 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return this;
 
         }
+        @Override
+        public void subscribe(final Subscriber<? super PT> s) {
+            s.onComplete();
+        }
 
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
@@ -1370,10 +1398,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return absent.get();
         }
 
-        @Override
-        public void subscribe(final Subscriber<? super PT> s) {
 
-        }
 
         @Override
         public boolean test(final PT t) {
@@ -1473,7 +1498,10 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             throw new NoSuchElementException(
                                              "Attempt to access right value on a Middle Either4");
         }
-
+        @Override
+        public void subscribe(final Subscriber<? super PT> s) {
+            s.onComplete();
+        }
         @Override
         public <RT1> Either4<ST, M, M2,RT1> flatMap(
                 final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
@@ -1546,10 +1574,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return absent.get();
         }
 
-        @Override
-        public void subscribe(final Subscriber<? super PT> s) {
-
-        }
 
         @Override
         public boolean test(final PT t) {
@@ -1646,6 +1670,10 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return Maybe.none();
 
         }
+        @Override
+        public void subscribe(final Subscriber<? super PT> s) {
+            s.onComplete();
+        }
 
         @Override
         public PT get() {
@@ -1726,11 +1754,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         @Override
         public <R> R visit(final Function<? super PT, ? extends R> present, final Supplier<? extends R> absent) {
             return absent.get();
-        }
-
-        @Override
-        public void subscribe(final Subscriber<? super PT> s) {
-
         }
 
         @Override

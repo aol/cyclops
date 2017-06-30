@@ -17,7 +17,7 @@ import java.util.function.BinaryOperator;
 public interface Semigroup<T> extends BinaryFn<T>,BinaryOperator<T> {
     
     /* (non-Javadoc)
-     * @see java.util.function.BiFunction#apply(java.lang.Object, java.lang.Object)
+     * @see java.util.function.BiFunction#applyHKT(java.lang.Object, java.lang.Object)
      */
     @Override
     T apply(T t, T u);

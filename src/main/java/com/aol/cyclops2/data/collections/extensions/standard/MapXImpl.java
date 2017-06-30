@@ -328,4 +328,9 @@ public class MapXImpl<K, V> implements MapX<K, V> {
     public <X extends Throwable> void forEach(Consumer<? super Tuple2<K, V>> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
             stream().forEach(consumerElement,consumerError,onComplete);
     }
+
+    @Override
+    public String toString() {
+        return "MapX[" + map.toString() + "]";
+    }
 }

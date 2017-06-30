@@ -1,6 +1,8 @@
 package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.Active;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
@@ -8,7 +10,6 @@ import com.aol.cyclops2.types.recoverable.Recoverable;
 import cyclops.companion.Monoids;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.async.Future;
-import cyclops.control.lazy.Either;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
@@ -19,6 +20,8 @@ import cyclops.function.Curry;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.monads.AnyM;
+import cyclops.monads.Witness.maybe;
+import cyclops.monads.Witness.optional;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.MaybeT;
 import cyclops.stream.ReactiveSeq;
@@ -49,7 +52,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Totally lazy and reactive more powerful general Option(al) type. Maybe is maybe like a Java
+ * Totally lazy, reactive  more powerful general Option type. Maybe is maybe like a Java
  * 8 Stream that represents 0 or 1 values rather than eager like a Java 8
  * Optional. map / peek/ filter and flatMap build the execution chaing, but are
  * not executed until the value inside the Maybe is required.
@@ -107,18 +110,22 @@ import java.util.stream.Stream;
  */
 public interface Maybe<T> extends To<Maybe<T>>,
                                   MonadicValue<T>,
-        Recoverable<Void,T>,
-                                  Higher<Maybe.µ,T> {
+                                  Recoverable<T>,
+                                  Higher<maybe,T> {
 
+    default Active<maybe,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
+    }
     default <W extends WitnessType<W>> MaybeT<W, T> liftM(W witness) {
         return MaybeT.of(witness.adapter().unit(this));
     }
     static <T> Maybe<T> async(final Executor ex, final Supplier<T> s){
-        return fromFuture(Future.ofSupplier(s,ex));
+        return fromFuture(Future.of(s,ex));
     }
-    public static class µ {
-    }
-    default AnyM<Witness.maybe,T> anyM(){
+   
+
+
+    default AnyM<maybe,T> anyM(){
         return AnyM.fromMaybe(this);
     }
     static <T> Maybe<T> fromLazy(Eval<Maybe<T>> lazy){
@@ -263,14 +270,14 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @param opt Optional to construct Maybe from
      * @return Maybe created from Optional
      */
-    public static <T> Maybe<T> fromOptional(Higher<OptionalKind.µ,T> optional){
+    public static <T> Maybe<T> fromOptional(Higher<optional,T> optional){
         return   fromOptional(OptionalKind.narrowK(optional));
 
     }
 
-    public static <C2,T> Higher<C2, Higher<Maybe.µ,T>> widen2(Higher<C2, Maybe<T>> nestedMaybe){
+    public static <C2,T> Higher<C2, Higher<maybe,T>> widen2(Higher<C2, Maybe<T>> nestedMaybe){
         //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<MaybeType.µ,T> must be a StreamType
+        //cast seems safer as Higher<MaybeType.maybe,T> must be a StreamType
         return (Higher)nestedMaybe;
     }
     /**
@@ -279,7 +286,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @param future HKT encoded list into a MaybeType
      * @return MaybeType
      */
-    public static <T> Maybe<T> narrowK(final Higher<Maybe.µ, T> future) {
+    public static <T> Maybe<T> narrowK(final Higher<maybe, T> future) {
         return (Maybe<T>)future;
     }
 
@@ -289,7 +296,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @param MaybeType Constructor to convert back into narrowed type
      * @return Optional from Higher Kinded Type
      */
-    public static <T> Optional<T> narrowOptional(final Higher<Maybe.µ, T> maybe) {
+    public static <T> Optional<T> narrowOptional(final Higher<maybe, T> maybe) {
 
         return narrowK(maybe).toOptional();
 
@@ -400,6 +407,10 @@ public interface Maybe<T> extends To<Maybe<T>>,
     static <T> Maybe<T> fromEvalOf(final Eval<T> eval) {
         return new Just<T>(
                            eval);
+    }
+
+    default Trampoline<Maybe<T>> toTrampoline() {
+        return Trampoline.more(()->Trampoline.done(this));
     }
 
     /**
@@ -521,7 +532,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @return Maybe with a List of values
      */
     public static <T> Maybe<ListX<T>> sequenceJust(final CollectionX<Maybe<T>> maybes) {
-        return AnyM.sequence(maybes.stream().filter(Maybe::isPresent).map(AnyM::fromMaybe).toListX(),Witness.maybe.INSTANCE)
+        return AnyM.sequence(maybes.stream().filter(Maybe::isPresent).map(AnyM::fromMaybe).toListX(), maybe.INSTANCE)
                    .to(Witness::maybe);
     }
 
@@ -574,7 +585,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * @return  Maybe with a Stream of values
      */
     public static <T> Maybe<ReactiveSeq<T>> sequence(final Stream<Maybe<T>> maybes) {
-        return AnyM.sequence(maybes.map(AnyM::fromMaybe),Witness.maybe.INSTANCE)
+        return AnyM.sequence(maybes.map(AnyM::fromMaybe), maybe.INSTANCE)
                    .map(ReactiveSeq::fromStream)
                    .to(Witness::maybe);
 
@@ -931,9 +942,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     boolean isPresent();
 
 
-    default Maybe<T> recover(Function<? super Void,? extends T> rec){
-        return recover(()->rec.apply(null));
-    }
+
     Maybe<T> recover(Supplier<? extends T> value);
 
     Maybe<T> recover(T value);
@@ -1149,7 +1158,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
         }
 
         /* (non-Javadoc)
-         * @see cyclops2.control.Maybe#recoverWith(java.util.function.Supplier)
+         * @see cyclops2.control.Maybe#recoverFlatMap(java.util.function.Supplier)
          */
         @Override
         public Maybe<T> recoverWith(Supplier<? extends Maybe<T>> fn) {
@@ -1235,6 +1244,36 @@ public interface Maybe<T> extends To<Maybe<T>>,
                 }
             });
         }
+
+
+        @Override
+        public Trampoline<Maybe<T>> toTrampoline() {
+            Trampoline<Maybe<T>> trampoline = lazy.toTrampoline();
+            return new Trampoline<Maybe<T>>() {
+                @Override
+                public Maybe<T> get() {
+                    Maybe<T> maybe = lazy.get();
+                    while (maybe instanceof Lazy) {
+                        maybe = ((Lazy<T>) maybe).lazy.get();
+                    }
+                    return maybe;
+                }
+                @Override
+                public boolean complete(){
+                    return false;
+                }
+                @Override
+                public Trampoline<Maybe<T>> bounce() {
+                    Maybe<T> maybe = lazy.get();
+                    if(maybe instanceof Lazy){
+                        return maybe.toTrampoline();
+                    }
+                    return Trampoline.done(maybe);
+
+                }
+            };
+        }
+
 
         @Override
         public Maybe<T> recover(final T value) {
@@ -1341,18 +1380,13 @@ public interface Maybe<T> extends To<Maybe<T>>,
             Eval<? extends Maybe<? extends R>> res = lazy.map(m -> m.flatMapI(mapper));
             Eval<Maybe<R>> narrowed = (Eval)res;
             return Maybe.<R>fromLazy(narrowed);
-         /**   final Maybe<R> m = Maybe.super.flatMapI(mapper);
-            return new Lazy(
-                            Eval.later(() -> m.get()));
-          **/
+
         }
 
         @Override
         public <R> Maybe<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
             return Maybe.fromLazy(lazy.map(m->m.flatMapP(mapper)));
-          /**  final Maybe<R> m = (Lazy<R>) Maybe.super.flatMapP(mapper);
-            return new Lazy(
-                            Eval.later(() -> m.get()));**/
+
         }
 
     }
@@ -1462,7 +1496,59 @@ public interface Maybe<T> extends To<Maybe<T>>,
     @UtilityClass
     public static class Instances {
 
+        public static InstanceDefinitions<maybe> definitions(){
+            return new InstanceDefinitions<maybe>() {
+                @Override
+                public <T, R> Functor<maybe> functor() {
+                    return Instances.functor();
+                }
 
+                @Override
+                public <T> Pure<maybe> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<maybe> applicative() {
+                    return Instances.applicative();
+                }
+
+                @Override
+                public <T, R> Monad<maybe> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<maybe>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<maybe>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<maybe>> monadPlus(Monoid<Higher<maybe, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Maybe<Traverse<maybe>> traverse() {
+                    return Maybe.just(Instances.traverse());
+                }
+
+                @Override
+                public <T> Maybe<Foldable<maybe>> foldable() {
+                    return Maybe.just(Instances.foldable());
+                }
+
+                @Override
+                public <T> Maybe<Comonad<maybe>> comonad() {
+                    return Maybe.just(Instances.comonad());
+                }
+            };
+        }
 
         /**
          *
@@ -1483,7 +1569,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * {@code
          *   Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
-        .apply(h->Maybes.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Maybes.functor().map((String v) ->v.length(), h))
         .convert(Maybe::narrowK);
          *
          * }
@@ -1492,7 +1578,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *
          * @return A functor for Maybes
          */
-        public static <T,R>Functor<µ> functor(){
+        public static <T,R>Functor<maybe> functor(){
             BiFunction<Maybe<T>,Function<? super T, ? extends R>,Maybe<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -1511,8 +1597,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *
          * @return A factory for Maybes
          */
-        public static <T> Pure<µ> unit(){
-            return General.<Maybe.µ,T>unit(Instances::of);
+        public static <T> Pure<maybe> unit(){
+            return General.<maybe,T>unit(Instances::of);
         }
         /**
          *
@@ -1539,8 +1625,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
         Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
-        .apply(h->Maybes.functor().map((String v) ->v.length(), h))
-        .apply(h->Maybes.applicative().ap(maybeFn, h))
+        .applyHKT(h->Maybes.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Maybes.applicative().ap(maybeFn, h))
         .convert(Maybe::narrowK);
 
         //Maybe.just("hello".length()*2))
@@ -1551,7 +1637,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *
          * @return A zipper for Maybes
          */
-        public static <T,R> Applicative<Maybe.µ> applicative(){
+        public static <T,R> Applicative<maybe> applicative(){
             BiFunction<Maybe< Function<T, R>>,Maybe<T>,Maybe<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -1571,7 +1657,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * {@code
          *    Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
-        .apply(h->Maybes.monad().flatMap((String v) ->Maybes.unit().unit(v.length()), h))
+        .applyHKT(h->Maybes.monad().flatMap((String v) ->Maybes.unit().unit(v.length()), h))
         .convert(Maybe::narrowK);
 
         //Maybe.just("hello".length())
@@ -1581,9 +1667,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *
          * @return Type class with monad functions for Maybes
          */
-        public static <T,R> Monad<µ> monad(){
+        public static <T,R> Monad<maybe> monad(){
 
-            BiFunction<Higher<Maybe.µ,T>,Function<? super T, ? extends Higher<Maybe.µ,R>>,Higher<Maybe.µ,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<maybe,T>,Function<? super T, ? extends Higher<maybe,R>>,Higher<maybe,R>> flatMap = Instances::flatMap;
             return General.monad(applicative(), flatMap);
         }
         /**
@@ -1592,7 +1678,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * {@code
          *  Maybe<String> maybe = Maybes.unit()
         .unit("hello")
-        .apply(h->Maybes.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->Maybes.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(Maybe::narrowK);
 
         //Maybe.just("hello"));
@@ -1603,7 +1689,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<µ> monadZero(){
+        public static <T,R> MonadZero<maybe> monadZero(){
 
             return General.monadZero(monad(), Maybe.none());
         }
@@ -1619,12 +1705,12 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * </pre>
          * @return Type class for combining Maybes by concatenation
          */
-        public static <T> MonadPlus<Maybe.µ> monadPlus(){
+        public static <T> MonadPlus<maybe> monadPlus(){
             Monoid<Maybe<T>> mn = Monoids.firstPresentMaybe();
             Monoid<Maybe<T>> m = Monoid.of(mn.zero(), (f,g)->
                     mn.apply(Maybe.narrow(f), Maybe.narrow(g)));
 
-            Monoid<Higher<Maybe.µ,T>> m2= (Monoid)m;
+            Monoid<Higher<maybe,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
         /**
@@ -1643,15 +1729,15 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * @param m Monoid to use for combining Maybes
          * @return Type class for combining Maybes
          */
-        public static <T> MonadPlus<µ> monadPlus(Monoid<Maybe<T>> m){
-            Monoid<Higher<Maybe.µ,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<maybe> monadPlus(Monoid<Maybe<T>> m){
+            Monoid<Higher<maybe,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
 
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<µ> traverse(){
+        public static <C2,T> Traverse<maybe> traverse(){
 
             return General.traverseByTraverse(applicative(), Instances::traverseA);
         }
@@ -1671,14 +1757,14 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<µ> foldable(){
-            BiFunction<Monoid<T>,Higher<Maybe.µ,T>,T> foldRightFn =  (m,l)-> Maybe.narrowK(l).orElse(m.zero());
-            BiFunction<Monoid<T>,Higher<Maybe.µ,T>,T> foldLeftFn = (m,l)-> Maybe.narrowK(l).orElse(m.zero());
+        public static <T> Foldable<maybe> foldable(){
+            BiFunction<Monoid<T>,Higher<maybe,T>,T> foldRightFn =  (m,l)-> Maybe.narrowK(l).orElse(m.zero());
+            BiFunction<Monoid<T>,Higher<maybe,T>,T> foldLeftFn = (m,l)-> Maybe.narrowK(l).orElse(m.zero());
             return General.foldable(foldRightFn, foldLeftFn);
         }
 
-        public static <T> Comonad<µ> comonad(){
-            Function<? super Higher<Maybe.µ, T>, ? extends T> extractFn = maybe -> maybe.convert(Maybe::narrowK).get();
+        public static <T> Comonad<maybe> comonad(){
+            Function<? super Higher<maybe, T>, ? extends T> extractFn = maybe -> maybe.convert(Maybe::narrowK).get();
             return General.comonad(functor(), unit(), extractFn);
         }
 
@@ -1690,7 +1776,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
             return lt.combine(maybe, (a,b)->a.apply(b)).toMaybe();
 
         }
-        private static <T,R> Higher<Maybe.µ,R> flatMap( Higher<Maybe.µ,T> lt, Function<? super T, ? extends  Higher<Maybe.µ,R>> fn){
+        private static <T,R> Higher<maybe,R> flatMap( Higher<maybe,T> lt, Function<? super T, ? extends  Higher<maybe,R>> fn){
             return Maybe.narrowK(lt).flatMap(fn.andThen(Maybe::narrowK));
         }
         private static <T,R> Maybe<R> map(Maybe<T> lt, Function<? super T, ? extends R> fn){
@@ -1699,8 +1785,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
         }
 
 
-        private static <C2,T,R> Higher<C2, Higher<Maybe.µ, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
-                                                                         Higher<Maybe.µ, T> ds){
+        private static <C2,T,R> Higher<C2, Higher<maybe, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
+                                                                         Higher<maybe, T> ds){
 
             Maybe<T> maybe = Maybe.narrowK(ds);
             Higher<C2, Maybe<R>> res = maybe.visit(some-> applicative.map(m->Maybe.of(m), fn.apply(some)),

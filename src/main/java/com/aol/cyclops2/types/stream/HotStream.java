@@ -58,7 +58,7 @@ public interface HotStream<T> {
 
     /**
      * Connect toNested this HotStream using the provided transfer async.Queue.
-     * The transfer Queue can be used toNested apply backpressure toNested the HotStream if it produces
+     * The transfer Queue can be used toNested applyHKT backpressure toNested the HotStream if it produces
      * data faster than the connected Stream can consume it {@see cyclops2.async.wait.WaitStrategy}
      * 
      * <pre>
@@ -87,7 +87,7 @@ public interface HotStream<T> {
 
     /**
      * Connect toNested this HotStream using the provided transfer async.Queue.
-     * The transfer Queue can be used toNested apply backpressure toNested the HotStream if it produces
+     * The transfer Queue can be used toNested applyHKT backpressure toNested the HotStream if it produces
      * data faster than the connected Stream can consume it {@see cyclops2.async.wait.WaitStrategy}
      * Convert the emitted Stream toNested the required type with the provided function
      * 

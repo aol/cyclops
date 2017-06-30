@@ -9,6 +9,8 @@ import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.maybe;
 import org.junit.Test;
 
 
@@ -29,7 +31,7 @@ public class MaybesTest {
         
         Maybe<Integer> opt = Maybe.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Maybe.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->Maybe.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(Maybe::narrowK);
         
         assertThat(opt,equalTo(Maybe.of("hello".length())));
@@ -49,8 +51,8 @@ public class MaybesTest {
         
         Maybe<Integer> opt = Maybe.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Maybe.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h->Maybe.Instances.applicative().ap(optFn, h))
+                                     .applyHKT(h->Maybe.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->Maybe.Instances.applicative().ap(optFn, h))
                                      .convert(Maybe::narrowK);
         
         assertThat(opt,equalTo(Maybe.of("hello".length()*2)));
@@ -66,7 +68,7 @@ public class MaybesTest {
         
         Maybe<Integer> opt = Maybe.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Maybe.Instances.monad().flatMap((String v) ->Maybe.Instances.unit().unit(v.length()), h))
+                                     .applyHKT(h->Maybe.Instances.monad().flatMap((String v) ->Maybe.Instances.unit().unit(v.length()), h))
                                      .convert(Maybe::narrowK);
         
         assertThat(opt,equalTo(Maybe.of("hello".length())));
@@ -76,7 +78,7 @@ public class MaybesTest {
         
         Maybe<String> opt = Maybe.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Maybe.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h->Maybe.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(Maybe::narrowK);
         
         assertThat(opt,equalTo(Maybe.of("hello")));
@@ -86,7 +88,7 @@ public class MaybesTest {
         
         Maybe<String> opt = Maybe.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Maybe.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h->Maybe.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(Maybe::narrowK);
         
         assertThat(opt,equalTo(Maybe.none()));
@@ -124,7 +126,7 @@ public class MaybesTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<Maybe.µ, Integer>> res = Maybe.Instances.traverse()
+       Maybe<Higher<maybe, Integer>> res = Maybe.Instances.traverse()
                                                           .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), Maybe.just(1))
                                                           .convert(Maybe::narrowK);
        

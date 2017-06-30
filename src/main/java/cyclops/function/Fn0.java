@@ -10,6 +10,8 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.immutable.VectorX;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.supplier;
 import cyclops.monads.function.AnyMFn0;
 import cyclops.typeclasses.free.Free;
 import cyclops.monads.WitnessType;
@@ -40,7 +42,7 @@ public interface Fn0< R> extends Function0<R>{
     }
 
     default Fn0<Future<R>> lift(Executor ex){
-       return ()-> Future.ofSupplier(()->apply(),ex);
+       return ()-> Future.of(()->apply(),ex);
     }
     default Fn0<   Try<R,Throwable>> liftTry(){
        return ()->  Try.withCatch(()->apply(),Throwable.class);
@@ -89,7 +91,7 @@ public interface Fn0< R> extends Function0<R>{
         default <R1> Fn0<R1> coflatMap(final Function<? super Supplier<? super R>, ? extends  R1> f) {
             return () -> f.apply(this);
         }
-        default Free<SupplierKind.µ, R> free(){
+        default Free<supplier, R> free(){
             return suspend(() -> Free.done(get()));
         }
         default Fn0<ReactiveSeq<R>> liftStream() {
@@ -118,15 +120,14 @@ public interface Fn0< R> extends Function0<R>{
             return () -> VectorX.of(apply());
         }
     }
-    public static <A> Free<SupplierKind.µ, A> suspend(final SupplierKind<Free<SupplierKind.µ, A>> f){
+    public static <A> Free<supplier, A> suspend(final SupplierKind<Free<supplier, A>> f){
         return Free.suspend(f);
     }
-    public static <A> A run(final Free<SupplierKind.µ, A> f){
-        return f.go(a -> ((Fn0<Free<SupplierKind.µ, A>>)a).apply(), Fn0.Instances.functor);
+    public static <A> A run(final Free<supplier, A> f){
+        return f.go(a -> ((Fn0<Free<supplier, A>>)a).apply(), Fn0.Instances.functor);
     }
-    static interface SupplierKind<R> extends Fn0<R>, Higher<SupplierKind.µ,R> {
-        static class µ {
-        }
+    static interface SupplierKind<R> extends Fn0<R>, Higher<supplier,R> {
+
 
         default <R1> R1 kindTo(Function<? super SupplierKind<R>,? extends R1> reduce){
             return reduce.apply(this);
@@ -143,7 +144,7 @@ public interface Fn0< R> extends Function0<R>{
             default <R1> SupplierKind<R1> coflatMap(final Function<? super Supplier<? super R>, ? extends  R1> f) {
                 return () -> f.apply(this);
             }
-            default Free<SupplierKind.µ, R> free(){
+            default Free<supplier, R> free(){
                 return suspend(() -> Free.done(get()));
             }
             default SupplierKind<ReactiveSeq<R>> liftStream() {
@@ -170,10 +171,10 @@ public interface Fn0< R> extends Function0<R>{
     }
     static class Instances {
 
-        public static final Functor<SupplierKind.µ> functor =
-                new Functor<SupplierKind.µ>() {
+        public static final Functor<supplier> functor =
+                new Functor<supplier>() {
                     @Override
-                    public <T, R> SupplierKind<R> map(Function<? super T, ? extends R> f, Higher<SupplierKind.µ, T> fa) {
+                    public <T, R> SupplierKind<R> map(Function<? super T, ? extends R> f, Higher<supplier, T> fa) {
                         return ((SupplierKind<T>) fa).map(f);
                     }
                 };

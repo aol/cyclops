@@ -10,6 +10,8 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.eval;
 import org.junit.Test;
 
 
@@ -30,7 +32,7 @@ public class EvalsTest {
         
         Eval<Integer> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Eval.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->Eval.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now("hello".length())));
@@ -54,8 +56,8 @@ public class EvalsTest {
         
         Eval<Integer> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Eval.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h->Eval.Instances.applicative().ap(optFn, h))
+                                     .applyHKT(h->Eval.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->Eval.Instances.applicative().ap(optFn, h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now("hello".length()*2)));
@@ -71,7 +73,7 @@ public class EvalsTest {
         
         Eval<Integer> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Eval.Instances.monad().flatMap((String v) ->Eval.Instances.unit().unit(v.length()), h))
+                                     .applyHKT(h->Eval.Instances.monad().flatMap((String v) ->Eval.Instances.unit().unit(v.length()), h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now("hello".length())));
@@ -81,7 +83,7 @@ public class EvalsTest {
         
         Eval<String> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Eval.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h->Eval.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now("hello")));
@@ -91,7 +93,7 @@ public class EvalsTest {
         
         Eval<String> opt = Eval.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->Eval.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h->Eval.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(Eval::narrowK);
         
         assertThat(opt,equalTo(Eval.now(null)));
@@ -129,7 +131,7 @@ public class EvalsTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<Eval.µ, Integer>> res = Eval.Instances.traverse()
+       Maybe<Higher<eval, Integer>> res = Eval.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), Eval.now(1))
                                                          .convert(Maybe::narrowK);
        

@@ -124,7 +124,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     }
 
     static <RT> Either<Throwable,RT> async( final Executor ex, final Supplier<RT> s){
-        return fromFuture(Future.ofSupplier(s,ex));
+        return fromFuture(Future.of(s,ex));
     }
     /**
      * Create a reactive CompletableEither
@@ -253,6 +253,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         public <RT1> Either<Throwable, RT1> flatMap(Function<? super RT, ? extends MonadicValue<? extends RT1>> mapper) {
             return either.flatMap(mapper);
         }
+
 
         @Override
         public boolean isRight() {
@@ -429,7 +430,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * </pre>
      *
      * @param either Either to consume value for
-     * @return Consumer we can apply to consume value
+     * @return Consumer we can applyHKT to consume value
      */
     static <X, LT extends X, M extends X, RT extends X>  Consumer<Consumer<? super X>> consumeAny(Either<LT, RT> either){
         return in->visitAny(in,either);
@@ -449,6 +450,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
             return x;
         };
         return visitAny(either,fn);
+    }
+    default Trampoline<RT> toTrampoline(Supplier<RT> defaultValue) {
+        return Trampoline.more(()->Trampoline.done(get()));
+    }
+    default Trampoline<RT> toTrampoline(RT defaultValue) {
+        return Trampoline.more(()->Trampoline.done(get()));
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.control.Xor#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
@@ -659,7 +666,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      */
     @Override
     default <R> Either<LT, R> flatMapP(Function<? super RT, ? extends Publisher<? extends R>> mapper) {
-        return (Either<LT, R>) Xor.super.flatMapP(mapper);
+        return this.flatMap(a -> fromPublisher(mapper.apply(a)));
     }
 
     /*
@@ -673,6 +680,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         return (Either<LT, R>) Xor.super.coflatMap(mapper);
     }
 
+    default Trampoline<Xor<LT,RT>> toTrampoline() {
+        return (Trampoline)toEitherTrampoline();
+    }
+    default Trampoline<Either<LT,RT>> toEitherTrampoline() {
+        return Trampoline.more(()->Trampoline.done(this));
+    }
     // cojoin
     /*
      * (non-Javadoc)
@@ -1247,11 +1260,40 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         private final Eval<Either<ST, PT>> lazy;
 
+        public Eval<Xor<ST, PT>> nestedEval(){
+            return (Eval)lazy;
+        }
         private static <ST, PT> Lazy<ST, PT> lazy(Eval<Either<ST, PT>> lazy) {
             return new Lazy<>(
                               lazy);
         }
+        @Override
+        public Trampoline<Either<ST,PT>> toEitherTrampoline() {
+            Trampoline<Either<ST,PT>> trampoline = lazy.toTrampoline();
+            return new Trampoline<Either<ST,PT>>() {
+                @Override
+                public Either<ST,PT> get() {
+                    Either<ST,PT> either = lazy.get();
+                    while (either instanceof Either.Lazy) {
+                        either = ((Either.Lazy<ST,PT>) either).lazy.get();
+                    }
+                    return either;
+                }
+                @Override
+                public boolean complete(){
+                    return false;
+                }
+                @Override
+                public Trampoline<Either<ST,PT>> bounce() {
+                    Either<ST,PT> either = lazy.get();
+                    if(either instanceof Either.Lazy){
+                        return either.toEitherTrampoline();
+                    }
+                    return Trampoline.done(either);
 
+                }
+            };
+        }
 
 
         public Either<ST, PT> resolve() {
@@ -1738,7 +1780,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                 return ((Lazy)obj).equals(this);
             }
             if(obj instanceof Primary){
-                return value.equals(((Primary)obj).get());
+                return value.get().equals(((Primary)obj).get());
             }
             if (getClass() != obj.getClass())
                 return false;

@@ -49,7 +49,7 @@ public interface Fn4<T1, T2, T3, T4, R> extends Fn1<T1,Fn1<T2,Fn1<T3,Fn1<T4,R>>>
     }
     default Fn4<T1, T2, T3, T4, Future<R>> lift4(Executor ex){
        
-       return (s1,s2,s3,s4)-> Future.ofSupplier(()->apply(s1,s2,s3,s4),ex);
+       return (s1,s2,s3,s4)-> Future.of(()->apply(s1,s2,s3,s4),ex);
     }
     default Fn4<T1, T2, T3, T4, Try<R,Throwable>> liftTry4(){
        return (s1,s2,s3,s4)->  Try.withCatch(()->apply(s1,s2,s3,s4),Throwable.class);

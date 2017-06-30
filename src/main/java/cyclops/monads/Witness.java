@@ -131,7 +131,7 @@ public interface Witness {
     public static <ST,T> Ior<ST,T> ior(AnyM<ior,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <X extends Throwable,T> Try<T,X> Try(AnyM<tryType,? extends T> anyM){
+    public static <X extends Throwable,T> Try<T,X> Try(AnyM2<tryType,X,? extends T> anyM){
         return anyM.unwrap();
     }
 
@@ -418,4 +418,50 @@ public interface Witness {
         }
         
     }
+
+    public static enum reader implements WitnessType<reader>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<reader> adapter() {
+            return null;
+        }
+
     }
+    public static enum supplier implements WitnessType<supplier>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<supplier> adapter() {
+            return null;
+        }
+
+    }
+    public static enum yoneda implements WitnessType<yoneda>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<yoneda> adapter() {
+            return null;
+        }
+
+    }
+    public static enum coyoneda implements WitnessType<coyoneda>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<coyoneda> adapter() {
+            return null;
+        }
+
+    }
+    public static enum kleisli implements WitnessType<kleisli>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<kleisli> adapter() {
+            return null;
+        }
+
+    }
+}

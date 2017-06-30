@@ -41,7 +41,7 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
     }
     
     default <R> FutureT<W,R> futureT(Function<? super Iterable<T>,? extends R> fn,Executor exec) {
-        final AnyM<W,Future<R>> anyM = nestedCollectables().map(s -> Future.ofSupplier(()->fn.apply(s),exec));
+        final AnyM<W,Future<R>> anyM = nestedCollectables().map(s -> Future.of(()->fn.apply(s),exec));
         return FutureT.of(anyM);
     }
 

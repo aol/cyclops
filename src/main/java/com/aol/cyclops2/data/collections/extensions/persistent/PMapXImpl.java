@@ -378,4 +378,9 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     public <X extends Throwable> void forEach(Consumer<? super Tuple2<K, V>> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
 
     }
+
+    @Override
+    public String toString() {
+        return "PersistentMapX[" + map.toString() + "]";
+    }
 }

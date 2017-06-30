@@ -463,22 +463,6 @@ public interface Monoids {
     }
 
     /**
-     * Combine two BigIntegers by adding one toNested a (can be used toNested count BigIntegers in a Collection or Stream)
-     */
-    static Monoid<BigInteger> bigIntCount = Monoid.of(BigInteger.ZERO, Semigroups.bigIntCount);
-    /**
-     * Combine two Integers by adding one toNested a (can be used toNested count Integers in a Collection or Stream)
-     */
-    static Monoid<Integer> intCount = Monoid.of(0, Semigroups.intCount);
-    /**
-     * Combine two Longs by adding one toNested a (can be used toNested count Integers in a Collection or Stream)
-     */
-    static Monoid<Long> longCount =  Monoid.of(0l, Semigroups.longCount);
-    /**
-     * Combine two Double by adding one toNested a (can be used toNested count Double in a Collection or Stream)
-     */
-    static Monoid<Double> doubleCount =  Monoid.of(0d, Semigroups.doubleCount);
-    /**
      * Combine two Integers by summing them
      */
     static Monoid<Integer> intSum =  Monoid.of(0, Semigroups.intSum);

@@ -39,9 +39,9 @@ import java.util.stream.Stream;
  * @param <LT2> Left2 type
  * @param <RT> Right type (operations are performed on this type if present)
  */
-public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
-        BiTransformable<LT2, RT>,
-        To<Either3<LT1, LT2, RT>>,
+public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
+                                                BiTransformable<LT2, RT>,
+                                                To<Either3<LT1, LT2, RT>>,
                                                 Supplier<RT>{
     
     static <LT1,LT2,RT> Either3<LT1,LT2,RT> fromMonadicValue(MonadicValue<RT> mv3){
@@ -275,10 +275,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
      * @return Either constructed from the supplied Publisher
      */
     public static <T1,T> Either3<Throwable, T1, T> fromPublisher(final Publisher<T> pub) {
-        final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
-        pub.subscribe(sub);
-        Either3<Throwable, T1, Xor<Throwable,T>> xor = Either3.rightEval(Eval.later(()->sub.toXor()));
-        return  xor.flatMap(x->x.visit(Either3::left1,Either3::right));
+        return fromFuture(Future.fromPublisher(pub));
     }
     /**
      * Construct a Right Either3 from the supplied Iterable
@@ -314,7 +311,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
      * </pre>
      *
      * @param either Either to consume value for
-     * @return Consumer we can apply to consume value
+     * @return Consumer we can applyHKT to consume value
      */
     static <X, LT extends X, M extends X, RT extends X>  Consumer<Consumer<? super X>> consumeAny(Either3<LT, M, RT> either){
         return in->visitAny(in,either);
@@ -414,7 +411,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
      * Filter this Either3 resulting in a Maybe#none if it is not a Right instance or if the predicate does not
      * hold. Otherwise results in a Maybe containing the current value
      *
-     * @param test Predicate to apply to filter this Either3
+     * @param test Predicate to applyHKT to filter this Either3
      * @return Maybe containing the current value if this is a Right instance and the predicate holds, otherwise Maybe#none
      */
     Maybe<RT> filter(Predicate<? super RT> test);
@@ -438,14 +435,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
         });
     }
     default < RT1> Either3<LT1, LT2, RT1>  flatMapP(Function<? super RT, ? extends Publisher<? extends RT1>> mapper){
-        return this.flatMap(a -> {
-            final Publisher<? extends RT1> publisher = mapper.apply(a);
-            final ValueSubscriber<RT1> sub = ValueSubscriber.subscriber();
-
-            publisher.subscribe(sub);
-            return unit(sub.get());
-
-        });
+        return this.flatMap(a -> fromPublisher(mapper.apply(a)));
     }
     /**
      * @return Swap the middle and the right types
@@ -487,6 +477,10 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
                            r->Xor.primary(r));
      }
 
+    @Override
+    default int arity() {
+        return 3;
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Filters#ofType(java.lang.Class)
@@ -502,6 +496,10 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
     @Override
     default Maybe<RT> filterNot(Predicate<? super RT> predicate) {
         return (Maybe<RT>)MonadicValue.super.filterNot(predicate);
+    }
+
+    default Trampoline<Either3<LT1,LT2,RT>> toTrampoline() {
+        return Trampoline.more(()->Trampoline.done(this));
     }
 
     /* (non-Javadoc)
@@ -876,6 +874,33 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
 
 
         }
+        @Override
+        public Trampoline<Either3<ST,M,PT>> toTrampoline() {
+            Trampoline<Either3<ST,M,PT>> trampoline = lazy.toTrampoline();
+            return new Trampoline<Either3<ST,M,PT>>() {
+                @Override
+                public Either3<ST,M,PT> get() {
+                    Either3<ST,M,PT> either = lazy.get();
+                    while (either instanceof Either3.Lazy) {
+                        either = ((Either3.Lazy<ST,M,PT>) either).lazy.get();
+                    }
+                    return either;
+                }
+                @Override
+                public boolean complete(){
+                    return false;
+                }
+                @Override
+                public Trampoline<Either3<ST,M,PT>> bounce() {
+                    Either3<ST,M,PT> either = lazy.get();
+                    if(either instanceof Either3.Lazy){
+                        return either.toTrampoline();
+                    }
+                    return Trampoline.done(either);
+
+                }
+            };
+        }
 
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
@@ -1199,6 +1224,10 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
             return this;
 
         }
+        @Override
+        public void subscribe(final Subscriber<? super PT> s) {
+            s.onComplete();
+        }
 
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
@@ -1282,10 +1311,6 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
             return absent.get();
         }
 
-        @Override
-        public void subscribe(final Subscriber<? super PT> s) {
-
-        }
 
         @Override
         public boolean test(final PT t) {
@@ -1451,7 +1476,7 @@ public interface Either3<LT1, LT2, RT> extends MonadicValue<RT>,
 
         @Override
         public void subscribe(final Subscriber<? super PT> s) {
-
+                s.onComplete();
         }
 
         @Override

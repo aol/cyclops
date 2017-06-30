@@ -198,7 +198,7 @@ public class CompletableEvalTest {
 
     @Test
     public void testConvertToAsync() {
-        Future<Stream<Integer>> async = Future.ofSupplier(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
+        Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
         
         assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
@@ -263,7 +263,7 @@ public class CompletableEvalTest {
 
 	@Test
 	public void testToTryClassOfXArray() {
-		assertTrue(none.toTry(Throwable.class).isSuccess());
+		assertFalse(none.toTry(Throwable.class).isSuccess());
 	}
 
 	@Test

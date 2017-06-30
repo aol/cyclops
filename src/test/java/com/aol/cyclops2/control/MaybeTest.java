@@ -344,11 +344,7 @@ public class MaybeTest implements Printable {
         assertThat(just.recover(() -> 20), equalTo(Maybe.of(10)));
         assertThat(none.recover(() -> 10), equalTo(Maybe.of(10)));
     }
-    @Test
-    public void testRecoverFn() {
-        assertThat(just.recover(__ -> 20), equalTo(Maybe.of(10)));
-        assertThat(none.recover(__ -> 10), equalTo(Maybe.of(10)));
-    }
+
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
@@ -396,7 +392,7 @@ public class MaybeTest implements Printable {
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future
-                .ofSupplier(() -> just.visit(f -> Stream.of((int) f), () -> Stream.of()));
+                .of(() -> just.visit(f -> Stream.of((int) f), () -> Stream.of()));
 
         assertThat(async.get().collect(Collectors.toList()), equalTo(ListX.of(10)));
     }

@@ -65,7 +65,8 @@ public class Eval2Test {
     }
     @Test
     public void combine(){
-     
+
+	    just.combineEager(Monoid.of(0,(a,b)->a+1),Eval.now(10)).printOut();
         
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
         assertThat(just.combineEager(add,Eval.now(10)),equalTo(Eval.now(20)));
@@ -206,7 +207,7 @@ public class Eval2Test {
 
     @Test
     public void testConvertToAsync() {
-        Future<Stream<Integer>> async = Future.ofSupplier(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
+        Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
         
         assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
@@ -271,7 +272,8 @@ public class Eval2Test {
 
 	@Test
 	public void testToTryClassOfXArray() {
-		assertTrue(none.toTry(Throwable.class).isSuccess());
+		System.out.println(none.toTry(Throwable.class));
+		assertFalse(none.toTry(Throwable.class).isSuccess());
 	}
 
 	@Test

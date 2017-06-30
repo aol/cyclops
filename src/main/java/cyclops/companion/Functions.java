@@ -68,7 +68,7 @@ public class Functions {
      *      ListX<Integer> myList = ListX.of(1,2,3);
             Fn1<? super String, ? extends ListX<String>> arrow = Functions.arrowUnit(myList);
 
-            ListX<String> list = arrow.apply("hello world");
+            ListX<String> list = arrow.applyHKT("hello world");
      *
      *     }
      * </pre>

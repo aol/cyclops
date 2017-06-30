@@ -9,6 +9,8 @@ import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.persistentQueueX;
 import org.junit.Test;
 
 
@@ -29,7 +31,7 @@ public class PQueuesTest {
         
         PersistentQueueX<Integer> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> PersistentQueueX.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> PersistentQueueX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(PersistentQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello".length()).toArray()));
@@ -49,8 +51,8 @@ public class PQueuesTest {
         
         PersistentQueueX<Integer> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> PersistentQueueX.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h-> PersistentQueueX.Instances.zippingApplicative().ap(listFn, h))
+                                     .applyHKT(h-> PersistentQueueX.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> PersistentQueueX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(PersistentQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello".length()*2).toArray()));
@@ -66,7 +68,7 @@ public class PQueuesTest {
         
         PersistentQueueX<Integer> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> PersistentQueueX.Instances.monad().flatMap((String v) -> PersistentQueueX.Instances.unit().unit(v.length()), h))
+                                     .applyHKT(h-> PersistentQueueX.Instances.monad().flatMap((String v) -> PersistentQueueX.Instances.unit().unit(v.length()), h))
                                      .convert(PersistentQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello".length()).toArray()));
@@ -76,7 +78,7 @@ public class PQueuesTest {
         
         PersistentQueueX<String> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> PersistentQueueX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h-> PersistentQueueX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(PersistentQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PersistentQueueX.of("hello").toArray()));
@@ -86,7 +88,7 @@ public class PQueuesTest {
         
         PersistentQueueX<String> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h-> PersistentQueueX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h-> PersistentQueueX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(PersistentQueueX::narrowK);
         
         assertThat(list.toArray(),equalTo(PersistentQueueX.empty().toArray()));
@@ -125,11 +127,11 @@ public class PQueuesTest {
     
     @Test
     public void traverse(){
-       Maybe<Higher<PersistentQueueX.µ, Integer>> res = PersistentQueueX.Instances.traverse()
+       Maybe<Higher<persistentQueueX, Integer>> res = PersistentQueueX.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), PersistentQueueX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
-       
-       
+
+
        assertThat(res.map(q-> PersistentQueueX.narrowK(q)
                                        .toArray()).get(),equalTo(Maybe.just(PersistentQueueX.of(2,4,6).toArray()).get()));
     }

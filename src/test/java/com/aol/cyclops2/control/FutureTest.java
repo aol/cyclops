@@ -100,7 +100,7 @@ public class FutureTest {
     @Test
     public void testBreakout(){
         
-        Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() > 1, Future.ofSupplier(()->1), Future.ofSupplier(()->1), Future.ofSupplier(()->1));
+        Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() > 1, Future.of(()->1), Future.of(()->1), Future.of(()->1));
                
 
         assertThat(strings.get().size(), is(greaterThan(1)));
@@ -108,7 +108,7 @@ public class FutureTest {
     @Test
     public void testBreakoutAll(){
         
-        Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() > 2, Future.ofSupplier(()->1), Future.ofSupplier(()->1), Future.ofSupplier(()->1));
+        Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() > 2, Future.of(()->1), Future.of(()->1), Future.of(()->1));
                
 
         assertThat(strings.get().size(), is(equalTo(3)));
@@ -117,7 +117,7 @@ public class FutureTest {
     public void testFirstSuccess(){
         
         Future<Integer> ft = Future.future();
-        Future<Integer> result = Future.firstSuccess(Future.ofSupplier(()->1),ft);
+        Future<Integer> result = Future.firstSuccess(Future.of(()->1),ft);
                
         ft.complete(10);
         assertThat(result.get(), is(equalTo(1)));
@@ -125,7 +125,7 @@ public class FutureTest {
     @Test
     public void testBreakoutOne(){
         
-        Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.ofSupplier(()->1), Future.future(), Future.future());
+        Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.of(()->1), Future.future(), Future.future());
                
 
         assertThat(strings.get().size(), is(equalTo(1)));
@@ -147,8 +147,8 @@ public class FutureTest {
     @Test
     public void apNonBlocking(){
         
-      val f =  Future.ofSupplier(()->{ sleep(1000l); return "hello";},ex)
-                      .combine(Future.ofSupplier(()->" world",ex),String::concat);
+      val f =  Future.of(()->{ sleep(1000l); return "hello";},ex)
+                      .combine(Future.of(()->" world",ex),String::concat);
       
       
       System.out.println("hello");
@@ -256,7 +256,7 @@ public class FutureTest {
     }
     @Test
     public void testAccumulateSuccessSemigroup() {
-        Future<Integer> maybes = Future.accumulateSuccess(Monoids.intCount,ListX.of(just,none, Future.ofResult(1)));
+        Future<Integer> maybes = Future.accumulateSuccess(Monoid.of(0,(a,b)->a+1),ListX.of(just,none, Future.ofResult(1)));
         
         assertThat(maybes.get(),equalTo(2));
     }
@@ -268,7 +268,7 @@ public class FutureTest {
     }
     @Test @Ignore
     public void testAccumulateJNonBlocking() {
-        Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofSupplier(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)), Future.ofResult(1)),Reducers.toPersistentSetX());
+        Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.of(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)), Future.ofResult(1)),Reducers.toPersistentSetX());
         System.out.println("not blocked");
        
     }
@@ -352,7 +352,7 @@ public class FutureTest {
 
     @Test
     public void testConvertToAsync() {
-        Future<Stream<Integer>> async = Future.ofSupplier(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
+        Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
         
         assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
     }

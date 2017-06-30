@@ -109,7 +109,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * @param monad3
      *            Nested Monad toNested iterate over
      * @param filterFunction
-     *            Filter toNested apply over elements before passing non-filtered
+     *            Filter toNested applyHKT over elements before passing non-filtered
      *            values toNested the yielding function
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
@@ -185,7 +185,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * }
      * </pre>
      * @param monad Nested Monad toNested iterate over
-     * @param filterFunction Filter toNested apply over elements before passing non-filtered values toNested the yielding function
+     * @param filterFunction Filter toNested applyHKT over elements before passing non-filtered values toNested the yielding function
      * @param yieldingFunction Function with pointers toNested the current element from both monads that generates the new elements
      * @return
      */
@@ -220,7 +220,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * </pre> 
      * @param monad1 Nested monad toNested flatMap over
      * @param monad2 Nested monad toNested flatMap over
-     * @param filterFunction Filter toNested apply over elements before passing non-filtered values toNested the yielding function
+     * @param filterFunction Filter toNested applyHKT over elements before passing non-filtered values toNested the yielding function
      * @param yieldingFunction Function with pointers toNested the current element from both monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */

@@ -46,7 +46,7 @@ public interface Fn5<T1, T2, T3, T4, T5, R> extends Fn1<T1, Fn1<T2, Fn1<T3,Fn1<T
 
     default Fn5<T1, T2, T3, T4, T5, Future<R>> lift5(Executor ex) {
 
-        return (s1, s2, s3, s4, s5) -> Future.ofSupplier(() -> apply(s1, s2, s3, s4, s5), ex);
+        return (s1, s2, s3, s4, s5) -> Future.of(() -> apply(s1, s2, s3, s4, s5), ex);
     }
 
     default Fn5<T1, T2, T3, T4, T5, Try<R, Throwable>> liftTry5() {

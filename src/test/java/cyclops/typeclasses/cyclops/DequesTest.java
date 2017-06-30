@@ -10,6 +10,8 @@ import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.deque;
 import org.junit.Test;
 
 
@@ -30,7 +32,7 @@ public class DequesTest {
         
         DequeX<Integer> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->DequeX.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->DequeX.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of("hello".length()).toArray()));
@@ -50,8 +52,8 @@ public class DequesTest {
         
         DequeX<Integer> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->DequeX.Instances.functor().map((String v) ->v.length(), h))
-                                     .apply(h->DequeX.Instances.zippingApplicative().ap(listFn, h))
+                                     .applyHKT(h->DequeX.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h->DequeX.Instances.zippingApplicative().ap(listFn, h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of("hello".length()*2).toArray()));
@@ -67,7 +69,7 @@ public class DequesTest {
         
         DequeX<Integer> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->DequeX.Instances.monad().flatMap((String v) ->DequeX.Instances.unit().unit(v.length()), h))
+                                     .applyHKT(h->DequeX.Instances.monad().flatMap((String v) ->DequeX.Instances.unit().unit(v.length()), h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of("hello".length()).toArray()));
@@ -77,7 +79,7 @@ public class DequesTest {
         
         DequeX<String> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->DequeX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h->DequeX.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of("hello").toArray()));
@@ -87,7 +89,7 @@ public class DequesTest {
         
         DequeX<String> list = DequeX.Instances.unit()
                                      .unit("hello")
-                                     .apply(h->DequeX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h->DequeX.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(DequeX::narrowK);
         
         assertThat(list.toArray(),equalTo(DequeX.of().toArray()));
@@ -125,7 +127,7 @@ public class DequesTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<DequeX.µ, Integer>> res = DequeX.Instances.traverse()
+       Maybe<Higher<deque, Integer>> res = DequeX.Instances.traverse()
                                                            .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), DequeX.of(1,2,3))
                                                             .convert(Maybe::narrowK);
        

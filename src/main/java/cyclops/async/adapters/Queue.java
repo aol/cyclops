@@ -337,7 +337,7 @@ public class Queue<T> implements Adapter<T> {
      * @return Infinite (until Queue is closed) Stream of CompletableFutures
      *         that can be used as input into a SimpleReact concurrent dataflow
      * 
-     *         This Stream itself is Sequential, SimpleReact will apply
+     *         This Stream itself is Sequential, SimpleReact will applyHKT
      *         concurrency / parralellism via the constituent CompletableFutures
      * 
      */

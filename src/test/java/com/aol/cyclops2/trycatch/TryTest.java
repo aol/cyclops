@@ -32,12 +32,18 @@ public class TryTest {
 	}
 	@Test
 	public void ongoing(){
+        Try<Object, Throwable> t = Try.success(2, RuntimeException.class).map(a -> {
+            throw new RuntimeException();});
+            System.out.println(t.toString());
 
-	    assertTrue(Try.of(2, RuntimeException.class)
-	       .map(i->{throw new RuntimeException();}).isFailure());
-	       
-	}
-	public int throwsEx() throws Exception{
+            assertTrue(Try.success(2, RuntimeException.class)
+                    .map(i -> {
+                        throw new RuntimeException();
+                    }).isFailure());
+
+        };
+
+    public int throwsEx() throws Exception{
 	    return 0;
     }
     @Test
