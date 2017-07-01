@@ -13,4 +13,8 @@ public interface Traverse<CRE> extends Applicative<CRE>{
    
     <C2,T> Higher<C2, Higher<CRE, T>> sequenceA(Applicative<C2> applicative,
                                                 Higher<CRE, Higher<C2, T>> ds);
+   default  <C2, T, R> Higher<C2, Higher<CRE, R>>flatTraverse(Applicative<C2> applicative, Monad<CRE> monad, Higher<CRE, T> fa,
+                                                              Function<? super T,? extends Higher<C2, Higher<CRE, R>>>f) {
+       return applicative.mapRev(traverseA(applicative,f,fa), it->monad.flatten(it));
+    }
 }

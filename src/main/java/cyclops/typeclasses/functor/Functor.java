@@ -35,7 +35,8 @@ public interface Functor<CRE> {
     default <T,R> Higher<CRE,R> mapRev(Higher<CRE, T> ds, Function<? super T, ? extends R> fn){
         return map(fn,ds);
     }
-    
+
+
     default <T> Higher<CRE,T> peek(Consumer<? super T> fn, Higher<CRE, T> ds){
         return map(t->{
             fn.accept(t);

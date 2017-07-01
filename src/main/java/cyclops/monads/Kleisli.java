@@ -32,7 +32,12 @@ public interface Kleisli<W extends WitnessType<W>,T,R> extends Fn1<T,AnyM<W,R>>,
     default <R1> Kleisli<W,T,R1> flatMapA(Function<? super R, ? extends AnyM<W,? extends R1>> mapper){
         return kleisli(andThen(am->am.flatMapA(mapper)));
     }
-
+    default  <R2> Kleisli<W, T, Tuple2<R,R2>> zip(Kleisli<W, T, R2> o){
+        return zip(o,Tuple::tuple);
+    }
+    default  <R2,B> Kleisli<W, T, B> zip(Kleisli<W, T, R2> o,BiFunction<? super R,? super R2,? extends B> fn){
+        return flatMap(a -> o.map(b -> fn.apply(a,b)));
+    }
     /**
      *
      * Compose functions that return monads.

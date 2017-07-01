@@ -2,13 +2,8 @@ package cyclops.typeclasses;
 
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.mutable.ListX;
-import cyclops.companion.Optionals;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness.list;
-import cyclops.monads.Witness.optional;
-import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Compose;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -104,21 +99,34 @@ public class Nested<W1,W2,T> {
         return new Nested<>(res,composedFunctor,def1,def2);
     }
 
-
-    public Nested<W2, W1, T> sequence(){
-        Higher<W2, Higher<W1, T>> res = def1.traverse().get().sequenceA(def2.applicative(), nested);
-        return of(res,def2,def1);
+    public Maybe<Traverse> traverse(){
+        return def1.traverse().visit(s-> Maybe.just(new Traverse()),Maybe::none);
     }
-    public  <R> Nested<W2, W1, R> traverse(Function<? super T,? extends R> fn){
-       return sequence().map(fn);
+    public Maybe<Folds> folds(){
+        return def1.foldable().visit(s-> Maybe.just(new Folds()),Maybe::none);
     }
 
-    public  Higher<W1,T> foldRight(Monoid<T> monoid){
-        return def1.functor().map(a -> def2.foldable().get().foldRight(monoid, a), nested);
+    public class Folds{
+        public  Higher<W1,T> foldRight(Monoid<T> monoid){
+            return def1.functor().map(a -> def2.foldable().get().foldRight(monoid, a), nested);
+        }
+        public  Higher<W1,T> foldLeft(Monoid<T> monoid){
+            return def1.functor().map(a -> def2.foldable().get().foldLeft(monoid, a), nested);
+        }
     }
-    public  Higher<W1,T> foldLeft(Monoid<T> monoid){
-        return def1.functor().map(a -> def2.foldable().get().foldLeft(monoid, a), nested);
+    public class Traverse {
+
+        public Nested<W2, W1, T> sequence(){
+            Higher<W2, Higher<W1, T>> res = def1.traverse().get().sequenceA(def2.applicative(), nested);
+            return of(res,def2,def1);
+        }
+        public  <R> Nested<W2, W1, R> traverse(Function<? super T,? extends R> fn){
+            return sequence().map(fn);
+        }
+
+
     }
+
     public String toString(){
         return "Nested["+nested.toString()+"]";
     }

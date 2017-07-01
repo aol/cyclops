@@ -6,6 +6,7 @@ import java.util.function.Function;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.*;
+import cyclops.monads.Kleisli;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.reader;
 import cyclops.typeclasses.Active;
@@ -15,6 +16,8 @@ import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 /**
  * An interface that represents the Reader monad
@@ -37,6 +40,12 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
         return Active.of(this, Instances.definitions());
     }
 
+    default  <R2> Reader<T, Tuple2<R,R2>> zip(Reader<T, R2> o){
+        return zip(o, Tuple::tuple);
+    }
+    default  <R2,B> Reader<T, B> zip(Reader<T, R2> o,BiFunction<? super R,? super R2,? extends B> fn){
+        return flatMap(a -> o.map(b -> fn.apply(a,b)));
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.functor.Transformable#map(java.util.function.Function)
      */
@@ -178,6 +187,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
                 public <T> Maybe<MonadPlus<Higher<reader, IN>>> monadPlus(Monoid<Higher<Higher<reader, IN>, T>> m) {
                     return Maybe.none();
                 }
+
 
                 @Override
                 public <C2, T> Maybe<Traverse<Higher<reader, IN>>> traverse() {
