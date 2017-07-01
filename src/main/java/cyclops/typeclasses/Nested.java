@@ -100,7 +100,12 @@ public class Nested<W1,W2,T> {
         Higher<W1, Higher<W2, R>> res = composedFunctor.map1(a->def2.monad().flatMap(fn, a),nested);
         return new Nested<>(res,composedFunctor,def1,def2);
     }
-
+    public Traverse traverseUnsafe(){
+        return def1.traverse().visit(s-> new Traverse(),()->null);
+    }
+    public Folds foldsUnsafe(){
+        return def1.foldable().visit(s-> new Folds(),()->null);
+    }
     public Maybe<Traverse> traverse(){
         return def1.traverse().visit(s-> Maybe.just(new Traverse()),Maybe::none);
     }

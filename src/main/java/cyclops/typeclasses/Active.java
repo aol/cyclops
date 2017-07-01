@@ -76,7 +76,12 @@ public class Active<W,T> {
     public <R> Active<W, R> ap(Higher<W, ? extends Function<T, R>> fn) {
         return of(def1.applicative().ap(fn, single), def1);
     }
-
+    public Nested.Traverse traverseUnsafe(){
+        return def1.traverse().visit(s-> new Nested.Traverse(),()->null);
+    }
+    public Nested.Folds foldsUnsafe(){
+        return def1.foldable().visit(s-> new Nested.Folds(),()->null);
+    }
     public Maybe<Folds> folds(){
         return def1.foldable().visit(e->Maybe.just(new Folds()),Maybe::none);
     }
