@@ -4,6 +4,8 @@ package cyclops.typeclasses;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -78,27 +80,38 @@ public class Active<W,T> {
     public Maybe<Folds> folds(){
         return def1.foldable().visit(e->Maybe.just(new Folds()),Maybe::none);
     }
+    public Maybe<Traverse> traverse(){
+        return def1.traverse().visit(e->Maybe.just(new Traverse()),Maybe::none);
+    }
     public class Folds {
 
 
-    public T foldRight(Monoid<T> monoid) {
-        return def1.foldable().get().foldRight(monoid, single);
+        public T foldRight(Monoid<T> monoid) {
+            return def1.foldable().get().foldRight(monoid, single);
+        }
+
+
+        public T foldRight(T identity, BinaryOperator<T> semigroup) {
+            return def1.foldable().get().foldRight(Monoid.fromBiFunction(identity, semigroup), single);
+        }
+
+        public T foldLeft(Monoid<T> monoid) {
+            return def1.foldable().get().foldLeft(monoid, single);
+        }
+
+
+        public T foldLeft(T identity, BinaryOperator<T> semigroup) {
+            return def1.foldable().get().foldLeft(identity, semigroup, single);
+        }
+
     }
 
+    public class Traverse{
+        public  <W2, R> Higher<W2, Higher<W, R>> flatTraverse(Applicative<W2> applicative,
+                                                               Function<? super T,? extends Higher<W2, Higher<W, R>>>f) {
+            return def1.traverse().get().flatTraverse(applicative,def1.monad(),single,f);
 
-    public T foldRight(T identity, BinaryOperator<T> semigroup) {
-        return def1.foldable().get().foldRight(Monoid.fromBiFunction(identity, semigroup), single);
-    }
-
-    public T foldLeft(Monoid<T> monoid) {
-        return def1.foldable().get().foldLeft(monoid, single);
-    }
-
-
-    public T foldLeft(T identity, BinaryOperator<T> semigroup) {
-        return def1.foldable().get().foldLeft(identity, semigroup, single);
-    }
-
+        }
     }
     public String toString(){
         return "Active["+single.toString()+"]";

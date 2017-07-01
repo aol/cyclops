@@ -5,6 +5,8 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.functor.Compose;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -123,7 +125,6 @@ public class Nested<W1,W2,T> {
         public  <R> Nested<W2, W1, R> traverse(Function<? super T,? extends R> fn){
             return sequence().map(fn);
         }
-
 
     }
 

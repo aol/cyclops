@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
 
+import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.monad.Monad;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -65,5 +66,6 @@ public class Compose<CRE,C2>{
     public <T,R> Higher<CRE,R> map1(Function<? super T,? extends R> fn, Higher<CRE,T> ds){
         return f.map(fn ,ds);
     }
+
 
 }
