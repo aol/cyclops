@@ -3,6 +3,7 @@ package cyclops.typeclasses.free;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.hkt.Higher3;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.coyoneda;
 import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
@@ -34,7 +35,7 @@ public class Coyoneda<F, T, R> implements Higher3<coyoneda, F, T, R> {
     public static <F,T,R> Coyoneda<F,T,R> narrowK3(Higher3<coyoneda, F, T, R> higher){
         return (Coyoneda<F,T,R>)higher;
     }
-    public static <F,T,R> Coyoneda<F,T,R> narrowK(Higher<Higher2<coyoneda, F, T>, R>  higher){
+    public static <F,T,R> Coyoneda<F,T,R> narrowK(Higher<Higher<Higher<coyoneda, F>,T>, R>  higher){
         return (Coyoneda<F,T,R>)higher;
     }
 
@@ -48,12 +49,13 @@ public class Coyoneda<F, T, R> implements Higher3<coyoneda, F, T, R> {
     
     public static class Instances{
         
-        public <F, T1, R> Functor<Higher2<coyoneda, F, T1>> functor(){
-            return new Functor<Higher2<coyoneda, F, T1>>() {
+        public <F, T1, R> Functor<Higher<Higher<coyoneda, F>, T1>> functor(){
+            return new Functor<Higher<Higher<coyoneda, F>, T1>>() {
                 @Override
-                public <T, R> Higher<Higher2<coyoneda, F, T1>, R> map(Function<? super T, ? extends R> fn, Higher<Higher2<coyoneda, F, T1>, T> ds) {
+                public <T, R> Higher<Higher<Higher<coyoneda, F>, T1>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<coyoneda, F>, T1>, T> ds) {
                     return ds.convert(Coyoneda::narrowK).map(fn);
                 }
+
             };
         }
     }

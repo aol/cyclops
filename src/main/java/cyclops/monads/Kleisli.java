@@ -58,13 +58,13 @@ public interface Kleisli<W extends WitnessType<W>,T,R> extends Fn1<T,AnyM<W,R>>,
      * <pre>
      *  {@code
      *  import cyclops.monads.Witness.reactiveSeq;
-        import static cyclops.monads.Kleisli.kleisli;
+        import static cyclops.monads.Kleisli.kleisliK;
 
 
-        Kleisli<reactiveSeq, Integer, Integer> k1 = kleisli(t -> ReactiveSeq.iterate(0,i->i<t, i->i+1)
+        Kleisli<reactiveSeq, Integer, Integer> k1 = kleisliK(t -> ReactiveSeq.iterate(0,i->i<t, i->i+1)
                                                                             .anyM(), reactiveSeq.INSTANCE);
 
-        k1.flatMap(i-> kleisli(t-> ReactiveSeq.of(t+i)
+        k1.flatMap(i-> kleisliK(t-> ReactiveSeq.of(t+i)
                                               .anyM(), reactiveSeq.INSTANCE))
           .applyHKT(10)
           .forEach(System.out::println);
