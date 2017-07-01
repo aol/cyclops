@@ -69,6 +69,17 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
  }
 
  </pre>
+
+ Results in interleaved execution visible from the console
+ <pre>
+...
+ Loop-B 21414 : 216908016
+ Loop-A 21413 : 216929430
+ Loop-B 21413 : 216929430
+ Loop-A 21412 : 216950843
+...
+
+ </pre>
  * 
  * @author johnmcclean
  *
