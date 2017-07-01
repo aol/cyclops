@@ -1394,7 +1394,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          *   DequeX<Integer> list = Deques.unit()
         .unit("hello")
         .applyHKT(h->Deques.functor().map((String v) ->v.length(), h))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
          *
          * }
          * </pre>
@@ -1411,7 +1411,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * {@code
          * DequeX<String> list = Deques.unit()
         .unit("hello")
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
 
         //DequeX.of("hello"))
          *
@@ -1445,13 +1445,13 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * {@code
          * DequeX<Function<Integer,Integer>> listFn =Deques.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(DequeX::narrowK);
+         *                                                  .convert(DequeX::narrowK3);
 
         DequeX<Integer> list = Deques.unit()
         .unit("hello")
         .applyHKT(h->Deques.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Deques.zippingApplicative().ap(listFn, h))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
 
         //DequeX.of("hello".length()*2))
          *
@@ -1472,7 +1472,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * import static com.aol.cyclops.hkt.jdk.DequeX.widen;
          * DequeX<Integer> list  = Deques.monad()
         .flatMap(i->widen(DequeX.range(0,i)), widen(DequeX.of(1,2,3)))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
          * }
          * </pre>
          *
@@ -1482,7 +1482,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          *    DequeX<Integer> list = Deques.unit()
         .unit("hello")
         .applyHKT(h->Deques.monad().flatMap((String v) ->Deques.unit().unit(v.length()), h))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
 
         //DequeX.of("hello".length())
          *
@@ -1503,7 +1503,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          *  DequeX<String> list = Deques.unit()
         .unit("hello")
         .applyHKT(h->Deques.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
 
         //DequeX.of("hello"));
          *
@@ -1522,7 +1522,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * {@code
          *  DequeX<Integer> list = Deques.<Integer>monadPlus()
         .plus(DequeX.of()), DequeX.of(10)))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
         //DequeX.of(10))
          *
          * }
@@ -1541,7 +1541,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          *  Monoid<DequeX<Integer>> m = Monoid.of(DequeX.of()), (a,b)->a.isEmpty() ? b : a);
         DequeX<Integer> list = Deques.<Integer>monadPlus(m)
         .plus(DequeX.of(5)), DequeX.of(10)))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
         //DequeX.of(5))
          *
          * }

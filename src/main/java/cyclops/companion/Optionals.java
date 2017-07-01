@@ -660,7 +660,7 @@ public class Optionals {
          *   OptionalKind<Integer> list = Optionals.unit()
         .unit("hello")
         .applyHKT(h->Optionals.functor().map((String v) ->v.length(), h))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
          *
          * }
          * </pre>
@@ -677,7 +677,7 @@ public class Optionals {
          * {@code
          * OptionalKind<String> list = Optionals.unit()
         .unit("hello")
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
 
         //Arrays.asOptional("hello"))
          *
@@ -711,13 +711,13 @@ public class Optionals {
          * {@code
          * OptionalKind<Function<Integer,Integer>> listFn =Optionals.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(OptionalKind::narrowK);
+         *                                                  .convert(OptionalKind::narrowK3);
 
         OptionalKind<Integer> list = Optionals.unit()
         .unit("hello")
         .applyHKT(h->Optionals.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Optionals.applicative().ap(listFn, h))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
 
         //Arrays.asOptional("hello".length()*2))
          *
@@ -738,7 +738,7 @@ public class Optionals {
          * import static com.aol.cyclops.hkt.jdk.OptionalKind.widen;
          * OptionalKind<Integer> list  = Optionals.monad()
         .flatMap(i->widen(OptionalX.range(0,i)), widen(Arrays.asOptional(1,2,3)))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
          * }
          * </pre>
          *
@@ -748,7 +748,7 @@ public class Optionals {
          *    OptionalKind<Integer> list = Optionals.unit()
         .unit("hello")
         .applyHKT(h->Optionals.monad().flatMap((String v) ->Optionals.unit().unit(v.length()), h))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
 
         //Arrays.asOptional("hello".length())
          *
@@ -769,7 +769,7 @@ public class Optionals {
          *  OptionalKind<String> list = Optionals.unit()
         .unit("hello")
         .applyHKT(h->Optionals.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
 
         //Arrays.asOptional("hello"));
          *
@@ -788,7 +788,7 @@ public class Optionals {
          * {@code
          *  OptionalKind<Integer> list = Optionals.<Integer>monadPlus()
         .plus(OptionalKind.widen(Arrays.asOptional()), OptionalKind.widen(Arrays.asOptional(10)))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
         //Arrays.asOptional(10))
          *
          * }
@@ -810,7 +810,7 @@ public class Optionals {
          *  Monoid<OptionalKind<Integer>> m = Monoid.of(OptionalKind.widen(Arrays.asOptional()), (a,b)->a.isEmpty() ? b : a);
         OptionalKind<Integer> list = Optionals.<Integer>monadPlus(m)
         .plus(OptionalKind.widen(Arrays.asOptional(5)), OptionalKind.widen(Arrays.asOptional(10)))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
         //Arrays.asOptional(5))
          *
          * }

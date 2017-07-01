@@ -1493,7 +1493,7 @@ public class Future<T> implements To<Future<T>>,
          *   Future<Integer> future = FutureWs.unit()
         .unit("hello")
         .applyHKT(h->FutureWs.functor().map((String v) ->v.length(), h))
-        .convert(Future::narrowK);
+        .convert(Future::narrowK3);
          *
          * }
          * </pre>
@@ -1510,7 +1510,7 @@ public class Future<T> implements To<Future<T>>,
          * {@code
          * Future<String> future = FutureWs.unit()
         .unit("hello")
-        .convert(Future::narrowK);
+        .convert(Future::narrowK3);
 
         //FutureW("hello")
          *
@@ -1544,13 +1544,13 @@ public class Future<T> implements To<Future<T>>,
          * {@code
          * Future<Function<Integer,Integer>> futureFn =FutureWs.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(Future::narrowK);
+         *                                                  .convert(Future::narrowK3);
 
         Future<Integer> future = FutureWs.unit()
         .unit("hello")
         .applyHKT(h->FutureWs.functor().map((String v) ->v.length(), h))
         .applyHKT(h->FutureWs.applicative().ap(futureFn, h))
-        .convert(Future::narrowK);
+        .convert(Future::narrowK3);
 
         //FutureW("hello".length()*2))
          *
@@ -1571,7 +1571,7 @@ public class Future<T> implements To<Future<T>>,
          * import static com.aol.cyclops.hkt.jdk.Future.widen;
          * Future<Integer> future  = FutureWs.monad()
         .flatMap(i->widen(FutureW.ofResult(0)), widen(FutureW.ofResult(2)))
-        .convert(Future::narrowK);
+        .convert(Future::narrowK3);
          * }
          * </pre>
          *
@@ -1581,7 +1581,7 @@ public class Future<T> implements To<Future<T>>,
          *    Future<Integer> future = FutureWs.unit()
         .unit("hello")
         .applyHKT(h->FutureWs.monad().flatMap((String v) ->FutureWs.unit().unit(v.length()), h))
-        .convert(Future::narrowK);
+        .convert(Future::narrowK3);
 
         //FutureW("hello".length())
          *
@@ -1602,7 +1602,7 @@ public class Future<T> implements To<Future<T>>,
          *  Future<String> future = FutureWs.unit()
         .unit("hello")
         .applyHKT(h->FutureWs.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(Future::narrowK);
+        .convert(Future::narrowK3);
 
         //FutureW["hello"]
          *
@@ -1621,7 +1621,7 @@ public class Future<T> implements To<Future<T>>,
          * {@code
          *  Future<Integer> future = FutureWs.<Integer>monadPlus()
         .plus(Future.widen(FutureW.future()), Future.widen(FutureW.ofResult(10)))
-        .convert(Future::narrowK);
+        .convert(Future::narrowK3);
         //FutureW[10]
          *
          * }
@@ -1643,7 +1643,7 @@ public class Future<T> implements To<Future<T>>,
          *  Monoid<Future<Integer>> m = Monoid.of(Future.widen(FutureW.future()()), (a,b)->a.isDone() ? b : a);
         Future<Integer> future = FutureWs.<Integer>monadPlus(m)
         .plus(Future.widen(FutureW.ofResult(5)), Future.widen(FutureW.ofResult(10)))
-        .convert(Future::narrowK);
+        .convert(Future::narrowK3);
         //FutureW(5)
          *
          * }

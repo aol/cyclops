@@ -147,7 +147,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *   ListX<Integer> list = Lists.unit()
         .unit("hello")
         .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
          *
          * }
          * </pre>
@@ -164,7 +164,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * {@code
          * ListX<String> list = Lists.unit()
         .unit("hello")
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
 
         //Arrays.asList("hello"))
          *
@@ -198,13 +198,13 @@ public interface ListX<T> extends To<ListX<T>>,
          * {@code
          * ListX<Function<Integer,Integer>> listFn =Lists.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(ListX::narrowK);
+         *                                                  .convert(ListX::narrowK3);
 
         ListX<Integer> list = Lists.unit()
         .unit("hello")
         .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Lists.zippingApplicative().ap(listFn, h))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
 
         //Arrays.asList("hello".length()*2))
          *
@@ -225,7 +225,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * import static com.aol.cyclops2.hkt.jdk.ListX.widen;
          * ListX<Integer> list  = Lists.monad()
         .flatMap(i->widen(ListX.range(0,i)), widen(Arrays.asList(1,2,3)))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
          * }
          * </pre>
          *
@@ -235,7 +235,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *    ListX<Integer> list = Lists.unit()
         .unit("hello")
         .applyHKT(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
 
         //Arrays.asList("hello".length())
          *
@@ -256,7 +256,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *  ListX<String> list = Lists.unit()
         .unit("hello")
         .applyHKT(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
 
         //Arrays.asList("hello"));
          *
@@ -275,7 +275,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * {@code
          *  ListX<Integer> list = Lists.<Integer>monadPlus()
         .plus(ListX.widen(Arrays.asList()), ListX.widen(Arrays.asList(10)))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
         //Arrays.asList(10))
          *
          * }
@@ -294,7 +294,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *  Monoid<ListX<Integer>> m = Monoid.of(ListX.widen(Arrays.asList()), (a,b)->a.isEmpty() ? b : a);
         ListX<Integer> list = Lists.<Integer>monadPlus(m)
         .plus(ListX.widen(Arrays.asList(5)), ListX.widen(Arrays.asList(10)))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
         //Arrays.asList(5))
          *
          * }

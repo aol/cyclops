@@ -27,7 +27,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Try;
 
 @FunctionalInterface
-public interface Fn0< R> extends Function0<R>{
+public interface Fn0< R> extends Supplier<R>{
 
 
     public static <  T3,R> Fn0< R> λ(final Fn0<R> triFunc){
@@ -37,6 +37,9 @@ public interface Fn0< R> extends Function0<R>{
         return triFunc;
     }
 
+    default R apply(){
+        return get();
+    }
     default Fn0<Maybe<R>> lift(){
         return ()-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply())));
     }

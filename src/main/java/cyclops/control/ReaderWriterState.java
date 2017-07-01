@@ -1,7 +1,9 @@
 package cyclops.control;
 
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.supplier;
+import cyclops.typeclasses.KleisliK;
 import cyclops.typeclasses.free.Free;
 import cyclops.function.*;
 import lombok.AccessLevel;
@@ -67,7 +69,77 @@ public class ReaderWriterState<R,W,S,T>  {
     }
 
 
+    public <R1, R2, R3, R4> ReaderWriterState<R,W,S,R4> forEach4(Function<? super T, ReaderWriterState<R,W,S,R1>> value2,
+                                                      BiFunction<? super T, ? super R1, ReaderWriterState<R,W,S,R2>> value3,
+                                                      Fn3<? super T, ? super R1, ? super R2, ReaderWriterState<R,W,S,R3>> value4,
+                                                      Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
 
+
+
+
+        return this.flatMap(in -> {
+            
+            ReaderWriterState<R,W,S,R1> a = value2.apply(in);
+            return a.flatMap(ina -> {
+                ReaderWriterState<R,W,S,R2> b = value3.apply(in,ina);
+                return b.flatMap(inb -> {
+
+                    ReaderWriterState<R,W,S,R3> c = value4.apply(in,ina,inb);
+                    return c.map(inc->yieldingFunction.apply(in, ina, inb, inc));
+
+                });
+
+
+            });
+
+
+        });
+
+    }
+
+
+
+
+    public <R1, R2, R4> ReaderWriterState<R,W,S,R4> forEach3(Function<? super T, ReaderWriterState<R,W,S,R1>> value2,
+                                                  BiFunction<? super T, ? super R1, ReaderWriterState<R,W,S,R2>> value3,
+                                                  Fn3<? super T, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
+
+        return this.flatMap(in -> {
+
+            ReaderWriterState<R,W,S,R1> a = value2.apply(in);
+            return a.flatMap(ina -> {
+                ReaderWriterState<R,W,S,R2> b = value3.apply(in,ina);
+                return b.map(in2 -> {
+                    return yieldingFunction.apply(in, ina, in2);
+
+                });
+
+
+
+            });
+
+        });
+
+    }
+
+    public <R1, R4> ReaderWriterState<R,W,S,R4> forEach2(Function<? super T, ReaderWriterState<R,W,S,R1>> value2,
+                                              BiFunction<? super T, ? super R1, ? extends R4> yieldingFunction) {
+
+        return this.flatMap(in -> {
+
+            ReaderWriterState<R,W,S,R1> a = value2.apply(in);
+            return a.map(in2 -> {
+                return yieldingFunction.apply(in, in2);
+
+            });
+
+
+
+
+        });
+
+
+    }
     public static <R,W,S,T> ReaderWriterState<R,W,S,T> rws(BiFunction<? super R, ? super S,? extends Tuple3<W,S, T>> runF, Monoid<W> monoid) {
 
         return new ReaderWriterState<R, W, S, T>(monoid,(r,s) -> Free.done(runF.apply(r,s)));

@@ -627,7 +627,7 @@ public class CompletableFutures {
          *   CompletableFutureKind<Integer> future = CompletableFutures.unit()
         .unit("hello")
         .applyHKT(h->CompletableFutures.functor().map((String v) ->v.length(), h))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
          *
          * }
          * </pre>
@@ -644,7 +644,7 @@ public class CompletableFutures {
          * {@code
          * CompletableFutureKind<String> future = CompletableFutures.unit()
         .unit("hello")
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
 
         //CompletableFuture.completedFuture("hello"))
          *
@@ -677,13 +677,13 @@ public class CompletableFutures {
          * {@code
          * CompletableFutureKind<Function<Integer,Integer>> futureFn =CompletableFutures.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(CompletableFutureKind::narrowK);
+         *                                                  .convert(CompletableFutureKind::narrowK3);
 
         CompletableFutureKind<Integer> future = CompletableFutures.unit()
         .unit("hello")
         .applyHKT(h->CompletableFutures.functor().map((String v) ->v.length(), h))
         .applyHKT(h->CompletableFutures.applicative().ap(futureFn, h))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
 
         //CompletableFuture.completedFuture("hello".length()*2))
          *
@@ -704,7 +704,7 @@ public class CompletableFutures {
          * import static com.aol.cyclops.hkt.jdk.CompletableFutureKind.widen;
          * CompletableFutureKind<Integer> future  = CompletableFutures.monad()
         .flatMap(i->widen(CompletableFutureX.range(0,i)), widen(CompletableFuture.completedFuture(3)))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
          * }
          * </pre>
          *
@@ -714,7 +714,7 @@ public class CompletableFutures {
          *    CompletableFutureKind<Integer> future = CompletableFutures.unit()
         .unit("hello")
         .applyHKT(h->CompletableFutures.monad().flatMap((String v) ->CompletableFutures.unit().unit(v.length()), h))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
 
         //CompletableFuture.completedFuture("hello".length())
          *
@@ -735,7 +735,7 @@ public class CompletableFutures {
          *  CompletableFutureKind<String> future = CompletableFutures.unit()
         .unit("hello")
         .applyHKT(h->CompletableFutures.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
 
         //CompletableFuture.completedFuture("hello"));
          *
@@ -754,7 +754,7 @@ public class CompletableFutures {
          * {@code
          *  CompletableFutureKind<Integer> future = CompletableFutures.<Integer>monadPlus()
         .plus(CompletableFutureKind.widen(CompletableFuture.completedFuture()), CompletableFutureKind.widen(CompletableFuture.completedFuture(10)))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
         //CompletableFuture.completedFuture(10))
          *
          * }
@@ -776,7 +776,7 @@ public class CompletableFutures {
          *  Monoid<CompletableFutureKind<Integer>> m = Monoid.of(CompletableFutureKind.widen(CompletableFuture.completedFuture()), (a,b)->a.isEmpty() ? b : a);
         CompletableFutureKind<Integer> future = CompletableFutures.<Integer>monadPlus(m)
         .plus(CompletableFutureKind.widen(CompletableFuture.completedFuture(5)), CompletableFutureKind.widen(CompletableFuture.completedFuture(10)))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
         //CompletableFuture.completedFuture(5))
          *
          * }

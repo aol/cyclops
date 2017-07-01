@@ -1239,7 +1239,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          *   QueueX<Integer> queue = Queues.unit()
         .unit("hello")
         .applyHKT(h->Queues.functor().map((String v) ->v.length(), h))
-        .convert(QueueX::narrowK);
+        .convert(QueueX::narrowK3);
          *
          * }
          * </pre>
@@ -1256,7 +1256,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          * {@code
          * QueueX<String> queue = Queues.unit()
         .unit("hello")
-        .convert(QueueX::narrowK);
+        .convert(QueueX::narrowK3);
 
         //QueueX.of("hello"))
          *
@@ -1290,13 +1290,13 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          * {@code
          * QueueX<Function<Integer,Integer>> queueFn =Queues.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(QueueX::narrowK);
+         *                                                  .convert(QueueX::narrowK3);
 
         QueueX<Integer> queue = Queues.unit()
         .unit("hello")
         .applyHKT(h->Queues.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Queues.zippingApplicative().ap(queueFn, h))
-        .convert(QueueX::narrowK);
+        .convert(QueueX::narrowK3);
 
         //QueueX.of("hello".length()*2))
          *
@@ -1317,7 +1317,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          * import static com.aol.cyclops.hkt.jdk.QueueX.widen;
          * QueueX<Integer> queue  = Queues.monad()
         .flatMap(i->widen(QueueX.range(0,i)), widen(QueueX.of(1,2,3)))
-        .convert(QueueX::narrowK);
+        .convert(QueueX::narrowK3);
          * }
          * </pre>
          *
@@ -1327,7 +1327,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          *    QueueX<Integer> queue = Queues.unit()
         .unit("hello")
         .applyHKT(h->Queues.monad().flatMap((String v) ->Queues.unit().unit(v.length()), h))
-        .convert(QueueX::narrowK);
+        .convert(QueueX::narrowK3);
 
         //QueueX.of("hello".length())
          *
@@ -1348,7 +1348,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          *  QueueX<String> queue = Queues.unit()
         .unit("hello")
         .applyHKT(h->Queues.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(QueueX::narrowK);
+        .convert(QueueX::narrowK3);
 
         //QueueX.of("hello"));
          *
@@ -1367,7 +1367,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          * {@code
          *  QueueX<Integer> queue = Queues.<Integer>monadPlus()
         .plus(QueueX.of()), QueueX.of(10)))
-        .convert(QueueX::narrowK);
+        .convert(QueueX::narrowK3);
         //QueueX.of(10))
          *
          * }
@@ -1386,7 +1386,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          *  Monoid<QueueX<Integer>> m = Monoid.of(QueueX.of()), (a,b)->a.isEmpty() ? b : a);
         QueueX<Integer> queue = Queues.<Integer>monadPlus(m)
         .plus(QueueX.of(5)), QueueX.of(10)))
-        .convert(QueueX::narrowK);
+        .convert(QueueX::narrowK3);
         //QueueX.of(5))
          *
          * }

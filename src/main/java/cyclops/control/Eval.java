@@ -1213,7 +1213,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *   Eval<Integer> list = Evals.unit()
         .unit("hello")
         .applyHKT(h->Evals.functor().map((String v) ->v.length(), h))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
          *
          * }
          * </pre>
@@ -1231,7 +1231,7 @@ public interface Eval<T> extends To<Eval<T>>,
          * {@code
          * Eval<String> list = Evals.unit()
         .unit("hello")
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
 
         //Arrays.asEval("hello"))
          *
@@ -1265,13 +1265,13 @@ public interface Eval<T> extends To<Eval<T>>,
          * {@code
          * Eval<Function<Integer,Integer>> listFn =Evals.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(Eval::narrowK);
+         *                                                  .convert(Eval::narrowK3);
 
         Eval<Integer> list = Evals.unit()
         .unit("hello")
         .applyHKT(h->Evals.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Evals.applicative().ap(listFn, h))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
 
         //Arrays.asEval("hello".length()*2))
          *
@@ -1292,7 +1292,7 @@ public interface Eval<T> extends To<Eval<T>>,
          * import static com.aol.cyclops.hkt.jdk.Eval.widen;
          * Eval<Integer> list  = Evals.monad()
         .flatMap(i->widen(EvalX.range(0,i)), widen(Arrays.asEval(1,2,3)))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
          * }
          * </pre>
          *
@@ -1302,7 +1302,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *    Eval<Integer> list = Evals.unit()
         .unit("hello")
         .applyHKT(h->Evals.monad().flatMap((String v) ->Evals.unit().unit(v.length()), h))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
 
         //Arrays.asEval("hello".length())
          *
@@ -1323,7 +1323,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *  Eval<String> list = Evals.unit()
         .unit("hello")
         .applyHKT(h->Evals.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
 
         //Arrays.asEval("hello"));
          *
@@ -1342,7 +1342,7 @@ public interface Eval<T> extends To<Eval<T>>,
          * {@code
          *  Eval<Integer> list = Evals.<Integer>monadPlus()
         .plus(Eval.widen(Arrays.asEval()), Eval.widen(Arrays.asEval(10)))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
         //Arrays.asEval(10))
          *
          * }
@@ -1364,7 +1364,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *  Monoid<Eval<Integer>> m = Monoid.of(Eval.widen(Arrays.asEval()), (a,b)->a.isEmpty() ? b : a);
         Eval<Integer> list = Evals.<Integer>monadPlus(m)
         .plus(Eval.widen(Arrays.asEval(5)), Eval.widen(Arrays.asEval(10)))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
         //Arrays.asEval(5))
          *
          * }

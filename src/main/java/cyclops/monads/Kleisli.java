@@ -1,9 +1,20 @@
 package cyclops.monads;
 
 
+import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher2;
+import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.types.functor.Transformable;
+import cyclops.control.Maybe;
 import cyclops.control.Xor;
 import cyclops.function.*;
+import cyclops.monads.Witness.kleisli;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.monad.*;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
@@ -204,4 +215,5 @@ public interface Kleisli<W extends WitnessType<W>,T,R> extends Fn1<T,AnyM<W,R>>,
         }
         return in -> (AnyM<W,R>)fn.apply(in);
     }
+
 }
