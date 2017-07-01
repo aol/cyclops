@@ -48,7 +48,7 @@ public class NestedTest {
 
     @Test
     public void sequence()  {
-        assertThat(just.traverse().get().sequence().toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(2)),Optionals.Instances.definitions(),ListX.Instances.definitions()).toString()));
+        assertThat(just.traverseUnsafe().sequence().toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(2)),Optionals.Instances.definitions(),ListX.Instances.definitions()).toString()));
     }
 
     @Test
