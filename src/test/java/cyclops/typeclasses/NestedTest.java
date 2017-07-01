@@ -24,7 +24,7 @@ public class NestedTest {
 
     @Test
     public void foldLeft()  {
-        assertThat(just.foldLeft(Monoids.intSum).applyHKT(ListX::narrowK), equalTo(ListX.of(2)));
+        assertThat(just.folds().get().foldLeft(Monoids.intSum).applyHKT(ListX::narrowK), equalTo(ListX.of(2)));
     }
 
     @Test
