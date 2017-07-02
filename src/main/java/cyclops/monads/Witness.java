@@ -464,4 +464,13 @@ public interface Witness {
         }
 
     }
+    public static enum rws implements WitnessType<rws>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<rws> adapter() {
+            return null;
+        }
+
+    }
 }
