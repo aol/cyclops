@@ -46,7 +46,7 @@ public class Functions {
     }
 
     /**
-     * Kleisli arrow : A function that takes an input value t and embeds it inside a monadic context.
+     * KleisliM arrow : A function that takes an input value t and embeds it inside a monadic context.
      * arrowM makes use of Witness Types toNested simulate higher-kinded types, and wraps the new monadic type
      * inside an AnyM. AnyM makes use of sub-type polymorphism (Object Orientd inheritance) toNested define monadic
      * functions (map / flatMap etc) on the returned Object (for parametric polymorphism use {@link Functions#arrow}
@@ -61,7 +61,7 @@ public class Functions {
     }
 
     /**
-     * Use an existing instance of a type that implements Unit toNested create a Kleisli arrow for that type
+     * Use an existing instance of a type that implements Unit toNested create a KleisliM arrow for that type
      *
      * <pre>
      *     {@code

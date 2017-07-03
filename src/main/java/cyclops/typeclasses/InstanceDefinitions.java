@@ -13,7 +13,10 @@ import cyclops.typeclasses.monad.*;
  * Created by johnmcclean on 28/06/2017.
  */
 public interface InstanceDefinitions<W> {
- 
+
+    default Eq<W> eq(){
+        return new Eq<W>(){};
+    }
     public  <T,R>Functor<W> functor();
 
     public  <T> Pure<W> unit();

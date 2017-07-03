@@ -108,7 +108,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
                                                             Transformable<T>,
                                                             ToStream<T>,
                                                             Zippable<T>,
-                                                            Publisher<T> {
+                                                            Publisher<T>,
+                                                            Filters<T>{
     @Override
     default ReactiveSeq<T> reactiveSeq() {
         return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
@@ -1515,4 +1516,58 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return ListT.of(this.map(a -> ListX.of(a)));
     }
 
+    @Override
+    default <U> AnyM<W,U> ofType(final Class<? extends U> type) {
+        return (AnyM<W,U>)Filters.super.ofType(type);
+    }
+
+    @Override
+    default AnyM<W,T> filterNot(final Predicate<? super T> predicate) {
+        return (AnyM<W,T>)Filters.super.filterNot(predicate);
+    }
+
+    @Override
+    default AnyM<W,T> notNull() {
+        return (AnyM<W,T>)Filters.super.notNull();
+    }
+
+    @Override
+    default AnyM<W,T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
+        return (AnyM<W,T>)Zippable.super.zip(combiner,app);
+    }
+
+    @Override
+    default <T2, R> AnyM<W,R> zip(final Iterable<? extends T2> iterable, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (AnyM<W,R>)Zippable.super.zip(iterable,fn);
+    }
+
+    @Override
+    default <T2, R> AnyM<W,R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (AnyM<W,R>)Zippable.super.zipP(publisher,fn);
+    }
+
+    @Override
+    default <U, R> AnyM<W,R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (AnyM<W,R>)Zippable.super.zipS(other,zipper);
+    }
+
+    @Override
+    default <U> AnyM<W,Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+        return (AnyM)Zippable.super.zipS(other);
+    }
+
+    @Override
+    default <U> AnyM<W,Tuple2<T, U>> zip(final Iterable<? extends U> other) {
+        return (AnyM)Zippable.super.zip(other);
+    }
+
+    @Override
+    default <U> AnyM<W,U> cast(final Class<? extends U> type) {
+        return (AnyM<W,U>)Zippable.super.cast(type);
+    }
+
+    @Override
+    default <R> AnyM<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (AnyM<W, R>) Zippable.super.trampoline(mapper);
+    }
 }

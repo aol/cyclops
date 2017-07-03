@@ -7,6 +7,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.*;
 
@@ -25,6 +26,8 @@ import cyclops.async.Future;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.functor.Functor;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -62,6 +65,13 @@ public interface Fn1<T,  R> extends Function<T,R>{
      */
     default Fn1<T, R> after(final BiConsumer<? super T,? super R> action) {
         return FluentFunctions.of(this).after(action);
+    }
+
+    default <W1,W2> Fn1<Higher<W1,T>,Higher<W2,R>> liftKind(Function<Higher<W1,T>,Higher<W2,T>> hktTransform,Functor<W2> functor){
+        return (T1)-> functor.map(this,hktTransform.apply(T1));
+    }
+    default <W1 extends WitnessType<W1>,W2 extends WitnessType<W2>> Fn1<AnyM<W1,T>,AnyM<W2,R>> liftAnyM(Function<AnyM<W1,T>,AnyM<W2,T>> hktTransform){
+        return (T1)-> hktTransform.apply(T1).map(this);
     }
 
     default Fn1<T,Maybe<R>> lift(){
@@ -266,11 +276,11 @@ public interface Fn1<T,  R> extends Function<T,R>{
             return liftList().andThen(l->l.liftM(witness));
         }
 
-        default Fn1<T1, LinkedListX<R>> liftPStack() {
+        default Fn1<T1, LinkedListX<R>> liftLinkedListX() {
             return in -> LinkedListX.of(apply(in));
         }
 
-        default Fn1<T1, VectorX<R>> liftPVector() {
+        default Fn1<T1, VectorX<R>> liftVectorX() {
             return in -> VectorX.of(apply(in));
         }
     }

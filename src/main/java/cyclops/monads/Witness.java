@@ -473,4 +473,22 @@ public interface Witness {
         }
 
     }
+    public static enum state implements WitnessType<state>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<state> adapter() {
+            return null;
+        }
+
+    }
+    public static enum writer implements WitnessType<writer>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<writer> adapter() {
+            return null;
+        }
+
+    }
 }

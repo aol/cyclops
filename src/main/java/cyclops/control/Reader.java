@@ -6,8 +6,6 @@ import java.util.function.Function;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.*;
-import cyclops.monads.Kleisli;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.reader;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
