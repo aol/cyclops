@@ -491,4 +491,13 @@ public interface Witness {
         }
 
     }
+    public static enum constant implements WitnessType<constant>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<constant> adapter() {
+            return null;
+        }
+
+    }
 }

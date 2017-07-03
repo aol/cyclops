@@ -2,7 +2,10 @@ package cyclops.typeclasses;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.Filters;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.Monad;
@@ -11,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -34,7 +38,8 @@ import java.util.function.Predicate;
  */
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
 @EqualsAndHashCode(of={"single"})
-public class Active<W,T> {
+public class Active<W,T> implements Filters<T>,
+                                    Transformable<T> {
 
 
     private final Higher<W, T> single;
@@ -118,6 +123,42 @@ public class Active<W,T> {
 
         }
     }
+
+    @Override
+    public <U> Active<W,U> cast(Class<? extends U> type) {
+        return (Active<W,U>)Transformable.super.cast(type);
+    }
+
+    @Override
+    public <U> Active<W,U> ofType(Class<? extends U> type) {
+        return (Active<W,U>)Filters.super.ofType(type);
+    }
+
+    @Override
+    public Active<W,T> filterNot(Predicate<? super T> predicate) {
+        return (Active<W,T>)Filters.super.filterNot(predicate);
+    }
+
+    @Override
+    public Active<W,T> notNull() {
+        return (Active<W,T>)Filters.super.notNull();
+    }
+
+    @Override
+    public <R> Active<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (Active<W,R>)Transformable.super.trampoline(mapper);
+    }
+
+    @Override
+    public <R> Active<W,R> retry(Function<? super T, ? extends R> fn) {
+        return (Active<W,R>)Transformable.super.retry(fn);
+    }
+
+    @Override
+    public <R> Active<W,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
+        return (Active<W,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
+    }
+
     public String toString(){
         return "Active["+single.toString()+"]";
     }

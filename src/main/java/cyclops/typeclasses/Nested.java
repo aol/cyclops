@@ -2,7 +2,10 @@ package cyclops.typeclasses;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.Filters;
+import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.functor.Compose;
 import cyclops.typeclasses.monad.Applicative;
@@ -11,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -59,7 +63,7 @@ import java.util.function.Function;
  */
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
 @EqualsAndHashCode(of={"nested"})
-public class Nested<W1,W2,T> {
+public class Nested<W1,W2,T> implements Transformable<T> {
 
     private final Higher<W1,Higher<W2,T>> nested;
     private final Compose<W1,W2> composedFunctor;
@@ -138,5 +142,23 @@ public class Nested<W1,W2,T> {
         return "Nested["+nested.toString()+"]";
     }
 
+    @Override
+    public <U> Nested<W1,W2,U> cast(Class<? extends U> type) {
+        return (Nested<W1,W2,U>)Transformable.super.cast(type);
+    }
 
+    @Override
+    public <R> Nested<W1,W2,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (Nested<W1,W2,R>)Transformable.super.trampoline(mapper);
+    }
+
+    @Override
+    public <R> Nested<W1,W2,R> retry(Function<? super T, ? extends R> fn) {
+        return (Nested<W1,W2,R>)Transformable.super.retry(fn);
+    }
+
+    @Override
+    public <R> Nested<W1,W2,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
+        return (Nested<W1,W2,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
+    }
 }

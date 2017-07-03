@@ -905,6 +905,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     public static <T> AnyMValue<future,T> futureOf(final Supplier<T> task, Executor executor) {
         return fromFuture(Future.of(task,executor));
     }
+    public static <T> AnyMValue<completableFuture,T> completableFutureOf(final Supplier<T> task, Executor executor) {
+        return fromCompletableFuture(CompletableFuture.supplyAsync(task,executor));
+    }
 
 
     /**

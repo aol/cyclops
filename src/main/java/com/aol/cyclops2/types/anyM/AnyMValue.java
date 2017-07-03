@@ -69,7 +69,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     @Override
     default AnyMValue<W,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
         
-        return (AnyMValue<W,T>)MonadicValue.super.zip(combiner, app);
+        return (AnyMValue<W,T>)AnyM.super.zip(combiner, app);
     }
 
     @Override
@@ -169,7 +169,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     @Override
     default <U> AnyMValue<W,U> ofType(final Class<? extends U> type) {
 
-        return (AnyMValue<W,U>) MonadicValue.super.ofType(type);
+        return (AnyMValue<W,U>) AnyM.super.ofType(type);
     }
 
     /* (non-Javadoc)
@@ -178,7 +178,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     @Override
     default AnyMValue<W,T> filterNot(final Predicate<? super T> fn) {
 
-        return (AnyMValue<W,T>) MonadicValue.super.filterNot(fn);
+        return (AnyMValue<W,T>) AnyM.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
@@ -187,7 +187,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     @Override
     default AnyMValue<W,T> notNull() {
 
-        return (AnyMValue<W,T>) MonadicValue.super.notNull();
+        return (AnyMValue<W,T>) AnyM.super.notNull();
     }
 
     /* (non-Javadoc)

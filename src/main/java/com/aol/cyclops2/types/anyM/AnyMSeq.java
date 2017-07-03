@@ -412,7 +412,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <U> AnyMSeq<W,U> cast(final Class<? extends U> type) {
 
-        return (AnyMSeq<W,U>) FoldableTraversable.super.cast(type);
+        return (AnyMSeq<W,U>) AnyM.super.cast(type);
     }
 
     /* (non-Javadoc)
@@ -421,7 +421,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <R> AnyMSeq<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (AnyMSeq<W,R>) FoldableTraversable.super.trampoline(mapper);
+        return (AnyMSeq<W,R>) AnyM.super.trampoline(mapper);
     }
 
 
@@ -896,7 +896,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <U> AnyMSeq<W,U> ofType(final Class<? extends U> type) {
 
-        return (AnyMSeq<W,U>) FoldableTraversable.super.ofType(type);
+        return (AnyMSeq<W,U>) AnyM.super.ofType(type);
     }
 
     /* (non-Javadoc)
@@ -904,7 +904,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      */
     @Override
     default AnyMSeq<W,T> filterNot(final Predicate<? super T> fn) {
-        return (AnyMSeq<W,T>) FoldableTraversable.super.filterNot(fn);
+        return (AnyMSeq<W,T>) AnyM.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
