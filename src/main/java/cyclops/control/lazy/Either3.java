@@ -24,6 +24,7 @@ import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -1623,6 +1624,11 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
                 @Override
                 public <T> Maybe<Comonad<Higher<Higher<either3, L1>, L2>>> comonad() {
                     return Maybe.just(Instances.comonad());
+                }
+
+                @Override
+                public <T> Maybe<Unfoldable<Higher<Higher<either3, L1>, L2>>> unfoldable() {
+                    return Maybe.none();
                 }
             };
 

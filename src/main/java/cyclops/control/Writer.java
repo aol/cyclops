@@ -14,6 +14,7 @@ import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -271,6 +272,11 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
 
                 @Override
                 public <T> Maybe<Comonad<Higher<writer, W>>> comonad() {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <T> Maybe<Unfoldable<Higher<writer, W>>> unfoldable() {
                     return Maybe.none();
                 }
             };

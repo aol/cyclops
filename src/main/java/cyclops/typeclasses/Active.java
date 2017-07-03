@@ -9,16 +9,21 @@ import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.Traverse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jooq.lambda.tuple.Tuple2;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import static org.jooq.lambda.tuple.Tuple.tuple;
 
 /**
  * Provide easy access to all typeclasses for a type
@@ -84,6 +89,12 @@ public class Active<W,T> implements Filters<T>,
     public Traverse traverseUnsafe(){
         return def1.traverse().visit(s-> new Traverse(),()->null);
     }
+    public Unfolds unfoldsUnsafe(){
+        return def1.unfoldable().visit(s-> new Unfolds(),()->null);
+    }
+    public Maybe<Unfolds> unfolds(){
+        return def1.unfoldable().visit(e->Maybe.just(new Unfolds()),Maybe::none);
+    }
     public Folds foldsUnsafe(){
         return def1.foldable().visit(s-> new Folds(),()->null);
     }
@@ -92,6 +103,17 @@ public class Active<W,T> implements Filters<T>,
     }
     public Maybe<Traverse> traverse(){
         return def1.traverse().visit(e->Maybe.just(new Traverse()),Maybe::none);
+    }
+
+    public class Unfolds{
+        public <R, T> Active<W, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn){
+            return of(def1.unfoldable().get().unfold(b,fn),def1);
+        }
+
+        public <T> Active<W, T> replicate(int n, T value) {
+            return unfold(n,i -> Optional.of(tuple(value, i-1)));
+        }
+
     }
     public class Folds {
 

@@ -38,6 +38,7 @@ import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.*;
@@ -1553,6 +1554,11 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                 @Override
                 public <T> Maybe<Comonad<Higher<tryType, L>>> comonad() {
                     return Maybe.just(Instances.comonad());
+                }
+
+                @Override
+                public <T> Maybe<Unfoldable<Higher<tryType, L>>> unfoldable() {
+                    return Maybe.none();
                 }
             };
         }

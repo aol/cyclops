@@ -29,6 +29,7 @@ import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -1550,6 +1551,11 @@ public interface Maybe<T> extends To<Maybe<T>>,
                 @Override
                 public <T> Maybe<Comonad<maybe>> comonad() {
                     return Maybe.just(Instances.comonad());
+                }
+
+                @Override
+                public <T> Maybe<Unfoldable<maybe>> unfoldable() {
+                    return Maybe.none();
                 }
             };
         }

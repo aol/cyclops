@@ -12,6 +12,7 @@ import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.free.Free;
 import cyclops.function.*;
 import cyclops.typeclasses.functor.Functor;
@@ -281,6 +282,11 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
                 @Override
                 public <T> Maybe<Comonad<Higher<state, S>>> comonad() {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <T> Maybe<Unfoldable<Higher<state, S>>> unfoldable() {
                     return Maybe.none();
                 }
             };
