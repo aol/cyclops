@@ -59,7 +59,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /**
-     * Widen a QueueType nested inside another HKT encoded type
+     * Widen a QueueType nest inside another HKT encoded type
      *
      * @param  queue HTK encoded type containing  a List toNested widen
      * @return HKT encoded type with a widened List

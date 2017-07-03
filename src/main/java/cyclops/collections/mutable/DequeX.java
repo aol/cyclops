@@ -66,7 +66,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return Nested.of(map(fn), Instances.definitions(), defs);
     }
     /**
-     * Widen a DequeType nested inside another HKT encoded type
+     * Widen a DequeType nest inside another HKT encoded type
      *
      * @param deque HTK encoded type containing  a Deque toNested widen
      * @return HKT encoded type with a widened Deque

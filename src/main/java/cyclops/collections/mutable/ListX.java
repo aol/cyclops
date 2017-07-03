@@ -389,7 +389,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
 
         /**
-         * Widen a ListType nested inside another HKT encoded type
+         * Widen a ListType nest inside another HKT encoded type
          *
          * @param flux HTK encoded type containing  a List toNested widen
          * @return HKT encoded type with a widened List

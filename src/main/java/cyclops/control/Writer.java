@@ -55,7 +55,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
 
     /*
      * Perform a For Comprehension over a Writer, accepting 3 generating function.
-             * This results in a four level nested internal iteration over the provided Writers.
+             * This results in a four level nest internal iteration over the provided Writers.
       *
               *  <pre>
       * {@code
@@ -113,7 +113,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
 
     /**
      * Perform a For Comprehension over a Writer, accepting 2 generating function.
-     * This results in a three level nested internal iteration over the provided Writers.
+     * This results in a three level nest internal iteration over the provided Writers.
      *
      *  <pre>
      * {@code
@@ -159,7 +159,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
 
     /**
      * Perform a For Comprehension over a Writer, accepting a generating function.
-     * This results in a two level nested internal iteration over the provided Writers.
+     * This results in a two level nest internal iteration over the provided Writers.
      *
      *  <pre>
      * {@code

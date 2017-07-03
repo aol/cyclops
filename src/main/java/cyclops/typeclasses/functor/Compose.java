@@ -17,10 +17,10 @@ import lombok.AllArgsConstructor;
  * 
  * <pre>
  * {@code 
- *    OptionalType<ListX<Integer>> nested;
+ *    OptionalType<ListX<Integer>> nest;
  *    
  *    Compose.compose(Optionals.functor(),Lists.functor())
- *           .map(i->i*2,nested);
+ *           .map(i->i*2,nest);
  *   
  * }
  * </pre>

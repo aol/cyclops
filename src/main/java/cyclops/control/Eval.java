@@ -328,7 +328,7 @@ public interface Eval<T> extends To<Eval<T>>,
      * </pre>
      *
      * @param evals Collection of Evals to accumulate
-     * @param reducer Reducer to fold nested values into
+     * @param reducer Reducer to fold nest values into
      * @return Eval with a value
      */
     public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Reducer<R> reducer) {

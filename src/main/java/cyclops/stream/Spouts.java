@@ -816,7 +816,7 @@ public interface Spouts {
 
 
         /**
-         * Widen a ReactiveSeq nested inside another HKT encoded type
+         * Widen a ReactiveSeq nest inside another HKT encoded type
          *
          * @param flux HTK encoded type containing  a List toNested widen
          * @return HKT encoded type with a widened List

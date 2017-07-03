@@ -70,7 +70,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     LinkedListX<T> eager();
 
     /**
-     * Widen a PStackType nested inside another HKT encoded type
+     * Widen a PStackType nest inside another HKT encoded type
      *
      * @param list HTK encoded type containing  a PStack toNested widen
      * @return HKT encoded type with a widened PStack

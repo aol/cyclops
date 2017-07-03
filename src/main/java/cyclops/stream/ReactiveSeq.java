@@ -875,7 +875,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * join / flatten one level of a nested hierarchy
+     * join / flatten one level of a nest hierarchy
      *
      * <pre>
      * {@code
@@ -4062,7 +4062,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                    .size();
     }
     /**
-     * Perform a four level nested internal iteration over this Stream and the
+     * Perform a four level nest internal iteration over this Stream and the
      * supplied streams
      *
      * <pre>
@@ -4088,7 +4088,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R2, R3,R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
                         final BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
@@ -4109,7 +4109,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         });
     }
     /**
-     * Perform a four level nested internal iteration over this Stream and the
+     * Perform a four level nest internal iteration over this Stream and the
      * supplied streams
      *
      * <pre>
@@ -4140,7 +4140,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R2, R3, R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             final BiFunction<? super T, ? super R1, ? extends BaseStream<R2, ?>> stream2,
@@ -4167,7 +4167,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         });
     }
     /**
-     * Perform a three level nested internal iteration over this Stream and the
+     * Perform a three level nest internal iteration over this Stream and the
      * supplied streams
      *
      * <pre>
@@ -4189,7 +4189,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
@@ -4210,7 +4210,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Perform a three level nested internal iteration over this Stream and the
+     * Perform a three level nest internal iteration over this Stream and the
      * supplied streams
      *
      * <pre>
@@ -4237,7 +4237,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
    default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
@@ -4259,7 +4259,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Perform a two level nested internal iteration over this Stream and the
+     * Perform a two level nest internal iteration over this Stream and the
      * supplied reactiveStream
      *
      * <pre>
@@ -4279,7 +4279,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends R> yieldingFunction){
@@ -4303,7 +4303,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Perform a two level nested internal iteration over this Stream and the
+     * Perform a two level nest internal iteration over this Stream and the
      * supplied reactiveStream
      *
      * <pre>
@@ -4326,7 +4326,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, Boolean> filterFunction,
@@ -5156,7 +5156,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
         /**
-         * Widen a ReactiveSeq nested inside another HKT encoded type
+         * Widen a ReactiveSeq nest inside another HKT encoded type
          *
          * @param flux HTK encoded type containing  a List toNested widen
          * @return HKT encoded type with a widened List

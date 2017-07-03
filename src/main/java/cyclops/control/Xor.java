@@ -25,6 +25,7 @@ import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
@@ -1629,7 +1630,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
             };
         }
         public static <L> Comonad<Higher<xor, L>> comonad() {
-            return new Comonad<Higher<xor, L>>() {
+            return new ComonadByPure<Higher<xor, L>>() {
 
 
                 @Override

@@ -588,7 +588,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     @Override
     <R> CollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper);
     /**
-     * Perform a three level nested internal iteration over this Stream and the
+     * Perform a three level nest internal iteration over this Stream and the
      * supplied streams
      *
      * <pre>
@@ -613,7 +613,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return CollectionX with elements generated via nested iteration
+     * @return CollectionX with elements generated via nest iteration
      */
     default <R1, R2, R3,R> CollectionX<R> forEach4(final Function<? super T, ? extends Iterable<R1>> iterable1,
                         final BiFunction<? super T,? super R1, ? extends Iterable<R2>> iterable2,
@@ -636,7 +636,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
 
 
     /**
-     * Perform a three level nested internal iteration over this Stream and the
+     * Perform a three level nest internal iteration over this Stream and the
      * supplied streams
      * 
      * <pre>
@@ -667,7 +667,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return CollectionX with elements generated via nested iteration
+     * @return CollectionX with elements generated via nest iteration
      */
     default <R1, R2, R3, R> CollectionX<R> forEach4(final Function<? super T, ? extends Iterable<R1>> iterable1,
             final BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2,
@@ -691,7 +691,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     }
 
     /**
-     * Perform a three level nested internal iteration over this Stream and the
+     * Perform a three level nest internal iteration over this Stream and the
      * supplied streams
      *
      * <pre>
@@ -715,7 +715,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R2, R> CollectionX<R> forEach3(final Function<? super T, ? extends Iterable<R1>> iterable1,
                                                 final BiFunction<? super T,? super R1, ? extends Iterable<R2>> iterable2,
@@ -734,7 +734,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
 
 
     /**
-     * Perform a three level nested internal iteration over this Stream and the
+     * Perform a three level nest internal iteration over this Stream and the
      * supplied streams
      * 
      * <pre>
@@ -762,7 +762,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R2, R> CollectionX<R> forEach3(final Function<? super T, ? extends Iterable<R1>> iterable1,
             final BiFunction<? super T,? super R1, ? extends Iterable<R2>> iterable2,
@@ -782,7 +782,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     }
 
     /**
-     * Perform a two level nested internal iteration over this Stream and the
+     * Perform a two level nest internal iteration over this Stream and the
      * supplied reactiveStream
      * 
      * <pre>
@@ -803,7 +803,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R> CollectionX<R> forEach2(final Function<? super T,? extends Iterable<R1>> iterable1,
             final BiFunction<? super T,? super R1, ? extends R> yieldingFunction) {
@@ -817,7 +817,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     }
 
     /**
-     * Perform a two level nested internal iteration over this Stream and the
+     * Perform a two level nest internal iteration over this Stream and the
      * supplied reactiveStream
      * 
      * <pre>
@@ -842,7 +842,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R> CollectionX<R> forEach2(final Function<? super T, ? extends Iterable<R1>> iterable1,
             final BiFunction<? super T,? super R1,  Boolean> filterFunction,

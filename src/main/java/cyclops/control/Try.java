@@ -37,6 +37,7 @@ import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
@@ -1357,8 +1358,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         public void run() throws X;
     }
     /*
-     * Flatten a nested Try Structure
-     * @return Lowest nested Try
+     * Flatten a nest Try Structure
+     * @return Lowest nest Try
      * @see com.aol.cyclops2.trycatch.Try#flatten()
      */
 
@@ -1687,7 +1688,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         }
 
         public static <L extends Throwable> Comonad<Higher<tryType, L>> comonad() {
-            return new Comonad<Higher<tryType, L>>() {
+            return new ComonadByPure<Higher<tryType, L>>() {
 
 
                 @Override

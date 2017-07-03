@@ -21,6 +21,7 @@ import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
@@ -1701,7 +1702,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
             };
         }
         public static <L> Comonad<Higher<ior, L>> comonad() {
-            return new Comonad<Higher<ior, L>>() {
+            return new ComonadByPure<Higher<ior, L>>() {
 
 
                 @Override

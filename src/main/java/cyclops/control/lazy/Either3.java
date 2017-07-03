@@ -23,6 +23,7 @@ import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
@@ -1779,7 +1780,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
             };
         }
         public static <L1,L2> Comonad<Higher<Higher<either3, L1>, L2>> comonad() {
-            return new Comonad<Higher<Higher<either3, L1>, L2>>() {
+            return new ComonadByPure<Higher<Higher<either3, L1>, L2>>() {
 
 
                 @Override

@@ -61,7 +61,7 @@ public class CompletableFutures {
 
     /**
      * Perform a For Comprehension over a CompletableFuture, accepting 3 generating function.
-     * This results in a four level nested internal iteration over the provided CompletableFutures.
+     * This results in a four level nest internal iteration over the provided CompletableFutures.
      *
      *  <pre>
      * {@code
@@ -110,7 +110,7 @@ public class CompletableFutures {
 
     /**
      * Perform a For Comprehension over a CompletableFuture, accepting 2 generating function.
-     * This results in a three level nested internal iteration over the provided CompletableFutures.
+     * This results in a three level nest internal iteration over the provided CompletableFutures.
      *
      *  <pre>
      * {@code
@@ -155,7 +155,7 @@ public class CompletableFutures {
 
     /**
      * Perform a For Comprehension over a CompletableFuture, accepting a generating function.
-     * This results in a two level nested internal iteration over the provided CompletableFutures.
+     * This results in a two level nest internal iteration over the provided CompletableFutures.
      *
      *  <pre>
      * {@code

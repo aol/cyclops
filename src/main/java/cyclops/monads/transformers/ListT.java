@@ -40,7 +40,7 @@ import org.reactivestreams.Subscriber;
 /**
  * Monad Transformer for Java Lists
  * 
- * ListT allows the deeply wrapped List toNested be manipulating within it's nested /contained context
+ * ListT allows the deeply wrapped List toNested be manipulating within it's nest /contained context
  *
  * <pre>
  *     {@code
@@ -56,7 +56,7 @@ import org.reactivestreams.Subscriber;
  *
  * @author johnmcclean
  *
- * @param <T> Type of data stored inside the nested Lists
+ * @param <T> Type of data stored inside the nest Lists
  */
 public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
                                                           FoldableTransformerSeq<W,T> {

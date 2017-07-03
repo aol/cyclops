@@ -52,7 +52,7 @@ import java.util.stream.Stream;
  *
  * </pre>
  *
- * Transform nested data
+ * Transform nest data
  * <pre>
  *     {@code
  *     Nested<list,optional,Integer> listOfOptionalInt;  //Nested[List[Optional[2]]]
@@ -81,7 +81,7 @@ import java.util.stream.Stream;
  * @param <T> Nested Data Type
  */
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
-@EqualsAndHashCode(of={"nested"})
+@EqualsAndHashCode(of={"nest"})
 public class Nested<W1,W2,T> implements Transformable<T> {
 
     private final Higher<W1,Higher<W2,T>> nested;

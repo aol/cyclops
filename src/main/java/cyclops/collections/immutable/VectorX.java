@@ -70,7 +70,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     /**
-     * Widen a PVectorType nested inside another HKT encoded type
+     * Widen a PVectorType nest inside another HKT encoded type
      *
      * @param list HTK encoded type containing  a PVector toNested widen
      * @return HKT encoded type with a widened PVector

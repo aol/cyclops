@@ -81,7 +81,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
     /**
-     * Widen a PersistentQueueX nested inside another HKT encoded type
+     * Widen a PersistentQueueX nest inside another HKT encoded type
      *
      * @param list HTK encoded type containing  a PQueue toNested widen
      * @return HKT encoded type with a widened PQueue

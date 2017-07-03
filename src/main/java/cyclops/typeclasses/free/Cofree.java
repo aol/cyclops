@@ -5,18 +5,15 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
 import cyclops.control.Eval;
 
-import cyclops.control.Maybe;
-import cyclops.function.Lambda;
 import cyclops.monads.Witness.cofree;
 import cyclops.monads.Witness.eval;
 import cyclops.typeclasses.NaturalTransformation;
-import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.Monad;
 import cyclops.typeclasses.monad.Traverse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -46,8 +43,8 @@ public class Cofree<W, T> implements Supplier<T>, Higher2<cofree,W,T> {
     public <R> Cofree<W, R>  coflatMap(Function<? super Cofree<W, T>,? extends  R> f){
         return of(functor, f.apply(this), tail.map(h-> functor.map_(h, __->coflatMap(f))));
     }
-    public Cofree<W, Cofree<W, T>> nested() {
-        return of(functor, this, tail.map(h-> functor.map_(h, __->nested())));
+    public Cofree<W, Cofree<W, T>> nest() {
+        return of(functor, this, tail.map(h-> functor.map_(h, __-> nest())));
     }
 
     public <R> Cofree<W, R> transform(Function<? super T,? extends R> f, Function<Cofree<W, T>,Cofree<W, R>> g) {
@@ -100,7 +97,35 @@ public class Cofree<W, T> implements Supplier<T>, Higher2<cofree,W,T> {
             return of(functor, b, Eval.later(() -> functor.map_(fn.apply(b), t -> unfold(functor, t, fn))));
         }
 
+    public static <W,T> Cofree<W,T> narrowK2(final Higher2<cofree, W,T> cof) {
+        return (Cofree<W,T>)cof;
+    }
+    public static <W,T> Cofree<W,T> narrowK(final Higher<Higher<cofree, W>,T> cof) {
+        return (Cofree<W,T>)cof;
+    }
+    public static class Instances{
+        public <W> Comonad<Higher<cofree,W>> comonad(){
+            return new Comonad<Higher<cofree, W>>() {
+                @Override
+                public <T> T extract(Higher<Higher<cofree, W>, T> ds) {
+                    return narrowK(ds).extract();
+                }
 
+                @Override
+                public <T> Higher<Higher<cofree, W>, Higher<Higher<cofree, W>, T>> nest(Higher<Higher<cofree, W>, T> ds) {
+
+                    return (Higher)narrowK(ds).nest();
+                }
+
+                @Override
+                public <T, R> Higher<Higher<cofree, W>, R> coflatMap(Function<? super Higher<Higher<cofree, W>, T>, R> mapper, Higher<Higher<cofree, W>, T> ds) {
+                    return narrowK(ds).coflatMap(mapper);
+                }
+
+
+            };
+        }
+    }
 
 
 }

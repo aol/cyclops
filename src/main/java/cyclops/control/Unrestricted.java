@@ -251,7 +251,7 @@ public abstract class Unrestricted<T> {
 
     /**
      * Perform a For Comprehension over a Unrestricted, accepting 3 generating function.
-     * This results in a four level nested internal iteration over the provided Computationss.
+     * This results in a four level nest internal iteration over the provided Computationss.
      *
      *
      * @param value1 top level Unrestricted
@@ -284,7 +284,7 @@ public abstract class Unrestricted<T> {
 
     /**
      * Perform a For Comprehension over a Unrestricted, accepting 2 generating function.
-     * This results in a three level nested internal iteration over the provided Computationss.
+     * This results in a three level nest internal iteration over the provided Computationss.
      *
      *
      * @param value1 top level Unrestricted
@@ -311,7 +311,7 @@ public abstract class Unrestricted<T> {
 
     /**
      * Perform a For Comprehension over a Unrestricted, accepting a generating function.
-     * This results in a two level nested internal iteration over the provided Computationss.
+     * This results in a two level nest internal iteration over the provided Computationss.
      *
      *
      * @param value1 top level Unrestricted

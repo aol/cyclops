@@ -393,7 +393,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
 
     /**
-     * join / flatten one level of a nested hierarchy
+     * join / flatten one level of a nest hierarchy
      * 
      * @return Flattened / joined one level
      */ 

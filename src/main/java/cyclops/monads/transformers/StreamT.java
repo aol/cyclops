@@ -31,10 +31,10 @@ import java.util.stream.Stream;
 /**
  * Monad Transformer for Java Streams and related types such as ReactiveSeq
  * 
- * StreamT allows the deeply wrapped Stream toNested be manipulating within it's nested /contained context
+ * StreamT allows the deeply wrapped Stream toNested be manipulating within it's nest /contained context
  * @author johnmcclean
  *
- * @param <T> Type of data stored inside the nested  Streams
+ * @param <T> Type of data stored inside the nest  Streams
  */
 public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
                                                           FoldableTransformerSeq<W,T> {

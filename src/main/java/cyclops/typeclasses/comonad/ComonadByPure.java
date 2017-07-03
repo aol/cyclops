@@ -19,7 +19,7 @@ import java.util.function.Function;
  *
  * @param <CRE> Witness type of Kind to process
  */
-public interface Comonad<CRE>  {
+public interface ComonadByPure<CRE> extends Comonad<CRE>,Pure<CRE>, Functor<CRE> {
 
     /**
      * Nest a value inside a value  (e.g. {@code List<List<Integer>> })
@@ -27,7 +27,9 @@ public interface Comonad<CRE>  {
      * @param ds Value to nest
      * @return Nested value
      */
-    <T> Higher<CRE,Higher<CRE,T>> nest(Higher<CRE, T> ds);
+    default <T> Higher<CRE,Higher<CRE,T>> nest(Higher<CRE, T> ds){
+        return map(i->unit(i),ds);
+    }
     
     /**
      * Contra-variant flatMap
@@ -38,7 +40,10 @@ public interface Comonad<CRE>  {
      * @param ds Datastructure
      * @return Coflatmapped result
      */
-    <T,R> Higher<CRE,R> coflatMap(final Function<? super Higher<CRE, T>, R> mapper, Higher<CRE, T> ds);
+    default <T,R> Higher<CRE,R> coflatMap(final Function<? super Higher<CRE, T>, R> mapper, Higher<CRE, T> ds) {
+        return mapper.andThen(r -> unit(r))
+                     .apply(ds);
+    }
     
     /**
      * Extract value embedded in datastructure
@@ -46,5 +51,5 @@ public interface Comonad<CRE>  {
      * @param ds Datatructure to extract value from
      * @return Value
      */
-     <T> T extract(Higher<CRE, T> ds);
+    public <T> T extract(Higher<CRE, T> ds);
 }
