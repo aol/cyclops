@@ -20,6 +20,7 @@ import cyclops.monads.Witness.either3;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -1564,6 +1565,9 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
     }
     default Active<Higher<Higher<either3, LT1>, LT2>,RT> allTypeclasses(){
         return Active.of(this,Instances.definitions());
+    }
+    default <W2,R> Nested<Higher<Higher<either3, LT1>, LT2>,W2,R> mapM(Function<? super RT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
     public static class Instances {
 

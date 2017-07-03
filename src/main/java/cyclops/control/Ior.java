@@ -18,6 +18,7 @@ import cyclops.monads.Witness.ior;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -58,6 +59,9 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
 
     default Active<Higher<ior,ST>,PT> allTypeclasses(){
         return Active.of(this, Ior.Instances.definitions());
+    }
+    default <W2,R> Nested<Higher<ior,ST>,W2,R> mapM(Function<? super PT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
 
     /**

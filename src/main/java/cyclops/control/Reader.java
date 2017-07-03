@@ -6,9 +6,11 @@ import java.util.function.Function;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.*;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.reader;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -36,6 +38,9 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
     default Active<Higher<reader,T>,R> allTypeclasses(){
         return Active.of(this, Instances.definitions());
+    }
+    default <W2,R2> Nested<Higher<reader,T>,W2,R2> mapM(Function<? super R,? extends Higher<W2,R2>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
 
     default  <R2> Reader<T, Tuple2<R,R2>> zip(Reader<T, R2> o){

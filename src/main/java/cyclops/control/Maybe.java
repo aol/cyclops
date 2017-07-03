@@ -25,6 +25,7 @@ import cyclops.monads.Witness.optional;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.MaybeT;
 import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -115,6 +116,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     default Active<maybe,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
+    }
+    default <W2,R> Nested<maybe,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
     default <W extends WitnessType<W>> MaybeT<W, T> liftM(W witness) {
         return MaybeT.of(witness.adapter().unit(this));

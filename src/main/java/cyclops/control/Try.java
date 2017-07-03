@@ -34,6 +34,7 @@ import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -167,6 +168,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
     public Active<Higher<tryType,X>,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
+    }
+    public <W2,R> Nested<Higher<tryType,X>,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
     public Trampoline<Xor<X,T>> toTrampoline() {
         return xor.toTrampoline();

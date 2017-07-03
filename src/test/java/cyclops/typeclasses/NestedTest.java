@@ -1,12 +1,16 @@
 package cyclops.typeclasses;
 
+import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.monads.Witness;
+import cyclops.monads.Witness.future;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.optional;
+import cyclops.monads.Witness.reactiveSeq;
+import cyclops.stream.ReactiveSeq;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +24,11 @@ import static org.junit.Assert.*;
 public class NestedTest {
     Nested<list,optional,Integer> just = Nested.of(ListX.of(OptionalKind.of(2)),ListX.Instances.definitions(),Optionals.Instances.definitions());
     Nested<list,optional,Integer> doubled = Nested.of(ListX.of(OptionalKind.of(4)),ListX.Instances.definitions(),Optionals.Instances.definitions());
+
+
+    Nested<future,optional,Integer> futureOptional = Nested.of(Future.ofResult(OptionalKind.of(4)),Future.Instances.definitions(),Optionals.Instances.definitions());
+
+    Nested<future,reactiveSeq,Integer> futureReactiveSeq = Nested.of(Future.ofResult(ReactiveSeq.of(4)),Future.Instances.definitions(),ReactiveSeq.Instances.definitions());
 
 
     @Test

@@ -1,6 +1,7 @@
 package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.collections.immutable.VectorX;
@@ -21,6 +22,7 @@ import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.NonPausableHotStream;
 import com.aol.cyclops2.types.stream.PausableHotStream;
 import com.aol.cyclops2.util.ExceptionSoftener;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -3228,23 +3230,23 @@ public class Streams {
             }
 
             @Override
-            public Stream<T> sequential() {
-                return boxed.sequential();
+            public StreamKind<T> sequential() {
+                return widen(boxed.sequential());
             }
 
             @Override
-            public Stream<T> parallel() {
-                return boxed.parallel();
+            public StreamKind<T> parallel() {
+                return widen(boxed.parallel());
             }
 
             @Override
-            public Stream<T> unordered() {
-                return boxed.unordered();
+            public StreamKind<T> unordered() {
+                return widen(boxed.unordered());
             }
 
             @Override
-            public Stream<T> onClose(final Runnable closeHandler) {
-                return boxed.onClose(closeHandler);
+            public StreamKind<T> onClose(final Runnable closeHandler) {
+                return widen(boxed.onClose(closeHandler));
             }
 
             @Override
@@ -3253,13 +3255,13 @@ public class Streams {
             }
 
             @Override
-            public Stream<T> filter(final Predicate<? super T> predicate) {
-                return boxed.filter(predicate);
+            public StreamKind<T> filter(final Predicate<? super T> predicate) {
+                return widen(boxed.filter(predicate));
             }
 
             @Override
-            public <R> Stream<R> map(final Function<? super T, ? extends R> mapper) {
-                return boxed.map(mapper);
+            public <R> StreamKind<R> map(final Function<? super T, ? extends R> mapper) {
+                return widen(boxed.map(mapper));
             }
 
             @Override
@@ -3278,8 +3280,8 @@ public class Streams {
             }
 
             @Override
-            public <R> Stream<R> flatMap(final Function<? super T, ? extends Stream<? extends R>> mapper) {
-                return boxed.flatMap(mapper);
+            public <R> StreamKind<R> flatMap(final Function<? super T, ? extends Stream<? extends R>> mapper) {
+                return widen(boxed.flatMap(mapper));
             }
 
             @Override
@@ -3298,33 +3300,33 @@ public class Streams {
             }
 
             @Override
-            public Stream<T> distinct() {
-                return boxed.distinct();
+            public StreamKind<T> distinct() {
+                return widen(boxed.distinct());
             }
 
             @Override
-            public Stream<T> sorted() {
-                return boxed.sorted();
+            public StreamKind<T> sorted() {
+                return widen(boxed.sorted());
             }
 
             @Override
-            public Stream<T> sorted(final Comparator<? super T> comparator) {
-                return boxed.sorted(comparator);
+            public StreamKind<T> sorted(final Comparator<? super T> comparator) {
+                return widen(boxed.sorted(comparator));
             }
 
             @Override
-            public Stream<T> peek(final Consumer<? super T> action) {
-                return boxed.peek(action);
+            public StreamKind<T> peek(final Consumer<? super T> action) {
+                return widen(boxed.peek(action));
             }
 
             @Override
-            public Stream<T> limit(final long maxSize) {
-                return boxed.limit(maxSize);
+            public StreamKind<T> limit(final long maxSize) {
+                return widen(boxed.limit(maxSize));
             }
 
             @Override
-            public Stream<T> skip(final long n) {
-                return boxed.skip(n);
+            public StreamKind<T> skip(final long n) {
+                return widen(boxed.skip(n));
             }
 
             @Override
@@ -3413,7 +3415,12 @@ public class Streams {
             public Optional<T> findAny() {
                 return boxed.findAny();
             }
-
+            public Active<stream,T> allTypeclasses(){
+                return Active.of(this, Instances.definitions());
+            }
+            public <W2,R> Nested<stream,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+                return Nested.of(map(fn), Instances.definitions(), defs);
+            }
         }
 
     }

@@ -10,6 +10,7 @@ import cyclops.monads.Witness;
 import cyclops.monads.Witness.writer;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -208,6 +209,9 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
 
     public Active<Higher<writer,W>,T> allTypeclasses(Monoid<W> monoid){
         return Active.of(this, Instances.definitions(monoid));
+    }
+    public <W2,R> Nested<Higher<writer,W>,W2,R> mapM(Monoid<W> monoid,Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(monoid), defs);
     }
     public static <W,T> Writer<W,T> narrowK2(final Higher2<writer, W,T> t) {
         return (Writer<W,T>)t;

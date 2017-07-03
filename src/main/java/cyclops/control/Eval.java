@@ -18,6 +18,7 @@ import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.EvalT;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -78,6 +79,9 @@ public interface Eval<T> extends To<Eval<T>>,
 
     default Active<eval,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
+    }
+    default <W2,R> Nested<eval,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
     static <T> Eval<T> async(final Executor ex, final Supplier<T> s){
         return fromFuture(Future.of(s,ex));

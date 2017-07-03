@@ -1,6 +1,7 @@
 package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.companion.Streams;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.*;
@@ -29,6 +30,7 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -77,6 +79,9 @@ public class Future<T> implements To<Future<T>>,
 
     public Active<future,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
+    }
+    public <W2,R> Nested<future,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
     public <W extends WitnessType<W>> FutureT<W, T> liftM(W witness) {
         return FutureT.of(witness.adapter().unit(this));

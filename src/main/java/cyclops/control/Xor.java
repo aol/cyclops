@@ -22,6 +22,7 @@ import cyclops.monads.transformers.XorT;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -128,6 +129,9 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
     default Active<Higher<xor,ST>,PT> allTypeclasses(){
         return Active.of(this, Instances.definitions());
+    }
+    default <W2,R> Nested<Higher<xor,ST>,W2,R> mapM(Function<? super PT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
     default <W extends WitnessType<W>> XorT<W, ST,PT> liftM(W witness) {
         return XorT.of(witness.adapter().unit(this));

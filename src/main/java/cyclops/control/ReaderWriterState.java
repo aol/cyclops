@@ -7,6 +7,7 @@ import cyclops.monads.Witness.rws;
 import cyclops.monads.Witness.supplier;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -150,6 +151,14 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
     }
     public Active<Higher<Higher<Higher<rws,R>,W>,S>,T> allTypeclasses(Monoid<W> monoid){
         return Active.of(this, Instances.definitions(monoid));
+    }
+    public <W2,R2> Nested<Higher<Higher<Higher<rws, R>, W>, S>, W2, R2>mapM(Monoid<W> monoid, Function<? super T,? extends Higher<W2,R2>> fn, InstanceDefinitions<W2> defs){
+        InstanceDefinitions<Higher<Higher<Higher<rws,R>, W>, S>> def1 = Instances.definitions(monoid);
+        ReaderWriterState<R, W, S, Higher<W2, R2>> r = map(fn);
+        Higher<Higher<Higher<Higher<rws,R>,W>,S>,Higher<W2,R2>> hkt = r;
+
+        Nested<Higher<Higher<Higher<rws, R>, W>, S>, W2, R2> res = Nested.of(hkt, def1, defs);
+        return res;
     }
     public static <R,W,S,T> ReaderWriterState<R,W,S,T> rws(BiFunction<? super R, ? super S,? extends Tuple3<W,S, T>> runF, Monoid<W> monoid) {
 

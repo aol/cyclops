@@ -16,7 +16,7 @@ import java.util.function.Function;
  * @param <T1> Core type
  * @param <T2> Data type of elements in Core Type
  */
-public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{// , __<T1, T2>{
+public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{
 
 
     /**

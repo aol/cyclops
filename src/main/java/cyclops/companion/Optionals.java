@@ -8,6 +8,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -16,6 +17,7 @@ import cyclops.function.Reducer;
 import cyclops.monads.Witness.optional;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.OptionalT;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -35,6 +37,7 @@ import com.aol.cyclops2.types.Value;
 import cyclops.monads.Witness;
 
 import lombok.experimental.UtilityClass;
+import sun.security.jca.GetInstance;
 
 /**
  * Utility class for working with JDK Optionals
@@ -868,7 +871,7 @@ public class Optionals {
             return OptionalKind.widen(OptionalKind.narrow(lt).flatMap(fn.andThen(OptionalKind::narrowK)));
         }
         private static <T,R> OptionalKind<R> map(OptionalKind<T> lt, Function<? super T, ? extends R> fn){
-            return OptionalKind.widen(OptionalKind.narrow(lt).map(fn));
+            return OptionalKind.narrow(lt).map(fn);
         }
 
 
@@ -951,11 +954,11 @@ public class Optionals {
         public void ifPresent(Consumer<? super T> consumer) {
             boxed.ifPresent(consumer);
         }
-        public Optional<T> filter(Predicate<? super T> predicate) {
-            return boxed.filter(predicate);
+        public OptionalKind<T> filter(Predicate<? super T> predicate) {
+            return widen(boxed.filter(predicate));
         }
-        public <U> Optional<U> map(Function<? super T, ? extends U> mapper) {
-            return boxed.map(mapper);
+        public <U> OptionalKind<U> map(Function<? super T, ? extends U> mapper) {
+            return widen(boxed.map(mapper));
         }
         public <U> Optional<U> flatMap(Function<? super T, Optional<U>> mapper) {
             return boxed.flatMap(mapper);
@@ -979,7 +982,12 @@ public class Optionals {
             return boxed.toString();
         }
 
+         public Active<optional,T> allTypeclasses(){
+             return Active.of(this, Instances.definitions());
+         }
 
-
+         public <W2,R> Nested<optional,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+             return Nested.of(map(fn), Instances.definitions(), defs);
+         }
     }
 }

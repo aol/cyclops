@@ -2,11 +2,26 @@ package cyclops.typeclasses;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.functor.Transformable;
+import cyclops.async.Future;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.ListX;
+import cyclops.companion.CompletableFutures;
+import cyclops.companion.CompletableFutures.CompletableFutureKind;
+import cyclops.companion.Optionals;
+import cyclops.companion.Optionals.OptionalKind;
+import cyclops.companion.Streams;
+import cyclops.companion.Streams.StreamKind;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
+import cyclops.control.Try;
+import cyclops.control.Xor;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
+import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.functor.Compose;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.Monad;
@@ -14,9 +29,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Class for working with Nested Data Structures.
@@ -69,6 +88,9 @@ public class Nested<W1,W2,T> implements Transformable<T> {
     private final Compose<W1,W2> composedFunctor;
     private final InstanceDefinitions<W1> def1;
     private final InstanceDefinitions<W2> def2;
+
+
+
 
     public static <W1,W2,T> Nested<W1,W2,T> of(Higher<W1,Higher<W2,T>> nested,InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2){
         Compose<W1,W2> composed = Compose.compose(def1.functor(),def2.functor());
@@ -160,5 +182,46 @@ public class Nested<W1,W2,T> implements Transformable<T> {
     @Override
     public <R> Nested<W1,W2,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
         return (Nested<W1,W2,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
+    }
+
+
+    public static <T> Nested<completableFuture,stream,T> completableFutureStream(CompletableFuture<? extends Stream<T>> optionalList){
+        CompletableFutureKind<StreamKind<T>> opt = CompletableFutureKind.widen(optionalList.thenApply(StreamKind::widen));
+        Higher<completableFuture,Higher<stream,T>> hkt = (Higher)opt;
+        return of(hkt, CompletableFutures.Instances.definitions(), Streams.Instances.definitions());
+    }
+    public static <T> Nested<optional,stream,T> optionalStream(Optional<? extends Stream<T>> optionalList){
+        OptionalKind<StreamKind<T>> opt = OptionalKind.widen(optionalList).map(StreamKind::widen);
+        Higher<optional,Higher<stream,T>> hkt = (Higher)opt;
+        return of(hkt, Optionals.Instances.definitions(), Streams.Instances.definitions());
+    }
+
+    public static <T> Nested<optional,list,T> optionalList(Optional<? extends List<T>> optionalList){
+        OptionalKind<ListX<T>> opt = OptionalKind.widen(optionalList).map(ListX::fromIterable);
+        Higher<optional,Higher<list,T>> hkt = (Higher)opt;
+        return of(hkt, Optionals.Instances.definitions(), ListX.Instances.definitions());
+    }
+    public static <T, X extends Throwable> Nested<future,Higher<tryType,X>,T> futureTry(Future<? extends Try<T,X>> futureTry){
+        Higher<future,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
+        return of(hkt, Future.Instances.definitions(), Try.Instances.definitions());
+    }
+    public static <T, X extends Throwable> Nested<list,Higher<tryType,X>,T> listTry(List<? extends Try<T,X>> futureTry){
+        Higher<list,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
+        return of(hkt, ListX.Instances.definitions(), Try.Instances.definitions());
+    }
+    public static <L,R> Nested<list,Higher<xor,L>,R> listXor(List<? extends Xor<L,R>> listXor){
+        Higher<list,Higher<Higher<xor,L>,R>> hkt = (Higher)listXor;
+        return of(hkt, ListX.Instances.definitions(), Xor.Instances.definitions());
+    }
+    public static <L,R> Nested<future,Higher<xor,L>,R> futureXor(Future<? extends Xor<L,R>> futureXor){
+        Higher<future,Higher<Higher<xor,L>,R>> hkt = (Higher)futureXor;
+        return of(hkt, Future.Instances.definitions(), Xor.Instances.definitions());
+    }
+    public static <T> Nested<future,list,T> futureList(Future<? extends List<T>> futureList){
+        return of(futureList.map(ListX::fromIterable),Future.Instances.definitions(), ListX.Instances.definitions());
+    }
+    public static <T> Nested<future,vectorX,T> futureVector(Future<VectorX<T>> futureList){
+        Higher<future,Higher<vectorX,T>> hkt = (Higher)futureList;
+        return of(hkt,Future.Instances.definitions(), VectorX.Instances.definitions());
     }
 }

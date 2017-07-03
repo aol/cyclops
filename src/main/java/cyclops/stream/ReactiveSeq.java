@@ -44,6 +44,7 @@ import cyclops.monads.Witness;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.StreamT;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -123,6 +124,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     default Active<reactiveSeq,T> allTypeclasses(){
         return Active.of(this, this.visit(sync->Instances.definitions(),rs->Spouts.Instances.definitions(),ac->Spouts.Instances.definitions()));
+    }
+    default <W2,R> Nested<reactiveSeq,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
 
 

@@ -23,6 +23,7 @@ import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.ListT;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -62,7 +63,9 @@ public interface ListX<T> extends To<ListX<T>>,
     default Active<list,T> allTypeclasses(){
         return Active.of(this,Instances.definitions());
     }
-
+    default <W2,R> Nested<list,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
+    }
     /**
      * Convert the raw Higher Kinded Type for ListX types into the ListX type definition class
      *
