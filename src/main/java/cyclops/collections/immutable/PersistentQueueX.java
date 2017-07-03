@@ -28,6 +28,7 @@ import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -1357,6 +1358,19 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 @Override
                 public <T> Maybe<Comonad<persistentQueueX>> comonad() {
                     return Maybe.none();
+                }
+                @Override
+                public <T> Maybe<Unfoldable<persistentQueueX>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+        }
+
+        public static Unfoldable<persistentQueueX> unfoldable(){
+            return new Unfoldable<persistentQueueX>() {
+                @Override
+                public <R, T> Higher<persistentQueueX, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return PersistentQueueX.unfold(b,fn);
                 }
             };
         }

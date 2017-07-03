@@ -28,6 +28,7 @@ import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -1376,6 +1377,18 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 @Override
                 public <T> Maybe<Comonad<deque>> comonad() {
                     return Maybe.none();
+                }
+                @Override
+                public <T> Maybe<Unfoldable<Witness.deque>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+        }
+        public static Unfoldable<deque> unfoldable(){
+            return new Unfoldable<deque>() {
+                @Override
+                public <R, T> Higher<deque, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return DequeX.unfold(b,fn);
                 }
             };
         }

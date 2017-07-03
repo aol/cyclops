@@ -31,6 +31,7 @@ import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -1274,6 +1275,18 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 @Override
                 public <T> Maybe<Comonad<vectorX>> comonad() {
                     return Maybe.none();
+                }
+                @Override
+                public <T> Maybe<Unfoldable<vectorX>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+        }
+        public static Unfoldable<vectorX> unfoldable(){
+            return new Unfoldable<vectorX>() {
+                @Override
+                public <R, T> Higher<vectorX, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return VectorX.unfold(b,fn);
                 }
             };
         }

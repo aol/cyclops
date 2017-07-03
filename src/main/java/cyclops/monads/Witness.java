@@ -500,4 +500,13 @@ public interface Witness {
         }
 
     }
+    public static enum cofree implements WitnessType<cofree>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<cofree> adapter() {
+            return null;
+        }
+
+    }
 }

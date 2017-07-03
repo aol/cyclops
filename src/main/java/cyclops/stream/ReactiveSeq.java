@@ -48,6 +48,7 @@ import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -4895,6 +4896,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 @Override
                 public <T> Maybe<Comonad<reactiveSeq>> comonad() {
                     return Maybe.none();
+                }
+                @Override
+                public <T> Maybe<Unfoldable<reactiveSeq>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+        }
+        public static Unfoldable<reactiveSeq> unfoldable(){
+            return new Unfoldable<reactiveSeq>() {
+                @Override
+                public <R, T> Higher<reactiveSeq, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return ReactiveSeq.unfold(b,fn);
                 }
             };
         }

@@ -1,0 +1,106 @@
+package cyclops.typeclasses.free;
+
+
+import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher2;
+import cyclops.control.Eval;
+
+import cyclops.control.Maybe;
+import cyclops.function.Lambda;
+import cyclops.monads.Witness.cofree;
+import cyclops.monads.Witness.eval;
+import cyclops.typeclasses.NaturalTransformation;
+import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.Traverse;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import org.jooq.lambda.tuple.Tuple2;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+/*
+ * Cofree : https://github.com/typelevel/cats/blob/master/free/src/main/scala/cats/free/Cofree.scala
+ *          https://github.com/kategory/kategory/blob/master/kategory/src/main/kotlin/kategory/free/Cofree.kt
+ *
+ */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class Cofree<W, T> implements Supplier<T>, Higher2<cofree,W,T> {
+
+    private final Functor<W> functor;
+    private final T head;
+    private final Eval<Higher<W, Cofree<W, T>>> tail;
+
+    public static <W,T> Cofree<W,T> of(Functor<W> functor, T head, Eval<Higher<W, Cofree<W, T>>> tail) {
+        return new Cofree<W,T>(functor,head,tail);
+    }
+    public Higher<W, Cofree<W, T>> tailForced() {
+        return tail.get();
+    }
+    public <R> Cofree<W,R> map(Function<? super T,? extends R> f){
+        return transform(f,c->c.map(f));
+    }
+    public <R> Cofree<W, R>  coflatMap(Function<? super Cofree<W, T>,? extends  R> f){
+        return of(functor, f.apply(this), tail.map(h-> functor.map_(h, __->coflatMap(f))));
+    }
+    public Cofree<W, Cofree<W, T>> nested() {
+        return of(functor, this, tail.map(h-> functor.map_(h, __->nested())));
+    }
+
+    public <R> Cofree<W, R> transform(Function<? super T,? extends R> f, Function<Cofree<W, T>,Cofree<W, R>> g) {
+        return of(functor,f.apply(head),tail.map(i-> functor.map_(i,g)));
+    }
+    public Cofree<W, T> mapBranchingRoot(NaturalTransformation<W, W> nat) {
+        return of(functor, head, tail.map(h->nat.apply(h)));
+    }
+    public <R> Cofree<R, T> mapBranchingS(Functor<R> functor,NaturalTransformation<W, R> nat) {
+        return of(functor, head, tail.map( ce -> nat.apply(this.functor.map_(ce, cofree -> cofree.mapBranchingS( functor,nat)))));
+    }
+    public <R> Cofree<R, T>  mapBranchingT(Functor<R> functor,NaturalTransformation<W, R> nat) {
+        return of(functor, head, tail.map(ce -> functor.map_(nat.apply(ce), cofree -> cofree.mapBranchingT(functor,nat))));
+    }
+    public Cofree<W, T> forceTail() {
+       return of(functor, head, Eval.now(tail.get()));
+    }
+
+    public Cofree<W, T> forceAll(){
+        return of(functor, head, Eval.now(tail.map(h-> functor.map_(h, c->c.forceAll())).get()));
+    }
+    public T extract(){
+        return head;
+    }
+
+    public T get(){
+        return extract();
+    }
+
+    public  <R> Eval<R> visit(Traverse<W> traverse,BiFunction<T, Higher<W, R>,Eval<R>> fn) {
+        Eval<Higher<W, R>> eval = traverse.traverseA(Eval.Instances.applicative(), it -> it.visit( traverse,fn), tailForced())
+                .convert(Eval::narrowK);
+        return eval.flatMap(i->fn.apply(extract(), i));
+    }
+
+    public  <M, R> Higher<M,R> visitM(Traverse<W> traverse, Monad<M> monad,BiFunction<? super T,? super Higher<W, R>,Higher<M, R>> fn,
+                                      NaturalTransformation<eval, M> inclusion) {
+
+        class inner {
+
+            public Eval<Higher<M, R>> loop(Cofree<W, T> eval) {
+                Higher<M, Higher<W, R>> looped = traverse.traverseA(monad, (Cofree<W,T> fr) ->  monad.flatten(inclusion.apply(Eval.defer(()->loop(fr)))), eval.tailForced());
+                Higher<M, R> folded = monad.flatMap_(looped, fb -> fn.apply(eval.head, fb));
+                return Eval.now(folded);
+            }
+        }
+        return monad.flatten(inclusion.apply(new inner().loop(this)));
+     }
+        public static <W,T> Cofree<W,T> unfold(Functor<W> functor,T b, Function<? super T, ? extends Higher<W, T>> fn) {
+            return of(functor, b, Eval.later(() -> functor.map_(fn.apply(b), t -> unfold(functor, t, fn))));
+        }
+
+
+
+
+}

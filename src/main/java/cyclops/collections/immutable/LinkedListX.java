@@ -31,6 +31,7 @@ import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -1329,6 +1330,19 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 @Override
                 public <T> Maybe<Comonad<linkedListX>> comonad() {
                     return Maybe.none();
+                }
+
+                @Override
+                public <T> Maybe<Unfoldable<linkedListX>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+        }
+        public static Unfoldable<linkedListX> unfoldable(){
+            return new Unfoldable<linkedListX>() {
+                @Override
+                public <R, T> Higher<linkedListX, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return LinkedListX.unfold(b,fn);
                 }
             };
         }

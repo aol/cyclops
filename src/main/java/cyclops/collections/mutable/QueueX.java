@@ -26,6 +26,7 @@ import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -1220,6 +1221,18 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                 @Override
                 public <T> Maybe<Comonad<queue>> comonad() {
                     return Maybe.none();
+                }
+                @Override
+                public <T> Maybe<Unfoldable<queue>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+        }
+        public static Unfoldable<queue> unfoldable(){
+            return new Unfoldable<queue>() {
+                @Override
+                public <R, T> Higher<queue, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return QueueX.unfold(b,fn);
                 }
             };
         }

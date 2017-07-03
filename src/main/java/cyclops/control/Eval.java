@@ -252,6 +252,10 @@ public interface Eval<T> extends To<Eval<T>>,
         return new Module.Later<T>(
                                    in -> value.get());
     }
+    public static <T> Eval<T> defer(final Supplier<Eval<T>> value) {
+        return new Module.Later<T>(
+                in -> value.get().get());
+    }
 
     /**
      * Lazily create an Eval from the specified Supplier. Supplier#get will only be every time get is called on the resulting Eval.

@@ -1,6 +1,7 @@
 package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.collections.mutable.QueueX;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.spliterators.*;
@@ -26,6 +27,7 @@ import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -2890,9 +2892,21 @@ public class Streams {
                 public <T> Maybe<Comonad<stream>> comonad() {
                     return Maybe.none();
                 }
+                @Override
+                public <T> Maybe<Unfoldable<Witness.stream>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
             };
         }
-        /**
+        public static Unfoldable<Witness.stream> unfoldable(){
+            return new Unfoldable<Witness.stream>() {
+                @Override
+                public <R, T> Higher<Witness.stream, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return StreamKind.widen(ReactiveSeq.unfold(b,fn));
+                }
+            };
+        }
+        /*
          *
          * Transform a list, mulitplying every element by 2
          *

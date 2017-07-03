@@ -67,7 +67,8 @@ public interface Fn1<T,  R> extends Function<T,R>{
         return FluentFunctions.of(this).after(action);
     }
 
-    default <W1,W2> Fn1<Higher<W1,T>,Higher<W2,R>> liftKind(Function<Higher<W1,T>,Higher<W2,T>> hktTransform,Functor<W2> functor){
+
+    default <W1,W2> Fn1<Higher<W1,T>,Higher<W2,R>> liftNT(Function<Higher<W1,T>,Higher<W2,T>> hktTransform, Functor<W2> functor){
         return (T1)-> functor.map(this,hktTransform.apply(T1));
     }
     default <W1 extends WitnessType<W1>,W2 extends WitnessType<W2>> Fn1<AnyM<W1,T>,AnyM<W2,R>> liftAnyM(Function<AnyM<W1,T>,AnyM<W2,T>> hktTransform){
