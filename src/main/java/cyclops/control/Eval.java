@@ -80,6 +80,7 @@ public interface Eval<T> extends To<Eval<T>>,
     default Active<eval,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }
+
     default <W2,R> Nested<eval,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
         return Nested.of(map(fn), Instances.definitions(), defs);
     }

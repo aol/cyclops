@@ -122,6 +122,7 @@ public class Active<W,T> implements Filters<T>,
             return def1.traverse().get().flatTraverse(applicative,def1.monad(),single,f);
 
         }
+
     }
 
     @Override
