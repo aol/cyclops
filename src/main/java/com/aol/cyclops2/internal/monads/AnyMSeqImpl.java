@@ -24,7 +24,7 @@ public class AnyMSeqImpl<W extends WitnessType<W>,T> extends BaseAnyMImpl<W,T>im
 
         }
         return adapter.toStream(this);
-     //   return Streams.oneShotStreamI(this);
+
     }
     @Override
     public String toString() {

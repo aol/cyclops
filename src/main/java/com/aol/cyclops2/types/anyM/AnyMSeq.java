@@ -25,6 +25,8 @@ import cyclops.async.adapters.QueueFactory;
 import cyclops.collections.mutable.*;
 import cyclops.collections.immutable.*;
 import cyclops.monads.WitnessType;
+import org.jooq.lambda.Collectable;
+import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -1171,6 +1173,17 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
         return fromIterable(FoldableTraversable.super.zip4(second,third,fourth,fn));
     }
 
+    /**
+     * Narrow this class toNested a Collectable
+     *
+     * @return Collectable
+     */
+    default Collectable<T> collectors(){
+        ReactiveSeq<T> x = this.adapter().toStream(this);
 
-
+        return x.collectors();
+    }
+    default Seq<T> seq(){
+        return Seq.seq((Stream<T>)stream());
+    }
 }

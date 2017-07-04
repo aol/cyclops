@@ -5,7 +5,7 @@ package com.aol.cyclops2.hkt;
 
 /**
  * Higher Kinded Type - a core type (e.g. a List) and a data type of the elements within the List (e.g. Integers).
- * A fluent semantic alias for  org.derive4j.hkt.__ (awaiting https://github.com/derive4j/hkt/issues/13).
+ *
  *
  * @author johnmcclean
  *
