@@ -46,11 +46,12 @@ import java.util.stream.Stream;
 
 
 /**
- * An eXtended Deque type, that offers additional eagerly executed functional style operators such as bimap, filter and more
+ * An eXtended Deque type, that offers additional functional style operators such as bimap, filter and more
+ * Can operate eagerly, lazily or reactively (async push)
  * 
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this toX
+ * @param <T> the type of elements held in this DequeX
  */
 public interface DequeX<T> extends To<DequeX<T>>,
                                    Deque<T>,

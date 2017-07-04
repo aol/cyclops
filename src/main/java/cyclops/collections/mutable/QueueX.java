@@ -42,6 +42,14 @@ import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+/**
+ * An eXtended Queue type, that offers additional functional style operators such as bimap, filter and more
+ * Can operate eagerly, lazily or reactively (async push)
+ *
+ * @author johnmcclean
+ *
+ * @param <T> the type of elements held in this QueueX
+ */
 public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                                    LazyCollectionX<T>,
                                     OnEmptySwitch<T, Queue<T>>,

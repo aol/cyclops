@@ -47,10 +47,11 @@ import static cyclops.monads.Witness.list;
 
 /**
  * An eXtended List type, that offers additional functional style operators such as bimap, filter and more
+ * Can operate eagerly, lazily or reactively (async push)
  * 
  * @author johnmcclean
  *
- * @param <T> the type of elements held in this toX
+ * @param <T> the type of elements held in this ListX
  */
 public interface ListX<T> extends To<ListX<T>>,
                                   List<T>,

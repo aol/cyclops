@@ -32,8 +32,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
-
-
+/**
+ * An eXtended Persistent Set type, that offers additional functional style operators such as bimap, filter and more
+ * Can operate eagerly, lazily or reactively (async push)
+ *
+ * @author johnmcclean
+ *
+ * @param <T> the type of elements held in this collection
+ */
 public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
 
 

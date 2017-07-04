@@ -29,7 +29,14 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
+/**
+ * An eXtended Set type, that offers additional functional style operators such as bimap, filter and more
+ * Can operate eagerly, lazily or reactively (async push)
+ *
+ * @author johnmcclean
+ *
+ * @param <T> the type of elements held in this SetX
+ */
 public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, OnEmptySwitch<T, Set<T>> {
 
 

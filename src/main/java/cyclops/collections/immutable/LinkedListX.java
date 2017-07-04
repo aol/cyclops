@@ -49,6 +49,14 @@ import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+/**
+ * An eXtended Persistent List type, that offers additional functional style operators such as bimap, filter and more
+ * Can operate eagerly, lazily or reactively (async push)
+ *
+ * @author johnmcclean
+ *
+ * @param <T> the type of elements held in this collection
+ */
 public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                     PStack<T>,
                                     LazyCollectionX<T>,

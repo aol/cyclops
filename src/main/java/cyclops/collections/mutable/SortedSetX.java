@@ -33,6 +33,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
+/**
+ * An eXtended SortedSet type, that offers additional functional style operators such as bimap, filter and more
+ * Can operate eagerly, lazily or reactively (async push)
+ *
+ * @author johnmcclean
+ *
+ * @param <T> the type of elements held in this SortedSetX
+ */
 public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, SortedSet<T>> {
 
 
