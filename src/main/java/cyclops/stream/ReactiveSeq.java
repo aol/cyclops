@@ -604,10 +604,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<Integer> ints(ToIntFunction<? super T> fn,Function<? super IntStream, ? extends IntStream> mapper){
         return ReactiveSeq.fromSpliterator(mapper.apply(mapToInt(fn)).spliterator());
     }
-    default <R> ReactiveSeq<R> jooλ(Function<? super Seq<T>, ? extends Seq<R>> mapper){
-        return ReactiveSeq.fromSpliterator(foldJooλ(mapper).spliterator());
+    default <R> ReactiveSeq<R> jool(Function<? super Seq<T>, ? extends Seq<R>> mapper){
+        return ReactiveSeq.fromSpliterator(foldJool(mapper).spliterator());
     }
-    default <R> R foldJooλ(Function<? super Seq<T>, ? extends R> mapper){
+    default <R> R foldJool(Function<? super Seq<T>, ? extends R> mapper){
         Spliterator<T> split = this.spliterator();
         return mapper.apply(Seq.seq(split));
     }
