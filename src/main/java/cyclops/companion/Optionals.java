@@ -917,6 +917,9 @@ public class Optionals {
         public static <T> OptionalKind<T> of(T value) {
             return widen(Optional.of(value));
         }
+         public static <T> OptionalKind<T> ofNullable(T value) {
+             return widen(Optional.ofNullable(value));
+         }
         /**
          * Convert a Optional toNested a simulated HigherKindedType that captures Optional nature
          * and Optional element data type separately. Recover via @see OptionalKind#narrow

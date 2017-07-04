@@ -1,9 +1,6 @@
 package cyclops.companion;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -875,6 +872,29 @@ public class CompletableFutures {
          */
         public static <T> CompletableFutureKind<T> completedFuture(T value){
             return widen(CompletableFuture.completedFuture(value));
+        }
+
+
+
+        public static <U> CompletableFutureKind<U> supplyAsync(Supplier<U> supplier) {
+            return widen(CompletableFuture.supplyAsync(supplier));
+        }
+
+
+        public static <U> CompletableFutureKind<U> supplyAsync(Supplier<U> supplier,
+                                                           Executor executor) {
+            return widen(CompletableFuture.supplyAsync(supplier,executor));
+        }
+
+
+        public static CompletableFutureKind<Void> runAsync(Runnable runnable) {
+            return widen(CompletableFuture.runAsync(runnable));
+        }
+
+
+        public static CompletableFutureKind<Void> runAsync(Runnable runnable,
+                                                       Executor executor) {
+            return widen(CompletableFuture.runAsync(runnable,executor));
         }
 
         /**

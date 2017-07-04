@@ -4,18 +4,42 @@ package cyclops.typeclasses;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
-import cyclops.control.Xor;
+import cyclops.async.Future;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.immutable.PersistentSetX;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
+import cyclops.companion.CompletableFutures;
+import cyclops.companion.CompletableFutures.CompletableFutureKind;
+import cyclops.companion.Optionals;
+import cyclops.companion.Optionals.OptionalKind;
+import cyclops.companion.Streams;
+import cyclops.companion.Streams.StreamKind;
+import cyclops.control.*;
+import cyclops.control.lazy.Either;
 import cyclops.function.Monoid;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
+import cyclops.monads.WitnessType;
+import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.monad.Applicative;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import sun.awt.image.ImageWatched;
 
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
+import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode(of="xor")
 public class Coproduct<W1,W2,T> implements  Filters<T>,
                                             Transformable<T>{
 
@@ -169,6 +193,68 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,
         }
 
 
+    }
+
+
+
+    public static  <W1,T> Coproduct<W1,vectorX,T> vectorX(VectorX<T> list,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Xor.primary(list),def1, VectorX.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,vectorX,T> vectorX(InstanceDefinitions<W1> def1,T... values){
+        return new Coproduct<>(Xor.primary(VectorX.of(values)),def1, VectorX.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,linkedListX,T> linkedListX(LinkedListX<T> list,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Xor.primary(list),def1, LinkedListX.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,linkedListX,T> linkedListX(InstanceDefinitions<W1> def1,T... values){
+        return new Coproduct<>(Xor.primary(LinkedListX.of(values)),def1, LinkedListX.Instances.definitions());
+    }
+
+
+    public static  <W1,T> Coproduct<W1,list,T> listX(List<T> list,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Xor.primary(ListX.fromIterable(list)),def1, ListX.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,list,T> listX(InstanceDefinitions<W1> def1,T... values){
+        return new Coproduct<>(Xor.primary(ListX.of(values)),def1, ListX.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,stream,T> stream(Stream<T> stream,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Xor.primary(StreamKind.widen(stream)),def1, Streams.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,stream,T> stream(InstanceDefinitions<W1> def1,T... values){
+        return new Coproduct<>(Xor.primary(StreamKind.of(values)),def1, Streams.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,reactiveSeq,T> reactiveSeq(ReactiveSeq<T> stream,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Xor.primary(stream),def1,ReactiveSeq.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,reactiveSeq,T> reactiveSeq(InstanceDefinitions<W1> def1,T... values){
+        return new Coproduct<>(Xor.primary(ReactiveSeq.of(values)),def1,ReactiveSeq.Instances.definitions());
+    }
+    public static  <W1,X extends Throwable,T> Coproduct<W1,Higher<tryType,X>,T> success(T value,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Xor.primary(Try.success(value)),def1, Try.Instances.definitions());
+    }
+    public static  <W1,X extends Throwable,T> Coproduct<W1,Higher<tryType,X>,T> failure(X value,InstanceDefinitions<W1> def1){
+        return new Coproduct<W1,Higher<tryType,X>,T>(Xor.primary(Try.failure(value)),def1,Try.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,future,T> futureOf(Supplier<T> value, Executor ex,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Xor.primary(Future.of(value, ex)),def1,Future.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,completableFuture,T> completableFutureOf(Supplier<T> value, Executor ex,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Xor.primary(CompletableFutureKind.supplyAsync(value, ex)),def1, CompletableFutures.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,eval,T> later(Supplier<T> value,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Either.right(Eval.later(value)),def1,Eval.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,optional,T> ofNullable(T value,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Xor.primary(OptionalKind.ofNullable(value)),def1,Optionals.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,maybe,T> just(T value,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Xor.primary(Maybe.just(value)),def1,Maybe.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,maybe,T> none(InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Xor.primary(Maybe.none()),def1,Maybe.Instances.definitions());
+    }
+    public static  <W1,T> Coproduct<W1,maybe,T> maybeNullabe(T value,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Xor.primary(Maybe.ofNullable(value)),def1,Maybe.Instances.definitions());
     }
 
 }

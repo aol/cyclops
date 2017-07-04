@@ -509,4 +509,13 @@ public interface Witness {
         }
 
     }
+    public static enum identity implements WitnessType<identity>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<identity> adapter() {
+            return null;
+        }
+
+    }
 }

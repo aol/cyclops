@@ -20,8 +20,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /*
- * Cofree : https://github.com/typelevel/cats/blob/master/free/src/main/scala/cats/free/Cofree.scala
- *          https://github.com/kategory/kategory/blob/master/kategory/src/main/kotlin/kategory/free/Cofree.kt
+ * Cofree refs & guides : https://github.com/typelevel/cats/blob/master/free/src/main/scala/cats/free/Cofree.scala
+ *                        https://github.com/kategory/kategory/blob/master/kategory/src/main/kotlin/kategory/free/Cofree.kt
  *
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
