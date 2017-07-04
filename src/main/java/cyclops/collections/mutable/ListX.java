@@ -46,7 +46,7 @@ import java.util.stream.Stream;
 import static cyclops.monads.Witness.list;
 
 /**
- * An eXtended List type, that offers additional eagerly executed functional style operators such as bimap, filter and more
+ * An eXtended List type, that offers additional functional style operators such as bimap, filter and more
  * 
  * @author johnmcclean
  *
