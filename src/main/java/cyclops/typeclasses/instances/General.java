@@ -18,7 +18,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * General instance used toNested create typeclass instances from Java 8 method references
+ * General instance used to create typeclass instances from Java 8 method references
  * 
  * @author johnmcclean
  *
