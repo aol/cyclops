@@ -3,6 +3,7 @@ package cyclops.typeclasses;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Filters;
+import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.async.Future;
 import cyclops.collections.immutable.LinkedListX;
@@ -28,6 +29,7 @@ import cyclops.typeclasses.monad.Applicative;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 
 import java.util.List;
@@ -40,8 +42,9 @@ import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of="xor")
+@Getter
 public class Coproduct<W1,W2,T> implements  Filters<T>,
-                                            Transformable<T>{
+                                            Transformable<T>, To<Coproduct<W1,W2,T>> {
 
     private final Xor<Higher<W1,T>,Higher<W2,T>> xor;
     private final InstanceDefinitions<W1> def1;

@@ -15,10 +15,10 @@ import java.util.function.Function;
 public class Comprehensions<W1> {
 
 
-    public <W1> Comprehensions<W1> of(Monad<W1>  monad){
+    public static <W1> Comprehensions<W1> of(Monad<W1>  monad){
         return new Comprehensions<>(monad);
     }
-    public <W1> Guarded<W1> of(MonadZero<W1>  monad){
+    public static <W1> Guarded<W1> of(MonadZero<W1>  monad){
         return new Comprehensions.Guarded<>(monad);
     }
 
@@ -69,7 +69,7 @@ public class Comprehensions<W1> {
 
 
 
-    public  <T, R1, R> Higher<W1,R> forEach2(Higher<W1,? extends T> value1, Function<? super T, Higher<W1,R1>> value2,
+    public  <T, R1, R> Higher<W1,R> forEach2(Higher<W1,? extends T> value1, Function<? super T, ? extends Higher<W1,R1>> value2,
                                                   BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
         return monad.flatMap_(value1,in -> {

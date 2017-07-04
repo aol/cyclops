@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Folds;
+import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.reactive.Completable;
 import cyclops.async.Future;
@@ -25,6 +26,7 @@ import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -40,14 +42,34 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
+/**
+ * A Sum type for monads of the same type.
+ * XorM is active type biased (rather than right biased).
+ * e.g.
+ * <pre>
+ *     {@code
+ *          XorM<stream,optional,Integer> nums = XorM.stream(1,2,3);
+ *          int result = nums.map(i->i*2)
+ *                           .foldLeft(Monoids.intSum);
+ *          //12
+ *     }
+ *
+ * </pre>
+ *
+ * @param <W1> Witness type of monad
+ * @param <W2> Witness type of monad
+ * @param <T> Data type
+ */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of="xor")
 public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> implements Filters<T>,
                                                                                        Transformable<T>,
                                                                                        Folds<T>,
                                                                                        Zippable<T>,
-                                                                                       Publisher<T> {
-    
+                                                                                       Publisher<T>,
+                                                                                       To<XorM<W1,W2,T>> {
+
+    @Getter
     private final Xor<AnyM<W1,T>,AnyM<W2,T>> xor;
 
     public static  <W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> XorM<W1,W2,T> of(Xor<? extends AnyM<? extends W1,? extends T>,
