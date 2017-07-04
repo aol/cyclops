@@ -48,7 +48,8 @@ import java.util.stream.Stream;
  * e.g.
  * <pre>
  *     {@code
- *          XorM<stream,optional,Integer> nums = XorM.stream(1,2,3);
+ *          XorM<stream,optional,Integer> nums = XorM.stream(1,2,3)
+                                                     .swap();
  *          int result = nums.map(i->i*2)
  *                           .foldLeft(Monoids.intSum);
  *          //12
