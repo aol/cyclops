@@ -2437,7 +2437,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.reactiveStream.Stream, java.util.function.BiPredicate)
      */
     default <U> Streamable<Tuple2<T, U>> leftOuterJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
-        return fromStream(reactiveSeq().jooλ(s->s.leftOuterJoin(other, predicate)));
+        return fromStream(reactiveSeq().jool(s->s.leftOuterJoin(other, predicate)));
 
     }
 
@@ -2445,7 +2445,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.reactiveStream.Stream, java.util.function.BiPredicate)
      */
     default <U> Streamable<Tuple2<T, U>> rightOuterJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
-        return fromStream(reactiveSeq().jooλ(s->s.rightOuterJoin(other, predicate)));
+        return fromStream(reactiveSeq().jool(s->s.rightOuterJoin(other, predicate)));
     }
 
     /** If this Streamable is empty replace it with a another Stream

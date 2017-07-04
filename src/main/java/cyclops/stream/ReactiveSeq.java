@@ -78,7 +78,7 @@ import java.util.stream.*;
  * A powerful extended, sequential Stream type.
  * Extends JDK 8 java.util.reactiveStream.Stream.
  * Implements the reactive-reactiveStream publisher api.
- * Replayable Stream by default, using primitive operators (ints,longs, doubles or jooλ results in conversion toNested a oneshot Stream
+ * Replayable Stream by default, using primitive operators (ints,longs, doubles or jool results in conversion toNested a oneshot Stream
  * (as of 2.0.0-MI1)
  *
  * Features include

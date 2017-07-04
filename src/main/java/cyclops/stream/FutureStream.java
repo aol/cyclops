@@ -965,8 +965,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     }
     @Override
-    default <R> FutureStream<R> jooλ(Function<? super Seq<U>, ? extends Seq<R>> mapper){
-        return fromStream(ReactiveSeq.super.jooλ(mapper));
+    default <R> FutureStream<R> jool(Function<? super Seq<U>, ? extends Seq<R>> mapper){
+        return fromStream(ReactiveSeq.super.jool(mapper));
     }
 
     @Override
