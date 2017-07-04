@@ -13,6 +13,9 @@ import java.util.stream.Stream;
 public interface Monad<CRE> extends Applicative<CRE>,Functor<CRE>, Pure<CRE> {
     
     public <T,R> Higher<CRE,R> flatMap(Function<? super T, ? extends Higher<CRE, R>> fn, Higher<CRE, T> ds);
+    default <T,R> Higher<CRE,R> flatMap_(Higher<CRE, T> ds,Function<? super T, ? extends Higher<CRE, R>> fn){
+        return flatMap(fn,ds);
+    }
     
     default <T>  Higher<CRE,T> flatten(Higher<CRE, Higher<CRE, T>> nested){
         return flatMap(Function.identity(), nested);

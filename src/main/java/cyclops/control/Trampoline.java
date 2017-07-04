@@ -43,41 +43,43 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
  * }
  * </pre>
  * 
- * And co-routines
+ * And co-routines can be implemented simply via zipping trampolines
  * 
- * <pre>
- * {@code 
- *  List results;
-    @Test
-    public void coroutine(){
-        results = new ArrayList();
-        Iterator<String> it = Arrays.asList("hello","world","take").iterator();
-        val coroutine = new Trampoline[1];
-        coroutine[0] = Trampoline.more( ()-> it.hasNext() ? print(it.next(),coroutine[0]) : Trampoline.done(0));
-        withCoroutine(coroutine[0]);
-        
-        assertThat(results,equalTo(Arrays.asList(0,"hello",1,"world",2,"take",3,4)));
+    <pre>
+ {@code
+ Trampoline<Integer> looping = loop(500000,5);
+ Trampoline<Integer> looping2 = loop2(500000,5);
+ System.out.println(looping.zip(looping2).get());
+
+ }
+    </pre>
+
+ Where loop and loop2 are implemented recursively using Trampoline with additional print logic
+
+
+ <pre>
+ {@code
+ Trampoline<Integer> loop(int times,int sum){
+    System.out.println("Loop-A " + times + " : " + sum);
+    if(times==0)
+         return Trampoline.done(sum);
+    else
+        return Trampoline.more(()->loop(times-1,sum+times));
     }
-    
-    private Trampoline<Integer> print(Object next, Trampoline trampoline) {
-        System.out.println(next);
-        results.add(next);
-        return trampoline;
-    }
-    public void withCoroutine(Trampoline coroutine){
-        
-        for(int i=0;i<5;i++){
-                print(i,coroutine);
-                if(!coroutine.complete())
-                    coroutine= coroutine.bounce();
-                
-        }
-        
-    }
- * 
- * }
- * </pre>
- * 
+ }
+
+ </pre>
+
+ Results in interleaved execution visible from the console
+ <pre>
+...
+ Loop-B 21414 : 216908016
+ Loop-A 21413 : 216929430
+ Loop-B 21413 : 216929430
+ Loop-A 21412 : 216950843
+...
+
+ </pre>
  * 
  * @author johnmcclean
  *

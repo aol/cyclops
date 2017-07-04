@@ -6,6 +6,7 @@ import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 
@@ -13,7 +14,10 @@ import cyclops.typeclasses.monad.*;
  * Created by johnmcclean on 28/06/2017.
  */
 public interface InstanceDefinitions<W> {
- 
+
+    default Eq<W> eq(){
+        return new Eq<W>(){};
+    }
     public  <T,R>Functor<W> functor();
 
     public  <T> Pure<W> unit();
@@ -31,4 +35,5 @@ public interface InstanceDefinitions<W> {
     public  <C2,T> Maybe<Traverse<W>> traverse();
     public  <T> Maybe<Foldable<W>> foldable();
     public  <T> Maybe<Comonad<W>> comonad();
+    public  <T> Maybe<Unfoldable<W>> unfoldable();
 }

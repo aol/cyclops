@@ -10,10 +10,8 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.internal.adapters.*;
 import cyclops.collections.immutable.*;
-import cyclops.control.Eval;
+import cyclops.control.*;
 import cyclops.async.Future;
-import cyclops.control.Ior;
-import cyclops.control.Maybe;
 import cyclops.control.lazy.Either;
 import cyclops.control.lazy.Either3;
 import cyclops.control.lazy.Either4;
@@ -21,8 +19,6 @@ import cyclops.control.lazy.Either5;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import cyclops.control.Try;
-import cyclops.control.Xor;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
@@ -42,6 +38,10 @@ public interface Witness {
    static interface CollectionXWitness<W extends CollectionXWitness<W>>  extends WitnessType<W>{
        
    }
+    public static <T> Identity<T> identity(AnyM<identity,? extends T> anyM){
+        return anyM.unwrap();
+    }
+
     public static <T> Stream<T> stream(AnyM<stream,? extends T> anyM){
         return anyM.unwrap();
     }
@@ -461,6 +461,60 @@ public interface Witness {
         @Override
         public FunctionalAdapter<kleisli> adapter() {
             return null;
+        }
+
+    }
+    public static enum rws implements WitnessType<rws>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<rws> adapter() {
+            return null;
+        }
+
+    }
+    public static enum state implements WitnessType<state>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<state> adapter() {
+            return null;
+        }
+
+    }
+    public static enum writer implements WitnessType<writer>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<writer> adapter() {
+            return null;
+        }
+
+    }
+    public static enum constant implements WitnessType<constant>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<constant> adapter() {
+            return null;
+        }
+
+    }
+    public static enum cofree implements WitnessType<cofree>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<cofree> adapter() {
+            return null;
+        }
+
+    }
+    public static enum identity implements WitnessType<identity>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<identity> adapter() {
+            return new IdentityAdapter();
         }
 
     }

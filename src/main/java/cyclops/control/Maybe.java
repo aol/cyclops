@@ -25,9 +25,11 @@ import cyclops.monads.Witness.optional;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.MaybeT;
 import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -115,6 +117,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     default Active<maybe,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
+    }
+    default <W2,R> Nested<maybe,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
     default <W extends WitnessType<W>> MaybeT<W, T> liftM(W witness) {
         return MaybeT.of(witness.adapter().unit(this));
@@ -1547,6 +1552,11 @@ public interface Maybe<T> extends To<Maybe<T>>,
                 public <T> Maybe<Comonad<maybe>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
+
+                @Override
+                public <T> Maybe<Unfoldable<maybe>> unfoldable() {
+                    return Maybe.none();
+                }
             };
         }
 
@@ -1570,7 +1580,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *   Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
         .applyHKT(h->Maybes.functor().map((String v) ->v.length(), h))
-        .convert(Maybe::narrowK);
+        .convert(Maybe::narrowK3);
          *
          * }
          * </pre>
@@ -1587,7 +1597,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * {@code
          * Maybe<String> maybe = Maybes.unit()
         .unit("hello")
-        .convert(Maybe::narrowK);
+        .convert(Maybe::narrowK3);
 
         //Maybe.just("hello"))
          *
@@ -1621,13 +1631,13 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * {@code
          * Maybe<Function<Integer,Integer>> maybeFn =Maybes.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(Maybe::narrowK);
+         *                                                  .convert(Maybe::narrowK3);
 
         Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
         .applyHKT(h->Maybes.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Maybes.applicative().ap(maybeFn, h))
-        .convert(Maybe::narrowK);
+        .convert(Maybe::narrowK3);
 
         //Maybe.just("hello".length()*2))
          *
@@ -1648,7 +1658,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * import static com.aol.cyclops.hkt.jdk.Maybe.widen;
          * Maybe<Integer> maybe  = Maybes.monad()
         .flatMap(i->widen(MaybeX.range(0,i)), widen(Maybe.just(1,2,3)))
-        .convert(Maybe::narrowK);
+        .convert(Maybe::narrowK3);
          * }
          * </pre>
          *
@@ -1658,7 +1668,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *    Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
         .applyHKT(h->Maybes.monad().flatMap((String v) ->Maybes.unit().unit(v.length()), h))
-        .convert(Maybe::narrowK);
+        .convert(Maybe::narrowK3);
 
         //Maybe.just("hello".length())
          *
@@ -1679,7 +1689,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *  Maybe<String> maybe = Maybes.unit()
         .unit("hello")
         .applyHKT(h->Maybes.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(Maybe::narrowK);
+        .convert(Maybe::narrowK3);
 
         //Maybe.just("hello"));
          *
@@ -1698,7 +1708,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          * {@code
          *  Maybe<Integer> maybe = Maybes.<Integer>monadPlus()
         .plus(Maybe.widen(Maybe.just()), Maybe.widen(Maybe.just(10)))
-        .convert(Maybe::narrowK);
+        .convert(Maybe::narrowK3);
         //Maybe.just(10))
          *
          * }
@@ -1720,7 +1730,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *  Monoid<Maybe<Integer>> m = Monoid.of(Maybe.widen(Maybe.just()), (a,b)->a.isEmpty() ? b : a);
         Maybe<Integer> maybe = Maybes.<Integer>monadPlus(m)
         .plus(Maybe.widen(Maybe.just(5)), Maybe.widen(Maybe.just(10)))
-        .convert(Maybe::narrowK);
+        .convert(Maybe::narrowK3);
         //Maybe[5]
          *
          * }

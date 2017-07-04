@@ -4,6 +4,7 @@ import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
+import cyclops.monads.Witness.StreamWitness;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import static cyclops.companion.Streams.zipSequence;
 import static cyclops.monads.AnyM.fromStream;
 
 @AllArgsConstructor
-public class ReactiveAdapter<W extends Witness.StreamWitness<W>> extends  AbstractFunctionalAdapter<W> {
+public class ReactiveAdapter<W extends StreamWitness<W>> extends  AbstractFunctionalAdapter<W> {
     
     private final Supplier<Stream<?>> empty;
     private final Function<?,Stream<?>> unit;
@@ -88,6 +89,8 @@ public class ReactiveAdapter<W extends Witness.StreamWitness<W>> extends  Abstra
         return fromStream(this.<T>getUnit().apply(o),witness);
     }
 
-   
-   
+    @Override
+    public <T, R> AnyM<W, R> map(AnyM<W, T> t, Function<? super T, ? extends R> fn) {
+        return fromStream(((Stream)t.unwrap()).map(fn),witness);
+    }
 }

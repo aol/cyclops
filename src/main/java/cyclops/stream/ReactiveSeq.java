@@ -44,9 +44,11 @@ import cyclops.monads.Witness;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.StreamT;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -123,6 +125,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     default Active<reactiveSeq,T> allTypeclasses(){
         return Active.of(this, this.visit(sync->Instances.definitions(),rs->Spouts.Instances.definitions(),ac->Spouts.Instances.definitions()));
+    }
+    default <W2,R> Nested<reactiveSeq,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
 
 
@@ -870,7 +875,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * join / flatten one level of a nested hierarchy
+     * join / flatten one level of a nest hierarchy
      *
      * <pre>
      * {@code
@@ -4083,7 +4088,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R2, R3,R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
                         final BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
@@ -4135,7 +4140,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R2, R3, R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             final BiFunction<? super T, ? super R1, ? extends BaseStream<R2, ?>> stream2,
@@ -4184,7 +4189,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
@@ -4232,7 +4237,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
    default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
@@ -4274,7 +4279,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends R> yieldingFunction){
@@ -4321,7 +4326,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nested iteration
+     * @return ReactiveSeq with elements generated via nest iteration
      */
     default <R1, R> ReactiveSeq<R> forEach2(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, Boolean> filterFunction,
@@ -4892,6 +4897,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 public <T> Maybe<Comonad<reactiveSeq>> comonad() {
                     return Maybe.none();
                 }
+                @Override
+                public <T> Maybe<Unfoldable<reactiveSeq>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+        }
+        public static Unfoldable<reactiveSeq> unfoldable(){
+            return new Unfoldable<reactiveSeq>() {
+                @Override
+                public <R, T> Higher<reactiveSeq, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return ReactiveSeq.unfold(b,fn);
+                }
             };
         }
         /**
@@ -4914,7 +4931,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *   ReactiveSeq<Integer> list = ReactiveSeq.Instances.unit()
         .unit("hello")
         .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
          *
          * }
          * </pre>
@@ -4931,7 +4948,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          * ReactiveSeq<String> list = Lists.unit()
         .unit("hello")
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
 
         //Arrays.asList("hello"))
          *
@@ -4965,13 +4982,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          * ReactiveSeq<Function<Integer,Integer>> listFn =Lists.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(ReactiveSeq::narrowK);
+         *                                                  .convert(ReactiveSeq::narrowK3);
 
         ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
         .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Lists.zippingApplicative().ap(listFn, h))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
 
         //Arrays.asList("hello".length()*2))
          *
@@ -4992,7 +5009,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * import static com.aol.cyclops2.hkt.jdk.ReactiveSeq.widen;
          * ReactiveSeq<Integer> list  = Lists.monad()
         .flatMap(i->widen(ReactiveSeq.range(0,i)), widen(Arrays.asList(1,2,3)))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
          * }
          * </pre>
          *
@@ -5002,7 +5019,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *    ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
         .applyHKT(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
 
         //Arrays.asList("hello".length())
          *
@@ -5023,7 +5040,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *  ReactiveSeq<String> list = Lists.unit()
         .unit("hello")
         .applyHKT(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
 
         //Arrays.asList("hello"));
          *
@@ -5042,7 +5059,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          *  ReactiveSeq<Integer> list = Lists.<Integer>monadPlus()
         .plus(ReactiveSeq.widen(Arrays.asList()), ReactiveSeq.widen(Arrays.asList(10)))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
         //Arrays.asList(10))
          *
          * }
@@ -5061,7 +5078,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *  Monoid<ReactiveSeq<Integer>> m = Monoid.of(ReactiveSeq.widen(Arrays.asList()), (a,b)->a.isEmpty() ? b : a);
         ReactiveSeq<Integer> list = Lists.<Integer>monadPlus(m)
         .plus(ReactiveSeq.widen(Arrays.asList(5)), ReactiveSeq.widen(Arrays.asList(10)))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
         //Arrays.asList(5))
          *
          * }
@@ -5139,7 +5156,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
         /**
-         * Widen a ReactiveSeq nested inside another HKT encoded type
+         * Widen a ReactiveSeq nest inside another HKT encoded type
          *
          * @param flux HTK encoded type containing  a List toNested widen
          * @return HKT encoded type with a widened List

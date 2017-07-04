@@ -22,9 +22,12 @@ import cyclops.monads.transformers.XorT;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -128,6 +131,9 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
     default Active<Higher<xor,ST>,PT> allTypeclasses(){
         return Active.of(this, Instances.definitions());
+    }
+    default <W2,R> Nested<Higher<xor,ST>,W2,R> mapM(Function<? super PT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
     default <W extends WitnessType<W>> XorT<W, ST,PT> liftM(W witness) {
         return XorT.of(witness.adapter().unit(this));
@@ -1425,6 +1431,11 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                 public <T> Maybe<Comonad<Higher<xor, L>>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
+
+                @Override
+                public <T> Maybe<Unfoldable<Higher<xor, L>>> unfoldable() {
+                    return Maybe.none();
+                }
             };
         }
         public static <L> Functor<Higher<xor, L>> functor() {
@@ -1619,7 +1630,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
             };
         }
         public static <L> Comonad<Higher<xor, L>> comonad() {
-            return new Comonad<Higher<xor, L>>() {
+            return new ComonadByPure<Higher<xor, L>>() {
 
 
                 @Override

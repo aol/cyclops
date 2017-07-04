@@ -107,12 +107,7 @@ public interface Fn2<T1, T2, R> extends BiFunction<T1,T2,R> {
             return (a,b) -> (AnyM<W,R>)a.zip(b,this);
         }
 
-        /**
-        default <W extends WitnessType<W>> Fn2<AnyM<W,T1>,AnyM<W,T2>,AnyM<W,R>> anyMM() {
-            return (a,b) -> Xors.fromEither5(a)
-                                      .visit(v->v.forEach2(x->b,this),s->s.forEach2(x->b,this));
-        }
-         **/
+
         default Fn2<ReactiveSeq<T1>,ReactiveSeq<T2>, ReactiveSeq<R>> streamZip() {
             return (a,b) -> a.zip(b,this);
         }

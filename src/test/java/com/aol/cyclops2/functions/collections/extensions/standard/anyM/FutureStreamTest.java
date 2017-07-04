@@ -12,7 +12,12 @@ import com.aol.cyclops2.react.ThreadPools;
 import cyclops.async.LazyReact;
 import cyclops.control.Maybe;
 import cyclops.monads.Witness;
+import cyclops.monads.Witness.futureStream;
+import cyclops.monads.Witness.reactiveSeq;
+import cyclops.stream.FutureStream;
 import org.junit.Test;
+
+import java.util.List;
 import java.util.stream.Stream;
 
 import cyclops.monads.AnyM;
@@ -20,9 +25,15 @@ import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.functions.collections.extensions.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 
-public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<Witness.reactiveSeq>{
+public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<futureStream>{
     int count = 0;
-	@Test
+
+    public <T> FutureStream<T> ft(T... values) {
+        return new LazyReact(ThreadPools.getCommonFreeThread()).async().of(values);
+    }
+
+
+    @Test
 	public void materialize(){
 		ListX<Integer> d= of(1, 2, 3).cycleUntil(next->count++==6).toListX();
 		System.out.println("D " + d);
@@ -30,15 +41,15 @@ public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<Witnes
 		assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
 	}
 	@Override
-	public <T> AnyMSeq<Witness.reactiveSeq,T> of(T... values) {
-		return AnyM.fromStream(new LazyReact(ThreadPools.getCommonFreeThread()).async().of(values));
+	public <T> AnyMSeq<futureStream,T> of(T... values) {
+		return AnyM.fromFutureStream(new LazyReact(ThreadPools.getCommonFreeThread()).async().of(values));
 	}
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#empty()
 	 */
 	@Override
-	public <T> AnyMSeq<Witness.reactiveSeq,T> empty() {
-		return AnyM.fromStream(new LazyReact().of());
+	public <T> AnyMSeq<futureStream,T> empty() {
+		return AnyM.fromFutureStream(new LazyReact().of());
 	}
 	@Test
 	public void when(){

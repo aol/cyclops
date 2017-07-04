@@ -1,13 +1,11 @@
 package cyclops.companion;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.async.Future;
 import cyclops.control.Maybe;
@@ -18,9 +16,11 @@ import cyclops.function.Reducer;
 import cyclops.monads.Witness.completableFuture;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.CompletableFutureT;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -604,6 +604,11 @@ public class CompletableFutures {
                 public <T> Maybe<Comonad<completableFuture>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
+
+                @Override
+                public <T> Maybe<Unfoldable<completableFuture>> unfoldable() {
+                    return Maybe.none();
+                }
             };
         }
 
@@ -627,7 +632,7 @@ public class CompletableFutures {
          *   CompletableFutureKind<Integer> future = CompletableFutures.unit()
         .unit("hello")
         .applyHKT(h->CompletableFutures.functor().map((String v) ->v.length(), h))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
          *
          * }
          * </pre>
@@ -644,7 +649,7 @@ public class CompletableFutures {
          * {@code
          * CompletableFutureKind<String> future = CompletableFutures.unit()
         .unit("hello")
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
 
         //CompletableFuture.completedFuture("hello"))
          *
@@ -677,13 +682,13 @@ public class CompletableFutures {
          * {@code
          * CompletableFutureKind<Function<Integer,Integer>> futureFn =CompletableFutures.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(CompletableFutureKind::narrowK);
+         *                                                  .convert(CompletableFutureKind::narrowK3);
 
         CompletableFutureKind<Integer> future = CompletableFutures.unit()
         .unit("hello")
         .applyHKT(h->CompletableFutures.functor().map((String v) ->v.length(), h))
         .applyHKT(h->CompletableFutures.applicative().ap(futureFn, h))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
 
         //CompletableFuture.completedFuture("hello".length()*2))
          *
@@ -704,7 +709,7 @@ public class CompletableFutures {
          * import static com.aol.cyclops.hkt.jdk.CompletableFutureKind.widen;
          * CompletableFutureKind<Integer> future  = CompletableFutures.monad()
         .flatMap(i->widen(CompletableFutureX.range(0,i)), widen(CompletableFuture.completedFuture(3)))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
          * }
          * </pre>
          *
@@ -714,7 +719,7 @@ public class CompletableFutures {
          *    CompletableFutureKind<Integer> future = CompletableFutures.unit()
         .unit("hello")
         .applyHKT(h->CompletableFutures.monad().flatMap((String v) ->CompletableFutures.unit().unit(v.length()), h))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
 
         //CompletableFuture.completedFuture("hello".length())
          *
@@ -735,7 +740,7 @@ public class CompletableFutures {
          *  CompletableFutureKind<String> future = CompletableFutures.unit()
         .unit("hello")
         .applyHKT(h->CompletableFutures.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
 
         //CompletableFuture.completedFuture("hello"));
          *
@@ -754,7 +759,7 @@ public class CompletableFutures {
          * {@code
          *  CompletableFutureKind<Integer> future = CompletableFutures.<Integer>monadPlus()
         .plus(CompletableFutureKind.widen(CompletableFuture.completedFuture()), CompletableFutureKind.widen(CompletableFuture.completedFuture(10)))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
         //CompletableFuture.completedFuture(10))
          *
          * }
@@ -776,7 +781,7 @@ public class CompletableFutures {
          *  Monoid<CompletableFutureKind<Integer>> m = Monoid.of(CompletableFutureKind.widen(CompletableFuture.completedFuture()), (a,b)->a.isEmpty() ? b : a);
         CompletableFutureKind<Integer> future = CompletableFutures.<Integer>monadPlus(m)
         .plus(CompletableFutureKind.widen(CompletableFuture.completedFuture(5)), CompletableFutureKind.widen(CompletableFuture.completedFuture(10)))
-        .convert(CompletableFutureKind::narrowK);
+        .convert(CompletableFutureKind::narrowK3);
         //CompletableFuture.completedFuture(5))
          *
          * }
@@ -869,6 +874,29 @@ public class CompletableFutures {
             return widen(CompletableFuture.completedFuture(value));
         }
 
+
+
+        public static <U> CompletableFutureKind<U> supplyAsync(Supplier<U> supplier) {
+            return widen(CompletableFuture.supplyAsync(supplier));
+        }
+
+
+        public static <U> CompletableFutureKind<U> supplyAsync(Supplier<U> supplier,
+                                                           Executor executor) {
+            return widen(CompletableFuture.supplyAsync(supplier,executor));
+        }
+
+
+        public static CompletableFutureKind<Void> runAsync(Runnable runnable) {
+            return widen(CompletableFuture.runAsync(runnable));
+        }
+
+
+        public static CompletableFutureKind<Void> runAsync(Runnable runnable,
+                                                       Executor executor) {
+            return widen(CompletableFuture.runAsync(runnable,executor));
+        }
+
         /**
          * Convert a CompletableFuture toNested a simulated HigherKindedType that captures CompletableFuture nature
          * and CompletableFuture element data type separately. Recover via @see CompletableFutureKind#narrow
@@ -928,207 +956,213 @@ public class CompletableFutures {
                 return boxed;
             }
 
+            public Active<completableFuture,T> allTypeclasses(){
+                return Active.of(this, Instances.definitions());
+            }
+            public <W2,R> Nested<completableFuture,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+                return Nested.of(thenApply(fn),Instances.definitions(), defs);
+            }
             @Override
-            public <U> CompletionStage<U> thenApply(final Function<? super T, ? extends U> fn) {
-                return boxed.thenApply(fn);
+            public <U> CompletableFutureKind<U> thenApply(final Function<? super T, ? extends U> fn) {
+                return widen(boxed.thenApply(fn));
             }
 
             @Override
-            public <U> CompletionStage<U> thenApplyAsync(final Function<? super T, ? extends U> fn) {
-                return boxed.thenApplyAsync(fn);
+            public <U> CompletableFutureKind<U> thenApplyAsync(final Function<? super T, ? extends U> fn) {
+                return widen(boxed.thenApplyAsync(fn));
             }
 
             @Override
-            public <U> CompletionStage<U> thenApplyAsync(final Function<? super T, ? extends U> fn,
+            public <U> CompletableFutureKind<U> thenApplyAsync(final Function<? super T, ? extends U> fn,
                                                          final Executor executor) {
-                return boxed.thenApplyAsync(fn, executor);
+                return widen(boxed.thenApplyAsync(fn, executor));
             }
 
             @Override
-            public CompletionStage<Void> thenAccept(final Consumer<? super T> action) {
-                return boxed.thenAccept(action);
+            public CompletableFutureKind<Void> thenAccept(final Consumer<? super T> action) {
+                return widen(boxed.thenAccept(action));
             }
 
             @Override
-            public CompletionStage<Void> thenAcceptAsync(final Consumer<? super T> action) {
-                return boxed.thenAcceptAsync(action);
+            public CompletableFutureKind<Void> thenAcceptAsync(final Consumer<? super T> action) {
+                return widen(boxed.thenAcceptAsync(action));
             }
 
             @Override
-            public CompletionStage<Void> thenAcceptAsync(final Consumer<? super T> action, final Executor executor) {
-                return boxed.thenAcceptAsync(action, executor);
+            public CompletableFutureKind<Void> thenAcceptAsync(final Consumer<? super T> action, final Executor executor) {
+                return widen(boxed.thenAcceptAsync(action, executor));
             }
 
             @Override
-            public CompletionStage<Void> thenRun(final Runnable action) {
-                return boxed.thenRun(action);
+            public CompletableFutureKind<Void> thenRun(final Runnable action) {
+                return widen(boxed.thenRun(action));
             }
 
             @Override
-            public CompletionStage<Void> thenRunAsync(final Runnable action) {
-                return boxed.thenRunAsync(action);
+            public CompletableFutureKind<Void> thenRunAsync(final Runnable action) {
+                return widen(boxed.thenRunAsync(action));
             }
 
             @Override
-            public CompletionStage<Void> thenRunAsync(final Runnable action, final Executor executor) {
-                return boxed.thenRunAsync(action, executor);
+            public CompletableFutureKind<Void> thenRunAsync(final Runnable action, final Executor executor) {
+                return widen(boxed.thenRunAsync(action, executor));
             }
 
             @Override
-            public <U, V> CompletionStage<V> thenCombine(final CompletionStage<? extends U> other,
+            public <U, V> CompletableFutureKind<V> thenCombine(final CompletionStage<? extends U> other,
                                                          final BiFunction<? super T, ? super U, ? extends V> fn) {
-                return boxed.thenCombine(other, fn);
+                return widen(boxed.thenCombine(other, fn));
             }
 
             @Override
-            public <U, V> CompletionStage<V> thenCombineAsync(final CompletionStage<? extends U> other,
+            public <U, V> CompletableFutureKind<V> thenCombineAsync(final CompletionStage<? extends U> other,
                                                               final BiFunction<? super T, ? super U, ? extends V> fn) {
-                return boxed.thenCombineAsync(other, fn);
+                return widen(boxed.thenCombineAsync(other, fn));
             }
 
             @Override
-            public <U, V> CompletionStage<V> thenCombineAsync(final CompletionStage<? extends U> other,
+            public <U, V> CompletableFutureKind<V> thenCombineAsync(final CompletionStage<? extends U> other,
                                                               final BiFunction<? super T, ? super U, ? extends V> fn, final Executor executor) {
-                return boxed.thenCombineAsync(other, fn, executor);
+                return widen(boxed.thenCombineAsync(other, fn, executor));
             }
 
             @Override
-            public <U> CompletionStage<Void> thenAcceptBoth(final CompletionStage<? extends U> other,
+            public <U> CompletableFutureKind<Void> thenAcceptBoth(final CompletionStage<? extends U> other,
                                                             final BiConsumer<? super T, ? super U> action) {
-                return boxed.thenAcceptBoth(other, action);
+                return widen(boxed.thenAcceptBoth(other, action));
             }
 
             @Override
-            public <U> CompletionStage<Void> thenAcceptBothAsync(final CompletionStage<? extends U> other,
+            public <U> CompletableFutureKind<Void> thenAcceptBothAsync(final CompletionStage<? extends U> other,
                                                                  final BiConsumer<? super T, ? super U> action) {
-                return boxed.thenAcceptBothAsync(other, action);
+                return widen(boxed.thenAcceptBothAsync(other, action));
             }
 
             @Override
-            public <U> CompletionStage<Void> thenAcceptBothAsync(final CompletionStage<? extends U> other,
+            public <U> CompletableFutureKind<Void> thenAcceptBothAsync(final CompletionStage<? extends U> other,
                                                                  final BiConsumer<? super T, ? super U> action, final Executor executor) {
-                return boxed.thenAcceptBothAsync(other, action, executor);
+                return widen(boxed.thenAcceptBothAsync(other, action, executor));
             }
 
             @Override
-            public CompletionStage<Void> runAfterBoth(final CompletionStage<?> other, final Runnable action) {
-                return boxed.runAfterBoth(other, action);
+            public CompletableFutureKind<Void> runAfterBoth(final CompletionStage<?> other, final Runnable action) {
+                return widen(boxed.runAfterBoth(other, action));
             }
 
             @Override
-            public CompletionStage<Void> runAfterBothAsync(final CompletionStage<?> other, final Runnable action) {
-                return boxed.runAfterBothAsync(other, action);
+            public CompletableFutureKind<Void> runAfterBothAsync(final CompletionStage<?> other, final Runnable action) {
+                return widen(boxed.runAfterBothAsync(other, action));
             }
 
             @Override
-            public CompletionStage<Void> runAfterBothAsync(final CompletionStage<?> other, final Runnable action,
+            public CompletableFutureKind<Void> runAfterBothAsync(final CompletionStage<?> other, final Runnable action,
                                                            final Executor executor) {
-                return boxed.runAfterBothAsync(other, action, executor);
+                return widen(boxed.runAfterBothAsync(other, action, executor));
             }
 
             @Override
-            public <U> CompletionStage<U> applyToEither(final CompletionStage<? extends T> other,
+            public <U> CompletableFutureKind<U> applyToEither(final CompletionStage<? extends T> other,
                                                         final Function<? super T, U> fn) {
-                return boxed.applyToEither(other, fn);
+                return widen(boxed.applyToEither(other, fn));
             }
 
             @Override
-            public <U> CompletionStage<U> applyToEitherAsync(final CompletionStage<? extends T> other,
+            public <U> CompletableFutureKind<U> applyToEitherAsync(final CompletionStage<? extends T> other,
                                                              final Function<? super T, U> fn) {
-                return boxed.applyToEitherAsync(other, fn);
+                return widen(boxed.applyToEitherAsync(other, fn));
             }
 
             @Override
-            public <U> CompletionStage<U> applyToEitherAsync(final CompletionStage<? extends T> other,
+            public <U> CompletableFutureKind<U> applyToEitherAsync(final CompletionStage<? extends T> other,
                                                              final Function<? super T, U> fn, final Executor executor) {
-                return boxed.applyToEitherAsync(other, fn, executor);
+                return widen(boxed.applyToEitherAsync(other, fn, executor));
             }
 
             @Override
-            public CompletionStage<Void> acceptEither(final CompletionStage<? extends T> other,
+            public CompletableFutureKind<Void> acceptEither(final CompletionStage<? extends T> other,
                                                       final Consumer<? super T> action) {
-                return boxed.acceptEither(other, action);
+                return widen(boxed.acceptEither(other, action));
             }
 
             @Override
-            public CompletionStage<Void> acceptEitherAsync(final CompletionStage<? extends T> other,
+            public CompletableFutureKind<Void> acceptEitherAsync(final CompletionStage<? extends T> other,
                                                            final Consumer<? super T> action) {
-                return boxed.acceptEitherAsync(other, action);
+                return widen(boxed.acceptEitherAsync(other, action));
             }
 
             @Override
-            public CompletionStage<Void> acceptEitherAsync(final CompletionStage<? extends T> other,
+            public CompletableFutureKind<Void> acceptEitherAsync(final CompletionStage<? extends T> other,
                                                            final Consumer<? super T> action, final Executor executor) {
-                return boxed.acceptEitherAsync(other, action, executor);
+                return widen(boxed.acceptEitherAsync(other, action, executor));
             }
 
             @Override
-            public CompletionStage<Void> runAfterEither(final CompletionStage<?> other, final Runnable action) {
-                return boxed.runAfterEither(other, action);
+            public CompletableFutureKind<Void> runAfterEither(final CompletionStage<?> other, final Runnable action) {
+                return widen(boxed.runAfterEither(other, action));
             }
 
             @Override
-            public CompletionStage<Void> runAfterEitherAsync(final CompletionStage<?> other, final Runnable action) {
-                return boxed.runAfterEitherAsync(other, action);
+            public CompletableFutureKind<Void> runAfterEitherAsync(final CompletionStage<?> other, final Runnable action) {
+                return widen(boxed.runAfterEitherAsync(other, action));
             }
 
             @Override
-            public CompletionStage<Void> runAfterEitherAsync(final CompletionStage<?> other, final Runnable action,
+            public CompletableFutureKind<Void> runAfterEitherAsync(final CompletionStage<?> other, final Runnable action,
                                                              final Executor executor) {
-                return boxed.runAfterEitherAsync(other, action, executor);
+                return widen(boxed.runAfterEitherAsync(other, action, executor));
             }
 
             @Override
-            public <U> CompletionStage<U> thenCompose(final Function<? super T, ? extends CompletionStage<U>> fn) {
-                return boxed.thenCompose(fn);
+            public <U> CompletableFutureKind<U> thenCompose(final Function<? super T, ? extends CompletionStage<U>> fn) {
+                return widen(boxed.thenCompose(fn));
             }
 
             @Override
-            public <U> CompletionStage<U> thenComposeAsync(final Function<? super T, ? extends CompletionStage<U>> fn) {
-                return boxed.thenComposeAsync(fn);
+            public <U> CompletableFutureKind<U> thenComposeAsync(final Function<? super T, ? extends CompletionStage<U>> fn) {
+                return widen(boxed.thenComposeAsync(fn));
             }
 
             @Override
-            public <U> CompletionStage<U> thenComposeAsync(final Function<? super T, ? extends CompletionStage<U>> fn,
+            public <U> CompletableFutureKind<U> thenComposeAsync(final Function<? super T, ? extends CompletionStage<U>> fn,
                                                            final Executor executor) {
-                return boxed.thenComposeAsync(fn, executor);
+                return widen(boxed.thenComposeAsync(fn, executor));
             }
 
             @Override
-            public CompletionStage<T> exceptionally(final Function<Throwable, ? extends T> fn) {
-                return boxed.exceptionally(fn);
+            public CompletableFutureKind<T> exceptionally(final Function<Throwable, ? extends T> fn) {
+                return widen(boxed.exceptionally(fn));
             }
 
             @Override
-            public CompletionStage<T> whenComplete(final BiConsumer<? super T, ? super Throwable> action) {
-                return boxed.whenComplete(action);
+            public CompletableFutureKind<T> whenComplete(final BiConsumer<? super T, ? super Throwable> action) {
+                return widen(boxed.whenComplete(action));
             }
 
             @Override
-            public CompletionStage<T> whenCompleteAsync(final BiConsumer<? super T, ? super Throwable> action) {
-                return boxed.whenCompleteAsync(action);
+            public CompletableFutureKind<T> whenCompleteAsync(final BiConsumer<? super T, ? super Throwable> action) {
+                return widen(boxed.whenCompleteAsync(action));
             }
 
             @Override
-            public CompletionStage<T> whenCompleteAsync(final BiConsumer<? super T, ? super Throwable> action,
+            public CompletableFutureKind<T> whenCompleteAsync(final BiConsumer<? super T, ? super Throwable> action,
                                                         final Executor executor) {
-                return boxed.whenCompleteAsync(action, executor);
+                return widen(boxed.whenCompleteAsync(action, executor));
             }
 
             @Override
-            public <U> CompletionStage<U> handle(final BiFunction<? super T, Throwable, ? extends U> fn) {
-                return boxed.handle(fn);
+            public <U> CompletableFutureKind<U> handle(final BiFunction<? super T, Throwable, ? extends U> fn) {
+                return widen(boxed.handle(fn));
             }
 
             @Override
-            public <U> CompletionStage<U> handleAsync(final BiFunction<? super T, Throwable, ? extends U> fn) {
-                return boxed.handleAsync(fn);
+            public <U> CompletableFutureKind<U> handleAsync(final BiFunction<? super T, Throwable, ? extends U> fn) {
+                return widen(boxed.handleAsync(fn));
             }
 
             @Override
-            public <U> CompletionStage<U> handleAsync(final BiFunction<? super T, Throwable, ? extends U> fn,
+            public <U> CompletableFutureKind<U> handleAsync(final BiFunction<? super T, Throwable, ? extends U> fn,
                                                       final Executor executor) {
-                return boxed.handleAsync(fn, executor);
+                return widen(boxed.handleAsync(fn, executor));
             }
 
             @Override

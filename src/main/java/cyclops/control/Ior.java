@@ -18,9 +18,12 @@ import cyclops.monads.Witness.ior;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -58,6 +61,9 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
 
     default Active<Higher<ior,ST>,PT> allTypeclasses(){
         return Active.of(this, Ior.Instances.definitions());
+    }
+    default <W2,R> Nested<Higher<ior,ST>,W2,R> mapM(Function<? super PT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
 
     /**
@@ -1495,6 +1501,11 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                 public <T> Maybe<Comonad<Higher<ior, L>>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
+
+                @Override
+                public <T> Maybe<Unfoldable<Higher<ior, L>>> unfoldable() {
+                    return Maybe.none();
+                }
             };
         }
         public static <L> Functor<Higher<ior, L>> functor() {
@@ -1691,7 +1702,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
             };
         }
         public static <L> Comonad<Higher<ior, L>> comonad() {
-            return new Comonad<Higher<ior, L>>() {
+            return new ComonadByPure<Higher<ior, L>>() {
 
 
                 @Override

@@ -17,7 +17,7 @@ import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class StreamableAdapter extends AbstractFunctionalAdapter<Witness.streamable> {
+public class StreamableAdapter extends AbstractFunctionalAdapter<streamable> {
     
     private final Supplier<Streamable<?>> empty;
     private final Function<?,Streamable<?>> unit;
@@ -60,7 +60,7 @@ public class StreamableAdapter extends AbstractFunctionalAdapter<Witness.streama
     @Override
     public <T, R> AnyM<streamable, R> flatMap(AnyM<streamable, T> t,
             Function<? super T, ? extends AnyM<streamable, ? extends R>> fn) {
-        return fromStreamable(Witness.streamable(t).flatMap(fn.andThen(Witness::streamable)));
+        return fromStreamable(streamable(t).flatMap(fn.andThen(Witness::streamable)));
     }
 
     @Override
@@ -69,10 +69,13 @@ public class StreamableAdapter extends AbstractFunctionalAdapter<Witness.streama
     }
    
     @Override
-    public <T> AnyM<Witness.streamable, T> unit(T o) {
+    public <T> AnyM<streamable, T> unit(T o) {
         return fromStreamable(this.<T>getUnit().apply(o));
     }
 
-   
-   
+
+    @Override
+    public <T, R> AnyM<streamable, R> map(AnyM<streamable, T> t, Function<? super T, ? extends R> fn) {
+        return fromStreamable(streamable(t).map(fn));
+    }
 }

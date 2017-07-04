@@ -27,9 +27,11 @@ import cyclops.monads.WitnessType;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -58,6 +60,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     default Active<linkedListX,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }
+    default <W2,R> Nested<linkedListX,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
+    }
 
     @Override
     LinkedListX<T> lazy();
@@ -65,7 +70,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     LinkedListX<T> eager();
 
     /**
-     * Widen a PStackType nested inside another HKT encoded type
+     * Widen a PStackType nest inside another HKT encoded type
      *
      * @param list HTK encoded type containing  a PStack toNested widen
      * @return HKT encoded type with a widened PStack
@@ -1326,6 +1331,19 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 public <T> Maybe<Comonad<linkedListX>> comonad() {
                     return Maybe.none();
                 }
+
+                @Override
+                public <T> Maybe<Unfoldable<linkedListX>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+        }
+        public static Unfoldable<linkedListX> unfoldable(){
+            return new Unfoldable<linkedListX>() {
+                @Override
+                public <R, T> Higher<linkedListX, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return LinkedListX.unfold(b,fn);
+                }
             };
         }
         /**
@@ -1348,7 +1366,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *   LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
         .applyHKT(h->PStacks.functor().map((String v) ->v.length(), h))
-        .convert(LinkedListX::narrowK);
+        .convert(LinkedListX::narrowK3);
          *
          * }
          * </pre>
@@ -1365,7 +1383,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * {@code
          * LinkedListX<String> list = PStacks.unit()
         .unit("hello")
-        .convert(LinkedListX::narrowK);
+        .convert(LinkedListX::narrowK3);
 
         //Arrays.asPStack("hello"))
          *
@@ -1399,13 +1417,13 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * {@code
          * LinkedListX<Function<Integer,Integer>> listFn =PStacks.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(LinkedListX::narrowK);
+         *                                                  .convert(LinkedListX::narrowK3);
 
         LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
         .applyHKT(h->PStacks.functor().map((String v) ->v.length(), h))
         .applyHKT(h->PStacks.zippingApplicative().ap(listFn, h))
-        .convert(LinkedListX::narrowK);
+        .convert(LinkedListX::narrowK3);
 
         //Arrays.asPStack("hello".length()*2))
          *
@@ -1426,7 +1444,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * import static com.aol.cyclops.hkt.jdk.LinkedListX.widen;
          * LinkedListX<Integer> list  = PStacks.monad()
         .flatMap(i->widen(LinkedListX.range(0,i)), widen(Arrays.asPStack(1,2,3)))
-        .convert(LinkedListX::narrowK);
+        .convert(LinkedListX::narrowK3);
          * }
          * </pre>
          *
@@ -1436,7 +1454,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *    LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
         .applyHKT(h->PStacks.monad().flatMap((String v) ->PStacks.unit().unit(v.length()), h))
-        .convert(LinkedListX::narrowK);
+        .convert(LinkedListX::narrowK3);
 
         //Arrays.asPStack("hello".length())
          *
@@ -1457,7 +1475,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *  LinkedListX<String> list = PStacks.unit()
         .unit("hello")
         .applyHKT(h->PStacks.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(LinkedListX::narrowK);
+        .convert(LinkedListX::narrowK3);
 
         //Arrays.asPStack("hello"));
          *
@@ -1476,7 +1494,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * {@code
          *  LinkedListX<Integer> list = PStacks.<Integer>monadPlus()
         .plus(LinkedListX.widen(Arrays.asPStack()), LinkedListX.widen(Arrays.asPStack(10)))
-        .convert(LinkedListX::narrowK);
+        .convert(LinkedListX::narrowK3);
         //Arrays.asPStack(10))
          *
          * }
@@ -1495,7 +1513,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *  Monoid<LinkedListX<Integer>> m = Monoid.of(LinkedListX.widen(Arrays.asPStack()), (a,b)->a.isEmpty() ? b : a);
         LinkedListX<Integer> list = PStacks.<Integer>monadPlus(m)
         .plus(LinkedListX.widen(Arrays.asPStack(5)), LinkedListX.widen(Arrays.asPStack(10)))
-        .convert(LinkedListX::narrowK);
+        .convert(LinkedListX::narrowK3);
         //Arrays.asPStack(5))
          *
          * }

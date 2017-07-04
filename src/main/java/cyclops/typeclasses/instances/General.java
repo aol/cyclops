@@ -5,6 +5,7 @@ import cyclops.function.Fn3;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
@@ -315,7 +316,7 @@ public interface General {
         
     }
     @AllArgsConstructor
-    static class GeneralComonad<CRE,A,B> implements Comonad<CRE> {
+    static class GeneralComonad<CRE,A,B> implements ComonadByPure<CRE> {
         Functor<CRE> functor;
         Pure<CRE> pure;
         Function<? super Higher<CRE, A>, ? extends A> extractFn;

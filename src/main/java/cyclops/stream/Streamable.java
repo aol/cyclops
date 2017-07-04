@@ -758,7 +758,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * join / flatten one level of a nested hierarchy
+     * join / flatten one level of a nest hierarchy
      * 
      * <pre>
      * {@code 

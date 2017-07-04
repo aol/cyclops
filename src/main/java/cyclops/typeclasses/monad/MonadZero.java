@@ -35,6 +35,10 @@ public interface MonadZero<CRE> extends Monad<CRE>, Filterable<CRE> {
         
         return flatMap((T in)->predicate.test(in) ? ds : narrowZero(),ds);
     }
+    default <T> Higher<CRE,T> filter_(Higher<CRE, T> ds,Predicate<? super T> predicate){
+
+        return filter(predicate,ds);
+    }
     
     default <T> Higher<CRE,T> narrowZero(){
         return  (Higher)zero();

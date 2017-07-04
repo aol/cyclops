@@ -1,10 +1,22 @@
 package cyclops.control;
 
+import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher2;
 import cyclops.control.Maybe.Nothing;
 import cyclops.monads.Witness;
+import cyclops.monads.Witness.state;
 import cyclops.monads.Witness.supplier;
+import cyclops.typeclasses.Active;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.free.Free;
 import cyclops.function.*;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.jooq.lambda.tuple.Tuple;
@@ -14,7 +26,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class State<S, T> {
+public final class State<S, T> implements Higher2<state,S,T> {
 
 
     private final Fn1<S, Free<supplier,Tuple2<S, T>>> runState;
@@ -206,7 +218,163 @@ public final class State<S, T> {
     public static <S> State<S, Nothing> of(S s) {
         return state(__ -> Tuple.tuple(s, (Nothing)Maybe.none()));
     }
+    public Active<Higher<state,S>,T> allTypeclasses(S value){
+        return Active.of(this, Instances.definitions(value));
+    }
+    public <W2,R> Nested<Higher<Witness.state,S>,W2,R> mapM(S value, Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(value), defs);
+    }
+    public static <S,T> State<S,T> narrowK2(final Higher2<state, S,T> t) {
+        return (State<S,T>)t;
+    }
+    public static <S,T> State<S,T> narrowK(final Higher<Higher<state, S>,T> t) {
+        return (State)t;
+    }
+    public static class Instances {
+
+        public static <S> InstanceDefinitions<Higher<state, S>> definitions(S val){
+            return new InstanceDefinitions<Higher<state, S>>() {
+
+                @Override
+                public <T, R> Functor<Higher<state, S>> functor() {
+                    return Instances.functor();
+                }
+
+                @Override
+                public <T> Pure<Higher<state, S>> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<Higher<state, S>> applicative() {
+                    return Instances.applicative();
+                }
+
+                @Override
+                public <T, R> Monad<Higher<state, S>> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<Higher<state, S>>> monadZero() {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<Higher<state, S>>> monadPlus() {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<Higher<state, S>>> monadPlus(Monoid<Higher<Higher<state, S>, T>> m) {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <C2, T> Maybe<Traverse<Higher<state, S>>> traverse() {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <T> Maybe<Foldable<Higher<state, S>>> foldable() {
+                    return Maybe.just(Instances.foldable(val));
+                }
+
+                @Override
+                public <T> Maybe<Comonad<Higher<state, S>>> comonad() {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <T> Maybe<Unfoldable<Higher<state, S>>> unfoldable() {
+                    return Maybe.none();
+                }
+            };
+        }
+        public static <S> Functor<Higher<state, S>> functor() {
+            return new Functor<Higher<state, S>>() {
+                @Override
+                public <T, R> Higher<Higher<state, S>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<state, S>, T> ds) {
+                    return narrowK(ds).map(fn);
+                }
+            };
+        }
+        public static <S> Pure<Higher<state, S>> unit() {
+            return new Pure<Higher<state, S>>() {
+
+                @Override
+                public <T> Higher<Higher<state, S>, T> unit(T value) {
+                    return State.constant(value);
+                }
+            };
+        }
+        public static <S> Applicative<Higher<state, S>> applicative() {
+            return new Applicative<Higher<state, S>>() {
+
+                @Override
+                public <T, R> Higher<Higher<state, S>, R> ap(Higher<Higher<state, S>, ? extends Function<T, R>> fn, Higher<Higher<state, S>, T> apply) {
+                    State<S, ? extends Function<T, R>> f = narrowK(fn);
+                    State<S, T> ap = narrowK(apply);
+                    return f.flatMap(fn1->ap.map(a->fn1.apply(a)));
+                }
+
+                @Override
+                public <T, R> Higher<Higher<state, S>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<state, S>, T> ds) {
+                    return Instances.<S>functor().map(fn,ds);
+                }
+
+                @Override
+                public <T> Higher<Higher<state, S>, T> unit(T value) {
+                    return Instances.<S>unit().unit(value);
+                }
+            };
+        }
+        public static <S> Monad<Higher<state, S>> monad() {
+            return new Monad<Higher<state, S>>() {
 
 
+                @Override
+                public <T, R> Higher<Higher<state, S>, R> ap(Higher<Higher<state, S>, ? extends Function<T, R>> fn, Higher<Higher<state, S>, T> apply) {
+                    return Instances.<S>applicative().ap(fn,apply);
+                }
 
+                @Override
+                public <T, R> Higher<Higher<state, S>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<state, S>, T> ds) {
+                    return Instances.<S>functor().map(fn,ds);
+                }
+
+                @Override
+                public <T> Higher<Higher<state, S>, T> unit(T value) {
+                    return Instances.<S>unit().unit(value);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<state, S>, R> flatMap(Function<? super T, ? extends Higher<Higher<state, S>, R>> fn, Higher<Higher<state, S>, T> ds) {
+                    return narrowK(ds).flatMap(fn.andThen(h->narrowK(h)));
+                }
+            };
+        }
+
+        public static <S> Foldable<Higher<state,S>> foldable(S val) {
+            return new Foldable<Higher<state, S>>() {
+
+
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<Higher<state, S>, T> ds) {
+                    return monoid.foldRight(narrowK(ds).eval(val));
+
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<state, S>, T> ds) {
+                    return monoid.foldLeft(narrowK(ds).eval(val));
+                }
+            };
+        }
+
+
+    }
 }
+
+
+

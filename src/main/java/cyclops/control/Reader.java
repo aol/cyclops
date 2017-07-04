@@ -10,11 +10,15 @@ import cyclops.monads.Witness;
 import cyclops.monads.Witness.reader;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 /**
  * An interface that represents the Reader monad
@@ -36,7 +40,16 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
     default Active<Higher<reader,T>,R> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }
+    default <W2,R2> Nested<Higher<reader,T>,W2,R2> mapM(Function<? super R,? extends Higher<W2,R2>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
+    }
 
+    default  <R2> Reader<T, Tuple2<R,R2>> zip(Reader<T, R2> o){
+        return zip(o, Tuple::tuple);
+    }
+    default  <R2,B> Reader<T, B> zip(Reader<T, R2> o,BiFunction<? super R,? super R2,? extends B> fn){
+        return flatMap(a -> o.map(b -> fn.apply(a,b)));
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.functor.Transformable#map(java.util.function.Function)
      */
@@ -179,6 +192,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
                     return Maybe.none();
                 }
 
+
                 @Override
                 public <C2, T> Maybe<Traverse<Higher<reader, IN>>> traverse() {
                     return Maybe.none();
@@ -191,6 +205,11 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
                 @Override
                 public <T> Maybe<Comonad<Higher<reader, IN>>> comonad() {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <T> Maybe<Unfoldable<Higher<reader, IN>>> unfoldable() {
                     return Maybe.none();
                 }
             };

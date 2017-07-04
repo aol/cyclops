@@ -17,6 +17,7 @@ import cyclops.monads.Witness.reactiveSeq;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -555,6 +556,19 @@ public interface Spouts {
                 public <T> Maybe<Comonad<reactiveSeq>> comonad() {
                     return Maybe.none();
                 }
+
+                @Override
+                public <T> Maybe<Unfoldable<reactiveSeq>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+        }
+        public static Unfoldable<reactiveSeq> unfoldable(){
+            return new Unfoldable<reactiveSeq>() {
+                @Override
+                public <R, T> Higher<reactiveSeq, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return Spouts.unfold(b,fn);
+                }
             };
         }
         /**
@@ -577,7 +591,7 @@ public interface Spouts {
          *   ReactiveSeq<Integer> list = ReactiveSeq.Instances.unit()
         .unit("hello")
         .transform(h->Lists.functor().map((String v) ->v.length(), h))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
          *
          * }
          * </pre>
@@ -594,7 +608,7 @@ public interface Spouts {
          * {@code
          * ReactiveSeq<String> list = Lists.unit()
         .unit("hello")
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
 
         //Arrays.asList("hello"))
          *
@@ -628,13 +642,13 @@ public interface Spouts {
          * {@code
          * ReactiveSeq<Function<Integer,Integer>> listFn =Lists.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(ReactiveSeq::narrowK);
+         *                                                  .convert(ReactiveSeq::narrowK3);
 
         ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
         .transform(h->Lists.functor().map((String v) ->v.length(), h))
         .transform(h->Lists.zippingApplicative().ap(listFn, h))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
 
         //Arrays.asList("hello".length()*2))
          *
@@ -655,7 +669,7 @@ public interface Spouts {
          * import static com.aol.cyclops2.hkt.jdk.ReactiveSeq.widen;
          * ReactiveSeq<Integer> list  = Lists.monad()
         .flatMap(i->widen(ReactiveSeq.range(0,i)), widen(Arrays.asList(1,2,3)))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
          * }
          * </pre>
          *
@@ -665,7 +679,7 @@ public interface Spouts {
          *    ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
         .transform(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
 
         //Arrays.asList("hello".length())
          *
@@ -686,7 +700,7 @@ public interface Spouts {
          *  ReactiveSeq<String> list = Lists.unit()
         .unit("hello")
         .transform(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
 
         //Arrays.asList("hello"));
          *
@@ -705,7 +719,7 @@ public interface Spouts {
          * {@code
          *  ReactiveSeq<Integer> list = Lists.<Integer>monadPlus()
         .plus(ReactiveSeq.widen(Arrays.asList()), ReactiveSeq.widen(Arrays.asList(10)))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
         //Arrays.asList(10))
          *
          * }
@@ -724,7 +738,7 @@ public interface Spouts {
          *  Monoid<ReactiveSeq<Integer>> m = Monoid.of(ReactiveSeq.widen(Arrays.asList()), (a,b)->a.isEmpty() ? b : a);
         ReactiveSeq<Integer> list = Lists.<Integer>monadPlus(m)
         .plus(ReactiveSeq.widen(Arrays.asList(5)), ReactiveSeq.widen(Arrays.asList(10)))
-        .convert(ReactiveSeq::narrowK);
+        .convert(ReactiveSeq::narrowK3);
         //Arrays.asList(5))
          *
          * }
@@ -802,7 +816,7 @@ public interface Spouts {
 
 
         /**
-         * Widen a ReactiveSeq nested inside another HKT encoded type
+         * Widen a ReactiveSeq nest inside another HKT encoded type
          *
          * @param flux HTK encoded type containing  a List toNested widen
          * @return HKT encoded type with a widened List

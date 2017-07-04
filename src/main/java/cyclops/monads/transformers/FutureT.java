@@ -29,14 +29,14 @@ import cyclops.function.Fn4;
 import cyclops.function.Fn3;
 
 /**
-* Monad Transformer for Future's nested within another monadic type
+* Monad Transformer for Future's nest within another monadic type
 
  * 
- * FutureT allows the deeply wrapped Future toNested be manipulating within it's nested /contained context
+ * FutureT allows the deeply wrapped Future toNested be manipulating within it's nest /contained context
  *
  * @author johnmcclean
  *
- * @param <T> Type of data stored inside the nested Future(s)
+ * @param <T> Type of data stored inside the nest Future(s)
  */
 public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
                                                        implements To<FutureT<W,T>>,

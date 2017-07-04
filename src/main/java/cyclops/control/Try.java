@@ -34,9 +34,12 @@ import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.*;
@@ -167,6 +170,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
     public Active<Higher<tryType,X>,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
+    }
+    public <W2,R> Nested<Higher<tryType,X>,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
     public Trampoline<Xor<X,T>> toTrampoline() {
         return xor.toTrampoline();
@@ -1352,8 +1358,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         public void run() throws X;
     }
     /*
-     * Flatten a nested Try Structure
-     * @return Lowest nested Try
+     * Flatten a nest Try Structure
+     * @return Lowest nest Try
      * @see com.aol.cyclops2.trycatch.Try#flatten()
      */
 
@@ -1550,6 +1556,11 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                 public <T> Maybe<Comonad<Higher<tryType, L>>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
+
+                @Override
+                public <T> Maybe<Unfoldable<Higher<tryType, L>>> unfoldable() {
+                    return Maybe.none();
+                }
             };
         }
         public static <L extends Throwable> Functor<Higher<tryType, L>> functor() {
@@ -1677,7 +1688,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         }
 
         public static <L extends Throwable> Comonad<Higher<tryType, L>> comonad() {
-            return new Comonad<Higher<tryType, L>>() {
+            return new ComonadByPure<Higher<tryType, L>>() {
 
 
                 @Override

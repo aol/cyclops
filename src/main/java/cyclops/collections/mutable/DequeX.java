@@ -24,9 +24,11 @@ import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -59,8 +61,12 @@ public interface DequeX<T> extends To<DequeX<T>>,
     default Active<deque,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }
+
+    default <W2,R> Nested<deque,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
+    }
     /**
-     * Widen a DequeType nested inside another HKT encoded type
+     * Widen a DequeType nest inside another HKT encoded type
      *
      * @param deque HTK encoded type containing  a Deque toNested widen
      * @return HKT encoded type with a widened Deque
@@ -1372,6 +1378,18 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 public <T> Maybe<Comonad<deque>> comonad() {
                     return Maybe.none();
                 }
+                @Override
+                public <T> Maybe<Unfoldable<Witness.deque>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+        }
+        public static Unfoldable<deque> unfoldable(){
+            return new Unfoldable<deque>() {
+                @Override
+                public <R, T> Higher<deque, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return DequeX.unfold(b,fn);
+                }
             };
         }
         /**
@@ -1394,7 +1412,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          *   DequeX<Integer> list = Deques.unit()
         .unit("hello")
         .applyHKT(h->Deques.functor().map((String v) ->v.length(), h))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
          *
          * }
          * </pre>
@@ -1411,7 +1429,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * {@code
          * DequeX<String> list = Deques.unit()
         .unit("hello")
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
 
         //DequeX.of("hello"))
          *
@@ -1445,13 +1463,13 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * {@code
          * DequeX<Function<Integer,Integer>> listFn =Deques.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(DequeX::narrowK);
+         *                                                  .convert(DequeX::narrowK3);
 
         DequeX<Integer> list = Deques.unit()
         .unit("hello")
         .applyHKT(h->Deques.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Deques.zippingApplicative().ap(listFn, h))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
 
         //DequeX.of("hello".length()*2))
          *
@@ -1472,7 +1490,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * import static com.aol.cyclops.hkt.jdk.DequeX.widen;
          * DequeX<Integer> list  = Deques.monad()
         .flatMap(i->widen(DequeX.range(0,i)), widen(DequeX.of(1,2,3)))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
          * }
          * </pre>
          *
@@ -1482,7 +1500,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          *    DequeX<Integer> list = Deques.unit()
         .unit("hello")
         .applyHKT(h->Deques.monad().flatMap((String v) ->Deques.unit().unit(v.length()), h))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
 
         //DequeX.of("hello".length())
          *
@@ -1503,7 +1521,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          *  DequeX<String> list = Deques.unit()
         .unit("hello")
         .applyHKT(h->Deques.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
 
         //DequeX.of("hello"));
          *
@@ -1522,7 +1540,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * {@code
          *  DequeX<Integer> list = Deques.<Integer>monadPlus()
         .plus(DequeX.of()), DequeX.of(10)))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
         //DequeX.of(10))
          *
          * }
@@ -1541,7 +1559,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          *  Monoid<DequeX<Integer>> m = Monoid.of(DequeX.of()), (a,b)->a.isEmpty() ? b : a);
         DequeX<Integer> list = Deques.<Integer>monadPlus(m)
         .plus(DequeX.of(5)), DequeX.of(10)))
-        .convert(DequeX::narrowK);
+        .convert(DequeX::narrowK3);
         //DequeX.of(5))
          *
          * }

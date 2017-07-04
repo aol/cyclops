@@ -5,6 +5,7 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.reactivestreams.Publisher;
 
+import java.util.Arrays;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -62,6 +63,12 @@ public interface Monoid<T> extends Semigroup<T> {
     default <A> T foldMap(final Stream<A> toFoldMap, Function<? super A, ? extends T> mapFn){
         Stream<T> toReduce = toFoldMap.map(mapFn);
         return toReduce.reduce(zero(),this);
+    }
+    default  T foldLeft(final T toFold){
+        return reduceI(Arrays.asList(zero(),toFold));
+    }
+    default  T foldRight(final T toFold){
+        return foldRightI(Arrays.asList(zero(),toFold));
     }
     default  T foldLeft(final Stream<T> toFold){
         return reduce(toFold);

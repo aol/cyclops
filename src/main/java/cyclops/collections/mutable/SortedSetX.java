@@ -1104,11 +1104,11 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      * <pre>
      * {@code 
      * SortedSetX<? extends Fruit> set = SortedSetX.of(apple,bannana);
-     * SortedSetX<Fruit> fruitSet = SortedSetX.narrowK(set);
+     * SortedSetX<Fruit> fruitSet = SortedSetX.narrowK3(set);
      * }
      * </pre>
      * 
-     * @param sortedSetX toNested narrowK generic type
+     * @param sortedSetX toNested narrowK3 generic type
      * @return SortedSetX with narrowed type
      */
     public static <T> SortedSetX<T> narrow(final SortedSetX<? extends T> setX) {

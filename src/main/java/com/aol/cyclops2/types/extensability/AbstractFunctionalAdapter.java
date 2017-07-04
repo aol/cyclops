@@ -4,6 +4,8 @@ import java.util.function.Function;
 
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
+import org.jooq.lambda.Collectable;
+import org.jooq.lambda.Seq;
 
 public abstract class  AbstractFunctionalAdapter<W extends WitnessType<W>>  implements FunctionalAdapter<W>{
 
@@ -20,6 +22,8 @@ public abstract class  AbstractFunctionalAdapter<W extends WitnessType<W>>  impl
 
     @Override
     public abstract <T> AnyM<W, T> unitIterable(Iterable<T> it);
+
+
 
    
 }

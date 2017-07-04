@@ -27,9 +27,11 @@ import cyclops.monads.WitnessType;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -59,13 +61,16 @@ public interface VectorX<T> extends To<VectorX<T>>,
     default Active<vectorX,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }
+    default <W2,R> Nested<vectorX,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
+    }
 
     default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {
         return ListT.of(witness.adapter().unit(this));
     }
 
     /**
-     * Widen a PVectorType nested inside another HKT encoded type
+     * Widen a PVectorType nest inside another HKT encoded type
      *
      * @param list HTK encoded type containing  a PVector toNested widen
      * @return HKT encoded type with a widened PVector
@@ -1271,6 +1276,18 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 public <T> Maybe<Comonad<vectorX>> comonad() {
                     return Maybe.none();
                 }
+                @Override
+                public <T> Maybe<Unfoldable<vectorX>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+        }
+        public static Unfoldable<vectorX> unfoldable(){
+            return new Unfoldable<vectorX>() {
+                @Override
+                public <R, T> Higher<vectorX, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return VectorX.unfold(b,fn);
+                }
             };
         }
         /**
@@ -1293,7 +1310,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *   VectorX<Integer> list = PVectors.unit()
         .unit("hello")
         .applyHKT(h->PVectors.functor().map((String v) ->v.length(), h))
-        .convert(VectorX::narrowK);
+        .convert(VectorX::narrowK3);
          *
          * }
          * </pre>
@@ -1310,7 +1327,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * {@code
          * VectorX<String> list = PVectors.unit()
         .unit("hello")
-        .convert(VectorX::narrowK);
+        .convert(VectorX::narrowK3);
 
         //Arrays.asPVector("hello"))
          *
@@ -1344,13 +1361,13 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * {@code
          * VectorX<Function<Integer,Integer>> listFn =PVectors.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(VectorX::narrowK);
+         *                                                  .convert(VectorX::narrowK3);
 
         VectorX<Integer> list = PVectors.unit()
         .unit("hello")
         .applyHKT(h->PVectors.functor().map((String v) ->v.length(), h))
         .applyHKT(h->PVectors.zippingApplicative().ap(listFn, h))
-        .convert(VectorX::narrowK);
+        .convert(VectorX::narrowK3);
 
         //Arrays.asPVector("hello".length()*2))
          *
@@ -1371,7 +1388,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * import static com.aol.cyclops.hkt.jdk.VectorX.widen;
          * VectorX<Integer> list  = PVectors.monad()
         .flatMap(i->widen(VectorX.range(0,i)), widen(Arrays.asPVector(1,2,3)))
-        .convert(VectorX::narrowK);
+        .convert(VectorX::narrowK3);
          * }
          * </pre>
          *
@@ -1381,7 +1398,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *    VectorX<Integer> list = PVectors.unit()
         .unit("hello")
         .applyHKT(h->PVectors.monad().flatMap((String v) ->PVectors.unit().unit(v.length()), h))
-        .convert(VectorX::narrowK);
+        .convert(VectorX::narrowK3);
 
         //Arrays.asPVector("hello".length())
          *
@@ -1402,7 +1419,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *  VectorX<String> list = PVectors.unit()
         .unit("hello")
         .applyHKT(h->PVectors.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(VectorX::narrowK);
+        .convert(VectorX::narrowK3);
 
         //Arrays.asPVector("hello"));
          *
@@ -1421,7 +1438,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * {@code
          *  VectorX<Integer> list = PVectors.<Integer>monadPlus()
         .plus(Arrays.asPVector()), Arrays.asPVector(10)))
-        .convert(VectorX::narrowK);
+        .convert(VectorX::narrowK3);
         //Arrays.asPVector(10))
          *
          * }
@@ -1440,7 +1457,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *  Monoid<VectorX<Integer>> m = Monoid.of(Arrays.asPVector()), (a,b)->a.isEmpty() ? b : a);
         VectorX<Integer> list = PVectors.<Integer>monadPlus(m)
         .plus(Arrays.asPVector(5)), Arrays.asPVector(10)))
-        .convert(VectorX::narrowK);
+        .convert(VectorX::narrowK3);
         //Arrays.asPVector(5))
          *
          * }

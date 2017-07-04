@@ -17,7 +17,7 @@ import com.aol.cyclops2.types.stream.HeadAndTail;
  * A type that represents a non-scalar Monad Transformer
  * @author johnmcclean
  *
- * @param <T> Data type of elements in nested Monad
+ * @param <T> Data type of elements in nest Monad
  */
 public interface FoldableTransformerSeq<W extends WitnessType<W>,T> extends TransformerSeq<W,T>,  
                                                                             NestedFoldable<W,T>, 

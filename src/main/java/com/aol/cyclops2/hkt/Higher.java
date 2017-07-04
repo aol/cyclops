@@ -9,14 +9,14 @@ import java.util.function.Function;
 
 /**
  * Higher Kinded Type - a core type (e.g. a List) and a data type of the elements within the List (e.g. Integers).
- * A fluent semantic alias for  org.derive4j.hkt.__ (awaiting https://github.com/derive4j/hkt/issues/13).
+ *
  *
  * @author johnmcclean
  *
  * @param <T1> Core type
  * @param <T2> Data type of elements in Core Type
  */
-public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{// , __<T1, T2>{
+public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{
 
 
     /**

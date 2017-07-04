@@ -18,9 +18,11 @@ import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.EvalT;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -78,6 +80,10 @@ public interface Eval<T> extends To<Eval<T>>,
 
     default Active<eval,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
+    }
+
+    default <W2,R> Nested<eval,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
     }
     static <T> Eval<T> async(final Executor ex, final Supplier<T> s){
         return fromFuture(Future.of(s,ex));
@@ -247,6 +253,10 @@ public interface Eval<T> extends To<Eval<T>>,
         return new Module.Later<T>(
                                    in -> value.get());
     }
+    public static <T> Eval<T> defer(final Supplier<Eval<T>> value) {
+        return new Module.Later<T>(
+                in -> value.get().get());
+    }
 
     /**
      * Lazily create an Eval from the specified Supplier. Supplier#get will only be every time get is called on the resulting Eval.
@@ -318,7 +328,7 @@ public interface Eval<T> extends To<Eval<T>>,
      * </pre>
      *
      * @param evals Collection of Evals to accumulate
-     * @param reducer Reducer to fold nested values into
+     * @param reducer Reducer to fold nest values into
      * @return Eval with a value
      */
     public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Reducer<R> reducer) {
@@ -1191,6 +1201,11 @@ public interface Eval<T> extends To<Eval<T>>,
                 public <T> Maybe<Comonad<eval>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
+
+                @Override
+                public <T> Maybe<Unfoldable<eval>> unfoldable() {
+                    return Maybe.none();
+                }
             };
         }
         /**
@@ -1213,7 +1228,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *   Eval<Integer> list = Evals.unit()
         .unit("hello")
         .applyHKT(h->Evals.functor().map((String v) ->v.length(), h))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
          *
          * }
          * </pre>
@@ -1231,7 +1246,7 @@ public interface Eval<T> extends To<Eval<T>>,
          * {@code
          * Eval<String> list = Evals.unit()
         .unit("hello")
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
 
         //Arrays.asEval("hello"))
          *
@@ -1265,13 +1280,13 @@ public interface Eval<T> extends To<Eval<T>>,
          * {@code
          * Eval<Function<Integer,Integer>> listFn =Evals.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(Eval::narrowK);
+         *                                                  .convert(Eval::narrowK3);
 
         Eval<Integer> list = Evals.unit()
         .unit("hello")
         .applyHKT(h->Evals.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Evals.applicative().ap(listFn, h))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
 
         //Arrays.asEval("hello".length()*2))
          *
@@ -1292,7 +1307,7 @@ public interface Eval<T> extends To<Eval<T>>,
          * import static com.aol.cyclops.hkt.jdk.Eval.widen;
          * Eval<Integer> list  = Evals.monad()
         .flatMap(i->widen(EvalX.range(0,i)), widen(Arrays.asEval(1,2,3)))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
          * }
          * </pre>
          *
@@ -1302,7 +1317,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *    Eval<Integer> list = Evals.unit()
         .unit("hello")
         .applyHKT(h->Evals.monad().flatMap((String v) ->Evals.unit().unit(v.length()), h))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
 
         //Arrays.asEval("hello".length())
          *
@@ -1323,7 +1338,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *  Eval<String> list = Evals.unit()
         .unit("hello")
         .applyHKT(h->Evals.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
 
         //Arrays.asEval("hello"));
          *
@@ -1342,7 +1357,7 @@ public interface Eval<T> extends To<Eval<T>>,
          * {@code
          *  Eval<Integer> list = Evals.<Integer>monadPlus()
         .plus(Eval.widen(Arrays.asEval()), Eval.widen(Arrays.asEval(10)))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
         //Arrays.asEval(10))
          *
          * }
@@ -1364,7 +1379,7 @@ public interface Eval<T> extends To<Eval<T>>,
          *  Monoid<Eval<Integer>> m = Monoid.of(Eval.widen(Arrays.asEval()), (a,b)->a.isEmpty() ? b : a);
         Eval<Integer> list = Evals.<Integer>monadPlus(m)
         .plus(Eval.widen(Arrays.asEval(5)), Eval.widen(Arrays.asEval(10)))
-        .convert(Eval::narrowK);
+        .convert(Eval::narrowK3);
         //Arrays.asEval(5))
          *
          * }

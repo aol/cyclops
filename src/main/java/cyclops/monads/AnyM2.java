@@ -360,7 +360,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
 
     /**
-     * join / flatten one level of a nested hierarchy
+     * join / flatten one level of a nest hierarchy
      * 
      * @return Flattened / joined one level
      */ 

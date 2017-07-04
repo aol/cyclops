@@ -1,9 +1,22 @@
 package cyclops.control;
 
+import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.writer;
+import cyclops.typeclasses.Active;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +30,7 @@ import java.util.function.Function;
 
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
 @Getter
-public final class Writer<W, T> implements Transformable<T>, Iterable<T> {
+public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2<writer,W,T> {
 
 
     private final Tuple2<T,W> value;
@@ -193,5 +206,162 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return Arrays.asList(value.v1).iterator();
+    }
+
+    public Active<Higher<writer,W>,T> allTypeclasses(Monoid<W> monoid){
+        return Active.of(this, Instances.definitions(monoid));
+    }
+    public <W2,R> Nested<Higher<writer,W>,W2,R> mapM(Monoid<W> monoid,Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(monoid), defs);
+    }
+    public static <W,T> Writer<W,T> narrowK2(final Higher2<writer, W,T> t) {
+        return (Writer<W,T>)t;
+    }
+    public static <W,T> Writer<W,T> narrowK(final Higher<Higher<writer, W>,T> t) {
+        return (Writer)t;
+    }
+    public static class Instances {
+
+        public static <W> InstanceDefinitions<Higher<writer, W>> definitions(Monoid<W> monoid){
+            return new InstanceDefinitions<Higher<writer, W>>() {
+
+                @Override
+                public <T, R> Functor<Higher<writer, W>> functor() {
+                    return Writer.Instances.functor();
+                }
+
+                @Override
+                public <T> Pure<Higher<writer, W>> unit() {
+                    return Writer.Instances.unit(monoid);
+                }
+
+                @Override
+                public <T, R> Applicative<Higher<writer, W>> applicative() {
+                    return Writer.Instances.applicative(monoid);
+                }
+
+                @Override
+                public <T, R> Monad<Higher<writer, W>> monad() {
+                    return Writer.Instances.monad(monoid);
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<Higher<writer, W>>> monadZero() {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<Higher<writer, W>>> monadPlus() {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<Higher<writer, W>>> monadPlus(Monoid<Higher<Higher<writer, W>, T>> m) {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <C2, T> Maybe<Traverse<Higher<writer, W>>> traverse() {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <T> Maybe<Foldable<Higher<writer, W>>> foldable() {
+                    return Maybe.just(Writer.Instances.foldable());
+                }
+
+                @Override
+                public <T> Maybe<Comonad<Higher<writer, W>>> comonad() {
+                    return Maybe.none();
+                }
+
+                @Override
+                public <T> Maybe<Unfoldable<Higher<writer, W>>> unfoldable() {
+                    return Maybe.none();
+                }
+            };
+        }
+        public static <W> Functor<Higher<writer, W>> functor() {
+            return new Functor<Higher<writer, W>>() {
+                @Override
+                public <T, R> Higher<Higher<writer, W>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<writer, W>, T> ds) {
+                    return narrowK(ds).map(fn);
+                }
+            };
+        }
+        public static <W> Pure<Higher<writer, W>> unit(Monoid<W> monoid) {
+            return new Pure<Higher<writer, W>>() {
+
+                @Override
+                public <T> Higher<Higher<writer, W>, T> unit(T value) {
+                    return Writer.writer(value,monoid);
+                }
+            };
+        }
+        public static <W> Applicative<Higher<writer, W>> applicative(Monoid<W> monoid) {
+            return new Applicative<Higher<writer, W>>() {
+
+                @Override
+                public <T, R> Higher<Higher<writer, W>, R> ap(Higher<Higher<writer, W>, ? extends Function<T, R>> fn, Higher<Higher<writer, W>, T> apply) {
+                    Writer<W, ? extends Function<T, R>> f = narrowK(fn);
+                    Writer<W, T> ap = narrowK(apply);
+                    return f.flatMap(fn1->ap.map(a->fn1.apply(a)));
+                }
+
+                @Override
+                public <T, R> Higher<Higher<writer, W>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<writer, W>, T> ds) {
+                    return Writer.Instances.<W>functor().map(fn,ds);
+                }
+
+                @Override
+                public <T> Higher<Higher<writer, W>, T> unit(T value) {
+                    return Writer.Instances.<W>unit(monoid).unit(value);
+                }
+            };
+        }
+        public static <W> Monad<Higher<writer, W>> monad(Monoid<W> monoid) {
+            return new Monad<Higher<writer, W>>() {
+
+
+                @Override
+                public <T, R> Higher<Higher<writer, W>, R> ap(Higher<Higher<writer, W>, ? extends Function<T, R>> fn, Higher<Higher<writer, W>, T> apply) {
+                    return Writer.Instances.<W>applicative(monoid).ap(fn,apply);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<writer, W>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<writer, W>, T> ds) {
+                    return Writer.Instances.<W>functor().map(fn,ds);
+                }
+
+                @Override
+                public <T> Higher<Higher<writer, W>, T> unit(T value) {
+                    return Writer.Instances.<W>unit(monoid).unit(value);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<writer, W>, R> flatMap(Function<? super T, ? extends Higher<Higher<writer, W>, R>> fn, Higher<Higher<writer, W>, T> ds) {
+                    return narrowK(ds).flatMap(fn.andThen(h->narrowK(h)));
+                }
+            };
+        }
+
+        public static <W> Foldable<Higher<writer,W>> foldable() {
+            return new Foldable<Higher<writer, W>>() {
+
+
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<Higher<writer, W>, T> ds) {
+                    return monoid.foldRight(narrowK(ds).getValue().v1);
+
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<writer, W>, T> ds) {
+                    return monoid.foldLeft(narrowK(ds).getValue().v1);
+                }
+            };
+        }
+
+
     }
 }

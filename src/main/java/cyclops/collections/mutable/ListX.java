@@ -23,9 +23,11 @@ import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.ListT;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -62,7 +64,9 @@ public interface ListX<T> extends To<ListX<T>>,
     default Active<list,T> allTypeclasses(){
         return Active.of(this,Instances.definitions());
     }
-
+    default <W2,R> Nested<list,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
+    }
     /**
      * Convert the raw Higher Kinded Type for ListX types into the ListX type definition class
      *
@@ -125,6 +129,19 @@ public interface ListX<T> extends To<ListX<T>>,
                 public <T> Maybe<Comonad<list>> comonad() {
                     return Maybe.none();
                 }
+                @Override
+                public <T> Maybe<Unfoldable<list>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+
+        }
+        public static Unfoldable<list> unfoldable(){
+            return new Unfoldable<list>() {
+                @Override
+                public <R, T> Higher<list, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return ListX.unfold(b,fn);
+                }
             };
         }
         /**
@@ -147,7 +164,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *   ListX<Integer> list = Lists.unit()
         .unit("hello")
         .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
          *
          * }
          * </pre>
@@ -164,7 +181,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * {@code
          * ListX<String> list = Lists.unit()
         .unit("hello")
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
 
         //Arrays.asList("hello"))
          *
@@ -198,13 +215,13 @@ public interface ListX<T> extends To<ListX<T>>,
          * {@code
          * ListX<Function<Integer,Integer>> listFn =Lists.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(ListX::narrowK);
+         *                                                  .convert(ListX::narrowK3);
 
         ListX<Integer> list = Lists.unit()
         .unit("hello")
         .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Lists.zippingApplicative().ap(listFn, h))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
 
         //Arrays.asList("hello".length()*2))
          *
@@ -225,7 +242,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * import static com.aol.cyclops2.hkt.jdk.ListX.widen;
          * ListX<Integer> list  = Lists.monad()
         .flatMap(i->widen(ListX.range(0,i)), widen(Arrays.asList(1,2,3)))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
          * }
          * </pre>
          *
@@ -235,7 +252,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *    ListX<Integer> list = Lists.unit()
         .unit("hello")
         .applyHKT(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
 
         //Arrays.asList("hello".length())
          *
@@ -256,7 +273,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *  ListX<String> list = Lists.unit()
         .unit("hello")
         .applyHKT(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
 
         //Arrays.asList("hello"));
          *
@@ -275,7 +292,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * {@code
          *  ListX<Integer> list = Lists.<Integer>monadPlus()
         .plus(ListX.widen(Arrays.asList()), ListX.widen(Arrays.asList(10)))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
         //Arrays.asList(10))
          *
          * }
@@ -294,7 +311,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *  Monoid<ListX<Integer>> m = Monoid.of(ListX.widen(Arrays.asList()), (a,b)->a.isEmpty() ? b : a);
         ListX<Integer> list = Lists.<Integer>monadPlus(m)
         .plus(ListX.widen(Arrays.asList(5)), ListX.widen(Arrays.asList(10)))
-        .convert(ListX::narrowK);
+        .convert(ListX::narrowK3);
         //Arrays.asList(5))
          *
          * }
@@ -372,7 +389,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
 
         /**
-         * Widen a ListType nested inside another HKT encoded type
+         * Widen a ListType nest inside another HKT encoded type
          *
          * @param flux HTK encoded type containing  a List toNested widen
          * @return HKT encoded type with a widened List

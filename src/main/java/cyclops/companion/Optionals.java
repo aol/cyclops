@@ -8,6 +8,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -16,9 +17,11 @@ import cyclops.function.Reducer;
 import cyclops.monads.Witness.optional;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.OptionalT;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -35,6 +38,7 @@ import com.aol.cyclops2.types.Value;
 import cyclops.monads.Witness;
 
 import lombok.experimental.UtilityClass;
+
 
 /**
  * Utility class for working with JDK Optionals
@@ -637,6 +641,11 @@ public class Optionals {
                 public <T> Maybe<Comonad<optional>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
+
+                @Override
+                public <T> Maybe<Unfoldable<optional>> unfoldable() {
+                    return Maybe.none();
+                }
             };
         }
 
@@ -660,7 +669,7 @@ public class Optionals {
          *   OptionalKind<Integer> list = Optionals.unit()
         .unit("hello")
         .applyHKT(h->Optionals.functor().map((String v) ->v.length(), h))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
          *
          * }
          * </pre>
@@ -677,7 +686,7 @@ public class Optionals {
          * {@code
          * OptionalKind<String> list = Optionals.unit()
         .unit("hello")
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
 
         //Arrays.asOptional("hello"))
          *
@@ -711,13 +720,13 @@ public class Optionals {
          * {@code
          * OptionalKind<Function<Integer,Integer>> listFn =Optionals.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(OptionalKind::narrowK);
+         *                                                  .convert(OptionalKind::narrowK3);
 
         OptionalKind<Integer> list = Optionals.unit()
         .unit("hello")
         .applyHKT(h->Optionals.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Optionals.applicative().ap(listFn, h))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
 
         //Arrays.asOptional("hello".length()*2))
          *
@@ -738,7 +747,7 @@ public class Optionals {
          * import static com.aol.cyclops.hkt.jdk.OptionalKind.widen;
          * OptionalKind<Integer> list  = Optionals.monad()
         .flatMap(i->widen(OptionalX.range(0,i)), widen(Arrays.asOptional(1,2,3)))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
          * }
          * </pre>
          *
@@ -748,7 +757,7 @@ public class Optionals {
          *    OptionalKind<Integer> list = Optionals.unit()
         .unit("hello")
         .applyHKT(h->Optionals.monad().flatMap((String v) ->Optionals.unit().unit(v.length()), h))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
 
         //Arrays.asOptional("hello".length())
          *
@@ -769,7 +778,7 @@ public class Optionals {
          *  OptionalKind<String> list = Optionals.unit()
         .unit("hello")
         .applyHKT(h->Optionals.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
 
         //Arrays.asOptional("hello"));
          *
@@ -788,7 +797,7 @@ public class Optionals {
          * {@code
          *  OptionalKind<Integer> list = Optionals.<Integer>monadPlus()
         .plus(OptionalKind.widen(Arrays.asOptional()), OptionalKind.widen(Arrays.asOptional(10)))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
         //Arrays.asOptional(10))
          *
          * }
@@ -810,7 +819,7 @@ public class Optionals {
          *  Monoid<OptionalKind<Integer>> m = Monoid.of(OptionalKind.widen(Arrays.asOptional()), (a,b)->a.isEmpty() ? b : a);
         OptionalKind<Integer> list = Optionals.<Integer>monadPlus(m)
         .plus(OptionalKind.widen(Arrays.asOptional(5)), OptionalKind.widen(Arrays.asOptional(10)))
-        .convert(OptionalKind::narrowK);
+        .convert(OptionalKind::narrowK3);
         //Arrays.asOptional(5))
          *
          * }
@@ -868,7 +877,7 @@ public class Optionals {
             return OptionalKind.widen(OptionalKind.narrow(lt).flatMap(fn.andThen(OptionalKind::narrowK)));
         }
         private static <T,R> OptionalKind<R> map(OptionalKind<T> lt, Function<? super T, ? extends R> fn){
-            return OptionalKind.widen(OptionalKind.narrow(lt).map(fn));
+            return OptionalKind.narrow(lt).map(fn);
         }
 
 
@@ -908,6 +917,9 @@ public class Optionals {
         public static <T> OptionalKind<T> of(T value) {
             return widen(Optional.of(value));
         }
+         public static <T> OptionalKind<T> ofNullable(T value) {
+             return widen(Optional.ofNullable(value));
+         }
         /**
          * Convert a Optional toNested a simulated HigherKindedType that captures Optional nature
          * and Optional element data type separately. Recover via @see OptionalKind#narrow
@@ -951,11 +963,11 @@ public class Optionals {
         public void ifPresent(Consumer<? super T> consumer) {
             boxed.ifPresent(consumer);
         }
-        public Optional<T> filter(Predicate<? super T> predicate) {
-            return boxed.filter(predicate);
+        public OptionalKind<T> filter(Predicate<? super T> predicate) {
+            return widen(boxed.filter(predicate));
         }
-        public <U> Optional<U> map(Function<? super T, ? extends U> mapper) {
-            return boxed.map(mapper);
+        public <U> OptionalKind<U> map(Function<? super T, ? extends U> mapper) {
+            return widen(boxed.map(mapper));
         }
         public <U> Optional<U> flatMap(Function<? super T, Optional<U>> mapper) {
             return boxed.flatMap(mapper);
@@ -979,7 +991,12 @@ public class Optionals {
             return boxed.toString();
         }
 
+         public Active<optional,T> allTypeclasses(){
+             return Active.of(this, Instances.definitions());
+         }
 
-
+         public <W2,R> Nested<optional,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+             return Nested.of(map(fn), Instances.definitions(), defs);
+         }
     }
 }

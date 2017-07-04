@@ -20,11 +20,11 @@ public class ForPublishersTest {
                                                              .groupedT(2)
                                                              .map(i->i*2);
        
-       ListX<ListX<String>> listOfLists = nestedList.map(i->"nested:"+i)
+       ListX<ListX<String>> listOfLists = nestedList.map(i->"nest:"+i)
                                                      .toListOfLists();
        System.out.println(listOfLists);
        
-       //[[nested:2, nested:4], [nested:6, nested:8], [nested:10, nested:12], [nested:14, nested:16], [nested:18, nested:20]]
+       //[[nest:2, nest:4], [nest:6, nest:8], [nest:10, nest:12], [nest:14, nest:16], [nest:18, nest:20]]
 
       
        
