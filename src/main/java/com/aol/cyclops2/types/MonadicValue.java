@@ -93,7 +93,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      */
     <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
     /**
-     * Perform a four level nest internal iteration over this MonadicValue and the
+     * Perform a four level nested internal iteration over this MonadicValue and the
      * supplied MonadicValues
      * 
        * <pre>
@@ -118,7 +118,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            MonadicValue that generates the new elements
-     * @return MonadicValue with elements generated via nest iteration
+     * @return MonadicValue with elements generated via nested iteration
      */
     default < T2, R1, R2,R3, R>  MonadicValue<R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1,
                                                     final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
@@ -140,7 +140,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     }
 
     /**
-     * Perform a four level nest internal iteration over this MonadicValue and the
+     * Perform a four level nested internal iteration over this MonadicValue and the
      * supplied MonadicValues
      * 
      * {@code 
@@ -169,7 +169,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            MonadicValue that generates the new elements
-     * @return MonadicValue with elements generated via nest iteration
+     * @return MonadicValue with elements generated via nested iteration
      */
     default < T2, R1, R2,R3, R>  MonadicValue<R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
@@ -191,7 +191,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
         });
     }
     /**
-     * Perform a three level nest internal iteration over this MonadicValue and the
+     * Perform a three level nested internal iteration over this MonadicValue and the
      * supplied MonadicValues
      * 
        * <pre>
@@ -214,7 +214,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            MonadicValue that generates the new elements
-     * @return MonadicValue with elements generated via nest iteration
+     * @return MonadicValue with elements generated via nested iteration
      */
     default < T2, R1, R2, R>  MonadicValue<R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
                                                     final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
@@ -231,7 +231,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     }
 
     /**
-     * Perform a three level nest internal iteration over this MonadicValue and the
+     * Perform a three level nested internal iteration over this MonadicValue and the
      * supplied MonadicValues
      * 
        * <pre>
@@ -258,7 +258,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            MonadicValue that generates the new elements
-     * @return MonadicValue with elements generated via nest iteration
+     * @return MonadicValue with elements generated via nested iteration
      */
     default < T2, R1, R2, R>  MonadicValue<R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
@@ -277,7 +277,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     }
 
     /**
-     * Perform a two level nest internal iteration over this MonadicValue and the
+     * Perform a two level nested internal iteration over this MonadicValue and the
      * supplied MonadicValue
      * 
      * <pre>
@@ -297,7 +297,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            monad types that generates the new elements
-     * @return MonadicValue with elements generated via nest iteration
+     * @return MonadicValue with elements generated via nested iteration
      */
     default <R1, R> MonadicValue<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
@@ -309,7 +309,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     }
 
     /**
-     * Perform a two level nest internal iteration over this MonadicValue and the
+     * Perform a two level nested internal iteration over this MonadicValue and the
      * supplied reactiveStream
      * 
      * <pre>
@@ -332,7 +332,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return MonadicValue with elements generated via nest iteration
+     * @return MonadicValue with elements generated via nested iteration
      */
     default <R1, R> MonadicValue<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
             final BiFunction<? super T, ? super R1, Boolean> filterFunction,

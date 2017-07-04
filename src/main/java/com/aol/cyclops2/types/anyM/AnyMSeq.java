@@ -62,7 +62,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
         return this.flatMap(fn.andThen(i->unitIterator(i.iterator())));
     }
     /**
-     * Perform a four level nest internal iteration over this monad and the
+     * Perform a four level nested internal iteration over this monad and the
      * supplied monads
      *
      * 
@@ -75,7 +75,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Monad that generates the new elements
-     * @return AnyMSeq with elements generated via nest iteration
+     * @return AnyMSeq with elements generated via nested iteration
      */
     default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
                         final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
@@ -97,7 +97,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
         });
     }
     /**
-     * Perform a four level nest internal iteration over this monad and the
+     * Perform a four level nested internal iteration over this monad and the
      * supplied monads
      * 
 
@@ -114,7 +114,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * @param yieldingFunction
      *            Function with pointers toNested the current element from both
      *            Streams that generates the new elements
-     * @return ReactiveSeq with elements generated via nest iteration
+     * @return ReactiveSeq with elements generated via nested iteration
      */
     default <R1, R2, R3,R> AnyMSeq<W,R> forEach4(final Function<? super T, ? extends AnyM<W,R1>> monad1,
             final BiFunction<? super T,? super R1, ? extends AnyM<W,R2>> monad2,
@@ -140,7 +140,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
            
     }
     /**
-     * Perform a two level nest internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
+     * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
      * etc toNested be injected, for example)
      * 
      * <pre>
@@ -157,7 +157,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * 
      * @param monad Nested Monad toNested iterate over
      * @param yieldingFunction Function with pointers toNested the current element from both Streams that generates the new elements
-     * @return FutureStream with elements generated via nest iteration
+     * @return FutureStream with elements generated via nested iteration
      */
     default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad,
             BiFunction<? super T,? super R1, ? extends R> yieldingFunction){  
@@ -170,7 +170,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /**
-     * Perform a two level nest internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
+     * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
      * etc toNested be injected, for example)
      * 
      * <pre>
@@ -205,7 +205,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /** 
-     * Perform a three level nest internal iteration over this Stream and the supplied streams
+     * Perform a three level nested internal iteration over this Stream and the supplied streams
       *<pre>
      * {@code 
      * AnyM.fromArray(1,2)
@@ -222,7 +222,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * @param monad2 Nested monad toNested flatMap over
      * @param filterFunction Filter toNested applyHKT over elements before passing non-filtered values toNested the yielding function
      * @param yieldingFunction Function with pointers toNested the current element from both monads that generates the new elements
-     * @return AnyM with elements generated via nest iteration
+     * @return AnyM with elements generated via nested iteration
      */
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
             BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
@@ -244,7 +244,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
     
     /**
-     * Perform a three level nest internal iteration over this AnyM and the supplied monads
+     * Perform a three level nested internal iteration over this AnyM and the supplied monads
      *<pre>
      * {@code 
      * AnyM.fromArray(1,2,3)
@@ -261,7 +261,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * @param monad1 Nested Stream toNested iterate over
      * @param monad2 Nested Stream toNested iterate over
      * @param yieldingFunction Function with pointers toNested the current element from both Monads that generates the new elements
-     * @return AnyM with elements generated via nest iteration
+     * @return AnyM with elements generated via nested iteration
      */
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
             BiFunction<? super T, ? super R1, ? extends AnyM<W,R2>> monad2,
