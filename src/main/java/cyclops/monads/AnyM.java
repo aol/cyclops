@@ -920,7 +920,15 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         Objects.requireNonNull(maybe);
         return AnyMFactory.instance.value(maybe, Witness.maybe.INSTANCE);
     }
+    public static <T> AnyMValue<identity,T> fromIdentity(final Identity<T> value){
+        Objects.requireNonNull(value);
+        return AnyMFactory.instance.value(value, Witness.identity.INSTANCE);
+    }
 
+    public static <T> AnyMValue<identity,T> identity(final T value){
+        Objects.requireNonNull(value);
+        return AnyMFactory.instance.value(Identity.of(value), Witness.identity.INSTANCE);
+    }
 
     /**
      * Create an AnyMValue that wraps the untyped monad

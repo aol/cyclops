@@ -1,11 +1,15 @@
 package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
-import com.sun.xml.internal.bind.v2.model.core.ID;
+import com.aol.cyclops2.types.MonadicValue;
+import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.function.Monoid;
+import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.identity;
+import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
@@ -16,14 +20,13 @@ import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-/**
- * Created by johnmcclean on 04/07/2017.
- */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Identity<T> implements Higher<identity,T>, Supplier<T> {
+public class Identity<T> implements Higher<identity,T>, Iterable<T> {
      private final T value;
 
      public static <T> Identity<T> of(T value){
@@ -52,12 +55,30 @@ public class Identity<T> implements Higher<identity,T>, Supplier<T> {
         return narrow(fn.apply(value));
     }
 
+    public AnyMValue<identity,T> anyM(){
+        return AnyM.fromIdentity(this);
+    }
+
     public static <T> Identity<T> narrow(Identity<? extends T> id){
         return (Identity<T>)id;
     }
     public static <T> Identity<T> narrowK(Higher<identity,T> ds){
         return (Identity<T>)ds;
     }
+
+    public Active<identity,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
+    }
+
+    public <W2,R> Nested<identity,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(), defs);
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return Arrays.asList(value).iterator();
+    }
+
     public static class Instances{
 
         public static InstanceDefinitions<identity> definitions(){

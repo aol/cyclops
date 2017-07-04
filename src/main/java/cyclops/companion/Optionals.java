@@ -38,7 +38,7 @@ import com.aol.cyclops2.types.Value;
 import cyclops.monads.Witness;
 
 import lombok.experimental.UtilityClass;
-import sun.security.jca.GetInstance;
+
 
 /**
  * Utility class for working with JDK Optionals

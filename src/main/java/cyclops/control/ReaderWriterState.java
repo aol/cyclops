@@ -27,7 +27,7 @@ import java.util.function.Function;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
-    
+
     private final Monoid<W> monoid;
     private final BiFunction<R,S, Free<supplier,Tuple3<W, S, T>>> runState;
 
