@@ -83,6 +83,11 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
     }
 
     @Override
+    public <T, R> AnyM<W, R> map(AnyM<W, T> t, Function<? super T, ? extends R> fn) {
+        return fromMonadicValue(monadicValue(t).map(fn),witness);
+    }
+
+    @Override
     public <T> AnyM<W, T> unitIterable(Iterable<T> it) {
         if(it instanceof MonadicValue){
             fromMonadicValue(convert.apply((MonadicValue)it),witness);

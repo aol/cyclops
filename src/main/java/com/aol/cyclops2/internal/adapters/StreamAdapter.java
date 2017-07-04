@@ -90,6 +90,8 @@ public class StreamAdapter<W extends Witness.StreamWitness<W>> extends  Abstract
         return fromStream(this.<T>getUnit().apply(o),witness);
     }
 
-   
-   
+    @Override
+    public <T, R> AnyM<W, R> map(AnyM<W, T> t, Function<? super T, ? extends R> fn) {
+        return fromStream(((Stream)t.unwrap()).map(fn),witness);
+    }
 }

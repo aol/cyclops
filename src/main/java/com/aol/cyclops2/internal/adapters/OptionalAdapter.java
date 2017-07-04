@@ -81,6 +81,8 @@ public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional>
         return fromOptional(this.<T>getUnit().apply(o));
     }
 
-   
-   
+    @Override
+    public <T, R> AnyM<Witness.optional, R> map(AnyM<Witness.optional, T> t, Function<? super T, ? extends R> fn) {
+        return fromOptional(optional(t).<R>map(fn));
+    }
 }
