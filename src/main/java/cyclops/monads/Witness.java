@@ -6,6 +6,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.internal.adapters.*;
@@ -27,6 +28,7 @@ import cyclops.collections.mutable.SetX;
 import cyclops.collections.mutable.SortedSetX;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
+import cyclops.typeclasses.Product;
 
 public interface Witness {
    static interface MonadicValueWitness<W extends MonadicValueWitness<W>>  extends WitnessType<W>{
@@ -115,6 +117,7 @@ public interface Witness {
     public static <ST,T> Xor<ST,T> xor(AnyM<xor,? extends T> anyM){
         return anyM.unwrap();
     }
+
 
     public static <L,R> Either<L,R> either(AnyM<either,? extends R> anyM){
         return anyM.unwrap();

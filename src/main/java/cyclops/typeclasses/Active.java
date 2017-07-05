@@ -63,6 +63,9 @@ public class Active<W,T> implements Filters<T>,
     public <R> R visit(Function<? super Higher<W, T>,? extends R> visitor){
         return visitor.apply(single);
     }
+    public <R> R visitA(Function<? super Active<W, T>,? extends R> visitor){
+        return visitor.apply(this);
+    }
     public Higher<W, T> getActive() {
         return single;
     }
@@ -178,6 +181,10 @@ public class Active<W,T> implements Filters<T>,
 
         }
 
+    }
+
+    public <W2> Product<W,W2,T> plus(Active<W2,T> active){
+        return Product.of(this,active);
     }
 
     @Override
