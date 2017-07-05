@@ -4845,7 +4845,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 (Spliterator<T>)right),Optional.empty());
     }
 
-    static class Instances {
+    public static class Instances {
         public static InstanceDefinitions<reactiveSeq> definitions(){
             return new InstanceDefinitions<reactiveSeq>() {
                 @Override

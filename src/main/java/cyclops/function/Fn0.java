@@ -172,7 +172,7 @@ public interface Fn0< R> extends Supplier<R>{
             }
 
     }
-    static class Instances {
+    public static class Instances {
 
         public static final Functor<supplier> functor =
                 new Functor<supplier>() {

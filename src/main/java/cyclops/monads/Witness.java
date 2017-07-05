@@ -518,4 +518,13 @@ public interface Witness {
         }
 
     }
+    public static enum product implements WitnessType<product>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<product> adapter() {
+            return null;
+        }
+
+    }
 }

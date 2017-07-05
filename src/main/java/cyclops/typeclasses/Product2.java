@@ -2,6 +2,8 @@ package cyclops.typeclasses;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher3;
+import com.aol.cyclops2.hkt.Higher4;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.To;
@@ -19,10 +21,16 @@ import cyclops.companion.Streams.StreamKind;
 import cyclops.control.*;
 import cyclops.control.lazy.Either;
 import cyclops.function.Fn3;
+import cyclops.function.Fn4;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -41,7 +49,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of="run")
 @Getter
-public class Product2<W1,W2,T> implements  Filters<T>,
+public class Product2<W1,W2,T> implements  Filters<T>,Higher3<product,W1,W2,T>,
                                             Transformable<T>, To<Product2<W1,W2,T>> {
 
     private final Tuple2<Higher<W1,T>,Higher<W2,T>> run;
@@ -239,6 +247,137 @@ public class Product2<W1,W2,T> implements  Filters<T>,
  **/
 
 
+    }
+
+
+    public <R1, R> Product2<W1,W2,R> forEach2(Function<? super T, ? extends Product2<W1,W2,R1>> value1, final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+        return flatMap(a->{
+            return value1.apply(a).map(b->yieldingFunction.apply(a,b));
+        });
+
+    }
+    public <T2, R1, R2, R> Product2<W1,W2,R> forEach3(final Function<? super T, ? extends Product2<W1,W2,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Product2<W1,W2,R2>> value2,
+                                                      final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        return flatMap(a->{
+            return value1.apply(a).flatMap(b->value2.apply(a,b).map(c->yieldingFunction.apply(a,b,c)));
+        });
+    }
+    public <T2, R1, R2, R3, R> Product2<W1,W2,R> forEach4(final Function<? super T, ? extends Product2<W1,W2,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Product2<W1,W2,R2>> value2, final Fn3<? super T, ? super R1, ? super R2, ? extends Product2<W1,W2,R3>> value3,
+                                                    final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return flatMap(a->{
+            return value1.apply(a).flatMap(b->value2.apply(a,b).flatMap(c->value3.apply(a,b,c).map(d->yieldingFunction.apply(a,b,c,d))));
+        });
+    }
+
+    public static <W1,W2,T>  Product2<W1,W2,T> narrowK(Higher<Higher<Higher<product, W1>, W2>, T> ds){
+        return (Product2<W1,W2,T>)ds;
+    }
+    public static class Instances<W1,W2> implements InstanceDefinitions<Higher<Higher<product, W1>, W2>>{
+        InstanceDefinitions<W1> def1;
+        InstanceDefinitions<W2> def2;
+
+        public static <W1,W2> InstanceDefinitions<Higher<Higher<product, W1>, W2>> definitions(){
+            return new Instances<>();
+        }
+
+        public  Functor<Higher<Higher<product, W1>, W2>> functor(){
+            return new Functor<Higher<Higher<product, W1>, W2>>(){
+
+                @Override
+                public <T, R> Higher<Higher<Higher<product, W1>, W2>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<product, W1>, W2>, T> ds) {
+                    return narrowK(ds).map(fn);
+                }
+            };
+        }
+        public  Pure<Higher<Higher<product, W1>, W2>> unit(){
+            return new Pure<Higher<Higher<product, W1>, W2>>(){
+
+                @Override
+                public <T> Higher<Higher<Higher<product, W1>, W2>, T> unit(T value) {
+                    return Product2.of(Active.of(def1,value), Active.of(def2, value));
+
+                }
+            };
+        }
+        public  Applicative<Higher<Higher<product, W1>, W2>> applicative(){
+            return new Applicative<Higher<Higher<product, W1>, W2>>(){
+
+                @Override
+                public <T, R> Higher<Higher<Higher<product, W1>, W2>, R> ap(Higher<Higher<Higher<product, W1>, W2>, ? extends Function<T, R>> fn, Higher<Higher<Higher<product, W1>, W2>, T> apply) {
+                    return narrowK(fn).flatMap(x -> narrowK(apply).map(x));
+
+                }
+
+                @Override
+                public <T, R> Higher<Higher<Higher<product, W1>, W2>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<product, W1>, W2>, T> ds) {
+                    return functor().map(fn,ds);
+                }
+
+                @Override
+                public <T> Higher<Higher<Higher<product, W1>, W2>, T> unit(T value) {
+                    return Instances.this.<T>unit().unit(value);
+                }
+            };
+        }
+        public Monad<Higher<Higher<product, W1>, W2>> monad(){
+            return new Monad<Higher<Higher<product, W1>, W2>>(){
+
+                @Override
+                public <T, R> Higher<Higher<Higher<product, W1>, W2>, R> ap(Higher<Higher<Higher<product, W1>, W2>, ? extends Function<T, R>> fn, Higher<Higher<Higher<product, W1>, W2>, T> apply) {
+                    return applicative().ap(fn,apply);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<Higher<product, W1>, W2>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<product, W1>, W2>, T> ds) {
+                    return functor().map(fn,ds);
+                }
+
+                @Override
+                public <T> Higher<Higher<Higher<product, W1>, W2>, T> unit(T value) {
+                    return Instances.this.<T>unit().unit(value);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<Higher<product, W1>, W2>, R> flatMap(Function<? super T, ? extends Higher<Higher<Higher<product, W1>, W2>, R>> fn, Higher<Higher<Higher<product, W1>, W2>, T> ds) {
+                    return narrowK(ds).flatMap(fn.andThen(Product2::narrowK));
+                }
+            };
+        }
+
+        @Override
+        public <T, R> Maybe<MonadZero<Higher<Higher<product, W1>, W2>>> monadZero() {
+            return Maybe.none();
+        }
+
+        @Override
+        public <T> Maybe<MonadPlus<Higher<Higher<product, W1>, W2>>> monadPlus() {
+            return Maybe.none();
+        }
+
+        @Override
+        public <T> Maybe<MonadPlus<Higher<Higher<product, W1>, W2>>> monadPlus(Monoid<Higher<Higher<Higher<product, W1>, W2>, T>> m) {
+            return Maybe.none();
+        }
+
+        @Override
+        public <C2, T> Maybe<cyclops.typeclasses.monad.Traverse<Higher<Higher<product, W1>, W2>>> traverse() {
+            return Maybe.none();
+        }
+
+        @Override
+        public <T> Maybe<Foldable<Higher<Higher<product, W1>, W2>>> foldable() {
+            return Maybe.none();
+        }
+
+        @Override
+        public <T> Maybe<Comonad<Higher<Higher<product, W1>, W2>>> comonad() {
+            return Maybe.none();
+        }
+
+        @Override
+        public <T> Maybe<Unfoldable<Higher<Higher<product, W1>, W2>>> unfoldable() {
+            return Maybe.none();
+        }
     }
 
 

@@ -56,6 +56,9 @@ public class Active<W,T> implements Filters<T>,
     public static <W, T> Active<W, T> of(Higher<W, T> single, InstanceDefinitions<W> def1) {
         return new Active<>(single, def1);
     }
+    public static <W, T> Active<W, T> of(InstanceDefinitions<W> def1,T value) {
+        return new Active<>(def1.unit().unit(value), def1);
+    }
 
     public <R> R visit(Function<? super Higher<W, T>,? extends R> visitor){
         return visitor.apply(single);
