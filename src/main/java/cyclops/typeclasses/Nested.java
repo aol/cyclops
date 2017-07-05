@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -104,6 +105,8 @@ public class Nested<W1,W2,T> implements Transformable<T> {
     public <R> R fold(Function<? super Higher<W1, Higher<W2, T>>, ? extends R> fn){
         return fn.apply(nested);
     }
+
+
     public <R> Nested<W1,W2,R> map(Function<? super T,? extends R> fn){
         Higher<W1, Higher<W2, R>> res = composedFunctor.map(fn, nested);
         return new Nested<>(res,composedFunctor,def1,def2);
@@ -126,6 +129,16 @@ public class Nested<W1,W2,T> implements Transformable<T> {
         Higher<W1, Higher<W2, R>> res = composedFunctor.map1(a->def2.monad().flatMap(fn, a),nested);
         return new Nested<>(res,composedFunctor,def1,def2);
     }
+    public <R,X> Nested<W1,W2,R> flatMap(Function<? super X,? extends Higher<W2,R>> widenFn,Function<? super T,? extends X> fn){
+        Higher<W1, Higher<W2, R>> res = composedFunctor.map1(a->def2.monad().flatMap(fn.andThen(widenFn), a),nested);
+        return new Nested<>(res,composedFunctor,def1,def2);
+    }
+
+
+    public <R> Nested<W1,W2,R> flatMapA(Function<? super T, ? extends Active<W2,R>> fn){
+        Higher<W1, Higher<W2, R>> res = composedFunctor.map1(a->def2.monad().flatMap(fn.andThen(t->t.getSingle()), a),nested);
+        return new Nested<>(res,composedFunctor,def1,def2);
+    }
 
     public Traverse traverseUnsafe(){
         return def1.traverse().visit(s-> new Traverse(),()->null);
@@ -141,11 +154,35 @@ public class Nested<W1,W2,T> implements Transformable<T> {
     }
 
     public class Folds{
+        public Active<W1,T> foldl(T identity, BinaryOperator<T> semigroup){
+            return  foldl(Monoid.fromBiFunction(identity, semigroup));
+        }
+        public Active<W1,T> foldr(T identity, BinaryOperator<T> semigroup){
+            return foldr(Monoid.fromBiFunction(identity, semigroup));
+        }
+        public Active<W1,T> foldl(Monoid<T> monoid){
+            return Active.of(foldLeft(monoid),def1);
+        }
+        public Active<W1,T> foldr(Monoid<T> monoid){
+            return Active.of(foldRight(monoid),def1);
+        }
         public  Higher<W1,T> foldRight(Monoid<T> monoid){
             return def1.functor().map(a -> def2.foldable().get().foldRight(monoid, a), nested);
         }
         public  Higher<W1,T> foldLeft(Monoid<T> monoid){
             return def1.functor().map(a -> def2.foldable().get().foldLeft(monoid, a), nested);
+        }
+        public <R> R foldRight(Monoid<T> monoid, Function<? super Higher<W1,T>,? extends R> narrowK){
+            return narrowK.apply(foldRight(monoid));
+        }
+        public  <R> R foldLeft(Monoid<T> monoid, Function<? super Higher<W1,T>,? extends R> narrowK){
+            return narrowK.apply(foldLeft(monoid));
+        }
+        public Higher<W1,T> foldLeft(T identity, BinaryOperator<T> semigroup){
+            return foldLeft(Monoid.fromBiFunction(identity, semigroup));
+        }
+        public Higher<W1,T> foldRight(T identity, BinaryOperator<T> semigroup){
+            return foldRight(Monoid.fromBiFunction(identity, semigroup));
         }
     }
     public class Traverse {

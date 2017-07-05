@@ -8,9 +8,7 @@ import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
-import cyclops.function.Monoid;
+import cyclops.function.*;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.Monad;
 import cyclops.typeclasses.monad.Traverse;
@@ -18,7 +16,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -48,6 +48,7 @@ public class Active<W,T> implements Filters<T>,
                                     Transformable<T> {
 
 
+    @Getter
     private final Higher<W, T> single;
     @Getter
     private final InstanceDefinitions<W> def1;
@@ -56,6 +57,9 @@ public class Active<W,T> implements Filters<T>,
         return new Active<>(single, def1);
     }
 
+    public <R> R visit(Function<? super Higher<W, T>,? extends R> visitor){
+        return visitor.apply(single);
+    }
     public Higher<W, T> getActive() {
         return single;
     }
@@ -79,9 +83,34 @@ public class Active<W,T> implements Filters<T>,
     public <R> Function<Active<W, T>, Active<W, R>> lift(final Function<? super T, ? extends R> fn) {
         return t -> of(def1.functor().map(fn, t.single), def1);
     }
+    public Active<W,Tuple2<T,T>> zip(Active<W,T> p2){
+
+        return zip(p2, Tuple::tuple);
+    }
+    public <R> Active<W,R> zip(Active<W,T> p2,BiFunction<? super T,? super T, ? extends R> zipper){
+        Applicative<W> ap = def1.applicative();
+
+        Function<T, Function<T, R>> fn = a->b->zipper.apply(a,b);
+        Higher<W, Function<T, Function<T, R>>> hfn = ap.unit(fn);
+        return of(ap.ap(ap.ap(hfn,single),p2.getSingle()),def1);
+    }
+    public Active<W,Tuple3<T,T,T>> zip(Active<W,T> p2, Active<W,T> p3){
+
+        return zip(p2, p3,Tuple::tuple);
+    }
+    public <R> Active<W,R> zip(Active<W,T> p2,Active<W,T> p3,Fn3<? super T,? super T, ? super T,? extends R> zipper){
+        Applicative<W> ap = def1.applicative();
+
+        Function<T, Function<T,Function<T, R>>> fn = a->b->c->zipper.apply(a,b,c);
+        Higher<W, Function<T, Function<T,Function<T, R>>>> hfn = ap.unit(fn);
+        return of(ap.ap(ap.ap(ap.ap(hfn,single),p2.getSingle()),p3.getSingle()),def1);
+    }
 
     public <R> Active<W, R> flatMap(Function<? super T, ? extends Higher<W, R>> fn) {
         return of(def1.monad().flatMap(fn, single), def1);
+    }
+    public <R> Active<W, R> flatMapA(Function<? super T, ? extends Active<W, R>> fn) {
+        return of(def1.monad().flatMap(fn.andThen(Active::getActive), single), def1);
     }
 
     public <R> Active<W, R> ap(Higher<W, ? extends Function<T, R>> fn) {

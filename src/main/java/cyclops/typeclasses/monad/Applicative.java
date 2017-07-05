@@ -51,6 +51,7 @@ public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
     public <T,R> Higher<CRE,R> ap(Higher<CRE, ? extends Function<T, R>> fn, Higher<CRE, T> apply);
 
 
+
     
     /**
      * The default implementation of apBiFn is less efficient than ap2 (extra map operation)
