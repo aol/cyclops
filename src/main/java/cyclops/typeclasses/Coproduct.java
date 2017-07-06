@@ -2,7 +2,9 @@ package cyclops.typeclasses;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.types.Filters;
+import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.async.Future;
@@ -25,7 +27,11 @@ import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -48,7 +54,7 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of="xor")
 @Getter
-public class Coproduct<W1,W2,T> implements  Filters<T>,
+public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T>,
                                             Transformable<T>, To<Coproduct<W1,W2,T>> {
 
     private final Xor<Higher<W1,T>,Higher<W2,T>> xor;
@@ -72,6 +78,9 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,
     public Coproduct<W1,W2,T> filter(Predicate<? super T> test) {
         return of(xor.map(m -> def2.<T, T>monadZero().visit(s->s.filter(test, m),()->m))
                .secondaryMap(m -> def1.<T, T>monadZero().visit(s->s.filter(test, m),()->m)),def1,def2);
+    }
+    public MonadicValue<MonadicValue<T>> nest() {
+        return this.map(t -> unit(t));
     }
 
     public <R>  Coproduct<W1,W2,R> coflatMap(final Function<? super  Coproduct<W1,W2,T>, R> mapper){
@@ -106,6 +115,23 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,
 
         return of(xor.map(m->{
             Higher<W2, ? extends R> x = def2.<T, R>functor().map(fn, m);
+            return (Higher<W2, R>)x;
+        }).secondaryMap(m->{
+            Higher<W1, ? extends R> x = def1.<T, R>functor().map(fn, m);
+            return (Higher<W1, R>)x;
+        }),def1,def2);
+    }
+    public Xor<Higher<W1,T>,Higher<W2,T>> asXor(){
+        return xor;
+    }
+    public <R>  Coproduct<W1,W2,R> flatMap(Function<? super T, ? extends Coproduct<W1,W2,R>> fn) {
+
+        return of(xor.map(m->{
+
+            Higher<W2, ? extends Coproduct<W1, W2, R>> x = def2.<T, R>functor().flatMap(in->{
+                Coproduct<W1, W2, R> s = fn.apply(in);
+                return s;
+            }, m);
             return (Higher<W2, R>)x;
         }).secondaryMap(m->{
             Higher<W1, ? extends R> x = def1.<T, R>functor().map(fn, m);
@@ -327,6 +353,65 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,
     }
     public static  <W1,T> Coproduct<W1,maybe,T> maybeNullabe(T value,InstanceDefinitions<W1> def1){
         return new Coproduct<>(Xor.primary(Maybe.ofNullable(value)),def1,Maybe.Instances.definitions());
+    }
+    public static <W1,W2,T> Coproduct<W1,W2,T> narrowK(Higher<Higher<Higher<coproduct, W1>, W2>, T> ds){
+        return (Coproduct<W1,W2,T>)ds;
+    }
+
+    public static class Instances<W1,W2>  {
+
+
+
+        public static <T, R> Functor<Higher<Higher<coproduct, W1>, W2>> functor() {
+            return new Functor<Higher<Higher<coproduct, W1>, W2>>(){
+
+                @Override
+                public <T, R> Higher<Higher<Higher<coproduct, W1>, W2>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<coproduct, W1>, W2>, T> ds) {
+                    return narrowK(ds).map(fn);
+                }
+            };
+        }
+
+
+        public <T> Pure<Higher<Higher<coproduct, W1>, W2>> unit(InstanceDefinitions<W1> def1,InstanceDefinitions def2) {
+            return new Pure<Higher<Higher<coproduct, W1>, W2>>(){
+
+                @Override
+                public <T> Higher<Higher<Higher<coproduct, W1>, W2>, T> unit(T value) {
+                    return Coproduct.right(def2.unit().unit(value),def1,def2);
+                }
+            };
+        }
+        
+
+        public static <W1,W2,T> Foldable<Higher<Higher<coproduct, W1>, W2>> foldable() {
+            return new Foldable<Higher<Higher<coproduct, W1>, W2>>(){
+
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<Higher<Higher<coproduct, W1>, W2>, T> ds) {
+                    return narrowK(ds).foldsUnsafe().foldRight(monoid);
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<Higher<coproduct, W1>, W2>, T> ds) {
+                    return narrowK(ds).foldsUnsafe().foldLeft(monoid);
+                }
+            };
+        }
+
+
+
+
+
+        public static <W1,W2,T> Unfoldable<Higher<Higher<coproduct, W1>, W2>> unfoldable(Coproduct<W1,W2,T> cop) {
+            return new Unfoldable<Higher<Higher<coproduct, W1>, W2>>(){
+
+                @Override
+                public <R, T> Higher<Higher<Higher<coproduct, W1>, W2>, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return cop.unfolds().get().unfold(b,fn);
+                }
+            };
+        }
     }
 
 }

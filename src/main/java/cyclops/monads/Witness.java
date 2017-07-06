@@ -530,4 +530,13 @@ public interface Witness {
         }
 
     }
+    public static enum coproduct implements WitnessType<coproduct>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<coproduct> adapter() {
+            return null;
+        }
+
+    }
 }
