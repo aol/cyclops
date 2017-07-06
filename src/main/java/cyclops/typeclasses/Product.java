@@ -70,8 +70,8 @@ public class Product<W1,W2,T> implements  Filters<T>,
 
     public Product<W1,W2,T> filter(Predicate<? super T> test) {
         return of(run.map((m1,m2)->{
-            Higher<W2, T> x2 = def2.monadZero().get().filter(test,m2);
-            Higher<W1,T> x1 = def1.monadZero().get().filter(test,m1);
+            Higher<W2, T> x2 = def2.monadZero().visit(p->p.filter(test,m2),()->m2);
+            Higher<W1,T> x1 = def1.monadZero().visit(p->p.filter(test,m1),()->m1);
             return Tuple.tuple(x1, x2);
         }),def1,def2);
     }
