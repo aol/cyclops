@@ -6,10 +6,7 @@ import cyclops.control.Maybe.Nothing;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.state;
 import cyclops.monads.Witness.supplier;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -218,9 +215,21 @@ public final class State<S, T> implements Higher2<state,S,T> {
     public static <S> State<S, Nothing> of(S s) {
         return state(__ -> Tuple.tuple(s, (Nothing)Maybe.none()));
     }
+
+    public static <W1,T,S> Nested<Higher<state,S>,W1,T> nested(State<S,Higher<W1,T>> nested, S value,InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(value),def2);
+    }
+    public <W1> Product<Higher<state,S>,W1,T> product(S value,Active<W1,T> active){
+       return Product.of(allTypeclasses(value), active);
+    }
+    public <W1> Coproduct<W1,Higher<state,S>,T> coproduct(S value,InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2,Instances.definitions(value));
+    }
+
     public Active<Higher<state,S>,T> allTypeclasses(S value){
         return Active.of(this, Instances.definitions(value));
     }
+
     public <W2,R> Nested<Higher<Witness.state,S>,W2,R> mapM(S value, Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
         return Nested.of(map(fn), Instances.definitions(value), defs);
     }

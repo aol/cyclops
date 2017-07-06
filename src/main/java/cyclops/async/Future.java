@@ -2,8 +2,7 @@ package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.companion.Streams;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
@@ -30,8 +29,6 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -78,6 +75,15 @@ public class Future<T> implements To<Future<T>>,
                                   Higher<future,T>,
                                   RecoverableFrom<Throwable,T> {
 
+    public static <W1,T> Nested<future,W1,T> nested(Future<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(),def2);
+    }
+    public <W1> Product<future,W1,T> product(Active<W1,T> active){
+        return Product.of(allTypeclasses(),active);
+    }
+    public <W1> Coproduct<W1,future,T> coproduct(InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions());
+    }
     public Active<future,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }

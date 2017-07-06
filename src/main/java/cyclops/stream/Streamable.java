@@ -47,10 +47,10 @@ public interface Streamable<T> extends To<Streamable<T>>,
                                         ToStream<T>,
                                         FoldableTraversable<T>,
                                         CyclopsCollectable<T>,
-        Transformable<T>,
+                                        Transformable<T>,
                                         Filters<T>,
                                         Traversable<T>,
-        Unit<T>,
+                                        Unit<T>,
                                         Zippable<T> {
 
     public static <T> Streamable<T> fromObject(final Object toCoerce) {

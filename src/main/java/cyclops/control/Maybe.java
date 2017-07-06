@@ -1,8 +1,7 @@
 package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
@@ -25,8 +24,6 @@ import cyclops.monads.Witness.optional;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.MaybeT;
 import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -115,6 +112,15 @@ public interface Maybe<T> extends To<Maybe<T>>,
                                   Recoverable<T>,
                                   Higher<maybe,T> {
 
+    public static <W1,T> Nested<maybe,W1,T> nested(Maybe<Higher<W1,T>> nested,InstanceDefinitions<W1> def2){
+        return Nested.of(nested,Instances.definitions(),def2);
+    }
+    default <W1> Product<maybe,W1,T> product(Active<W1,T> active){
+        return Product.of(allTypeclasses(),active);
+    }
+    default <W1> Coproduct<W1,maybe,T> coproduct(InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2,Instances.definitions());
+    }
     default Active<maybe,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }

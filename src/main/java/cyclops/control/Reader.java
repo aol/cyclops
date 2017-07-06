@@ -8,10 +8,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.*;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.reader;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -37,6 +34,15 @@ import org.jooq.lambda.tuple.Tuple2;
  */
 public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<reader,T>,R> {
 
+    public static <W1,T,R> Nested<Higher<reader,T>,W1,R> nested(Reader<T,Higher<W1,R>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(),def2);
+    }
+    default <W1> Product<Higher<reader,T>,W1,R> product(Active<W1,R> active){
+        return Product.of(allTypeclasses(),active);
+    }
+    default <W1> Coproduct<W1,Higher<reader,T>,R> coproduct(InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions());
+    }
     default Active<Higher<reader,T>,R> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }

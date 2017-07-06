@@ -10,6 +10,7 @@ import cyclops.control.*;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -32,8 +33,10 @@ import java.util.function.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of="run")
 @Getter
-public class Product<W1,W2,T> implements  Filters<T>,Higher3<product,W1,W2,T>,
-                                            Transformable<T>, To<Product<W1,W2,T>> {
+public class Product<W1,W2,T> implements  Filters<T>,
+                                            Higher3<product,W1,W2,T>,
+                                            Transformable<T>,
+                                            To<Product<W1,W2,T>> {
 
     private final Tuple2<Higher<W1,T>,Higher<W2,T>> run;
     private final InstanceDefinitions<W1> def1;
@@ -339,6 +342,11 @@ public class Product<W1,W2,T> implements  Filters<T>,Higher3<product,W1,W2,T>,
                     @Override
                     public <T, R> Higher<Higher<Higher<product, W1>, W2>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<product, W1>, W2>, T> ds) {
                         return functor().map(fn,ds);
+                    }
+
+                    @Override
+                    public <T> Higher<Higher<Higher<product, W1>, W2>, T> filter(Predicate<? super T> predicate, Higher<Higher<Higher<product, W1>, W2>, T> ds) {
+                        return narrowK(ds).filter(predicate);
                     }
 
                     @Override

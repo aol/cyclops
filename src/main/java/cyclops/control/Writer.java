@@ -8,10 +8,7 @@ import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.writer;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -206,6 +203,16 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
     @Override
     public Iterator<T> iterator() {
         return Arrays.asList(value.v1).iterator();
+    }
+
+    public static <W,W1,T> Nested<Higher<writer,W>,W1,T> nested(Writer<W,Higher<W1,T>> nested,Monoid<W> monoid, InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(monoid),def2);
+    }
+    public <W1> Product<Higher<writer,W>,W1,T> product(Monoid<W> monoid,Active<W1,T> active){
+        return Product.of(allTypeclasses(monoid),active);
+    }
+    public <W1> Coproduct<W1,Higher<writer,W>,T> coproduct(Monoid<W> monoid,InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions(monoid));
     }
 
     public Active<Higher<writer,W>,T> allTypeclasses(Monoid<W> monoid){

@@ -16,10 +16,7 @@ import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.ior;
 import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
@@ -59,6 +56,16 @@ import java.util.stream.Stream;
  */
 public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransformable<ST, PT> ,Higher2<ior,ST,PT> {
 
+
+    public static <W1,ST,PT> Nested<Higher<ior,ST>,W1,PT> nested(Ior<ST,Higher<W1,PT>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(),def2);
+    }
+    default <W1> Product<Higher<ior,ST>,W1,PT> product(Active<W1,PT> active){
+        return Product.of(allTypeclasses(),active);
+    }
+    default <W1> Coproduct<W1,Higher<ior,ST>,PT> coproduct(InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions());
+    }
     default Active<Higher<ior,ST>,PT> allTypeclasses(){
         return Active.of(this, Ior.Instances.definitions());
     }
@@ -1442,10 +1449,10 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                         .visit(s -> Ior.secondary(this.secondaryGet()), f -> Ior.both(this.secondaryGet(), fn.apply(get(), app.get())));
             }
         }
-    public static <ST,T> Ior<ST,T> narrowK2(final Higher2<Witness.ior, ST,T> ior) {
+    public static <ST,T> Ior<ST,T> narrowK2(final Higher2<ior, ST,T> ior) {
         return (Ior<ST,T>)ior;
     }
-    public static <ST,T> Ior<ST,T> narrowK(final Higher<Higher<Witness.ior, ST>,T> ior) {
+    public static <ST,T> Ior<ST,T> narrowK(final Higher<Higher<ior, ST>,T> ior) {
         return (Ior<ST,T>)ior;
     }
     public static class Instances {
