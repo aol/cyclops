@@ -20,6 +20,9 @@ import cyclops.function.Monoid;
 import cyclops.monads.Witness.*;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Compose;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -157,8 +160,65 @@ public class Nested<W1,W2,T> implements Transformable<T> {
     public Maybe<Unfolds> unfolds(){
         return def2.unfoldable().visit(s-> Maybe.just(new Unfolds()),Maybe::none);
     }
+    public Plus plusUnsafe(){
+        return new Plus();
+    }
+
+    public Maybe<Plus> plus(){
+        if(def1.monadPlus().isPresent() && def2.monadPlus().isPresent()){
+            return Maybe.just(plusUnsafe());
+        }
+        return Maybe.none();
+    }
+
+    public class Plus{
+
+        public Nested<W1,W2,T> sum(ListX<Nested<W1,W2, T>> list){
+            return of(def1.monadPlus().visit(p -> p.sum(list.plus(Nested.this).map(x -> x.nested)), () -> nested),def1,def2);
+        }
+
+        public Nested<W1,W2,T> plus(Higher<W2, T> b){
+            Functor<W1> f = def1.functor();
+            MonadPlus<W2> mp = def2.monadPlus().get();
+            Higher<W1, Higher<W2, T>> x = f.map(a -> mp.plus(a, b), nested);
+            return of(x,def1,def2);
+        }
+        public Nested<W1,W2,T> plus(Nested<W1,W2, T> b){
+            Monad<W1> f = def1.monad();
+            MonadPlus<W2> mp = def2.monadPlus().get();
+            Higher<W1, Higher<W2, T>> x2 = f.flatMap(a -> {
+                Nested<W1, W2, T> r = plus(a);
+                return r.nested;
+            }, b.nested);
+            return of(x2,def1,def2);
+        }
+
+    }
+
 
     public class Folds{
+
+        public T foldBothl(T identity, BinaryOperator<T> semigroup){
+            return  foldl(Monoid.fromBiFunction(identity, semigroup)).foldsUnsafe().foldLeft(identity,semigroup);
+        }
+        public T foldBothr(T identity, BinaryOperator<T> semigroup){
+            return  foldr(Monoid.fromBiFunction(identity, semigroup)).foldsUnsafe().foldRight(identity,semigroup);
+        }
+        public  T foldBothRight(Monoid<T> monoid){
+            return Active.of(foldRight(monoid),def1).foldsUnsafe().foldRight(monoid);
+        }
+        public  T foldBothLeft(Monoid<T> monoid){
+            return Active.of(foldRight(monoid),def1).foldsUnsafe().foldLeft(monoid);
+        }
+
+        public <R> R foldRight(Monoid<T> monoid, Function<? super Higher<W1,T>,? extends R> narrowK){
+            return narrowK.apply(foldRight(monoid));
+        }
+        public  <R> R foldLeft(Monoid<T> monoid, Function<? super Higher<W1,T>,? extends R> narrowK){
+            return narrowK.apply(foldLeft(monoid));
+        }
+
+
         public Active<W1,T> foldl(T identity, BinaryOperator<T> semigroup){
             return  foldl(Monoid.fromBiFunction(identity, semigroup));
         }
@@ -171,18 +231,15 @@ public class Nested<W1,W2,T> implements Transformable<T> {
         public Active<W1,T> foldr(Monoid<T> monoid){
             return Active.of(foldRight(monoid),def1);
         }
+
+
         public  Higher<W1,T> foldRight(Monoid<T> monoid){
             return def1.functor().map(a -> def2.foldable().get().foldRight(monoid, a), nested);
         }
         public  Higher<W1,T> foldLeft(Monoid<T> monoid){
             return def1.functor().map(a -> def2.foldable().get().foldLeft(monoid, a), nested);
         }
-        public <R> R foldRight(Monoid<T> monoid, Function<? super Higher<W1,T>,? extends R> narrowK){
-            return narrowK.apply(foldRight(monoid));
-        }
-        public  <R> R foldLeft(Monoid<T> monoid, Function<? super Higher<W1,T>,? extends R> narrowK){
-            return narrowK.apply(foldLeft(monoid));
-        }
+
         public Higher<W1,T> foldLeft(T identity, BinaryOperator<T> semigroup){
             return foldLeft(Monoid.fromBiFunction(identity, semigroup));
         }
