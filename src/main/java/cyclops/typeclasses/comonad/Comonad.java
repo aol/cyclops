@@ -47,4 +47,12 @@ public interface Comonad<CRE>  {
      * @return Value
      */
      <T> T extract(Higher<CRE, T> ds);
+
+    default <T, R> Higher<CRE, R> inject(R t,Higher<CRE, T> ds) {
+        return coflatMap(h->t,ds);
+    }
+    default <T, R> Function<Higher<CRE, T>, R> lift(Function<? super T,? extends R> fn) {
+        return higher -> fn.apply(extract(higher));
+    }
+
 }

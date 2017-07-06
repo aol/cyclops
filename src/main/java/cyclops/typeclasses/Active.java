@@ -108,11 +108,18 @@ public class Active<W,T> implements Filters<T>,
 
     public class Unfolds{
         public <R, T> Active<W, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn){
-            return of(def1.unfoldable().get().unfold(b,fn),def1);
+            return Active.of(def1.unfoldable().get().unfold(b,fn),def1);
         }
 
         public <T> Active<W, T> replicate(int n, T value) {
             return unfold(n,i -> Optional.of(tuple(value, i-1)));
+        }
+
+        public <R> Active<W,R> none() {
+            return unfold((T) null, t -> Optional.<Tuple2<R, T>>empty());
+        }
+        public <T> Active<W,T> one(T a) {
+            return replicate(1, a);
         }
 
     }

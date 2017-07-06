@@ -30,15 +30,19 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jooq.lambda.tuple.Tuple2;
 
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
+
+import static org.jooq.lambda.tuple.Tuple.tuple;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of="xor")
@@ -148,13 +152,22 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,
     }
 
     public Folds foldsUnsafe(){
-        return def1.foldable().visit(s-> new Folds(),()->null);
+        return xor.visit(s-> def1.foldable().isPresent() ? new Folds() : null,p-> def2.foldable().isPresent() ? new Folds() : null);
+    }
+    public Unfolds unfoldsUnsafe(){
+        return xor.visit(s-> def1.unfoldable().isPresent() ? new Unfolds() : null,p-> def2.foldable().isPresent() ? new Unfolds() : null);
+    }
+    public Traverse traverseUnsafe(){
+        return xor.visit(s-> def1.traverse().isPresent() ? new Traverse() : null,p-> def2.traverse().isPresent() ? new Traverse() : null);
     }
     public Maybe<Folds> folds(){
-        return def1.foldable().visit(e->Maybe.just(new Folds()),Maybe::none);
+        return xor.visit(s-> def1.foldable().isPresent() ? Maybe.just(new Folds()) : Maybe.none(),p-> def2.foldable().isPresent() ? Maybe.just(new Folds()) : Maybe.none());
+    }
+    public Maybe<Unfolds> unfolds(){
+        return xor.visit(s-> def1.unfoldable().isPresent() ? Maybe.just(new Unfolds()) : Maybe.none(),p-> def2.unfoldable().isPresent() ? Maybe.just(new Unfolds()) : Maybe.none());
     }
     public Maybe<Traverse> traverse(){
-        return def1.traverse().visit(e->Maybe.just(new Traverse()),Maybe::none);
+        return xor.visit(s-> def1.traverse().isPresent() ? Maybe.just(new Traverse()) : Maybe.none(),p-> def2.traverse().isPresent() ? Maybe.just(new Traverse()) : Maybe.none());
     }
     public class Folds {
 
@@ -185,6 +198,25 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,
 
     }
 
+    public class Unfolds{
+        public <R, T> Coproduct<W1,W2, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn){
+            Xor<Higher<W1,R>,Higher<W2,R>> res = xor.visit(left -> Xor.secondary(def1.unfoldable().get().unfold(b, fn)), r -> Xor.primary(def2.unfoldable().get().unfold(b, fn)));
+            Coproduct<W1, W2, R> cop = Coproduct.of(res, def1, def2);
+            return cop;
+        }
+
+        public <T> Coproduct<W1,W2,T> replicate(int n, T value) {
+            return unfold(n,i -> Optional.of(tuple(value, i-1)));
+        }
+
+        public <R> Coproduct<W1,W2,R> none() {
+            return unfold((T) null, t -> Optional.<Tuple2<R, T>>empty());
+        }
+        public <T> Coproduct<W1,W2,T> one(T a) {
+            return replicate(1, a);
+        }
+
+    }
     public class Traverse{
 
         public <W3, R> Higher<W3,Coproduct<W1,W2, R>> traverse(Applicative<W3> applicative, Function<? super T, Higher<W3, R>> f){
