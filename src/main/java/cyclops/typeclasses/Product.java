@@ -199,7 +199,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
            return run.map((a,b)->{
                T r1 = def1.foldable().get().foldRight(monoid,a);
                T r2 = def2.foldable().get().foldRight(monoid, b);
-               return monoid.foldRightI(Arrays.asList(r1,r2));
+               return monoid.foldRightI(Arrays.asList(r2,r1));
             });
 
 
