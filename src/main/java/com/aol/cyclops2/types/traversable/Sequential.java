@@ -47,7 +47,7 @@ public interface Sequential<T> {
     }
 
     /**
-     * emit one element per time period
+     * emit replaceWith element per time period
      * 
      * <pre>
      * {@code 

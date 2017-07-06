@@ -80,7 +80,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @return HKT encoded type with a widened Deque
      */
     public static <C2,T> Higher<C2, Higher<deque,T>> widen2(Higher<C2, DequeX<T>> list){
-        //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
+        //a functor could be used (if C2 is a functor / replaceWith exists for C2 type) instead of casting
         //cast seems safer as Higher<DequeType.deque,T> must be a ListType
         return (Higher)list;
     }

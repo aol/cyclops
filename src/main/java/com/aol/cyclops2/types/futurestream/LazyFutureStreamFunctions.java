@@ -17,7 +17,7 @@ import com.aol.cyclops2.internal.react.stream.CloseableIterator;
 public class LazyFutureStreamFunctions {
 
     /**
-     * Zip two streams into one.
+     * Zip two streams into replaceWith.
      * <p>
      * <code>
      * // (tuple(1, "a"), tuple(2, "b"), tuple(3, "c"))
@@ -29,7 +29,7 @@ public class LazyFutureStreamFunctions {
     }
 
     /**
-     * Zip two streams into one using a {@link BiFunction} toNested produce resulting
+     * Zip two streams into replaceWith using a {@link BiFunction} toNested produce resulting
      * values.
      * <p>
      * <code>

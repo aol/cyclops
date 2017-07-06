@@ -144,7 +144,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * 
-     * Start a reactive dataflow with a list of one-off-suppliers
+     * Start a reactive dataflow with a list of replaceWith-off-suppliers
      * 
      * @param actions
      *           Stream of Suppliers toNested provide data (and thus events) that
@@ -174,7 +174,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * 
-     * Start a reactive dataflow with a list of one-off-suppliers
+     * Start a reactive dataflow with a list of replaceWith-off-suppliers
      * 
      * @param actions
      *           Iterator over Suppliers toNested provide data (and thus events) that
@@ -191,7 +191,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * 
-     * Start a reactive dataflow with a list of one-off-suppliers
+     * Start a reactive dataflow with a list of replaceWith-off-suppliers
      * 
      * @param actions
      *           Stream of Suppliers toNested provide data (and thus events) that
@@ -209,7 +209,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * 
-     * Start a reactive dataflow with an array of one-off-suppliers
+     * Start a reactive dataflow with an array of replaceWith-off-suppliers
      * 
      * @param actions Array of Suppliers toNested provide data (and thus events) that
      *            downstream jobs will react too

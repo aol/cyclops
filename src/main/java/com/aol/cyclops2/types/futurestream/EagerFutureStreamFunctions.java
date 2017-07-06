@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 public class EagerFutureStreamFunctions {
     /**
-     * Close all queues except the active one
+     * Close all queues except the active replaceWith
      * 
      * @param active Queue not toNested close
      * @param all All queues potentially including the active queue
@@ -30,7 +30,7 @@ public class EagerFutureStreamFunctions {
     }
 
     /**
-     * Close all streams except the active one
+     * Close all streams except the active replaceWith
      * 
      * @param active Stream not toNested close
      * @param all  All streams potentially including the active reactiveStream
@@ -44,7 +44,7 @@ public class EagerFutureStreamFunctions {
     }
 
     /**
-     * Zip two streams into one. Uses the latest values from each rather than waiting for both
+     * Zip two streams into replaceWith. Uses the latest values from each rather than waiting for both
      * 
      */
     static <T1, T2> Seq<Tuple2<T1, T2>> combineLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right) {
@@ -83,7 +83,7 @@ public class EagerFutureStreamFunctions {
     }
 
     /**
-     * Zip two streams into one using a {@link BiFunction} toNested produce resulting.
+     * Zip two streams into replaceWith using a {@link BiFunction} toNested produce resulting.
      * values. Uses the latest values from each rather than waiting for both.
      * 
      */
@@ -124,7 +124,7 @@ public class EagerFutureStreamFunctions {
     }
 
     /**
-     * Zip two streams into one. Uses the latest values from each rather than waiting for both
+     * Zip two streams into replaceWith. Uses the latest values from each rather than waiting for both
      * 
      */
     static <T1, T2> Seq<Tuple2<T1, T2>> withLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right) {
@@ -132,7 +132,7 @@ public class EagerFutureStreamFunctions {
     }
 
     /**
-     * Zip two streams into one using a {@link BiFunction} toNested produce resulting.
+     * Zip two streams into replaceWith using a {@link BiFunction} toNested produce resulting.
      * values. Uses the latest values from each rather than waiting for both.
      * 
      */

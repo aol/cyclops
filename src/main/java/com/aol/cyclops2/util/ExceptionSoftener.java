@@ -180,7 +180,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a BooleanSuppler that throws a checked exception into one that still throws the exception, but doesn't need toNested declare it.
+     * Soften a BooleanSuppler that throws a checked exception into replaceWith that still throws the exception, but doesn't need toNested declare it.
      * 
      * <pre>
      * {@code 

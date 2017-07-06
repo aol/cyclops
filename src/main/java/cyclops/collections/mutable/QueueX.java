@@ -79,7 +79,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * @return HKT encoded type with a widened List
      */
     public static <C2,T> Higher<C2, Higher<queue,T>> widen2(Higher<C2, QueueX<T>> queue){
-        //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
+        //a functor could be used (if C2 is a functor / replaceWith exists for C2 type) instead of casting
         //cast seems safer as Higher<QueueType.queue,T> must be a ListType
         return (Higher)queue;
     }

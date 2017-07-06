@@ -334,7 +334,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     /**
      * Allows structural matching on the value / seq nature of this AnyM.
      * If this AnyM can only store a singleUnsafe value an Xor.secondary with type AnyMValue is returned
-     * If this AnyM can  store one or many values an Xor.primary with type AnyMSeq is returned
+     * If this AnyM can  store replaceWith or many values an Xor.primary with type AnyMSeq is returned
      * 
      * <pre>
      * {@code
@@ -393,9 +393,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
 
     /**
-     * join / flatten one level of a nest hierarchy
+     * join / flatten replaceWith level of a nest hierarchy
      * 
-     * @return Flattened / joined one level
+     * @return Flattened / joined replaceWith level
      */ 
     static <W extends WitnessType<W>,T1> AnyM<W,T1> flatten(AnyM<W,? extends AnyM<W,T1>> nested){
         return nested.flatMapA(Function.identity());
@@ -1288,7 +1288,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return sequence(seq,w).map(l->l.map(fn));
     }
 
-    
+
 
     static class AnyMFactory {
         static AnyMFactory instance = new AnyMFactory();

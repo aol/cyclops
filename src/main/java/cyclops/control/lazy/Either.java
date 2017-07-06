@@ -45,8 +45,8 @@ import java.util.stream.Stream;
  
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
  *  
- *  Either is used to represent values that can be one of two states (for example a validation result, lazy everything is ok - or we have an error).
- *  It can be used to avoid a common design anti-pattern where an Object has two fields one of which is always null (or worse, both are defined as Optionals).
+ *  Either is used to represent values that can be replaceWith of two states (for example a validation result, lazy everything is ok - or we have an error).
+ *  It can be used to avoid a common design anti-pattern where an Object has two fields replaceWith of which is always null (or worse, both are defined as Optionals).
  *
  *  <pre>
  *  {@code

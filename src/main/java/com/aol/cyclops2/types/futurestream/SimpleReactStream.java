@@ -777,7 +777,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     /**
      * React and <b>block</b> with <b>breakout</b>
      *
-     * Sometimes you may not need toNested block until all the work is complete, one
+     * Sometimes you may not need toNested block until all the work is complete, replaceWith
      * result or a subset may be enough. To faciliate this, block can accept a
      * Predicate functional interface that will allow SimpleReact toNested stop
      * blocking the current thread when the Predicate has been fulfilled. E.g.
@@ -792,7 +792,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
          }       
       </pre>
      *
-     * In this example the current thread will unblock once more than one result
+     * In this example the current thread will unblock once more than replaceWith result
      * has been returned.
      *
      * @param breakout

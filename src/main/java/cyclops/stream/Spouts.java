@@ -822,7 +822,7 @@ public interface Spouts {
          * @return HKT encoded type with a widened List
          */
         public static <C2, T> Higher<C2, Higher<reactiveSeq, T>> widen2(Higher<C2, ReactiveSeq<T>> flux) {
-            // a functor could be used (if C2 is a functor / one exists for C2 type)
+            // a functor could be used (if C2 is a functor / replaceWith exists for C2 type)
             // instead of casting
             // cast seems safer as Higher<reactiveSeq,T> must be a ReactiveSeq
             return (Higher) flux;

@@ -91,7 +91,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @return HKT encoded type with a widened PStack
      */
     public static <C2,T> Higher<C2, Higher<linkedListX,T>> widen2(Higher<C2, LinkedListX<T>> list){
-        //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
+        //a functor could be used (if C2 is a functor / replaceWith exists for C2 type) instead of casting
         //cast seems safer as Higher<PStackType.linkedListX,T> must be a PStackType
         return (Higher)list;
     }

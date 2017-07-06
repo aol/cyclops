@@ -274,7 +274,7 @@ public interface Traversable<T> extends Publisher<T>,
 
 
     /**
-     * zip 3 Streams into one
+     * zip 3 Streams into replaceWith
      * 
      * <pre>
      * {@code

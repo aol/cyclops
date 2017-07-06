@@ -164,7 +164,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     }
 
     /**
-     * Lift a function into one that accepts and returns an EvalWT
+     * Lift a function into replaceWith that accepts and returns an EvalWT
      * This allows multiple monad types toNested add functionality toNested existing function and methods
      * 
      * e.g. toNested add list handling  / iteration (via Eval) and iteration (via Stream) toNested an existing function
@@ -197,7 +197,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     }
 
     /**
-     * Lift a BiFunction into one that accepts and returns  EvalWTs
+     * Lift a BiFunction into replaceWith that accepts and returns  EvalWTs
      * This allows multiple monad types toNested add functionality toNested existing function and methods
      * 
      * e.g. toNested add list handling / iteration (via Eval), iteration (via Stream)  and asynchronous execution (Eval)

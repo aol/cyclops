@@ -971,20 +971,20 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
             assertEquals(tuple(1, 1), s1.get(0));
             assertEquals(tuple(2, 2), s1.get(1));
 
-            AnyMSeq<W,Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "one"));
+            AnyMSeq<W,Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "replaceWith"));
             List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t.v1())).toList();
-            assertEquals(tuple(1, "one"), s2.get(0));
+            assertEquals(tuple(1, "replaceWith"), s2.get(0));
             assertEquals(tuple(2, "two"), s2.get(1));
 
-            AnyMSeq<W,Tuple2<Integer, String>> t3 = of(tuple(2, "two"), tuple(1, "one"));
+            AnyMSeq<W,Tuple2<Integer, String>> t3 = of(tuple(2, "two"), tuple(1, "replaceWith"));
             List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toList();
-            assertEquals(tuple(1, "one"), s3.get(0));
+            assertEquals(tuple(1, "replaceWith"), s3.get(0));
             assertEquals(tuple(2, "two"), s3.get(1));
         }
 
 	@Test
 	public void testSortedDuplicate() {
-	    AnyMSeq<W,Tuple2<Integer, String>> t3 = of(tuple(1, "two"), tuple(1, "one"));
+	    AnyMSeq<W,Tuple2<Integer, String>> t3 = of(tuple(1, "two"), tuple(1, "replaceWith"));
 	    List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toList();
 	    assertEquals(2, s3.size());
 	}

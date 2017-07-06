@@ -810,7 +810,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
     /**
-     * Execute one function conditional on Try state (Success / Failure)
+     * Execute replaceWith function conditional on Try state (Success / Failure)
      *
      * <pre>
      * {@code
@@ -824,7 +824,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      *
      * @param success Function to execute if this Try is a Success
      * @param failure Funcion to execute if this Try is a Failure
-     * @return Result of executed function (one or other depending on case)
+     * @return Result of executed function (replaceWith or other depending on case)
      */
     public <R> R visit(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure){
         return xor.visit(failure,success);

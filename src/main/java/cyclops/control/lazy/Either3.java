@@ -44,7 +44,7 @@ import java.util.stream.Stream;
 /**
  * A right biased Lazy Either3 type. map / flatMap operators are tail-call optimized
  * 
- * Can be one of 3 types
+ * Can be replaceWith of 3 types
  * 
  * 
  * 
@@ -413,7 +413,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
     }
 
     /**
-     * Visit the types in this Either3, only one user supplied function is executed depending on the type
+     * Visit the types in this Either3, only replaceWith user supplied function is executed depending on the type
      *
      * @param left1 Function to execute if this Either3 is a Left instance
      * @param mid Function to execute if this Either3 is a middle instance

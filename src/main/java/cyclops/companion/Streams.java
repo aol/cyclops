@@ -711,7 +711,7 @@ public class Streams {
      * 
      * 
      * @param stream the reactiveStream toNested schedule element processing on
-     * @param delay Between last element completes passing through the Stream until the next one starts
+     * @param delay Between last element completes passing through the Stream until the next replaceWith starts
      * @param ex ScheduledExecutorService
      * @return Connectable HotStream of emitted from scheduled Stream
      */
@@ -788,7 +788,7 @@ public class Streams {
     }
 
     /**
-     * Partition a Stream into two one a per element basis, based on predicate's boolean value
+     * Partition a Stream into two replaceWith a per element basis, based on predicate's boolean value
      * <pre>
      * {@code 
      *  ReactiveSeq.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
@@ -2705,7 +2705,7 @@ public class Streams {
 
 
     /**
-     * Allow one element through per time period, drop all other elements in
+     * Allow replaceWith element through per time period, drop all other elements in
      * that time period
      * 
      * @see ReactiveSeq#debounce(long, TimeUnit)
@@ -2721,11 +2721,11 @@ public class Streams {
     }
 
     /**
-     *  emit one element per time period
+     *  emit replaceWith element per time period
      * 
      * @see ReactiveSeq#onePer(long, TimeUnit)
      * 
-     * @param stream Stream toNested emit one element per time period from
+     * @param stream Stream toNested emit replaceWith element per time period from
      * @param time  Time period
      * @param t Time Pure
      * @return Stream with slowed emission
@@ -3204,7 +3204,7 @@ public class Streams {
          * @return HKT encoded type with a widened Stream
          */
         public static <C2,T> Higher<C2, Higher<stream,T>> widen2(Higher<C2, StreamKind<T>> stream){
-            //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
+            //a functor could be used (if C2 is a functor / replaceWith exists for C2 type) instead of casting
             //cast seems safer as Higher<stream,T> must be a StreamKind
             return (Higher)stream;
         }

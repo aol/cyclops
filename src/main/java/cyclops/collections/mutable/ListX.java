@@ -402,7 +402,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * @return HKT encoded type with a widened List
          */
         public static <C2, T> Higher<C2, Higher<list, T>> widen2(Higher<C2, ListX<T>> flux) {
-            // a functor could be used (if C2 is a functor / one exists for C2 type)
+            // a functor could be used (if C2 is a functor / replaceWith exists for C2 type)
             // instead of casting
             // cast seems safer as Higher<list,T> must be a ListX
             return (Higher) flux;

@@ -23,6 +23,11 @@ public interface Unfoldable<W> {
     default <W2, T> Higher<W2, Higher<W, T>> replicateA(int n, Higher<W2, T> ds, Applicative<W2> applicative, Traverse<W> traversable) {
         return traversable.sequenceA(applicative, replicate(n, ds));
     }
-
+    default <T,R> Higher<W,R> none() {
+        return unfold((T) null, t -> Optional.<Tuple2<R, T>>empty());
+    }
+    default <T> Higher<W,T> one(T a) {
+        return replicate(1, a);
+    }
 
 }

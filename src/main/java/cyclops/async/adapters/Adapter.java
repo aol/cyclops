@@ -29,7 +29,7 @@ public interface Adapter<T> {
     }
 
     /**
-     * Conditionally execute one of the supplied function depending on whether or not this Adapter is a Queue or a Topic
+     * Conditionally execute replaceWith of the supplied function depending on whether or not this Adapter is a Queue or a Topic
      * 
      * @param caseQueue Function to execute if this Adapter is a Queue
      * @param caseTopic Function to execute if this Adapter is a Topic

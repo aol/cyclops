@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  * A right biased Lazy Either4 type. map / flatMap operators are tail-call optimized
  * 
  * 
- * Can be one of 4 types
+ * Can be replaceWith of 4 types
  * Left1
  * Left2
  * Left3
@@ -564,7 +564,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
 
     /**
-     * Visit the types in this Either4, only one user supplied function is executed depending on the type
+     * Visit the types in this Either4, only replaceWith user supplied function is executed depending on the type
      *
      * @param left1 Function to execute if this Either4 is a Left1 instance
      * @param left2 Function to execute if this Either4 is a Left2 instance
