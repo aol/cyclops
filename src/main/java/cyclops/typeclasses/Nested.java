@@ -22,12 +22,15 @@ import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Compose;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.Monad;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +39,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
+import static org.jooq.lambda.tuple.Tuple.tuple;
 
 /**
  * Class for working with Nested Data Structures.
@@ -146,6 +151,41 @@ public class Nested<W1,W2,T> implements Transformable<T> {
         }
         public  Higher<W1,T> foldLeft(Monoid<T> monoid){
             return def1.functor().map(a -> def2.foldable().get().foldLeft(monoid, a), nested);
+        }
+    }
+    public class Unfolds{
+        public <R> Nested<W1,W2, R> unfold(Function<? super T, Optional<Tuple2<R, T>>> fn){
+            Unfoldable<W2> unf = def2.unfoldable().get();
+            Higher<W1, Higher<W2, R>> x = def1.functor().map(a -> def2.monad().flatMap(c -> unf.unfold(c, fn), a), nested);
+            return Nested.of(x,def1,def2);
+        }
+        private <T2> Nested<W1,W2, T> unfoldPrivate(T2 b,Function<T2, Optional<Tuple2<T, T2>>> fn){
+            Unfoldable<W2> unf = def2.unfoldable().get();
+            Higher<W1, Higher<W2, T>> x = def1.functor().map(a -> def2.monad().flatMap(c -> unf.unfold(b, fn.andThen(o->o.map(t->t.map1(v->c)))), a), nested);
+            return Nested.of(x,def1,def2);
+        }
+
+        private <T,R> Nested<W1,W2, R> unfoldIgnore(T b,Function<T, Optional<Tuple2<R, T>>> fn){
+            Unfoldable<W2> unf = def2.unfoldable().get();
+            Higher<W1, Higher<W2, R>> x = def1.functor().map(a -> def2.monad().flatMap(c -> unf.unfold(b, fn), a), nested);
+            return Nested.of(x,def1,def2);
+        }
+
+        public <R> Nested<W1,W2, R> replicate(int n, R value) {
+
+            return this.<Integer,R>unfoldIgnore(n, i-> Optional.of(Tuple.tuple(value, i - 1)));
+        }
+
+        public  Nested<W1,W2, T> replicate(int n) {
+            return this.<Integer>unfoldPrivate(n, i-> Optional.of(Tuple.tuple(null, i - 1)));
+        }
+
+
+        public <R> Nested<W1,W2, R> none() {
+            return unfold(t -> Optional.<Tuple2<R, T>>empty());
+        }
+        public <R> Nested<W1,W2, R> one(R a) {
+            return replicate(1, a);
         }
     }
     public class Traverse {

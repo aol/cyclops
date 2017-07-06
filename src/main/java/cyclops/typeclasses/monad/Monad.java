@@ -41,5 +41,9 @@ public interface Monad<CRE> extends Applicative<CRE>,Functor<CRE>, Pure<CRE> {
     default <T,R> Higher<CRE,Stream<R>> traverse(Function<T, R> fn, Stream<Higher<CRE, T>> stream) {
        return sequence(stream.map(h->map(fn,h)));
     }
+
+    default <T,R > Higher<CRE, R> inject(Higher<CRE, R> inj, Higher<CRE, T> ds) {
+        return flatMap(i->inj,ds);
+    }
     
 }
