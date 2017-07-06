@@ -33,6 +33,7 @@ import lombok.Getter;
 import org.jooq.lambda.tuple.Tuple2;
 
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -207,12 +208,15 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,
 
     public class Folds {
 
+        public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
+            return xor.visit(left->def1.foldable().visit(p -> p.foldMap(mb, fn, left), () -> mb.zero()),
+                            right->def2.foldable().visit(p -> p.foldMap(mb, fn, right), () -> mb.zero()));
+        }
         public T foldRight(Monoid<T> monoid) {
             return xor.visit(left->def1.foldable().visit(p->p.foldRight(monoid, left),()->monoid.zero()),
                     right->def2.foldable().visit(p->p.foldRight(monoid, right),()->monoid.zero()));
 
         }
-
 
         public T foldRight(T identity, BinaryOperator<T> semigroup) {
             return foldRight(Monoid.fromBiFunction(identity,semigroup));

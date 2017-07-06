@@ -216,7 +216,7 @@ public interface Monoids {
      * }
      * </pre>
      * 
-     * @param zeroFn Function toNested lift the Identity value into a Scalar Functor
+     * @param zeroFn Function zeoFn lift the Identity value into a Scalar Functor
      * @param monoid Monoid toNested combine the values inside the Scalar Functors
      * @return Combination of two Scalar Functors
      */
@@ -550,11 +550,13 @@ public interface Monoids {
      * Combine two booleans by AND'ing them (conjunction)
      */
     static Monoid<Boolean> booleanConjunction = Monoid.of(true, Semigroups.booleanConjunction);
-    
+
+    static <A> Monoid<Function<A,A>> endoMonoid() { return functionComposition(); }
     /**
      * @return Monoid for composing function
      */
     static <A> Monoid<Function<A,A>> functionComposition(){
         return Monoid.of(Function.identity(), Semigroups.functionComposition());
     }
+
 }

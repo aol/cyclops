@@ -29,6 +29,7 @@ import lombok.EqualsAndHashCode;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -198,6 +199,10 @@ public class Nested<W1,W2,T> implements Transformable<T> {
 
     public class Folds{
 
+
+        public <R> R foldMapBoth(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
+            return foldMapA(mb,fn).foldsUnsafe().foldRight(mb);
+        }
         public T foldBothl(T identity, BinaryOperator<T> semigroup){
             return  foldl(Monoid.fromBiFunction(identity, semigroup)).foldsUnsafe().foldLeft(identity,semigroup);
         }
@@ -231,7 +236,14 @@ public class Nested<W1,W2,T> implements Transformable<T> {
         public Active<W1,T> foldr(Monoid<T> monoid){
             return Active.of(foldRight(monoid),def1);
         }
+        public <R> Active<W1,R> foldMapA(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
+            return Active.of(foldMap(mb, fn), def1);
+        }
 
+
+        public <R> Higher<W1,R> foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
+            return def1.functor().map(a -> def2.foldable().get().foldMap(mb, fn,a), nested);
+        }
 
         public  Higher<W1,T> foldRight(Monoid<T> monoid){
             return def1.functor().map(a -> def2.foldable().get().foldRight(monoid, a), nested);
@@ -266,7 +278,6 @@ public class Nested<W1,W2,T> implements Transformable<T> {
         }
 
         public <R> Nested<W1,W2, R> replaceWith(int n, R value) {
-
             return this.<Integer,R>unfoldIgnore(n, i-> Optional.of(Tuple.tuple(value, i - 1)));
         }
 

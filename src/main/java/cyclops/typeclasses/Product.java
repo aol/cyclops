@@ -249,6 +249,13 @@ public class Product<W1,W2,T> implements  Filters<T>,
     }
     public class Folds {
 
+        public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
+            return run.map((a, b) -> {
+                R r1 = def1.foldable().visit(p -> p.foldMap(mb, fn, a), () -> mb.zero());
+                R r2 = def2.foldable().visit(p -> p.foldMap(mb, fn, b), () -> mb.zero());
+                return mb.foldRightI(Arrays.asList(r2, r1));
+            });
+        }
         public T foldRight(Monoid<T> monoid) {
             return run.map((a, b) -> {
                 T r1 = def1.foldable().visit(p -> p.foldRight(monoid, a), () -> monoid.zero());

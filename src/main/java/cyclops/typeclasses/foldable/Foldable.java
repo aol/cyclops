@@ -1,9 +1,11 @@
 package cyclops.typeclasses.foldable;
 
+import cyclops.companion.Monoids;
 import cyclops.function.Monoid;
 import com.aol.cyclops2.hkt.Higher;
 
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
 
 /**
@@ -55,4 +57,14 @@ public interface Foldable<CRE> {
     default <T>  T foldLeft(T identity, BinaryOperator<T> semigroup, Higher<CRE, T> ds){
         return foldLeft(Monoid.fromBiFunction(identity, semigroup),ds);
     }
+
+    default <T, R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn, Higher<CRE, T> nestedA) {
+        return foldr( (T a) -> (R b) -> mb.apply(fn.apply(a), b), mb.zero(), nestedA);
+    }
+
+    default <T, R> R foldr(final Function< T, Function< R, R>> fn, R b, Higher<CRE, T> as) {
+
+        return foldMap(Monoids.functionComposition(), fn, as).apply(b);
+    }
+
 }

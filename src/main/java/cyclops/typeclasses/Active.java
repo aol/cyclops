@@ -192,6 +192,9 @@ public class Active<W,T> implements Filters<T>,
 
     public class Folds {
 
+        public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
+            return def1.foldable().visit(p->p.foldMap(mb,fn,single),()->mb.zero());
+        }
 
         public T foldRight(Monoid<T> monoid) {
             return  def1.foldable().visit(p -> p.foldRight(monoid, single), () -> monoid.zero());
