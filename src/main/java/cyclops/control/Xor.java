@@ -638,7 +638,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
 
     /**
-     *  Turn a toX of Xors into a singleUnsafe Ior with Lists of values.
+     *  Turn a Collection of Xors into a single Xor with Lists of values.
      *
      * <pre>
      * {@code
