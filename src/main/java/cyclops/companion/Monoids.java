@@ -244,8 +244,8 @@ public interface Monoids {
     /**
      * @return Combination of two LazyFutureStreams Streams b is appended toNested a
      */
-    static <T> Semigroup<FutureStream<T>> combineFutureStream() {
-        return (a, b) -> a.appendS(b);
+    static <T> Monoid<FutureStream<T>> combineFutureStream() {
+        return Monoid.of(FutureStream.builder().of(),Semigroups.combineFutureStream());
     }
     /**
      * @return Combination of two ReactiveSeq Streams b is appended toNested a

@@ -106,12 +106,7 @@ public interface Groups {
         return Monoid.of(VectorX.empty(),Semigroups.collectionXConcat());
     }
 
-    /**
-     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a singleUnsafe PersistentSetX)
-     */
-    static <T> Monoid<PersistentSetX<T>> persistentSetXConcat() {
-        return Monoid.of(PersistentSetX.empty(),Semigroups.collectionXConcat());
-    }
+
 
     /**
      * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a singleUnsafe OrderedSetX)
@@ -127,72 +122,13 @@ public interface Groups {
         return Monoid.of(PersistentQueueX.empty(),Semigroups.collectionXConcat());
     }
 
-    /**
-     * @return A combiner for BagX (concatenates two BagX into a singleUnsafe BagX)
-     */
-    static <T> Monoid<BagX<T>> bagXConcat() {
-        return Monoid.of(BagX.empty(),Semigroups.collectionXConcat());
-    }
 
-    /**
-     * This Semigroup will attempt toNested combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
-     * or a pCollection persisent toX a new Collection type is created that contains the entries from both supplied collections.
-     * If the supplied Collections are standard JDK mutable collections Colleciton b is appended toNested Collection a and a is returned.
-     *
-     *
-     * To manage javac type inference takeOne assign the semigroup
-     * <pre>
-     * {@code
-     *
-     *    Monoid<List<Integer>> list = Monoids.collectionConcat();
-     *    Monoid<Set<Integer>> set = Monoids.collectionConcat();
-     *
-     *
-     *
-     * }
-     * </pre>
-     * @return A Semigroup that attempts toNested combine the supplied Collections
-     */
-    static <T, C extends Collection<T>> Monoid<C> collectionConcat(C zero) {
-        return Monoid.of(zero, Semigroups.collectionConcat());
-    }
-    /**
-     * Example sum integer Maybes
-     * <pre>
-     * {@code
-     *     Monoid<Maybe<Integer>> sumMaybes = Monoids.combineScalarFunctors(Maybe::just,Monoids.intSum);
-     * }
-     * </pre>
-     *
-     * @param zeroFn Function zeoFn lift the Identity value into a Scalar Functor
-     * @param monoid Monoid toNested combine the values inside the Scalar Functors
-     * @return Combination of two Scalar Functors
-     */
-    static <T,A extends Zippable<T>> Monoid<A> combineScalarFunctors(Function<T, A> zeroFn, Monoid<T> monoid) {
 
-        return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineScalarFunctors(monoid));
-    }
-    /**
-     * Example sum integer Lists
-     * <pre>
-     * {@code
-     *      Monoid<ListX<Integer>> sumLists = Monoids.combineZippables(ListX::of,Monoids.intSum);
-     * }
-     * </pre>
-     *
-     * @param zeroFn Function toNested lift the Identity value into a Zippable
-     * @param monoid Monoid toNested combine the values inside the Zippables
-     * @return Combination of two Applicatives
-     */
-    static <T,A extends Zippable<T>> Monoid<A> combineZippables(Function<T, A> zeroFn, Monoid<T> monoid) {
-
-        return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineZippables(monoid));
-    }
     /**
      * @return Combination of two LazyFutureStreams Streams b is appended toNested a
      */
-    static <T> Semigroup<FutureStream<T>> combineFutureStream() {
-        return (a, b) -> a.appendS(b);
+    static <T> Group<FutureStream<T>> combineFutureStream() {
+        return Group.of(FutureStream::reverse,Monoids.combineFutureStream());
     }
     /**
      * @return Combination of two ReactiveSeq Streams b is appended toNested a
