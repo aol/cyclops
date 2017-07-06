@@ -67,7 +67,6 @@ public class Product<W1,W2,T> implements  Filters<T>,
     public static  <W1,W2,T> Product<W1,W2,T> of(Active<W1,T> a1, Active<W2,T> a2){
         return of(Tuple.tuple(a1.getSingle(),a2.getSingle()),a1.getDef1(),a2.getDef1());
     }
-    
 
     public Product<W1,W2,T> filter(Predicate<? super T> test) {
         return of(run.map((m1,m2)->{
@@ -76,7 +75,6 @@ public class Product<W1,W2,T> implements  Filters<T>,
             return Tuple.tuple(x1, x2);
         }),def1,def2);
     }
-
 
 
     @Override
@@ -278,14 +276,11 @@ public class Product<W1,W2,T> implements  Filters<T>,
             });
         }
 
-
         public T foldLeft(T identity, BinaryOperator<T> semigroup) {
             return foldLeft(Monoid.fromBiFunction(identity, semigroup));
         }
 
-
     }
-
 
     public <R1, R> Product<W1,W2,R> forEach2(Function<? super T, ? extends Product<W1,W2,R1>> value1, final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         return flatMap(a->{

@@ -15,6 +15,7 @@ import cyclops.function.Semigroup;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.NaturalTransformation;
 import org.jooq.lambda.Seq;
 import org.pcollections.PCollection;
 import org.reactivestreams.Publisher;
@@ -588,6 +589,9 @@ public interface Semigroups {
      * @return Combine  function
      */
     static <A> Semigroup<Function<A,A>> functionComposition(){
+        return  (a,b)->a.andThen(b);
+    }
+    static <A> Semigroup<NaturalTransformation<A,A>> naturalTransformationComposition(){
         return  (a,b)->a.andThen(b);
     }
 

@@ -16,6 +16,7 @@ import cyclops.function.Semigroup;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.NaturalTransformation;
 import org.jooq.lambda.Seq;
 import org.reactivestreams.Publisher;
 
@@ -551,7 +552,10 @@ public interface Monoids {
      */
     static Monoid<Boolean> booleanConjunction = Monoid.of(true, Semigroups.booleanConjunction);
 
-    static <A> Monoid<Function<A,A>> endoMonoid() { return functionComposition(); }
+    static <A> Monoid<NaturalTransformation<A,A>> naturalTransformationComposition(){
+        return Monoid.of(NaturalTransformation.identity(), Semigroups.naturalTransformationComposition());
+    }
+
     /**
      * @return Monoid for composing function
      */
