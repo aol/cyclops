@@ -6,6 +6,7 @@ import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.functor.Transformable;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.*;
@@ -132,13 +133,43 @@ public class Active<W,T> implements Filters<T>,
         return def1.unfoldable().visit(e->Maybe.just(new Unfolds()),Maybe::none);
     }
     public Folds foldsUnsafe(){
-        return def1.foldable().visit(s-> new Folds(),()->null);
+        return new Folds();
     }
     public Maybe<Folds> folds(){
         return def1.foldable().visit(e->Maybe.just(new Folds()),Maybe::none);
     }
     public Maybe<Traverse> traverse(){
         return def1.traverse().visit(e->Maybe.just(new Traverse()),Maybe::none);
+    }
+    public Plus plusUnsafe(){
+        return new Plus();
+    }
+    public Maybe<Plus> plus(){
+        return def1.foldable().visit(e->Maybe.just(new Plus()),Maybe::none);
+    }
+    public class Plus{
+
+        public Monoid<Higher<W,T>> monoid(){
+            return def1.monadPlus().get().narrowMonoid();
+        }
+        public Active<W,T> zero(){
+            Higher<W, T> h = def1.monadZero().get().narrowZero();
+            return of(h, def1);
+
+        }
+        public Active<W,T> sum(ListX<Higher<W, T>> list){
+            return of(def1.monadPlus().visit(p->p.sum(list.plus(single)),()->single),def1);
+        }
+        public Active<W,T> sumA(ListX<Active<W, T>> list){
+            return sum(list.map(Active::getActive));
+        }
+        public Active<W,T> plus(Higher<W, T> a){
+            return of(def1.monadPlus().visit(p->p.plus(single,a),()->single),def1);
+        }
+        public Active<W,T> plusA(Active<W, T> ac){
+            Higher<W, T> a =ac.single;
+            return plus(a);
+        }
     }
 
     public class Unfolds{
@@ -163,21 +194,21 @@ public class Active<W,T> implements Filters<T>,
 
 
         public T foldRight(Monoid<T> monoid) {
-            return def1.foldable().get().foldRight(monoid, single);
+            return  def1.foldable().visit(p -> p.foldRight(monoid, single), () -> monoid.zero());
         }
 
 
         public T foldRight(T identity, BinaryOperator<T> semigroup) {
-            return def1.foldable().get().foldRight(Monoid.fromBiFunction(identity, semigroup), single);
+            return foldRight(Monoid.fromBiFunction(identity, semigroup));
         }
 
         public T foldLeft(Monoid<T> monoid) {
-            return def1.foldable().get().foldLeft(monoid, single);
+            return def1.foldable().visit(p -> p.foldLeft(monoid, single), () -> monoid.zero());
         }
 
 
         public T foldLeft(T identity, BinaryOperator<T> semigroup) {
-            return def1.foldable().get().foldLeft(identity, semigroup, single);
+            return foldLeft(Monoid.fromBiFunction(identity, semigroup));
         }
 
     }
@@ -185,13 +216,13 @@ public class Active<W,T> implements Filters<T>,
     public class Traverse{
         public  <W2, R> Higher<W2, Higher<W, R>> flatTraverse(Applicative<W2> applicative,
                                                                Function<? super T,? extends Higher<W2, Higher<W, R>>>f) {
-            return def1.traverse().get().flatTraverse(applicative,def1.monad(),single,f);
-
+            return def1.traverse()
+                       .get()
+                       .flatTraverse(applicative,def1.monad(),single,f);
         }
-
     }
 
-    public <W2> Product<W,W2,T> plus(Active<W2,T> active){
+    public <W2> Product<W,W2,T> concat(Active<W2,T> active){
         return Product.of(this,active);
     }
 

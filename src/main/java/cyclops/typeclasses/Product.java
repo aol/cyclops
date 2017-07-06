@@ -6,6 +6,7 @@ import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -205,11 +206,19 @@ public class Product<W1,W2,T> implements  Filters<T>,
             return Maybe.just(new Unfolds());
         return Maybe.none();
     }
+    public Plus plusUnsafe(){
+        return new Plus();
+    }
+    public Maybe<Plus> plus(){
+        if(def1.monadPlus().isPresent() && def2.monadPlus().isPresent())
+            return Maybe.just(new Plus());
+        return Maybe.none();
+    }
     public class Unfolds {
+
         public <R, T> Product<W1,W2, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn){
             Tuple2<Higher<W1, R>, Higher<W2, R>> res = run.map((left, right) -> Tuple.tuple(def1.unfoldable().get().unfold(b, fn), def2.unfoldable().get().unfold(b, fn)));
             return Product.of(res, def1, def2);
-
         }
 
         public <T> Product<W1,W2,T> replicate(int n, T value) {
@@ -223,7 +232,21 @@ public class Product<W1,W2,T> implements  Filters<T>,
             return replicate(1, a);
         }
     }
+    public class Plus{
 
+        public Product<W1,W2,T> plus(Product<W1,W2,T> a){
+            Active<W1, T> r1 = Active.of(run.v1, def1).plusUnsafe().plusA(a.v1());
+            Active<W2, T> r2 = Active.of(run.v2, def2).plusUnsafe().plusA(a.v2());
+            return of(r1,r2);
+        }
+        public Product<W1,W2,T> sum(ListX<Product<W1,W2,T>> list){
+
+            Active<W1, T> r1 = Active.of(run.v1, def1).plusUnsafe().sumA(list.map(p->p.asActiveTuple().v1));
+            Active<W2, T> r2 = Active.of(run.v2, def2).plusUnsafe().sumA(list.map(p->p.asActiveTuple().v2));
+            return of(r1,r2);
+        }
+
+    }
     public class Folds {
 
         public T foldRight(Monoid<T> monoid) {
@@ -234,7 +257,6 @@ public class Product<W1,W2,T> implements  Filters<T>,
             });
 
         }
-
 
         public T foldRight(T identity, BinaryOperator<T> semigroup) {
             return foldRight(Monoid.fromBiFunction(identity, semigroup));

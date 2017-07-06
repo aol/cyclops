@@ -174,7 +174,35 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,
     public Maybe<Traverse> traverse(){
         return xor.visit(s-> def1.traverse().isPresent() ? Maybe.just(new Traverse()) : Maybe.none(),p-> def2.traverse().isPresent() ? Maybe.just(new Traverse()) : Maybe.none());
     }
+    public class Plus{
 
+        public Coproduct<W1,W2,T> plus(Coproduct<W1,W2,T> a){
+
+            if(xor.isSecondary() && a.xor.isSecondary()){
+                    Higher<W1, T> plused = def1.monadPlus().get().plus(xor.secondaryGet(), a.xor.secondaryGet());
+                    return Coproduct.left(plused,def1,def2);
+            }
+            if(xor.isPrimary() && a.xor.isPrimary()){
+                Higher<W2, T> plused = def2.monadPlus().get().plus(xor.get(), a.getXor().get());
+                return Coproduct.right(plused,def1,def2);
+            }
+            return Coproduct.this;
+
+        }
+        public Coproduct<W1,W2,T> sum(ListX<Coproduct<W1,W2,T>> l){
+            ListX<Coproduct<W1,W2,T>> list = l.plus(Coproduct.this);
+            if(xor.isSecondary()){
+                Higher<W1, T> summed = def1.monadPlus().get().sum(list.map(c -> c.xor.secondaryGet()));
+                return Coproduct.left(summed,def1,def2);
+            }
+            if(xor.isPrimary()){
+                Higher<W2, T> summed = def2.monadPlus().get().sum(list.map(c -> c.xor.get()));
+                return Coproduct.right(summed,def1,def2);
+            }
+            return Coproduct.this;
+        }
+
+    }
 
 
     public class Folds {
