@@ -79,9 +79,6 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return of(xor.map(m -> def2.<T, T>monadZero().visit(s->s.filter(test, m),()->m))
                .secondaryMap(m -> def1.<T, T>monadZero().visit(s->s.filter(test, m),()->m)),def1,def2);
     }
-    public MonadicValue<MonadicValue<T>> nest() {
-        return this.map(t -> unit(t));
-    }
 
     public <R>  Coproduct<W1,W2,R> coflatMap(final Function<? super  Coproduct<W1,W2,T>, R> mapper){
         return visit(leftM ->  left(def1.unit()
@@ -124,20 +121,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public Xor<Higher<W1,T>,Higher<W2,T>> asXor(){
         return xor;
     }
-    public <R>  Coproduct<W1,W2,R> flatMap(Function<? super T, ? extends Coproduct<W1,W2,R>> fn) {
 
-        return of(xor.map(m->{
-
-            Higher<W2, ? extends Coproduct<W1, W2, R>> x = def2.<T, R>functor().flatMap(in->{
-                Coproduct<W1, W2, R> s = fn.apply(in);
-                return s;
-            }, m);
-            return (Higher<W2, R>)x;
-        }).secondaryMap(m->{
-            Higher<W1, ? extends R> x = def1.<T, R>functor().map(fn, m);
-            return (Higher<W1, R>)x;
-        }),def1,def2);
-    }
 
 
     @Override
@@ -362,7 +346,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
 
 
 
-        public static <T, R> Functor<Higher<Higher<coproduct, W1>, W2>> functor() {
+        public static <W1, W2> Functor<Higher<Higher<coproduct, W1>, W2>> functor() {
             return new Functor<Higher<Higher<coproduct, W1>, W2>>(){
 
                 @Override
@@ -382,7 +366,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
                 }
             };
         }
-        
+
 
         public static <W1,W2,T> Foldable<Higher<Higher<coproduct, W1>, W2>> foldable() {
             return new Foldable<Higher<Higher<coproduct, W1>, W2>>(){
