@@ -2,12 +2,16 @@ package cyclops.typeclasses.free;
 
 import com.aol.cyclops2.hkt.Higher;
 
+import com.aol.cyclops2.hkt.Higher2;
 import cyclops.control.Xor;
 import cyclops.control.lazy.Either3;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Fn5;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.free;
 import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.monad.Applicative;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -30,7 +34,7 @@ import java.util.function.Function;
  * @param <T> Data type of Transformable
  */
 @NoArgsConstructor(access=AccessLevel.PRIVATE)
-public abstract class Free<F, T> {
+public abstract class Free<F, T> implements Higher2<free,F,T> {
 
     /**
      * Static for comprehensions for working with Free
@@ -620,6 +624,36 @@ public abstract class Free<F, T> {
         }
 
 
+    }
+
+    public static <F,T> Free<F,T> narrowK(Higher<Higher<free, F>, T> ds){
+        return (Free<F,T>)ds;
+    }
+
+    static  class Instances {
+        public static <F> Applicative<Higher<free, F>> applicative(cyclops.typeclasses.Pure<F> pure,Functor<F> functor) {
+            return new Applicative<Higher<free, F>>() {
+
+                @Override
+                public <T, R> Higher<Higher<free, F>, R> ap(Higher<Higher<free, F>, ? extends Function<T, R>> fn, Higher<Higher<free, F>, T> apply) {
+                    Free<F, ? extends Function<T, R>> f = narrowK(fn);
+                    Free<F, T> a = narrowK(apply);
+                    return f.flatMap(x->a.map(t->x.apply(t)));
+                }
+
+                @Override
+                public <T, R> Higher<Higher<free, F>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<free, F>, T> ds) {
+                    return narrowK(ds).map(fn);
+                }
+
+                @Override
+                public <T> Higher<Higher<free, F>, T> unit(T value) {
+                    return liftF(pure.unit(value),functor);
+                }
+            };
+
+
+        }
     }
 
 }

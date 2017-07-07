@@ -3,6 +3,8 @@ package cyclops.typeclasses.monad;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.functor.Functor;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -10,7 +12,17 @@ import java.util.function.Function;
 
 
 public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
-    
+
+    default <T, R> Higher<CRE,Tuple2<T, R>> product(Higher<CRE, T> fa, Higher<CRE, R> fb) {
+        return ap(ap(unit(a-> b-> Tuple.tuple(a,b)), fa),fb);
+
+    }
+    default <A, B, Z> Higher<CRE, Z> map2(Higher<CRE, A> fa, Higher<CRE, B> fb, BiFunction<A, B, Z> f) {
+        Higher<CRE, Tuple2<A, B>> p = product(fa, fb);
+        return map_(product(fa, fb),in->{
+            return f.apply(in.v1,in.v2);
+        });
+    }
     /**
      * Narrow the co/contra variance on Function stored within a HKT encoded type 
      * 

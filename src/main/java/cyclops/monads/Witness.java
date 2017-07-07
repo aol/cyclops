@@ -548,4 +548,13 @@ public interface Witness {
         }
 
     }
+    public static enum free implements WitnessType<free>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<free> adapter() {
+            return null;
+        }
+
+    }
 }
