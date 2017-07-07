@@ -3,6 +3,7 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Xor;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -1212,6 +1213,11 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                 }
 
                 @Override
+                public <T> MonadRec<queue> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<queue>> monadPlus(Monoid<Higher<queue, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -1403,6 +1409,22 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
             Monoid<QueueX<T>> m = Monoid.of(QueueX.empty(), Instances::concat);
             Monoid<Higher<queue,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
+        }
+        public static <T,R> MonadRec<queue> monadRec(){
+
+            return new MonadRec<queue>(){
+                @Override
+                public <T, R> Higher<queue, R> tailRec(T initial, Function<? super T, ? extends Higher<queue,? extends Xor<T, R>>> fn) {
+                    QueueX<Xor<T, R>> next = QueueX.of(Xor.secondary(initial));
+                    boolean newValue[] = {false};
+                    for(;;){
+                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> QueueX.of(e)));
+                        if(!newValue[0])
+                            break;
+                    }
+                    return Xor.sequencePrimary(next).get().to().queueX(Evaluation.LAZY);
+                }
+            };
         }
         /**
          *

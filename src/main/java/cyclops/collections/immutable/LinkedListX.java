@@ -4,6 +4,7 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Xor;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -48,6 +49,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
+
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * An eXtended Persistent List type, that offers additional functional style operators such as bimap, filter and more
@@ -1321,6 +1324,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 }
 
                 @Override
+                public <T> MonadRec<linkedListX> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<linkedListX>> monadPlus(Monoid<Higher<linkedListX, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -1513,6 +1521,22 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             Monoid<LinkedListX<T>> m = Monoid.of(LinkedListX.empty(), Instances::concat);
             Monoid<Higher<linkedListX,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
+        }
+        public static <T,R> MonadRec<linkedListX> monadRec(){
+
+            return new MonadRec<linkedListX>(){
+                @Override
+                public <T, R> Higher<linkedListX, R> tailRec(T initial, Function<? super T, ? extends Higher<linkedListX,? extends Xor<T, R>>> fn) {
+                    LinkedListX<Xor<T, R>> next = LinkedListX.of(Xor.secondary(initial));
+                    boolean newValue[] = {false};
+                    for(;;){
+                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> LinkedListX.of(e)));
+                        if(!newValue[0])
+                            break;
+                    }
+                    return Xor.sequencePrimary(next).map(l->l.to().linkedListX(LAZY)).get();
+                }
+            };
         }
         /**
          *

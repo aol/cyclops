@@ -1413,6 +1413,11 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                 }
 
                 @Override
+                public <T> MonadRec<Higher<xor, L>> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<Higher<xor, L>>> monadPlus(Monoid<Higher<Higher<xor, L>, T>> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
@@ -1505,6 +1510,28 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                     return Instances.<L>unit().unit(value);
                 }
             };
+        }
+        public static <X,T,R> MonadRec<Higher<xor, X>> monadRec() {
+
+            return new MonadRec<Higher<xor, X>>(){
+                @Override
+                public <T, R> Higher<Higher<xor, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<xor, X>, ? extends Xor<T, R>>> fn) {
+                    Xor<X,? extends Xor<T, R>> next[] = new Xor[1];
+                    next[0] = Xor.primary(Xor.secondary(initial));
+                    boolean cont = true;
+                    do {
+                        cont = next[0].visit(p -> p.visit(s -> {
+                            next[0] = narrowK(fn.apply(s));
+                            return true;
+                        }, pr -> false), () -> false);
+                    } while (cont);
+                    return next[0].map(Xor::get);
+                }
+
+
+            };
+
+
         }
         public static <L> Traverse<Higher<xor, L>> traverse() {
             return new Traverse<Higher<xor, L>>() {

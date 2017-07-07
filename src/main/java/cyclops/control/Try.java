@@ -1537,6 +1537,11 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                 }
 
                 @Override
+                public <T> Maybe<MonadRec<Higher<tryType, L>>> monadRec() {
+                    return Maybe.just(Instances.monadRec());
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<Higher<tryType, L>>> monadPlus(Monoid<Higher<Higher<tryType, L>, T>> m) {
                     return Maybe.none();
                 }
@@ -1631,6 +1636,29 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                 }
             };
         }
+        public static <X extends Throwable,T,R> MonadRec<Higher<tryType, X>> monadRec() {
+
+            return new MonadRec<Higher<tryType, X>>(){
+                @Override
+                public <T, R> Higher<Higher<tryType, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<tryType, X>, ? extends Xor<T, R>>> fn) {
+                    Try<? extends Xor<T, R>,X> next[] = new Try[1];
+                    next[0] = Try.success(Xor.secondary(initial));
+                    boolean cont = true;
+                    do {
+                        cont = next[0].visit(p -> p.visit(s -> {
+                            next[0] = narrowK(fn.apply(s));
+                            return true;
+                        }, pr -> false), () -> false);
+                    } while (cont);
+                    return next[0].map(Xor::get);
+                }
+
+
+            };
+
+
+        }
+
         public static <L extends Throwable> Traverse<Higher<tryType, L>> traverse() {
             return new Traverse<Higher<tryType, L>>() {
 

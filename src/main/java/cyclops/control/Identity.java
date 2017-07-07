@@ -114,6 +114,11 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
                 }
 
                 @Override
+                public <T> MonadRec<identity> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<identity>> monadPlus(Monoid<Higher<identity, T>> m) {
                     return Maybe.none();
                 }
@@ -206,6 +211,31 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
                     return narrowK(ds).flatMap(fn.andThen(i->narrowK(i)));
                 }
             };
+        }
+        public static  MonadRec<identity> monadRec() {
+
+            return new MonadRec<identity>(){
+                @Override
+                public <T, R> Higher<identity, R> tailRec(T initial, Function<? super T, ? extends Higher<identity, ? extends Xor<T, R>>> fn) {
+                    Identity<? extends Xor<T, R>> next[] = new Identity[1];
+                    next[0] = Identity.of(Xor.secondary(initial));
+                    boolean cont = true;
+                    do {
+
+                        cont = next[0].visit(p -> p.visit(s -> {
+                            next[0] = narrowK(fn.apply(s));
+                            return true;
+                        }, __ -> false));
+                    } while (cont);
+                    return next[0].map(Xor::get);
+                }
+
+
+
+
+            };
+
+
         }
         public static Traverse<identity> traverse(){
             return new Traverse<identity>(){

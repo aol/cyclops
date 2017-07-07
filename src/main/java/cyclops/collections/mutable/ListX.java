@@ -115,6 +115,11 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
 
                 @Override
+                public <T> MonadRec<list> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<list>> monadPlus(Monoid<Higher<list, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }

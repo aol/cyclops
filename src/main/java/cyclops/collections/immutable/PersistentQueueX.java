@@ -4,6 +4,7 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Xor;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -44,6 +45,9 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
+
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
+
 /**
  * An eXtended Persistent Queue type, that offers additional functional style operators such as bimap, filter and more
  * Can operate eagerly, lazily or reactively (async push)
@@ -1348,6 +1352,11 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 }
 
                 @Override
+                public <T> MonadRec<persistentQueueX> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<persistentQueueX>> monadPlus(Monoid<Higher<persistentQueueX, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -1541,6 +1550,22 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
             Monoid<PersistentQueueX<T>> m = Monoid.of(PersistentQueueX.empty(), Instances::concat);
             Monoid<Higher<persistentQueueX,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
+        }
+        public static <T,R> MonadRec<persistentQueueX> monadRec(){
+
+            return new MonadRec<persistentQueueX>(){
+                @Override
+                public <T, R> Higher<persistentQueueX, R> tailRec(T initial, Function<? super T, ? extends Higher<persistentQueueX,? extends Xor<T, R>>> fn) {
+                    PersistentQueueX<Xor<T, R>> next = PersistentQueueX.of(Xor.secondary(initial));
+                    boolean newValue[] = {false};
+                    for(;;){
+                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> PersistentQueueX.of(e)));
+                        if(!newValue[0])
+                            break;
+                    }
+                    return Xor.sequencePrimary(next).map(l->l.to().persistentQueueX(LAZY)).get();
+                }
+            };
         }
         /**
          *

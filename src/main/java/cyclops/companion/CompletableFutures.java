@@ -5,6 +5,8 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Xor;
+import cyclops.monads.Witness.future;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.async.Future;
@@ -586,6 +588,11 @@ public class CompletableFutures {
                 }
 
                 @Override
+                public <T> MonadRec<completableFuture> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<completableFuture>> monadPlus(Monoid<Higher<completableFuture, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -848,6 +855,17 @@ public class CompletableFutures {
             CompletableFuture<T> future = CompletableFutureKind.narrowK(ds);
             return applicative.map(CompletableFutureKind::completedFuture, fn.apply(future.join()));
         }
+        public static <T,R> MonadRec<completableFuture> monadRec(){
+
+            return new  MonadRec<completableFuture>(){
+
+                @Override
+                public <T, R> Higher<completableFuture, R> tailRec(T initial, Function<? super T, ? extends Higher<completableFuture, ? extends Xor<T, R>>> fn) {
+                    Higher<future, R> x = Future.Instances.monadRec().tailRec(initial, fn.andThen(CompletableFutureKind::narrowK).andThen(Future::of));
+                    return CompletableFutureKind.narrowFuture(x);
+                }
+            };
+        }
 
     }
     /**
@@ -913,7 +931,12 @@ public class CompletableFutures {
             return new Box<>(
                     completableFuture);
         }
-
+        public static <T> CompletableFutureKind<T> fromFuture(final Future<T> completableFuture) {
+           return widen(completableFuture.toCompletableFuture());
+        }
+        public static <T> CompletableFutureKind<T> narrowFuture(final Higher<future, T> future) {
+            return fromFuture(Future.narrowK(future));
+        }
         /**
          * Convert the raw Higher Kinded Type for CompletableFutureKind types into the CompletableFutureKind type definition class
          *
