@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 
 /**
  * 
- * A static class with a large number of Semigroups  or Combiners.
+ * A static class with a large number of SemigroupK  or Combiners.
  * 
  * A semigroup is an Object that can be used toNested combine objects of the same type.
  *
@@ -42,8 +42,8 @@ public interface Semigroups {
      * <pre>
      * {@code
      *    
-     *    Semigroup<ListX<Integer>> listX = Semigroups.collectionXConcat();
-     *    Semigroup<SetX<Integer>> setX = Semigroups.collectionXConcat();
+     *    Semigroup<ListX<Integer>> listX = SemigroupK.collectionXConcat();
+     *    Semigroup<SetX<Integer>> setX = SemigroupK.collectionXConcat();
      *    
      *    
      * 
@@ -62,8 +62,8 @@ public interface Semigroups {
      * <pre>
      * {@code
      *    
-     *    Semigroup<List<Integer>> list = Semigroups.collectionConcat();
-     *    Semigroup<Set<Integer>> set = Semigroups.collectionConcat();
+     *    Semigroup<List<Integer>> list = SemigroupK.collectionConcat();
+     *    Semigroup<Set<Integer>> set = SemigroupK.collectionConcat();
      *    
      *    
      * 
@@ -201,8 +201,8 @@ public interface Semigroups {
      * <pre>
      * {@code
      *    
-     *    Semigroup<List<Integer>> list = Semigroups.collectionConcat();
-     *    Semigroup<Set<Integer>> set = Semigroups.collectionConcat();
+     *    Semigroup<List<Integer>> list = SemigroupK.collectionConcat();
+     *    Semigroup<Set<Integer>> set = SemigroupK.collectionConcat();
      *    
      *    
      * 
@@ -231,7 +231,7 @@ public interface Semigroups {
     /**
      * <pre>
      * {@code 
-     *  BinaryOperator<Zippable<Integer>> sumInts = Semigroups.combineZippables(Semigroups.intSum);
+     *  BinaryOperator<Zippable<Integer>> sumInts = SemigroupK.combineZippables(SemigroupK.intSum);
         sumInts.applyHKT(ListX.of(1,2,3), ListX.of(4,5,6));
         
         //List[5,7,9];
@@ -250,7 +250,7 @@ public interface Semigroups {
      * <pre>
      * {@code 
      * 
-     *  BinaryOperator<Combiner<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
+     *  BinaryOperator<Combiner<Integer>> sumMaybes = SemigroupK.combineScalarFunctors(SemigroupK.intSum);
      *  Maybe.just(1)
      *       .combine(sumMaybes, Maybe.just(5))
      *       
@@ -314,13 +314,13 @@ public interface Semigroups {
     }
     
     /**
-     * @return Combination of two Collection, takeOne non-empty is returned
+     * @return Combination of two Collection, takeOne non-zero is returned
      */
     static <T,C extends Collection<T>> Semigroup<C> firstNonEmpty() {
         return (a, b) -> a.isEmpty() ? b: a;
     }
     /**
-     * @return Combination of two Collection, last non-empty is returned
+     * @return Combination of two Collection, last non-zero is returned
      */
     static <T,C extends Collection<T>> Semigroup<C> lastNonEmpty() {
         return (a, b) -> b.isEmpty() ? a: b;

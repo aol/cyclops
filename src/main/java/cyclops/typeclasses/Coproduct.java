@@ -132,6 +132,9 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public Xor<Higher<W1,T>,Higher<W2,T>> asXor(){
         return xor;
     }
+    public Xor<Active<W1,T>,Active<W2,T>> asActiveXor(){
+        return xor.bimap(s->Active.of(s,def1),p->Active.of(p,def2));
+    }
 
 
 

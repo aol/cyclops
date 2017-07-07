@@ -861,7 +861,7 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      *  new LazyReact().generate(()->"hello")
                        .limit(5)
-                       .reduce(Semigroups.stringConcat);
+                       .reduce(SemigroupK.stringConcat);
                        
         //Optional[hellohellohellohellohello]         
      * 
@@ -884,7 +884,7 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      *  new LazyReact().generate(this::load)
                        .limit(5)
-                       .reduce(Semigroups.stringConcat);
+                       .reduce(SemigroupK.stringConcat);
                        
         //Optional["data1data2data3data4data5"]         
      * 

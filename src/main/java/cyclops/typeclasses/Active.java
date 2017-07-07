@@ -5,6 +5,7 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.anyM.AnyMValue;
+import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Eval;
@@ -15,6 +16,8 @@ import cyclops.control.Xor;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.Monad;
 import cyclops.typeclasses.monad.Traverse;
@@ -51,7 +54,7 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
 @EqualsAndHashCode(of={"single"})
 public class Active<W,T> implements Filters<T>,
-                                    Transformable<T> {
+                                    Transformable<T>, To<Active<W,T>> {
 
 
     @Getter
@@ -64,6 +67,27 @@ public class Active<W,T> implements Filters<T>,
     }
     public static <W, T> Active<W, T> of(InstanceDefinitions<W> def1,T value) {
         return new Active<>(def1.unit().unit(value), def1);
+    }
+
+    /**
+     * Perform a custom operation
+     *
+     * <pre>
+     *     {@code
+     *       Active<list,Integer> active = Active.of(ListX.of(1,2,3), ListX.Instances.definitions());
+     *      Active<list, ListX<Integer>> grouped = active.to(ListX::narrowK, l -> l.grouped(10));
+     *     }
+     * </pre>
+     *
+     * @param narrow Function that narrows Higher Kinded encoding to it's concrete type
+     * @param fn Transformation function
+     * @param <S> Concrete type
+     * @param <R> Return type
+     * @return Transformed Active after custom operation
+     */
+    public <S,R> Active<W,R> to(Function<? super Higher<W, T>,? extends S> narrow,Function<? super S,? extends Higher<W,R>> fn){
+        return Active.of(fn.apply(narrow.apply(single)),def1);
+
     }
 
     public <R> R visit(Function<? super Higher<W, T>,? extends R> visitor){
@@ -142,6 +166,12 @@ public class Active<W,T> implements Filters<T>,
     public <R> Active<W, R> ap(Higher<W, ? extends Function<T, R>> fn) {
         return of(def1.applicative().ap(fn, single), def1);
     }
+    public Active<W,T> plus(SemigroupK<W,T> semigroupK, Higher<W,T> add){
+        return of(semigroupK.apply(single,add),def1);
+    }
+    public Active<W,T> plus(SemigroupK<W,T> semigroupK, Active<W,T> add){
+        return of(semigroupK.apply(single,add.getSingle()),def1);
+    }
     public Traverse traverseUnsafe(){
         return def1.traverse().visit(s-> new Traverse(),()->null);
     }
@@ -169,6 +199,9 @@ public class Active<W,T> implements Filters<T>,
 
     public class Plus{
 
+        public MonoidK<W,T> monoidK(){
+            return def1.monadPlus().get().asMonoid();
+        }
         public Monoid<Higher<W,T>> monoid(){
             return def1.monadPlus().get().narrowMonoid();
         }

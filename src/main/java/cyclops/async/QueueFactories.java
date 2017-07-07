@@ -114,9 +114,9 @@ public class QueueFactories {
     /**
      * Creates an async.Queue backed by a JDK Wait Free unbounded ConcurrentLinkedQueue
      * The provided WaitStrategy is used toNested determine behaviour of both producers and consumers when the Queue is full (producer)
-     * or empty (consumer). {@see WaitStrategy#spinWait() , @see WaitStrategy#exponentialBackOff() , @see WaitStrategy#noWaitRetry() }
+     * or zero (consumer). {@see WaitStrategy#spinWait() , @see WaitStrategy#exponentialBackOff() , @see WaitStrategy#noWaitRetry() }
      * 
-     * @param strategy Strategy toNested be employed by producers when Queue is full, or consumers when Queue is empty
+     * @param strategy Strategy toNested be employed by producers when Queue is full, or consumers when Queue is zero
      * @return Factory for unbounded wait free queue backed by ConcurrentLinkedQueue
      */
     public static <T> QueueFactory<T> unboundedNonBlockingQueue(final WaitStrategy<T> strategy) {
@@ -150,10 +150,10 @@ public class QueueFactories {
     /**
      * Generate QueueFactory for bounded non blocking queues. Max queue size is determined by the input parameter.
      * The provided WaitStrategy is used toNested determine behaviour of both producers and consumers when the Queue is full (producer)
-     * or empty (consumer). {@see WaitStrategy#spinWait() , @see WaitStrategy#exponentialBackOff() , @see WaitStrategy#noWaitRetry() }
+     * or zero (consumer). {@see WaitStrategy#spinWait() , @see WaitStrategy#exponentialBackOff() , @see WaitStrategy#noWaitRetry() }
      * 
      * @param queueSize Max Queue size
-     * @param strategy Strategy toNested be employed by producers when Queue is full, or consumers when Queue is empty
+     * @param strategy Strategy toNested be employed by producers when Queue is full, or consumers when Queue is zero
      * @return bounded wait free Queue Factory backed by an Agrona ManyToOneConcurrentArrayQueue
      */
     public static <T> QueueFactory<T> boundedNonBlockingQueue(final int queueSize, final WaitStrategy<T> strategy) {
@@ -188,10 +188,10 @@ public class QueueFactories {
     /**
      * Generate QueueFactory for bounded non blocking queues. Max queue size is determined by the input parameter.
      * The provided WaitStrategy is used toNested determine behaviour of both producers and consumers when the Queue is full (producer)
-     * or empty (consumer). {@see WaitStrategy#spinWait() , @see WaitStrategy#exponentialBackOff() , @see WaitStrategy#noWaitRetry() }
+     * or zero (consumer). {@see WaitStrategy#spinWait() , @see WaitStrategy#exponentialBackOff() , @see WaitStrategy#noWaitRetry() }
      * 
      * @param queueSize Max Queue size
-     * @param strategy Strategy toNested be employed by producers when Queue is full, or consumers when Queue is empty
+     * @param strategy Strategy toNested be employed by producers when Queue is full, or consumers when Queue is zero
      * @return bounded wait free Queue Factory backed by an Agrona OneToOneConcurrentArrayQueue
      */
     public static <T> QueueFactory<T> singleWriterboundedNonBlockingQueue(final int queueSize, final WaitStrategy<T> strategy) {

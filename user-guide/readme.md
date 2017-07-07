@@ -60,7 +60,7 @@ This is suspended mirror of the [wiki user guide](https://github.com/aol/cyclops
 		- [to efficient reversal](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_efficient_reversal)
 		- [to take / drop / cycle](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_limit_skip_take_drop_cycle)
 		- [to flatMap / map and for comprehensions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_flatmap_operators_flatten)
-		- [to empty stream and single value handling](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_empty_stream_handling)
+		- [to zero stream and single value handling](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_empty_stream_handling)
 		- [to filtering and scanning](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_filtering_filter_remove_oftype)
 		- [to assertions, folds & conversions](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_assertions)
 		- [to async ops](http://gist.asciidoctor.org/?github-aol/simple-react//user-guide/streams.adoc#_async_terminal_operations)

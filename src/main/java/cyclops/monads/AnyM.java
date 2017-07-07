@@ -276,7 +276,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * {@code
      *   AnyM.fromOptional(Optional.of(10)).filter(i->i<10);
      * 
-     *   //AnyM[Optional.empty()]
+     *   //AnyM[Optional.zero()]
      *   
      *   AnyM.fromStream(Stream.of(5,10)).filter(i->i<10);
      *   
@@ -438,13 +438,13 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     
 
     /**
-     * Construct an AnyM wrapping a new empty instance of the wrapped type 
+     * Construct an AnyM wrapping a new zero instance of the wrapped type
      * 
      * e.g.
      * <pre>
      * {@code 
      * Any<Integer> ints = AnyM.fromStream(Stream.of(1,2,3));
-     * AnyM<Integer> empty=ints.empty();
+     * AnyM<Integer> zero=ints.zero();
      * }
      * </pre>
      * @return Empty AnyM
@@ -1392,7 +1392,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
               return a+b;
       }
    * }</pre>
-   * The add method has no null handling, but we can lift the method toNested Monadic form, and use Optionals toNested automatically handle null / empty value cases.
+   * The add method has no null handling, but we can lift the method toNested Monadic form, and use Optionals toNested automatically handle null / zero value cases.
    * 
    * 
    * @param fn BiFunction toNested lift

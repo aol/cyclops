@@ -3,11 +3,13 @@ package cyclops.typeclasses;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.SemigroupK;
+import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.functor.ProFunctor;
 import cyclops.typeclasses.monad.*;
 
 /**
@@ -38,4 +40,6 @@ public interface InstanceDefinitions<W> {
     public  <T> Maybe<Foldable<W>> foldable();
     public  <T> Maybe<Comonad<W>> comonad();
     public  <T> Maybe<Unfoldable<W>> unfoldable();
+
+
 }

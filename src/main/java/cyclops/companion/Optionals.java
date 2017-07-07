@@ -350,17 +350,17 @@ public class Optionals {
     }
     /**
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
-     * By constrast with {@link Optionals#sequencePresent(CollectionX)}, if any Optionals are empty the result
-     * is an empty Optional
+     * By constrast with {@link Optionals#sequencePresent(CollectionX)}, if any Optionals are zero the result
+     * is an zero Optional
      * 
      * <pre>
      * {@code
      * 
      *  Optional<Integer> just = Optional.of(10);
-        Optional<Integer> none = Optional.empty();
+        Optional<Integer> none = Optional.zero();
      *  
      *  Optional<ListX<Integer>> opts = Optionals.sequence(ListX.of(just, none, Optional.of(1)));
-        //Optional.empty();
+        //Optional.zero();
      * 
      * }
      * </pre>
@@ -375,13 +375,13 @@ public class Optionals {
     }
     /**
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
-     * Only successes are retained. By constrast with {@link Optionals#sequence(CollectionX)} Optional#empty types are 
+     * Only successes are retained. By constrast with {@link Optionals#sequence(CollectionX)} Optional#zero types are
      * tolerated and ignored.
      * 
      * <pre>
      * {@code 
      *  Optional<Integer> just = Optional.of(10);
-        Optional<Integer> none = Optional.empty();
+        Optional<Integer> none = Optional.zero();
      * 
      * Optional<ListX<Integer>> maybes = Optionals.sequencePresent(ListX.of(just, none, Optional.of(1)));
        //Optional.of(ListX.of(10, 1));
@@ -396,17 +396,17 @@ public class Optionals {
     }
     /**
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
-     * By constrast with {@link Optional#sequencePresent(CollectionX)} if any Optional types are empty 
-     * the return type will be an empty Optional
+     * By constrast with {@link Optional#sequencePresent(CollectionX)} if any Optional types are zero
+     * the return type will be an zero Optional
      * 
      * <pre>
      * {@code
      * 
      *  Optional<Integer> just = Optional.of(10);
-        Optional<Integer> none = Optional.empty();
+        Optional<Integer> none = Optional.zero();
      *  
      *  Optional<ListX<Integer>> maybes = Optionals.sequence(ListX.of(just, none, Optional.of(1)));
-        //Optional.empty();
+        //Optional.zero();
      * 
      * }
      * </pre>
@@ -423,12 +423,12 @@ public class Optionals {
     }
     /**
      * Accummulating operation using the supplied Reducer (@see cyclops2.Reducers). A typical use case is toNested accumulate into a Persistent Collection type.
-     * Accumulates the present results, ignores empty Optionals.
+     * Accumulates the present results, ignores zero Optionals.
      * 
      * <pre>
      * {@code 
      *  Optional<Integer> just = Optional.of(10);
-        Optional<Integer> none = Optional.empty();
+        Optional<Integer> none = Optional.zero();
         
      * Optional<PersistentSetX<Integer>> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), Reducers.toPersistentSetX());
        //Optional.of(PersistentSetX.of(10, 1)));
@@ -451,7 +451,7 @@ public class Optionals {
      * <pre>
      * {@code 
      *  Optional<Integer> just = Optional.of(10);
-        Optional<Integer> none = Optional.empty();
+        Optional<Integer> none = Optional.zero();
         
      *  Optional<String> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), i -> "" + i,
                                                      Monoids.stringConcat);
@@ -478,7 +478,7 @@ public class Optionals {
      * <pre>
      * {@code 
      *  Optional<Integer> just = Optional.of(10);
-        Optional<Integer> none = Optional.empty();
+        Optional<Integer> none = Optional.zero();
         
      *  Optional<String> opts = Optional.accumulateJust(Monoids.stringConcat,ListX.of(just, none, Optional.of(1)), 
                                                      );
@@ -540,7 +540,7 @@ public class Optionals {
      * @param f Optional toNested combine with a value
      * @param v Optional toNested combine
      * @param fn Combining function
-     * @return Optional combined with supplied value, or empty Optional if no value present
+     * @return Optional combined with supplied value, or zero Optional if no value present
      */
     public static <T1, T2, R> Optional<R> combine(final Optional<? extends T1> f, final Optional<? extends T2> v,
             final BiFunction<? super T1, ? super T2, ? extends R> fn) {
@@ -563,7 +563,7 @@ public class Optionals {
      * @param f Optional toNested combine with takeOne element in Iterable (if present)
      * @param v Iterable toNested combine
      * @param fn Combining function
-     * @return Optional combined with supplied Iterable, or empty Optional if no value present
+     * @return Optional combined with supplied Iterable, or zero Optional if no value present
      */
     public static <T1, T2, R> Optional<R> zip(final Optional<? extends T1> f, final Iterable<? extends T2> v,
             final BiFunction<? super T1, ? super T2, ? extends R> fn) {
@@ -589,7 +589,7 @@ public class Optionals {
      * @param p Publisher toNested combine
      * @param f  Optional toNested combine with
      * @param fn Combining function
-     * @return Optional combined with supplied Publisher, or empty Optional if no value present
+     * @return Optional combined with supplied Publisher, or zero Optional if no value present
      */
     public static <T1, T2, R> Optional<R> zip(final Publisher<? extends T2> p, final Optional<? extends T1> f,
             final BiFunction<? super T1, ? super T2, ? extends R> fn) {
@@ -958,7 +958,7 @@ public class Optionals {
 
        
         /**
-         * @return An HKT encoded empty Optional
+         * @return An HKT encoded zero Optional
          */
         public static <T> OptionalKind<T> empty() {
             return widen(Optional.empty());

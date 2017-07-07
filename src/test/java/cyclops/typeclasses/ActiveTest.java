@@ -8,6 +8,8 @@ import cyclops.control.Maybe;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.maybe;
+import cyclops.monads.Witness.reactiveSeq;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import static cyclops.control.Maybe.Instances.applicative;
@@ -50,6 +52,12 @@ public class ActiveTest {
         Maybe<ListX<Integer>> raw = res.convert(Maybe::narrowK)
                                        .map(ListX::narrowK);
         assertThat(raw,equalTo(Maybe.just(ListX.of(2,4,6))));
+    }
+
+    @Test
+    public void custom(){
+        Active<list, ListX<Integer>> grouped = active.to(ListX::narrowK, l -> l.grouped(10));
+
     }
 
 }

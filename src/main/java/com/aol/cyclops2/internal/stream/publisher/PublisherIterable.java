@@ -39,7 +39,7 @@ public final class PublisherIterable<T>  implements Publisher<T> {
         
     }
     /**
-     * Calls onSubscribe on the target Subscriber with the empty instance followed by a call to onComplete.
+     * Calls onSubscribe on the target Subscriber with the zero instance followed by a call to onComplete.
      *
      * @param s
      */

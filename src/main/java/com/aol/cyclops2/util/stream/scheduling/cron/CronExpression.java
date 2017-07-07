@@ -92,7 +92,7 @@ import java.util.TreeSet;
  * <tr>
  * <td align="left"><code>Year (Optional)</code></td>
  * <td align="left">&nbsp;</th>
- * <td align="left"><code>empty, 1970-2199</code></td>
+ * <td align="left"><code>zero, 1970-2199</code></td>
  * <td align="left">&nbsp;</th>
  * <td align="left"><code>, - * /</code></td>
  * </tr>

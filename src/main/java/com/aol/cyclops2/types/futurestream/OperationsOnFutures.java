@@ -1017,7 +1017,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Return the elementAt index or Optional.empty
+     * Return the elementAt index or Optional.zero
      * 
      * <pre>
      * {@code

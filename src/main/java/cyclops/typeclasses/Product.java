@@ -2,6 +2,7 @@ package cyclops.typeclasses;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.To;
@@ -17,6 +18,7 @@ import cyclops.monads.Witness.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -349,6 +351,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
         return (Product<W1,W2,T>)ds;
     }
 
+
     public  Active<Higher<Higher<product,W1>,W2>,T> allTypeClasses(){
         return  Active.of(this, Instances.<W1, W2>definitions(def1, def2));
     }
@@ -382,6 +385,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
                 }
             };
         }
+
         public  Applicative<Higher<Higher<product, W1>, W2>> applicative(){
             return new Applicative<Higher<Higher<product, W1>, W2>>(){
 

@@ -278,8 +278,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
      *   MaybeType<Integer> some = MaybeType.fromOptional(Optional.of(10));
      *   //Maybe[10], Some[10]
      *
-     *   MaybeType<Integer> none = MaybeType.fromOptional(Optional.empty());
-     *   //Maybe.empty, None[]
+     *   MaybeType<Integer> none = MaybeType.fromOptional(Optional.zero());
+     *   //Maybe.zero, None[]
      * }
      * </pre>
      *
@@ -321,7 +321,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     final static Maybe EMPTY = new Nothing<>();
 
     /**
-     * @return Get the empty Maybe (singleUnsafe instance)
+     * @return Get the zero Maybe (singleUnsafe instance)
      */
     @SuppressWarnings("unchecked")
     static <T> Maybe<T> none() {
@@ -365,7 +365,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * </pre>
      *
      * @param pub Publisher to extract value from
-     * @return Maybe populated with takeOne value from Publisher (Maybe.empty if Publisher empty)
+     * @return Maybe populated with takeOne value from Publisher (Maybe.zero if Publisher zero)
      */
     public static <T> Maybe<T> fromPublisher(final Publisher<T> pub) {
         return fromFuture(Future.fromPublisher(pub));
@@ -384,7 +384,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * }
      * </pre>
      * @param iterable Iterable  to extract value from
-     * @return Maybe populated with takeOne value from Iterable (Maybe.empty if Publisher empty)
+     * @return Maybe populated with takeOne value from Iterable (Maybe.zero if Publisher zero)
      */
     static <T> Maybe<T> fromIterable(final Iterable<T> iterable) {
         return Maybe.fromEvalNullable(Eval.fromIterable(iterable));
@@ -401,8 +401,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
      *   Maybe<Integer> some = Maybe.fromOptional(Optional.of(10));
      *   //Maybe[10], Some[10]
      *
-     *   Maybe<Integer> none = Maybe.fromOptional(Optional.empty());
-     *   //Maybe.empty, None[]
+     *   Maybe<Integer> none = Maybe.fromOptional(Optional.zero());
+     *   //Maybe.zero, None[]
      * }
      * </pre>
      *
@@ -531,7 +531,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     /**
      * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
-     * Only successes are retained. By constrast with {@link Maybe#sequence(CollectionX)} Maybe#empty/ None types are
+     * Only successes are retained. By constrast with {@link Maybe#sequence(CollectionX)} Maybe#zero/ None types are
      * tolerated and ignored.
      *
      * <pre>
@@ -554,8 +554,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     /**
      * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
-     * By constrast with {@link Maybe#sequenceJust(CollectionX)} if any Maybe types are None / empty
-     * the return type will be an empty Maybe / None
+     * By constrast with {@link Maybe#sequenceJust(CollectionX)} if any Maybe types are None / zero
+     * the return type will be an zero Maybe / None
      *
      * <pre>
      * {@code
@@ -580,8 +580,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     /**
      * Sequence operation, take a Stream of Maybes and turn it into a Maybe with a Stream
-     * By constrast with {@link Maybe#sequenceJust(CollectionX)} Maybe#empty/ None types are
-     * result in the returned Maybe being Maybe.empty / None
+     * By constrast with {@link Maybe#sequenceJust(CollectionX)} Maybe#zero/ None types are
+     * result in the returned Maybe being Maybe.zero / None
      *
      *
      * <pre>
@@ -610,7 +610,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     /**
      * Accummulating operation using the supplied Reducer (@see cyclops2.Reducers). A typical use case is to accumulate into a Persistent Collection type.
-     * Accumulates the present results, ignores empty Maybes.
+     * Accumulates the present results, ignores zero Maybes.
      *
      * <pre>
      * {@code
@@ -641,7 +641,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
         Maybe<Integer> none = Maybe.none();
 
      *  Maybe<String> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), i -> "" + i,
-                                                     Semigroups.stringConcat);
+                                                     SemigroupK.stringConcat);
         //Maybe.of("101")
      *
      * }

@@ -406,9 +406,9 @@ public class SpoutsTest {
                 .forEach(System.out::println);
 **/
  /**
-        assertThat(Semigroups.<Integer>amb()
+        assertThat(SemigroupK.<Integer>amb()
                 .applyHKT(Spouts.of(100,200,300),nextAsyncRS()).listX(),equalTo(ListX.of(100,200,300)));
-        assertThat(Semigroups.<Integer>amb()
+        assertThat(SemigroupK.<Integer>amb()
                 .applyHKT(nextAsyncRS(),Spouts.of(100,200,300)).listX(),equalTo(ListX.of(100,200,300)));
 **/
     }

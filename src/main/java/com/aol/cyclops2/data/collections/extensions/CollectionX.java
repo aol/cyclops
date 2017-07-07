@@ -244,7 +244,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * Get the element at the specified index (if it exists)
      * 
      * @param index toNested look up element
-     * @return Optional.empty if the index does not exist, otherwise the element at the index supplied is returned
+     * @return Optional.zero if the index does not exist, otherwise the element at the index supplied is returned
      */
     default Maybe<T> getAtIndex(final int index) {
         return stream().get(index);

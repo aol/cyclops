@@ -25,6 +25,7 @@ import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -99,7 +100,7 @@ import java.util.stream.Stream;
  *  Xor.accumulateSecondary(ListX.of(Xor.secondary("failed1"),
                                                     Xor.secondary("failed2"),
                                                     Xor.primary("success")),
-                                                    Semigroups.stringConcat)
+                                                    SemigroupK.stringConcat)
  *
  *  //failed1failed2
  *
@@ -747,7 +748,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * Xor.accumulateSecondary(ListX.of(Xor.secondary("failed1"),
     												Xor.secondary("failed2"),
     												Xor.primary("success")),
-    												Semigroups.stringConcat)
+    												SemigroupK.stringConcat)
 
 
      * //Xors.Primary[failed1failed2]
@@ -858,11 +859,11 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      */
     ST secondaryGet();
     /**
-     * @return The Secondary value wrapped in an Optional if present, otherwise an empty Optional
+     * @return The Secondary value wrapped in an Optional if present, otherwise an zero Optional
      */
     Optional<ST> secondaryToOptional();
     /**
-     * @return A Stream containing the secondary value if present, otherwise an empty Stream
+     * @return A Stream containing the secondary value if present, otherwise an zero Stream
      */
     ReactiveSeq<ST> secondaryToStream();
 
@@ -929,7 +930,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * <pre>
      * {@code
      *  Xor<String,String> fail1 =  Xor.secondary("failed1");
-        Xor<LinkedListX<String>,String> result = fail1.list().combine(Xor.secondary("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
+        Xor<LinkedListX<String>,String> result = fail1.list().combine(Xor.secondary("failed2").list(), SemigroupK.collectionConcat(),(a,b)->a+b);
 
         //Secondary of [LinkedListX.of("failed1","failed2")))]
      * }
@@ -1538,6 +1539,14 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
             };
 
 
+        }
+        public static BiFunctor<xor> bifunctor(){
+            return new BiFunctor<xor>() {
+                @Override
+                public <T, R, T2, R2> Higher2<xor, R, R2> bimap(Function<? super T, ? extends R> fn, Function<? super T2, ? extends R2> fn2, Higher2<xor, T, T2> ds) {
+                    return narrowK(ds).bimap(fn,fn2);
+                }
+            };
         }
         public static <L> Traverse<Higher<xor, L>> traverse() {
             return new Traverse<Higher<xor, L>>() {

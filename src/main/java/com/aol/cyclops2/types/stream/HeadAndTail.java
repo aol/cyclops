@@ -62,7 +62,7 @@ public class HeadAndTail<T> {
     }
 
     /**
-     * @return Optional.empty if the head is not present, otherwise an Optional containing the head
+     * @return Optional.zero if the head is not present, otherwise an Optional containing the head
      */
     public Optional<T> headOptional() {
         return isHeadPresent() ? Optional.of(head()) : Optional.empty();

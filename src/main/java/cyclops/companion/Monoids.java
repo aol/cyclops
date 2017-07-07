@@ -42,8 +42,8 @@ public interface Monoids {
      * <pre>
      * {@code
      *    
-     *    Monoid<ListX<Integer>> listX = Monoid.of(identity,Semigroups.collectionXConcat(ListX.empty());
-     *    Monoid<SetX<Integer>> setX = Monoid.of(identity,Semigroups.collectionXConcat(SetX.empty());
+     *    Monoid<ListX<Integer>> listX = Monoid.of(identity,SemigroupK.collectionXConcat(ListX.zero());
+     *    Monoid<SetX<Integer>> setX = Monoid.of(identity,SemigroupK.collectionXConcat(SetX.zero());
      *    
      *    
      * 
@@ -62,8 +62,8 @@ public interface Monoids {
      * <pre>
      * {@code
      *    
-     *    Monoid<List<Integer>> list =  Monoid.of(identity,Semigroups.collectionConcat(Arrays.asList());
-     *    Monoid<Set<Integer>> set =  Monoid.of(identity,Semigroups.collectionConcat(new HashSet());
+     *    Monoid<List<Integer>> list =  Monoid.of(identity,SemigroupK.collectionConcat(Arrays.asList());
+     *    Monoid<Set<Integer>> set =  Monoid.of(identity,SemigroupK.collectionConcat(new HashSet());
      *    
      *    
      * 
@@ -285,14 +285,14 @@ public interface Monoids {
     }
     /**
      * @param zero Empty Collection of same type
-     * @return Combination of two Collection, takeOne non-empty is returned
+     * @return Combination of two Collection, takeOne non-zero is returned
      */
     static <T,C extends Collection<T>> Monoid<C> firstNonEmpty(C zero) {
         return  Monoid.of(zero,Semigroups.firstNonEmpty());
     }
     /**
      * @param zero Empty Collection of same type
-     * @return Combination of two Collection, last non-empty is returned
+     * @return Combination of two Collection, last non-zero is returned
      */
     static <T,C extends Collection<T>> Monoid<C> lastNonEmpty(C zero) {
         return Monoid.of(zero,Semigroups.lastNonEmpty());

@@ -524,10 +524,10 @@ public interface Folds<T> {
      *    //Optional[1]
      *    ReactiveSeq.of(1).singleUnsafe();
      *    
-     *    //Optional.empty
+     *    //Optional.zero
      *    ReactiveSeq.of().singleOpional();
      *     
-     *     //Optional.empty
+     *     //Optional.zero
      *    ReactiveSeq.of(1,2,3).singleUnsafe();
      * }
      * </pre>
@@ -543,7 +543,7 @@ public interface Folds<T> {
         return stream().takeOne();
     }
     /**
-     * Return the elementAt index or Optional.empty
+     * Return the elementAt index or Optional.zero
      * 
      * <pre>
      * {@code

@@ -200,7 +200,7 @@ public class FutureWTTest implements Printable {
 	@Test
 	public void testMkString() {
 		assertThat(just.mkString(),equalTo("FutureT[Optional[Future[10]]]"));
-		assertThat(none.mkString(),equalTo("FutureT[Optional.empty]"));
+		assertThat(none.mkString(),equalTo("FutureT[Optional.zero]"));
 	}
 
 

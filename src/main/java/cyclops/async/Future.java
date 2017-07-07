@@ -150,7 +150,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * An empty Future
+     * An zero Future
      *
      * @return A Future that wraps a CompletableFuture with a null result
      */
@@ -159,7 +159,7 @@ public class Future<T> implements To<Future<T>>,
                            CompletableFuture.completedFuture(null));
     }
     /**
-     * An empty Future
+     * An zero Future
      *
      * @return A Future that wraps a CompletableFuture with a null result
      */

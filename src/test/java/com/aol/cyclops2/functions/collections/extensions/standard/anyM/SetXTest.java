@@ -16,7 +16,7 @@ public class SetXTest extends AbstractAnyMSeqTest<Witness.set>{
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#empty()
+	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.set,T> empty() {

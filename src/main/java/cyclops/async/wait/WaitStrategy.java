@@ -1,7 +1,7 @@
 package cyclops.async.wait;
 
 /**
- * An interface that defines a Waiting strategy to be employed when an async.Queue is full or empty
+ * An interface that defines a Waiting strategy to be employed when an async.Queue is full or zero
  * 
  * @author johnmcclean
  *

@@ -75,7 +75,7 @@ public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
     }
 
     /**
-     * @return True if this type is empty, false otherwise
+     * @return True if this type is zero, false otherwise
      */
     default boolean isEmpty() {
 

@@ -17,7 +17,7 @@ public class ReactiveSeqTest extends AbstractAnyMSeqOrderedDependentTest<Witness
 		return AnyM.fromStream(ReactiveSeq.of(values));
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#empty()
+	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.reactiveSeq,T> empty() {

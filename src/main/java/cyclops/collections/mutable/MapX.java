@@ -77,7 +77,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /**
-     * @return An empty MapX
+     * @return An zero MapX
      */
     static <K, V> MapX<K, V> empty() {
         return fromMap(new HashMap<K, V>());

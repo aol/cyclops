@@ -32,7 +32,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
 
     /**
      * Combine two applicatives together using the provided BinaryOperator (Semigroup, Monoid and Reducer all
-     * extend BinaryOperator - checkout Semigroups and Monoids for a large number of canned combinations).
+     * extend BinaryOperator - checkout SemigroupK and Monoids for a large number of canned combinations).
      * If this Applicative is a scalar value the provided value is combined with that value,
      * otherwise the value is combined pair wise with all value in a non-scalar datastructure
      *
@@ -41,15 +41,15 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
      * @see Monoid
      * @see Monoids
      *
-     * To lift any Semigroup (or monoid) up toNested handling Applicatives use the combineApplicatives operator in Semigroups
-     * {@see com.aol.cyclops2.Semigroups#combineApplicatives(BiFunction) } or Monoids
+     * To lift any Semigroup (or monoid) up toNested handling Applicatives use the combineApplicatives operator in SemigroupK
+     * {@see com.aol.cyclops2.SemigroupK#combineApplicatives(BiFunction) } or Monoids
      * { {@see com.aol.cyclops2.Monoids#combineApplicatives(java.util.function.Function, com.aol.cyclops2.function.Monoid)
      *  }
      * <pre>
      * {@code
      *
      *
-     *  BinaryOperator<Zippable<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
+     *  BinaryOperator<Zippable<Integer>> sumMaybes = SemigroupK.combineScalarFunctors(SemigroupK.intSum);
         Maybe.just(1).zip(sumMaybes, Maybe.just(5))
        //Maybe.just(6));
      * }

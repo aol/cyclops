@@ -494,7 +494,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     *  Create an empty sequential synchronous reactiveStream that runs on the current thread
+     *  Create an zero sequential synchronous reactiveStream that runs on the current thread
      * 
      * 
      */

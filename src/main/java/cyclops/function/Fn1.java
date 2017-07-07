@@ -26,7 +26,6 @@ import cyclops.async.Future;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.functor.Functor;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -285,6 +284,7 @@ public interface Fn1<T,  R> extends Function<T,R>{
             return in -> VectorX.of(apply(in));
         }
     }
+
 
 
 }

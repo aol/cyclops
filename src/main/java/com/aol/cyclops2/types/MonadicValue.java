@@ -352,7 +352,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * <pre>
      * {@code 
      * 
-     *  Monoid<Integer> add = Monoid.of(1,Semigroups.intSum);
+     *  Monoid<Integer> add = Monoid.of(1,SemigroupK.intSum);
      *  Maybe.of(10).combineEager(add,Maybe.none());
      *  //Maybe[10]
      *  
@@ -365,7 +365,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      *  Maybe.of(10).combineEager(add,Maybe.of(10));
      *  //Maybe[20]
      *  
-     *  Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+     *  Monoid<Integer> firstNonNull = Monoid.of(null , SemigroupK.firstNonNull());
      *  Maybe.of(10).combineEager(firstNonNull,Maybe.of(10));
      *  //Maybe[10]
      * }</pre>

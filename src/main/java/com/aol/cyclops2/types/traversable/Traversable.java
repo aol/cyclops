@@ -133,7 +133,7 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code 
      *  ReactiveSeq.of(1,1,2,3)
-                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .combine((a, b)->a.equals(b),SemigroupK.intSum)
                    .listX()
                    
      *  //ListX(3,4) 

@@ -133,7 +133,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
      * 
      * @see
      * com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#
-     * empty()
+     * zero()
      */
     @Override
     public <T> FluentCollectionX<T> empty() {

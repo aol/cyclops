@@ -135,10 +135,10 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
       * <pre>
      * {@code 
      *  ListT.of(AnyM.fromStream(Arrays.asList(10))
-     *             .flatMap(t->List.empty();
+     *             .flatMap(t->List.zero();
      *  
      *  
-     *  //ListT<AnyM<Stream<List.empty>>>
+     *  //ListT<AnyM<Stream<List.zero>>>
      * }
      * </pre>
      * @param f FlatMap function

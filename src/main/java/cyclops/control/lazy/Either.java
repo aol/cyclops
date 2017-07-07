@@ -95,7 +95,7 @@ import java.util.stream.Stream;
  *  Xor.accumulateLeft(ListX.of(Either.left("failed1"),
                                                     Either.left("failed2"),
                                                     Either.right("success")),
-                                                    Semigroups.stringConcat)
+                                                    SemigroupK.stringConcat)
  *
  *  //failed1failed2
  *
@@ -1021,12 +1021,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     LT secondaryGet();
 
     /**
-     * @return The Left value wrapped in an Optional if present, otherwise an empty Optional
+     * @return The Left value wrapped in an Optional if present, otherwise an zero Optional
      */
     Optional<LT> secondaryToOptional();
 
     /**
-     * @return A Stream containing the secondary value if present, otherwise an empty Stream
+     * @return A Stream containing the secondary value if present, otherwise an zero Stream
      */
     ReactiveSeq<LT> secondaryToStream();
 
@@ -1109,7 +1109,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * <pre>
      * {@code
      *  Either<String,String> fail1 =  Either.left("failed1");
-        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.left("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
+        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.left("failed2").list(), SemigroupK.collectionConcat(),(a,b)->a+b);
 
         //Left of [LinkedListX.of("failed1","failed2")))]
      * }

@@ -4,11 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.async.Future;
-import cyclops.async.SimpleReact;
 import cyclops.function.*;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.reader;
@@ -16,7 +12,9 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functor.ContravariantFunctor;
 import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.functor.ProFunctor;
 import cyclops.typeclasses.monad.*;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -163,6 +161,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
     public static <T,R> Reader<T,  R> narrowK(Higher<Higher<reader,T>,R> hkt){
         return (Reader<T,R>)hkt;
     }
+
     public static class Instances {
         public static <IN> InstanceDefinitions<Higher<reader, IN>> definitions() {
             return new InstanceDefinitions<Higher<reader, IN>>() {
@@ -302,6 +301,18 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
         }
 
+        public static <IN,R> ProFunctor<reader> profunctor() {
+                return new ProFunctor<reader>() {
+
+                    @Override
+                    public <A, B, C, D> Higher<Higher<reader, C>, D> dimap(Function<? super C, ? extends A> f, Function<? super B, ? extends D> g, Higher<Higher<reader, A>, B> p) {
+                        Reader<A, B> r = narrowK(p);
+                        Function<? super C, ? extends D> f1 = g.compose(r).compose(f);
+                        Reader<C,D> r1 = in->f1.apply(in);
+                        return r1;
+                    }
+                };
+            }
         public static <IN, T, R> MonadRec<Higher<reader, IN>> monadRec() {
              return new MonadRec<Higher<reader, IN>>() {
                 @Override

@@ -430,7 +430,7 @@ public class Streams {
      *     Stream<Integer> reactiveStream = Streams.optionalToStream(Optional.of(1));
      *     //Stream[1]
      *     
-     *     Stream<Integer> empty = Streams.optionalToStream(Optional.empty());
+     *     Stream<Integer> zero = Streams.optionalToStream(Optional.zero());
      *     //Stream[]
      * }
      * </pre>
@@ -1788,7 +1788,7 @@ public class Streams {
        <pre>
        {@code 
      *  List<SetX<Integer>> list = Streams.grouped(Stream.of(1,2,3,4,5,6)
-                                                        ,3,()->SetX.empty())
+                                                        ,3,()->SetX.zero())
                                                     .collect(CyclopsCollectors.toList());
         
         

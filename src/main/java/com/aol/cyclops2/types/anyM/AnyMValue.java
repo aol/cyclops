@@ -310,7 +310,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.monad.AnyM#empty()
+     * @see com.aol.cyclops2.monad.AnyM#zero()
      */
     @Override
     default <T> AnyMValue<W,T> empty(){

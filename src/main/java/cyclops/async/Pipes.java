@@ -93,7 +93,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * @return Construct an empty Pipes instance
+     * @return Construct an zero Pipes instance
      */
     public static <K, V> Pipes<K, V> of() {
         return new Pipes<>();
@@ -272,7 +272,7 @@ public class Pipes<K, V> {
 
     /**
      * Extract the next x values from the Adapter identified by the provided Key
-     * If the Adapter doesn't exist an empty List is returned
+     * If the Adapter doesn't exist an zero List is returned
      * 
      * <pre>
      * {@code 
@@ -348,7 +348,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Extact one value from the selected pipe or an empty Maybe if it doesn't exist. Currently only Adapter's and not Publishers
+     * Extact one value from the selected pipe or an zero Maybe if it doesn't exist. Currently only Adapter's and not Publishers
      * are managed by Pipes so Publisher errors are not propagated (@see {@link Pipes#oneValue(Object)} or @see {@link Pipes#oneOrError(Object)} is better at the moment.
      * 
      *  <pre>
@@ -377,7 +377,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Extact one value from the selected pipe or an empty Maybe if it doesn't exist. Currently only Adapter's and not Publishers
+     * Extact one value from the selected pipe or an zero Maybe if it doesn't exist. Currently only Adapter's and not Publishers
      * are managed by Pipes so Publisher errors are not propagated (@see {@link Pipes#oneValue(Object)} or @see {@link Pipes#oneOrError(Object)} is better at the moment.
      * 
      *  <pre>

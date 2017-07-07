@@ -519,7 +519,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return (FutureStream<U>)ReactiveSeq.super.combine(op,predicate);
     }
     /**
-     * If this SequenceM is empty one it with a another Stream
+     * If this SequenceM is zero one it with a another Stream
      *
      * <pre>
      * {@code
@@ -532,7 +532,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @param switchTo
      *            Supplier that will generate the alternative Stream
-     * @return SequenceM that will switch toNested an alternative Stream if empty
+     * @return SequenceM that will switch toNested an alternative Stream if zero
      */
     @Override
     default FutureStream<U> onEmptySwitch(final Supplier<? extends Stream<U>> switchTo) {
@@ -2415,7 +2415,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Produce this reactiveStream, or an alternative reactiveStream from the
-     * {@code value}, in case this reactiveStream is empty.
+     * {@code value}, in case this reactiveStream is zero.
      * <pre>
      * {@code
      *    FutureStream.of().onEmpty(1)
@@ -2434,7 +2434,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Produce this reactiveStream, or an alternative reactiveStream from the
-     * {@code supplier}, in case this reactiveStream is empty.
+     * {@code supplier}, in case this reactiveStream is zero.
      *
      * <pre>
      * {@code
@@ -2454,7 +2454,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Produce this reactiveStream, or an alternative reactiveStream from the
-     * {@code supplier}, in case this reactiveStream is empty.
+     * {@code supplier}, in case this reactiveStream is zero.
      *
      * <pre>
      * {@code
@@ -2697,14 +2697,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     }
 
-    /* Optional empty, if empty Stream. Otherwise collects toNested a List
+    /* Optional zero, if zero Stream. Otherwise collects toNested a List
      *	@return this Stream as an Optional
      * @see cyclops2.reactiveStream.ReactiveSeq#optional()
 
     @Override
     default Optional<ListX<U>> optional() {
         return Optional.of(block())
-                       .flatMap(list -> list.size() == 0 ? Optional.<ListX<U>> empty() : Optional.of(list));
+                       .flatMap(list -> list.size() == 0 ? Optional.<ListX<U>> zero() : Optional.of(list));
     }
 */
     /*

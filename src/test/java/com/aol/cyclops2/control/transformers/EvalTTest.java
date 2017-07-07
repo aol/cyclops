@@ -192,7 +192,7 @@ public class EvalTTest implements Printable {
 	@Test
 	public void testMkString() {
 		assertThat(just.mkString(),equalTo("EvalT[Optional[Always[10]]]"));
-		assertThat(none.mkString(),equalTo("EvalT[Optional.empty]"));
+		assertThat(none.mkString(),equalTo("EvalT[Optional.zero]"));
 	}
 
 
