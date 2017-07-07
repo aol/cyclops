@@ -279,6 +279,38 @@ public class Product<W1,W2,T> implements  Filters<T>,
         public T foldLeft(T identity, BinaryOperator<T> semigroup) {
             return foldLeft(Monoid.fromBiFunction(identity, semigroup));
         }
+        public <R> Tuple2<R,R> foldMapTuple(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
+            return run.map((a, b) -> {
+                R r1 = def1.foldable().visit(p -> p.foldMap(mb, fn, a), () -> mb.zero());
+                R r2 = def2.foldable().visit(p -> p.foldMap(mb, fn, b), () -> mb.zero());
+                return Tuple.tuple(r2, r1);
+            });
+        }
+        public Tuple2<T,T> foldRightTuple(Monoid<T> monoid) {
+            return run.map((a, b) -> {
+                T r1 = def1.foldable().visit(p -> p.foldRight(monoid, a), () -> monoid.zero());
+                T r2 = def2.foldable().visit(p -> p.foldRight(monoid, b), () -> monoid.zero());
+                return Tuple.tuple(r2, r1);
+            });
+
+        }
+
+        public Tuple2<T,T> foldRightTuple(T identity, BinaryOperator<T> semigroup) {
+            return foldRightTuple(Monoid.fromBiFunction(identity, semigroup));
+
+        }
+
+        public Tuple2<T,T> foldLeftTuple(Monoid<T> monoid) {
+            return run.map((a, b) -> {
+                T r1 = def1.foldable().visit(p -> p.foldRight(monoid, a), () -> monoid.zero());
+                T r2 = def2.foldable().visit(p -> p.foldRight(monoid, b), () -> monoid.zero());
+                return Tuple.tuple(r1, r2);
+            });
+        }
+
+        public Tuple2<T,T> foldLeftTuple(T identity, BinaryOperator<T> semigroup) {
+            return foldLeftTuple(Monoid.fromBiFunction(identity, semigroup));
+        }
 
     }
 

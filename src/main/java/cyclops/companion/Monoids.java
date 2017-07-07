@@ -149,7 +149,7 @@ public interface Monoids {
      * @return A combiner for LinkedListX (concatenates two LinkedListX into a singleUnsafe LinkedListX)
      */
     static <T> Monoid<LinkedListX<T>> linkedListXConcat() {
-        return Monoid.of(LinkedListX.empty(),Semigroups.collectionXConcat());
+        return Monoid.of(LinkedListX.empty(),Semigroups.linkedListXConcat());
     }
 
     /**

@@ -2,6 +2,8 @@ package cyclops.typeclasses;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher3;
+import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.async.Future;
 import cyclops.collections.immutable.VectorX;
@@ -17,12 +19,14 @@ import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.control.Xor;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
+import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Compose;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.monad.Monad;
-import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -86,7 +90,8 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
  */
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
 @EqualsAndHashCode(of={"nest"})
-public class Nested<W1,W2,T> implements Transformable<T> {
+public class Nested<W1,W2,T> implements Transformable<T>,
+                                        Higher3<nested,W1,W2,T>,To<Nested<W1,W2,T>> {
 
     private final Higher<W1,Higher<W2,T>> nested;
     private final Compose<W1,W2> composedFunctor;
@@ -132,6 +137,7 @@ public class Nested<W1,W2,T> implements Transformable<T> {
         Higher<W1, Higher<W2, R>> res = composedFunctor.map1(a->def2.monad().flatMap(fn, a),nested);
         return new Nested<>(res,composedFunctor,def1,def2);
     }
+    
     public <R,X> Nested<W1,W2,R> flatMap(Function<? super X,? extends Higher<W2,R>> widenFn,Function<? super T,? extends X> fn){
         Higher<W1, Higher<W2, R>> res = composedFunctor.map1(a->def2.monad().flatMap(fn.andThen(widenFn), a),nested);
         return new Nested<>(res,composedFunctor,def1,def2);
@@ -368,5 +374,66 @@ public class Nested<W1,W2,T> implements Transformable<T> {
     public static <T> Nested<future,vectorX,T> futureVector(Future<VectorX<T>> futureList){
         Higher<future,Higher<vectorX,T>> hkt = (Higher)futureList;
         return of(hkt,Future.Instances.definitions(), VectorX.Instances.definitions());
+    }
+    public static <W1,W2,T> Nested<W1,W2,T> narrowK(Higher<Higher<Higher<nested, W1>, W2>, T> ds){
+        return (Nested<W1,W2,T>)ds;
+    }
+
+
+
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Instances<W1,W2>  {
+
+
+
+        public static <T, R,W1,W2> Functor<Higher<Higher<nested, W1>, W2>> functor() {
+            return new Functor<Higher<Higher<nested, W1>, W2>>(){
+
+                @Override
+                public <T, R> Higher<Higher<Higher<nested, W1>, W2>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<nested, W1>, W2>, T> ds) {
+                    return narrowK(ds).map(fn);
+                }
+            };
+        }
+
+
+        public static <T,W1,W2> Pure<Higher<Higher<nested, W1>, W2>> unit(InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2) {
+            return new Pure<Higher<Higher<nested, W1>, W2>>(){
+
+                @Override
+                public <T> Higher<Higher<Higher<nested, W1>, W2>, T> unit(T value) {
+                    return Nested.of(def1.unit().unit(def2.unit().unit(value)),def1,def2);
+
+                }
+            };
+        }
+
+
+
+        public static <T,W1,W2>  Foldable<Higher<Higher<nested, W1>, W2>> foldable() {
+            return new Foldable<Higher<Higher<nested, W1>, W2>>(){
+
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<Higher<Higher<nested, W1>, W2>, T> ds) {
+                    return narrowK(ds).foldsUnsafe().foldBothRight(monoid);
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<Higher<nested, W1>, W2>, T> ds) {
+                    return narrowK(ds).foldsUnsafe().foldBothLeft(monoid);
+                }
+            };
+        }
+
+
+        public static <T,W1,W2>  Unfoldable<Higher<Higher<nested, W1>, W2>> unfoldable(InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2) {
+            return new Unfoldable<Higher<Higher<nested, W1>, W2>>(){
+
+                @Override
+                public <R, T> Higher<Higher<Higher<Witness.nested, W1>, W2>, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return narrowK(unit(def1,def2).unit(b)).unfoldsUnsafe().unfold(fn);
+                }
+            };
+        }
     }
 }

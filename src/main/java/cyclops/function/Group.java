@@ -8,6 +8,7 @@ import java.util.function.UnaryOperator;
 public interface Group<T> extends Monoid<T> {
 
     T invert(T t);
+
     public static <T> Group<T> fromCurried(UnaryOperator<T> inverse,final T zero, final Function<T, Function<T, T>> combiner){
         return of(inverse,Monoid.of(zero,combiner));
 

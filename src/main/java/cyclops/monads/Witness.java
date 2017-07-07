@@ -539,4 +539,13 @@ public interface Witness {
         }
 
     }
+    public static enum nested implements WitnessType<nested>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<nested> adapter() {
+            return null;
+        }
+
+    }
 }
