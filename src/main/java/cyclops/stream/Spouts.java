@@ -510,7 +510,7 @@ public interface Spouts {
     }
 
     static class Instances {
-        public static InstanceDefinitions<reactiveSeq> definitions(){
+        public static InstanceDefinitions<reactiveSeq> definitions(Executor ex){
             return new InstanceDefinitions<reactiveSeq>() {
                 @Override
                 public <T, R> Functor<reactiveSeq> functor() {
@@ -544,7 +544,7 @@ public interface Spouts {
 
                 @Override
                 public <T> MonadRec<reactiveSeq> monadRec() {
-                    return Instances.monadRec();
+                    return Instances.monadRec(ex);
                 }
 
                 @Override
@@ -569,15 +569,15 @@ public interface Spouts {
 
                 @Override
                 public <T> Maybe<Unfoldable<reactiveSeq>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                    return Maybe.just(Instances.unfoldable(ex));
                 }
             };
         }
-        public static Unfoldable<reactiveSeq> unfoldable(){
+        public static Unfoldable<reactiveSeq> unfoldable(Executor ex){
             return new Unfoldable<reactiveSeq>() {
                 @Override
                 public <R, T> Higher<reactiveSeq, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
-                    return Spouts.unfold(b,fn);
+                    return Spouts.reactive(Spouts.unfold(b,fn),ex);
                 }
             };
         }
@@ -761,13 +761,13 @@ public interface Spouts {
             Monoid<Higher<reactiveSeq,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
-        public static <T,R> MonadRec<reactiveSeq> monadRec(){
+        public static <T,R> MonadRec<reactiveSeq> monadRec(Executor ex){
 
             return new MonadRec<reactiveSeq>(){
                 @Override
                 public <T, R> Higher<reactiveSeq, R> tailRec(T initial, Function<? super T, ? extends Higher<reactiveSeq,? extends Xor<T, R>>> fn) {
-                   //TODO Switch to async reactive-streams once onComplete event available..
-                    return ReactiveSeq.deferred(()-> {
+
+                    return Spouts.reactive(ReactiveSeq.deferred(()-> {
                         ReactiveSeq<Xor<T, R>> next = ReactiveSeq.of(Xor.secondary(initial));
                         boolean newValue[] = {false};
                         for (; ; ) {
@@ -780,7 +780,7 @@ public interface Spouts {
                         }
 
                         return Xor.sequencePrimary(next.to().listX(LAZY)).map(l -> l.stream()).get();
-                    });
+                    }),ex);
                 }
             };
         }

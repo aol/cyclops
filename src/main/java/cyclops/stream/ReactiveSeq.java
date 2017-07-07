@@ -3,6 +3,7 @@ package cyclops.stream;
 
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.react.ThreadPools;
 import cyclops.collections.mutable.QueueX;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.foldable.Evaluation;
@@ -132,12 +133,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <W1> Product<reactiveSeq,W1,T> product(Active<W1,T> active){
         return Product.of(allTypeclasses(),active);
     }
+    default <W1> Product<reactiveSeq,W1,T> product(Active<W1,T> active,Executor ex){
+        return Product.of(allTypeclasses(ex),active);
+    }
     default <W1> Coproduct<W1,reactiveSeq,T> coproduct(InstanceDefinitions<W1> def2){
         return Coproduct.right(this,def2, Instances.definitions());
     }
-
+    default Active<reactiveSeq,T> allTypeclasses(Executor ex){
+        return Active.of(this, this.visit(sync->Instances.definitions(),rs->Spouts.Instances.definitions(ex),ac->Spouts.Instances.definitions(ex)));
+    }
     default Active<reactiveSeq,T> allTypeclasses(){
-        return Active.of(this, this.visit(sync->Instances.definitions(),rs->Spouts.Instances.definitions(),ac->Spouts.Instances.definitions()));
+        return Active.of(this, this.visit(sync->Instances.definitions(),rs->Spouts.Instances.definitions(ThreadPools.getCurrentThreadExecutor()),ac->Spouts.Instances.definitions(ThreadPools.getCurrentThreadExecutor())));
     }
     default <W2,R> Nested<reactiveSeq,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
         return Nested.of(map(fn), Instances.definitions(), defs);
