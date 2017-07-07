@@ -3,9 +3,9 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Xor;
 import cyclops.monads.Witness;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
@@ -22,8 +22,6 @@ import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -56,6 +54,15 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                                     Higher<queue,T>{
 
 
+    public static <W1,T> Nested<queue,W1,T> nested(QueueX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(nested, QueueX.Instances.definitions(),def2);
+    }
+    default <W1> Product<queue,W1,T> product(Active<W1,T> active){
+        return Product.of(allTypeclasses(),active);
+    }
+    default <W1> Coproduct<W1,queue,T> coproduct(InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, QueueX.Instances.definitions());
+    }
     default Active<queue,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }
@@ -1212,6 +1219,11 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                 }
 
                 @Override
+                public <T> MonadRec<queue> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<queue>> monadPlus(Monoid<Higher<queue, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -1403,6 +1415,22 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
             Monoid<QueueX<T>> m = Monoid.of(QueueX.empty(), Instances::concat);
             Monoid<Higher<queue,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
+        }
+        public static <T,R> MonadRec<queue> monadRec(){
+
+            return new MonadRec<queue>(){
+                @Override
+                public <T, R> Higher<queue, R> tailRec(T initial, Function<? super T, ? extends Higher<queue,? extends Xor<T, R>>> fn) {
+                    QueueX<Xor<T, R>> next = QueueX.of(Xor.secondary(initial));
+                    boolean newValue[] = {false};
+                    for(;;){
+                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> QueueX.of(e)));
+                        if(!newValue[0])
+                            break;
+                    }
+                    return Xor.sequencePrimary(next).get().to().queueX(Evaluation.LAZY);
+                }
+            };
         }
         /**
          *

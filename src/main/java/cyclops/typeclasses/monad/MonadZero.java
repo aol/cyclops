@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 /**
  * A filterable monad
  * 
- * The zero() operator is used toNested replace supplied HKT with it's zero / empty equivalent when filtered out
+ * The zero() operator is used toNested one supplied HKT with it's zero / empty equivalent when filtered out
  * 
  * @author johnmcclean
  *

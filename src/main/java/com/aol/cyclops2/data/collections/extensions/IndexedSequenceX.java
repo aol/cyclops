@@ -30,7 +30,7 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
     /**
      * Replace the value at the specifed index with the supplied value
      * 
-     * @param i Index toNested replace value at
+     * @param i Index toNested one value at
      * @param e Value toNested use
      * @return FluentSequence with value replaced
      */

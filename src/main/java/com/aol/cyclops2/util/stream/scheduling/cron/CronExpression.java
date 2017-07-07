@@ -156,12 +156,12 @@ import java.util.TreeSet;
  * The '#' character is allowed for the day-of-week field. This character is
  * used to specify &quot;the nth&quot; XXX day of the month. For example, the 
  * value of &quot;6#3&quot; in the day-of-week field means the third Friday of 
- * the month (day 6 = Friday and &quot;#3&quot; = the 3rd one in the month). 
+ * the month (day 6 = Friday and &quot;#3&quot; = the 3rd one in the month).
  * Other examples: &quot;2#1&quot; = the takeOne Monday of the month and
  * &quot;4#5&quot; = the fifth Wednesday of the month. Note that if you specify
  * &quot;#5&quot; and there is not 5 of the given day-of-week in the month, then
  * no firing will occur that month.  If the '#' character is used, there can
- * only be one expression in the day-of-week field (&quot;3#1,6#3&quot; is 
+ * only be one expression in the day-of-week field (&quot;3#1,6#3&quot; is
  * not valid, since there are two expressions).
  * <P>
  * <!--The 'C' character is allowed for the day-of-month and day-of-week fields.

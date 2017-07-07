@@ -4,9 +4,11 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Eval;
+import cyclops.control.Xor;
+
 import cyclops.monads.Witness;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
@@ -27,8 +29,6 @@ import cyclops.monads.WitnessType;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -49,6 +49,8 @@ import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
+
 /**
  * An eXtended Persistent List type, that offers additional functional style operators such as bimap, filter and more
  * Can operate eagerly, lazily or reactively (async push)
@@ -65,6 +67,15 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                     Higher<linkedListX,T> {
 
 
+    public static <W1,T> Nested<linkedListX,W1,T> nested(LinkedListX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(),def2);
+    }
+    default <W1> Product<linkedListX,W1,T> product(Active<W1,T> active){
+        return Product.of(allTypeclasses(),active);
+    }
+    default <W1> Coproduct<W1,linkedListX,T> coproduct(InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions());
+    }
     default Active<linkedListX,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }
@@ -1321,6 +1332,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 }
 
                 @Override
+                public <T> MonadRec<linkedListX> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<linkedListX>> monadPlus(Monoid<Higher<linkedListX, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -1513,6 +1529,22 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             Monoid<LinkedListX<T>> m = Monoid.of(LinkedListX.empty(), Instances::concat);
             Monoid<Higher<linkedListX,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
+        }
+        public static <T,R> MonadRec<linkedListX> monadRec(){
+
+            return new MonadRec<linkedListX>(){
+                @Override
+                public <T, R> Higher<linkedListX, R> tailRec(T initial, Function<? super T, ? extends Higher<linkedListX,? extends Xor<T, R>>> fn) {
+                    LinkedListX<Xor<T, R>> next = LinkedListX.of(Xor.secondary(initial));
+                    boolean newValue[] = {false};
+                    for(;;){
+                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> LinkedListX.of(e)));
+                        if(!newValue[0])
+                            break;
+                    }
+                    return Xor.sequencePrimary(next).map(l->l.to().linkedListX(LAZY)).get();
+                }
+            };
         }
         /**
          *

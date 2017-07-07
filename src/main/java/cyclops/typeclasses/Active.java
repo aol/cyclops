@@ -6,8 +6,12 @@ import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.functor.Transformable;
+import cyclops.collections.mutable.ListX;
+import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
+import cyclops.function.*;
+import cyclops.control.Xor;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
@@ -18,7 +22,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -48,6 +54,7 @@ public class Active<W,T> implements Filters<T>,
                                     Transformable<T> {
 
 
+    @Getter
     private final Higher<W, T> single;
     @Getter
     private final InstanceDefinitions<W> def1;
@@ -55,7 +62,16 @@ public class Active<W,T> implements Filters<T>,
     public static <W, T> Active<W, T> of(Higher<W, T> single, InstanceDefinitions<W> def1) {
         return new Active<>(single, def1);
     }
+    public static <W, T> Active<W, T> of(InstanceDefinitions<W> def1,T value) {
+        return new Active<>(def1.unit().unit(value), def1);
+    }
 
+    public <R> R visit(Function<? super Higher<W, T>,? extends R> visitor){
+        return visitor.apply(single);
+    }
+    public <R> R visitA(Function<? super Active<W, T>,? extends R> visitor){
+        return visitor.apply(this);
+    }
     public Higher<W, T> getActive() {
         return single;
     }
@@ -71,6 +87,20 @@ public class Active<W,T> implements Filters<T>,
     public <R> Active<W, R> map(Function<? super T, ? extends R> fn) {
         return of(def1.functor().map(fn, single), def1);
     }
+    public <T2, R> Active<W, R> map2(Higher<W, T2> fb, BiFunction<? super T,? super T2,? extends R> f) {
+        return of(def1.applicative().map2(single,fb,f),def1);
+    }
+
+    public <T2, R> Active<W, R> map2(Active<W, T2> fb, BiFunction<? super T,? super T2,? extends R> f) {
+        return of(def1.applicative().map2(single,fb.single,f),def1);
+    }
+
+    public <T2,R> Eval<Active<W,R>> lazyMap2(Eval<Higher<W,T2>> lazy, BiFunction<? super T,? super T2,? extends R> fn) {
+        return lazy.map(e->map2(e,fn));
+    }
+    public <T2,R> Eval<Active<W,R>> lazyMap2A(Eval<Active<W,T2>> lazy, BiFunction<? super T,? super T2,? extends R> fn) {
+        return lazy.map(e->map2(e,fn));
+    }
 
     public Active<W, T> peek(Consumer<? super T> fn) {
         return of(def1.functor().peek(fn, single), def1);
@@ -79,9 +109,34 @@ public class Active<W,T> implements Filters<T>,
     public <R> Function<Active<W, T>, Active<W, R>> lift(final Function<? super T, ? extends R> fn) {
         return t -> of(def1.functor().map(fn, t.single), def1);
     }
+    public Active<W,Tuple2<T,T>> zip(Active<W,T> p2){
+
+        return zip(p2, Tuple::tuple);
+    }
+    public <R> Active<W,R> zip(Active<W,T> p2,BiFunction<? super T,? super T, ? extends R> zipper){
+        Applicative<W> ap = def1.applicative();
+
+        Function<T, Function<T, R>> fn = a->b->zipper.apply(a,b);
+        Higher<W, Function<T, Function<T, R>>> hfn = ap.unit(fn);
+        return of(ap.ap(ap.ap(hfn,single),p2.getSingle()),def1);
+    }
+    public Active<W,Tuple3<T,T,T>> zip(Active<W,T> p2, Active<W,T> p3){
+
+        return zip(p2, p3,Tuple::tuple);
+    }
+    public <R> Active<W,R> zip(Active<W,T> p2,Active<W,T> p3,Fn3<? super T,? super T, ? super T,? extends R> zipper){
+        Applicative<W> ap = def1.applicative();
+
+        Function<T, Function<T,Function<T, R>>> fn = a->b->c->zipper.apply(a,b,c);
+        Higher<W, Function<T, Function<T,Function<T, R>>>> hfn = ap.unit(fn);
+        return of(ap.ap(ap.ap(ap.ap(hfn,single),p2.getSingle()),p3.getSingle()),def1);
+    }
 
     public <R> Active<W, R> flatMap(Function<? super T, ? extends Higher<W, R>> fn) {
         return of(def1.monad().flatMap(fn, single), def1);
+    }
+    public <R> Active<W, R> flatMapA(Function<? super T, ? extends Active<W, R>> fn) {
+        return of(def1.monad().flatMap(fn.andThen(Active::getActive), single), def1);
     }
 
     public <R> Active<W, R> ap(Higher<W, ? extends Function<T, R>> fn) {
@@ -97,13 +152,54 @@ public class Active<W,T> implements Filters<T>,
         return def1.unfoldable().visit(e->Maybe.just(new Unfolds()),Maybe::none);
     }
     public Folds foldsUnsafe(){
-        return def1.foldable().visit(s-> new Folds(),()->null);
+        return new Folds();
     }
     public Maybe<Folds> folds(){
         return def1.foldable().visit(e->Maybe.just(new Folds()),Maybe::none);
     }
     public Maybe<Traverse> traverse(){
         return def1.traverse().visit(e->Maybe.just(new Traverse()),Maybe::none);
+    }
+    public Plus plusUnsafe(){
+        return new Plus();
+    }
+    public Maybe<Plus> plus(){
+        return def1.foldable().visit(e->Maybe.just(new Plus()),Maybe::none);
+    }
+
+    public class Plus{
+
+        public Monoid<Higher<W,T>> monoid(){
+            return def1.monadPlus().get().narrowMonoid();
+        }
+        public Active<W,T> zero(){
+            Higher<W, T> h = def1.monadZero().get().narrowZero();
+            return of(h, def1);
+
+        }
+        public Active<W,T> sum(ListX<Higher<W, T>> list){
+            return of(def1.monadPlus().visit(p->p.sum(list.plus(single)),()->single),def1);
+        }
+        public Active<W,T> sumA(ListX<Active<W, T>> list){
+            return sum(list.map(Active::getActive));
+        }
+        public Active<W,T> plus(Higher<W, T> a){
+            return of(def1.monadPlus().visit(p->p.plus(single,a),()->single),def1);
+        }
+        public Active<W,T> plusA(Active<W, T> ac){
+            Higher<W, T> a =ac.single;
+            return plus(a);
+        }
+    }
+
+    public <R> Higher<W, R> tailRec(T initial,Function<? super T,? extends Higher<W, ? extends Xor<T, R>>> fn){
+        return def1.monadRec().<T,R>tailRec(initial,fn);
+    }
+    public <R> Active<W, R> tailRecA(T initial,Function<? super T,? extends Higher<W, ? extends Xor<T, R>>> fn){
+        return Active.of(def1.monadRec().<T,R>tailRec(initial,fn),def1);
+    }
+    public <R> Active<W, R> tailRecActive(T initial,Function<? super T,? extends Active<W, ? extends Xor<T, R>>> fn){
+        return Active.of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(Active::getActive)),def1);
     }
 
     public class Unfolds{
@@ -123,25 +219,29 @@ public class Active<W,T> implements Filters<T>,
         }
 
     }
+
     public class Folds {
 
+        public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
+            return def1.foldable().visit(p->p.foldMap(mb,fn,single),()->mb.zero());
+        }
 
         public T foldRight(Monoid<T> monoid) {
-            return def1.foldable().get().foldRight(monoid, single);
+            return  def1.foldable().visit(p -> p.foldRight(monoid, single), () -> monoid.zero());
         }
 
 
         public T foldRight(T identity, BinaryOperator<T> semigroup) {
-            return def1.foldable().get().foldRight(Monoid.fromBiFunction(identity, semigroup), single);
+            return foldRight(Monoid.fromBiFunction(identity, semigroup));
         }
 
         public T foldLeft(Monoid<T> monoid) {
-            return def1.foldable().get().foldLeft(monoid, single);
+            return def1.foldable().visit(p -> p.foldLeft(monoid, single), () -> monoid.zero());
         }
 
 
         public T foldLeft(T identity, BinaryOperator<T> semigroup) {
-            return def1.foldable().get().foldLeft(identity, semigroup, single);
+            return foldLeft(Monoid.fromBiFunction(identity, semigroup));
         }
 
     }
@@ -149,10 +249,14 @@ public class Active<W,T> implements Filters<T>,
     public class Traverse{
         public  <W2, R> Higher<W2, Higher<W, R>> flatTraverse(Applicative<W2> applicative,
                                                                Function<? super T,? extends Higher<W2, Higher<W, R>>>f) {
-            return def1.traverse().get().flatTraverse(applicative,def1.monad(),single,f);
-
+            return def1.traverse()
+                       .get()
+                       .flatTraverse(applicative,def1.monad(),single,f);
         }
+    }
 
+    public <W2> Product<W,W2,T> concat(Active<W2,T> active){
+        return Product.of(this,active);
     }
 
     @Override

@@ -3,14 +3,12 @@ package cyclops.control;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.anyM.AnyMValue;
+import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.identity;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
@@ -33,6 +31,15 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
          return new Identity<>(value);
      }
 
+    public static <W1,T> Nested<identity,W1,T> nested(Identity<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(),def2);
+    }
+    public <W1> Product<identity,W1,T> product(Active<W1,T> active){
+        return Product.of(allTypeclasses(),active);
+    }
+    public <W1> Coproduct<W1,identity,T> coproduct(InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions());
+    }
      public T get(){
          return value;
      }
@@ -111,6 +118,11 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
                 @Override
                 public <T> Maybe<MonadPlus<identity>> monadPlus() {
                     return Maybe.none();
+                }
+
+                @Override
+                public <T> MonadRec<identity> monadRec() {
+                    return Instances.monadRec();
                 }
 
                 @Override
@@ -206,6 +218,31 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
                     return narrowK(ds).flatMap(fn.andThen(i->narrowK(i)));
                 }
             };
+        }
+        public static  MonadRec<identity> monadRec() {
+
+            return new MonadRec<identity>(){
+                @Override
+                public <T, R> Higher<identity, R> tailRec(T initial, Function<? super T, ? extends Higher<identity, ? extends Xor<T, R>>> fn) {
+                    Identity<? extends Xor<T, R>> next[] = new Identity[1];
+                    next[0] = Identity.of(Xor.secondary(initial));
+                    boolean cont = true;
+                    do {
+
+                        cont = next[0].visit(p -> p.visit(s -> {
+                            next[0] = narrowK(fn.apply(s));
+                            return true;
+                        }, __ -> false));
+                    } while (cont);
+                    return next[0].map(Xor::get);
+                }
+
+
+
+
+            };
+
+
         }
         public static Traverse<identity> traverse(){
             return new Traverse<identity>(){

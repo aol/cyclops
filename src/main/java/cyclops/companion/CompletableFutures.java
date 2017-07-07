@@ -5,6 +5,12 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
+
+import com.aol.cyclops2.types.reactive.Completable;
+import cyclops.monads.transformers.FutureT;
+import cyclops.typeclasses.*;
+import cyclops.control.Xor;
+import cyclops.monads.Witness.future;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.async.Future;
@@ -16,8 +22,6 @@ import cyclops.function.Reducer;
 import cyclops.monads.Witness.completableFuture;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.CompletableFutureT;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -51,6 +55,25 @@ public class CompletableFutures {
         result.complete(value);
         return result;
     }
+    public static <W1,T> Nested<completableFuture,W1,T> nested(CompletableFuture<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(CompletableFutureKind.widen(nested), Instances.definitions(),def2);
+    }
+    public <W1,T> Product<completableFuture,W1,T> product(CompletableFuture<T> f,Active<W1,T> active){
+        return Product.of(allTypeclasses(f),active);
+    }
+
+    public static <W1,T> Coproduct<W1,completableFuture,T> coproduct(CompletableFuture<T> f,InstanceDefinitions<W1> def2){
+        return Coproduct.right(CompletableFutureKind.widen(f),def2,Instances.definitions());
+    }
+    public static <T> Active<completableFuture,T> allTypeclasses(CompletableFuture<T> f){
+        return Active.of(CompletableFutureKind.widen(f), Instances.definitions());
+    }
+    public <W2,T,R> Nested<completableFuture,W2,R> mapM(CompletableFuture<T> f,Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        CompletableFuture<Higher<W2, R>> x = f.thenApply(fn);
+        return nested(x,defs);
+
+    }
+
 
     public static <T,W extends WitnessType<W>> CompletableFutureT<W, T> liftM(CompletableFuture<T> opt, W witness) {
         return CompletableFutureT.of(witness.adapter().unit(opt));
@@ -586,6 +609,11 @@ public class CompletableFutures {
                 }
 
                 @Override
+                public <T> MonadRec<completableFuture> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<completableFuture>> monadPlus(Monoid<Higher<completableFuture, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -848,6 +876,17 @@ public class CompletableFutures {
             CompletableFuture<T> future = CompletableFutureKind.narrowK(ds);
             return applicative.map(CompletableFutureKind::completedFuture, fn.apply(future.join()));
         }
+        public static <T,R> MonadRec<completableFuture> monadRec(){
+
+            return new  MonadRec<completableFuture>(){
+
+                @Override
+                public <T, R> Higher<completableFuture, R> tailRec(T initial, Function<? super T, ? extends Higher<completableFuture, ? extends Xor<T, R>>> fn) {
+                    Higher<future, R> x = Future.Instances.monadRec().tailRec(initial, fn.andThen(CompletableFutureKind::narrowK).andThen(Future::of));
+                    return CompletableFutureKind.narrowFuture(x);
+                }
+            };
+        }
 
     }
     /**
@@ -913,7 +952,12 @@ public class CompletableFutures {
             return new Box<>(
                     completableFuture);
         }
-
+        public static <T> CompletableFutureKind<T> fromFuture(final Future<T> completableFuture) {
+           return widen(completableFuture.toCompletableFuture());
+        }
+        public static <T> CompletableFutureKind<T> narrowFuture(final Higher<future, T> future) {
+            return fromFuture(Future.narrowK(future));
+        }
         /**
          * Convert the raw Higher Kinded Type for CompletableFutureKind types into the CompletableFutureKind type definition class
          *

@@ -2,6 +2,7 @@ package cyclops.typeclasses.monad;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.Monoid;
 
 public interface MonadPlus<CRE> extends MonadZero<CRE>{
@@ -19,5 +20,9 @@ public interface MonadPlus<CRE> extends MonadZero<CRE>{
     
     default <T> Higher<CRE,T> plus(Higher<CRE, T> a, Higher<CRE, T> b){
         return this.<T>narrowMonoid().apply(a,b);         
+    }
+
+    default <T> Higher<CRE, T> sum(ListX<Higher<CRE, T>> list) {
+        return list.foldLeft(this.narrowZero(),this::plus);
     }
 }

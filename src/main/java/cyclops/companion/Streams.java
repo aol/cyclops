@@ -2,8 +2,11 @@ package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.mutable.QueueX;
+import cyclops.typeclasses.*;
+import cyclops.control.Xor;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
+
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
@@ -23,8 +26,6 @@ import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.NonPausableHotStream;
 import com.aol.cyclops2.types.stream.PausableHotStream;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -67,6 +68,25 @@ import java.util.stream.*;
  */
 @UtilityClass
 public class Streams {
+
+    public static <W1,T> Nested<stream,W1,T> nested(Stream<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(StreamKind.widen(nested), Instances.definitions(),def2);
+    }
+    public <W1,T> Product<stream,W1,T> product(Stream<T> f, Active<W1,T> active){
+        return Product.of(allTypeclasses(f),active);
+    }
+
+    public static <W1,T> Coproduct<W1,stream,T> coproduct(Stream<T> f, InstanceDefinitions<W1> def2){
+        return Coproduct.right(StreamKind.widen(f),def2, Instances.definitions());
+    }
+    public static <T> Active<stream,T> allTypeclasses(Stream<T> f){
+        return Active.of(StreamKind.widen(f), Instances.definitions());
+    }
+    public <W2,T,R> Nested<stream,W2,R> mapM(Stream<T> f, Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        Stream<Higher<W2, R>> x = f.map(fn);
+        return nested(x,defs);
+
+    }
 
     public static <T> ReactiveSeq<ReactiveSeq<T>> combinations(int size,Object[] a){
 
@@ -2874,6 +2894,11 @@ public class Streams {
                 }
 
                 @Override
+                public <T> MonadRec<stream> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<stream>> monadPlus(Monoid<Higher<stream, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -3048,6 +3073,22 @@ public class Streams {
             BiFunction<Higher<stream,T>,Predicate<? super T>,Higher<stream,T>> filter = Instances::filter;
             Supplier<Higher<stream, T>> zero = ()->StreamKind.widen(Stream.of());
             return General.<stream,T,R>monadZero(monad(), zero,filter);
+        }
+        public static <T,R> MonadRec<stream> monadRec(){
+
+            return new MonadRec<stream>(){
+                @Override
+                public <T, R> Higher<stream, R> tailRec(T initial, Function<? super T, ? extends Higher<stream,? extends Xor<T, R>>> fn) {
+                    Stream<Xor<T, R>> next = Stream.of(Xor.secondary(initial));
+                    boolean newValue[] = {false};
+                    for(;;){
+                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return StreamKind.narrowK(fn.apply(s)); }, p -> Stream.of(e)));
+                        if(!newValue[0])
+                            break;
+                    }
+                    return StreamKind.widen(Xor.sequencePrimary(ListX.listX(ReactiveSeq.fromStream(next))).get().stream());
+                }
+            };
         }
         /**
          * <pre>

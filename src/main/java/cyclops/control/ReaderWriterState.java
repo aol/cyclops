@@ -2,6 +2,7 @@ package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher4;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.rws;
 import cyclops.monads.Witness.supplier;
@@ -23,6 +24,8 @@ import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -203,6 +206,11 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
                 }
 
                 @Override
+                public <T> MonadRec<Higher<Higher<Higher<rws, R>, W>, S>> monadRec() {
+                    return Instances.monadRec(monoid);
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<Higher<Higher<Higher<rws, R>, W>, S>>> monadPlus(Monoid<Higher<Higher<Higher<Higher<rws, R>, W>, S>, T>> m) {
                     return Maybe.none();
                 }
@@ -299,6 +307,22 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
 
             };
 
+        }
+        public static <R1,W,S> MonadRec<Higher<Higher<Higher<rws, R1>,W>,S>> monadRec(Monoid<W> monoid) {
+            return new MonadRec<Higher<Higher<Higher<rws, R1>,W>,S>>() {
+
+
+                @Override
+                public <T, R> Higher<Higher<Higher<Higher<rws, R1>, W>, S>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<Higher<rws, R1>, W>, S>, ? extends Xor<T, R>>> fn) {
+                    return narrowK(fn.apply(initial)).flatMap( eval ->
+                            eval.visit(s->narrowK(tailRec(s,fn)),p->{
+                                ReaderWriterState<R1, W, S, R> k = narrowK(Instances.<R1, W, S>unit(monoid).<R>unit(p));
+                                return k;
+                            }));
+                }
+
+
+            };
         }
 
 

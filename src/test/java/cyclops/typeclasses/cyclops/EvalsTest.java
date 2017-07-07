@@ -8,6 +8,8 @@ import static org.junit.Assert.assertThat;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
+import cyclops.control.Xor;
+import cyclops.control.lazy.Either;
 import cyclops.function.Fn1;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
@@ -45,6 +47,11 @@ public class EvalsTest {
     }
     private int multiplyByTwo(int x){
         return x*2;
+    }
+    @Test
+    public void tailRec(){
+        System.out.println(Eval.Instances.monadRec().tailRec(10,i->Eval.now(Xor.primary(i+10))));
+        System.out.println(Eval.Instances.monadRec().tailRec(10,i-> i<1000_000 ? Eval.now(Either.left(i+1)) : Eval.now(Either.right(i+10))));
     }
     @Test
     public void applicative(){

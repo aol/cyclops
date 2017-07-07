@@ -146,4 +146,7 @@ public class Functions {
 
     }
 
+    public static <T, R> Function<T,R> narrow(Function<? super T, ? extends R> fn) {
+        return  (Function<T,R>)fn;
+    }
 }

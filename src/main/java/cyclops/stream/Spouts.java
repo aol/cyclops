@@ -1,6 +1,9 @@
 package cyclops.stream;
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.react.threads.SequentialElasticPools;
+import cyclops.async.SimpleReact;
+import cyclops.control.Xor;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
@@ -36,6 +39,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Stream;
+
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * reactive : is used toNested denote creational methods for reactive-streams that support non-blocking backpressure
@@ -538,6 +543,11 @@ public interface Spouts {
                 }
 
                 @Override
+                public <T> MonadRec<reactiveSeq> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<reactiveSeq>> monadPlus(Monoid<Higher<reactiveSeq, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -751,7 +761,29 @@ public interface Spouts {
             Monoid<Higher<reactiveSeq,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
+        public static <T,R> MonadRec<reactiveSeq> monadRec(){
 
+            return new MonadRec<reactiveSeq>(){
+                @Override
+                public <T, R> Higher<reactiveSeq, R> tailRec(T initial, Function<? super T, ? extends Higher<reactiveSeq,? extends Xor<T, R>>> fn) {
+                   //TODO Switch to async reactive-streams once onComplete event available..
+                    return ReactiveSeq.deferred(()-> {
+                        ReactiveSeq<Xor<T, R>> next = ReactiveSeq.of(Xor.secondary(initial));
+                        boolean newValue[] = {false};
+                        for (; ; ) {
+                            next = next.flatMap(e -> e.visit(s -> {
+                                newValue[0] = true;
+                                return narrowK(fn.apply(s));
+                            }, p -> ReactiveSeq.of(e)));
+                            if (!newValue[0])
+                                break;
+                        }
+
+                        return Xor.sequencePrimary(next.to().listX(LAZY)).map(l -> l.stream()).get();
+                    });
+                }
+            };
+        }
         /**
          * @return Type class for traversables with traverse / sequence operations
          */

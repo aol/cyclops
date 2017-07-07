@@ -519,7 +519,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return (FutureStream<U>)ReactiveSeq.super.combine(op,predicate);
     }
     /**
-     * If this SequenceM is empty replace it with a another Stream
+     * If this SequenceM is empty one it with a another Stream
      *
      * <pre>
      * {@code

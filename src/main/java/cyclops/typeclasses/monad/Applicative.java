@@ -1,8 +1,11 @@
 package cyclops.typeclasses.monad;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Eval;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.functor.Functor;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -10,7 +13,17 @@ import java.util.function.Function;
 
 
 public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
-    
+
+    default <T, R> Higher<CRE,Tuple2<T, R>> product(Higher<CRE, T> fa, Higher<CRE, R> fb) {
+        return ap(ap(unit(a-> b-> Tuple.tuple(a,b)), fa),fb);
+
+    }
+    default <T1, T2, R> Higher<CRE, R> map2(Higher<CRE, T1> fa, Higher<CRE, T2> fb, BiFunction<? super T1,? super T2,? extends R> f) {
+        return map_(product(fa, fb),in-> f.apply(in.v1,in.v2));
+    }
+    default <T1,T2,R> Eval<Higher<CRE,R>> lazyMap2(Higher<CRE,T1> f1, Eval<Higher<CRE,T2>> lazy, BiFunction<? super T1,? super T2,? extends R> fn) {
+        return lazy.map(e->map2(f1,e,fn));
+    }
     /**
      * Narrow the co/contra variance on Function stored within a HKT encoded type 
      * 
@@ -49,6 +62,7 @@ public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
     }
     
     public <T,R> Higher<CRE,R> ap(Higher<CRE, ? extends Function<T, R>> fn, Higher<CRE, T> apply);
+
 
 
     

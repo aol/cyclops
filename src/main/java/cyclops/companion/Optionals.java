@@ -4,10 +4,14 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.typeclasses.*;
+
+import cyclops.control.Xor;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.function.Fn3;
@@ -17,8 +21,6 @@ import cyclops.function.Reducer;
 import cyclops.monads.Witness.optional;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.OptionalT;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -50,6 +52,28 @@ import lombok.experimental.UtilityClass;
 public class Optionals {
    public static <T,W extends WitnessType<W>> OptionalT<W, T> liftM(Optional<T> opt, W witness) {
         return OptionalT.of(witness.adapter().unit(opt));
+    }
+    public static <W1,T> Nested<optional,W1,T> nested(Optional<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(OptionalKind.widen(nested), Instances.definitions(),def2);
+    }
+    public <W1,T> Product<optional,W1,T> product(Optional<T> f, Active<W1,T> active){
+        return Product.of(allTypeclasses(f),active);
+    }
+
+    public static <W1,T> Coproduct<W1,optional,T> coproduct(Optional<T> f, InstanceDefinitions<W1> def2){
+        return Coproduct.right(OptionalKind.widen(f),def2, Instances.definitions());
+    }
+    public static <T> Active<optional,T> allTypeclasses(Optional<T> f){
+        return Active.of(OptionalKind.widen(f), Instances.definitions());
+    }
+    public <W2,T,R> Nested<optional,W2,R> mapM(Optional<T> f, Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        Optional<Higher<W2, R>> x = f.map(fn);
+        return nested(x,defs);
+
+    }
+
+    public static <T,R> R visit(Optional<T> optional, Function<? super T, ? extends R> fn, Supplier<R> s){
+       return optional.isPresent() ? fn.apply(optional.get()) : s.get();
     }
 
     /**
@@ -623,6 +647,11 @@ public class Optionals {
                 }
 
                 @Override
+                public <T> MonadRec<optional> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<optional>> monadPlus(Monoid<Higher<optional, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -792,7 +821,31 @@ public class Optionals {
 
             return General.monadZero(monad(), OptionalKind.empty());
         }
+        public static  MonadRec<optional> monadRec() {
+
+            return new MonadRec<optional>(){
+
+
+                @Override
+                public <T, R> Higher<optional, R> tailRec(T initial, Function<? super T, ? extends Higher<optional, ? extends Xor<T, R>>> fn) {
+                    Optional<? extends Xor<T, R>> next[] = new Optional[1];
+                    next[0] = Optional.of(Xor.secondary(initial));
+                    boolean cont = true;
+                    do {
+                        cont = Optionals.visit(next[0],p -> p.visit(s -> {
+                            next[0] = OptionalKind.narrowK(fn.apply(s));
+                            return true;
+                        }, pr -> false), () -> false);
+                    } while (cont);
+                    return OptionalKind.widen(next[0].map(Xor::get));
+
+                }
+            };
+
+
+        }
         /**
+         *
          * <pre>
          * {@code
          *  OptionalKind<Integer> list = Optionals.<Integer>monadPlus()

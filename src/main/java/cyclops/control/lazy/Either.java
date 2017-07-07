@@ -1,6 +1,7 @@
 package cyclops.control.lazy;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.reactive.Completable;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;
@@ -14,7 +15,9 @@ import cyclops.control.*;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
+import cyclops.monads.Witness.either;
 import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.jooq.lambda.tuple.Tuple;
@@ -114,6 +117,7 @@ import java.util.stream.Stream;
  * @param <RT> Right type
  */
 public interface Either<LT, RT> extends Xor<LT, RT>{
+
 
     static <LT1,RT> Either<LT1,RT> fromMonadicValue(MonadicValue<RT> mv2){
         if(mv2 instanceof Either){
@@ -352,7 +356,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      */
     public static <LT1, PT> Either<ListX<LT1>,ListX<PT>> sequenceRight(final CollectionX<Either<LT1, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(Either::isRight).map(AnyM::fromEither).to().listX(),Witness.either.INSTANCE)
+        return AnyM.sequence(xors.stream().filter(Either::isRight).map(AnyM::fromEither).to().listX(), either.INSTANCE)
                 .to(Witness::either);
     }
     public static <LT1, PT> Either<ListX<LT1>,ListX<PT>> sequenceLeft(final CollectionX<Either<LT1, PT>> xors) {
@@ -361,7 +365,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                                  .filter(Either::isRight)
                                  .map(i->AnyM.fromEither(i.swap())).to()
                                  .listX(),
-                                Witness.either.INSTANCE)
+                                either.INSTANCE)
                     .to(Witness::either);
         return res.swap();
     }
@@ -629,7 +633,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @see com.aol.cyclops2.types.MonadicValue#fromEither5()
      */
 
-    default AnyM<Witness.either, RT> anyMEither() {
+    default AnyM<either, RT> anyMEither() {
         return AnyM.fromEither(this);
     }
 

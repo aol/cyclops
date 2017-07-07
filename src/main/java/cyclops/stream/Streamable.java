@@ -47,10 +47,10 @@ public interface Streamable<T> extends To<Streamable<T>>,
                                         ToStream<T>,
                                         FoldableTraversable<T>,
                                         CyclopsCollectable<T>,
-        Transformable<T>,
+                                        Transformable<T>,
                                         Filters<T>,
                                         Traversable<T>,
-        Unit<T>,
+                                        Unit<T>,
                                         Zippable<T> {
 
     public static <T> Streamable<T> fromObject(final Object toCoerce) {
@@ -2448,7 +2448,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return fromStream(reactiveSeq().jool(s->s.rightOuterJoin(other, predicate)));
     }
 
-    /** If this Streamable is empty replace it with a another Stream
+    /** If this Streamable is empty one it with a another Stream
      * 
      * <pre>
      * {@code 
@@ -2562,7 +2562,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Allow one element through per time period, drop all other 
+     * Allow one element through per time period, drop all other
      * elements in that time period
      * 
      * <pre>

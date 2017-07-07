@@ -32,10 +32,7 @@ import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
@@ -1502,6 +1499,16 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     public static <T,X extends Throwable> Try<T,X> narrowK(final Higher<Higher<tryType, X>,T> t) {
         return (Try)t;
     }
+
+    public static <W1,X extends Throwable,T> Nested<Higher<tryType,X>,W1,T> nested(Try<Higher<W1,T>,X> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(),def2);
+    }
+    public <W1> Product<Higher<tryType,X>,W1,T> product(Active<W1,T> active){
+        return Product.of(allTypeclasses(),active);
+    }
+    public <W1> Coproduct<W1,Higher<tryType,X>,T> coproduct(InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions());
+    }
     public static class Instances {
 
         public static <L extends Throwable> InstanceDefinitions<Higher<tryType, L>> definitions(){
@@ -1534,6 +1541,11 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                 @Override
                 public <T> Maybe<MonadPlus<Higher<tryType, L>>> monadPlus() {
                     return Maybe.none();
+                }
+
+                @Override
+                public <T> MonadRec<Higher<tryType, L>> monadRec() {
+                    return Instances.monadRec();
                 }
 
                 @Override
@@ -1631,6 +1643,29 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                 }
             };
         }
+        public static <X extends Throwable,T,R> MonadRec<Higher<tryType, X>> monadRec() {
+
+            return new MonadRec<Higher<tryType, X>>(){
+                @Override
+                public <T, R> Higher<Higher<tryType, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<tryType, X>, ? extends Xor<T, R>>> fn) {
+                    Try<? extends Xor<T, R>,X> next[] = new Try[1];
+                    next[0] = Try.success(Xor.secondary(initial));
+                    boolean cont = true;
+                    do {
+                        cont = next[0].visit(p -> p.visit(s -> {
+                            next[0] = narrowK(fn.apply(s));
+                            return true;
+                        }, pr -> false), () -> false);
+                    } while (cont);
+                    return next[0].map(Xor::get);
+                }
+
+
+            };
+
+
+        }
+
         public static <L extends Throwable> Traverse<Higher<tryType, L>> traverse() {
             return new Traverse<Higher<tryType, L>>() {
 

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -24,23 +25,9 @@ public class TrampolineTest {
 		assertThat(loop(500000,10).result(),equalTo(446198426));
 		
 	}
-    Trampoline<Integer> loop2(int times,int sum){
 
-	    System.out.println("Loop-B " + times + " : " + sum);
-        if(times==0)
-            return Trampoline.done(sum);
-        else
-            return Trampoline.more(()->loop2(times-1,sum+times));
-    }
 
-	Trampoline<Integer> loop(int times,int sum){
-        System.out.println("Loop-A " + times + " : " + sum);
-		if(times==0)
-			return Trampoline.done(sum);
-		else
-			return Trampoline.more(()->loop(times-1,sum+times));
-	}
-	
+
 	@Test @Ignore
 	public void trampolineTest1(){
 		
@@ -48,20 +35,47 @@ public class TrampolineTest {
 		
 	}
 	Integer loop1(int times,int sum){
-		
+
 		if(times==0)
 			return sum;
 		else
 			return loop1(times-1,sum+times);
 	}
-	
+    @Test
 
-	@Test
+
+
     public void interleave(){
-	    Trampoline<Integer> looping = loop(500000,5);
-	    Trampoline<Integer> looping2 = loop2(500000,5);
-	    System.out.println(looping.zip(looping2).get());
+
+	    Trampoline<Integer> algorithm1 = loop(500000,5);
+        Trampoline<Integer> algorithm2 = loop2(500000,5);
+
+        //interleaved execution via Zip!
+        Tuple2<Integer, Integer> result = algorithm1.zip(algorithm2).get();
+
+        System.out.println(result);
     }
+
+    Trampoline<Integer> loop2(int times,int sum){
+
+        System.out.println("Loop-B " + times + " : " + sum);
+        if(times==0)
+            return Trampoline.done(sum);
+        else
+            return Trampoline.more(()->loop2(times-1,sum+times));
+    }
+
+    Trampoline<Integer> loop(int times,int sum){
+        System.out.println("Loop-A " + times + " : " + sum);
+        if(times==0)
+            return Trampoline.done(sum);
+        else
+            return Trampoline.more(()->loop(times-1,sum+times));
+    }
+
+
+
+
     @Test
     public void interleave3(){
         Trampoline<Integer> looping = loop(50000,5);

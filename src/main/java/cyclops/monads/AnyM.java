@@ -1288,7 +1288,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return sequence(seq,w).map(l->l.map(fn));
     }
 
-    
+
 
     static class AnyMFactory {
         static AnyMFactory instance = new AnyMFactory();

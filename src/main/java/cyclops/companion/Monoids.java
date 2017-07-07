@@ -16,6 +16,7 @@ import cyclops.function.Semigroup;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.NaturalTransformation;
 import org.jooq.lambda.Seq;
 import org.reactivestreams.Publisher;
 
@@ -148,7 +149,7 @@ public interface Monoids {
      * @return A combiner for LinkedListX (concatenates two LinkedListX into a singleUnsafe LinkedListX)
      */
     static <T> Monoid<LinkedListX<T>> linkedListXConcat() {
-        return Monoid.of(LinkedListX.empty(),Semigroups.collectionXConcat());
+        return Monoid.of(LinkedListX.empty(),Semigroups.linkedListXConcat());
     }
 
     /**
@@ -216,7 +217,7 @@ public interface Monoids {
      * }
      * </pre>
      * 
-     * @param zeroFn Function toNested lift the Identity value into a Scalar Functor
+     * @param zeroFn Function zeoFn lift the Identity value into a Scalar Functor
      * @param monoid Monoid toNested combine the values inside the Scalar Functors
      * @return Combination of two Scalar Functors
      */
@@ -243,8 +244,8 @@ public interface Monoids {
     /**
      * @return Combination of two LazyFutureStreams Streams b is appended toNested a
      */
-    static <T> Semigroup<FutureStream<T>> combineFutureStream() {
-        return (a, b) -> a.appendS(b);
+    static <T> Monoid<FutureStream<T>> combineFutureStream() {
+        return Monoid.of(FutureStream.builder().of(),Semigroups.combineFutureStream());
     }
     /**
      * @return Combination of two ReactiveSeq Streams b is appended toNested a
@@ -550,11 +551,16 @@ public interface Monoids {
      * Combine two booleans by AND'ing them (conjunction)
      */
     static Monoid<Boolean> booleanConjunction = Monoid.of(true, Semigroups.booleanConjunction);
-    
+
+    static <A> Monoid<NaturalTransformation<A,A>> naturalTransformationComposition(){
+        return Monoid.of(NaturalTransformation.identity(), Semigroups.naturalTransformationComposition());
+    }
+
     /**
      * @return Monoid for composing function
      */
     static <A> Monoid<Function<A,A>> functionComposition(){
         return Monoid.of(Function.identity(), Semigroups.functionComposition());
     }
+
 }

@@ -2,8 +2,7 @@ package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
@@ -18,8 +17,6 @@ import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.EvalT;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -78,6 +75,15 @@ public interface Eval<T> extends To<Eval<T>>,
                                     MonadicValue<T>,
                                     Higher<eval ,T> {
 
+    public static <W1,T> Nested<eval,W1,T> nested(Eval<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(),def2);
+    }
+    default <W1> Product<eval,W1,T> product(Active<W1,T> active){
+        return Product.of(allTypeclasses(),active);
+    }
+    default <W1> Coproduct<W1,eval,T> coproduct(InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions());
+    }
     default Active<eval,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }
@@ -1183,6 +1189,11 @@ public interface Eval<T> extends To<Eval<T>>,
                 }
 
                 @Override
+                public <T> MonadRec<eval> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<eval>> monadPlus(Monoid<Higher<eval, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -1351,6 +1362,17 @@ public interface Eval<T> extends To<Eval<T>>,
         public static <T,R> MonadZero<eval> monadZero(){
 
             return General.monadZero(monad(), Eval.now(null));
+        }
+        public static <T,R> MonadRec<eval> monadRec(){
+
+            return new MonadRec<eval>(){
+
+                @Override
+                public <T, R> Higher<eval, R> tailRec(T initial, Function<? super T, ? extends Higher<eval, ? extends Xor<T, R>>> fn) {
+                    return narrowK(fn.apply(initial)).flatMap( eval ->
+                            eval.visit(s->narrowK(tailRec(s,fn)),p->Eval.now(p)));
+                }
+            };
         }
         /**
          * <pre>

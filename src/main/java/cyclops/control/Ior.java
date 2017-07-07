@@ -16,10 +16,7 @@ import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.ior;
 import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
@@ -59,6 +56,16 @@ import java.util.stream.Stream;
  */
 public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransformable<ST, PT> ,Higher2<ior,ST,PT> {
 
+
+    public static <W1,ST,PT> Nested<Higher<ior,ST>,W1,PT> nested(Ior<ST,Higher<W1,PT>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(),def2);
+    }
+    default <W1> Product<Higher<ior,ST>,W1,PT> product(Active<W1,PT> active){
+        return Product.of(allTypeclasses(),active);
+    }
+    default <W1> Coproduct<W1,Higher<ior,ST>,PT> coproduct(InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions());
+    }
     default Active<Higher<ior,ST>,PT> allTypeclasses(){
         return Active.of(this, Ior.Instances.definitions());
     }
@@ -1442,10 +1449,10 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                         .visit(s -> Ior.secondary(this.secondaryGet()), f -> Ior.both(this.secondaryGet(), fn.apply(get(), app.get())));
             }
         }
-    public static <ST,T> Ior<ST,T> narrowK2(final Higher2<Witness.ior, ST,T> ior) {
+    public static <ST,T> Ior<ST,T> narrowK2(final Higher2<ior, ST,T> ior) {
         return (Ior<ST,T>)ior;
     }
-    public static <ST,T> Ior<ST,T> narrowK(final Higher<Higher<Witness.ior, ST>,T> ior) {
+    public static <ST,T> Ior<ST,T> narrowK(final Higher<Higher<ior, ST>,T> ior) {
         return (Ior<ST,T>)ior;
     }
     public static class Instances {
@@ -1480,6 +1487,11 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                 @Override
                 public <T> Maybe<MonadPlus<Higher<ior, L>>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> MonadRec<Higher<ior, L>> monadRec() {
+                    return Instances.monadRec();
                 }
 
                 @Override
@@ -1659,6 +1671,28 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                     return Instances.<L>unit().unit(value);
                 }
             };
+        }
+        public static <X,T,R> MonadRec<Higher<ior, X>> monadRec() {
+
+            return new MonadRec<Higher<ior, X>>(){
+                @Override
+                public <T, R> Higher<Higher<ior, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<ior, X>, ? extends Xor<T, R>>> fn) {
+                    Ior<X,? extends Xor<T, R>> next[] = new Ior[1];
+                    next[0] = Ior.primary(Xor.secondary(initial));
+                    boolean cont = true;
+                    do {
+                        cont = next[0].visit(p -> p.visit(s -> {
+                            next[0] = narrowK(fn.apply(s));
+                            return true;
+                        }, pr -> false), () -> false);
+                    } while (cont);
+                    return next[0].map(Xor::get);
+                }
+
+
+            };
+
+
         }
         public static <L> MonadPlus<Higher<ior, L>> monadPlus() {
             Monoid m = Monoids.firstPrimaryIor((Ior)Ior.narrowK(Instances.<L>monadZero().zero()));

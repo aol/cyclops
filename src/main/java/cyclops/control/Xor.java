@@ -20,10 +20,7 @@ import cyclops.monads.Witness.xor;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.XorT;
 import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
@@ -129,6 +126,15 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                                      Higher2<xor,ST,PT> {
 
 
+    public static <W1,ST,PT> Nested<Higher<xor,ST>,W1,PT> nested(Xor<ST,Higher<W1,PT>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(),def2);
+    }
+    default <W1> Product<Higher<xor,ST>,W1,PT> product(Active<W1,PT> active){
+        return Product.of(allTypeclasses(),active);
+    }
+    default <W1> Coproduct<W1,Higher<xor,ST>,PT> coproduct(InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions());
+    }
     default Active<Higher<xor,ST>,PT> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }
@@ -638,7 +644,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
 
     /**
-     *  Turn a toX of Xors into a singleUnsafe Ior with Lists of values.
+     *  Turn a Collection of Xors into a single Xor with Lists of values.
      *
      * <pre>
      * {@code
@@ -1413,6 +1419,11 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                 }
 
                 @Override
+                public <T> MonadRec<Higher<xor, L>> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<Higher<xor, L>>> monadPlus(Monoid<Higher<Higher<xor, L>, T>> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
@@ -1505,6 +1516,28 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                     return Instances.<L>unit().unit(value);
                 }
             };
+        }
+        public static <X,T,R> MonadRec<Higher<xor, X>> monadRec() {
+
+            return new MonadRec<Higher<xor, X>>(){
+                @Override
+                public <T, R> Higher<Higher<xor, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<xor, X>, ? extends Xor<T, R>>> fn) {
+                    Xor<X,? extends Xor<T, R>> next[] = new Xor[1];
+                    next[0] = Xor.primary(Xor.secondary(initial));
+                    boolean cont = true;
+                    do {
+                        cont = next[0].visit(p -> p.visit(s -> {
+                            next[0] = narrowK(fn.apply(s));
+                            return true;
+                        }, pr -> false), () -> false);
+                    } while (cont);
+                    return next[0].map(Xor::get);
+                }
+
+
+            };
+
+
         }
         public static <L> Traverse<Higher<xor, L>> traverse() {
             return new Traverse<Higher<xor, L>>() {

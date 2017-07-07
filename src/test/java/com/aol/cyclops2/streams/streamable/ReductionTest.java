@@ -20,12 +20,12 @@ public class ReductionTest {
 	@Test
 	public void reduceWithMonoid2(){
 		
-		assertThat(Streamable.of("one","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()),
+		assertThat(Streamable.of("replaceWith","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()),
 						equalTo(10));
 	}
 	
 	int toInt(String s){
-		if("one".equals(s))
+		if("replaceWith".equals(s))
 			return 1;
 		if("two".equals(s))
 			return 2;

@@ -22,12 +22,12 @@ public class ReductionTest {
 	@Test
 	public void reduceWithMonoid2(){
 		
-		assertThat(LazyReact.sequentialBuilder().of("one","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()),
+		assertThat(LazyReact.sequentialBuilder().of("replaceWith","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()),
 						equalTo(10));
 	}
 	
 	int toInt(String s){
-		if("one".equals(s))
+		if("replaceWith".equals(s))
 			return 1;
 		if("two".equals(s))
 			return 2;
