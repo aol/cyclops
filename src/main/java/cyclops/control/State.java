@@ -275,6 +275,11 @@ public final class State<S, T> implements Higher2<state,S,T> {
                 }
 
                 @Override
+                public <T> MonadRec<Higher<state, S>> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<Higher<state, S>>> monadPlus(Monoid<Higher<Higher<state, S>, T>> m) {
                     return Maybe.none();
                 }
@@ -377,6 +382,15 @@ public final class State<S, T> implements Higher2<state,S,T> {
                 @Override
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<state, S>, T> ds) {
                     return monoid.foldLeft(narrowK(ds).eval(val));
+                }
+            };
+        }
+        public static <S> MonadRec<Higher<state,S>> monadRec() {
+            return new MonadRec<Higher<state,S>>() {
+                @Override
+                public <T, R> Higher<Higher<state, S>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<state, S>, ? extends Xor<T, R>>> fn) {
+                    return narrowK(fn.apply(initial)).flatMap( eval ->
+                            eval.visit(s->narrowK(tailRec(s,fn)),p->State.constant(p)));
                 }
             };
         }

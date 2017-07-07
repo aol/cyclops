@@ -1189,6 +1189,11 @@ public interface Eval<T> extends To<Eval<T>>,
                 }
 
                 @Override
+                public <T> MonadRec<eval> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<eval>> monadPlus(Monoid<Higher<eval, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -1357,6 +1362,17 @@ public interface Eval<T> extends To<Eval<T>>,
         public static <T,R> MonadZero<eval> monadZero(){
 
             return General.monadZero(monad(), Eval.now(null));
+        }
+        public static <T,R> MonadRec<eval> monadRec(){
+
+            return new MonadRec<eval>(){
+
+                @Override
+                public <T, R> Higher<eval, R> tailRec(T initial, Function<? super T, ? extends Higher<eval, ? extends Xor<T, R>>> fn) {
+                    return narrowK(fn.apply(initial)).flatMap( eval ->
+                            eval.visit(s->narrowK(tailRec(s,fn)),p->Eval.now(p)));
+                }
+            };
         }
         /**
          * <pre>

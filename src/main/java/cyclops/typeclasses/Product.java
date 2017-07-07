@@ -7,6 +7,7 @@ import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collections.mutable.ListX;
+import cyclops.companion.Monoids;
 import cyclops.control.*;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -172,6 +173,17 @@ public class Product<W1,W2,T> implements  Filters<T>,
     public <R> Product<W1,W2,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
         return (Product<W1,W2,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
     }
+
+    public <R> Active<W1, R> tailRec1(T initial,Function<? super T,? extends Higher<W1, ? extends Xor<T, R>>> fn){
+        Higher<W1, R> x = asActiveTuple().v1.tailRec(initial, fn);
+       return Active.of(x,def1);
+    }
+
+    public <R> Active<W2, R> tailRec2(T initial,Function<? super T,? extends Higher<W2, ? extends Xor<T, R>>> fn){
+        Higher<W2, R> x = asActiveTuple().v2.tailRec(initial, fn);
+        return Active.of(x,def2);
+    }
+
 
 
 
@@ -456,7 +468,40 @@ public class Product<W1,W2,T> implements  Filters<T>,
                 };});
             });
         }
+        public  MonadRec<Higher<Higher<product, W1>, W2>> monadRec() {
 
+            return new MonadRec<Higher<Higher<product, W1>, W2>>(){
+                @Override
+                public <T, R> Higher<Higher<Higher<product, W1>, W2>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<product, W1>, W2>, ? extends Xor<T, R>>> fn) {
+                    Product<W1,W2,? extends Xor<T, R>> next[] = new Product[1];
+                    Xor<T, R> in = Xor.secondary(initial);
+
+                    next[0] = Product.of(Tuple.tuple(def1.unit().unit(in),def2.unit().unit(in)),def1,def2);
+                    boolean cont = true;
+                    do {
+                        cont = next[0].visit( (a,__) -> {
+                            boolean[] internalCont = {true};
+
+                            Higher<W1, ?> b = a;
+                            Higher<W1, Boolean> r = def1.functor().map(p -> {
+                                Xor<T, R> x = (Xor<T, R>) p;
+                                internalCont[0] = internalCont[0] || x.visit(s -> {
+                                    next[0] = narrowK(fn.apply(s));
+                                    return true;
+                                }, pr -> false);
+                                return internalCont[0];
+                            }, a);
+                            return internalCont[0];
+
+                        });
+                    } while (cont);
+                    return next[0].map(Xor::get);
+                }
+
+            };
+
+
+        }
         @Override
         public <T> Maybe<MonadPlus<Higher<Higher<product, W1>, W2>>> monadPlus() {
             return def1.monadPlus().flatMap(x -> {

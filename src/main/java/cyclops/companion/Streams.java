@@ -3,6 +3,10 @@ package cyclops.companion;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.mutable.QueueX;
 import cyclops.typeclasses.*;
+import cyclops.control.Xor;
+import cyclops.typeclasses.Active;
+import cyclops.typeclasses.InstanceDefinitions;
+
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
@@ -2890,6 +2894,11 @@ public class Streams {
                 }
 
                 @Override
+                public <T> MonadRec<stream> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<stream>> monadPlus(Monoid<Higher<stream, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -3064,6 +3073,22 @@ public class Streams {
             BiFunction<Higher<stream,T>,Predicate<? super T>,Higher<stream,T>> filter = Instances::filter;
             Supplier<Higher<stream, T>> zero = ()->StreamKind.widen(Stream.of());
             return General.<stream,T,R>monadZero(monad(), zero,filter);
+        }
+        public static <T,R> MonadRec<stream> monadRec(){
+
+            return new MonadRec<stream>(){
+                @Override
+                public <T, R> Higher<stream, R> tailRec(T initial, Function<? super T, ? extends Higher<stream,? extends Xor<T, R>>> fn) {
+                    Stream<Xor<T, R>> next = Stream.of(Xor.secondary(initial));
+                    boolean newValue[] = {false};
+                    for(;;){
+                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return StreamKind.narrowK(fn.apply(s)); }, p -> Stream.of(e)));
+                        if(!newValue[0])
+                            break;
+                    }
+                    return StreamKind.widen(Xor.sequencePrimary(ListX.listX(ReactiveSeq.fromStream(next))).get().stream());
+                }
+            };
         }
         /**
          * <pre>

@@ -1608,6 +1608,11 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
                 }
 
                 @Override
+                public <T> MonadRec<Higher<Higher<either3, L1>, L2>> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<Higher<Higher<either3, L1>, L2>>> monadPlus(Monoid<Higher<Higher<Higher<either3, L1>, L2>, T>> m) {
                     return Maybe.none();
                 }
@@ -1696,6 +1701,19 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
                 public <T, R> Higher<Higher<Higher<either3, L1>, L2>, R> flatMap(Function<? super T, ? extends Higher<Higher<Higher<either3, L1>, L2>, R>> fn, Higher<Higher<Higher<either3, L1>, L2>, T> ds) {
                     return narrowK(ds).flatMap(fn.andThen(m->narrowK(m)));
                 }
+            };
+        }
+        public static <L1,L2,T,R> MonadRec<Higher<Higher<either3, L1>, L2>> monadRec(){
+
+            return new MonadRec<Higher<Higher<either3, L1>, L2>>(){
+
+                @Override
+                public <T, R> Higher<Higher<Higher<either3, L1>, L2>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<either3, L1>, L2>, ? extends Xor<T, R>>> fn) {
+                    return narrowK(fn.apply(initial)).flatMap( eval ->
+                            eval.visit(s->narrowK(tailRec(s,fn)),p->Eval.now(p)));
+                }
+
+
             };
         }
         public static <L1,L2> MonadZero<Higher<Higher<either3, L1>, L2>> monadZero() {

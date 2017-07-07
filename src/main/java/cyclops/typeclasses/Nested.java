@@ -149,6 +149,10 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         return new Nested<>(res,composedFunctor,def1,def2);
     }
 
+    public <R> Nested<W1,W2, R> tailRec(T initial,Function<? super T,? extends Higher<W2, ? extends Xor<T, R>>> fn){
+        return flatMap(in->Active.of(def2.unit().unit(in),def2).tailRec(initial,fn));
+    }
+
     public Traverse traverseUnsafe(){
         return def1.traverse().visit(s-> new Traverse(),()->null);
     }

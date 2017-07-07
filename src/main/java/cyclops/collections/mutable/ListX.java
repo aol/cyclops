@@ -4,6 +4,9 @@ import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.collections.box.Mutable;
+import cyclops.collections.box.MutableBoolean;
+import cyclops.control.Xor;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
@@ -115,6 +118,11 @@ public interface ListX<T> extends To<ListX<T>>,
                 @Override
                 public <T> Maybe<MonadPlus<list>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> MonadRec<list> monadRec() {
+                    return Instances.monadRec();
                 }
 
                 @Override
@@ -272,6 +280,22 @@ public interface ListX<T> extends To<ListX<T>>,
 
             BiFunction<Higher<list,T>,Function<? super T, ? extends Higher<list,R>>,Higher<list,R>> flatMap = Instances::flatMap;
             return General.monad(zippingApplicative(), flatMap);
+        }
+        public static <T,R> MonadRec<list> monadRec(){
+
+            return new MonadRec<list>(){
+                @Override
+                public <T, R> Higher<list, R> tailRec(T initial, Function<? super T, ? extends Higher<list,? extends Xor<T, R>>> fn) {
+                    ListX<Xor<T, R>> next = ListX.of(Xor.secondary(initial));
+                    boolean newValue[] = {false};
+                    for(;;){
+                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> ListX.of(e)));
+                        if(!newValue[0])
+                            break;
+                    }
+                    return Xor.sequencePrimary(next).get();
+                }
+            };
         }
         /**
          *

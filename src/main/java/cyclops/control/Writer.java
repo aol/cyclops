@@ -37,6 +37,9 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
         return writer(mapper.apply(value.v1), value.v2, monoid);
     }
 
+    public <R> R visit(BiFunction<? super Tuple2<T,W>,? super Monoid<W>,? extends R> fn){
+        return fn.apply(value,monoid);
+    }
     public <R> Writer<W, R> flatMap(Function<? super T,? extends  Writer<W, ? extends R>> fn) {
         Writer<W, ? extends R> writer = fn.apply(value.v1);
         return writer(writer.value.v1, writer.monoid.apply(value.v2, writer.value.v2), writer.monoid);
@@ -263,6 +266,11 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 }
 
                 @Override
+                public <T> MonadRec<Higher<writer, W>> monadRec() {
+                    return Instances.monadRec(monoid);
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<Higher<writer, W>>> monadPlus(Monoid<Higher<Higher<writer, W>, T>> m) {
                     return Maybe.none();
                 }
@@ -365,6 +373,24 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 @Override
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<writer, W>, T> ds) {
                     return monoid.foldLeft(narrowK(ds).getValue().v1);
+                }
+            };
+        }
+        public static <W, T, R> MonadRec<Higher<writer, W>> monadRec(Monoid<W> monoid) {
+            return new MonadRec<Higher<writer, W>>() {
+                @Override
+                public <T, R> Higher<Higher<writer, W>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<writer, W>, ? extends Xor<T, R>>> fn) {
+                    Writer<W,? extends Xor<T, R>> next[] = new Writer[1];
+                    next[0] = Writer.writer(Xor.secondary(initial),monoid);
+
+                    boolean cont = true;
+                    do {
+                        cont = next[0].visit((p,__) -> p.v1.visit(s -> {
+                            next[0] = narrowK(fn.apply(s));
+                            return true;
+                        }, pr -> false));
+                    } while (cont);
+                    return next[0].map(Xor::get);
                 }
             };
         }

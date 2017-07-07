@@ -10,6 +10,10 @@ import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.*;
+import cyclops.control.Xor;
+import cyclops.function.Fn3;
+import cyclops.function.Fn4;
+import cyclops.function.Monoid;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.Monad;
 import cyclops.typeclasses.monad.Traverse;
@@ -147,6 +151,7 @@ public class Active<W,T> implements Filters<T>,
     public Maybe<Plus> plus(){
         return def1.foldable().visit(e->Maybe.just(new Plus()),Maybe::none);
     }
+
     public class Plus{
 
         public Monoid<Higher<W,T>> monoid(){
@@ -170,6 +175,16 @@ public class Active<W,T> implements Filters<T>,
             Higher<W, T> a =ac.single;
             return plus(a);
         }
+    }
+
+    public <R> Higher<W, R> tailRec(T initial,Function<? super T,? extends Higher<W, ? extends Xor<T, R>>> fn){
+        return def1.monadRec().<T,R>tailRec(initial,fn);
+    }
+    public <R> Active<W, R> tailRecA(T initial,Function<? super T,? extends Higher<W, ? extends Xor<T, R>>> fn){
+        return Active.of(def1.monadRec().<T,R>tailRec(initial,fn),def1);
+    }
+    public <R> Active<W, R> tailRecActive(T initial,Function<? super T,? extends Active<W, ? extends Xor<T, R>>> fn){
+        return Active.of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(Active::getActive)),def1);
     }
 
     public class Unfolds{

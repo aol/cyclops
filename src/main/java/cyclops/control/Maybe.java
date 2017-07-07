@@ -2,6 +2,9 @@ package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.typeclasses.*;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.typeclasses.Active;
+import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
@@ -49,6 +52,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * Totally lazy, reactive  more powerful general Option type. Maybe is maybe like a Java
@@ -1540,6 +1545,11 @@ public interface Maybe<T> extends To<Maybe<T>>,
                 }
 
                 @Override
+                public <T> MonadRec<maybe> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<maybe>> monadPlus(Monoid<Higher<maybe, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -1687,6 +1697,17 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
             BiFunction<Higher<maybe,T>,Function<? super T, ? extends Higher<maybe,R>>,Higher<maybe,R>> flatMap = Instances::flatMap;
             return General.monad(applicative(), flatMap);
+        }
+        public static <T,R> MonadRec<maybe> monadRec(){
+
+            return new MonadRec<maybe>(){
+
+                @Override
+                public <T, R> Higher<maybe, R> tailRec(T initial, Function<? super T, ? extends Higher<maybe, ? extends Xor<T, R>>> fn) {
+                    return narrowK(fn.apply(initial)).flatMap( eval ->
+                            eval.visit(s->narrowK(tailRec(s,fn)),p->Maybe.just(p)));
+                }
+            };
         }
         /**
          *

@@ -5,6 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Xor;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
@@ -45,6 +46,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
+
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
+
 /**
  * An eXtended Persistent Vector type, that offers additional functional style operators such as bimap, filter and more
  * Can operate eagerly, lazily or reactively (async push)
@@ -131,7 +135,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static VectorX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end).to()
-                          .vectorX(Evaluation.LAZY);
+                          .vectorX(LAZY);
     }
 
     /**
@@ -145,7 +149,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static VectorX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end).to()
-                          .vectorX(Evaluation.LAZY);
+                          .vectorX(LAZY);
     }
 
     /**
@@ -165,7 +169,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     static <U, T> VectorX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to()
-                          .vectorX(Evaluation.LAZY);
+                          .vectorX(LAZY);
     }
 
     /**
@@ -179,7 +183,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit).to()
-                          .vectorX(Evaluation.LAZY);
+                          .vectorX(LAZY);
     }  
     /**
      * Generate a VectorX from the provided value up toNested the provided limit number of times
@@ -192,7 +196,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit).to()
-                          .vectorX(Evaluation.LAZY);
+                          .vectorX(LAZY);
     }
 
     /**
@@ -206,7 +210,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     public static <T> VectorX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit).to()
-                          .vectorX(Evaluation.LAZY);
+                          .vectorX(LAZY);
 
     }
 
@@ -230,7 +234,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @return new PVector
      */
     public static <T> VectorX<T> of(final T... values) {
-        return new LazyPVectorX<>(null,ReactiveSeq.of(values),Reducers.toPVector(),Evaluation.LAZY);
+        return new LazyPVectorX<>(null,ReactiveSeq.of(values),Reducers.toPVector(), LAZY);
     }
     /**
      * 
@@ -255,7 +259,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> empty() {
         return new LazyPVectorX<T>(
-                                  TreePVector.empty(),null,Reducers.toPVector(),Evaluation.LAZY);
+                                  TreePVector.empty(),null,Reducers.toPVector(), LAZY);
     }
 
     /**
@@ -276,7 +280,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> singleton(final T value) {
         return new LazyPVectorX<>(
-                                  TreePVector.singleton(value),null,Reducers.toPVector(),Evaluation.LAZY);
+                                  TreePVector.singleton(value),null,Reducers.toPVector(), LAZY);
     }
 
     /**
@@ -288,7 +292,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher).to()
-                          .vectorX(Evaluation.LAZY);
+                          .vectorX(LAZY);
     }
 
     public static <T> VectorX<T> fromIterable(final Iterable<T> iterable) {
@@ -296,11 +300,11 @@ public interface VectorX<T> extends To<VectorX<T>>,
             return (VectorX) iterable;
         if (iterable instanceof PVector)
             return new LazyPVectorX<>(
-                                      (PVector) iterable,null,Reducers.toPVector(),Evaluation.LAZY);
+                                      (PVector) iterable,null,Reducers.toPVector(), LAZY);
 
         return new LazyPVectorX<>(null,
                 ReactiveSeq.fromIterable(iterable),
-                Reducers.toPVector(),Evaluation.LAZY);
+                Reducers.toPVector(), LAZY);
     }
     VectorX<T> type(Reducer<? extends PVector<T>> reducer);
 
@@ -320,7 +324,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> vectorX(ReactiveSeq<T> stream) {
 
-        return new LazyPVectorX<T>(null,stream,Reducers.toPVector(),Evaluation.LAZY);
+        return new LazyPVectorX<T>(null,stream,Reducers.toPVector(), LAZY);
     }
 
 
@@ -1271,6 +1275,11 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 }
 
                 @Override
+                public <T> MonadRec<vectorX> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<vectorX>> monadPlus(Monoid<Higher<vectorX, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -1445,6 +1454,22 @@ public interface VectorX<T> extends To<VectorX<T>>,
         public static <T,R> MonadZero<vectorX> monadZero(){
 
             return General.monadZero(monad(), VectorX.empty());
+        }
+        public static <T,R> MonadRec<vectorX> monadRec(){
+
+            return new MonadRec<vectorX>(){
+                @Override
+                public <T, R> Higher<vectorX, R> tailRec(T initial, Function<? super T, ? extends Higher<vectorX,? extends Xor<T, R>>> fn) {
+                    VectorX<Xor<T, R>> next = VectorX.of(Xor.secondary(initial));
+                    boolean newValue[] = {false};
+                    for(;;){
+                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> VectorX.of(e)));
+                        if(!newValue[0])
+                            break;
+                    }
+                    return Xor.sequencePrimary(next).map(l->l.to().vectorX(LAZY)).get();
+                }
+            };
         }
         /**
          * <pre>

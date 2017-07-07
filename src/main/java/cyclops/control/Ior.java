@@ -1490,6 +1490,11 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                 }
 
                 @Override
+                public <T> MonadRec<Higher<ior, L>> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<Higher<ior, L>>> monadPlus(Monoid<Higher<Higher<ior, L>, T>> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
@@ -1666,6 +1671,28 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                     return Instances.<L>unit().unit(value);
                 }
             };
+        }
+        public static <X,T,R> MonadRec<Higher<ior, X>> monadRec() {
+
+            return new MonadRec<Higher<ior, X>>(){
+                @Override
+                public <T, R> Higher<Higher<ior, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<ior, X>, ? extends Xor<T, R>>> fn) {
+                    Ior<X,? extends Xor<T, R>> next[] = new Ior[1];
+                    next[0] = Ior.primary(Xor.secondary(initial));
+                    boolean cont = true;
+                    do {
+                        cont = next[0].visit(p -> p.visit(s -> {
+                            next[0] = narrowK(fn.apply(s));
+                            return true;
+                        }, pr -> false), () -> false);
+                    } while (cont);
+                    return next[0].map(Xor::get);
+                }
+
+
+            };
+
+
         }
         public static <L> MonadPlus<Higher<ior, L>> monadPlus() {
             Monoid m = Monoids.firstPrimaryIor((Ior)Ior.narrowK(Instances.<L>monadZero().zero()));
