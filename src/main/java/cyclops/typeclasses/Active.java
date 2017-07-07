@@ -8,6 +8,7 @@ import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
+import cyclops.control.Xor;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
@@ -104,6 +105,18 @@ public class Active<W,T> implements Filters<T>,
     }
     public Maybe<Traverse> traverse(){
         return def1.traverse().visit(e->Maybe.just(new Traverse()),Maybe::none);
+    }
+
+
+
+    public <R> Higher<W, R> tailRec(T initial,Function<? super T,? extends Higher<W, ? extends Xor<T, R>>> fn){
+        return def1.monadRec().get().<T,R>tailRec(initial,fn);
+    }
+    public <R> Active<W, R> tailRecA(T initial,Function<? super T,? extends Higher<W, ? extends Xor<T, R>>> fn){
+        return Active.of(def1.monadRec().get().<T,R>tailRec(initial,fn),def1);
+    }
+    public <R> Active<W, R> tailRecActive(T initial,Function<? super T,? extends Active<W, ? extends Xor<T, R>>> fn){
+        return Active.of(def1.monadRec().get().<T,R>tailRec(initial,fn.andThen(Active::getActive)),def1);
     }
 
     public class Unfolds{

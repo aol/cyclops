@@ -1,6 +1,8 @@
 package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.react.ThreadPools;
+import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import cyclops.companion.Streams;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -45,14 +47,12 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Collectors;
@@ -1458,6 +1458,11 @@ public class Future<T> implements To<Future<T>>,
                 }
 
                 @Override
+                public <T> MonadRec<future> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<future>> monadPlus(Monoid<Higher<future, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -1478,7 +1483,7 @@ public class Future<T> implements To<Future<T>>,
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<Witness.future>> unfoldable() {
+                public <T> Maybe<Unfoldable<future>> unfoldable() {
                     return Maybe.none();
                 }
             };
@@ -1627,6 +1632,34 @@ public class Future<T> implements To<Future<T>>,
 
             return General.monadZero(monad(), Future.future());
         }
+
+        public static <T,R> MonadRec<future> monadRec(){
+
+            SimpleReact sr = SequentialElasticPools.simpleReact.nextReactor();
+            return new MonadRec<future>(){
+
+                @Override
+                public <T, R> Higher<future, R> tailRec(T initial, Function<? super T, ? extends Higher<future, ? extends Xor<T, R>>> fn) {
+                   return Future.of(()->{
+                            Future<? extends Xor<T, R>> next[] = new Future[1];
+                            next[0]=Future.ofResult(Xor.secondary(initial));
+                            boolean cont = true;
+                            do {
+                                cont = next[0].visit(p ->  p.visit(s -> {
+                                    next[0] = narrowK(fn.apply(s));
+                                    return true;
+                                }, pr -> false), () -> false);
+                            }while(cont);
+                        return next[0].map(Xor::get);
+                        }, sr.getExecutor()).flatMap(i->i)
+                                .peek(e->SequentialElasticPools.simpleReact.populate(sr)).recover(t->{
+                               SequentialElasticPools.simpleReact.populate(sr);
+                               throw ExceptionSoftener.throwSoftenedException(t);
+                           });
+                }
+            };
+        }
+
         /**
          * <pre>
          * {@code

@@ -30,6 +30,8 @@ public interface InstanceDefinitions<W> {
 
     public  <T> Maybe<MonadPlus<W>> monadPlus();
 
+    public  <T> MonadRec<W> monadRec();
+
     public  <T> Maybe<MonadPlus<W>> monadPlus(Monoid<Higher<W,T>> m);
 
     public  <C2,T> Maybe<Traverse<W>> traverse();

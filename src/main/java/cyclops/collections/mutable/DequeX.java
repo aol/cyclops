@@ -3,6 +3,7 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Xor;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -43,6 +44,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
+
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 
 /**
@@ -100,7 +103,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static DequeX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end)
                           .to()
-                          .dequeX(Evaluation.LAZY);
+                          .dequeX(LAZY);
     }
 
     /**
@@ -115,7 +118,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static DequeX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end)
                           .to()
-                          .dequeX(Evaluation.LAZY);
+                          .dequeX(LAZY);
     }
 
     /**
@@ -136,7 +139,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     static <U, T> DequeX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
                           .to()
-                          .dequeX(Evaluation.LAZY);
+                          .dequeX(LAZY);
     }
     /**
      * Generate a DequeX from the provided value up toNested the provided limit number of times
@@ -150,7 +153,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return ReactiveSeq.fill(s)
                           .limit(limit)
                           .to()
-                          .dequeX(Evaluation.LAZY);
+                          .dequeX(LAZY);
     }
 
     /**
@@ -165,7 +168,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return ReactiveSeq.generate(s)
                           .limit(limit)
                           .to()
-                          .dequeX(Evaluation.LAZY);
+                          .dequeX(LAZY);
     }
 
     /**
@@ -180,7 +183,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
                           .to()
-                          .dequeX(Evaluation.LAZY);
+                          .dequeX(LAZY);
 
     }
 
@@ -216,7 +219,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static <T> DequeX<T> of(final T... values) {
         return new LazyDequeX<T>(null,
                 ReactiveSeq.of(values),
-                defaultCollector(),Evaluation.LAZY);
+                defaultCollector(), LAZY);
     }
     /**
      * 
@@ -256,7 +259,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static <T> DequeX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher)
                           .to()
-                          .dequeX(Evaluation.LAZY);
+                          .dequeX(LAZY);
     }
 
     /**
@@ -276,7 +279,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static <T> DequeX<T> dequeX(ReactiveSeq<T> stream){
         return new LazyDequeX<T>(null,
                 stream,
-                defaultCollector(),Evaluation.LAZY);
+                defaultCollector(), LAZY);
     }
 
     /**
@@ -292,10 +295,10 @@ public interface DequeX<T> extends To<DequeX<T>>,
             return (DequeX) it;
         if (it instanceof Deque)
             return new LazyDequeX<T>(
-                                     (Deque) it, defaultCollector(),Evaluation.LAZY);
+                                     (Deque) it, defaultCollector(), LAZY);
         return new LazyDequeX<T>(null,
                                     ReactiveSeq.fromIterable(it),
-                                    defaultCollector(),Evaluation.LAZY);
+                                    defaultCollector(), LAZY);
     }
 
     /**
@@ -310,11 +313,11 @@ public interface DequeX<T> extends To<DequeX<T>>,
             return ((DequeX) it).type(collector);
         if (it instanceof Deque)
             return new LazyDequeX<T>(
-                                     (Deque) it, collector,Evaluation.LAZY);
+                                     (Deque) it, collector, LAZY);
         return new LazyDequeX<T>(
                                  Streams.stream(it)
                                             .collect(collector),
-                                 collector,Evaluation.LAZY);
+                                 collector, LAZY);
     }
 
     @Override
@@ -417,7 +420,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     @Override
     default <X> DequeX<X> fromStream(final ReactiveSeq<X> stream) {
         return new LazyDequeX<>(
-                                ReactiveSeq.fromStream(stream), getCollector(),Evaluation.LAZY);
+                                ReactiveSeq.fromStream(stream), getCollector(), LAZY);
     }
 
     /**
@@ -1361,6 +1364,11 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 }
 
                 @Override
+                public <T> MonadRec<deque> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<deque>> monadPlus(Monoid<Higher<deque, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -1552,6 +1560,22 @@ public interface DequeX<T> extends To<DequeX<T>>,
             Monoid<DequeX<T>> m = Monoid.of(DequeX.empty(), Instances::concat);
             Monoid<Higher<deque,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
+        }
+        public static <T,R> MonadRec<deque> monadRec(){
+
+            return new MonadRec<deque>(){
+                @Override
+                public <T, R> Higher<deque, R> tailRec(T initial, Function<? super T, ? extends Higher<deque,? extends Xor<T, R>>> fn) {
+                    ListX<Xor<T, R>> next = ListX.of(Xor.secondary(initial));
+                    boolean newValue[] = {false};
+                    for(;;){
+                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> ListX.of(e)));
+                        if(!newValue[0])
+                            break;
+                    }
+                    return Xor.sequencePrimary(next).get().to().dequeX(LAZY);
+                }
+            };
         }
         /**
          *

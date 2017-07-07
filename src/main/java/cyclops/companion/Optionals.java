@@ -8,6 +8,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Xor;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.function.Fn3;
@@ -50,6 +51,10 @@ import lombok.experimental.UtilityClass;
 public class Optionals {
    public static <T,W extends WitnessType<W>> OptionalT<W, T> liftM(Optional<T> opt, W witness) {
         return OptionalT.of(witness.adapter().unit(opt));
+    }
+
+    public static <T,R> R visit(Optional<T> optional, Function<? super T, ? extends R> fn, Supplier<R> s){
+       return optional.isPresent() ? fn.apply(optional.get()) : s.get();
     }
 
     /**
@@ -623,6 +628,11 @@ public class Optionals {
                 }
 
                 @Override
+                public <T> MonadRec<optional> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
                 public <T> Maybe<MonadPlus<optional>> monadPlus(Monoid<Higher<optional, T>> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
@@ -792,7 +802,31 @@ public class Optionals {
 
             return General.monadZero(monad(), OptionalKind.empty());
         }
+        public static  MonadRec<optional> monadRec() {
+
+            return new MonadRec<optional>(){
+
+
+                @Override
+                public <T, R> Higher<optional, R> tailRec(T initial, Function<? super T, ? extends Higher<optional, ? extends Xor<T, R>>> fn) {
+                    Optional<? extends Xor<T, R>> next[] = new Optional[1];
+                    next[0] = Optional.of(Xor.secondary(initial));
+                    boolean cont = true;
+                    do {
+                        cont = Optionals.visit(next[0],p -> p.visit(s -> {
+                            next[0] = OptionalKind.narrowK(fn.apply(s));
+                            return true;
+                        }, pr -> false), () -> false);
+                    } while (cont);
+                    return OptionalKind.widen(next[0].map(Xor::get));
+
+                }
+            };
+
+
+        }
         /**
+         *
          * <pre>
          * {@code
          *  OptionalKind<Integer> list = Optionals.<Integer>monadPlus()

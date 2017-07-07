@@ -3,6 +3,9 @@ package cyclops.stream;
 
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.control.Xor;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
@@ -73,6 +76,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
 import java.util.stream.*;
+
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * A powerful extended, sequential Stream type.
@@ -4845,6 +4850,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 (Spliterator<T>)right),Optional.empty());
     }
 
+
+
     static class Instances {
         public static InstanceDefinitions<reactiveSeq> definitions(){
             return new InstanceDefinitions<reactiveSeq>() {
@@ -4876,6 +4883,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 @Override
                 public <T> Maybe<MonadPlus<reactiveSeq>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> MonadRec<reactiveSeq> monadRec() {
+                    return Instances.monadRec();
                 }
 
                 @Override
@@ -5070,6 +5082,27 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             Monoid<ReactiveSeq<T>> m = Monoid.of(ReactiveSeq.empty(), Instances::concat);
             Monoid<Higher<reactiveSeq,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
+        }
+        public static <T,R> MonadRec<reactiveSeq> monadRec(){
+
+            return new MonadRec<reactiveSeq>(){
+                @Override
+                public <T, R> Higher<reactiveSeq, R> tailRec(T initial, Function<? super T, ? extends Higher<reactiveSeq,? extends Xor<T, R>>> fn) {
+                    return ReactiveSeq.deferred(()-> {
+                        ReactiveSeq<Xor<T, R>> next = ReactiveSeq.of(Xor.secondary(initial));
+                        boolean newValue[] = {false};
+                        for (; ; ) {
+                            next = next.flatMap(e -> e.visit(s -> {
+                                newValue[0] = true;
+                                return narrowK(fn.apply(s));
+                            }, p -> ReactiveSeq.of(e)));
+                            if (!newValue[0])
+                                break;
+                        }
+                        return Xor.sequencePrimary(next.to().listX(LAZY)).map(l -> l.stream()).get();
+                    });
+                }
+            };
         }
         /**
          *
