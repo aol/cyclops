@@ -557,4 +557,13 @@ public interface Witness {
         }
 
     }
+    public static enum freeAp implements WitnessType<freeAp>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<freeAp> adapter() {
+            return null;
+        }
+
+    }
 }

@@ -7,6 +7,7 @@ import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collections.mutable.ListX;
+import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.*;
@@ -85,6 +86,20 @@ public class Active<W,T> implements Filters<T>,
 
     public <R> Active<W, R> map(Function<? super T, ? extends R> fn) {
         return of(def1.functor().map(fn, single), def1);
+    }
+    public <T2, R> Active<W, R> map2(Higher<W, T2> fb, BiFunction<? super T,? super T2,? extends R> f) {
+        return of(def1.applicative().map2(single,fb,f),def1);
+    }
+
+    public <T2, R> Active<W, R> map2(Active<W, T2> fb, BiFunction<? super T,? super T2,? extends R> f) {
+        return of(def1.applicative().map2(single,fb.single,f),def1);
+    }
+
+    public <T2,R> Eval<Active<W,R>> lazyMap2(Eval<Higher<W,T2>> lazy, BiFunction<? super T,? super T2,? extends R> fn) {
+        return lazy.map(e->map2(e,fn));
+    }
+    public <T2,R> Eval<Active<W,R>> lazyMap2A(Eval<Active<W,T2>> lazy, BiFunction<? super T,? super T2,? extends R> fn) {
+        return lazy.map(e->map2(e,fn));
     }
 
     public Active<W, T> peek(Consumer<? super T> fn) {
