@@ -8,7 +8,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Trampoline;
 
 /**
- * An interface that represents a type that can transform a value from replaceWith type toNested another
+ * An interface that represents a type that can transform a value from one type toNested another
  *
  * @author johnmcclean
  *

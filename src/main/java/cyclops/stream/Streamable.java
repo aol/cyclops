@@ -499,7 +499,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Map the values in the Streamable from replaceWith set of values / types toNested another
+     * Map the values in the Streamable from one set of values / types toNested another
      * 
      * <pre>
      * {@code 
@@ -758,7 +758,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * join / flatten replaceWith level of a nest hierarchy
+     * join / flatten one level of a nest hierarchy
      * 
      * <pre>
      * {@code 
@@ -770,7 +770,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * </pre>
      * 
-     * @return Flattened / joined replaceWith level
+     * @return Flattened / joined one level
      */
     public static <T1> Streamable<T1> flatten(Streamable<? extends Streamable<T1>> nested) {
         return nested.flatMap(Function.identity());
@@ -916,7 +916,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Partition a Stream into two replaceWith a per element basis, based on predicate's boolean value
+     * Partition a Stream into two one a per element basis, based on predicate's boolean value
      * <pre>
      * {@code 
      *  Streamable.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
@@ -1001,7 +1001,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Zip 2 streams into replaceWith
+     * Zip 2 streams into one
      * 
      * <pre>
      * {@code 
@@ -1018,7 +1018,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
 
     /**
-     * zip 3 Streams into replaceWith
+     * zip 3 Streams into one
      * <pre>
      * {@code 
      * List<Tuple3<Integer,Integer,Character>> list =
@@ -1544,13 +1544,13 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *  
      *  <pre>
      *  {@code
-     *  Streamable.of("replaceWith","two","three","four")
+     *  Streamable.of("one","two","three","four")
      *           .mapReduce(this::toInt,Reducers.toTotalInt());
      *  
      *  //10
      *  
      *  int toInt(String s){
-    	if("replaceWith".equals(s))
+    	if("one".equals(s))
     		return 1;
     	if("two".equals(s))
     		return 2;
@@ -1619,7 +1619,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     /**
      * Reduce with multiple reducers in parallel
-     * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was replaceWith value
+     * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
      * To reduce over the values on the list, called streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
@@ -1646,7 +1646,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     /**
      * Reduce with multiple reducers in parallel
-     * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was replaceWith value
+     * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
      * To reduce over the values on the list, called streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
@@ -2448,7 +2448,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return fromStream(reactiveSeq().jool(s->s.rightOuterJoin(other, predicate)));
     }
 
-    /** If this Streamable is empty replaceWith it with a another Stream
+    /** If this Streamable is empty one it with a another Stream
      * 
      * <pre>
      * {@code 
@@ -2538,7 +2538,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * emit replaceWith element per time period
+     * emit one element per time period
      * <pre>
      * {@code 
      * Streamable.iterate("", last -> "next")
@@ -2562,7 +2562,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Allow replaceWith element through per time period, drop all other
+     * Allow one element through per time period, drop all other
      * elements in that time period
      * 
      * <pre>

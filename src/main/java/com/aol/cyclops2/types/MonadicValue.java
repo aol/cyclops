@@ -465,7 +465,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * }
      * </pre>
      *
-     * @param app Value toNested combine with this replaceWith.
+     * @param app Value toNested combine with this one.
      * @param fn BiFunction toNested combine them
      * @return New Applicativefunctor that represents the combined values
      */

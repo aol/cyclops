@@ -25,7 +25,7 @@ import lombok.val;
 public class Memoize {
 
     /**
-     * Convert a Supplier into replaceWith that caches it's result
+     * Convert a Supplier into one that caches it's result
      * 
      * @param s Supplier to memoise
      * @return Memoised Supplier
@@ -36,7 +36,7 @@ public class Memoize {
     }
 
     /**
-     * Convert a Supplier into replaceWith that caches it's result
+     * Convert a Supplier into one that caches it's result
      * 
      * @param s Supplier to memoise
      * @param cache Cachable to store the results
@@ -77,7 +77,7 @@ public class Memoize {
     }
 
     /**
-     * Convert a Callable into replaceWith that caches it's result
+     * Convert a Callable into one that caches it's result
      * 
      * @param s Callable to memoise
      * @param cache Cachable to store the results
@@ -95,7 +95,7 @@ public class Memoize {
     }
 
     /**
-     * Convert a Callable into replaceWith that caches it's result
+     * Convert a Callable into one that caches it's result
      * 
      * @param s Callable to memoise
      * @return Memoised Callable
@@ -127,7 +127,7 @@ public class Memoize {
     }
 
     /**
-     * Convert a Function into replaceWith that caches it's result
+     * Convert a Function into one that caches it's result
      * 
      * @param fn Function to memoise
      * @return Memoised Function
@@ -191,7 +191,7 @@ public class Memoize {
  
 
     /**
-     * Convert a Function into replaceWith that caches it's result
+     * Convert a Function into one that caches it's result
      * 
      * @param fn Function to memoise
      * @param cache Cachable to store the results
@@ -231,7 +231,7 @@ public class Memoize {
     }
 
     /**
-     * Convert a BiFunction into replaceWith that caches it's result
+     * Convert a BiFunction into one that caches it's result
      * 
      * @param fn BiFunction to memoise
      * @return Memoised BiFunction
@@ -242,7 +242,7 @@ public class Memoize {
     }
 
     /**
-     * Convert a BiFunction into replaceWith that caches it's result
+     * Convert a BiFunction into one that caches it's result
      * 
      * @param fn BiFunction to memoise
      * @param cache Cachable to store the results
@@ -254,7 +254,7 @@ public class Memoize {
     }
 
     /**
-     * Convert a TriFunction into replaceWith that caches it's result
+     * Convert a TriFunction into one that caches it's result
      * 
      * @param fn TriFunction to memoise
      * @return Memoised TriFunction
@@ -278,7 +278,7 @@ public class Memoize {
         return (t1, t2, t3) -> memoise2.apply(tuple(t1, t2, t3));
     }
     /**
-     * Convert a TriFunction into replaceWith that caches it's result
+     * Convert a TriFunction into one that caches it's result
      * 
      * @param fn TriFunction to memoise
      * @param cache Cachable to store the results
@@ -302,7 +302,7 @@ public class Memoize {
         return (t1, t2, t3) -> memoise2.apply(tuple(t1, t2, t3));
     }
     /**
-     * Convert a QuadFunction into replaceWith that caches it's result
+     * Convert a QuadFunction into one that caches it's result
      * 
      * @param fn QuadFunction to memoise
      * @return Memoised TriFunction
@@ -327,7 +327,7 @@ public class Memoize {
 
 
     /**
-     * Convert a QuadFunction into replaceWith that caches it's result
+     * Convert a QuadFunction into one that caches it's result
      * 
      * @param fn QuadFunction to memoise
      * @param cache Cachable to store the results
@@ -353,7 +353,7 @@ public class Memoize {
     }
 
     /**
-     * Convert a Predicate into replaceWith that caches it's result
+     * Convert a Predicate into one that caches it's result
      * 
      * @param p Predicate to memoise
      * @return Memoised Predicate
@@ -365,7 +365,7 @@ public class Memoize {
     }
 
     /**
-     * Convert a Predicate into replaceWith that caches it's result
+     * Convert a Predicate into one that caches it's result
      * 
      * @param p Predicate to memoise
      * @param cache Cachable to store the results

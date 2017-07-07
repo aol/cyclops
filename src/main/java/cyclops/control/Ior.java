@@ -40,7 +40,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
- * Inclusive Or (can be replaceWith of Primary, Secondary or Both Primary and Secondary)
+ * Inclusive Or (can be one of Primary, Secondary or Both Primary and Secondary)
  * 
  * An Either or Union type, but right biased. Primary and Secondary are used instead of Right & Left.
  * 'Right' (or primary type) biased disjunct union.

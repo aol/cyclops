@@ -19,9 +19,9 @@ import lombok.Getter;
  * assumptions
  * 1. join is read once
  * 2. only map / mapAsync/ exceptionally/ allOf and anyOf are neccessary
- * 3. For results / errors : singleUnsafe writer (replaceWith thread executing a task at a time, replaceWith thread sets the result or error)
+ * 3. For results / errors : singleUnsafe writer (one thread executing a task at a time, one thread sets the result or error)
  * 						/ singleUnsafe reader (simple-react Stream)
- * 4. For post-hoc event listeners : singleUnsafe writer (simple-react Stream adds event listeners) : singleUnsafe reader (only replaceWith thread can read event listeners -
+ * 4. For post-hoc event listeners : singleUnsafe writer (simple-react Stream adds event listeners) : singleUnsafe reader (only one thread can read event listeners -
  * 						lazy the thread that sets the result / error and eventually done,
  * 							or if done already set - the calling thread can execute post-hoc events)
  */

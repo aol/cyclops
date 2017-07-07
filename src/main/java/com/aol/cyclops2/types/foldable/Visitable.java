@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 public interface Visitable<T> {
 
     /**
-     * The provided function is executed with the value stored in this Visitable if replaceWith is present,
+     * The provided function is executed with the value stored in this Visitable if one is present,
      * otherwise the provided Supplier is executed instead.
      * 
      * @param present Function to execute if this Visitable has a value

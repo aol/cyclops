@@ -65,13 +65,13 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * 
      * <pre>
      *  {@code
-     *  ReactiveSeq.of("replaceWith","two","three","four")
+     *  ReactiveSeq.of("one","two","three","four")
      *           .mapReduce(this::toInt,Reducers.toTotalInt());
      *  
      *  //10
      *  
      *  int toInt(String s){
-     *      if("replaceWith".equals(s))
+     *      if("one".equals(s))
      *          return 1;
      *      if("two".equals(s))
      *          return 2;
@@ -144,7 +144,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /**
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
-     * was replaceWith value To reduce over the values on the list, called
+     * was one value To reduce over the values on the list, called
      * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
@@ -172,7 +172,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /**
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
-     * was replaceWith value To reduce over the values on the list, called
+     * was one value To reduce over the values on the list, called
      * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
@@ -224,7 +224,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * 
      * @param identity value that results in the input parameter toNested the accumulator function being returned.
      *          E.g. for multiplication 1 is the identity value, for addition 0 is the identity value
-     * @param accumulator function that combines the accumulated value and the next replaceWith
+     * @param accumulator function that combines the accumulated value and the next one
      * @return AnyM containing the results of the nest fold right
      */
     default AnyM<W,T> foldRight(final T identity, final BinaryOperator<T> accumulator) {
@@ -240,7 +240,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre> * 
      * @param identity value that results in the input parameter toNested the accumulator function being returned.
      *          E.g. for multiplication 1 is the identity value, for addition 0 is the identity value
-     * @param accumulator function that combines the accumulated value and the next replaceWith
+     * @param accumulator function that combines the accumulated value and the next one
      * @return AnyM containing the results of the nest fold right
      */
     default <U> AnyM<W,U> foldRight(final U identity, final BiFunction<? super T, U, U> accumulator) {
@@ -492,7 +492,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * @return An Optional with singleUnsafe value if this Stream has exactly replaceWith
+     * @return An Optional with singleUnsafe value if this Stream has exactly one
      *         element, otherwise Optional Empty
      */
     default AnyM<W,Maybe<T>> single() {
@@ -580,7 +580,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * 
      * @param delay
      *            Between last element completes passing through the Stream
-     *            until the next replaceWith starts
+     *            until the next one starts
      * @param ex
      *            ScheduledExecutorService
      * @return Connectable HotStream of emitted from scheduled Stream

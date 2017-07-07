@@ -168,7 +168,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     }
 
     /**
-     * Lift a function into replaceWith that accepts and returns an OptionalWT
+     * Lift a function into one that accepts and returns an OptionalWT
      * This allows multiple monad types toNested add functionality toNested existing function and methods
      * 
      * e.g. toNested add list handling  / iteration (via Optional) and iteration (via Stream) toNested an existing function
@@ -201,7 +201,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     }
 
     /**
-     * Lift a BiFunction into replaceWith that accepts and returns  OptionalWTs
+     * Lift a BiFunction into one that accepts and returns  OptionalWTs
      * This allows multiple monad types toNested add functionality toNested existing function and methods
      * 
      * e.g. toNested add list handling / iteration (via Optional), iteration (via Stream)  and asynchronous execution (Optional)

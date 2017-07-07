@@ -1560,14 +1560,14 @@ public class FluentFunctions {
         }
 
         /**
-         * @return Lift this TriFunction into replaceWith that accepts and returns generic monad types (AnyM)
+         * @return Lift this TriFunction into one that accepts and returns generic monad types (AnyM)
          */
         public  <W extends WitnessType<W>> FluentTriFunction<AnyM<W,T1>, AnyM<W,T2>, AnyM<W,T3>, AnyM<W,R>> liftF3() {
             return FluentFunctions.of(AnyM.liftF3(fn));
         }
 
         /**
-         * Convert this TriFunction into replaceWith that executes asynchronously and returns a CompleteableFuture with the result
+         * Convert this TriFunction into one that executes asynchronously and returns a CompleteableFuture with the result
          * 
          * @param ex Executor toNested execute this TriFunction on
          * @return TriFunction that executes Asynchronous 
@@ -1590,7 +1590,7 @@ public class FluentFunctions {
          * Compose this TriFunction with the provided function into a singleUnsafe TriFunction.
          * This TriFunction would be executed takeOne and the result passed toNested the provided Function and applied there.
          * 
-         * @param after Function toNested execute after this replaceWith in a chain
+         * @param after Function toNested execute after this one in a chain
          * @return TriFunction that executes this TriFunction and the provided Function in a chain
          */
         public <R2> FluentTriFunction<T1, T2, T3, R2> andThen3(final Function<? super R, ? extends R2> after) {

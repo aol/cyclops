@@ -104,7 +104,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * @return HKT encoded type with a widened PQueue
      */
     public static <C2,T> Higher<C2, Higher<persistentQueueX,T>> widen2(Higher<C2, PersistentQueueX<T>> list){
-        //a functor could be used (if C2 is a functor / replaceWith exists for C2 type) instead of casting
+        //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
         //cast seems safer as Higher<persistentQueueX,T> must be a PQueueType
         return (Higher)list;
     }

@@ -326,7 +326,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * zip 3 Streams into replaceWith
+     * zip 3 Streams into one
      * 
      * <pre>
      * {@code

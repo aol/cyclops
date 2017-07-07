@@ -585,7 +585,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * Efficiently construct a ReactiveSeq from a singleUnsafe value
      *
      * @param value Value toNested construct ReactiveSeq from
-     * @return ReactiveSeq of replaceWith value
+     * @return ReactiveSeq of one value
      */
     public static <T> ReactiveSeq<T> of(T value){
         return fromSpliterator(new SingleSpliterator<>(value));
@@ -888,7 +888,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * join / flatten replaceWith level of a nest hierarchy
+     * join / flatten one level of a nest hierarchy
      *
      * <pre>
      * {@code
@@ -903,7 +903,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * </pre>
      *
-     * @return Flattened / joined replaceWith level
+     * @return Flattened / joined one level
      */
     static <T1> ReactiveSeq<T1> flatten(ReactiveSeq<? extends ReactiveSeq<T1>> nested){
         return nested.flatMap(Function.identity());
@@ -1036,7 +1036,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitBy(Predicate<T> splitter);
 
     /**
-     * Partition a Stream into two replaceWith a per element basis, based on predicate's
+     * Partition a Stream into two one a per element basis, based on predicate's
      * boolean value
      *
      * <pre>
@@ -1127,7 +1127,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Zip 2 streams into replaceWith
+     * Zip 2 streams into one
      *
      * <pre>
      * {@code
@@ -1153,7 +1153,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * zip 3 Streams into replaceWith
+     * zip 3 Streams into one
      *
      * <pre>
      * {@code
@@ -2050,7 +2050,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Maybe<T> findOne();
 
     /**
-     * Lazy / reactive look up of takeOne value , capturing the takeOne error, if replaceWith occurs. If no values are
+     * Lazy / reactive look up of takeOne value , capturing the takeOne error, if one occurs. If no values are
      * present a NoSuchElementException is returned.
      *
      * For push based reactive-streams (created via Spouts.XXX) data will be pushed toNested the returned Either on arrival.
@@ -2140,13 +2140,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      *  {@code
-     *  ReactiveSeq.of("replaceWith","two","three","four")
+     *  ReactiveSeq.of("one","two","three","four")
      *           .mapReduce(this::toInt,Reducers.toTotalInt());
      *
      *  //10
      *
      *  int toInt(String s){
-     * 		if("replaceWith".equals(s))
+     * 		if("one".equals(s))
      * 			return 1;
      * 		if("two".equals(s))
      * 			return 2;
@@ -2215,7 +2215,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Performs a <a href="package-summary.html#MutableReduction">mutable
      * reduction</a> operation on the elements of this reactiveStream.  A mutable
-     * reduction is replaceWith in which the reduced value is a mutable result container,
+     * reduction is one in which the reduced value is a mutable result container,
      * such as an {@code ArrayList}, and elements are incorporated by updating
      * the state of the result rather than by replacing the result.  This
      * produces a result equivalent toNested:
@@ -2326,7 +2326,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
-     * was replaceWith value To reduce over the values on the list, called
+     * was one value To reduce over the values on the list, called
      * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      *
      * <pre>
@@ -2350,7 +2350,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
-     * was replaceWith value To reduce over the values on the list, called
+     * was one value To reduce over the values on the list, called
      * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      *
      * <pre>
@@ -3115,7 +3115,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * @return An Maybe with singleUnsafe value if this Stream has exactly replaceWith
+     * @return An Maybe with singleUnsafe value if this Stream has exactly one
      *         element, otherwise Maybe.none
      */
     @Override
@@ -3574,7 +3574,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * If this ReactiveSeq is empty replaceWith it with a another Stream
+     * If this ReactiveSeq is empty one it with a another Stream
      *
      * <pre>
      * {@code
@@ -3657,7 +3657,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> xPer(int x, long time, TimeUnit t);
 
     /**
-     * emit replaceWith element per time period
+     * emit one element per time period
      *
      * <pre>
      * {@code
@@ -3678,7 +3678,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> onePer(long time, TimeUnit t);
 
     /**
-     * Allow replaceWith element through per time period, drop all other elements in
+     * Allow one element through per time period, drop all other elements in
      * that time period
      *
      * <pre>
@@ -4021,7 +4021,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param delay
      *            Between last element completes passing through the Stream
-     *            until the next replaceWith starts
+     *            until the next one starts
      * @param ex
      *            ScheduledExecutorService
      * @return Connectable HotStream of emitted from scheduled Stream
@@ -4785,7 +4785,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * @return A Stream that contains only changes in the values in the current Stream, useful for converting a Continuous sequence into replaceWith with discrete steps
+     * @return A Stream that contains only changes in the values in the current Stream, useful for converting a Continuous sequence into one with discrete steps
      */
     ReactiveSeq<T> changes();
 
@@ -5202,7 +5202,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * @return HKT encoded type with a widened List
          */
         public static <C2, T> Higher<C2, Higher<reactiveSeq, T>> widen2(Higher<C2, ReactiveSeq<T>> flux) {
-            // a functor could be used (if C2 is a functor / replaceWith exists for C2 type)
+            // a functor could be used (if C2 is a functor / one exists for C2 type)
             // instead of casting
             // cast seems safer as Higher<reactiveSeq,T> must be a ReactiveSeq
             return (Higher) flux;

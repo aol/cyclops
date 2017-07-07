@@ -35,8 +35,8 @@ import lombok.experimental.Wither;
 /**
  * Inspired by scalaz-streams async.Queue (functionally similar, but wraps a JDK Queue - wait-free or Blocking)
  * 
- * A Queue that takes data from replaceWith or more input Streams and provides them toNested
- * replaceWith or more emitted Streams
+ * A Queue that takes data from one or more input Streams and provides them toNested
+ * one or more emitted Streams
  * 
  * Interface specifies a BlockingQueue, but non-BlockingQueues (such as ConcurrentLinkedQueue can be used
  * in conjunction with an implementation of the Continuation interface

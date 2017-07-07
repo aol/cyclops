@@ -171,7 +171,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     }
 
     /**
-     * Lift a function into replaceWith that accepts and returns an FutureWT
+     * Lift a function into one that accepts and returns an FutureWT
      * This allows multiple monad types toNested add functionality toNested existing function and methods
      * 
      * e.g. toNested add list handling  / iteration (via Future) and iteration (via Stream) toNested an existing function
@@ -204,7 +204,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     }
 
     /**
-     * Lift a BiFunction into replaceWith that accepts and returns  FutureWTs
+     * Lift a BiFunction into one that accepts and returns  FutureWTs
      * This allows multiple monad types toNested add functionality toNested existing function and methods
      * 
      * e.g. toNested add list handling / iteration (via Future), iteration (via Stream)  and asynchronous execution (Future)

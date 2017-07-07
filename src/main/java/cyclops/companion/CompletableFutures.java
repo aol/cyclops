@@ -512,7 +512,7 @@ public class CompletableFutures {
                              .getFuture());
     }
     /**
-     * Combine an CompletableFuture with the provided Iterable (selecting replaceWith element if present) using the supplied BiFunction
+     * Combine an CompletableFuture with the provided Iterable (selecting one element if present) using the supplied BiFunction
      * <pre>
      * {@code 
      *  CompletableFutures.zip(CompletableFuture.completedFuture(10),Arrays.asList(20), this::add)
@@ -536,7 +536,7 @@ public class CompletableFutures {
                              .getFuture());
     }
     /**
-     * Combine an CompletableFuture with the provided Publisher (selecting replaceWith element if present) using the supplied BiFunction
+     * Combine an CompletableFuture with the provided Publisher (selecting one element if present) using the supplied BiFunction
      * <pre>
      * {@code 
      *  CompletableFutures.zip(Flux.just(10),CompletableFuture.completedResult(10), this::add)

@@ -58,13 +58,13 @@ public interface Folds<T> {
      * 
      * <pre>
      *  {@code
-     *  ReactiveSeq.of("replaceWith","two","three","four")
+     *  ReactiveSeq.of("one","two","three","four")
      *           .mapReduce(this::toInt,Reducers.toTotalInt());
      *  
      *  //10
      *  
      *  int toInt(String s){
-     * 		if("replaceWith".equals(s))
+     * 		if("one".equals(s))
      * 			return 1;
      * 		if("two".equals(s))
      * 			return 2;
@@ -167,7 +167,7 @@ public interface Folds<T> {
     /**
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
-     * was replaceWith value To reduce over the values on the list, called
+     * was one value To reduce over the values on the list, called
      * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
@@ -194,7 +194,7 @@ public interface Folds<T> {
     /**
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
-     * was replaceWith value To reduce over the values on the list, called
+     * was one value To reduce over the values on the list, called
      * streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
@@ -532,7 +532,7 @@ public interface Folds<T> {
      * }
      * </pre>
      * 
-     * @return An Optional with singleUnsafe value if this Stream has exactly replaceWith
+     * @return An Optional with singleUnsafe value if this Stream has exactly one
      *         element, otherwise Optional Empty
      */
     default Maybe<T> single() {
@@ -621,7 +621,7 @@ public interface Folds<T> {
      * 
      * @param delay
      *            Between last element completes passing through the Stream
-     *            until the next replaceWith starts
+     *            until the next one starts
      * @param ex
      *            ScheduledExecutorService
      * @return Connectable HotStream of emitted from scheduled Stream

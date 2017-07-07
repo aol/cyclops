@@ -538,17 +538,17 @@ public class FlatMapPublisherTest {
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
 
             assertThat(res, hasItems(1, 2));
-            int replaceWith = 0;
+            int one = 0;
             int two = 0;
             for (Integer next : res) {
                 if (next == 1) {
-                    replaceWith++;
+                    one++;
                 }
                 if (next == 2) {
                     two++;
                 }
             }
-            assertThat(replaceWith, equalTo(3));
+            assertThat(one, equalTo(3));
             assertThat(two, equalTo(3));
 
         }

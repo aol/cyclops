@@ -134,7 +134,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
         return zipS((Stream<? extends U>) ReactiveSeq.fromIterable(other));
     }
     /**
-     * zip 3 Streams into replaceWith
+     * zip 3 Streams into one
      *
      * <pre>
      * {@code

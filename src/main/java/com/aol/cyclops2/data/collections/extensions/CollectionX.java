@@ -454,9 +454,9 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
 
     /**
      * Zip (merge) this toX with the supplied Iterable into a Colleciton containing Tuples
-     * Each Tuple contains replaceWith element from this toX and replaceWith from the other
+     * Each Tuple contains one element from this toX and one from the other
      * 
-     * @param other Collection toNested merge with this replaceWith
+     * @param other Collection toNested merge with this one
      * @return Merged toX
      */
     @Override

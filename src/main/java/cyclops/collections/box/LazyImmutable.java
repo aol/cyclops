@@ -85,7 +85,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     }
 
     /**
-     * Map the value stored in this Immutable Closed Value from replaceWith Value toNested another
+     * Map the value stored in this Immutable Closed Value from one Value toNested another
      * If this is an unitiatilised ImmutableClosedValue, an uninitialised closed value will be returned instead
      * 
      * @param fn Mapper function
@@ -103,7 +103,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
 
 
     /**
-     * FlatMap the value stored in Immutable Closed Value from replaceWith Value toNested another
+     * FlatMap the value stored in Immutable Closed Value from one Value toNested another
      *  If this is an unitiatilised ImmutableClosedValue, an uninitialised closed value will be returned instead
      * 
      * @param fn  Flat Mapper function

@@ -548,7 +548,7 @@ public class Optionals {
     }
 
     /**
-     * Combine an Optional with the provided Iterable (selecting replaceWith element if present) using the supplied BiFunction
+     * Combine an Optional with the provided Iterable (selecting one element if present) using the supplied BiFunction
      * <pre>
      * {@code 
      *  Optionals.zip(Optional.of(10),Arrays.asList(20), this::add)
@@ -573,7 +573,7 @@ public class Optionals {
     }
 
     /**
-     * Combine an Optional with the provided Publisher (selecting replaceWith element if present) using the supplied BiFunction
+     * Combine an Optional with the provided Publisher (selecting one element if present) using the supplied BiFunction
      * <pre>
      * {@code 
      *  Optionals.zip(Flux.just(10),Optional.of(10), this::add)

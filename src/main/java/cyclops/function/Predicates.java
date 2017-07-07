@@ -104,7 +104,7 @@ public class Predicates {
      *       //ListX[List[1]]      
      * }
      * </pre>     
-     * @return A Predicate that checks if it's input is an Iterable with at least replaceWith value
+     * @return A Predicate that checks if it's input is an Iterable with at least one value
      */
     public static <T> Predicate<T> iterablePresent() {
         return t -> t instanceof Iterable ? ((Iterable) t).iterator()

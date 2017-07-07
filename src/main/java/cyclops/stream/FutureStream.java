@@ -519,7 +519,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return (FutureStream<U>)ReactiveSeq.super.combine(op,predicate);
     }
     /**
-     * If this SequenceM is empty replaceWith it with a another Stream
+     * If this SequenceM is empty one it with a another Stream
      *
      * <pre>
      * {@code
@@ -1284,7 +1284,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      *
      * @param time
-     *            Time from which toNested accept only replaceWith element
+     *            Time from which toNested accept only one element
      * @param unit
      *            Time unit for specified time
      * @return Next stage of reactiveStream, with only 1 element per specified time
@@ -1468,7 +1468,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Slow emissions down, emiting replaceWith element per specified time period
+     * Slow emissions down, emiting one element per specified time period
      *
      * <pre>
      * {@code
@@ -2401,7 +2401,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Cross join 2 streams into replaceWith.
+     * Cross join 2 streams into one.
      * <p>
      * <pre>{@code
      * // (tuple(1, "a"), tuple(1, "b"), tuple(2, "a"), tuple(2, "b"))
@@ -2471,7 +2471,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Inner join 2 streams into replaceWith.
+     * Inner join 2 streams into one.
      *
      * <pre>
      * {@code
@@ -2486,7 +2486,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Left outer join 2 streams into replaceWith.
+     * Left outer join 2 streams into one.
      * <p>
      * <pre>
      * {@code
@@ -2500,7 +2500,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Right outer join 2 streams into replaceWith.
+     * Right outer join 2 streams into one.
      * <p>
      * <pre>
      * {@code
@@ -2670,7 +2670,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /*
-     * Flatten this reactiveStream replaceWith level
+     * Flatten this reactiveStream one level
      * * <pre>
      * {@code
      *  FutureStream.of(Arrays.asList(1,2))

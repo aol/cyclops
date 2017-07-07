@@ -164,7 +164,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     }
 
     /**
-     * Lift a function into replaceWith that accepts and returns an MaybeWT
+     * Lift a function into one that accepts and returns an MaybeWT
      * This allows multiple monad types toNested add functionality toNested existing function and methods
      * 
      * e.g. toNested add list handling  / iteration (via Maybe) and iteration (via Stream) toNested an existing function
@@ -197,7 +197,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     }
 
     /**
-     * Lift a BiFunction into replaceWith that accepts and returns  MaybeWTs
+     * Lift a BiFunction into one that accepts and returns  MaybeWTs
      * This allows multiple monad types toNested add functionality toNested existing function and methods
      * 
      * e.g. toNested add list handling / iteration (via Maybe), iteration (via Stream)  and asynchronous execution (Maybe)

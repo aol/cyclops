@@ -36,7 +36,7 @@ import java.util.TreeSet;
  * &quot;At 8:00am every Monday through Friday&quot; or &quot;At 1:30am every 
  * last Friday of the month&quot;. 
  * <P>
- * Cron expressions are comprised of 6 required fields and replaceWith optional field
+ * Cron expressions are comprised of 6 required fields and one optional field
  * separated by white space. The fields respectively are described as follows:
  * 
  * <table cellspacing="8">
@@ -103,7 +103,7 @@ import java.util.TreeSet;
  * <P>
  * The '?' character is allowed for the day-of-month and day-of-week fields. It
  * is used toNested specify 'no specific value'. This is useful when you need toNested
- * specify something in replaceWith of the two fields, but not the other.
+ * specify something in one of the two fields, but not the other.
  * <P>
  * The '-' character is used to specify ranges For example &quot;10-12&quot; in
  * the hour field means &quot;the hours 10, 11 and 12&quot;.
@@ -156,12 +156,12 @@ import java.util.TreeSet;
  * The '#' character is allowed for the day-of-week field. This character is
  * used to specify &quot;the nth&quot; XXX day of the month. For example, the 
  * value of &quot;6#3&quot; in the day-of-week field means the third Friday of 
- * the month (day 6 = Friday and &quot;#3&quot; = the 3rd replaceWith in the month).
+ * the month (day 6 = Friday and &quot;#3&quot; = the 3rd one in the month).
  * Other examples: &quot;2#1&quot; = the takeOne Monday of the month and
  * &quot;4#5&quot; = the fifth Wednesday of the month. Note that if you specify
  * &quot;#5&quot; and there is not 5 of the given day-of-week in the month, then
  * no firing will occur that month.  If the '#' character is used, there can
- * only be replaceWith expression in the day-of-week field (&quot;3#1,6#3&quot; is
+ * only be one expression in the day-of-week field (&quot;3#1,6#3&quot; is
  * not valid, since there are two expressions).
  * <P>
  * <!--The 'C' character is allowed for the day-of-month and day-of-week fields.
@@ -179,7 +179,7 @@ import java.util.TreeSet;
  * <b>NOTES:</b>
  * <ul>
  * <li>Support for specifying both a day-of-week and a day-of-month value is
- * not complete (you'll need to use the '?' character in replaceWith of these fields).
+ * not complete (you'll need to use the '?' character in one of these fields).
  * </li>
  * <li>Overflowing ranges is supported - that is, having a larger number on 
  * the left hand side than the right. You might do 22-2 to catch 10 o'clock 
@@ -363,7 +363,7 @@ public final class CronExpression implements Serializable, Cloneable {
 
         //FUTURE_TODO: (QUARTZ-481) IMPROVE THIS! The following is a BAD solution to this problem. Performance will be very bad here, depending on the cron expression. It is, however A solution.
 
-        //keep getting the next included time until it's farther than replaceWith second
+        //keep getting the next included time until it's farther than one second
         // apart. At that point, lastDate is the last valid fire time. We return
         // the second immediately following it.
         while (difference == 999) {
@@ -1197,7 +1197,7 @@ public final class CronExpression implements Serializable, Cloneable {
         final Calendar cl = new java.util.GregorianCalendar(
                                                             getTimeZone());
 
-        // move ahead replaceWith second, since we're computing the time *after* the
+        // move ahead one second, since we're computing the time *after* the
         // given time
         afterTime = new Date(
                              afterTime.getTime() + 1000);
@@ -1413,7 +1413,7 @@ public final class CronExpression implements Serializable, Cloneable {
                     final int lDay = getLastDayOfMonth(mon, cl.get(Calendar.YEAR));
 
                     if (day + daysToAdd > lDay) { // did we already miss the
-                        // last replaceWith?
+                        // last one?
                         cl.set(Calendar.SECOND, 0);
                         cl.set(Calendar.MINUTE, 0);
                         cl.set(Calendar.HOUR_OF_DAY, 0);

@@ -305,7 +305,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Extract replaceWith value from the selected pipe, if it exists
+     * Extract one value from the selected pipe, if it exists
      * 
      * @param key : Adapter identifier
      * @return Maybe containing next value from the Adapter identified by the provided key
@@ -319,7 +319,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Extact replaceWith value from the selected pipe or an error if it doesn't exist (NoSuchElementException).
+     * Extact one value from the selected pipe or an error if it doesn't exist (NoSuchElementException).
      * 
      * <pre>
      * {@code 
@@ -348,7 +348,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Extact replaceWith value from the selected pipe or an empty Maybe if it doesn't exist. Currently only Adapter's and not Publishers
+     * Extact one value from the selected pipe or an empty Maybe if it doesn't exist. Currently only Adapter's and not Publishers
      * are managed by Pipes so Publisher errors are not propagated (@see {@link Pipes#oneValue(Object)} or @see {@link Pipes#oneOrError(Object)} is better at the moment.
      * 
      *  <pre>
@@ -377,7 +377,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Extact replaceWith value from the selected pipe or an empty Maybe if it doesn't exist. Currently only Adapter's and not Publishers
+     * Extact one value from the selected pipe or an empty Maybe if it doesn't exist. Currently only Adapter's and not Publishers
      * are managed by Pipes so Publisher errors are not propagated (@see {@link Pipes#oneValue(Object)} or @see {@link Pipes#oneOrError(Object)} is better at the moment.
      * 
      *  <pre>

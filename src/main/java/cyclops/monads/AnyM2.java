@@ -301,7 +301,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
     /**
      * Allows structural matching on the value / seq nature of this AnyM.
      * If this AnyM can only store a singleUnsafe value an Xor.secondary with type AnyMValue is returned
-     * If this AnyM can  store replaceWith or many values an Xor.primary with type AnyMSeq is returned
+     * If this AnyM can  store one or many values an Xor.primary with type AnyMSeq is returned
      * 
      * <pre>
      * {@code
@@ -360,9 +360,9 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
 
     /**
-     * join / flatten replaceWith level of a nest hierarchy
+     * join / flatten one level of a nest hierarchy
      * 
-     * @return Flattened / joined replaceWith level
+     * @return Flattened / joined one level
      */ 
     static <W extends WitnessType<W>,T1,T2> AnyM2<W,T2,T1> flatten(AnyM2<W, T2,? extends AnyM2<W, T2,T1>> nested){
         return nested.flatMapA(Function.identity());
