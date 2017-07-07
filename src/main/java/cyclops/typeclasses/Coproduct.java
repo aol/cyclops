@@ -128,6 +128,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
             return (Higher<W1, R>)x;
         }),def1,def2);
     }
+
     public Xor<Higher<W1,T>,Higher<W2,T>> asXor(){
         return xor;
     }
