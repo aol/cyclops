@@ -94,6 +94,15 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public <U> Coproduct<W1,W2,U> ofType(Class<? extends U> type) {
         return (Coproduct<W1,W2,U>)Filters.super.ofType(type);
     }
+    public Active<W1,T> activeLeft(MonoidK<W1,T> m, Higher<W1,T> concat){
+        Higher<W1, T> h = xor.visit(s -> m.apply(s, concat), p -> m.zero());
+        return Active.of(h,def1);
+    }
+    public Active<W2,T> activeSecond(MonoidK<W2,T> m, Higher<W2,T> concat){
+        Higher<W2, T> h = xor.visit(s -> m.zero(), p -> m.apply(p, concat));
+        return Active.of(h,def2);
+    }
+
     public Coproduct<W1,W2,T> plusLeft(SemigroupK<W1,T> semigroupK, Higher<W1,T> add){
         return of(xor.secondaryFlatMap(s -> Xor.secondary(semigroupK.apply(s, add))),def1,def2);
     }

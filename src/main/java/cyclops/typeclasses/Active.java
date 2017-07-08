@@ -118,7 +118,7 @@ public class Active<W,T> implements Filters<T>,
     public <T2,R> Eval<Active<W,R>> lazyZip(Eval<Higher<W,T2>> lazy, BiFunction<? super T,? super T2,? extends R> fn) {
         return lazy.map(e-> zip(e,fn));
     }
-    public <T2,R> Eval<Active<W,R>> lazyMap2A(Eval<Active<W,T2>> lazy, BiFunction<? super T,? super T2,? extends R> fn) {
+    public <T2,R> Eval<Active<W,R>> lazyZipA(Eval<Active<W,T2>> lazy, BiFunction<? super T,? super T2,? extends R> fn) {
         return lazy.map(e->zip(e.getSingle(),fn));
     }
 

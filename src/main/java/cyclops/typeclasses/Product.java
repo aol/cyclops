@@ -191,7 +191,12 @@ public class Product<W1,W2,T> implements  Filters<T>,
     }
 
 
-
+    public Active<W1,T> activeFirst(SemigroupK<W1,T> sg, Higher<W1,T> concat){
+        return Active.of(sg.apply(run.v1,concat),def1);
+    }
+    public Active<W2,T> activeSecond(SemigroupK<W2,T> sg, Higher<W2,T> concat){
+        return Active.of(sg.apply(run.v2,concat),def2);
+    }
 
     public <R> R visit(BiFunction<? super Higher<W1,? super T>,? super Higher<W2,? super T>, ? extends R> visitor){
         return run.map(visitor);
