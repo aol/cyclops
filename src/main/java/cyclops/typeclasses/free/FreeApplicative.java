@@ -37,7 +37,7 @@ public interface FreeApplicative<F, T> extends Higher2<freeAp,F, T> {
     }
     default <P,G> Higher<G, T> foldMap(NaturalTransformation<F, G> f, Applicative<G> applicative){
         return this.<P,Higher<G, T>>visit(a->applicative.unit(a),
-                (pivot,fn)->applicative.map2(f.apply(pivot),fn.foldMap(f,applicative),(a,g)->g.apply(a)));
+                (pivot,fn)->applicative.zip(f.apply(pivot),fn.foldMap(f,applicative),(a, g)->g.apply(a)));
     }
 
     default <P> Higher<F, T> fold(Applicative<F> applicative){

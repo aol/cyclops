@@ -3,16 +3,12 @@ package cyclops.typeclasses;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Filters;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collections.mutable.ListX;
-import cyclops.companion.Functions;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
-import cyclops.function.*;
 import cyclops.control.Xor;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
@@ -20,8 +16,6 @@ import cyclops.function.Monoid;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.monad.Applicative;
-import cyclops.typeclasses.monad.Monad;
-import cyclops.typeclasses.monad.Traverse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -117,19 +111,15 @@ public class Active<W,T> implements Filters<T>,
     public <R> Active<W, R> map(Function<? super T, ? extends R> fn) {
         return of(def1.functor().map(fn, single), def1);
     }
-    public <T2, R> Active<W, R> map2(Higher<W, T2> fb, BiFunction<? super T,? super T2,? extends R> f) {
-        return of(def1.applicative().map2(single,fb,f),def1);
+    public <T2, R> Active<W, R> zip(Higher<W, T2> fb, BiFunction<? super T,? super T2,? extends R> f) {
+        return of(def1.applicative().zip(single,fb,f),def1);
     }
 
-    public <T2, R> Active<W, R> map2(Active<W, T2> fb, BiFunction<? super T,? super T2,? extends R> f) {
-        return of(def1.applicative().map2(single,fb.single,f),def1);
-    }
-
-    public <T2,R> Eval<Active<W,R>> lazyMap2(Eval<Higher<W,T2>> lazy, BiFunction<? super T,? super T2,? extends R> fn) {
-        return lazy.map(e->map2(e,fn));
+    public <T2,R> Eval<Active<W,R>> lazyZip(Eval<Higher<W,T2>> lazy, BiFunction<? super T,? super T2,? extends R> fn) {
+        return lazy.map(e-> zip(e,fn));
     }
     public <T2,R> Eval<Active<W,R>> lazyMap2A(Eval<Active<W,T2>> lazy, BiFunction<? super T,? super T2,? extends R> fn) {
-        return lazy.map(e->map2(e,fn));
+        return lazy.map(e->zip(e.getSingle(),fn));
     }
 
     public Active<W, T> peek(Consumer<? super T> fn) {

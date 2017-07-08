@@ -896,7 +896,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     default Tuple2<Optional<T>, Streamable<T>> splitAtHead() {
         return reactiveSeq().splitAtHead()
-                            .map2(s -> fromStream(s));
+                            .zip(s -> fromStream(s));
     }*/
 
     /**
