@@ -18,6 +18,8 @@ import cyclops.monads.Witness.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
@@ -70,7 +72,9 @@ public class Product<W1,W2,T> implements  Filters<T>,
     public static  <W1,W2,T> Product<W1,W2,T> of(Active<W1,T> a1, Active<W2,T> a2){
         return of(Tuple.tuple(a1.getSingle(),a2.getSingle()),a1.getDef1(),a2.getDef1());
     }
-
+    public Coproduct<W1,W2,T> coproduct(BiPredicate<Higher<W1,T>,Higher<W2,T>> test){
+        return test.test(run.v1,run.v2) ?Coproduct.left(run.v1,def1,def2) : Coproduct.right(run.v2,def1,def2);
+    }
     public Product<W1,W2,T> filter(Predicate<? super T> test) {
         return of(run.map((m1,m2)->{
             Higher<W2, T> x2 = def2.monadZero().visit(p->p.filter(test,m2),()->m2);
@@ -195,7 +199,12 @@ public class Product<W1,W2,T> implements  Filters<T>,
     public <R> R visitA(BiFunction<? super Active<W1,? super T>,? super Active<W2,? super T>, ? extends R> visitor){
         return run.map((a,b)->visitor.apply(Active.of(a,def1),Active.of(b,def2)));
     }
-
+    public Product<W1,W2,T> plusFirst(SemigroupK<W1,T> semigroupK, Higher<W1,T> add){
+        return of(Tuple.tuple(semigroupK.apply(run.v1,add),run.v2),def1,def2);
+    }
+    public Product<W1,W2,T> plusSecond(SemigroupK<W2,T> semigroupK, Higher<W2,T> add){
+        return of(Tuple.tuple(run.v1,semigroupK.apply(run.v2,add)),def1,def2);
+    }
     public Product<W2,W1,T> swap(){
         return of(run.swap(),def2,def1);
     }

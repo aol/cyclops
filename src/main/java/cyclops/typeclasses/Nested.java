@@ -24,6 +24,7 @@ import cyclops.monads.Witness.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.functor.Compose;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
@@ -101,9 +102,14 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
 
 
+
     public static <W1,W2,T> Nested<W1,W2,T> of(Higher<W1,Higher<W2,T>> nested,InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2){
         Compose<W1,W2> composed = Compose.compose(def1.functor(),def2.functor());
         return new Nested<>(nested,composed,def1,def2);
+    }
+
+    public static <W,T> Active<W,T> flatten(Nested<W,W,T> nested){
+        return Active.of(nested.def1.monad().flatMap(i->i,nested.nested),nested.def1);
     }
 
     public Higher<W1, Higher<W2, T>> getNested() {
@@ -173,6 +179,10 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
     public Plus plusUnsafe(){
         return new Plus();
+    }
+
+    public Nested<W1,W2,T> plusNested(SemigroupK<W2,T> semigroupK, Higher<W2,T> add){
+        return of(def1.functor().map(i -> semigroupK.apply(i, add),nested), def1, def2);
     }
 
     public Maybe<Plus> plus(){

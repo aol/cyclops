@@ -8,6 +8,7 @@ import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collections.mutable.ListX;
+import cyclops.companion.Functions;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
@@ -107,7 +108,12 @@ public class Active<W,T> implements Filters<T>,
     public Active<W, T> filter(Predicate<? super T> predicate) {
         return of(def1.monadZero().visit(s -> s.filter(predicate, single), () -> single), def1);
     }
-
+    public <R> Active<W,Tuple2<T, R>> product(Higher<W, R> fb) {
+        return of(def1.applicative().product(single,fb),def1);
+    }
+    public <R> Active<W,Tuple2<T, R>> product(Active<W, R> fb) {
+        return of(def1.applicative().product(single,fb.single),def1);
+    }
     public <R> Active<W, R> map(Function<? super T, ? extends R> fn) {
         return of(def1.functor().map(fn, single), def1);
     }
@@ -240,8 +246,17 @@ public class Active<W,T> implements Filters<T>,
             return Active.of(def1.unfoldable().get().unfold(b,fn),def1);
         }
 
-        public <T> Active<W, T> replicate(int n, T value) {
-            return unfold(n,i -> Optional.of(tuple(value, i-1)));
+        public <T> Active<W, T> replicate(long n, T value) {
+            return unfold(n,i -> i>0? Optional.of(tuple(value, i<Long.MAX_VALUE? i-1 : i)) : Optional.empty());
+        }
+        public <R> Nested<W, W,R> replicate(Function<? super T,Long> fn, Function<? super T,R> mapper) {
+            return Nested.of(def1.functor().map(value->replicate(fn.apply(value), mapper.apply(value)).getSingle(),single),def1,def1);
+        }
+        public Nested<W, W,T> replicate(long n) {
+            return Nested.of(def1.functor().map(value->replicate(n,value).getSingle(),single),def1,def1);
+        }
+        public <T> Active<W, T> cycle(T value) {
+            return replicate(Long.MAX_VALUE, value);
         }
 
         public <R> Active<W,R> none() {

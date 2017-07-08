@@ -30,12 +30,15 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 
@@ -91,7 +94,16 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public <U> Coproduct<W1,W2,U> ofType(Class<? extends U> type) {
         return (Coproduct<W1,W2,U>)Filters.super.ofType(type);
     }
+    public Coproduct<W1,W2,T> plusLeft(SemigroupK<W1,T> semigroupK, Higher<W1,T> add){
+        return of(xor.secondaryFlatMap(s -> Xor.secondary(semigroupK.apply(s, add))),def1,def2);
+    }
+    public Coproduct<W1,W2,T> plusRight(SemigroupK<W2,T> semigroupK, Higher<W2,T> add){
+        return of(xor.flatMap(p -> Xor.primary(semigroupK.apply(p, add))),def1,def2);
+    }
 
+    public Product<W1,W2,T> product(MonoidK<W1,T> m1, MonoidK<W2,T> m2){
+        return Product.of(xor.visit(s -> Tuple.tuple(s, m2.zero()), p -> Tuple.tuple(m1.zero(), p)),def1,def2);
+    }
     @Override
     public Coproduct<W1,W2,T> filterNot(Predicate<? super T> predicate) {
         return filter(predicate.negate());
