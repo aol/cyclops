@@ -21,6 +21,7 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
@@ -32,7 +33,7 @@ public class MonoidKs {
         return  MonoidK.of(OptionalKind.empty(),SemigroupKs.optionalPresent());
     }
     public static <T> MonoidK<list,T> listXConcat() {
-        return MonoidK.of(ListX.empty(),SemigroupKs.listXConcat())
+        return MonoidK.of(ListX.empty(),SemigroupKs.listXConcat());
     }
 
 
@@ -193,65 +194,65 @@ public class MonoidKs {
     /**
      * @return Combine two Tryr's by taking the last primary
      */
-    static<T,X extends Throwable> MonoidK<Higher<tryType,X>,T> lastTrySuccess() {
-        return  (a, b) -> Try.narrowK(b).isSuccess() ? b : a;
+    static<T,X extends Throwable> MonoidK<Higher<tryType,X>,T> lastTrySuccess(X zero) {
+        return MonoidK.of(Try.failure(zero),SemigroupKs.lastTrySuccess());
     }
     /**
      * @return Combine two Try's by taking the last secondary
      */
-    static <T,X extends Throwable> MonoidK<Higher<tryType,X>,T> lastTryFailure() {
-        return  (a, b) -> Try.narrowK(b).isFailure() ? b : a;
+    static <T,X extends Throwable> MonoidK<Higher<tryType,X>,T> lastTryFailure(T zero) {
+        return MonoidK.of(Try.success(zero),SemigroupKs.lastTryFailure());
     }
     /**
      * @return Combine two Ior's by taking the takeOne primary
      */
-    static <ST,PT> MonoidK<Higher<ior,ST>,PT> firstPrimaryIor() {
-        return  (a, b) -> Ior.narrowK(a).isPrimary() ? a : b;
+    static <ST,PT> MonoidK<Higher<ior,ST>,PT> firstPrimaryIor(ST zero) {
+        return MonoidK.of(Ior.secondary(zero),SemigroupKs.firstPrimaryIor());
     }
     /**
      * @return Combine two Ior's by taking the takeOne secondary
      */
-    static <ST,PT> MonoidK<Higher<ior,ST>,PT> firstSecondaryIor() {
-        return  (a, b) -> Ior.narrowK(a).isSecondary() ? a : b;
+    static <ST,PT> MonoidK<Higher<ior,ST>,PT> firstSecondaryIor(PT zero) {
+        return MonoidK.of(Ior.primary(zero),SemigroupKs.firstSecondaryIor());
     }
     /**
      * @return Combine two Ior's by taking the last primary
      */
-    static <ST,PT> MonoidK<Higher<ior,ST>,PT> lastPrimaryIor() {
-        return  (a, b) -> Ior.narrowK(b).isPrimary() ? b : a;
+    static <ST,PT> MonoidK<Higher<ior,ST>,PT> lastPrimaryIor(ST zero) {
+        return MonoidK.of(Ior.secondary(zero),SemigroupKs.lastPrimaryIor());
     }
     /**
      * @return Combine two Ior's by taking the last secondary
      */
-    static <ST,PT> MonoidK<Higher<ior,ST>,PT> lastSecondaryIor() {
-        return  (a, b) -> Ior.narrowK(b).isSecondary() ? b : a;
+    static <ST,PT> MonoidK<Higher<ior,ST>,PT> lastSecondaryIor(PT zero) {
+        return MonoidK.of(Ior.primary(zero),SemigroupKs.lastSecondaryIor());
     }
 
     /**
      * @return Combine two Maybe's by taking the takeOne present
      */
     static <T> MonoidK<maybe,T> firstPresentMaybe() {
-        return (a, b) -> Maybe.narrowK(a).isPresent() ? a : b;
+        return MonoidK.of(Maybe.none(),SemigroupKs.firstPresentMaybe());
     }
 
     /**
      * @return Combine two optionals by taking the takeOne present
      */
     static <T> MonoidK<optional,T> firstPresentOptional() {
-        return (a, b) -> OptionalKind.narrowK(a).isPresent() ? a : b;
+        return MonoidK.of(OptionalKind.empty(),SemigroupKs.firstPresentOptional());
     }
 
     /**
      * @return Combine two Maybes by taking the last present
      */
     static <T> MonoidK<maybe,T> lastPresentMaybe() {
-        return (a, b) -> Maybe.narrowK(b).isPresent() ? b : a;
+        return MonoidK.of(Maybe.none(),SemigroupKs.lastPresentMaybe());
     }
 
     /**
      * @return Combine two optionals by taking the last present
      */
     static <T> MonoidK<optional,T> lastPresentOptional() {
-        return (a, b) -> OptionalKind.narrowK(b).isPresent() ? b : a;
+        return MonoidK.of(OptionalKind.empty(),SemigroupKs.lastPresentOptional());
     }
 }

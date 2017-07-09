@@ -745,7 +745,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * <pre>
      * {@code
      * List<String> result = 	SimpleReactStream.of(1,2,3)
-     * 											 .product(FutureStream.of(100,200,300))
+     * 											 .zip(FutureStream.of(100,200,300))
                                                   .map(it ->it+"!!")
                                                   .toList();
         assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -753,12 +753,12 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * }
      * </pre>
      *
-     * @param s Stream toNested product
+     * @param s Stream toNested zip
      *
      * @return Next stage in reactiveStream
      *
      * @see
-     * com.aol.simple.react.reactiveStream.traits.FutureStream#product(com.aol.simple.
+     * com.aol.simple.react.reactiveStream.traits.FutureStream#zip(com.aol.simple.
      * react.reactiveStream.traits.SimpleReactStream)
      */
 

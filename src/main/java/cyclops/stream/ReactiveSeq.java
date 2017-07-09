@@ -94,7 +94,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  *      Retries
  *      Zipping
  *      Duplication
- *      Cartesian product operations (e.g. crossJoin, forEach2)
+ *      Cartesian zip operations (e.g. crossJoin, forEach2)
  *      Subscriptions and fined grained control
  *      Interoperability
  *      Parallelism via FutureStream
@@ -4313,7 +4313,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * crossJoin two Streams forming a cartesian product over both
+     * crossJoin two Streams forming a cartesian zip over both
      * @param other Stream toNested crossJoin
      * @return Active Stream with each pair across both Streams in a Tuple
      */
