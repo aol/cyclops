@@ -61,8 +61,8 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                                                     Higher4<either4,LT1,LT2,LT3,RT>,
                                                     BiTransformable<LT3, RT>,
                                                     To<Either4<LT1, LT2,LT3, RT>>,
-                                                   MonadicValue<RT>,
-                                                   Supplier<RT>{
+                                                    MonadicValue<RT>,
+                                                    Supplier<RT>{
 
     public static  <LT1,LT2,LT3,T> Kleisli<Higher<Higher<Higher<either4, LT1>, LT2>,LT3>,Either4<LT1,LT2,LT3,T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), Either4::widen);
