@@ -126,7 +126,7 @@ public class Active<W,T> implements Filters<T>,
         list.concreteMonoid(kindKleisli(),ListX.kindCokleisli())
                 .sum(ListX.of(ListX.of(1,2,3)));
 
-        list.concreteFlatMap(kindKleisli())
+        list.concreteFlatMap(ListX.kindKleisli())
                 .flatMap(i->ListX.of(1,2,3));
 
         list.concreteTailRec(kindKleisli())
@@ -138,6 +138,26 @@ public class Active<W,T> implements Filters<T>,
     public <C> Narrowed<C> concreteMonoid(Kleisli<W,C,T> widen,Cokleisli<W,T,C> narrow){
         return new Narrowed<C>(widen,narrow);
     }
+
+    /**
+     * Use concreteFlatMap to access a flatMap operator that works with the concrete type (rather than the higher kind encoding)
+     *
+     * e.g. using a vavr Vector
+     *
+     * <pre>
+     *     {@code
+     *     Active<vector,Integer> vector = Vectors.allTypeclasses(Vector.of(1,2,3));
+     *
+     *     vector.concreteFlatMap(Vectors.kindKleisli())
+                .flatMap(i->Vector.of(1,2,3)); //flatMap accepts Vector rather than Higher<vector,T>
+     *
+     *     }
+     * </pre>
+     *
+     * Note this is not typically needed for cyclops-react types
+     *
+     *
+     */
     public <C,R> NarrowedFlatMap<C,R> concreteFlatMap(Kleisli<W,C,R> widen){
         return new NarrowedFlatMap<>(widen);
     }
@@ -187,6 +207,9 @@ public class Active<W,T> implements Filters<T>,
         private final Kleisli<W,C,T> widen;
         private final Cokleisli<W,T,C> narrow;
 
+        public C extract(){
+            return narrow.apply(single);
+        }
         public Active<W,T> plus(Monoid<C> m,C add){
             return sum(m,ListX.of(add));
         }

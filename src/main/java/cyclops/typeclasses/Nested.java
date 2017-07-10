@@ -107,6 +107,10 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         Compose<W1,W2> composed = Compose.compose(def1.functor(),def2.functor());
         return new Nested<>(narrow(nested),composed,def1,def2);
     }
+    public static <W1,W2,T> Nested<W1,W2,T> of(Active<W1,? extends  Higher<W2,? extends T>> nested,InstanceDefinitions<W2> def2){
+        Compose<W1,W2> composed = Compose.compose(nested.getDef1().functor(),def2.functor());
+        return new Nested<>(narrow(nested.getActive()),composed,nested.getDef1(),def2);
+    }
     public static <W1,W2,T> Higher<W1,Higher<W2,T>> narrow(Higher<W1,? extends  Higher<W2,? extends T>> nested){
         return (Higher<W1,Higher<W2,T>>) nested;
     }
@@ -164,9 +168,11 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public <C,R> NarrowedFlatMap<C,R> concreteFlatMap(Kleisli<W2,C,R> widen){
         return new NarrowedFlatMap<>(widen);
     }
+
     public <C,R> NarrowedApplicative<C,R> concreteAp(Kleisli<W2,C,Function<T,R>> widen){
         return new NarrowedApplicative<>(widen);
     }
+
     public <C,R> NarrowedTailRec<C,R> concreteTailRec(Kleisli<W2,C,Xor<T,R>> widen){
         return new NarrowedTailRec<>(widen);
     }
@@ -207,7 +213,9 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         private final Kleisli<W2,C,T> widen;
         private final Cokleisli<W2,T,C> narrow;
 
-
+        public Active<W1,C> extract(){
+            return Active.of(def1.functor().map_(nested,f->narrow.apply(f)),def1);
+        }
         public Nested<W1,W2,T> plus(Monoid<C> m,C add){
             return sum(m,ListX.of(add));
         }

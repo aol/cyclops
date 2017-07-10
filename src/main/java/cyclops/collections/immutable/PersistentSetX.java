@@ -2,11 +2,14 @@ package cyclops.collections.immutable;
 
 
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPSetX;
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 
+import cyclops.control.Maybe;
+import cyclops.control.Xor;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -20,7 +23,16 @@ import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.Cokleisli;
+import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.Kleisli;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.instances.General;
+import cyclops.typeclasses.monad.*;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -33,6 +45,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
+
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
+
 /**
  * An eXtended Persistent Set type, that offers additional functional style operators such as bimap, filter and more
  * Can operate eagerly, lazily or reactively (async push)
@@ -41,8 +56,8 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
-/**
+public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher<persistentSetX,T>,LazyCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
+
     public static  <T> Kleisli<persistentSetX,PersistentSetX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), PersistentSetX::widen);
     }
@@ -52,7 +67,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
     public static  <T> Cokleisli<persistentSetX,T,PersistentSetX<T>> kindCokleisli(){
         return Cokleisli.of(PersistentSetX::narrowK);
     }
- **/
+
     /**
      * Narrow a covariant PersistentSetX
      * 
@@ -80,7 +95,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
      */
     public static PersistentSetX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end)
-                          .to().persistentSetX(Evaluation.LAZY);
+                          .to().persistentSetX(LAZY);
     }
 
     /**
@@ -94,7 +109,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
      */
     public static PersistentSetX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end)
-                .to().persistentSetX(Evaluation.LAZY);
+                .to().persistentSetX(LAZY);
     }
 
     /**
@@ -114,7 +129,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
      */
     static <U, T> PersistentSetX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
-                .to().persistentSetX(Evaluation.LAZY);
+                .to().persistentSetX(LAZY);
     }
 
     /**
@@ -128,7 +143,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
 
         return ReactiveSeq.generate(s)
                           .limit(limit)
-                .to().persistentSetX(Evaluation.LAZY);
+                .to().persistentSetX(LAZY);
     }
 
     /**
@@ -142,23 +157,23 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
     public static <T> PersistentSetX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
-                .to().persistentSetX(Evaluation.LAZY);
+                .to().persistentSetX(LAZY);
 
     }
 
     public static <T> PersistentSetX<T> of(final T... values) {
 
-        return new LazyPSetX<>(null,ReactiveSeq.of(values),Reducers.toPSet(),Evaluation.LAZY);
+        return new LazyPSetX<>(null,ReactiveSeq.of(values),Reducers.toPSet(), LAZY);
     }
 
     public static <T> PersistentSetX<T> empty() {
         return new LazyPSetX<>(
-                               HashTreePSet.empty(),null,Reducers.toPSet(),Evaluation.LAZY);
+                               HashTreePSet.empty(),null,Reducers.toPSet(), LAZY);
     }
 
     public static <T> PersistentSetX<T> singleton(final T value) {
         return new LazyPSetX<>(
-                               HashTreePSet.singleton(value),null,Reducers.toPSet(),Evaluation.LAZY);
+                               HashTreePSet.singleton(value),null,Reducers.toPSet(), LAZY);
     }
     PersistentSetX<T> type(Reducer<? extends PSet<T>> reducer);
 
@@ -177,19 +192,19 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
      * @return
      */
     public static <T> PersistentSetX<T> persistentSetX(ReactiveSeq<T> stream) {
-        return new LazyPSetX<>(null,stream,Reducers.toPSet(),Evaluation.LAZY);
+        return new LazyPSetX<>(null,stream,Reducers.toPSet(), LAZY);
     }
     public static <T> PersistentSetX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof PersistentSetX)
             return (PersistentSetX) iterable;
         if (iterable instanceof PSet)
             return new LazyPSetX<>(
-                                   (PSet) iterable,null,Reducers.toPSet(),Evaluation.LAZY);
+                                   (PSet) iterable,null,Reducers.toPSet(), LAZY);
 
 
         return new LazyPSetX<>(null,
                 ReactiveSeq.fromIterable(iterable),
-                Reducers.toPSet(),Evaluation.LAZY);
+                Reducers.toPSet(), LAZY);
     }
 
     /**
@@ -201,7 +216,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
      */
     public static <T> PersistentSetX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher)
-                .to().persistentSetX(Evaluation.LAZY);
+                .to().persistentSetX(LAZY);
     }
 
 
@@ -632,7 +647,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
 
         return this.stream()
                    .cycle(times)
-                .to().linkedListX(Evaluation.LAZY);
+                .to().linkedListX(LAZY);
     }
 
     /* (non-Javadoc)
@@ -643,7 +658,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
 
         return this.stream()
                    .cycle(m, times)
-                .to().linkedListX(Evaluation.LAZY);
+                .to().linkedListX(LAZY);
     }
 
     /* (non-Javadoc)
@@ -654,7 +669,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
 
         return this.stream()
                    .cycleWhile(predicate)
-                .to().linkedListX(Evaluation.LAZY);
+                .to().linkedListX(LAZY);
     }
 
     /* (non-Javadoc)
@@ -665,7 +680,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
 
         return this.stream()
                    .cycleUntil(predicate)
-                .to().linkedListX(Evaluation.LAZY);
+                .to().linkedListX(LAZY);
     }
 
     /* (non-Javadoc)
@@ -1103,6 +1118,381 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCo
     @Override
     default <T2, T3, T4, R> PersistentSetX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (PersistentSetX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
+    }
+
+
+    public static <T> PersistentSetX<T> narrowK(final Higher<persistentSetX, T> persistentSetX) {
+        return (PersistentSetX<T>)persistentSetX;
+    }
+    static class Instances {
+
+        public static InstanceDefinitions<persistentSetX> definitions(){
+            return new InstanceDefinitions<persistentSetX>() {
+                @Override
+                public <T, R> Functor<persistentSetX> functor() {
+                    return Instances.functor();
+                }
+
+                @Override
+                public <T> Pure<persistentSetX> unit() {
+                    return Instances.unit();
+                }
+
+                @Override
+                public <T, R> Applicative<persistentSetX> applicative() {
+                    return Instances.zippingApplicative();
+                }
+
+                @Override
+                public <T, R> Monad<persistentSetX> monad() {
+                    return Instances.monad();
+                }
+
+                @Override
+                public <T, R> Maybe<MonadZero<persistentSetX>> monadZero() {
+                    return Maybe.just(Instances.monadZero());
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<persistentSetX>> monadPlus() {
+                    return Maybe.just(Instances.monadPlus());
+                }
+
+                @Override
+                public <T> MonadRec<persistentSetX> monadRec() {
+                    return Instances.monadRec();
+                }
+
+                @Override
+                public <T> Maybe<MonadPlus<persistentSetX>> monadPlus(Monoid<Higher<persistentSetX, T>> m) {
+                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                }
+
+                @Override
+                public <C2, T> Maybe<Traverse<persistentSetX>> traverse() {
+                    return Maybe.just(Instances.traverse());
+                }
+
+                @Override
+                public <T> Maybe<Foldable<persistentSetX>> foldable() {
+                    return Maybe.just(Instances.foldable());
+                }
+
+                @Override
+                public <T> Maybe<Comonad<persistentSetX>> comonad() {
+                    return Maybe.none();
+                }
+                @Override
+                public <T> Maybe<Unfoldable<persistentSetX>> unfoldable() {
+                    return Maybe.just(Instances.unfoldable());
+                }
+            };
+
+        }
+        public static Unfoldable<persistentSetX> unfoldable(){
+            return new Unfoldable<persistentSetX>() {
+                @Override
+                public <R, T> Higher<persistentSetX, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                    return PersistentSetX.unfold(b,fn);
+                }
+            };
+        }
+        /**
+         *
+         * Transform a persistentSetX, mulitplying every element by 2
+         *
+         * <pre>
+         * {@code
+         *  PersistentSetX<Integer> persistentSetX = Sets.functor().map(i->i*2, PersistentSetX.widen(Arrays.asSet(1,2,3));
+         *
+         *  //[2,4,6]
+         *
+         *
+         * }
+         * </pre>
+         *
+         * An example fluent api working with Sets
+         * <pre>
+         * {@code
+         *   PersistentSetX<Integer> persistentSetX = Sets.unit()
+        .unit("hello")
+        .applyHKT(h->Sets.functor().map((String v) ->v.length(), h))
+        .convert(PersistentSetX::narrowK3);
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A functor for Sets
+         */
+        public static <T,R>Functor<persistentSetX> functor(){
+            BiFunction<PersistentSetX<T>,Function<? super T, ? extends R>,PersistentSetX<R>> map = Instances::map;
+            return General.functor(map);
+        }
+        /**
+         * <pre>
+         * {@code
+         * PersistentSetX<String> persistentSetX = Sets.unit()
+        .unit("hello")
+        .convert(PersistentSetX::narrowK3);
+
+        //Arrays.asSet("hello"))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A factory for Sets
+         */
+        public static <T> Pure<persistentSetX> unit(){
+            return General.<persistentSetX,T>unit(Instances::of);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops2.hkt.jdk.PersistentSetX.widen;
+         * import static com.aol.cyclops2.util.function.Lambda.l1;
+         * import static java.util.Arrays.asSet;
+         *
+        Sets.zippingApplicative()
+        .ap(widen(asSet(l1(this::multiplyByTwo))),widen(asSet(1,2,3)));
+         *
+         * //[2,4,6]
+         * }
+         * </pre>
+         *
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         * PersistentSetX<Function<Integer,Integer>> persistentSetXFn =Sets.unit()
+         *                                                  .unit(Lambda.l1((Integer i) ->i*2))
+         *                                                  .convert(PersistentSetX::narrowK3);
+
+        PersistentSetX<Integer> persistentSetX = Sets.unit()
+        .unit("hello")
+        .applyHKT(h->Sets.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Sets.zippingApplicative().ap(persistentSetXFn, h))
+        .convert(PersistentSetX::narrowK3);
+
+        //Arrays.asSet("hello".length()*2))
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A zipper for Sets
+         */
+        public static <T,R> Applicative<persistentSetX> zippingApplicative(){
+            BiFunction<PersistentSetX< Function<T, R>>,PersistentSetX<T>,PersistentSetX<R>> ap = Instances::ap;
+            return General.applicative(functor(), unit(), ap);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         * import static com.aol.cyclops2.hkt.jdk.PersistentSetX.widen;
+         * PersistentSetX<Integer> persistentSetX  = Sets.monad()
+        .flatMap(i->widen(PersistentSetX.range(0,i)), widen(Arrays.asSet(1,2,3)))
+        .convert(PersistentSetX::narrowK3);
+         * }
+         * </pre>
+         *
+         * Example fluent API
+         * <pre>
+         * {@code
+         *    PersistentSetX<Integer> persistentSetX = Sets.unit()
+        .unit("hello")
+        .applyHKT(h->Sets.monad().flatMap((String v) ->Sets.unit().unit(v.length()), h))
+        .convert(PersistentSetX::narrowK3);
+
+        //Arrays.asSet("hello".length())
+         *
+         * }
+         * </pre>
+         *
+         * @return Type class with monad functions for Sets
+         */
+        public static <T,R> Monad<persistentSetX> monad(){
+
+            BiFunction<Higher<persistentSetX,T>,Function<? super T, ? extends Higher<persistentSetX,R>>,Higher<persistentSetX,R>> flatMap = Instances::flatMap;
+            return General.monad(zippingApplicative(), flatMap);
+        }
+        public static <T,R> MonadRec<persistentSetX> monadRec(){
+
+            return new MonadRec<persistentSetX>(){
+                @Override
+                public <T, R> Higher<persistentSetX, R> tailRec(T initial, Function<? super T, ? extends Higher<persistentSetX,? extends Xor<T, R>>> fn) {
+                    PersistentSetX<Xor<T, R>> next = PersistentSetX.of(Xor.secondary(initial));
+                    boolean newValue[] = {false};
+                    for(;;){
+                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> PersistentSetX.of(e)));
+                        if(!newValue[0])
+                            break;
+                    }
+                    return Xor.sequencePrimary(next).get().to().persistentSetX(LAZY);
+                }
+            };
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  PersistentSetX<String> persistentSetX = Sets.unit()
+        .unit("hello")
+        .applyHKT(h->Sets.monadZero().filter((String t)->t.startsWith("he"), h))
+        .convert(PersistentSetX::narrowK3);
+
+        //Arrays.asSet("hello"));
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return A filterable monad (with default value)
+         */
+        public static <T,R> MonadZero<persistentSetX> monadZero(){
+
+            return General.monadZero(monad(), PersistentSetX.empty());
+        }
+        /**
+         * <pre>
+         * {@code
+         *  PersistentSetX<Integer> persistentSetX = Sets.<Integer>monadPlus()
+        .plus(PersistentSetX.widen(Arrays.asSet()), PersistentSetX.widen(Arrays.asSet(10)))
+        .convert(PersistentSetX::narrowK3);
+        //Arrays.asSet(10))
+         *
+         * }
+         * </pre>
+         * @return Type class for combining Sets by concatenation
+         */
+        public static <T> MonadPlus<persistentSetX> monadPlus(){
+            Monoid<PersistentSetX<T>> m = Monoid.of(PersistentSetX.empty(), Instances::concat);
+            Monoid<Higher<persistentSetX,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+        /**
+         *
+         * <pre>
+         * {@code
+         *  Monoid<PersistentSetX<Integer>> m = Monoid.of(PersistentSetX.widen(Arrays.asSet()), (a,b)->a.isEmpty() ? b : a);
+        PersistentSetX<Integer> persistentSetX = Sets.<Integer>monadPlus(m)
+        .plus(PersistentSetX.widen(Arrays.asSet(5)), PersistentSetX.widen(Arrays.asSet(10)))
+        .convert(PersistentSetX::narrowK3);
+        //Arrays.asSet(5))
+         *
+         * }
+         * </pre>
+         *
+         * @param m Monoid toNested use for combining Sets
+         * @return Type class for combining Sets
+         */
+        public static <T> MonadPlus<persistentSetX> monadPlus(Monoid<PersistentSetX<T>> m){
+            Monoid<Higher<persistentSetX,T>> m2= (Monoid)m;
+            return General.monadPlus(monadZero(),m2);
+        }
+
+        /**
+         * @return Type class for traversables with traverse / sequence operations
+         */
+        public static <C2,T> Traverse<persistentSetX> traverse(){
+            BiFunction<Applicative<C2>,PersistentSetX<Higher<C2, T>>,Higher<C2, PersistentSetX<T>>> sequenceFn = (ap, persistentSetX) -> {
+
+                Higher<C2,PersistentSetX<T>> identity = ap.unit(PersistentSetX.empty());
+
+                BiFunction<Higher<C2,PersistentSetX<T>>,Higher<C2,T>,Higher<C2,PersistentSetX<T>>> combineToSet =   (acc,next) -> ap.apBiFn(ap.unit((a,b) -> { a.add(b); return a;}),acc,next);
+
+                BinaryOperator<Higher<C2,PersistentSetX<T>>> combineSets = (a,b)-> ap.apBiFn(ap.unit((l1,l2)-> { l1.addAll(l2); return l1;}),a,b); ;
+
+                return persistentSetX.stream()
+                        .reduce(identity,
+                                combineToSet,
+                                combineSets);
+
+
+            };
+            BiFunction<Applicative<C2>,Higher<persistentSetX,Higher<C2, T>>,Higher<C2, Higher<persistentSetX,T>>> sequenceNarrow  =
+                    (a,b) -> Instances.widen2(sequenceFn.apply(a, Instances.narrowK(b)));
+            return General.traverse(zippingApplicative(), sequenceNarrow);
+        }
+
+        /**
+         *
+         * <pre>
+         * {@code
+         * int sum  = Sets.foldable()
+        .foldLeft(0, (a,b)->a+b, PersistentSetX.widen(Arrays.asSet(1,2,3,4)));
+
+        //10
+         *
+         * }
+         * </pre>
+         *
+         *
+         * @return Type class for folding / reduction operations
+         */
+        public static <T> Foldable<persistentSetX> foldable(){
+            BiFunction<Monoid<T>,Higher<persistentSetX,T>,T> foldRightFn =  (m,l)-> PersistentSetX.fromIterable(narrow(l)).foldRight(m);
+            BiFunction<Monoid<T>,Higher<persistentSetX,T>,T> foldLeftFn = (m,l)-> PersistentSetX.fromIterable(narrow(l)).reduce(m);
+            return General.foldable(foldRightFn, foldLeftFn);
+        }
+
+        private static  <T> PersistentSetX<T> concat(Set<T> l1, Set<T> l2){
+            return PersistentSetX.persistentSetX(ReactiveSeq.fromStream(Stream.concat(l1.stream(),l2.stream())));
+        }
+        private static <T> PersistentSetX<T> of(T value){
+            return PersistentSetX.of(value);
+        }
+        private static <T,R> PersistentSetX<R> ap(PersistentSetX<Function< T, R>> lt,  PersistentSetX<T> persistentSetX){
+            return PersistentSetX.fromIterable(lt).zip(persistentSetX,(a,b)->a.apply(b));
+        }
+        private static <T,R> Higher<persistentSetX,R> flatMap( Higher<persistentSetX,T> lt, Function<? super T, ? extends  Higher<persistentSetX,R>> fn){
+            return PersistentSetX.fromIterable(Instances.narrowK(lt)).flatMap(fn.andThen(Instances::narrowK));
+        }
+        private static <T,R> PersistentSetX<R> map(PersistentSetX<T> lt, Function<? super T, ? extends R> fn){
+            return PersistentSetX.fromIterable(lt).map(fn);
+        }
+
+
+
+        /**
+         * Widen a SetType nest inside another HKT encoded type
+         *
+         * @param flux HTK encoded type containing  a Set toNested widen
+         * @return HKT encoded type with a widened Set
+         */
+        public static <C2, T> Higher<C2, Higher<persistentSetX, T>> widen2(Higher<C2, PersistentSetX<T>> flux) {
+            // a functor could be used (if C2 is a functor / one exists for C2 type)
+            // instead of casting
+            // cast seems safer as Higher<persistentSetX,T> must be a PersistentSetX
+            return (Higher) flux;
+        }
+
+
+
+        /**
+         * Convert the raw Higher Kinded Type for SetType types into the SetType type definition class
+         *
+         * @param future HKT encoded persistentSetX into a SetType
+         * @return SetType
+         */
+        public static <T> PersistentSetX<T> narrowK(final Higher<persistentSetX, T> future) {
+            return (PersistentSetX<T>) future;
+        }
+
+        /**
+         * Convert the HigherKindedType definition for a Set into
+         *
+         * @param Set Type Constructor toNested convert back into narrowed type
+         * @return Set from Higher Kinded Type
+         */
+        public static <T> PersistentSetX<T> narrow(final Higher<persistentSetX, T> completableSet) {
+
+            return ((PersistentSetX<T>) completableSet);//.narrow();
+
+        }
     }
 
 
