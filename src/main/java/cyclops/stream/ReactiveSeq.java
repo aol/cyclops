@@ -127,6 +127,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Unit<T>,
                                         Higher<reactiveSeq,T> {
 
+    public static  <T> Kleisli<reactiveSeq,ReactiveSeq<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), ReactiveSeq::widen);
+    }
+    public static <T> Higher<reactiveSeq, T> widen(ReactiveSeq<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<reactiveSeq,T,ReactiveSeq<T>> kindCokleisli(){
+        return Cokleisli.of(ReactiveSeq::narrowK);
+    }
+    
     public static <W1,T> Nested<reactiveSeq,W1,T> nested(ReactiveSeq<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }

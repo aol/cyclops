@@ -117,6 +117,15 @@ public interface Maybe<T> extends To<Maybe<T>>,
                                   Recoverable<T>,
                                   Higher<maybe,T> {
 
+    public static  <T> Kleisli<maybe,Maybe<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Maybe::widen);
+    }
+    public static <T> Higher<maybe, T> widen(Maybe<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<maybe,T,Maybe<T>> kindCokleisli(){
+        return Cokleisli.of(Maybe::narrowK);
+    }
     public static <W1,T> Nested<maybe,W1,T> nested(Maybe<Higher<W1,T>> nested,InstanceDefinitions<W1> def2){
         return Nested.of(nested,Instances.definitions(),def2);
     }

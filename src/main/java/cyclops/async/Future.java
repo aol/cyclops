@@ -75,6 +75,15 @@ public class Future<T> implements To<Future<T>>,
                                   Higher<future,T>,
                                   RecoverableFrom<Throwable,T> {
 
+    public static  <T> Kleisli<future,Future<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Future::widen);
+    }
+    public static <T> Higher<future, T> widen(Future<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<future,T,Future<T>> kindCokleisli(){
+        return Cokleisli.of(Future::narrowK);
+    }
     public static <W1,T> Nested<future,W1,T> nested(Future<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }

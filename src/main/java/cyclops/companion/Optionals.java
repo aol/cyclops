@@ -50,6 +50,17 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class Optionals {
+
+    public static  <T> Kleisli<optional,Optional<T>,T> kindKleisli(){
+        return Kleisli.of(Optionals.Instances.monad(), Optionals::widen);
+    }
+    public static <T> Higher<optional, T> widen(Optional<T> narrow) {
+        return Optionals.OptionalKind.widen(narrow);
+    }
+    public static  <T> Cokleisli<optional,T,Optional<T>> kindCokleisli(){
+        return Cokleisli.of(Optionals.OptionalKind::narrowK);
+    }
+
    public static <T,W extends WitnessType<W>> OptionalT<W, T> liftM(Optional<T> opt, W witness) {
         return OptionalT.of(witness.adapter().unit(opt));
     }

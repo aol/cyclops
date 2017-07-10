@@ -1,5 +1,6 @@
 package cyclops.companion;
 
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -50,6 +51,15 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class CompletableFutures {
 
+    public static  <T> Kleisli<completableFuture,CompletableFuture<T>,T> kindKleisli(){
+        return Kleisli.of(CompletableFutures.Instances.monad(), CompletableFutures::widen);
+    }
+    public static <T> Higher<completableFuture, T> widen(CompletableFuture<T> narrow) {
+        return CompletableFutures.CompletableFutureKind.widen(narrow);
+    }
+    public static  <T> Cokleisli<completableFuture,T,CompletableFuture<T>> kindCokleisli(){
+        return Cokleisli.of(CompletableFutures.CompletableFutureKind::narrowK);
+    }
     public static <T> CompletableFuture<T> ofResult(T value){
         CompletableFuture<T> result = new CompletableFuture<T>();
         result.complete(value);

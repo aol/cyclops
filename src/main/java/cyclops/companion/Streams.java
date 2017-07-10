@@ -69,6 +69,15 @@ import java.util.stream.*;
 @UtilityClass
 public class Streams {
 
+    public static  <T> Kleisli<stream,Stream<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Streams::widen);
+    }
+    public static <T> Higher<stream, T> widen(Stream<T> narrow) {
+        return StreamKind.widen(narrow);
+    }
+    public static  <T> Cokleisli<stream,T,Stream<T>> kindCokleisli(){
+        return Cokleisli.of(Streams.StreamKind::narrowK);
+    }
     public static <W1,T> Nested<stream,W1,T> nested(Stream<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(StreamKind.widen(nested), Instances.definitions(),def2);
     }

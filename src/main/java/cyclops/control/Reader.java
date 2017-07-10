@@ -36,6 +36,15 @@ import org.jooq.lambda.tuple.Tuple2;
  */
 public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<reader,T>,R> {
 
+    public static  <R,T> Kleisli<Higher<reader,T>,Reader<T,R>,R> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Reader::widen);
+    }
+    public static <T,R> Higher<Higher<reader,T>, R> widen(Reader<T,R> narrow) {
+        return narrow;
+    }
+    public static  <T,R> Cokleisli<Higher<reader,T>,R,Reader<T,R>> kindCokleisli(){
+        return Cokleisli.of(Reader::narrowK);
+    }
     public static <W1,T,R> Nested<Higher<reader,T>,W1,R> nested(Reader<T,Higher<W1,R>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
