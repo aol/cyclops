@@ -397,6 +397,15 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
 
     }
+    public static  <S,T> Kleisli<Higher<state, S>,State<S,T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), State::widen);
+    }
+    public static <S,T> Higher<Higher<state, S>, T> widen(State<S,T> narrow) {
+        return narrow;
+    }
+    public static  <S,T> Cokleisli<Higher<state, S>,T,State<S,T>> kindCokleisli(){
+        return Cokleisli.of(State::narrowK);
+    }
 }
 
 

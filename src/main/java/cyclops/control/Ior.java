@@ -57,7 +57,15 @@ import java.util.stream.Stream;
  */
 public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransformable<ST, PT> ,Higher2<ior,ST,PT> {
 
-
+    public static  <L,T> Kleisli<Higher<ior,L>,Ior<L,T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Ior::widen);
+    }
+    public static <L,T> Higher<Higher<ior,L>, T> widen(Ior<L,T> narrow) {
+        return narrow;
+    }
+    public static  <L,T> Cokleisli<Higher<ior,L>,T,Ior<L,T>> kindCokleisli(){
+        return Cokleisli.of(Ior::narrowK);
+    }
     public static <W1,ST,PT> Nested<Higher<ior,ST>,W1,PT> nested(Ior<ST,Higher<W1,PT>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }

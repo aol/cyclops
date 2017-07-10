@@ -6,10 +6,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.rws;
 import cyclops.monads.Witness.supplier;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -170,6 +167,15 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
     public static <R,W,S,T> ReaderWriterState<R,W,S,T> narrowK(Higher<Higher<Higher<Higher<rws, R>, W>, S>, T> hkt){
         return (ReaderWriterState<R,W,S,T>)hkt;
     }
+    public static  <R,W,S,T> Kleisli<Higher<Higher<Higher<rws, R>, W>, S>,ReaderWriterState<R,W,S,T>,T> kindKleisli(Monoid<W> m){
+        return Kleisli.of(Instances.monad(m), ReaderWriterState::widen);
+    }
+    public static <R,W,S,T> Higher<Higher<Higher<Higher<rws, R>, W>, S>, T> widen(ReaderWriterState<R,W,S,T> narrow) {
+        return narrow;
+    }
+    public static  <R,W,S,T> Cokleisli<Higher<Higher<Higher<rws, R>, W>, S>,T,ReaderWriterState<R,W,S,T>> kindCokleisli(){
+        return Cokleisli.of(ReaderWriterState::narrowK);
+    }
     public static class Instances{
 
         public static <R,W,S> InstanceDefinitions<Higher<Higher<Higher<rws,R>,W>,S>> definitions(Monoid<W> monoid){
@@ -324,7 +330,5 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
 
             };
         }
-
-
     }
 }

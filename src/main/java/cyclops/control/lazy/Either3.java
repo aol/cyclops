@@ -2,26 +2,20 @@ package cyclops.control.lazy;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
 import com.aol.cyclops2.types.reactive.Completable;
-import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
-import cyclops.monads.Witness.either;
 import cyclops.monads.Witness.either3;
 import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
@@ -37,7 +31,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import java.util.*;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -59,7 +52,16 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
                                                 To<Either3<LT1, LT2, RT>>,
                                                 Supplier<RT>,
                                                 Higher3<either3,LT1,LT2,RT> {
-    
+
+    public static  <LT1,LT2,T> Kleisli<Higher<Higher<either3, LT1>, LT2>,Either3<LT1,LT2,T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Either3::widen);
+    }
+    public static <LT1,LT2,T> Higher<Higher<Higher<either3, LT1>, LT2>,T> widen(Either3<LT1,LT2,T> narrow) {
+        return narrow;
+    }
+    public static  <LT1,LT2,T> Cokleisli<Higher<Higher<either3, LT1>,LT2>,T,Either3<LT1,LT2,T>> kindCokleisli(){
+        return Cokleisli.of(Either3::narrowK);
+    }
     static <LT1,LT2,RT> Either3<LT1,LT2,RT> fromMonadicValue(MonadicValue<RT> mv3){
         if(mv3 instanceof Either3){
             return (Either3)mv3;

@@ -126,7 +126,15 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                                      BiTransformable<ST,PT>,
                                      Higher2<xor,ST,PT> {
 
-
+    public static  <L,T> Kleisli<Higher<xor,L>,Xor<L,T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Xor::widen);
+    }
+    public static <L,T> Higher<Higher<xor,L>, T> widen(Xor<L,T> narrow) {
+        return narrow;
+    }
+    public static  <L,T> Cokleisli<Higher<xor,L>,T,Xor<L,T>> kindCokleisli(){
+        return Cokleisli.of(Xor::narrowK);
+    }
     public static <W1,ST,PT> Nested<Higher<xor,ST>,W1,PT> nested(Xor<ST,Higher<W1,PT>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }

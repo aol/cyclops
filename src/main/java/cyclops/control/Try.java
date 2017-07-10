@@ -166,6 +166,16 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return xor;
     }
 
+    public static  <X extends Throwable,T> Kleisli<Higher<tryType,X>,Try<T,X>,T> kindKleisli(){
+        return Kleisli.of(Try.Instances.monad(), Try::widen);
+    }
+    public static <X extends Throwable,T> Higher<Higher<tryType,X>, T> widen(Try<T,X> narrow) {
+        return narrow;
+    }
+    public static  <X extends Throwable,T> Cokleisli<Higher<tryType,X>,T,Try<T,X>> kindCokleisli(){
+        return Cokleisli.of(Try::narrowK);
+    }
+
     public Active<Higher<tryType,X>,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }

@@ -6,7 +6,6 @@ import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.writer;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
@@ -217,6 +216,15 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
     public <W1> Coproduct<W1,Higher<writer,W>,T> coproduct(Monoid<W> monoid,InstanceDefinitions<W1> def2){
         return Coproduct.right(this,def2, Instances.definitions(monoid));
     }
+    public static  <W,T> Kleisli<Higher<writer, W>,Writer<W,T>,T> kindKleisli(Monoid<W> m){
+        return Kleisli.of(Instances.monad(m), Writer::widen);
+    }
+    public static <W,T> Higher<Higher<writer, W>, T> widen(Writer<W,T> narrow) {
+        return narrow;
+    }
+    public static  <W,T> Cokleisli<Higher<writer, W>,T,Writer<W,T>> kindCokleisli(){
+        return Cokleisli.of(Writer::narrowK);
+    }
 
     public Active<Higher<writer,W>,T> allTypeclasses(Monoid<W> monoid){
         return Active.of(this, Instances.definitions(monoid));
@@ -397,4 +405,5 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
 
 
     }
+
 }
