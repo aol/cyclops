@@ -128,13 +128,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return (Coproduct<W1,W2,U>)Transformable.super.cast(type);
     }
 
-    public <R> Coproduct<W1,W2, R> tailRecLeft(T initial, Function<? super T,? extends Higher<W1, ? extends Xor<T, R>>> left,
-                                                          Function<? super T,? extends Higher<W2, ? extends Xor<T, R>>> right){
 
-        return Coproduct.of(xor.secondaryFlatMap(x -> Xor.secondary(Active.of(x,def1).tailRec(initial,left)))
-                              .flatMap(x->Xor.primary(Active.of(x, def2).tailRec(initial,right))),def1,def2);
-
-    }
 
 
 

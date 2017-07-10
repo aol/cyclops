@@ -15,8 +15,8 @@ public interface NaturalTransformation<W1,W2>{
     <T> Higher<W2, T> apply(Higher<W1, T> a) ;
 
 
-    default <T> FunctionK<W1,W2,T> asFunctionK(){
-        return in->apply(in);
+    default <T> FunctionK<W1,W2,T> asFunctionK(InstanceDefinitions<W2> def2){
+        return FunctionK.of(in->apply(in),def2);
     }
     default <W3> NaturalTransformation<W1, W3> andThen(NaturalTransformation<W2, W3> after) {
         return new NaturalTransformation<W1, W3>(){

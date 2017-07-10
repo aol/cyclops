@@ -109,7 +109,7 @@ public interface Monoid<T> extends Semigroup<T> {
         return Spouts.from(toFold).foldRight(this);
     }
 
-    default <W> MonoidK<W,T> toMonoidK(Kleisli<W,T,T> widen,Cokleisli<W,T,T> narrow){
+    default <W,R> MonoidK<W,R> toMonoidK(Kleisli<W,T,R> widen,Cokleisli<W,R,T> narrow){
         return  MonoidK.of(widen.apply(zero()),toSemigroupK(widen,narrow));
     }
     /**

@@ -32,11 +32,7 @@ public interface Semigroup<T> extends BinaryFn<T>,BinaryOperator<T> {
     @Override
     T apply(T t, T u);
 
-    static void test(){
-       //  a : Maybe<Integer>
-        //        b : Higher<maybe,Integer>  W = maybe, R = Integer T Maybe<Integer>
 
-    }
 
     /**
      * Example

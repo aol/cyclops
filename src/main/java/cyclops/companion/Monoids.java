@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  * 
  * A static class with a large number of Monoids  or Combiners with identity elements.
  * 
- * A Monoid is an Object that can be used toNested combine objects of the same type inconjunction with it's
+ * A Monoid is an Object that can be used to combine objects of the same type inconjunction with it's
  * identity element which leaves any element it is combined with unchanged.
  * 
  * @author johnmcclean
@@ -42,8 +42,8 @@ public interface Monoids {
      * <pre>
      * {@code
      *    
-     *    Monoid<ListX<Integer>> listX = Monoid.of(identity,SemigroupK.collectionXConcat(ListX.zero());
-     *    Monoid<SetX<Integer>> setX = Monoid.of(identity,SemigroupK.collectionXConcat(SetX.zero());
+     *    Monoid<ListX<Integer>> listX = Monoid.of(identity,Semigroups.collectionXConcat(ListX.zero());
+     *    Monoid<SetX<Integer>> setX = Monoid.of(identity,Semigroups.collectionXConcat(SetX.zero());
      *    
      *    
      * 
@@ -62,8 +62,8 @@ public interface Monoids {
      * <pre>
      * {@code
      *    
-     *    Monoid<List<Integer>> list =  Monoid.of(identity,SemigroupK.collectionConcat(Arrays.asList());
-     *    Monoid<Set<Integer>> set =  Monoid.of(identity,SemigroupK.collectionConcat(new HashSet());
+     *    Monoid<List<Integer>> list =  Monoid.of(identity,Semigroups.collectionConcat(Arrays.asList());
+     *    Monoid<Set<Integer>> set =  Monoid.of(identity,Semigroups.collectionConcat(new HashSet());
      *    
      *    
      * 
@@ -188,12 +188,12 @@ public interface Monoids {
     }
 
     /**
-     * This Semigroup will attempt toNested combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
+     * This Semigroup will attempt to combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
      * or a pCollection persisent toX a new Collection type is created that contains the entries from both supplied collections.
-     * If the supplied Collections are standard JDK mutable collections Colleciton b is appended toNested Collection a and a is returned.
+     * If the supplied Collections are standard JDK mutable collections Colleciton b is appended to Collection a and a is returned.
      * 
      * 
-     * To manage javac type inference takeOne assign the semigroup
+     * To manage javac type inference to assign the semigroup
      * <pre>
      * {@code
      *    
@@ -204,7 +204,7 @@ public interface Monoids {
      * 
      * }
      * </pre>
-     * @return A Semigroup that attempts toNested combine the supplied Collections
+     * @return A Semigroup that attempts to combine the supplied Collections
      */
     static <T, C extends Collection<T>> Monoid<C> collectionConcat(C zero) {
         return Monoid.of(zero, Semigroups.collectionConcat());
@@ -218,7 +218,7 @@ public interface Monoids {
      * </pre>
      * 
      * @param zeroFn Function zeoFn lift the Identity value into a Scalar Functor
-     * @param monoid Monoid toNested combine the values inside the Scalar Functors
+     * @param monoid Monoid to combine the values inside the Scalar Functors
      * @return Combination of two Scalar Functors
      */
     static <T,A extends Zippable<T>> Monoid<A> combineScalarFunctors(Function<T,A> zeroFn,Monoid<T> monoid) {
@@ -233,8 +233,8 @@ public interface Monoids {
      * }
      * </pre>
      * 
-     * @param zeroFn Function toNested lift the Identity value into a Zippable
-     * @param monoid Monoid toNested combine the values inside the Zippables
+     * @param zeroFn Function to lift the Identity value into a Zippable
+     * @param monoid Monoid to combine the values inside the Zippables
      * @return Combination of two Applicatives 
      */
     static <T,A extends Zippable<T>> Monoid<A> combineZippables(Function<T,A> zeroFn,Monoid<T> monoid) {
@@ -242,13 +242,13 @@ public interface Monoids {
         return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineZippables(monoid));
     }
     /**
-     * @return Combination of two LazyFutureStreams Streams b is appended toNested a
+     * @return Combination of two LazyFutureStreams Streams b is appended to a
      */
     static <T> Monoid<FutureStream<T>> combineFutureStream() {
         return Monoid.of(FutureStream.builder().of(),Semigroups.combineFutureStream());
     }
     /**
-     * @return Combination of two ReactiveSeq Streams b is appended toNested a
+     * @return Combination of two ReactiveSeq Streams b is appended to a
      */
     static <T> Monoid<ReactiveSeq<T>> combineReactiveSeq() {
         return Monoid.of(ReactiveSeq.empty(), Semigroups.combineReactiveSeq());
@@ -271,14 +271,14 @@ public interface Monoids {
     }
 
     /**
-     * @return Combination of two Seq's : b is appended toNested a
+     * @return Combination of two Seq's : b is appended to a
      */
     static <T> Monoid<Seq<T>> combineSeq() {
         return Monoid.of(Seq.empty(), Semigroups.combineSeq());
     }
 
     /**
-     * @return Combination of two Stream's : b is appended toNested a
+     * @return Combination of two Stream's : b is appended to a
      */
     static <T> Monoid<Stream<T>> combineStream() {
         return Monoid.of(Stream.empty(), Semigroups.combineStream());
