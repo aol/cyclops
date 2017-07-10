@@ -75,6 +75,15 @@ public interface Eval<T> extends To<Eval<T>>,
                                     MonadicValue<T>,
                                     Higher<eval ,T> {
 
+    public static  <T> Kleisli<eval,Eval<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Eval::widen);
+    }
+    public static <T> Higher<eval, T> widen(Eval<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<eval,T,Eval<T>> kindCokleisli(){
+        return Cokleisli.of(Eval::narrowK);
+    }
     public static <W1,T> Nested<eval,W1,T> nested(Eval<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }

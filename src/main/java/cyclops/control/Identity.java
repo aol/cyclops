@@ -312,5 +312,14 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
         }
 
     }
+    public static  <T> Kleisli<identity,Identity<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Identity::widen);
+    }
+    public static <T> Higher<identity, T> widen(Identity<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<identity,T,Identity<T>> kindCokleisli(){
+        return Cokleisli.of(Identity::narrowK);
+    }
 
 }
