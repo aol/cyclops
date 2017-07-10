@@ -23,10 +23,7 @@ import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
-import cyclops.typeclasses.Cokleisli;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Kleisli;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -66,6 +63,21 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     }
     public static  <T> Cokleisli<persistentSetX,T,PersistentSetX<T>> kindCokleisli(){
         return Cokleisli.of(PersistentSetX::narrowK);
+    }
+    public static <W1,T> Nested<persistentSetX,W1,T> nested(PersistentSetX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(),def2);
+    }
+    default <W1> Product<persistentSetX,W1,T> product(Active<W1,T> active){
+        return Product.of(allTypeclasses(),active);
+    }
+    default <W1> Coproduct<W1,persistentSetX,T> coproduct(InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions());
+    }
+    default Active<persistentSetX,T> allTypeclasses(){
+        return Active.of(this, Instances.definitions());
+    }
+    default <W2,R> Nested<persistentSetX,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn),Instances.definitions(), defs);
     }
 
     /**
