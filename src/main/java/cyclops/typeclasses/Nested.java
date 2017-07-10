@@ -422,6 +422,9 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             return sequence().map(fn);
         }
 
+        public <R> Active<W1,R> foldMap(Monoid<R> mb, final Function<? super T,? extends R> fn) {
+            return Active.of(def1.functor().map(f -> def2.traverse().get().foldMap(mb, fn, f), nested),def1);
+        }
     }
 
     public String toString(){

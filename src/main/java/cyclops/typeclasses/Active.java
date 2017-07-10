@@ -6,10 +6,7 @@ import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
-import cyclops.control.Xor;
+import cyclops.control.*;
 import cyclops.function.*;
 import cyclops.monads.Witness.list;
 import cyclops.typeclasses.functions.FunctionK;
@@ -29,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 import static cyclops.collections.mutable.ListX.kindKleisli;
+import static cyclops.control.Constant.Instances.applicative;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 
 /**
@@ -414,6 +412,9 @@ public class Active<W,T> implements Filters<T>,
             return def1.traverse()
                        .get()
                        .flatTraverse(applicative,def1.monad(),single,f);
+        }
+        public <R> R foldMap(Monoid<R> mb, final Function<? super T,? extends R> fn) {
+            return def1.traverse().get().foldMap(mb,fn,single);
         }
     }
 
