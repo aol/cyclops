@@ -20,6 +20,7 @@ import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.Kleisli;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -41,8 +42,17 @@ import java.util.stream.Stream;
  * @param <T> the type of elements held in this collection
  */
 public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
-
-
+/**
+    public static  <T> Kleisli<persistentSetX,PersistentSetX<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), PersistentSetX::widen);
+    }
+    public static <T> Higher<persistentSetX, T> widen(PersistentSetX<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<persistentSetX,T,PersistentSetX<T>> kindCokleisli(){
+        return Cokleisli.of(PersistentSetX::narrowK);
+    }
+ **/
     /**
      * Narrow a covariant PersistentSetX
      * 

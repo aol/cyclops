@@ -67,6 +67,15 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                     Higher<linkedListX,T> {
 
 
+    public static  <T> Kleisli<linkedListX,LinkedListX<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), LinkedListX::widen);
+    }
+    public static <T> Higher<linkedListX, T> widen(LinkedListX<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<linkedListX,T,LinkedListX<T>> kindCokleisli(){
+        return Cokleisli.of(LinkedListX::narrowK);
+    }
     public static <W1,T> Nested<linkedListX,W1,T> nested(LinkedListX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }

@@ -10,11 +10,7 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
-import cyclops.control.lazy.Either;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
-import cyclops.function.Monoid;
-import cyclops.monads.Witness;
+import cyclops.function.*;
 import cyclops.monads.Witness.list;
 import cyclops.typeclasses.functions.FunctionK;
 import cyclops.typeclasses.functions.MonoidK;
@@ -32,6 +28,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
+import static cyclops.collections.mutable.ListX.kindKleisli;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 
 /**
@@ -63,6 +60,9 @@ public class Active<W,T> implements Filters<T>,
 
     public static <W, T> Active<W, T> of(Higher<W, T> single, InstanceDefinitions<W> def1) {
         return new Active<>(single, def1);
+    }
+    public static <C,W, T> Active<W, T> of(Function<? super C,? extends Higher<W, T>> single, C c,InstanceDefinitions<W> def1) {
+        return of(single.apply(c),def1);
     }
     public static <W, T> Active<W, T> of(InstanceDefinitions<W> def1,T value) {
         return new Active<>(def1.unit().unit(value), def1);
@@ -112,11 +112,7 @@ public class Active<W,T> implements Filters<T>,
     public <R> Active<W,Tuple2<T, R>> zip(Higher<W, R> fb) {
         return of(def1.applicative().zip(single,fb),def1);
     }
-    /**
-    public <R> Active<W,Tuple2<T, R>> zip(Active<W, R> fb) {
-        return of(def1.applicative().zip(single,fb.single),def1);
-    }
-     **/
+
     public <W2> Active<W2, T> mapK(FunctionK<W,W2,T> fn) {
         return of( fn.apply(single), fn.definitions());
     }
@@ -126,65 +122,98 @@ public class Active<W,T> implements Filters<T>,
     public static void main(String[] args){
 
         Active<list,Integer> list = ListX.of(1,2,3).allTypeclasses();
-        list.<ListX<Xor<Integer,Integer>>,Integer>tailRec(ListX.Instances::widen,1,i-> 1<100_000 ? ListX.of(Xor.secondary(i+1)) : ListX.of(Xor.primary(i)));
-        list.<ListX<Integer>>concrete(ListX.Instances::widen);
 
+        list.concreteMonoid(kindKleisli(),ListX.kindCokleisli())
+                .sum(ListX.of(ListX.of(1,2,3)));
 
-        Active<list,Integer> a = list.<ListX<Integer>>concrete(ListX.Instances::widen)
-                                    .flatMap(i->ListX.of(2));
+        list.concreteFlatMap(kindKleisli())
+                .flatMap(i->ListX.of(1,2,3));
 
-        Active<list,Integer>.Narrowed<ListX<Integer>> x = list.concrete(ListX.Instances::widen);
+        list.concreteTailRec(kindKleisli())
+                .tailRec(1,i-> 1<100_000 ? ListX.of(Xor.secondary(i+1)) : ListX.of(Xor.primary(i)));
 
-        list.concrete((ListX<Integer> in)->{
-            ListX<Integer> x = in;
-            return ListX.Instances.widen(x);
-        });
 
     }
-    public <R1,R> Active<W, R> tailRec(Function<? super R1,? extends Higher<W, Xor<T, R>>> narrow,T initial,Function<? super T,? extends R1> fn){
 
-        return Active.of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(r->narrow.apply(r))),def1);
+    public <C> Narrowed<C> concreteMonoid(Kleisli<W,C,T> widen,Cokleisli<W,T,C> narrow){
+        return new Narrowed<C>(widen,narrow);
     }
-    public <C> Narrowed<C> concreteOps(Function<C,Higher<W,T>> fn){
-        return new Narrowed<C>(fn);
+    public <C,R> NarrowedFlatMap<C,R> concreteFlatMap(Kleisli<W,C,R> widen){
+        return new NarrowedFlatMap<>(widen);
     }
-    public <C,R> NarrowedXor<R,C> concreteRec(Function<C,Higher<W, Xor<T, R>>> fn){
-        return new NarrowedXor<R,C>(fn);
+    public <C,R> NarrowedApplicative<C,R> concreteAp(Kleisli<W,C,Function<T,R>> widen){
+        return new NarrowedApplicative<>(widen);
     }
-
-    @AllArgsConstructor
-    class Narrowed<R>{
-        // flatMap,plus, sum
-        Function<? super R,? extends Higher<W,T>> narrow;
-
-
-        public  Active<W, T> flatMap(Function<? super T, ? extends R> fn) {
-            return of(def1.monad().flatMap(fn.andThen(narrow), single), def1);
-        }
-
-        public Active<W,T> plus(SemigroupK<W,T> semigroupK, R add){
-            return of(semigroupK.apply(single,narrow.apply(add)),def1);
-        }
-        public Maybe<Active<W,T>> sum(ListX<R> list){
-            return Active.this.plus().flatMap(s->Maybe.just(s.sum(list.map(narrow))));
-        }
-
-        public Maybe<Active<W,T>> plus(R r){
-            return Active.this.plus().flatMap(s->Maybe.just(s.plus(narrow.apply(r))));
-        }
-
+    public <C,R> NarrowedTailRec<C,R> concreteTailRec(Kleisli<W,C,Xor<T,R>> widen){
+        return new NarrowedTailRec<>(widen);
     }
     @AllArgsConstructor
-    class NarrowedXor<R,R1>{
-        Function<R1,Higher<W, Xor<T, R>>> narrow;
-        public  Active<W, R> tailRec(T initial,Function<? super T,? extends R1> fn){
+    class NarrowedFlatMap<C,R>{
+        private final Kleisli<W,C,R> narrow;
 
+        public Active<W, R> flatMap(Function<? super T, ? extends C> fn) {
+            return Active.this.flatMap(fn.andThen(narrow));
+        }
+        public <R2> Active<W, R2> zip(C fb, BiFunction<? super T,? super R,? extends R2> f) {
+            return Active.this.zip(narrow.apply(fb),f);
+        }
+        public  Active<W, Tuple2<T,R>> zip(C fb) {
+            return Active.this.zip(narrow.apply(fb));
+        }
+    }
+    @AllArgsConstructor
+    class NarrowedTailRec<C,R>{
+        private final Kleisli<W,C,Xor<T,R>>  narrow;
+
+        public  Active<W, R> tailRec(T initial,Function<? super T,? extends C> fn){
             return Active.of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(r->narrow.apply(r))),def1);
         }
     }
+
+    @AllArgsConstructor
+    class NarrowedApplicative<C,R>{
+        private final Kleisli<W,C,Function<T,R>>  narrow;
+
+        public  Active<W, R> ap(C fn) {
+            return of(def1.applicative().ap(narrow.apply(fn), single), def1);
+        }
+    }
+
+
+    @AllArgsConstructor
+    class Narrowed<C>{
+        //plus, sum
+
+        private final Kleisli<W,C,T> widen;
+        private final Cokleisli<W,T,C> narrow;
+
+        public Active<W,T> plus(Monoid<C> m,C add){
+            return sum(m,ListX.of(add));
+        }
+        public Active<W,T> sum(C seed, BinaryOperator<C> op,ListX<C> list){
+            C res =list.plus(narrow.apply(single)).foldLeft(seed,(a,b)->op.apply(a,b));
+            return Active.of(widen.apply(res),def1);
+        }
+        public Active<W,T> sum(Monoid<C> s,ListX<C> list){
+            C res =list.plus(narrow.apply(single)).foldLeft(s.zero(),(a,b)->s.apply(a,b));
+            return Active.of(widen.apply(res),def1);
+        }
+        public Active<W,T> sumInverted(Group<C> s, ListX<C> list){
+            C res = s.invert(list.plus(narrow.apply(single)).foldLeft(s.zero(),(a,b)->s.apply(a,b)));
+            return Active.of(widen.apply(res),def1);
+        }
+        public Maybe<Active<W,T>> sum(ListX<C> list){
+            return Active.this.plus().flatMap(s ->
+                    Maybe.just(sum(narrow.apply(s.monoid().zero()), (C a, C b) -> narrow.apply(s.monoid().apply(widen.apply(a), widen.apply(b))), list))
+            );
+        }
+
+    }
+
     public <T2, R> Active<W, R> zip(Higher<W, T2> fb, BiFunction<? super T,? super T2,? extends R> f) {
         return of(def1.applicative().zip(single,fb,f),def1);
     }
+
 
     public <T2,R> Eval<Active<W,R>> lazyZip(Eval<Higher<W,T2>> lazy, BiFunction<? super T,? super T2,? extends R> fn) {
         return lazy.map(e-> zip(e,fn));
@@ -234,7 +263,7 @@ public class Active<W,T> implements Filters<T>,
         return of(def1.applicative().ap(fn, single), def1);
     }
     public <C,R> Active<W, R> ap(C c,Function<? super C, ? extends Higher<W, ? extends Function<T, R>>> fn) {
-        return return ap(fn.apply(c));
+        return ap(fn.apply(c));
     }
     public Active<W,T> plus(SemigroupK<W,T> semigroupK, Higher<W,T> add){
         return of(semigroupK.apply(single,add),def1);

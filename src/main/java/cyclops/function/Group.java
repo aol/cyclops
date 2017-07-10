@@ -1,5 +1,10 @@
 package cyclops.function;
 
+import cyclops.typeclasses.Cokleisli;
+import cyclops.typeclasses.Kleisli;
+import cyclops.typeclasses.functions.GroupK;
+import cyclops.typeclasses.functions.MonoidK;
+
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -16,6 +21,10 @@ public interface Group<T> extends Monoid<T> {
     public static <T> Group<T> fromBiFunction(UnaryOperator<T> inverse,final T zero, final BiFunction<T, T, T> combiner) {
         return of(inverse,Monoid.fromBiFunction(zero,combiner));
 
+    }
+
+    default <W> GroupK<W,T> toGroupK(Kleisli<W,T,T> widen,Cokleisli<W,T,T> narrow){
+        return  GroupK.of(t->widen.apply(invert(narrow.apply(t))),toMonoidK(widen,narrow));
     }
      public static <T> Group<T> of(UnaryOperator<T> inverse,Monoid<T> monoid){
          return new Group<T>() {

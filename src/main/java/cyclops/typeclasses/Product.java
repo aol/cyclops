@@ -181,13 +181,11 @@ public class Product<W1,W2,T> implements  Filters<T>,
     }
 
     public <R> Active<W1, R> tailRec1(T initial,Function<? super T,? extends Higher<W1, ? extends Xor<T, R>>> fn){
-        Higher<W1, R> x = asActiveTuple().v1.tailRec(initial, fn);
-       return Active.of(x,def1);
+        return asActiveTuple().v1.tailRec(initial, fn);
     }
 
     public <R> Active<W2, R> tailRec2(T initial,Function<? super T,? extends Higher<W2, ? extends Xor<T, R>>> fn){
-        Higher<W2, R> x = asActiveTuple().v2.tailRec(initial, fn);
-        return Active.of(x,def2);
+        return asActiveTuple().v2.tailRec(initial, fn);
     }
 
 

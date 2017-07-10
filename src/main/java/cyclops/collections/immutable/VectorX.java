@@ -65,7 +65,15 @@ public interface VectorX<T> extends To<VectorX<T>>,
                                      PVector<T>>,
                                      Comparable<T>,
                                      Higher<vectorX,T>{
-
+    public static  <T> Kleisli<vectorX,VectorX<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), VectorX::widen);
+    }
+    public static <T> Higher<vectorX, T> widen(VectorX<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<vectorX,T,VectorX<T>> kindCokleisli(){
+        return Cokleisli.of(VectorX::narrowK);
+    }
     public static <W1,T> Nested<vectorX,W1,T> nested(VectorX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }

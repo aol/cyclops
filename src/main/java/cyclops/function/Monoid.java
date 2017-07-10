@@ -3,6 +3,10 @@ package cyclops.function;
 import cyclops.companion.Semigroups;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.Cokleisli;
+import cyclops.typeclasses.Kleisli;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.SemigroupK;
 import org.reactivestreams.Publisher;
 
 import java.util.Arrays;
@@ -105,6 +109,9 @@ public interface Monoid<T> extends Semigroup<T> {
         return Spouts.from(toFold).foldRight(this);
     }
 
+    default <W> MonoidK<W,T> toMonoidK(Kleisli<W,T,T> widen,Cokleisli<W,T,T> narrow){
+        return  MonoidK.of(widen.apply(zero()),toSemigroupK(widen,narrow));
+    }
     /**
      * Construct a Monoid from the supplied identity element and Semigroup (combiner)
      * @see Semigroups

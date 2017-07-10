@@ -18,10 +18,10 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.control.Xor;
+import cyclops.function.Group;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
-import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.SemigroupK;
@@ -34,11 +34,11 @@ import lombok.EqualsAndHashCode;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -103,9 +103,12 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
 
 
-    public static <W1,W2,T> Nested<W1,W2,T> of(Higher<W1,Higher<W2,T>> nested,InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2){
+    public static <W1,W2,T> Nested<W1,W2,T> of(Higher<W1,? extends  Higher<W2,? extends T>> nested,InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2){
         Compose<W1,W2> composed = Compose.compose(def1.functor(),def2.functor());
-        return new Nested<>(nested,composed,def1,def2);
+        return new Nested<>(narrow(nested),composed,def1,def2);
+    }
+    public static <W1,W2,T> Higher<W1,Higher<W2,T>> narrow(Higher<W1,? extends  Higher<W2,? extends T>> nested){
+        return (Higher<W1,Higher<W2,T>>) nested;
     }
 
     public static <W,T> Active<W,T> flatten(Nested<W,W,T> nested){
@@ -148,7 +151,91 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         Higher<W1, Higher<W2, R>> res = composedFunctor.map1(a->def2.monad().flatMap(fn.andThen(widenFn), a),nested);
         return new Nested<>(res,composedFunctor,def1,def2);
     }
+    public <T2, R> Nested<W1,W2, R> zip(Higher<W2, T2> fb, BiFunction<? super T,? super T2,? extends R> f) {
+        return of(def1.functor().map_(nested, i -> def2.applicative().zip(i, fb, f)),def1,def2);
 
+    }
+    public <T2, R> Nested<W1,W2, Tuple2<T,T2>> zip(Higher<W2, T2> fb) {
+       return zip(fb,Tuple::tuple);
+    }
+    public <C> Narrowed<C> concreteMonoid(Kleisli<W2,C,T> widen, Cokleisli<W2,T,C> narrow){
+        return new Narrowed<C>(widen,narrow);
+    }
+    public <C,R> NarrowedFlatMap<C,R> concreteFlatMap(Kleisli<W2,C,R> widen){
+        return new NarrowedFlatMap<>(widen);
+    }
+    public <C,R> NarrowedApplicative<C,R> concreteAp(Kleisli<W2,C,Function<T,R>> widen){
+        return new NarrowedApplicative<>(widen);
+    }
+    public <C,R> NarrowedTailRec<C,R> concreteTailRec(Kleisli<W2,C,Xor<T,R>> widen){
+        return new NarrowedTailRec<>(widen);
+    }
+    @AllArgsConstructor
+    class NarrowedFlatMap<C,R>{
+        private final Kleisli<W2,C,R> widen;
+
+        public Nested<W1,W2,R> flatMap(Function<? super T, ? extends C> fn) {
+            return Nested.this.flatMap(fn.andThen(widen));
+        }
+        public <R2> Nested<W1,W2,R2> zip(C fb, BiFunction<? super T,? super R,? extends R2> f) {
+            return Nested.this.zip(widen.apply(fb),f);
+        }
+        public  Nested<W1,W2,Tuple2<T,R>> zip(C fb) {
+            return Nested.this.zip(widen.apply(fb));
+        }
+    }
+    @AllArgsConstructor
+    class NarrowedTailRec<C,R>{
+        private final Kleisli<W2,C,Xor<T,R>> widen;
+
+        public  Nested<W1,W2,R> tailRec(T initial,Function<? super T,? extends C> fn){
+            return Nested.this.tailRec(initial,fn.andThen(widen));
+        }
+    }
+    @AllArgsConstructor
+    class NarrowedApplicative<C,R>{
+        private final Kleisli<W2,C,Function<T,R>> widen;
+
+        public  Nested<W1,W2, R> ap(C fn) {
+            return Nested.this.ap(widen.apply(fn));
+        }
+    }
+    @AllArgsConstructor
+    class Narrowed<C>{
+        //plus, sum
+
+        private final Kleisli<W2,C,T> widen;
+        private final Cokleisli<W2,T,C> narrow;
+
+
+        public Nested<W1,W2,T> plus(Monoid<C> m,C add){
+            return sum(m,ListX.of(add));
+        }
+        public Nested<W1,W2,T> sum(C seed, BinaryOperator<C> op,ListX<C> list){
+            return of(def1.functor().map_(nested,f-> {
+                C res = list.plus(narrow.apply(f)).foldLeft(seed, (a, b) -> op.apply(a, b));
+                return widen.apply(res);
+            }),def1,def2);
+        }
+        public Nested<W1,W2,T> sum(Monoid<C> s,ListX<C> list){
+            return of(def1.functor().map_(nested,f-> {
+                C res = list.plus(narrow.apply(f)).foldLeft(s.zero(), (a, b) -> s.apply(a, b));
+                return widen.apply(res);
+            }),def1,def2);
+        }
+        public Nested<W1,W2,T> sumInverted(Group<C> s, ListX<C> list){
+            return of(def1.functor().map_(nested,f-> {
+            C res = s.invert(list.plus(narrow.apply(f)).foldLeft(s.zero(),(a,b)->s.apply(a,b)));
+            return widen.apply(res);
+            }),def1,def2);
+        }
+        public Maybe<Nested<W1,W2,T>> sum(ListX<C> list){
+            return Nested.this.plus().flatMap(s ->
+                    Maybe.just(sum(narrow.apply(s.monoid2().zero()), (C a, C b) -> narrow.apply(s.monoid2().apply(widen.apply(a), widen.apply(b))), list))
+            );
+        }
+
+    }
 
     public <R> Nested<W1,W2,R> flatMapA(Function<? super T, ? extends Active<W2,R>> fn){
         Higher<W1, Higher<W2, R>> res = composedFunctor.map1(a->def2.monad().flatMap(fn.andThen(t->t.getSingle()), a),nested);
@@ -156,8 +243,10 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
 
     public <R> Nested<W1,W2, R> tailRec(T initial,Function<? super T,? extends Higher<W2, ? extends Xor<T, R>>> fn){
-        return flatMap(in->Active.of(def2.unit().unit(in),def2).tailRec(initial,fn));
+        return flatMapA(in->Active.of(def2.unit().unit(in),def2).tailRec(initial,fn));
+
     }
+
 
     public Traverse traverseUnsafe(){
         return def1.traverse().visit(s-> new Traverse(),()->null);
@@ -193,7 +282,9 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
 
     public class Plus{
-
+        public Monoid<Higher<W2,T>> monoid2(){
+            return def2.monadPlus().get().narrowMonoid();
+        }
         public Nested<W1,W2,T> sum(ListX<Nested<W1,W2, T>> list){
             return of(def1.monadPlus().visit(p -> p.sum(list.plus(Nested.this).map(x -> x.nested)), () -> nested),def1,def2);
         }

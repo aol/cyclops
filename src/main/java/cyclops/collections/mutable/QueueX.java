@@ -53,7 +53,15 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                                     OnEmptySwitch<T, Queue<T>>,
                                     Higher<queue,T>{
 
-
+    public static  <T> Kleisli<queue,QueueX<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), QueueX::widen);
+    }
+    public static <T> Higher<queue, T> widen(QueueX<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<queue,T,QueueX<T>> kindCokleisli(){
+        return Cokleisli.of(QueueX::narrowK);
+    }
     public static <W1,T> Nested<queue,W1,T> nested(QueueX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, QueueX.Instances.definitions(),def2);
     }

@@ -432,9 +432,7 @@ public interface ListX<T> extends To<ListX<T>>,
             return (Higher) flux;
         }
         public static <T> Higher<list, T> widen( ListX<T> flux) {
-            // a functor could be used (if C2 is a functor / one exists for C2 type)
-            // instead of casting
-            // cast seems safer as Higher<list,T> must be a ListX
+
             return flux;
         }
 
@@ -450,6 +448,7 @@ public interface ListX<T> extends To<ListX<T>>,
             return (ListX<T>) future;
         }
 
+
         /**
          * Convert the HigherKindedType definition for a List into
          *
@@ -461,6 +460,12 @@ public interface ListX<T> extends To<ListX<T>>,
             return ((ListX<T>) completableList);//.narrow();
 
         }
+    }
+    public static  <T> Kleisli<list,ListX<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(),Instances::widen);
+    }
+    public static  <T> Cokleisli<list,T,ListX<T>> kindCokleisli(){
+        return Cokleisli.of(Instances::narrowK);
     }
 
     default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {

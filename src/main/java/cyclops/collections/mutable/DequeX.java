@@ -60,6 +60,15 @@ public interface DequeX<T> extends To<DequeX<T>>,
                                    OnEmptySwitch<T, Deque<T>>,
                                    Higher<deque,T>{
 
+    public static  <T> Kleisli<deque,DequeX<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), DequeX::widen);
+    }
+    public static <T> Higher<deque, T> widen(DequeX<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<deque,T,DequeX<T>> kindCokleisli(){
+        return Cokleisli.of(DequeX::narrowK);
+    }
     public static <W1,T> Nested<deque,W1,T> nested(DequeX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
@@ -1395,7 +1404,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
                     return Maybe.none();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<Witness.deque>> unfoldable() {
+                public <T> Maybe<Unfoldable<deque>> unfoldable() {
                     return Maybe.just(Instances.unfoldable());
                 }
             };

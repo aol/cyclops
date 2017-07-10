@@ -3,6 +3,7 @@ package cyclops.typeclasses.functions;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Optionals;
+import cyclops.control.Maybe;
 import cyclops.function.Fn1;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
@@ -18,7 +19,7 @@ import java.util.function.Function;
 
 
 @AllArgsConstructor
-public class FunctionK<W1,W2,T> extends Fn1<Higher<W1,T>,Higher<W2,T>> {
+public class FunctionK<W1,W2,T> implements Fn1<Higher<W1,T>,Higher<W2,T>> {
     Fn1<Higher<W1,T>,Higher<W2,T>> fn1;
     InstanceDefinitions<W2> def2;
     @Override
@@ -47,18 +48,18 @@ public class FunctionK<W1,W2,T> extends Fn1<Higher<W1,T>,Higher<W2,T>> {
     }
 
     static <T> FunctionK<reactiveSeq,maybe,T> streamMaybe(){
-        return i -> ReactiveSeq.narrowK(i).headAndTail().headMaybe();
+        return of(i -> ReactiveSeq.narrowK(i).headAndTail().headMaybe(), Maybe.Instances.definitions());
     }
     static <T> FunctionK<reactiveSeq,optional,T> streamOptionals(){
-        return i -> Optionals.OptionalKind.widen(ReactiveSeq.narrowK(i).headAndTail().headOptional());
+        return of(i -> Optionals.OptionalKind.widen(ReactiveSeq.narrowK(i).headAndTail().headOptional()),Optionals.Instances.definitions());
     }
     static <T> FunctionK<list,reactiveSeq,T> listStream(){
-        return i -> ListX.narrowK(i).stream();
+        return of(i -> ListX.narrowK(i).stream(),ReactiveSeq.Instances.definitions());
     }
     static <T> FunctionK<list,maybe,T> listMaybe(){
-        return i -> ListX.narrowK(i).headAndTail().headMaybe();
+        return of(i -> ListX.narrowK(i).headAndTail().headMaybe(), Maybe.Instances.definitions());
     }
     static <T> FunctionK<list,optional,T> listOptional(){
-        return i -> Optionals.OptionalKind.widen(ListX.narrowK(i).headAndTail().headOptional());
+        return of(i -> Optionals.OptionalKind.widen(ListX.narrowK(i).headAndTail().headOptional()),Optionals.Instances.definitions());
     }
 }

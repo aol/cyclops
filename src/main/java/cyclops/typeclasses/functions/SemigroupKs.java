@@ -1,5 +1,6 @@
 package cyclops.typeclasses.functions;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Zippable;
@@ -36,7 +37,8 @@ import java.util.stream.Stream;
 
 public class SemigroupKs{
 
-    
+
+
     public static <T>  SemigroupK<optional,T> optionalPresent() {
         return (a, b) -> OptionalKind.narrowK(a).isPresent() ? a : b;
     }

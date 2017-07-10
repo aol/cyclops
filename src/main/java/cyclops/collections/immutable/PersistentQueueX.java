@@ -59,6 +59,15 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                                     OnEmptySwitch<T, PQueue<T>>,
                                     Higher<persistentQueueX,T>{
 
+    public static  <T> Kleisli<persistentQueueX,PersistentQueueX<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), PersistentQueueX::widen);
+    }
+    public static <T> Higher<persistentQueueX, T> widen(PersistentQueueX<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<persistentQueueX,T,PersistentQueueX<T>> kindCokleisli(){
+        return Cokleisli.of(PersistentQueueX::narrowK);
+    }
     public static <W1,T> Nested<persistentQueueX,W1,T> nested(PersistentQueueX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }

@@ -1,11 +1,13 @@
 package com.aol.cyclops2.data.collections.extensions;
 
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.collections.mutable.ListX;

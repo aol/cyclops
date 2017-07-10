@@ -21,7 +21,9 @@ import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.Cokleisli;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Kleisli;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -53,7 +55,15 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  */
 public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<set,T>,OnEmptySwitch<T, Set<T>> {
 
-
+    public static  <T> Kleisli<set,SetX<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), SetX::widen);
+    }
+    public static <T> Higher<set, T> widen(SetX<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<set,T,SetX<T>> kindCokleisli(){
+        return Cokleisli.of(SetX::narrowK);
+    }
     /**
      * Create a SetX that contains the Integers between skip and take
      * 
