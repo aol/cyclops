@@ -33,6 +33,15 @@ import java.util.stream.Stream;
  * 
  * A semigroup is an Object that can be used toNested combine objects of the same type.
  *
+ * Using raw Semigroups with container types
+ * <pre>
+ *     {@code
+ *       Semigroup<Maybe<Integer>> m = Semigroups.combineZippables(Semigroups.intMax);
+ *       Semigroup<ReactiveSeq<Integer>> m = Semigroups.combineZippables(Semigroups.intSum);
+ *     }
+ * </pre>
+ *
+ *
  *  @author johnmcclean
  */
 public interface Semigroups {
@@ -42,8 +51,8 @@ public interface Semigroups {
      * <pre>
      * {@code
      *    
-     *    Semigroup<ListX<Integer>> listX = SemigroupK.collectionXConcat();
-     *    Semigroup<SetX<Integer>> setX = SemigroupK.collectionXConcat();
+     *    Semigroup<ListX<Integer>> listX = Semigroups.collectionXConcat();
+     *    Semigroup<SetX<Integer>> setX = Semigroups.collectionXConcat();
      *    
      *    
      * 
@@ -52,6 +61,7 @@ public interface Semigroups {
      * @return A Semigroup that can combine any cyclops2-react extended Collection type
      */
     static <T, C extends FluentCollectionX<T>> Semigroup<C> collectionXConcat() {
+
         return (a, b) -> (C) a.plusAll(b);
     }
 
@@ -62,8 +72,8 @@ public interface Semigroups {
      * <pre>
      * {@code
      *    
-     *    Semigroup<List<Integer>> list = SemigroupK.collectionConcat();
-     *    Semigroup<Set<Integer>> set = SemigroupK.collectionConcat();
+     *    Semigroup<List<Integer>> list = Semigroups.collectionConcat();
+     *    Semigroup<Set<Integer>> set = Semigroups.collectionConcat();
      *    
      *    
      * 
@@ -201,8 +211,8 @@ public interface Semigroups {
      * <pre>
      * {@code
      *    
-     *    Semigroup<List<Integer>> list = SemigroupK.collectionConcat();
-     *    Semigroup<Set<Integer>> set = SemigroupK.collectionConcat();
+     *    Semigroup<List<Integer>> list = Semigroups.collectionConcat();
+     *    Semigroup<Set<Integer>> set = Semigroups.collectionConcat();
      *    
      *    
      * 
@@ -231,8 +241,9 @@ public interface Semigroups {
     /**
      * <pre>
      * {@code 
-     *  BinaryOperator<Zippable<Integer>> sumInts = SemigroupK.combineZippables(SemigroupK.intSum);
-        sumInts.applyHKT(ListX.of(1,2,3), ListX.of(4,5,6));
+     *  BinaryOperator<ListX<Integer>> sumInts = Semigroups.combineZippables(Semigroups.intSum);
+
+        sumInts.apply(ListX.of(1,2,3), ListX.of(4,5,6));
         
         //List[5,7,9];
      * 
@@ -250,7 +261,7 @@ public interface Semigroups {
      * <pre>
      * {@code 
      * 
-     *  BinaryOperator<Combiner<Integer>> sumMaybes = SemigroupK.combineScalarFunctors(SemigroupK.intSum);
+     *  BinaryOperator<Maybe<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
      *  Maybe.just(1)
      *       .combine(sumMaybes, Maybe.just(5))
      *       
@@ -496,6 +507,7 @@ public interface Semigroups {
         return (a, b) -> a.compareTo((T) b) > 0 ? a : b;
     }
     
+   
     /**
      * Combine two Integers by summing them
      */
@@ -594,5 +606,6 @@ public interface Semigroups {
     static <A> Semigroup<NaturalTransformation<A,A>> naturalTransformationComposition(){
         return  (a,b)->a.andThen(b);
     }
+    
 
 }
