@@ -1339,14 +1339,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
             return new MonadRec<persistentSetX>(){
                 @Override
                 public <T, R> Higher<persistentSetX, R> tailRec(T initial, Function<? super T, ? extends Higher<persistentSetX,? extends Xor<T, R>>> fn) {
-                    PersistentSetX<Xor<T, R>> next = PersistentSetX.of(Xor.secondary(initial));
-                    boolean newValue[] = {false};
-                    for(;;){
-                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> PersistentSetX.of(e)));
-                        if(!newValue[0])
-                            break;
-                    }
-                    return Xor.sequencePrimary(next).get().to().persistentSetX(LAZY);
+                    return PersistentSetX.tailRec(initial,fn.andThen(PersistentSetX::narrowK));
                 }
             };
         }

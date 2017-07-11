@@ -1350,14 +1350,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
             return new MonadRec<set>(){
                 @Override
                 public <T, R> Higher<set, R> tailRec(T initial, Function<? super T, ? extends Higher<set,? extends Xor<T, R>>> fn) {
-                    SetX<Xor<T, R>> next = SetX.of(Xor.secondary(initial));
-                    boolean newValue[] = {false};
-                    for(;;){
-                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> SetX.of(e)));
-                        if(!newValue[0])
-                            break;
-                    }
-                    return Xor.sequencePrimary(next).get().to().setX(LAZY);
+                    return SetX.tailRec(initial,fn.andThen(SetX::narrowK));
                 }
             };
         }

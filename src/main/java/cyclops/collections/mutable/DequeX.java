@@ -1584,14 +1584,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
             return new MonadRec<deque>(){
                 @Override
                 public <T, R> Higher<deque, R> tailRec(T initial, Function<? super T, ? extends Higher<deque,? extends Xor<T, R>>> fn) {
-                    ListX<Xor<T, R>> next = ListX.of(Xor.secondary(initial));
-                    boolean newValue[] = {false};
-                    for(;;){
-                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> ListX.of(e)));
-                        if(!newValue[0])
-                            break;
-                    }
-                    return Xor.sequencePrimary(next).get().to().dequeX(LAZY);
+                    return DequeX.tailRec(initial,fn.andThen(DequeX::narrowK));
                 }
             };
         }

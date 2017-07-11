@@ -1545,14 +1545,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return new MonadRec<linkedListX>(){
                 @Override
                 public <T, R> Higher<linkedListX, R> tailRec(T initial, Function<? super T, ? extends Higher<linkedListX,? extends Xor<T, R>>> fn) {
-                    LinkedListX<Xor<T, R>> next = LinkedListX.of(Xor.secondary(initial));
-                    boolean newValue[] = {false};
-                    for(;;){
-                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> LinkedListX.of(e)));
-                        if(!newValue[0])
-                            break;
-                    }
-                    return Xor.sequencePrimary(next).map(l->l.to().linkedListX(LAZY)).get();
+                    return LinkedListX.tailRec(initial,fn.andThen(LinkedListX::narrowK));
                 }
             };
         }

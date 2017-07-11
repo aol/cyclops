@@ -1,6 +1,7 @@
 package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.mutable.QueueX;
 import cyclops.typeclasses.*;
 import cyclops.control.Xor;
@@ -3088,14 +3089,7 @@ public class Streams {
             return new MonadRec<stream>(){
                 @Override
                 public <T, R> Higher<stream, R> tailRec(T initial, Function<? super T, ? extends Higher<stream,? extends Xor<T, R>>> fn) {
-                    Stream<Xor<T, R>> next = Stream.of(Xor.secondary(initial));
-                    boolean newValue[] = {false};
-                    for(;;){
-                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return StreamKind.narrowK(fn.apply(s)); }, p -> Stream.of(e)));
-                        if(!newValue[0])
-                            break;
-                    }
-                    return StreamKind.widen(Xor.sequencePrimary(ListX.listX(ReactiveSeq.fromStream(next))).get().stream());
+                    return widen(ReactiveSeq.tailRec(initial,fn.andThen(s->ReactiveSeq.fromStream(StreamKind.narrowK(s)))));
                 }
             };
         }
@@ -3487,5 +3481,8 @@ public class Streams {
             }
         }
 
+    }
+    public static  <T,R> Stream<R> tailRec(T initial, Function<? super T, ? extends Stream<? extends Xor<T, R>>> fn) {
+        return ListX.tailRec(initial,fn.andThen(ReactiveSeq::fromStream)).stream();
     }
 }

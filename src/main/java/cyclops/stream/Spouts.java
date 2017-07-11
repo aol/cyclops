@@ -766,21 +766,8 @@ public interface Spouts {
             return new MonadRec<reactiveSeq>(){
                 @Override
                 public <T, R> Higher<reactiveSeq, R> tailRec(T initial, Function<? super T, ? extends Higher<reactiveSeq,? extends Xor<T, R>>> fn) {
+                    return  Spouts.reactive(ReactiveSeq.deferred( ()-> ReactiveSeq.tailRec(initial, fn.andThen(ReactiveSeq::narrowK))),ex);
 
-                    return Spouts.reactive(ReactiveSeq.deferred(()-> {
-                        ReactiveSeq<Xor<T, R>> next = ReactiveSeq.of(Xor.secondary(initial));
-                        boolean newValue[] = {false};
-                        for (; ; ) {
-                            next = next.flatMap(e -> e.visit(s -> {
-                                newValue[0] = true;
-                                return narrowK(fn.apply(s));
-                            }, p -> ReactiveSeq.of(e)));
-                            if (!newValue[0])
-                                break;
-                        }
-
-                        return Xor.sequencePrimary(next.to().listX(LAZY)).map(l -> l.stream()).get();
-                    }),ex);
                 }
             };
         }

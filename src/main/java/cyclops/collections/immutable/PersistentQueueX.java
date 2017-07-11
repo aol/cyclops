@@ -1573,14 +1573,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
             return new MonadRec<persistentQueueX>(){
                 @Override
                 public <T, R> Higher<persistentQueueX, R> tailRec(T initial, Function<? super T, ? extends Higher<persistentQueueX,? extends Xor<T, R>>> fn) {
-                    PersistentQueueX<Xor<T, R>> next = PersistentQueueX.of(Xor.secondary(initial));
-                    boolean newValue[] = {false};
-                    for(;;){
-                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> PersistentQueueX.of(e)));
-                        if(!newValue[0])
-                            break;
-                    }
-                    return Xor.sequencePrimary(next).map(l->l.to().persistentQueueX(LAZY)).get();
+                    return PersistentQueueX.tailRec(initial,fn.andThen(PersistentQueueX::narrowK));
                 }
             };
         }
