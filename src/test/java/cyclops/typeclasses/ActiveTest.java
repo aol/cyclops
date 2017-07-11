@@ -3,13 +3,9 @@ package cyclops.typeclasses;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
-import cyclops.companion.Optionals;
 import cyclops.control.Maybe;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.maybe;
-import cyclops.monads.Witness.reactiveSeq;
-import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import static cyclops.control.Maybe.Instances.applicative;
@@ -26,6 +22,17 @@ public class ActiveTest {
 
         Active<list,Integer> doubled = active.map(i->i*2);
         assertThat(doubled.getActive(),equalTo(ListX.of(2,4,6)));
+    }
+
+    @Test
+    public void concreteConversion() {
+
+        ListX<Integer> r = active.concreteFlatMap(ListX.<Integer>kindKleisli())
+                                 .flatMap(i -> ListX.of(i * 2, i * 3))
+                                 .concreteConversion(ListX.<Integer>kindCokleisli())
+                                 .to(l -> l);
+
+        assertThat(r,equalTo(ListX.of(2,3,4,6,6,9)));
     }
 
     @Test
@@ -56,7 +63,8 @@ public class ActiveTest {
 
     @Test
     public void custom(){
-        Active<list, ListX<Integer>> grouped = active.to(ListX::narrowK, l -> l.grouped(10));
+        Active<list, ListX<Integer>> grouped = active.custom(ListX::narrowK, l -> l.grouped(10));
+        assertThat(grouped,equalTo(ListX.of(ListX.of(1,2,3))));
 
     }
 

@@ -176,6 +176,17 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public <C,R> NarrowedTailRec<C,R> concreteTailRec(Kleisli<W2,C,Xor<T,R>> widen){
         return new NarrowedTailRec<>(widen);
     }
+    public <S,R> Converter<W1,S> concreteConversion(Function<? super Higher<W2, T>,? extends S> narrow2){
+        return  new Converter<W1,S>(){
+            @Override
+            public <R> Active<W1,R> to(Function<S, R> fn) {
+                return Active.of(def1.functor().map(f -> fn.apply(narrow2.apply(f)), nested),def1);
+            }
+        };
+    }
+    public static interface Converter<W,S>{
+        public <R> Active<W,R> to(Function<S,R> fn);
+    }
     @AllArgsConstructor
     class NarrowedFlatMap<C,R>{
         private final Kleisli<W2,C,R> widen;

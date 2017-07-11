@@ -72,7 +72,7 @@ public class Active<W,T> implements Filters<T>,
      * <pre>
      *     {@code
      *       Active<list,Integer> active = Active.of(ListX.of(1,2,3), ListX.Instances.definitions());
-     *      Active<list, ListX<Integer>> grouped = active.to(ListX::narrowK, l -> l.grouped(10));
+     *      Active<list, ListX<Integer>> grouped = active.custom(ListX::narrowK, l -> l.grouped(10));
      *     }
      * </pre>
      *
@@ -82,9 +82,48 @@ public class Active<W,T> implements Filters<T>,
      * @param <R> Return type
      * @return Transformed Active after custom operation
      */
-    public <S,R> Active<W,R> to(Function<? super Higher<W, T>,? extends S> narrow,Function<? super S,? extends Higher<W,R>> fn){
+    public <S,R> Active<W,R> custom(Function<? super Higher<W, T>,? extends S> narrow,Function<? super S,? extends Higher<W,R>> fn){
         return Active.of(fn.apply(narrow.apply(single)),def1);
 
+    }
+
+    /**
+     * Convert this Active to a new type via the underlying concrete type
+     * e.g. Given an Active List
+     * <pre>
+     *     {@code
+     *     Active<list,Integer> active = Active.of(ListX.of(1,2,3), ListX.Instances.definitions());
+     *     }
+     * </pre>
+     *
+     * We can convert it to a set via concreteConversion
+     *
+     * <pre>
+     *     {@code
+     *      SetX<Integer> set = active.concreteConversion(ListX.<Integer>kindCokleisli())
+                                      .to(ListX::toSetX());
+     *     }
+     * </pre>
+     * Most cyclops-react types provide kindCokleisli implementations that convert a Higher Kinded encoding of the type
+     * back to the concrete type
+     *
+     * @param narrow Narrowing function (Cokleisli) to a concrete type
+     * @param <S> Concrete type
+     * @param <R> Return type
+     * @return Converter that works on the concrete type
+     */
+    public <S,R> Converter<S> concreteConversion(Function<? super Higher<W, T>,? extends S> narrow){
+        return  new Converter<S>(){
+
+
+            @Override
+            public <R> R to(Function<S, R> fn) {
+                return fn.apply(narrow.apply(single));
+            }
+        };
+    }
+    public static interface Converter<S>{
+        public <R> R to(Function<S,R> fn);
     }
 
     public <C,R> R visit(Function<? super Higher<W, T>,? extends C> narrow,Function<? super C,? extends R> visitor){
