@@ -51,6 +51,18 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Optionals {
 
+    public static  <T,R> Optional<R> tailRec(T initial, Function<? super T, ? extends Optional<? extends Xor<T, R>>> fn) {
+        Optional<? extends Xor<T, R>> next[] = new Optional[1];
+        next[0] = Optional.of(Xor.secondary(initial));
+        boolean cont = true;
+        do {
+            cont = Optionals.visit(next[0],p -> p.visit(s -> {
+                next[0] = fn.apply(s);
+                return true;
+            }, pr -> false), () -> false);
+        } while (cont);
+        return next[0].map(Xor::get);
+    }
     public static  <T> Kleisli<optional,Optional<T>,T> kindKleisli(){
         return Kleisli.of(Optionals.Instances.monad(), Optionals::widen);
     }
@@ -839,16 +851,8 @@ public class Optionals {
 
                 @Override
                 public <T, R> Higher<optional, R> tailRec(T initial, Function<? super T, ? extends Higher<optional, ? extends Xor<T, R>>> fn) {
-                    Optional<? extends Xor<T, R>> next[] = new Optional[1];
-                    next[0] = Optional.of(Xor.secondary(initial));
-                    boolean cont = true;
-                    do {
-                        cont = Optionals.visit(next[0],p -> p.visit(s -> {
-                            next[0] = OptionalKind.narrowK(fn.apply(s));
-                            return true;
-                        }, pr -> false), () -> false);
-                    } while (cont);
-                    return OptionalKind.widen(next[0].map(Xor::get));
+                    Optional<R> x = Optionals.tailRec(initial, fn.andThen(a -> OptionalKind.narrowK(a)));
+                    return OptionalKind.widen(x);
 
                 }
             };

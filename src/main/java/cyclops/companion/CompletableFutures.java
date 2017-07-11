@@ -51,6 +51,11 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class CompletableFutures {
 
+    public static  <T,R> CompletableFuture<R> tailRec(T initial, Function<? super T, ? extends CompletableFuture<? extends Xor<T, R>>> fn){
+        Higher<future, R> x = Future.Instances.monadRec().tailRec(initial, fn.andThen(Future::of));
+        return Future.narrowK(x).getFuture();
+    }
+
     public static  <T> Kleisli<completableFuture,CompletableFuture<T>,T> kindKleisli(){
         return Kleisli.of(CompletableFutures.Instances.monad(), CompletableFutures::widen);
     }
