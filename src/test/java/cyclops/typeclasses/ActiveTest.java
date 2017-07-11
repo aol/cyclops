@@ -4,8 +4,13 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.control.Maybe;
+import cyclops.control.Xor;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.maybe;
+import cyclops.monads.Witness.reactiveSeq;
+import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.monad.MonadRec;
 import org.junit.Test;
 
 import static cyclops.control.Maybe.Instances.applicative;
@@ -24,6 +29,28 @@ public class ActiveTest {
         assertThat(doubled.getActive(),equalTo(ListX.of(2,4,6)));
     }
 
+    @Test
+    public void tailRec(){
+        MonadRec<list> mr = ListX.Instances.monadRec();
+        mr.tailRec(0,i-> i<100_000 ? ListX.of(Xor.secondary(i+1)) : ListX.of(Xor.primary(i+1)) )
+                .convert(ListX::narrowK).printOut();
+       /**
+        active.concreteTailRec(ListX.kindKleisli())
+                .tailRec(0,i-> i<100_000 ? ListX.of(Xor.secondary(i+1)) : ListX.of(Xor.primary(i)) )
+                .concreteConversion(ListX.kindCokleisli()).to(i->i).printOut();
+        **/
+    }
+    @Test
+    public void tailRecStream(){
+        MonadRec<reactiveSeq> mr = ReactiveSeq.Instances.monadRec();
+        mr.tailRec(0,i-> i<100_000 ? ReactiveSeq.of(Xor.secondary(i+1)) : ReactiveSeq.of(Xor.primary(i+1)) )
+                .convert(ReactiveSeq::narrowK).printOut();
+        /**
+         active.concreteTailRec(ListX.kindKleisli())
+         .tailRec(0,i-> i<100_000 ? ListX.of(Xor.secondary(i+1)) : ListX.of(Xor.primary(i)) )
+         .concreteConversion(ListX.kindCokleisli()).to(i->i).printOut();
+         **/
+    }
     @Test
     public void concreteConversion() {
 

@@ -85,7 +85,8 @@ public interface FreeApplicative<F, T> extends Higher2<freeAp,F, T> {
 
         @Override
         public <P,R> R visit(Function<? super A, ? extends R> pure, BiFunction<? super Higher<F, P>, FreeApplicative<F, Function<P, A>>, ? extends R> ap) {
-           return (R)ap.apply((Higher)pivot, (FreeApplicative) fn);
+           Higher<F,P> p = (Higher)pivot;
+            return (R)ap.apply(p, (FreeApplicative) fn);
         }
     }
     static <F,T> FreeApplicative<F,T> narrowK(Higher<Higher<freeAp, F>, T> ds){

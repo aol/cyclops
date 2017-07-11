@@ -67,6 +67,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                     Higher<linkedListX,T> {
 
 
+
     public static  <T> Kleisli<linkedListX,LinkedListX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), LinkedListX::widen);
     }
@@ -1639,5 +1640,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         private static <T,R> LinkedListX<R> map(LinkedListX<T> lt, Function<? super T, ? extends R> fn){
             return LinkedListX.fromIterable(lt).map(fn);
         }
+    }
+
+    public static  <T,R> LinkedListX<R> tailRec(T initial, Function<? super T, ? extends LinkedListX<? extends Xor<T, R>>> fn) {
+       return ListX.tailRec(initial,fn).to().linkedListX(Evaluation.LAZY);
     }
 }

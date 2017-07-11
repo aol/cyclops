@@ -53,6 +53,8 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  */
 public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<set,T>,OnEmptySwitch<T, Set<T>> {
 
+    SetX<T> lazy();
+    SetX<T> eager();
     public static <W1,T> Nested<set,W1,T> nested(SetX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
@@ -1517,6 +1519,25 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
             return ((SetX<T>) completableSet);//.narrow();
 
         }
+    }
+    public static  <T,R> SetX<R> tailRec(T initial, Function<? super T, ? extends SetX<? extends Xor<T, R>>> fn) {
+        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
+        ListX<Xor<T, R>> next = lazy.eager();
+        boolean newValue[] = {true};
+        for(;;){
+
+            next = next.flatMap(e -> e.visit(s -> {
+                        newValue[0]=true;
+                        return  fn.apply(s); },
+                    p -> {
+                        newValue[0]=false;
+                        return ListX.of(e);
+                    }));
+            if(!newValue[0])
+                break;
+
+        }
+        return Xor.sequencePrimary(next).get().to().setX(Evaluation.LAZY);
     }
 
 }

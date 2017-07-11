@@ -8,6 +8,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 
 
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
+import cyclops.control.Xor;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -44,7 +45,8 @@ import java.util.stream.Stream;
  */
 public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, POrderedSet<T>> {
 
-
+    OrderedSetX<T> lazy();
+    OrderedSetX<T> eager();
     /**
      * Narrow a covariant OrderedSetX
      * 
@@ -1110,6 +1112,24 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
         return (OrderedSetX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
 
+    public static  <T,R> OrderedSetX<R> tailRec(T initial, Function<? super T, ? extends OrderedSetX<? extends Xor<T, R>>> fn) {
+        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
+        ListX<Xor<T, R>> next = lazy.eager();
+        boolean newValue[] = {true};
+        for(;;){
 
+            next = next.flatMap(e -> e.visit(s -> {
+                        newValue[0]=true;
+                        return  fn.apply(s); },
+                    p -> {
+                        newValue[0]=false;
+                        return ListX.of(e);
+                    }));
+            if(!newValue[0])
+                break;
+
+        }
+        return Xor.sequencePrimary(next).get().to().orderedSetX(Evaluation.LAZY);
+    }
 
 }

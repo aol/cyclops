@@ -8,6 +8,7 @@ import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 
+import cyclops.collections.mutable.SetX;
 import cyclops.control.Maybe;
 import cyclops.control.Xor;
 import cyclops.function.Monoid;
@@ -55,6 +56,8 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  */
 public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher<persistentSetX,T>,LazyCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
 
+    PersistentSetX<T> lazy();
+    PersistentSetX<T> eager();
     public static  <T> Kleisli<persistentSetX,PersistentSetX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), PersistentSetX::widen);
     }
@@ -1507,6 +1510,24 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
         }
     }
 
+    public static  <T,R> PersistentSetX<R> tailRec(T initial, Function<? super T, ? extends PersistentSetX<? extends Xor<T, R>>> fn) {
+        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
+        ListX<Xor<T, R>> next = lazy.eager();
+        boolean newValue[] = {true};
+        for(;;){
 
+            next = next.flatMap(e -> e.visit(s -> {
+                        newValue[0]=true;
+                        return  fn.apply(s); },
+                    p -> {
+                        newValue[0]=false;
+                        return ListX.of(e);
+                    }));
+            if(!newValue[0])
+                break;
+
+        }
+        return Xor.sequencePrimary(next).get().to().persistentSetX(Evaluation.LAZY);
+    }
 
 }

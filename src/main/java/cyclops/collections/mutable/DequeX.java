@@ -60,6 +60,8 @@ public interface DequeX<T> extends To<DequeX<T>>,
                                    OnEmptySwitch<T, Deque<T>>,
                                    Higher<deque,T>{
 
+    DequeX<T> lazy();
+    DequeX<T> eager();
     public static  <T> Kleisli<deque,DequeX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), DequeX::widen);
     }
@@ -1674,5 +1676,25 @@ public interface DequeX<T> extends To<DequeX<T>>,
         private static <T,R> DequeX<R> map(DequeX<T> lt, Function<? super T, ? extends R> fn){
             return lt.map(fn);
         }
+    }
+
+    public static  <T,R> DequeX<R> tailRec(T initial, Function<? super T, ? extends DequeX<? extends Xor<T, R>>> fn) {
+        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
+        ListX<Xor<T, R>> next = lazy.eager();
+        boolean newValue[] = {true};
+        for(;;){
+
+            next = next.flatMap(e -> e.visit(s -> {
+                        newValue[0]=true;
+                        return fn.apply(s); },
+                    p -> {
+                        newValue[0]=false;
+                        return ListX.of(e);
+                    }));
+            if(!newValue[0])
+                break;
+
+        }
+        return Xor.sequencePrimary(next).get().to().dequeX(Evaluation.LAZY);
     }
 }

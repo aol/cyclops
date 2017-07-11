@@ -65,6 +65,10 @@ public interface VectorX<T> extends To<VectorX<T>>,
                                      PVector<T>>,
                                      Comparable<T>,
                                      Higher<vectorX,T>{
+
+    VectorX<T> lazy();
+    VectorX<T> eager();
+
     public static  <T> Kleisli<vectorX,VectorX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), VectorX::widen);
     }
@@ -1579,5 +1583,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
             return lt.map(fn);
         }
     }
-
+    public static  <T,R> VectorX<R> tailRec(T initial, Function<? super T, ? extends VectorX<? extends Xor<T, R>>> fn) {
+        return ListX.tailRec(initial,fn).to().vectorX(Evaluation.LAZY);
+    }
 }

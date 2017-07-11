@@ -7,9 +7,11 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
+import cyclops.collections.mutable.DequeX;
 import cyclops.companion.Reducers;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Trampoline;
+import cyclops.control.Xor;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
@@ -45,7 +47,8 @@ import java.util.stream.Stream;
  * @param <T>
  */
 public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmptySwitch<T, PBag<T>> {
-
+    BagX<T> lazy();
+    BagX<T> eager();
     /**
      * Narrow a covariant BagX
      * 
@@ -1119,6 +1122,10 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     @Override
     default <T2, T3, T4, R> BagX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (BagX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
+    }
+
+    public static  <T,R> BagX<R> tailRec(T initial, Function<? super T, ? extends BagX<? extends Xor<T, R>>> fn) {
+        return ListX.tailRec(initial,fn).to().bagX(Evaluation.LAZY);
     }
 
 }

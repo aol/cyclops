@@ -56,6 +56,7 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
+import lombok.experimental.var;
 import lombok.val;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
@@ -136,7 +137,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public static  <T> Cokleisli<reactiveSeq,T,ReactiveSeq<T>> kindCokleisli(){
         return Cokleisli.of(ReactiveSeq::narrowK);
     }
-    
+
     public static <W1,T> Nested<reactiveSeq,W1,T> nested(ReactiveSeq<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
@@ -5111,19 +5112,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return new MonadRec<reactiveSeq>(){
                 @Override
                 public <T, R> Higher<reactiveSeq, R> tailRec(T initial, Function<? super T, ? extends Higher<reactiveSeq,? extends Xor<T, R>>> fn) {
-                    return ReactiveSeq.deferred(()-> {
-                        ReactiveSeq<Xor<T, R>> next = ReactiveSeq.of(Xor.secondary(initial));
-                        boolean newValue[] = {false};
-                        for (; ; ) {
-                            next = next.flatMap(e -> e.visit(s -> {
-                                newValue[0] = true;
-                                return narrowK(fn.apply(s));
-                            }, p -> ReactiveSeq.of(e)));
-                            if (!newValue[0])
-                                break;
-                        }
-                        return Xor.sequencePrimary(next.to().listX(LAZY)).map(l -> l.stream()).get();
-                    });
+                   return ReactiveSeq.tailRec(initial,fn.andThen(ReactiveSeq::narrowK));
                 }
             };
         }
@@ -5253,4 +5242,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<T>) future;
     }
 
+    public static  <T,R> ReactiveSeq<R> tailRec(T initial, Function<? super T, ? extends ReactiveSeq<? extends Xor<T, R>>> fn) {
+        return ListX.tailRec(initial,fn).stream();
+    }
 }

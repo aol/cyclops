@@ -7,6 +7,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
+import cyclops.control.Xor;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.sortedSet;
@@ -45,7 +46,8 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
 
 
 
-
+    SortedSetX<T> lazy();
+    SortedSetX<T> eager();
     static <T> Collector<T, ?, SortedSet<T>> defaultCollector() {
         return Collectors.toCollection(() -> new TreeSet<T>(
                                                             (Comparator) Comparator.<Comparable> naturalOrder()));
@@ -1148,6 +1150,26 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
                                               });
 
         }
+    }
+
+    public static  <T,R> SortedSetX<R> tailRec(T initial, Function<? super T, ? extends SortedSetX<? extends Xor<T, R>>> fn) {
+        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
+        ListX<Xor<T, R>> next = lazy.eager();
+        boolean newValue[] = {true};
+        for(;;){
+
+            next = next.flatMap(e -> e.visit(s -> {
+                        newValue[0]=true;
+                        return fn.apply(s); },
+                    p -> {
+                        newValue[0]=false;
+                        return ListX.of(e);
+                    }));
+            if(!newValue[0])
+                break;
+
+        }
+        return Xor.sequencePrimary(next).get().to().sortedSetX(Evaluation.LAZY);
     }
 
 }

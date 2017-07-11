@@ -53,6 +53,8 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                                     OnEmptySwitch<T, Queue<T>>,
                                     Higher<queue,T>{
 
+    QueueX<T> lazy();
+    QueueX<T> eager();
     public static  <T> Kleisli<queue,QueueX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), QueueX::widen);
     }
@@ -1521,6 +1523,25 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         private static <T,R> QueueX<R> map(QueueX<T> lt, Function<? super T, ? extends R> fn){
             return lt.map(fn);
         }
+    }
+    public static  <T,R> QueueX<R> tailRec(T initial, Function<? super T, ? extends QueueX<? extends Xor<T, R>>> fn) {
+        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
+        ListX<Xor<T, R>> next = lazy.eager();
+        boolean newValue[] = {true};
+        for(;;){
+
+            next = next.flatMap(e -> e.visit(s -> {
+                        newValue[0]=true;
+                        return fn.apply(s); },
+                    p -> {
+                        newValue[0]=false;
+                        return ListX.of(e);
+                    }));
+            if(!newValue[0])
+                break;
+
+        }
+        return Xor.sequencePrimary(next).get().to().queueX(Evaluation.LAZY);
     }
 
 }

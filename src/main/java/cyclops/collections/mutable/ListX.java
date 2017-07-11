@@ -1,5 +1,6 @@
 package cyclops.collections.mutable;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
@@ -62,6 +63,8 @@ public interface ListX<T> extends To<ListX<T>>,
                                   Higher<list,T> {
 
 
+    ListX<T> lazy();
+    ListX<T> eager();
     public static <W1,T> Nested<list,W1,T> nested(ListX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
@@ -286,14 +289,7 @@ public interface ListX<T> extends To<ListX<T>>,
             return new MonadRec<list>(){
                 @Override
                 public <T, R> Higher<list, R> tailRec(T initial, Function<? super T, ? extends Higher<list,? extends Xor<T, R>>> fn) {
-                    ListX<Xor<T, R>> next = ListX.of(Xor.secondary(initial));
-                    boolean newValue[] = {false};
-                    for(;;){
-                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> ListX.of(e)));
-                        if(!newValue[0])
-                            break;
-                    }
-                    return Xor.sequencePrimary(next).get();
+                    return ListX.tailRec(initial,fn.andThen(ListX::narrowK));
                 }
             };
         }
@@ -1763,5 +1759,23 @@ public interface ListX<T> extends To<ListX<T>>,
     default <T2, T3, T4, R> ListX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (ListX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
+    public static  <T,R> ListX<R> tailRec(T initial, Function<? super T, ? extends Iterable<? extends Xor<T, R>>> fn) {
+        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
+        ListX<Xor<T, R>> next = lazy.eager();
+        boolean newValue[] = {true};
+        for(;;){
 
+            next = next.flatMap(e -> e.visit(s -> {
+                        newValue[0]=true;
+                        return fn.apply(s); },
+                    p -> {
+                        newValue[0]=false;
+                        return ListX.of(e);
+                    }));
+            if(!newValue[0])
+                break;
+
+        }
+        return Xor.sequencePrimary(next).get();
+    }
 }

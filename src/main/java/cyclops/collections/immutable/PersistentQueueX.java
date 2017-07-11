@@ -59,6 +59,8 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                                     OnEmptySwitch<T, PQueue<T>>,
                                     Higher<persistentQueueX,T>{
 
+    PersistentQueueX<T> lazy();
+    PersistentQueueX<T> eager();
     public static  <T> Kleisli<persistentQueueX,PersistentQueueX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), PersistentQueueX::widen);
     }
@@ -1664,5 +1666,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         private static <T,R> PersistentQueueX<R> map(PersistentQueueX<T> lt, Function<? super T, ? extends R> fn){
             return lt.map(fn);
         }
+    }
+
+    public static  <T,R> PersistentQueueX<R> tailRec(T initial, Function<? super T, ? extends PersistentQueueX<? extends Xor<T, R>>> fn) {
+        return ListX.tailRec(initial,fn).to().persistentQueueX(Evaluation.LAZY);
     }
 }
