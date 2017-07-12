@@ -34,8 +34,15 @@ import org.jooq.lambda.tuple.Tuple2;
  * @param <T> Current input type of Function
  * @param <R> Current return type of Function
  */
+@FunctionalInterface
 public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<reader,T>,R> {
 
+    public static <T,R> Reader<T,R> of(Reader<T,R> i){
+        return i;
+    }
+    public static <IN,T,R> Reader<IN,R> tailRec(T initial,Function<? super T,? extends Reader<IN, ? extends Xor<T, R>>> fn ){
+        return narrowK(Instances.<IN, T, R>monadRec().tailRec(initial, fn));
+    }
     public static  <R,T> Kleisli<Higher<reader,T>,Reader<T,R>,R> kindKleisli(){
         return Kleisli.of(Instances.monad(), Reader::widen);
     }

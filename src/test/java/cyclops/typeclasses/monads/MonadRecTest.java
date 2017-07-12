@@ -1,12 +1,15 @@
 package cyclops.typeclasses.monads;
 
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.control.Maybe;
+import cyclops.control.Reader;
 import cyclops.control.Xor;
+import cyclops.function.Lambda;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import cyclops.stream.ReactiveSeq;
@@ -66,4 +69,12 @@ public class MonadRecTest {
         assertThat(l,equalTo(Optional.of(100_001)));
     }
 
+    @Test
+    public void readerTest(){
+        MonadRec<Higher<reader, Integer>> mr = Reader.Instances.monadRec();
+
+        Reader<Integer, Integer> l = mr.tailRec(0, i -> i < 100_000 ? Reader.of(in -> Xor.secondary(in+i + 1)) : Reader.of(in -> Xor.primary(in+i + 1)))
+                                        .convert(Reader::narrowK);
+        assertThat(l.apply(10),equalTo(100_001+11));
+    }
 }
