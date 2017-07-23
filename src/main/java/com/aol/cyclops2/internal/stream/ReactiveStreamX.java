@@ -1479,8 +1479,4 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return Maybe.fromPublisher(this);
 
     }
-
-    public static void main(String[] args) throws Exception {
-
-    }
 }
