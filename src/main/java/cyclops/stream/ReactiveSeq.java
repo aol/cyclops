@@ -3747,7 +3747,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Function that accepts and returns completed value
      * @return ReactiveSeq that can handle stream or async operations simpler
      */
-    //ReactiveSeq<T> complete(final Runnable fn);
+    ReactiveSeq<T> complete(final Runnable fn);
 
     /**
      * Recover from an exception with an alternative value
