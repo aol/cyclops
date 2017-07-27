@@ -28,7 +28,7 @@ import java.util.function.Function;
  * and https://github.com/scalaz/scalaz/blob/series/7.2.x/core/src/main/scala/scalaz/Free.scala
  * and https://github.com/typelevel/cats/blob/master/free/src/main/scala/cats/free/Free.scala
  *
- * Org attempt : https://github.com/aol/cyclops/blob/v4.0.1/cyclops-free-monad/src/main/java/com/aol/cyclops/monad/Free.java
+ * Org recover : https://github.com/aol/cyclops/blob/v4.0.1/cyclops-free-monad/src/main/java/com/aol/cyclops/monad/Free.java
  *
  * @param <F> Transformable type
  * @param <T> Data type of Transformable

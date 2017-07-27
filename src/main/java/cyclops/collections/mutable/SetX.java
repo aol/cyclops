@@ -4,6 +4,7 @@ import com.aol.cyclops2.data.collections.extensions.lazy.LazySetX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.foldable.Evaluation;
 
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
@@ -29,6 +30,8 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
+import org.jooq.lambda.Collectable;
+import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -665,7 +668,18 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                    .to()
                    .listX(LAZY);
     }
+    default ConvertableSequence<T> to(){
+        if(isLazy() && !isMaterialized())
+            return new ConvertableSequence<T>(distinct());
 
+        return new ConvertableSequence<>(this);
+    }
+    default Collectable<T> collectors(){
+        if(isLazy() && !isMaterialized())
+            return Seq.seq(distinct());
+
+        return Seq.seq(this);
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycleUntil(java.util.function.Predicate)
      */

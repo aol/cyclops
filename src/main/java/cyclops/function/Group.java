@@ -8,11 +8,16 @@ import cyclops.typeclasses.functions.MonoidK;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 
 public interface Group<T> extends Monoid<T> {
 
     T invert(T t);
+
+    default T reduceReverse(final Stream<T> toReduce) {
+        return invert(reduce(toReduce));
+    }
 
     public static <T> Group<T> fromCurried(UnaryOperator<T> inverse,final T zero, final Function<T, Function<T, T>> combiner){
         return of(inverse,Monoid.of(zero,combiner));

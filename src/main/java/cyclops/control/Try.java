@@ -424,7 +424,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
 
-    Try<Integer,Throwable> attempt = Try.fromPublisher(reactiveStream, RuntimeException.class);
+    Try<Integer,Throwable> recover = Try.fromPublisher(reactiveStream, RuntimeException.class);
 
     //Try[1]
      *
@@ -456,7 +456,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
 
-    Try<Integer,Throwable> attempt = Try.fromPublisher(reactiveStream);
+    Try<Integer,Throwable> recover = Try.fromPublisher(reactiveStream);
 
     //Try[1]
      *
@@ -478,7 +478,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
 
-    Try<Integer,Throwable> attempt = Try.fromIterable(reactiveStream);
+    Try<Integer,Throwable> recover = Try.fromIterable(reactiveStream);
 
     //Try[1]
      *
@@ -1071,7 +1071,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * Try to execute supplied Supplier and will Catch specified Excpetions or java.lang.Exception
      * if none specified.
      *
-     * @param cf CheckedSupplier to attempt to execute
+     * @param cf CheckedSupplier to recover to execute
      * @param classes  Exception types to catch (or java.lang.Exception if none specified)
      * @return New Try
      */
@@ -1099,7 +1099,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * Try to execute supplied Runnable and will Catch specified Excpetions or java.lang.Exception
      * if none specified.
      *
-     * @param cf CheckedRunnable to attempt to execute
+     * @param cf CheckedRunnable to recover to execute
      * @param classes  Exception types to catch (or java.lang.Exception if none specified)
      * @return New Try
      */

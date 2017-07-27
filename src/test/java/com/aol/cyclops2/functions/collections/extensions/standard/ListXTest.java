@@ -22,6 +22,16 @@ import static org.junit.Assert.assertThat;
 public class ListXTest extends CollectionXTestsWithNulls {
 
 
+    int times =0;
+    @Test
+    public void cycleTests(){
+        ListX.of(1,2,3)
+                .cycle(2);
+
+        ListX.of(5,6,7)
+                .cycleWhile(i->i*times++<100)
+        .printOut();
+    }
 
     @Test
     public void lazy(){

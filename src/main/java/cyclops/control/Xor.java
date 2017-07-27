@@ -138,7 +138,8 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     public static <W1,ST,PT> Nested<Higher<xor,ST>,W1,PT> nested(Xor<ST,Higher<W1,PT>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
-    default <W1> Product<Higher<xor,ST>,W1,PT> product(Active<W1,PT> active){
+
+     default <W1> Product<Higher<xor,ST>,W1,PT> product(Active<W1,PT> active){
         return Product.of(allTypeclasses(),active);
     }
     default <W1> Coproduct<W1,Higher<xor,ST>,PT> coproduct(InstanceDefinitions<W1> def2){
@@ -1432,6 +1433,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                     return Instances.monadRec();
                 }
 
+
                 @Override
                 public <T> Maybe<MonadPlus<Higher<xor, L>>> monadPlus(Monoid<Higher<Higher<xor, L>, T>> m) {
                     return Maybe.just(Instances.monadPlus(m));
@@ -1676,6 +1678,41 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                 @Override
                 public <T> Higher<Higher<xor, L>, T> unit(T value) {
                     return Instances.<L>unit().unit(value);
+                }
+            };
+        }
+        public static <L> ApplicativeError<Higher<xor, L>,L> applicativeError(){
+            return new ApplicativeError<Higher<xor, L>,L>() {
+
+                @Override
+                public <T, R> Higher<Higher<xor, L>, R> ap(Higher<Higher<xor, L>, ? extends Function<T, R>> fn, Higher<Higher<xor, L>, T> apply) {
+                    return Instances.<L>applicative().ap(fn,apply);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<xor, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<xor, L>, T> ds) {
+                    return Instances.<L>applicative().map(fn,ds);
+                }
+
+                @Override
+                public <T> Higher<Higher<xor, L>, T> unit(T value) {
+                    return Instances.<L>applicative().unit(value);
+                }
+
+                @Override
+                public <T> Higher<Higher<xor, L>, T> raiseError(L l) {
+                    return Xor.secondary(l);
+                }
+
+                @Override
+                public <T> Higher<Higher<xor, L>, T> handleErrorWith(Function<? super L, ? extends Higher<Higher<xor, L>, ? extends T>> fn, Higher<Higher<xor, L>, T> ds) {
+                    Function<? super L, ? extends Xor<L, T>> fn2 = fn.andThen(s -> {
+
+                        Higher<Higher<xor, L>, T> x = (Higher<Higher<xor, L>, T>)s;
+                        Xor<L, T> r = narrowK(x);
+                        return r;
+                    });
+                    return narrowK(ds).secondaryToPrimayFlatMap(fn2);
                 }
             };
         }

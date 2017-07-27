@@ -232,6 +232,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
         return ReactiveSeq.fromIterable(this);
     }
 
+    boolean isMaterialized();
     default CollectionX<T> materialize(){
 
         return this;

@@ -5,6 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.stream.HeadAndTail;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.box.MutableBoolean;
 import cyclops.control.Xor;
@@ -61,6 +62,20 @@ public interface ListX<T> extends To<ListX<T>>,
                                   Comparable<T>,
                                   OnEmptySwitch<T, List<T>>,
                                   Higher<list,T> {
+
+
+    default Maybe<T> headMaybe(){
+        return headAndTail().headMaybe();
+    }
+    default T head(){
+        return headAndTail().head();
+    }
+    default ListX<T> tail(){
+        return headAndTail().tail().to().listX(Evaluation.LAZY);
+    }
+
+
+
 
 
     ListX<T> lazy();
@@ -293,6 +308,7 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
             };
         }
+
         /**
          *
          * <pre>

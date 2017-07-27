@@ -99,6 +99,7 @@ public class Optionals {
        return optional.isPresent() ? fn.apply(optional.get()) : s.get();
     }
 
+
     /**
      * Perform a For Comprehension over a Optional, accepting 3 generating function.
      * This results in a four level nested internal iteration over the provided Optionals.

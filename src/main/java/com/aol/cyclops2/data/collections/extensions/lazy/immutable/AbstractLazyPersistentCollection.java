@@ -68,7 +68,9 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     public boolean isLazy() {
         return strict == Evaluation.LAZY;
     }
-
+    public boolean isMaterialized(){
+        return seq.get()!=null;
+    }
     @Override
     public boolean isEager() {
         return strict == Evaluation.EAGER;

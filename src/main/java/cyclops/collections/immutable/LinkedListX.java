@@ -67,6 +67,15 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                     Higher<linkedListX,T> {
 
 
+    default Maybe<T> headMaybe(){
+        return headAndTail().headMaybe();
+    }
+    default T head(){
+        return headAndTail().head();
+    }
+    default LinkedListX<T> tail(){
+        return headAndTail().tail().to().linkedListX(Evaluation.LAZY);
+    }
 
     public static  <T> Kleisli<linkedListX,LinkedListX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), LinkedListX::widen);

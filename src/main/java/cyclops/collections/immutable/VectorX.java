@@ -65,7 +65,15 @@ public interface VectorX<T> extends To<VectorX<T>>,
                                      PVector<T>>,
                                      Comparable<T>,
                                      Higher<vectorX,T>{
-
+    default Maybe<T> headMaybe(){
+        return headAndTail().headMaybe();
+    }
+    default T head(){
+        return headAndTail().head();
+    }
+    default VectorX<T> tail(){
+        return headAndTail().tail().to().vectorX(Evaluation.LAZY);
+    }
     VectorX<T> lazy();
     VectorX<T> eager();
 

@@ -54,6 +54,7 @@ public class ReactiveSeqTest {
     @Test
     public void takeOne(){
 
+
         assertThat(ReactiveSeq.of()
                         .takeOne().isPresent(),equalTo(false));
         assertThat(ReactiveSeq.of(1,2,3)

@@ -4,6 +4,7 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPOrderedSetX;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.foldable.Evaluation;
 
 
@@ -22,6 +23,8 @@ import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
+import org.jooq.lambda.Collectable;
+import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -222,7 +225,20 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
                        .mapReduce(stream);
     }
 
+    @Override
+    default ConvertableSequence<T> to(){
+        if(isLazy() && !isMaterialized())
+            return new ConvertableSequence<T>(distinct());
 
+        return new ConvertableSequence<>(this);
+    }
+    @Override
+    default Collectable<T> collectors(){
+        if(isLazy() && !isMaterialized())
+            return Seq.seq(distinct());
+
+        return Seq.seq(this);
+    }
     @Override
     default OrderedSetX<T> materialize() {
         return (OrderedSetX<T>)LazyCollectionX.super.materialize();

@@ -27,7 +27,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Try;
 
 @FunctionalInterface
-public interface Fn0< R> extends Supplier<R>{
+public interface Fn0<R> extends Supplier<R>{
 
 
     public static <  T3,R> Fn0< R> λ(final Fn0<R> triFunc){
@@ -37,6 +37,9 @@ public interface Fn0< R> extends Supplier<R>{
         return triFunc;
     }
 
+    default Eval<R> toEval(){
+        return Eval.later(this);
+    }
     default R apply(){
         return get();
     }

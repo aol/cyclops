@@ -39,7 +39,10 @@ public class TryTest {
 	public void setUp() throws Exception {
 		just = Try.success(10);
 		none = Try.failure(exception);
+
+		just.toXor().secondaryMap(x-> new Exception()).toTry(Exception.class);
 	}
+
 
 	@Test
     public void recover(){

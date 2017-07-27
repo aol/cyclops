@@ -599,7 +599,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
     /**
      * Construct an AnyM that wraps a reactive-streams Publisher. If there is no registered Comprehender for the supplied Publisher, this method
-     *  will attempt toNested convert the Publisher toNested a type that cyclops2-react can understand.
+     *  will recover toNested convert the Publisher toNested a type that cyclops2-react can understand.
      *  
      *  <pre>
      *  {@code 
