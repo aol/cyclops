@@ -26,7 +26,7 @@ public interface MonadZero<CRE> extends Monad<CRE>, Filterable<CRE> {
      * 
      * @return Identity value or zero value for the HKT type, the generic type is unknown
      */
-    public Higher<CRE, ?> zero();
+    public <T> Higher<CRE, T> zero();
     
     /* (non-Javadoc)
      * @see com.aol.com.aol.cyclops2.hkt.typeclasses.Filterable#filter(java.util.function.Predicate, com.aol.com.aol.cyclops2.hkt.alias.Higher)

@@ -106,22 +106,7 @@ public class EvalsTest {
         assertThat(opt,equalTo(Eval.now(null)));
     }
     
-    @Test
-    public void monadPlus(){
-        Eval<Integer> opt = Eval.Instances.<Integer>monadPlus()
-                                      .plus(Eval.now(null), Eval.now(10))
-                                      .convert(Eval::narrowK);
-        assertThat(opt,equalTo(Eval.now(10)));
-    }
-    @Test
-    public void monadPlusNonEmpty(){
-        
-        Monoid<Eval<Integer>> m = Monoid.of(Eval.now(null), (a, b)->a.isPresent() ? b : a);
-        Eval<Integer> opt = Eval.Instances.<Integer>monadPlus(m)
-                                      .plus(Eval.now(5), Eval.now(10))
-                                      .convert(Eval::narrowK);
-        assertThat(opt,equalTo(Eval.now(10)));
-    }
+
     @Test
     public void  foldLeft(){
         int sum  = Eval.Instances.foldable()

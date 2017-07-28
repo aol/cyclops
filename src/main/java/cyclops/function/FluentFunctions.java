@@ -553,8 +553,8 @@ public class FluentFunctions {
         /**
          * Apply before advice toNested this function, capture the input with the provided Consumer
          * 
-         * @param action Before advice
-         * @return Function with Before advice attached
+         * @param action LESS advice
+         * @return Function with LESS advice attached
          */
         public FluentFunction<T, R> before(final Consumer<? super T> action) {
             return withFn(t -> {
@@ -564,10 +564,10 @@ public class FluentFunctions {
         }
 
         /**
-         * Apply After advice toNested this function capturing both the input and the emitted with the provided BiConsumer
+         * Apply MORE advice toNested this function capturing both the input and the emitted with the provided BiConsumer
          * 
-         * @param action After advice
-         * @return  Function with After advice attached
+         * @param action MORE advice
+         * @return  Function with MORE advice attached
          */
         public FluentFunction<T, R> after(final BiConsumer<? super T,? super R> action) {
             return withFn(t -> {

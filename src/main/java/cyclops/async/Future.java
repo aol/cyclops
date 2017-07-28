@@ -469,6 +469,7 @@ public class Future<T> implements To<Future<T>>,
      * @return Future populated on a Cron based Schedule
      */
     public static <T> Future<T> schedule(final String cron, final ScheduledExecutorService ex, final Supplier<T> t) {
+
         final CompletableFuture<T> future = new CompletableFuture<>();
         final Future<T> wrapped = Future.of(future);
         ReactiveSeq.generate(() -> {

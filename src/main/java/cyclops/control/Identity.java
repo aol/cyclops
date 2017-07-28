@@ -13,6 +13,7 @@ import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -25,9 +26,9 @@ import java.util.function.Supplier;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Identity<T> implements Higher<identity,T>, Iterable<T> {
-     private final T value;
+    private final T value;
 
-     public static <T> Identity<T> of(T value){
+    public static <T> Identity<T> of(T value){
          return new Identity<>(value);
      }
 
@@ -55,7 +56,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
      public <R> Identity<R> coflatMap(Function<? super Identity<? super T>, ? extends R> fn){
          return of(fn.apply(this));
      }
-     public <R> Identity<R> map(Function<? super T,? extends R> fn){
+    public <R> Identity<R> map(Function<? super T,? extends R> fn){
          return new Identity<>(fn.apply(value));
      }
     public <R> Identity<R> flatMap(Function<? super T,? extends Identity<? extends R>> fn){
@@ -219,6 +220,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
                 }
             };
         }
+
         public static  MonadRec<identity> monadRec() {
 
             return new MonadRec<identity>(){

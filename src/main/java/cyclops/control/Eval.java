@@ -73,7 +73,7 @@ import java.util.stream.Stream;
  */
 public interface Eval<T> extends To<Eval<T>>,
                                     MonadicValue<T>,
-                                    Higher<eval ,T> {
+                                    Higher<eval ,T>{
 
     public static  <T> Kleisli<eval,Eval<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), Eval::widen);
@@ -110,6 +110,8 @@ public interface Eval<T> extends To<Eval<T>>,
     default AnyM<eval,T> anyM(){
         return AnyM.fromEval(this);
     }
+
+
 
     /**
      * Convert the raw Higher Kinded Type for Evals types into the Eval interface
@@ -908,7 +910,6 @@ public interface Eval<T> extends To<Eval<T>>,
             }
 
 
-
             public void forEach(Consumer<? super T> cons){
                 input.peek(e->e.forEach(cons));
             }
@@ -1194,7 +1195,7 @@ public interface Eval<T> extends To<Eval<T>>,
 
                 @Override
                 public <T> Maybe<MonadPlus<eval>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Maybe.none();
                 }
 
                 @Override
@@ -1204,7 +1205,7 @@ public interface Eval<T> extends To<Eval<T>>,
 
                 @Override
                 public <T> Maybe<MonadPlus<eval>> monadPlus(Monoid<Higher<eval, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                    return Maybe.none();
                 }
 
                 @Override
@@ -1385,46 +1386,8 @@ public interface Eval<T> extends To<Eval<T>>,
                 }
             };
         }
-        /**
-         * <pre>
-         * {@code
-         *  Eval<Integer> list = Evals.<Integer>monadPlus()
-        .plus(Eval.widen(Arrays.asEval()), Eval.widen(Arrays.asEval(10)))
-        .convert(Eval::narrowK3);
-        //Arrays.asEval(10))
-         *
-         * }
-         * </pre>
-         * @return Type class for combining Evals by concatenation
-         */
-        public static <T> MonadPlus<eval> monadPlus(){
-            Monoid<Eval<T>> mn = Monoid.of(Eval.now(null), (a,b)->a.get()!=null?a :b);
-            Monoid<Eval<T>> m = Monoid.of(mn.zero(), (f,g)->
-                    mn.apply(Eval.narrow(f), Eval.narrow(g)));
 
-            Monoid<Higher<eval,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
-        }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<Eval<Integer>> m = Monoid.of(Eval.widen(Arrays.asEval()), (a,b)->a.isEmpty() ? b : a);
-        Eval<Integer> list = Evals.<Integer>monadPlus(m)
-        .plus(Eval.widen(Arrays.asEval(5)), Eval.widen(Arrays.asEval(10)))
-        .convert(Eval::narrowK3);
-        //Arrays.asEval(5))
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining Evals
-         * @return Type class for combining Evals
-         */
-        public static <T> MonadPlus<eval> monadPlus(Monoid<Eval<T>> m){
-            Monoid<Higher<eval,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
-        }
+
 
         /**
          * @return Type class for traversables with traverse / sequence operations
