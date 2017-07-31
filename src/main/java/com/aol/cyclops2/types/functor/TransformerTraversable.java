@@ -3,6 +3,8 @@ package com.aol.cyclops2.types.functor;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.reactiveSeq;
 import cyclops.stream.ReactiveSeq;
 import cyclops.monads.transformers.ListT;
 import cyclops.collections.mutable.ListX;
@@ -44,7 +46,7 @@ public interface TransformerTraversable<T>{
      * @param groupSize Size of each batch of elements toNested be grouped into Lists
      * @return List Transformer view into batched / grouped data
      */
-    default ListT<stream,T> groupedT(final int groupSize) {
+    default ListT<reactiveSeq,T> groupedT(final int groupSize) {
         return ListT.fromStream(stream().grouped(groupSize));
     }
 
@@ -69,7 +71,7 @@ public interface TransformerTraversable<T>{
      * @param increment Increment between windows
      * @return List Transformer view into the Sliding windows
      */
-    default ListT<stream,T> slidingT(final int windowSize, final int increment) {
+    default ListT<reactiveSeq,T> slidingT(final int windowSize, final int increment) {
         return ListT.fromStream(stream().sliding(windowSize, increment));
     }
 
@@ -93,7 +95,7 @@ public interface TransformerTraversable<T>{
      * @param windowSize Size of sliding window
      * @return List Transformer view into the Sliding windows
      */
-    default ListT<stream,T> slidingT(final int windowSize) {
+    default ListT<reactiveSeq,T> slidingT(final int windowSize) {
         return ListT.fromStream(stream().sliding(windowSize));
     }
 
@@ -119,7 +121,7 @@ public interface TransformerTraversable<T>{
      * @param predicate Predicate toNested determine batch termination point
      * @return List Transformer view into batched Traversable
      */
-    default ListT<stream,T> groupedUntilT(final Predicate<? super T> predicate) {
+    default ListT<reactiveSeq,T> groupedUntilT(final Predicate<? super T> predicate) {
         return ListT.fromStream(stream().groupedUntil(predicate));
     }
 
@@ -136,7 +138,7 @@ public interface TransformerTraversable<T>{
      * @param predicate Predicate toNested determine batch
      * @return List Transformer view into batched Traversable
      */
-    default ListT<stream,T> groupedStatefullyUntilT(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default ListT<reactiveSeq,T> groupedStatefullyUntilT(final BiPredicate<ListX<? super T>, ? super T> predicate) {
         return ListT.fromStream(stream().groupedStatefullyUntil(predicate));
     }
 
@@ -160,7 +162,7 @@ public interface TransformerTraversable<T>{
      * @param predicate Predicate toNested determine batch termination point
      * @return List Transformer view into batched Traversable
      */
-    default ListT<stream,T> groupedWhileT(final Predicate<? super T> predicate) {
+    default ListT<reactiveSeq,T> groupedWhileT(final Predicate<? super T> predicate) {
         return ListT.fromStream(stream().groupedUntil(predicate));
     }
 

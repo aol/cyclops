@@ -77,6 +77,12 @@ public interface ListX<T> extends To<ListX<T>>,
 
 
 
+    public static <T> ListX<T> defer(Supplier<ListX<T>> s){
+        return ListX.of(s)
+                    .map(Supplier::get)
+                    .flatMap(l->l);
+    }
+
 
     ListX<T> lazy();
     ListX<T> eager();

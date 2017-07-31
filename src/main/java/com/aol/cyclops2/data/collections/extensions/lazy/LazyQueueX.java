@@ -10,6 +10,8 @@ import lombok.EqualsAndHashCode;
 import java.util.*;
 import java.util.stream.Collector;
 
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
+
 /**
  * An extended List type {@see java.util.List}
  * Extended List operations execute lazily e.g.
@@ -41,16 +43,16 @@ public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements
 
 
     public LazyQueueX(Queue<T> list, ReactiveSeq<T> seq, Collector<T, ?, Queue<T>> collector,Evaluation strict) {
-        super(list, seq, collector,strict);
+        super(list, seq, collector,strict,r-> QueueX.defer(()->r.to().queueX(LAZY).flatMap(i->i)));
 
     }
     public LazyQueueX(Queue<T> list, Collector<T, ?, Queue<T>> collector,Evaluation strict) {
-        super(list, null, collector,strict);
+        super(list, null, collector,strict,r-> QueueX.defer(()->r.to().queueX(LAZY).flatMap(i->i)));
 
     }
 
     public LazyQueueX(ReactiveSeq<T> seq, Collector<T, ?, Queue<T>> collector,Evaluation strict) {
-        super(null, seq, collector,strict);
+        super(null, seq, collector,strict,r-> QueueX.defer(()->r.to().queueX(LAZY).flatMap(i->i)));
 
     }
 

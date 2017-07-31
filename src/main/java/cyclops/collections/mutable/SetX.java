@@ -56,6 +56,11 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  */
 public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<set,T>,OnEmptySwitch<T, Set<T>> {
 
+    public static <T> SetX<T> defer(Supplier<SetX<T>> s){
+        return of(s)
+                .map(Supplier::get)
+                .flatMap(l->l);
+    }
     SetX<T> lazy();
     SetX<T> eager();
     public static <W1,T> Nested<set,W1,T> nested(SetX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){

@@ -62,6 +62,13 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
     DequeX<T> lazy();
     DequeX<T> eager();
+
+    public static <T> DequeX<T> defer(Supplier<DequeX<T>> s){
+        return of(s)
+                .map(Supplier::get)
+                .flatMap(l->l);
+    }
+
     public static  <T> Kleisli<deque,DequeX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), DequeX::widen);
     }

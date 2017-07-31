@@ -42,6 +42,10 @@ public interface Fn1<T,  R> extends Function<T,R>{
         return triFunc;
     }
 
+    default Fn0<R> applyLazy(T t){
+        return ()->apply(t);
+    }
+
     default Eval<R> later(T t){
         return Eval.later(()->apply(t));
     }

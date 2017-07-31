@@ -9,6 +9,8 @@ import cyclops.stream.ReactiveSeq;
 import java.util.*;
 import java.util.stream.Collector;
 
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
+
 /**
  * An extended Set type {@see java.util.List}
  * Extended Set operations execute lazily e.g.
@@ -39,16 +41,16 @@ public class LazySortedSetX<T> extends AbstractLazyCollection<T,SortedSet<T>> im
 
 
     public LazySortedSetX(SortedSet<T> list, ReactiveSeq<T> seq, Collector<T, ?, SortedSet<T>> collector,Evaluation strict) {
-        super(list, seq, collector,strict);
+        super(list, seq, collector,strict,r-> SortedSetX.defer(()->r.to().sortedSetX(LAZY).flatMap(i->i)));
 
     }
     public LazySortedSetX(SortedSet<T> list, Collector<T, ?, SortedSet<T>> collector,Evaluation strict) {
-        super(list, null, collector,strict);
+        super(list, null, collector,strict,r-> SortedSetX.defer(()->r.to().sortedSetX(LAZY).flatMap(i->i)));
 
     }
 
     public LazySortedSetX(ReactiveSeq<T> seq, Collector<T, ?, SortedSet<T>> collector,Evaluation strict) {
-        super(null, seq, collector,strict);
+        super(null, seq, collector,strict,r-> SortedSetX.defer(()->r.to().sortedSetX(LAZY).flatMap(i->i)));
 
     }
     @Override

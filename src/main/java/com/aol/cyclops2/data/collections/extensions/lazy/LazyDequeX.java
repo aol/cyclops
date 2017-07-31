@@ -5,11 +5,14 @@ import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedLis
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.DequeX;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import lombok.EqualsAndHashCode;
 
 import java.util.*;
 import java.util.stream.Collector;
+
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * An extended List type {@see java.util.List}
@@ -42,16 +45,16 @@ public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements
 
 
     public LazyDequeX(Deque<T> list, ReactiveSeq<T> seq, Collector<T, ?, Deque<T>> collector,Evaluation strict) {
-        super(list, seq, collector,strict);
+        super(list, seq, collector,strict,r-> DequeX.defer(()->r.to().dequeX(LAZY).flatMap(i->i)));
 
     }
     public LazyDequeX(Deque<T> list, Collector<T, ?, Deque<T>> collector,Evaluation strict) {
-        super(list, null, collector,strict);
+        super(list, null, collector,strict,r-> DequeX.defer(()->r.to().dequeX(LAZY).flatMap(i->i)));
 
     }
 
     public LazyDequeX(ReactiveSeq<T> seq, Collector<T, ?, Deque<T>> collector,Evaluation strict) {
-        super(null, seq, collector,strict);
+        super(null, seq, collector,strict,r-> DequeX.defer(()->r.to().dequeX(LAZY).flatMap(i->i)));
 
     }
 

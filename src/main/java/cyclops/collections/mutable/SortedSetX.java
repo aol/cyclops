@@ -47,7 +47,11 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, SortedSet<T>> {
 
 
-
+    public static <T> SortedSetX<T> defer(Supplier<SortedSetX<T>> s){
+        return of(s)
+                .map(Supplier::get)
+                .flatMap(l->l);
+    }
     SortedSetX<T> lazy();
     SortedSetX<T> eager();
     static <T> Collector<T, ?, SortedSet<T>> defaultCollector() {

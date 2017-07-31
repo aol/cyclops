@@ -53,6 +53,11 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                                     OnEmptySwitch<T, Queue<T>>,
                                     Higher<queue,T>{
 
+    public static <T> QueueX<T> defer(Supplier<QueueX<T>> s){
+        return of(s)
+                .map(Supplier::get)
+                .flatMap(l->l);
+    }
     QueueX<T> lazy();
     QueueX<T> eager();
     public static  <T> Kleisli<queue,QueueX<T>,T> kindKleisli(){

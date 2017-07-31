@@ -19,6 +19,7 @@ import cyclops.control.Maybe;
 import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.monads.Witness.reactiveSeq;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -201,6 +202,9 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
                               monads.map(ListX::fromIterable));
     }
     public static <A> ListT<Witness.stream,A> fromStream(final Stream<? extends IndexedSequenceX<A>> nested) {
+        return of(AnyM.fromStream(nested));
+    }
+    public static <A> ListT<reactiveSeq,A> fromStream(final ReactiveSeq<? extends IndexedSequenceX<A>> nested) {
         return of(AnyM.fromStream(nested));
     }
     public static <A> ListT<Witness.optional,A> fromOptional(final Optional<? extends IndexedSequenceX<A>> nested) {
