@@ -9,10 +9,12 @@ import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.function.*;
 import cyclops.monads.Witness.list;
+import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functions.FunctionK;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -49,6 +51,7 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
 @EqualsAndHashCode(of={"single"})
 public class Active<W,T> implements Filters<T>,
                                     Transformable<T>, To<Active<W,T>> {
+
 
 
     @Getter
@@ -420,7 +423,7 @@ public class Active<W,T> implements Filters<T>,
     }
 
     public class Folds {
-
+        Foldable<W> foldable;
         public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
             return def1.foldable().visit(p->p.foldMap(mb,fn,single),()->mb.zero());
         }
@@ -532,6 +535,9 @@ public class Active<W,T> implements Filters<T>,
         return Maybe.just(of(Comprehensions.of(def1.monadZero().get()).forEach2(this.single,value1,filterFunction,yieldingFunction),def1));
     }
 
+    public String show(){
+        return def1.show().show(single);
+    }
     public String toString(){
         return "Active["+single.toString()+"]";
     }

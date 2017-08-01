@@ -16,20 +16,20 @@ import lombok.AllArgsConstructor;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-//FreeApplicative refs : = https://github.com/typelevel/cats/blob/master/free/src/main/scala/cats/free/FreeApplicative.scala
-public interface FreeApplicative<F, T> extends Higher2<freeAp,F, T> {
-    static <F, T> FreeApplicative<F, T> pure(T value) {
+//FreeAp refs : = https://github.com/typelevel/cats/blob/master/free/src/main/scala/cats/free/FreeApplicative.scala
+public interface FreeAp<F, T> extends Higher2<freeAp,F, T> {
+    static <F, T> FreeAp<F, T> pure(T value) {
         return new Pure(value);
     }
-    static <F, T,P> FreeApplicative<F, T> ap(Higher<F,P> fp, FreeApplicative<F,Function<P, T>> fn){
+    static <F, T,P> FreeAp<F, T> ap(Higher<F,P> fp, FreeAp<F,Function<P, T>> fn){
         return new Ap(fp,fn);
     }
-    default <P, R> FreeApplicative<F, R> ap(FreeApplicative<F, ? extends Function<T, R>> b){
-        return b.<P,FreeApplicative<F, R>>visit(f->this.map(f),
+    default <P, R> FreeAp<F, R> ap(FreeAp<F, ? extends Function<T, R>> b){
+        return b.<P,FreeAp<F, R>>visit(f->this.map(f),
                  (pivot,fn)->ap(pivot,ap(fn.map(fx->a->p->fx.apply(p).apply(a)))));
     }
-    default <P, R> FreeApplicative<F, R> map(Function<? super T,? extends R> f){
-            return this.<P,FreeApplicative<F, R>>visit(a->pure(f.apply(a)),
+    default <P, R> FreeAp<F, R> map(Function<? super T,? extends R> f){
+            return this.<P,FreeAp<F, R>>visit(a->pure(f.apply(a)),
                     (pivot,fn)-> ap(pivot, fn.map(it -> {
                         Function<P,? extends R> x = f.compose(it);
                         return Functions.narrow(x);
@@ -53,44 +53,44 @@ public interface FreeApplicative<F, T> extends Higher2<freeAp,F, T> {
         }, Free.Instances.applicative(applicative, applicative)));
 
     }
-    default <P,G> FreeApplicative<G, T> compile(NaturalTransformation<F, G> f, Applicative<G> applicative){
-        return FreeApplicative.narrowK(foldMap(new NaturalTransformation<F, Higher<freeAp, G>>() {
+    default <P,G> FreeAp<G, T> compile(NaturalTransformation<F, G> f, Applicative<G> applicative){
+        return FreeAp.narrowK(foldMap(new NaturalTransformation<F, Higher<freeAp, G>>() {
 
             @Override
             public <T> Higher<Higher<freeAp, G>, T> apply(Higher<F, T> a) {
-                return FreeApplicative.lift(f.apply(a),applicative);
+                return FreeAp.lift(f.apply(a),applicative);
             }
-        }, FreeApplicative.Instances.applicative(applicative, applicative)));
+        }, FreeAp.Instances.applicative(applicative, applicative)));
     }
-    static <F,A> FreeApplicative<F,A> lift(Higher<F,A> fa, Applicative<F> applicative) {
+    static <F,A> FreeAp<F,A> lift(Higher<F,A> fa, Applicative<F> applicative) {
         return ap(fa,pure(Lambda.l1(a -> a)));
     }
 
 
-    <P,R> R visit(Function<? super T,? extends R> pure, BiFunction<? super Higher<F,P>,FreeApplicative<F,Function<P, T>>,? extends R> ap);
+    <P,R> R visit(Function<? super T,? extends R> pure, BiFunction<? super Higher<F,P>,FreeAp<F,Function<P, T>>,? extends R> ap);
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Pure<F, A> implements FreeApplicative<F,A>{
+    static class Pure<F, A> implements FreeAp<F,A> {
         private final  A a;
 
         @Override
-        public <P,R> R visit(Function<? super A, ? extends R> pure, BiFunction<? super Higher<F, P>, FreeApplicative<F, Function<P, A>>, ? extends R> ap) {
+        public <P,R> R visit(Function<? super A, ? extends R> pure, BiFunction<? super Higher<F, P>, FreeAp<F, Function<P, A>>, ? extends R> ap) {
             return pure.apply(a);
         }
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Ap<F, P, A> implements FreeApplicative<F,A>{
+    static class Ap<F, P, A> implements FreeAp<F,A> {
         private final Higher<F,P> pivot;
-        private final FreeApplicative<F,Function<P,A>> fn;
+        private final FreeAp<F,Function<P,A>> fn;
 
         @Override
-        public <P,R> R visit(Function<? super A, ? extends R> pure, BiFunction<? super Higher<F, P>, FreeApplicative<F, Function<P, A>>, ? extends R> ap) {
+        public <P,R> R visit(Function<? super A, ? extends R> pure, BiFunction<? super Higher<F, P>, FreeAp<F, Function<P, A>>, ? extends R> ap) {
            Higher<F,P> p = (Higher)pivot;
-            return (R)ap.apply(p, (FreeApplicative) fn);
+            return (R)ap.apply(p, (FreeAp) fn);
         }
     }
-    static <F,T> FreeApplicative<F,T> narrowK(Higher<Higher<freeAp, F>, T> ds){
-        return (FreeApplicative<F,T>)ds;
+    static <F,T> FreeAp<F,T> narrowK(Higher<Higher<freeAp, F>, T> ds){
+        return (FreeAp<F,T>)ds;
     }
 
     static  class Instances {
@@ -99,8 +99,8 @@ public interface FreeApplicative<F, T> extends Higher2<freeAp,F, T> {
 
                 @Override
                 public <T, R> Higher<Higher<freeAp, F>, R> ap(Higher<Higher<freeAp, F>, ? extends Function<T, R>> fn, Higher<Higher<freeAp, F>, T> apply) {
-                    FreeApplicative<F, ? extends Function<T, R>> f = narrowK(fn);
-                    FreeApplicative<F, T> a = narrowK(apply);
+                    FreeAp<F, ? extends Function<T, R>> f = narrowK(fn);
+                    FreeAp<F, T> a = narrowK(apply);
                     return a.ap(f);
 
                 }
@@ -112,7 +112,7 @@ public interface FreeApplicative<F, T> extends Higher2<freeAp,F, T> {
 
                 @Override
                 public <T> Higher<Higher<freeAp, F>, T> unit(T value) {
-                    return FreeApplicative.pure(value);
+                    return FreeAp.pure(value);
                 }
             };
 

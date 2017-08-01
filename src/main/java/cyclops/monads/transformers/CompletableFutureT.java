@@ -35,9 +35,9 @@ import java.util.stream.Stream;
  * @param <T> Type of data stored inside the nested Future(s)
  */
 public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
-                                                       implements To<CompletableFutureT<W,T>>,
-        Transformable<T>,
-        Filters<T> {
+                                                                  implements To<CompletableFutureT<W,T>>,
+                                                                             Transformable<T>,
+                                                                             Filters<T> {
 
     private final AnyM<W,CompletableFuture<T>> run;
 

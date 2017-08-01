@@ -198,7 +198,7 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
 	public void testMkString() {
-			assertThat(none.mkString(),equalTo("CompletableFutureT[Optional.zero]"));
+			assertThat(none.mkString(),equalTo("CompletableFutureT[Optional.empty]"));
 	}
 
 

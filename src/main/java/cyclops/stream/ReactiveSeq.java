@@ -3324,7 +3324,23 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         if(start>end)
             return range(end,start);
         final ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(
-                                                                                    start, end, false);
+                                                                                    start, end, 1,false);
+        return Streams.reactiveSeq(range, Optional.ofNullable(range));
+
+    }
+    public static ReactiveSeq<Integer> range(final int start, final  int step,final int end) {
+        if(start>end)
+            return range(end,step,start);
+        final ReversingRangeIntSpliterator range = new ReversingRangeIntSpliterator(
+                start, end, step,false);
+        return Streams.reactiveSeq(range, Optional.ofNullable(range));
+
+    }
+    public static ReactiveSeq<Long> rangeLong(final long start, final  long step,final long end) {
+        if(start>end)
+            return rangeLong(end,step,start);
+        final ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(
+                start, end, step,false);
         return Streams.reactiveSeq(range, Optional.ofNullable(range));
 
     }
@@ -3343,7 +3359,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         if(start>end)
             return rangeLong(end,start);
         final ReversingRangeLongSpliterator range = new ReversingRangeLongSpliterator(
-                                                                                      start, end, false);
+                                                                                      start, end,1, false);
         return Streams.reactiveSeq(range, Optional.ofNullable(range));
 
     }

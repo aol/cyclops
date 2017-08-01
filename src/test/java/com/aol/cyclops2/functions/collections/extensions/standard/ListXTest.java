@@ -50,7 +50,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
                 .slidingT(2)
                 .map(i->"value is " + i)
                 .unwrap()
-                  .to(Witness::stream);
+                  .to(Witness::reactiveSeq);
 
     }
 
