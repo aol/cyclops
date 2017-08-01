@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 
 @FunctionalInterface
-public interface Effect extends Runnable {
+public interface Effect extends Runnable{
 
     default Effect memoize(){
         return ()->Memoize.memoizeRunnable(this)
@@ -39,6 +39,13 @@ public interface Effect extends Runnable {
         } catch (Exception e) {
             throw ExceptionSoftener.throwSoftenedException(e);
         }
+    }
+
+    default Callable<Void> callable(){
+        return ()-> {
+            run();
+            return null;
+        };
     }
 
     void runChecked() throws Exception;
