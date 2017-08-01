@@ -14,7 +14,7 @@ import cyclops.typeclasses.functions.FunctionK;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.monad.Applicative;
-import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.Traverse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 import static cyclops.collections.mutable.ListX.kindKleisli;
-import static cyclops.control.Constant.Instances.applicative;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 
 /**
@@ -334,9 +333,15 @@ public class Active<W,T> implements Filters<T>,
     public Active<W,T> plus(SemigroupK<W,T> semigroupK, Active<W,T> add){
         return of(semigroupK.apply(single,add.getSingle()),def1);
     }
-    public Traverse traverseUnsafe(){
-        return def1.traverse().visit(s-> new Traverse(),()->null);
+
+    public TraverseOps traverse(Traverse<W> traverse) {
+        return new TraverseOps(traverse);
+
     }
+    public Maybe<TraverseOps> traverse(){
+        return def1.traverse().visit(e->Maybe.just(new TraverseOps(e)),Maybe::none);
+    }
+
     public Unfolds unfoldsUnsafe(){
         return def1.unfoldable().visit(s-> new Unfolds(),()->null);
     }
@@ -349,9 +354,7 @@ public class Active<W,T> implements Filters<T>,
     public Maybe<Folds> folds(){
         return def1.foldable().visit(e->Maybe.just(new Folds()),Maybe::none);
     }
-    public Maybe<Traverse> traverse(){
-        return def1.traverse().visit(e->Maybe.just(new Traverse()),Maybe::none);
-    }
+
     public Plus plusUnsafe(){
         return new Plus();
     }
@@ -422,6 +425,7 @@ public class Active<W,T> implements Filters<T>,
 
     }
 
+
     public class Folds {
         Foldable<W> foldable;
         public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
@@ -448,15 +452,17 @@ public class Active<W,T> implements Filters<T>,
 
     }
 
-    public class Traverse{
+    @AllArgsConstructor
+    public class TraverseOps {
+        cyclops.typeclasses.monad.Traverse<W> traverse;
+
         public  <W2, R> Higher<W2, Higher<W, R>> flatTraverse(Applicative<W2> applicative,
                                                                Function<? super T,? extends Higher<W2, Higher<W, R>>>f) {
-            return def1.traverse()
-                       .get()
+            return traverse
                        .flatTraverse(applicative,def1.monad(),single,f);
         }
         public <R> R foldMap(Monoid<R> mb, final Function<? super T,? extends R> fn) {
-            return def1.traverse().get().foldMap(mb,fn,single);
+            return traverse.foldMap(mb,fn,single);
         }
     }
 

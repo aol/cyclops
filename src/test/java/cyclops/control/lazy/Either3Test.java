@@ -566,7 +566,7 @@ public class Either3Test {
 
 
     @Test
-    public void testToFutureW() {
+    public void testToFuture() {
         Future<Integer> cf = just.toFuture();
         assertThat(cf.get(),equalTo(10));
     }

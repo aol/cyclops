@@ -304,7 +304,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                 .to(Witness::either4);
     }
     /**
-     * Traverse a Collection of Either3 producing an Either4 with a ListX, applying the transformation function to every
+     * TraverseOps a Collection of Either3 producing an Either4 with a ListX, applying the transformation function to every
      * element in the list
      *
      * @param xors Either4s to sequence and transform

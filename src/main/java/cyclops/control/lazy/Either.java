@@ -370,7 +370,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         return res.swap();
     }
     /**
-     * Traverse a Collection of Either producting an Either3 with a ListX, applying the transformation function to every
+     * TraverseOps a Collection of Either producting an Either3 with a ListX, applying the transformation function to every
      * element in the list
      *
      * @param xors Eithers to sequence and transform

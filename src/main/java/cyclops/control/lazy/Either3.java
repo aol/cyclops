@@ -239,7 +239,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
                 .to(Witness::either3);
     }
     /**
-     * Traverse a Collection of Either3 producing an Either3 with a ListX, applying the transformation function to every
+     * TraverseOps a Collection of Either3 producing an Either3 with a ListX, applying the transformation function to every
      * element in the list
      *
      * @param xors Either3s to sequence and transform

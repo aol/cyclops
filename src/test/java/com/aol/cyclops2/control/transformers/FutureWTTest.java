@@ -39,7 +39,7 @@ import com.aol.cyclops2.types.mixins.Printable;
 
 
 
-public class FutureWTTest implements Printable {
+public class FutureTTest implements Printable {
 
 	FutureT<Witness.optional,Integer> just;
 	FutureT<Witness.optional,Integer> none;
@@ -200,7 +200,7 @@ public class FutureWTTest implements Printable {
 	@Test
 	public void testMkString() {
 		assertThat(just.mkString(),equalTo("FutureT[Optional[Future[10]]]"));
-		assertThat(none.mkString(),equalTo("FutureT[Optional.zero]"));
+		assertThat(none.mkString(),equalTo("FutureT[Optional.empty]"));
 	}
 
 

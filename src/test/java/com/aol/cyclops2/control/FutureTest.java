@@ -158,7 +158,7 @@ public class FutureTest {
     }
     
     @Test
-    public void futureWFromIterableTest() {
+    public void FutureFromIterableTest() {
 
         ReactiveSeq<Integer> stream = ReactiveSeq.of(1, 2, 3);
 
@@ -168,7 +168,7 @@ public class FutureTest {
     }
 
     @Test
-    public void futureWAsyncFromIterableTest() {
+    public void FutureAsyncFromIterableTest() {
 
         ReactiveSeq<Integer> stream = ReactiveSeq.of(1, 2, 3);
 
@@ -638,7 +638,7 @@ public class FutureTest {
 
     
     @Test
-    public void testToFutureW() {
+    public void testToFuture() {
         Future<Integer> cf = just.toFuture();
         assertThat(cf.get(),equalTo(10));
     }

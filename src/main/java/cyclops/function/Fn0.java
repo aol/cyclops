@@ -1,6 +1,7 @@
 package cyclops.function;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
@@ -37,6 +38,9 @@ public interface Fn0<R> extends Supplier<R>{
         return triFunc;
     }
 
+    default Future<R> future(Executor ex){
+        return Future.of(CompletableFuture.supplyAsync(this,ex));
+    }
     default Eval<R> toEval(){
         return Eval.later(this);
     }

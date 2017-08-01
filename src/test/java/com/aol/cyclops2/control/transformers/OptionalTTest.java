@@ -195,7 +195,7 @@ public class OptionalTTest implements Printable {
 	@Test
 	public void testMkString() {
 		assertThat(just.mkString(),equalTo("OptionalT[Optional[Optional[10]]]"));
-		assertThat(none.mkString(),equalTo("OptionalT[Optional.zero]"));
+		assertThat(none.mkString(),equalTo("OptionalT[Optional.empty]"));
 	}
 
 

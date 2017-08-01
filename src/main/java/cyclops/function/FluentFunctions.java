@@ -90,6 +90,9 @@ public class FluentFunctions {
         return new FluentSupplier<>(
                                     supplier);
     }
+    public static FluentFunctions.FluentRunnable ofRunnable(final Runnable r) {
+        return new FluentRunnable(r);
+    }
 
     /**
      * Construct a FluentFunction from a CheckedFunction
@@ -306,7 +309,185 @@ public class FluentFunctions {
             }
         };
     }
+    @Wither(AccessLevel.PRIVATE)
+    @AllArgsConstructor
+    public static class FluentRunnable<R> implements Effect {
+        private final Runnable fn;
+        private final String name;
 
+        public FluentRunnable(final Runnable fn) {
+            this.name = null;
+            this.fn = fn;
+        }
+
+
+
+        /**
+         * Apply before advice toNested this Supplier
+         *
+         * @param r Runnable that represents before advice (AOP)
+         * @return Returns a new Supplier with before advice attached
+         */
+        public FluentRunnable<R> before(final Runnable r) {
+            return withFn(() -> {
+                r.run();
+                fn.run();
+            });
+        }
+
+        /**
+         * Apply after advice toNested this Supplier
+         *
+         * @param action Runnable that represents after advice (AOP)
+         * @return Returns a new Supplier with after advice attached
+         */
+        public FluentRunnable after(final Runnable action) {
+            return withFn(() -> {
+                run();
+                action.run();
+
+            });
+        }
+
+        /**
+         * Apply around advice toNested this Supplier
+         *
+         * @param around Function that captures input toNested this Supplier and can optionally pass on the call
+         * @return Supplier with around advice attached
+         */
+        public FluentRunnable around(final Function<Advice0<Void>, Void> around) {
+            return withFn(() -> around.apply(new Advice0<>(()->{
+                fn.run();
+                return null;
+            })));
+        }
+
+        /**
+         * @return A caching version of this Supplier
+         */
+        public FluentRunnable memoize() {
+            return withFn(Memoize.memoizeRunnable(fn));
+        }
+
+
+
+        /**
+         * @param name To give this supplier
+         * @return A supplier with a name (useful for logging purposes)
+         */
+        public FluentRunnable name(final String name) {
+            return this.withName(name);
+        }
+
+        private String handleNameStart() {
+            return name == null ? "(fluent-supplier-" : "(" + name + "-";
+
+        }
+
+        private String handleNameEnd() {
+            return ")";
+
+        }
+
+        /**
+         * @return A supplier that prints out it's result or error on failure
+         */
+        public FluentRunnable println() {
+            return log(s -> System.out.println(s), t -> t.printStackTrace());
+
+        }
+
+        /**
+         * A supplier that logs it's success or error states toNested the provided Consumers
+         *
+         * @param logger Success logger
+         * @param error Failure logger
+         * @return Supplier that logs it's state
+         */
+        public FluentRunnable log(final Consumer<String> logger, final Consumer<Throwable> error) {
+            return FluentFunctions.ofRunnable(() -> {
+                try {
+                     run();
+                    logger.accept(handleNameStart() + ". Ran ." + handleNameEnd());
+
+                } catch (final Throwable t) {
+                    error.accept(t);
+                    throw ExceptionSoftener.throwSoftenedException(t);
+                }
+            });
+        }
+
+        /**
+         * A supplier that can recover from the specified exception types, using the provided Supplier
+         *
+         * @param type Recoverable exception types
+         * @param onError Supplier toNested use on error
+         * @return Supplier capable of error recovery
+         */
+        public <X extends Throwable> FluentRunnable recover(final Class<X> type, final Supplier<R> onError) {
+            return FluentFunctions.ofRunnable(() -> {
+                try {
+                    run();
+                } catch (final Throwable t) {
+                    if (type.isAssignableFrom(t.getClass())) {
+                        onError.get();
+                    }
+                    throw ExceptionSoftener.throwSoftenedException(t);
+
+                }
+            });
+
+        }
+
+        /**
+         * A supplier capable of retrying on failure using an exponential backoff strategy
+         *
+         * @param times Number of times toNested retry
+         * @param backoffStartTime Wait time before takeOne retry
+         * @return Supplier with a retry strategy
+         */
+        public FluentRunnable retry(final int times, final int backoffStartTime) {
+            return FluentFunctions.ofRunnable(() -> {
+                int count = times;
+                final MutableInt sleep = MutableInt.of(backoffStartTime);
+                Throwable exception = null;
+                while (count-- > 0) {
+                    try {
+                        run();
+                    } catch (final Throwable e) {
+                        exception = e;
+                    }
+                    ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep.get()))
+                            .run();
+
+                    sleep.mutate(s -> s * 2);
+                }
+                throw ExceptionSoftener.throwSoftenedException(exception);
+
+            });
+
+        }
+
+
+
+
+
+
+
+
+        /**
+         * @param ex Executor toNested execute this Supplier on
+         * @return The value generated by this Supplier in a CompletableFuture executed Asynchronously
+         */
+        public CompletableFuture<Void> async(final Executor ex) {
+            return CompletableFuture.runAsync(fn, ex);
+        }
+
+        @Override
+        public void run() {
+            fn.run();
+        }
+    }
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
     public static class FluentSupplier<R> implements Fn0<R> {

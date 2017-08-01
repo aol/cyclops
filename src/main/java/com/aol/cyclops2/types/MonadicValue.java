@@ -426,8 +426,8 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * A flattening transformation operation that takes the takeOne value from the returned Publisher.
      * <pre>
      * {@code 
-     *   FutureW.ofResult(1).map(i->i+2).flatMapP(i->Flux.just(()->i*3,20);
-     *   //FutureW[9]
+     *   Future.ofResult(1).map(i->i+2).flatMapP(i->Flux.just(()->i*3,20);
+     *   //Future[9]
      * 
      * }</pre>
      * 

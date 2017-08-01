@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
-public class FutureWsTest {
+public class FuturesTest {
 
     @Test
     public void unit(){

@@ -245,7 +245,7 @@ public class CompletableFutures {
         return sequence(fts.stream()).thenApply(s -> s.toListX());
     }
     /**
-     * Asynchronous sequence operation that convert a Stream of FutureWs toNested a Future with a Stream
+     * Asynchronous sequence operation that convert a Stream of Futures toNested a Future with a Stream
      * 
      * <pre>
      * {@code 

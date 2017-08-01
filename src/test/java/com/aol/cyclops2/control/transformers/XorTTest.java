@@ -184,7 +184,7 @@ public class XorTTest implements Printable {
 	@Test
 	public void testMkString() {
 		assertThat(just.mkString(),equalTo("XorT[Optional[Xor.primary[10]]]"));
-		assertThat(none.mkString(),equalTo("XorT[Optional.zero]"));
+		assertThat(none.mkString(),equalTo("XorT[Optional.empty]"));
 	}
 
 

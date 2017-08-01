@@ -53,7 +53,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
      * Peek at the current value of the Future
      * <pre>
      * {@code 
-     *    FutureWT.of(AnyM.fromStream(Arrays.asFutureW(10))
+     *    FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
      *             .peek(System.out::println);
      *             
      *     //prints 10        
@@ -61,7 +61,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
      * </pre>
      * 
      * @param peek  Consumer to accept current value of Future
-     * @return FutureWT with peek call
+     * @return FutureT with peek call
      */
     @Override
     public ReaderT<W,T,R> peek(final Consumer<? super R> peek) {
@@ -76,16 +76,16 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
      * 
      * <pre>
      * {@code 
-     *  FutureWT.of(AnyM.fromStream(Arrays.asFutureW(10))
+     *  FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
      *             .map(t->t=t+1);
      *  
      *  
-     *  //FutureWT<AnyMSeq<Stream<Future[11]>>>
+     *  //FutureT<AnyMSeq<Stream<Future[11]>>>
      * }
      * </pre>
      * 
      * @param f Mapping function for the wrapped Future
-     * @return FutureWT that applies the map function to the wrapped Future
+     * @return FutureT that applies the map function to the wrapped Future
      */
 
     public <B> ReaderT<W,T,B> map(final Function<? super R, ? extends B> f) {
@@ -112,10 +112,10 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
 
 
     /**
-     * Construct an FutureWT from an AnyM that wraps a monad containing  FutureWs
+     * Construct an FutureT from an AnyM that wraps a monad containing  Futures
      * 
      * @param monads AnyM that contains a monad wrapping an Future
-     * @return FutureWT
+     * @return FutureT
      */
     public static <W extends WitnessType<W>,T,R> ReaderT<W,T,R> of(final AnyM<W,Reader<T,R>> monads) {
         return new ReaderT<>(

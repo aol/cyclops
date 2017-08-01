@@ -151,7 +151,7 @@ public class Predicates {
      * import static cyclops2.function.Predicates.some
 
      * 
-     * Eval<Integer> result = Xors.future(FutureW.ofResult(1))
+     * Eval<Integer> result = Xors.future(Future.ofResult(1))
                                          .matches(c-> c.is( when(some(1)), applyHKT(10)), c->c.is(when(instanceOf(RuntimeException.class)), applyHKT(2)),otherwise(3));
         
        //Eval[10]
