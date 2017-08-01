@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -50,6 +51,15 @@ public interface Effect extends Runnable{
 
     void runChecked() throws Exception;
 
+    default Effect onError(Consumer<Throwable> onError){
+        return ()->{
+            try{
+                runChecked();
+            }catch(Throwable e){
+                onError.accept(e);
+            }
+        };
+    }
 
     default Effect andThen(Runnable r){
         return ()-> {
@@ -107,6 +117,18 @@ public interface Effect extends Runnable{
 
         };
     }
+    default Effect cycleForever(Consumer<Throwable> onError){
+        return  ()-> {
+            while (true){
+                try {
+                    run();
+                } catch (Throwable t) {
+                    onError.accept(t);
+                }
+            }
+
+        };
+    }
     default Effect cycle(long times){
         return  ()->{
            for(long i=0;i<times;i++)
@@ -124,14 +146,14 @@ public interface Effect extends Runnable{
     default Effect cycleUntil(Supplier<Boolean> pred){
         return cycleWhile(()->!pred.get());
     }
-    default Effect cycleUntilException(){
+    default Effect cycleUntilException(Consumer<Throwable> onError){
         return ()->{
             try{
                 while(true) {
                     run();
                 }
             }catch(Throwable t){
-                throw t;
+                onError.accept(t);
             }
         };
 
