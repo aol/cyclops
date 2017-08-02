@@ -44,7 +44,11 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
 
     public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector,Evaluation strict) {
 
-        super(list, seq, collector,strict,r->ListX.defer(()->r.to().listX(LAZY).flatMap(i->i)));
+        super(list, seq, collector,strict,r->{
+            CompletableListX<T> res = new CompletableListX<>();
+            r.forEachAsync(l->res.complete(l));
+            return res.asListX();
+        });
 
 
     }

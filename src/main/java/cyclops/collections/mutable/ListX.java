@@ -6,6 +6,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.stream.HeadAndTail;
+import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.box.MutableBoolean;
 import cyclops.control.Xor;
@@ -38,6 +39,9 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -83,6 +87,29 @@ public interface ListX<T> extends To<ListX<T>>,
                     .flatMap(l->l);
     }
 
+    static <T> CompletableListX<T> completable(){
+        return new CompletableListX<>();
+    }
+
+    static class CompletableListX<T> implements InvocationHandler{
+        Future<ListX<T>> future = Future.future();
+        public boolean complete(List<T> result){
+            return future.complete(ListX.fromIterable(result));
+        }
+
+        public ListX<T> asListX(){
+            ListX f = (ListX) Proxy.newProxyInstance(ListX.class.getClassLoader(),
+                    new Class[] { ListX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            ListX<T> target = future.get();
+            return method.invoke(target,args);
+        }
+    }
 
     ListX<T> lazy();
     ListX<T> eager();

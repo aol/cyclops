@@ -1,15 +1,13 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
-import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.DequeX;
-import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import lombok.EqualsAndHashCode;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collector;
 
 import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
@@ -44,17 +42,25 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements DequeX<T> {
 
 
-    public LazyDequeX(Deque<T> list, ReactiveSeq<T> seq, Collector<T, ?, Deque<T>> collector,Evaluation strict) {
-        super(list, seq, collector,strict,r-> DequeX.defer(()->r.to().dequeX(LAZY).flatMap(i->i)));
+    public static final <T> Function<ReactiveSeq<Deque<T>>, Deque<T>> asyncDeque() {
+        return r -> {
+            CompletableDequeX<T> res = new CompletableDequeX<>();
+            r.forEachAsync(l -> res.complete(l));
+            return res.asDequeX();
+        };
+    }
+
+    public LazyDequeX(Deque<T> list, ReactiveSeq<T> seq, Collector<T, ?, Deque<T>> collector, Evaluation strict) {
+        super(list, seq, collector,strict, asyncDeque());
 
     }
     public LazyDequeX(Deque<T> list, Collector<T, ?, Deque<T>> collector,Evaluation strict) {
-        super(list, null, collector,strict,r-> DequeX.defer(()->r.to().dequeX(LAZY).flatMap(i->i)));
+        super(list, null, collector,strict,asyncDeque());
 
     }
 
     public LazyDequeX(ReactiveSeq<T> seq, Collector<T, ?, Deque<T>> collector,Evaluation strict) {
-        super(null, seq, collector,strict,r-> DequeX.defer(()->r.to().dequeX(LAZY).flatMap(i->i)));
+        super(null, seq, collector,strict,asyncDeque());
 
     }
 

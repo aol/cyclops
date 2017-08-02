@@ -8,7 +8,9 @@ import cyclops.stream.ReactiveSeq;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Queue;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collector;
 
 import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
@@ -41,18 +43,24 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  */
 public class LazySetX<T> extends AbstractLazyCollection<T,Set<T>> implements SetX<T> {
 
-
+    public static final <T> Function<ReactiveSeq<Set<T>>, Set<T>> asyncSet() {
+        return r -> {
+            CompletableSetX<T> res = new CompletableSetX<>();
+            r.forEachAsync(l -> res.complete(l));
+            return res.asSetX();
+        };
+    }
     public LazySetX(Set<T> list, ReactiveSeq<T> seq, Collector<T, ?, Set<T>> collector,Evaluation strict) {
-        super(list, seq, collector,strict,r-> SetX.defer(()->r.to().setX(LAZY).flatMap(i->i)));
+        super(list, seq, collector,strict,asyncSet());
 
     }
     public LazySetX(Set<T> list, Collector<T, ?, Set<T>> collector,Evaluation strict) {
-        super(list, null, collector,strict,r-> SetX.defer(()->r.to().setX(LAZY).flatMap(i->i)));
+        super(list, null, collector,strict,asyncSet());
 
     }
 
     public LazySetX(ReactiveSeq<T> seq, Collector<T, ?, Set<T>> collector,Evaluation strict) {
-        super(null, seq, collector,strict,r-> SetX.defer(()->r.to().setX(LAZY).flatMap(i->i)));
+        super(null, seq, collector,strict,asyncSet());
 
     }
     @Override

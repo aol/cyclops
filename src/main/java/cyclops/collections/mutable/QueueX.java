@@ -3,6 +3,7 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.async.*;
 import cyclops.control.Xor;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.*;
@@ -34,8 +35,12 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.Future;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -58,6 +63,31 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                 .map(Supplier::get)
                 .flatMap(l->l);
     }
+
+    static <T> CompletableQueueX<T> completable(){
+        return new CompletableQueueX<>();
+    }
+
+    static class CompletableQueueX<T> implements InvocationHandler {
+        cyclops.async.Future<QueueX<T>> future = cyclops.async.Future.future();
+        public boolean complete(Queue<T> result){
+            return future.complete(QueueX.fromIterable(result));
+        }
+
+        public QueueX<T> asQueueX(){
+            QueueX f = (QueueX) Proxy.newProxyInstance(QueueX.class.getClassLoader(),
+                    new Class[] { DequeX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            QueueX<T> target = future.get();
+            return method.invoke(target,args);
+        }
+    }
+
     QueueX<T> lazy();
     QueueX<T> eager();
     public static  <T> Kleisli<queue,QueueX<T>,T> kindKleisli(){

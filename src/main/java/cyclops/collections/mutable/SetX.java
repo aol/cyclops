@@ -37,6 +37,9 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -60,6 +63,30 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         return of(s)
                 .map(Supplier::get)
                 .flatMap(l->l);
+    }
+
+    static <T> CompletableSetX<T> completable(){
+        return new CompletableSetX<>();
+    }
+
+    static class CompletableSetX<T> implements InvocationHandler {
+        cyclops.async.Future<SetX<T>> future = cyclops.async.Future.future();
+        public boolean complete(Set<T> result){
+            return future.complete(SetX.fromIterable(result));
+        }
+
+        public SetX<T> asSetX(){
+            SetX f = (SetX) Proxy.newProxyInstance(SetX.class.getClassLoader(),
+                    new Class[] { DequeX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            SetX<T> target = future.get();
+            return method.invoke(target,args);
+        }
     }
     SetX<T> lazy();
     SetX<T> eager();

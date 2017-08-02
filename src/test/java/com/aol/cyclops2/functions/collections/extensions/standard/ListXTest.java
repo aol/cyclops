@@ -3,26 +3,55 @@ package com.aol.cyclops2.functions.collections.extensions.standard;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.functions.collections.extensions.CollectionXTestsWithNulls;
 import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Semigroups;
 import cyclops.collections.immutable.*;
+import cyclops.control.Eval;
 import cyclops.monads.Witness;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class ListXTest extends CollectionXTestsWithNulls {
 
 
     int times =0;
+    AtomicLong counter = new AtomicLong(0);
+    @Before
+    public void setup(){
+        times = 0;
+        counter = new AtomicLong(0);
+    }
+    @Test
+    public void asyncTest() throws InterruptedException {
+        Spouts.async(Stream.generate(()->"next"), Executors.newFixedThreadPool(1))
+                .onePer(1, TimeUnit.MILLISECONDS)
+                .take(1000)
+                .to()
+                .listX(Evaluation.LAZY)
+                .peek(i->counter.incrementAndGet())
+                .materialize();
+
+        long current = counter.get();
+        Thread.sleep(400);
+        assertTrue(current<counter.get());
+    }
     @Test
     public void cycleTests(){
         ListX.of(1,2,3)

@@ -8,6 +8,7 @@ import cyclops.stream.ReactiveSeq;
 import lombok.EqualsAndHashCode;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collector;
 
 import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
@@ -42,17 +43,24 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements QueueX<T> {
 
 
+    public static final <T> Function<ReactiveSeq<Queue<T>>, Queue<T>> asyncQueue() {
+        return r -> {
+            CompletableQueueX<T> res = new CompletableQueueX<>();
+            r.forEachAsync(l -> res.complete(l));
+            return res.asQueueX();
+        };
+    }
     public LazyQueueX(Queue<T> list, ReactiveSeq<T> seq, Collector<T, ?, Queue<T>> collector,Evaluation strict) {
-        super(list, seq, collector,strict,r-> QueueX.defer(()->r.to().queueX(LAZY).flatMap(i->i)));
+        super(list, seq, collector,strict,asyncQueue());
 
     }
     public LazyQueueX(Queue<T> list, Collector<T, ?, Queue<T>> collector,Evaluation strict) {
-        super(list, null, collector,strict,r-> QueueX.defer(()->r.to().queueX(LAZY).flatMap(i->i)));
+        super(list, null, collector,strict,asyncQueue());
 
     }
 
     public LazyQueueX(ReactiveSeq<T> seq, Collector<T, ?, Queue<T>> collector,Evaluation strict) {
-        super(null, seq, collector,strict,r-> QueueX.defer(()->r.to().queueX(LAZY).flatMap(i->i)));
+        super(null, seq, collector,strict,asyncQueue());
 
     }
 

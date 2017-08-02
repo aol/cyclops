@@ -33,9 +33,12 @@ import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.functor.Compose;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.transformers.Transformer;
+import cyclops.typeclasses.transformers.TransformerFactory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
@@ -99,82 +102,18 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
 public class Nested<W1,W2,T> implements Transformable<T>,
                                         Higher3<nested,W1,W2,T>,To<Nested<W1,W2,T>> {
 
+
+
     public final Higher<W1,Higher<W2,T>> nested;
     private final Compose<W1,W2> composedFunctor;
-    private final InstanceDefinitions<W1> def1;
-    private final InstanceDefinitions<W2> def2;
 
+    public final InstanceDefinitions<W1> def1;
 
-    static interface Transformer<W1,W2,T>{
-        <R> Nested<W1,W2,R> flatMap(Function<? super T,? extends Nested<W1,W2,R>>fn);
-        <R> Nested<W1,W2,R> flatMapK(Function<? super T,? extends Higher<W1,Higher<W2,R>>> fn);
-
-
-    }
-    static interface TransformerFactory<W1,W2>{
-        <T> Transformer<W1,W2,T> build(Nested<W1,W2,T> nested);
-    }
-
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class MaybeTransformer<W1,T> implements Transformer<W1,maybe,T>{
-        private final Nested<W1,maybe,T> nested;
-        private final Monad<W1> monad1;
-
-        private final  static <W1> TransformerFactory<W1,maybe> factory(){
-            return MaybeTransformer::maybeT;
-        }
-        public static <W1,T> MaybeTransformer<W1,T> maybeT(Nested<W1,maybe,T> nested){
-            return new MaybeTransformer<W1,T>(nested,nested.def1.monad());
-        }
-        @Override
-        public <R> Nested<W1, maybe, R> flatMap(Function<? super T, ? extends Nested<W1, maybe, R>> fn) {
-            Higher<W1, Higher<maybe, R>> r = monad1.flatMap(m -> Maybe.narrowK(m).visit(t -> fn.apply(t).nested,
-                                                                                        () -> monad1.unit(Maybe.none())),
-                                                            nested.nested);
+    public final InstanceDefinitions<W2> def2;
 
 
 
-            return Nested.of(r, nested.def1, nested.def2);
 
-
-
-        }
-
-        @Override
-        public <R> Nested<W1, maybe, R> flatMapK(Function<? super T, ? extends Higher<W1, Higher<maybe, R>>> fn) {
-            return flatMap(fn.andThen(x->Nested.of(x,nested.def1,nested.def2)));
-        }
-
-
-    }
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class XorTransformer<W1,L,R> implements Transformer<W1,Higher<xor,L>,R>{
-        private final Nested<W1,Higher<xor,L>,R> nested;
-        private final Monad<W1> monad1;
-
-        private final  static <W1,L> TransformerFactory<W1,Higher<xor,L>> factory(){
-            return XorTransformer::xorT;
-        }
-        public static <W1,L,R> XorTransformer<W1,L,R> xorT(Nested<W1,Higher<xor,L>,R> nested){
-            return new XorTransformer<W1,L,R>(nested,nested.def1.monad());
-        }
-
-
-        @Override
-        public <R1> Nested<W1, Higher<xor, L>, R1> flatMap(Function<? super R, ? extends Nested<W1, Higher<xor, L>, R1>> fn) {
-            Higher<W1, Higher<Higher<xor, L>, R1>> res = monad1.flatMap(m -> Xor.narrowK(m).visit(l -> monad1.unit(Xor.secondary(l)),
-
-                    r -> fn.apply(r).nested),
-                    nested.nested);
-
-            return Nested.of(res, nested.def1, nested.def2);
-        }
-
-        @Override
-        public <R1> Nested<W1, Higher<xor, L>, R1> flatMapK(Function<? super R, ? extends Higher<W1, Higher<Higher<xor, L>, R1>>> fn) {
-            return flatMap(fn.andThen(x->Nested.of(x,nested.def1,nested.def2)));
-        }
-    }
 
     public Transformer<W1,W2,T> transformer(TransformerFactory<W1,W2> factory){
         return factory.build(this);

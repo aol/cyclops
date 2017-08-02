@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 public interface Enumeration<E> {
 
-     Maybe<E> toEnum(int e);
+    Maybe<E> toEnum(int e);
 
     int fromEnum(E a);
 

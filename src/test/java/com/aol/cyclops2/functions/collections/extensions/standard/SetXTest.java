@@ -2,14 +2,22 @@ package com.aol.cyclops2.functions.collections.extensions.standard;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
@@ -22,7 +30,26 @@ public class SetXTest extends AbstractCollectionXTest {
     public <T> FluentCollectionX<T> of(T... values) {
         return SetX.of(values);
     }
+    AtomicLong counter = new AtomicLong(0);
+    @Before
+    public void setup(){
 
+        counter = new AtomicLong(0);
+    }
+    @Test
+    public void asyncTest() throws InterruptedException {
+        Spouts.async(Stream.generate(()->"next"), Executors.newFixedThreadPool(1))
+                .onePer(1, TimeUnit.MILLISECONDS)
+                .take(1000)
+                .to()
+                .setX(Evaluation.LAZY)
+                .peek(i->counter.incrementAndGet())
+                .materialize();
+
+        long current = counter.get();
+        Thread.sleep(400);
+        assertTrue(current<counter.get());
+    }
     @Test
     public void onEmptySwitch() {
         assertThat(SetX.empty()

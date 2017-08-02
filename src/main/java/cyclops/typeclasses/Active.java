@@ -10,10 +10,13 @@ import cyclops.control.*;
 import cyclops.function.*;
 import cyclops.monads.Witness.list;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.FunctionK;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
+import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.MonadPlus;
 import cyclops.typeclasses.monad.Traverse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -342,47 +345,61 @@ public class Active<W,T> implements Filters<T>,
         return def1.traverse().visit(e->Maybe.just(new TraverseOps(e)),Maybe::none);
     }
 
+    public Unfolds unfolds(Unfoldable<W> unfoldable){
+        return new Unfolds(unfoldable);
+    }
+    public Folds folds(Foldable<W> foldable){
+        return new Folds(foldable);
+    }
+    public Plus plus(MonadPlus<W> plus){
+        return new Plus(plus);
+    }
+
+    @Deprecated
     public Unfolds unfoldsUnsafe(){
-        return def1.unfoldable().visit(s-> new Unfolds(),()->null);
+        return new Unfolds(def1.unfoldable().get());
+    }
+    @Deprecated
+    public Folds foldsUnsafe(){
+        return new Folds(def1.foldable().get());
+    }
+    @Deprecated
+    public Plus plusUnsafe(){
+        return new Plus(def1.monadPlus().get());
+    }
+
+    public Maybe<Folds> folds(){
+        return def1.foldable().visit(e->Maybe.just(new Folds(e)),Maybe::none);
     }
     public Maybe<Unfolds> unfolds(){
-        return def1.unfoldable().visit(e->Maybe.just(new Unfolds()),Maybe::none);
-    }
-    public Folds foldsUnsafe(){
-        return new Folds();
-    }
-    public Maybe<Folds> folds(){
-        return def1.foldable().visit(e->Maybe.just(new Folds()),Maybe::none);
-    }
-
-    public Plus plusUnsafe(){
-        return new Plus();
+        return def1.unfoldable().visit(e->Maybe.just(new Unfolds(e)),Maybe::none);
     }
     public Maybe<Plus> plus(){
-        return def1.foldable().visit(e->Maybe.just(new Plus()),Maybe::none);
+        return def1.monadPlus().visit(e->Maybe.just(new Plus(e)),Maybe::none);
     }
 
+    @AllArgsConstructor
     public class Plus{
-
+        private final MonadPlus<W> monadPlus;
         public MonoidK<W,T> monoidK(){
-            return def1.monadPlus().get().asMonoid();
+            return monadPlus.asMonoid();
         }
         public Monoid<Higher<W,T>> monoid(){
-            return def1.monadPlus().get().narrowMonoid();
+            return monadPlus.narrowMonoid();
         }
         public Active<W,T> zero(){
-            Higher<W, T> h = def1.monadZero().get().narrowZero();
+            Higher<W, T> h = monadPlus.narrowZero();
             return of(h, def1);
 
         }
         public Active<W,T> sum(ListX<Higher<W, T>> list){
-            return of(def1.monadPlus().visit(p->p.sum(list.plus(single)),()->single),def1);
+            return of(monadPlus.sum(list.plus(single)),def1);
         }
         public Active<W,T> sumA(ListX<Active<W, T>> list){
             return sum(list.map(Active::getActive));
         }
         public Active<W,T> plus(Higher<W, T> a){
-            return of(def1.monadPlus().visit(p->p.plus(single,a),()->single),def1);
+            return of(monadPlus.plus(single,a),def1);
         }
         public Active<W,T> plusA(Active<W, T> ac){
             Higher<W, T> a =ac.single;
@@ -397,10 +414,12 @@ public class Active<W,T> implements Filters<T>,
     public <R> Active<W, R> tailRecA(T initial,Function<? super T,? extends Active<W, ? extends Xor<T, R>>> fn){
         return Active.of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(Active::getActive)),def1);
     }
-
+    @AllArgsConstructor
     public class Unfolds{
+        private final Unfoldable<W> unfoldable;
+
         public <R, T> Active<W, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn){
-            return Active.of(def1.unfoldable().get().unfold(b,fn),def1);
+            return Active.of(unfoldable.unfold(b,fn),def1);
         }
 
         public <T> Active<W, T> replicate(long n, T value) {
@@ -426,8 +445,9 @@ public class Active<W,T> implements Filters<T>,
     }
 
 
+    @AllArgsConstructor
     public class Folds {
-        Foldable<W> foldable;
+        private final Foldable<W> foldable;
         public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
             return def1.foldable().visit(p->p.foldMap(mb,fn,single),()->mb.zero());
         }
@@ -454,7 +474,7 @@ public class Active<W,T> implements Filters<T>,
 
     @AllArgsConstructor
     public class TraverseOps {
-        cyclops.typeclasses.monad.Traverse<W> traverse;
+        private final Traverse<W> traverse;
 
         public  <W2, R> Higher<W2, Higher<W, R>> flatTraverse(Applicative<W2> applicative,
                                                                Function<? super T,? extends Higher<W2, Higher<W, R>>>f) {

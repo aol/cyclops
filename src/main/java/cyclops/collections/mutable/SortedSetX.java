@@ -26,6 +26,7 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
@@ -51,6 +52,30 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         return of(s)
                 .map(Supplier::get)
                 .flatMap(l->l);
+    }
+
+    static <T> CompletableSortedSetX<T> completable(){
+        return new CompletableSortedSetX<>();
+    }
+
+    static class CompletableSortedSetX<T> implements InvocationHandler {
+        cyclops.async.Future<SortedSetX<T>> future = cyclops.async.Future.future();
+        public boolean complete(SortedSet<T> result){
+            return future.complete(SortedSetX.fromIterable(result));
+        }
+
+        public SortedSetX<T> asSortedSetX(){
+            SortedSetX f = (SortedSetX) Proxy.newProxyInstance(SortedSetX.class.getClassLoader(),
+                    new Class[] { SortedSetX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            SortedSetX<T> target = future.get();
+            return method.invoke(target,args);
+        }
     }
     SortedSetX<T> lazy();
     SortedSetX<T> eager();
