@@ -8,10 +8,8 @@ import cyclops.stream.ReactiveSeq;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
@@ -45,8 +43,15 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
 
     private final FoldToList<T> generator;
 
+    public static final <T> Function<ReactiveSeq<PStack<T>>, PStack<T>> asyncLinkedList() {
+        return r -> {
+            CompletableLinkedListX<T> res = new CompletableLinkedListX<>();
+            r.forEachAsync(l -> res.complete(l));
+            return res.asLinkedListX();
+        };
+    }
     public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer, FoldToList<T> generator,Evaluation strict) {
-        super(strict,list, seq, reducer);
+        super(strict,list, seq, reducer,asyncLinkedList());
         this.generator = generator;
 
         handleStrict();
@@ -55,7 +60,7 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
 
     }
     public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer,Evaluation strict) {
-        super(strict,list, seq, reducer);
+        super(strict,list, seq, reducer,asyncLinkedList());
         this.generator = new PStackGeneator<>();
         handleStrict();
 
@@ -73,6 +78,7 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
    
     public PStack<T> materializeList(ReactiveSeq<T> toUse){
 
+        
         PStack<T> res = generator.from(toUse.iterator(),0);
         return new LazyLinkedListX<T>(
                 res,null, this.getCollectorInternal(),generator, evaluation());

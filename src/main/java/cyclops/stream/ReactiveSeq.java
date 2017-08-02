@@ -2282,9 +2282,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
         return seq().collect(supplier,accumulator,combiner);
     }
-
-    default <R, A> ReactiveSeq<R> collectStream(Collector<? super T, A, R> collector){
+    default <R, A> ReactiveSeq<R> collectAll(Collector<? super T, A, R> collector){
         return coflatMap(s->s.collect(collector));
+    }
+    @Deprecated
+    default <R, A> ReactiveSeq<R> collectStream(Collector<? super T, A, R> collector){
+        return collectAll(collector);
     }
     /**
      * Performs a <a href="package-summary.html#MutableReduction">mutable

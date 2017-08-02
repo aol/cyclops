@@ -4,6 +4,7 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.async.Future;
 import cyclops.control.Eval;
 import cyclops.control.Xor;
 
@@ -43,6 +44,9 @@ import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -77,6 +81,30 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         return headAndTail().tail().to().linkedListX(Evaluation.LAZY);
     }
 
+
+    static <T> CompletableLinkedListX<T> completable(){
+        return new CompletableLinkedListX<>();
+    }
+
+    static class CompletableLinkedListX<T> implements InvocationHandler {
+        Future<LinkedListX<T>> future = Future.future();
+        public boolean complete(PStack<T> result){
+            return future.complete(LinkedListX.fromIterable(result));
+        }
+
+        public LinkedListX<T> asLinkedListX(){
+            LinkedListX f = (LinkedListX) Proxy.newProxyInstance(LinkedListX.class.getClassLoader(),
+                    new Class[] { LinkedListX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            LinkedListX<T> target = future.get();
+            return method.invoke(target,args);
+        }
+    }
     public static  <T> Kleisli<linkedListX,LinkedListX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), LinkedListX::widen);
     }

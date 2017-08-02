@@ -1,24 +1,52 @@
 package com.aol.cyclops2.functions.collections.extensions.persistent;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.functions.collections.extensions.AbstractCollectionXTest;
+import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class PSetXTest extends AbstractCollectionXTest {
 
+    AtomicLong counter = new AtomicLong(0);
+    @Before
+    public void setup(){
+
+        counter = new AtomicLong(0);
+    }
+    @Test
+    public void asyncTest() throws InterruptedException {
+        Spouts.async(Stream.generate(()->"next"), Executors.newFixedThreadPool(1))
+                .onePer(1, TimeUnit.MILLISECONDS)
+                .take(1000)
+                .to()
+                .persistentSetX(Evaluation.LAZY)
+                .peek(i->counter.incrementAndGet())
+                .materialize();
+
+        long current = counter.get();
+        Thread.sleep(400);
+        assertTrue(current<counter.get());
+    }
     @Override
     public <T> FluentCollectionX<T> of(T... values) {
         return PersistentSetX.of(values);

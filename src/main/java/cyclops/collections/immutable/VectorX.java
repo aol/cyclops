@@ -5,6 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.async.Future;
 import cyclops.control.Xor;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.*;
@@ -37,10 +38,14 @@ import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.pcollections.PSet;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -76,7 +81,29 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
     VectorX<T> lazy();
     VectorX<T> eager();
+    static <T> CompletableVectorX<T> completable(){
+        return new CompletableVectorX<>();
+    }
 
+    static class CompletableVectorX<T> implements InvocationHandler {
+        Future<VectorX<T>> future = Future.future();
+        public boolean complete(PVector<T> result){
+            return future.complete(VectorX.fromIterable(result));
+        }
+
+        public VectorX<T> asVectorX(){
+            VectorX f = (VectorX) Proxy.newProxyInstance(VectorX.class.getClassLoader(),
+                    new Class[] { VectorX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            VectorX<T> target = future.get();
+            return method.invoke(target,args);
+        }
+    }
     public static  <T> Kleisli<vectorX,VectorX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), VectorX::widen);
     }

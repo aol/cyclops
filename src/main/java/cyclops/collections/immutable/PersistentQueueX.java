@@ -4,6 +4,7 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.async.Future;
 import cyclops.control.Xor;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.*;
@@ -36,8 +37,12 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.AmortizedPQueue;
 import org.pcollections.PQueue;
+import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collector;
@@ -61,6 +66,31 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
     PersistentQueueX<T> lazy();
     PersistentQueueX<T> eager();
+
+    static <T> CompletablePersistentQueueX<T> completable(){
+        return new CompletablePersistentQueueX<>();
+    }
+
+    static class CompletablePersistentQueueX<T> implements InvocationHandler {
+        Future<PersistentQueueX<T>> future = Future.future();
+        public boolean complete(PQueue<T> result){
+            return future.complete(PersistentQueueX.fromIterable(result));
+        }
+
+        public PersistentQueueX<T> asPersistentQueueX(){
+            PersistentQueueX f = (PersistentQueueX) Proxy.newProxyInstance(PersistentQueueX.class.getClassLoader(),
+                    new Class[] { PersistentQueueX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            PersistentQueueX<T> target = future.get();
+            return method.invoke(target,args);
+        }
+    }
+
     public static  <T> Kleisli<persistentQueueX,PersistentQueueX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), PersistentQueueX::widen);
     }

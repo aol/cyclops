@@ -9,6 +9,7 @@ import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 
+import cyclops.async.Future;
 import cyclops.collections.mutable.SetX;
 import cyclops.control.Maybe;
 import cyclops.control.Xor;
@@ -38,9 +39,13 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.HashTreePSet;
+import org.pcollections.PQueue;
 import org.pcollections.PSet;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -61,6 +66,30 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
 
     PersistentSetX<T> lazy();
     PersistentSetX<T> eager();
+
+    static <T> CompletablePersistentSetX<T> completable(){
+        return new CompletablePersistentSetX<>();
+    }
+
+    static class CompletablePersistentSetX<T> implements InvocationHandler {
+        Future<PersistentSetX<T>> future = Future.future();
+        public boolean complete(PSet<T> result){
+            return future.complete(PersistentSetX.fromIterable(result));
+        }
+
+        public PersistentSetX<T> asPersistentSetX(){
+            PersistentSetX f = (PersistentSetX) Proxy.newProxyInstance(PersistentQueueX.class.getClassLoader(),
+                    new Class[] { PersistentSetX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            PersistentSetX<T> target = future.get();
+            return method.invoke(target,args);
+        }
+    }
     public static  <T> Kleisli<persistentSetX,PersistentSetX<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), PersistentSetX::widen);
     }

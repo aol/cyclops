@@ -7,10 +7,12 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PBag;
+import org.pcollections.PStack;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
@@ -42,10 +44,16 @@ import java.util.function.Supplier;
  */
 public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> implements BagX<T> {
 
-
+    public static final <T> Function<ReactiveSeq<PBag<T>>, PBag<T>> asyncBag() {
+        return r -> {
+            CompletableBagX<T> res = new CompletableBagX<>();
+            r.forEachAsync(l -> res.complete(l));
+            return res.asBagX();
+        };
+    }
 
     public LazyPBagX(PBag<T> list, ReactiveSeq<T> seq, Reducer<PBag<T>> reducer,Evaluation strict) {
-        super(list, seq, reducer,strict);
+        super(list, seq, reducer,strict,asyncBag());
     }
 
     @Override

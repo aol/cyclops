@@ -7,6 +7,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
+import cyclops.async.Future;
 import cyclops.collections.mutable.DequeX;
 import cyclops.companion.Reducers;
 import cyclops.collections.mutable.ListX;
@@ -25,8 +26,12 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.HashTreePBag;
 import org.pcollections.PBag;
+import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -49,6 +54,30 @@ import java.util.stream.Stream;
 public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmptySwitch<T, PBag<T>> {
     BagX<T> lazy();
     BagX<T> eager();
+
+    static <T> CompletableBagX<T> completable(){
+        return new CompletableBagX<>();
+    }
+
+    static class CompletableBagX<T> implements InvocationHandler {
+        Future<BagX<T>> future = Future.future();
+        public boolean complete(PBag<T> result){
+            return future.complete(BagX.fromIterable(result));
+        }
+
+        public BagX<T> asBagX(){
+            BagX f = (BagX) Proxy.newProxyInstance(BagX.class.getClassLoader(),
+                    new Class[] { BagX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            BagX<T> target = future.get();
+            return method.invoke(target,args);
+        }
+    }
     /**
      * Narrow a covariant BagX
      * 

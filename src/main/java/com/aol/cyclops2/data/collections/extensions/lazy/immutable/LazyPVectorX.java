@@ -3,12 +3,15 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.immutable.PersistentQueueX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
+import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
@@ -39,10 +42,17 @@ import java.util.function.Supplier;
  * @param <T> the type of elements held in this toX
  */
 public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<T>> implements VectorX<T> {
+    public static final <T> Function<ReactiveSeq<PVector<T>>, PVector<T>> asyncVector() {
+        return r -> {
+            CompletableVectorX<T> res = new CompletableVectorX<>();
+            r.forEachAsync(l -> res.complete(l));
+            return res.asVectorX();
+        };
+    }
 
 
     public LazyPVectorX(PVector<T> list, ReactiveSeq<T> seq, Reducer<PVector<T>> reducer,Evaluation strict) {
-        super(list, seq, reducer,strict);
+        super(list, seq, reducer,strict,asyncVector());
     }
 
 

@@ -9,6 +9,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 
 
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
+import cyclops.async.Future;
 import cyclops.control.Xor;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -30,8 +31,12 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.OrderedPSet;
 import org.pcollections.POrderedSet;
+import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -50,6 +55,30 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     OrderedSetX<T> lazy();
     OrderedSetX<T> eager();
+
+    static <T> CompletableOrderedSetX<T> completable(){
+        return new CompletableOrderedSetX<>();
+    }
+
+    static class CompletableOrderedSetX<T> implements InvocationHandler {
+        Future<OrderedSetX<T>> future = Future.future();
+        public boolean complete(POrderedSet<T> result){
+            return future.complete(OrderedSetX.fromIterable(result));
+        }
+
+        public OrderedSetX<T> asOrderedSetX(){
+            OrderedSetX f = (OrderedSetX) Proxy.newProxyInstance(OrderedSetX.class.getClassLoader(),
+                    new Class[] { OrderedSetX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            OrderedSetX<T> target = future.get();
+            return method.invoke(target,args);
+        }
+    }
     /**
      * Narrow a covariant OrderedSetX
      * 
