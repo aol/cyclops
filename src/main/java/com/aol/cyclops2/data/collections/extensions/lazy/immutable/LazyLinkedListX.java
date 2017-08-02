@@ -78,10 +78,15 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
    
     public PStack<T> materializeList(ReactiveSeq<T> toUse){
 
-        
-        PStack<T> res = generator.from(toUse.iterator(),0);
-        return new LazyLinkedListX<T>(
-                res,null, this.getCollectorInternal(),generator, evaluation());
+        return toUse.visit(s -> {
+            PStack<T> res = generator.from(toUse.iterator(),0);
+            return new LazyLinkedListX<T>(
+                    res,null, this.getCollectorInternal(),generator, evaluation());
+                },
+                r -> super.materializeList(toUse),
+                a -> super.materializeList(toUse));
+
+
 
     }
     
