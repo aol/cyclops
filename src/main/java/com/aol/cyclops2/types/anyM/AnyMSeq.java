@@ -601,7 +601,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
     @Override
     default AnyMSeq<W,T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.combine(op,predicate);
+        return fromIterable(FoldableTraversable.super.combine(op,predicate));
     }
 
     /* (non-Javadoc)
@@ -1039,7 +1039,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     default <R> AnyMSeq<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
         return (AnyMSeq<W,R>)AnyM.super.retry(fn,retries,delay,timeUnit);
     }
-
     @Override
     default AnyMSeq<W,T> prependS(Stream<? extends T> stream) {
         return (AnyMSeq<W,T>)FoldableTraversable.super.prependS(stream);
@@ -1047,47 +1046,47 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
     @Override
     default AnyMSeq<W,T> append(T... values) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.append(values);
+        return fromIterable(FoldableTraversable.super.append(values));
     }
 
     @Override
     default AnyMSeq<W,T> append(T value) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.append(value);
+        return fromIterable(FoldableTraversable.super.append(value));
     }
 
     @Override
     default AnyMSeq<W,T> prepend(T value) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.prepend(value);
+        return fromIterable(FoldableTraversable.super.prepend(value));
     }
 
     @Override
     default AnyMSeq<W,T> prepend(T... values) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.prepend(values);
+        return fromIterable(FoldableTraversable.super.prepend(values));
     }
 
     @Override
     default AnyMSeq<W,T> insertAt(int pos, T... values) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.insertAt(pos,values);
+        return fromIterable(FoldableTraversable.super.insertAt(pos,values));
     }
 
     @Override
     default AnyMSeq<W,T> deleteBetween(int start, int end) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.deleteBetween(start,end);
+        return fromIterable(FoldableTraversable.super.deleteBetween(start,end));
     }
 
     @Override
     default AnyMSeq<W,T> insertAtS(int pos, Stream<T> stream) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.insertAtS(pos,stream);
+        return fromIterable(FoldableTraversable.super.insertAtS(pos,stream));
     }
 
     @Override
     default AnyMSeq<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.recover(fn);
+        return fromIterable(FoldableTraversable.super.recover(fn));
     }
 
     @Override
     default <EX extends Throwable> AnyMSeq<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.recover(exceptionClass,fn);
+        return fromIterable(FoldableTraversable.super.recover(exceptionClass,fn));
     }
 
 

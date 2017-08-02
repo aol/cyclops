@@ -3,11 +3,13 @@ package cyclops.function;
 import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
+import cyclops.control.Reader;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -16,6 +18,15 @@ import java.util.function.Supplier;
 @FunctionalInterface
 public interface Effect extends Runnable{
 
+    public static Effect test(){
+        return ()->System.out.println("hello");
+    }
+    public static void main(){
+        Effect e = ()->{};
+        e.flatMap(Effect::test)
+                .flatMap(Effect::test)
+                .andThen(Effect::test);
+    }
     default Effect memoize(){
         return ()->Memoize.memoizeRunnable(this)
                           .run();
@@ -207,5 +218,29 @@ public interface Effect extends Runnable{
             r.call();
             runChecked();
         };
+    }
+
+
+    default <R1, R4> Effect forEach4(Supplier<Effect> value2,
+                                     Supplier<Effect> value3,
+                                     Supplier<Effect> value4,
+                                     Effect yieldingFunction) {
+
+        return this.flatMap(()->  value2.get().flatMap(()->value3.get().flatMap(()->value4.get().andThen(yieldingFunction))));
+
+    }
+    default <R1, R4> Effect forEach3(Supplier<Effect> value2,
+                                     Supplier<Effect> value3,
+                                     Effect yieldingFunction) {
+
+        return this.flatMap(()->  value2.get().flatMap(()->value3.get().andThen(yieldingFunction)));
+
+    }
+
+    default <R1, R4> Effect forEach2(Supplier<Effect> value2,
+                                           Effect yieldingFunction) {
+
+        return this.flatMap(()->  value2.get().andThen(yieldingFunction));
+
     }
 }

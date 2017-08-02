@@ -91,7 +91,7 @@ public class ActiveTest {
     @Test
     public void custom(){
         Active<list, ListX<Integer>> grouped = active.custom(ListX::narrowK, l -> l.grouped(10));
-        assertThat(grouped,equalTo(ListX.of(ListX.of(1,2,3))));
+        assertThat(grouped.getActive()  ,equalTo(ListX.of(ListX.of(1,2,3))));
 
     }
 

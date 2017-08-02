@@ -6,7 +6,7 @@ import cyclops.function.Monoid;
 
 public interface MonoidK<W,T> extends SemigroupK<W,T>, Monoid<Higher<W,T>> {
 
-    @Override
+     @Override
      Higher<W,T> zero();
 
      public static <W,T> MonoidK<W,T> of(Higher<W,T> zero, SemigroupK<W,T> sg){

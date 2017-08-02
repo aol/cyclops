@@ -18,6 +18,8 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.control.Xor;
+import cyclops.function.Fn3;
+import cyclops.function.Fn4;
 import cyclops.function.Group;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
@@ -25,6 +27,8 @@ import cyclops.monads.Witness.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.free.Free;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.functor.Compose;
 import cyclops.typeclasses.functor.Functor;
@@ -352,6 +356,12 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public Unfolds unfoldsUnsafe(){
         return def2.unfoldable().visit(s-> new Unfolds(),()->null);
     }
+    public Plus plusUnsafe(){
+        return new Plus();
+    }
+
+
+
     public Maybe<Traverse> traverse(){
         return def1.traverse().visit(s-> Maybe.just(new Traverse()),Maybe::none);
     }
@@ -361,9 +371,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public Maybe<Unfolds> unfolds(){
         return def2.unfoldable().visit(s-> Maybe.just(new Unfolds()),Maybe::none);
     }
-    public Plus plusUnsafe(){
-        return new Plus();
-    }
+
 
     public Nested<W1,W2,T> plusNested(SemigroupK<W2,T> semigroupK, Higher<W2,T> add){
         return of(def1.functor().map(i -> semigroupK.apply(i, add),nested), def1, def2);
@@ -581,12 +589,38 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public static <W1,W2,T> Nested<W1,W2,T> narrowK(Higher<Higher<Higher<nested, W1>, W2>, T> ds){
         return (Nested<W1,W2,T>)ds;
     }
+    public Maybe<NestedComprehensions.Guarded<W1,W2,T>> comprehensionsGuarded(TransformerFactory<W1,W2> factory){
+        InstanceDefinitions<Higher<Higher<nested, W1>, W2>> defs = definitions(def1,def2,factory);
+        return defs.monadZero().map(z->
+                NestedComprehensions.of(this,z)
+        );
+    }
 
+    public NestedComprehensions<W1,W2,T> comprehensions(TransformerFactory<W1,W2> factory){
+        InstanceDefinitions<Higher<Higher<nested, W1>, W2>> defs = definitions(def1,def2,factory);
+        return NestedComprehensions.of(this,defs.monad());
+
+    }
+    public Maybe<Comprehensions.Guarded<Higher<Higher<nested, W1>, W2>>> comprehensionsGuardedHk(TransformerFactory<W1,W2> factory){
+        InstanceDefinitions<Higher<Higher<nested, W1>, W2>> defs = definitions(def1,def2,factory);
+        return defs.monadZero().map(z->
+            Comprehensions.of(z)
+        );
+    }
+
+    public Comprehensions<Higher<Higher<nested, W1>, W2>> comprehensionsHk(TransformerFactory<W1,W2> factory){
+        InstanceDefinitions<Higher<Higher<nested, W1>, W2>> defs = definitions(def1,def2,factory);
+        return Comprehensions.of(defs.monad());
+
+    }
 
     public Active<Higher<Higher<nested, W1>, W2>,T> allTypeclasses(TransformerFactory<W1,W2> factory){
         return Active.of(this,definitions(def1,def2,factory));
     }
     public InstanceDefinitions<Higher<Higher<nested, W1>, W2>> definitions(InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2,TransformerFactory<W1,W2> factory){
+        return definitions(def1,def2,factory,Maybe.none());
+    }
+    public InstanceDefinitions<Higher<Higher<nested, W1>, W2>> definitions(InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2,TransformerFactory<W1,W2> factory,Maybe<Higher<W2,?>> zero){
         return new InstanceDefinitions<Higher<Higher<nested, W1>, W2>>() {
             @Override
             public <T, R> Functor<Higher<Higher<nested, W1>, W2>> functor() {
@@ -615,7 +649,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
             @Override
             public <T, R> Maybe<MonadZero<Higher<Higher<nested, W1>, W2>>> monadZero() {
-                return Maybe.none();
+                return zero.map(z->Instances.monadZero(def1,def2,factory,z));
             }
 
             @Override
@@ -705,7 +739,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
                 @Override
                 public <T, R> Higher<Higher<Higher<nested, W1>, W2>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<nested, W1>, W2>, ? extends Xor<T, R>>> fn) {
 
-                    Higher<Higher<Higher<Witness.nested, W1>, W2>, Xor<T, R>>[] next = new Higher[1];
+                    Higher<Higher<Higher<nested, W1>, W2>, Xor<T, R>>[] next = new Higher[1];
                     next[0] = Instances.unit(def1, def2).unit(Xor.secondary(initial));
                     Foldable<Higher<Higher<nested, W1>, W2>> foldable = Instances.foldable();
                     boolean cont[] = {true};
@@ -757,6 +791,38 @@ public class Nested<W1,W2,T> implements Transformable<T>,
                 }
             };
         }
+        public static <W1,W2> MonadZero<Higher<Higher<nested, W1>, W2>> monadZero(InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2,TransformerFactory<W1,W2> factory,Higher<W2,?> zero) {
+            return new MonadZero<Higher<Higher<nested, W1>, W2>>() {
+
+                @Override
+                public <T, R> Higher<Higher<Higher<nested, W1>, W2>, R> ap(Higher<Higher<Higher<nested, W1>, W2>, ? extends Function<T, R>> fn, Higher<Higher<Higher<nested, W1>, W2>, T> apply) {
+                    return Instances.applicative(def1,def2,factory).ap(fn,apply);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<Higher<nested, W1>, W2>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<nested, W1>, W2>, T> ds) {
+                    return Instances.<W1,W2>functor()
+                                    .map(fn,ds);
+                }
+
+                @Override
+                public <T> Higher<Higher<Higher<nested, W1>, W2>, T> zero() {
+                    Higher<W2,T> identity = ( Higher<W2,T>)zero;
+                    Higher<W1, Higher<W2, T>> res = def1.unit().unit(identity);
+                    return Nested.of(res,def1,def2);
+                }
+
+                @Override
+                public <T> Higher<Higher<Higher<nested, W1>, W2>, T> unit(T value) {
+                    return Instances.unit(def1,def2).unit(value);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<Higher<nested, W1>, W2>, R> flatMap(Function<? super T, ? extends Higher<Higher<Higher<nested, W1>, W2>, R>> fn, Higher<Higher<Higher<nested, W1>, W2>, T> ds) {
+                    return Instances.monad(def1,def2,factory).flatMap(fn,ds);
+                }
+            };
+        }
 
         public static <W1,W2>  Foldable<Higher<Higher<nested, W1>, W2>> foldable() {
             return new Foldable<Higher<Higher<nested, W1>, W2>>(){
@@ -784,4 +850,149 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             };
         }
     }
+
+    @AllArgsConstructor(access= AccessLevel.PRIVATE)
+    public static class NestedComprehensions<W1,W2,T> {
+
+
+        public static  <W1,W2,T> NestedComprehensions<W1,W2,T> of(Nested<W1,W2,T> value1,Monad<Higher<Higher<nested, W1>, W2>>  monad){
+            return new NestedComprehensions<>(monad,value1);
+        }
+        public static <W1,W2,T> NestedComprehensions.Guarded<W1,W2,T> of(Nested<W1,W2,T> value1,MonadZero<Higher<Higher<nested, W1>, W2>>  monad){
+            return new NestedComprehensions.Guarded<>(monad,value1);
+        }
+
+        private final Monad<Higher<Higher<nested, W1>, W2>> monad;
+        private final Nested<W1,W2,T> value1;
+
+        public  < T2, T3, R1, R2, R3, R> Nested<W1,W2,R> forEach4(
+                                                                  Function<? super T, ? extends Nested<W1,W2,R1>> value2,
+                                                                  BiFunction<? super T, ? super R1, ? extends Nested<W1,W2,R2>> value3,
+                                                                  Fn3<? super T, ? super R1, ? super R2, ? extends Nested<W1,W2,R3>> value4,
+                                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+
+            return narrowK(monad.flatMap_(value1,in -> {
+
+                Nested<W1,W2,R1> a = value2.apply(in);
+                return monad.flatMap_(a,ina -> {
+                    Nested<W1,W2,R2> b = value3.apply(in,ina);
+                    return monad.flatMap_(b,inb -> {
+                        Nested<W1,W2,R3> c = value4.apply(in,ina,inb);
+                        return monad.map_(c, in2 -> yieldingFunction.apply(in, ina, inb, in2));
+                    });
+
+                });
+
+            }));
+
+        }
+
+
+
+
+
+        public  <T2, R1, R2, R> Nested<W1,W2,R> forEach3(
+                                                          Function<? super T, ? extends Nested<W1,W2,R1>> value2,
+                                                          BiFunction<? super T, ? super R1, ? extends Nested<W1,W2,R2>> value3,
+                                                          Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
+            return narrowK(monad.flatMap_(value1,in -> {
+
+                Nested<W1,W2,R1> a = value2.apply(in);
+                return monad.flatMap_(a,ina -> {
+                    Nested<W1,W2,R2> b = value3.apply(in,ina);
+                    return monad.map_(b, in2 -> yieldingFunction.apply(in, ina, in2));
+                });
+
+
+            }));
+
+        }
+
+
+
+        public  <R1, R> Nested<W1,W2,R> forEach2(Function<? super T, ? extends Nested<W1,W2,R1>> value2,
+                                                 BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+
+            Higher<Higher<Higher<Witness.nested, W1>, W2>, R> x = monad.flatMap_(value1, in -> {
+
+                Nested<W1, W2, R1> a = value2.apply(in);
+                monad.map_(a, in2 -> yieldingFunction.apply(in, in2));
+                return null;
+            });
+            return narrowK(x);
+
+
+        }
+        @AllArgsConstructor(access= AccessLevel.PRIVATE)
+        public static class Guarded<W1,W2,T> {
+
+            private final MonadZero<Higher<Higher<nested, W1>, W2>> monadZero;
+            private final Nested<W1,W2,T> value1;
+            public  <T2, T3, R1, R2, R3, R> Nested<W1,W2,R> forEach4(
+                                                                      Function<? super T, ? extends Nested<W1,W2,R1>> value2,
+                                                                      BiFunction<? super T, ? super R1, ? extends Nested<W1,W2,R2>> value3,
+                                                                      Fn3<? super T, ? super R1, ? super R2, ? extends Nested<W1,W2,R3>> value4,
+                                                                      Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                                      Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+
+                return narrowK(monadZero.flatMap_(value1,in -> {
+
+                    Nested<W1,W2,R1> a = value2.apply(in);
+                    return monadZero.flatMap_(a,ina -> {
+                        Nested<W1,W2,R2> b = value3.apply(in,ina);
+                        return monadZero.flatMap_(b,inb -> {
+                            Nested<W1,W2,R3> c = value4.apply(in,ina,inb);
+
+                            Nested<W1,W2, R3> x = narrowK(monadZero.filter_(c, in2 -> filterFunction.apply(in, ina, inb, in2)));
+                            return monadZero.map_(x, in2 -> yieldingFunction.apply(in, ina, inb, in2));
+                        });
+
+                    });
+
+                }));
+
+            }
+            public  <T2, R1, R2, R> Nested<W1,W2,R> forEach3(
+                                                              Function<? super T, ? extends Nested<W1,W2,R1>> value2,
+                                                              BiFunction<? super T, ? super R1, ? extends Nested<W1,W2,R2>> value3,
+                                                              Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                                              Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
+                return narrowK(monadZero.flatMap_(value1,in -> {
+
+                    Nested<W1,W2,R1> a = value2.apply(in);
+                    return monadZero.flatMap_(a,ina -> {
+                        Nested<W1,W2,R2> b = value3.apply(in,ina);
+                        Nested<W1,W2, R2> x = narrowK(monadZero.filter_(b, in2 -> filterFunction.apply(in, ina, in2)));
+                        return   monadZero.map_(x,in2 -> yieldingFunction.apply(in, ina, in2));
+                    });
+
+
+
+                }));
+
+            }
+            public  <R1, R> Nested<W1,W2,R> forEach2(Function<? super T, ? extends Nested<W1,W2,R1>> value2,
+                                                     BiFunction<? super T, ? super R1, Boolean> filterFunction,
+                                                     BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+
+                return narrowK(monadZero.flatMap_(value1,in -> {
+
+                    Nested<W1,W2,R1> a = value2.apply(in);
+                    Nested<W1,W2, R1> x = narrowK(monadZero.filter_(a, in2 -> filterFunction.apply(in, in2)));
+                    return    monadZero.map_(x,in2 -> yieldingFunction.apply(in,  in2));
+                }));
+
+
+
+
+            }
+
+
+        }
+
+
+    }
+
 }

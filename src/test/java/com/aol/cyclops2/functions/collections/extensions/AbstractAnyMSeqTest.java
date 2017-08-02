@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import cyclops.collections.immutable.VectorX;
-import cyclops.companion.CyclopsCollectors;
+import cyclops.companion.*;
 import cyclops.async.LazyReact;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
@@ -49,9 +49,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
-import cyclops.companion.Reducers;
-import cyclops.companion.Semigroups;
-import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.util.SimpleTimer;
@@ -61,6 +58,29 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 	public abstract <T> AnyMSeq<W,T> of(T... values);
 	
     public static final LazyReact r = new LazyReact(10,10);
+   // prependS, append,append,prepend,prepend,insertAt,deleteBetween,insertAtS,recover
+    @Test
+    public void prependAppend(){
+        assertThat(of(1).prependS(Stream.of(2)).append(3).prepend(4).append(5,6).prepend(7,8).insertAt(4,9).deleteBetween(1,2)
+                .insertAtS(5,Stream.of(11,12)).stream().count(),equalTo(10));
+    }
+    @Test
+    public void testRecover1(){
+        assertThat(of(1,2,3).map(e->{throw new RuntimeException();}).recover(e->"hello").join(" "),equalTo("hello hello hello"));
+    }
+    @Test
+    public void testRecover2(){
+        assertThat(of(1,2,3).map(e->{throw new RuntimeException();}).recover(RuntimeException.class,e->"hello").join(" "),equalTo("hello hello hello"));
+    }
+    @Test
+    public void testRetry(){
+        of(1,2,3).retry(i->i+2).printOut();
+    }
+    @Test
+    public void testRetryTime(){
+        of(1,2,3).retry(i->i+2,3,1,TimeUnit.DAYS).printOut();
+    }
+
     @Test
     public void stream(){
        
@@ -1203,6 +1223,13 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
                            .toListX(),equalTo(ListX.of(1,2,3))); 
                            
             }
+    @Test
+    public void combineNoOrderMonoid(){
+        assertThat(of(1,2,3)
+                .combine(Monoids.intSum,(a, b)->a.equals(b))
+                .toListX(),equalTo(ListX.of(1,2,3)));
+
+    }
             @Test
             public void groupedFunctionNoOrder(){
                 assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").count(),equalTo((2L)));
