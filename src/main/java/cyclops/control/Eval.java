@@ -1209,13 +1209,13 @@ public interface Eval<T> extends To<Eval<T>>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<eval>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T>Traverse<eval> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<eval>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<eval> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -1439,7 +1439,6 @@ public interface Eval<T> extends To<Eval<T>>,
 
         private static <C2,T,R> Higher<C2, Higher<eval, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
                                                                         Higher<eval, T> ds){
-
             Eval<T> eval = Eval.narrowK(ds);
             return applicative.map(Eval::now, fn.apply(eval.get()));
         }

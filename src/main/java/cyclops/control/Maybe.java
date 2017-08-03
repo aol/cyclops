@@ -1564,13 +1564,13 @@ public interface Maybe<T> extends To<Maybe<T>>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<maybe>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2,T> Traverse<maybe> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<maybe>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<maybe> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

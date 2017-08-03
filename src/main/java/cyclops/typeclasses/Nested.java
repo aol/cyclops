@@ -14,10 +14,7 @@ import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.companion.Streams;
 import cyclops.companion.Streams.StreamKind;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
-import cyclops.control.Try;
-import cyclops.control.Xor;
+import cyclops.control.*;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Group;
@@ -30,6 +27,7 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.functor.Compose;
 import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import cyclops.typeclasses.transformers.Transformer;
 import cyclops.typeclasses.transformers.TransformerFactory;
@@ -141,6 +139,12 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         return fn.apply(nested);
     }
 
+    public <R> Active<W1,R> pure1(R value){
+        return Active.of(def1.unit().unit(value),def1);
+    }
+    public <R> Nested<W1,W2,R> pure2(R value){
+        return Nested.of(def1.unit().unit(def2.unit().unit(value)),def1,def2);
+    }
 
     public <R> Nested<W1,W2,R> map(Function<? super T,? extends R> fn){
         Higher<W1, Higher<W2, R>> res = composedFunctor.map(fn, nested);
@@ -283,42 +287,29 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
 
 
-    public TraverseOps traverseUnsafe(){
-        return def1.traverse().visit(s-> new TraverseOps(),()->null);
+
+    public Unfolds unfolds(Unfoldable<W2> unf){
+        return  new Unfolds(unf);
     }
-    public Folds foldsUnsafe(){
-        return def2.foldable().visit(s-> new Folds(),()->null);
+    public Plus plus(MonadPlus<W1> plus1, MonadPlus<W2> plus2){
+        return new Plus(plus1,plus2);
     }
+
+
+
     public Unfolds unfoldsUnsafe(){
-        return  new Unfolds(def1.foldable().get(),def2.foldable().get());
+        return def2.unfoldable().visit(s-> new Unfolds(s),()->new Unfolds(new Unfoldable.UnsafeValueUnfoldable<>()));
     }
     public Plus plusUnsafe(){
-        return new Plus();
-    }
-
-    public TraverseOps traverse(Traverse<W1> traverse1,Traverse<W2> traverse2){
-        return new TraverseOps(traverse1,traverse2);
-    }
-    public Folds folds(Foldable<W1> f1, Foldable<W2> f2){
-        return  new Folds(f1,f2);
-    }
-    public Unfolds unfoldsUnsafe(){
-        return def2.unfoldable().visit(s-> new Unfolds(),()->null);
-    }
-    public Plus plusUnsafe(){
-        return new Plus();
+        return new Plus(def1.monadPlus().get(),def2.monadPlus().get());
     }
 
 
 
-    public Maybe<TraverseOps> traverse(){
-        return def1.traverse().visit(s-> Maybe.just(new TraverseOps()),Maybe::none);
-    }
-    public Maybe<Folds> folds(){
-        return def2.foldable().visit(s-> Maybe.just(new Folds()),Maybe::none);
-    }
+
+
     public Maybe<Unfolds> unfolds(){
-        return def2.unfoldable().visit(s-> Maybe.just(new Unfolds()),Maybe::none);
+        return def2.unfoldable().visit(s-> Maybe.just(new Unfolds(s)),Maybe::none);
     }
 
 
@@ -334,22 +325,24 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public class Plus{
+        private final  MonadPlus<W1> plus1;
+        private final  MonadPlus<W2> plus2;
         public Monoid<Higher<W2,T>> monoid2(){
             return def2.monadPlus().get().narrowMonoid();
         }
         public Nested<W1,W2,T> sum(ListX<Nested<W1,W2, T>> list){
-            return of(def1.monadPlus().visit(p -> p.sum(list.plus(Nested.this).map(x -> x.nested)), () -> nested),def1,def2);
+            return of(plus1.sum(list.plus(Nested.this).map(x -> x.nested)),def1,def2);
         }
 
         public Nested<W1,W2,T> plus(Higher<W2, T> b){
             Functor<W1> f = def1.functor();
-            MonadPlus<W2> mp = def2.monadPlus().get();
+            MonadPlus<W2> mp = plus2;
             Higher<W1, Higher<W2, T>> x = f.map(a -> mp.plus(a, b), nested);
             return of(x,def1,def2);
         }
         public Nested<W1,W2,T> plus(Nested<W1,W2, T> b){
             Monad<W1> f = def1.monad();
-            MonadPlus<W2> mp = def2.monadPlus().get();
+            MonadPlus<W2> mp = plus2;
             Higher<W1, Higher<W2, T>> x2 = f.flatMap(a -> {
                 Nested<W1, W2, T> r = plus(a);
                 return r.nested;
@@ -363,18 +356,18 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         return def1.foldable().foldRight(mb,foldMap(mb,fn));
     }
     public T foldBothl(T identity, BinaryOperator<T> semigroup){
-        return  foldable1.foldLeft(identity,semigroup,foldLeft(Monoid.fromBiFunction(identity, semigroup)));
+        return  def1.foldable().foldLeft(identity,semigroup,foldLeft(Monoid.fromBiFunction(identity, semigroup)));
     }
     public T foldBothr(T identity, BinaryOperator<T> semigroup){
 
-        return  foldable1.foldRight(identity,semigroup,foldRight(Monoid.fromBiFunction(identity, semigroup)));
+        return  def1.foldable().foldRight(identity,semigroup,foldRight(Monoid.fromBiFunction(identity, semigroup)));
     }
     public  T foldBothRight(Monoid<T> monoid){
-        return foldable1.foldRight(monoid,foldRight(monoid));
+        return def1.foldable().foldRight(monoid,foldRight(monoid));
 
     }
     public  T foldBothLeft(Monoid<T> monoid){
-        return foldable1.foldLeft(monoid,foldLeft(monoid));
+        return def1.foldable().foldLeft(monoid,foldLeft(monoid));
 
     }
 
@@ -423,19 +416,22 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public class Unfolds{
+
+        private final Unfoldable<W2> unfold2;
+
         public <R> Nested<W1,W2, R> unfold(Function<? super T, Optional<Tuple2<R, T>>> fn){
-            Unfoldable<W2> unf = def2.unfoldable().get();
+            Unfoldable<W2> unf = unfold2;
             Higher<W1, Higher<W2, R>> x = def1.functor().map(a -> def2.monad().flatMap(c -> unf.unfold(c, fn), a), nested);
             return Nested.of(x,def1,def2);
         }
         private <T2> Nested<W1,W2, T> unfoldPrivate(T2 b,Function<T2, Optional<Tuple2<T, T2>>> fn){
-            Unfoldable<W2> unf = def2.unfoldable().get();
+            Unfoldable<W2> unf = unfold2;
             Higher<W1, Higher<W2, T>> x = def1.functor().map(a -> def2.monad().flatMap(c -> unf.unfold(b, fn.andThen(o->o.map(t->t.map1(v->c)))), a), nested);
             return Nested.of(x,def1,def2);
         }
 
         private <T,R> Nested<W1,W2, R> unfoldIgnore(T b,Function<T, Optional<Tuple2<R, T>>> fn){
-            Unfoldable<W2> unf = def2.unfoldable().get();
+            Unfoldable<W2> unf = unfold2;
             Higher<W1, Higher<W2, R>> x = def1.functor().map(a -> def2.monad().flatMap(c -> unf.unfold(b, fn), a), nested);
             return Nested.of(x,def1,def2);
         }
@@ -457,23 +453,16 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         }
     }
 
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public class TraverseOps {
-        private final Traverse<W1> traverse1;
-        private final Traverse<W2> traverse2;
 
-        public Nested<W2, W1, T> sequence(){
-            Higher<W2, Higher<W1, T>> res = traverse1.sequenceA(def2.applicative(), nested);
-            return of(res,def2,def1);
-        }
-        public  <R> Nested<W2, W1, R> traverse(Function<? super T,? extends R> fn){
-            return sequence().map(fn);
-        }
-
-        public <R> Active<W1,R> foldMap(Monoid<R> mb, final Function<? super T,? extends R> fn) {
-            return Active.of(def1.functor().map(f -> traverse2.foldMap(mb, fn, f), nested),def1);
-        }
+    public Nested<W2, W1, T> sequence(){
+        Higher<W2, Higher<W1, T>> res = def1.traverse().sequenceA(def2.applicative(), nested);
+        return of(res,def2,def1);
     }
+    public  <R> Nested<W2, W1, R> traverse(Function<? super T,? extends R> fn){
+        return sequence().map(fn);
+    }
+
+
 
     public String toString(){
         return "Nested["+nested.toString()+"]";
@@ -621,13 +610,13 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             }
 
             @Override
-            public <C2, T> Maybe<cyclops.typeclasses.monad.Traverse<Higher<Higher<nested, W1>, W2>>> traverse() {
+            public <C2, T> Traverse<Higher<Higher<nested, W1>, W2>> traverse() {
                 return null;
             }
 
             @Override
-            public <T> Maybe<Foldable<Higher<Higher<nested, W1>, W2>>> foldable() {
-                return Maybe.just(Instances.foldable());
+            public <T> Foldable<Higher<Higher<nested, W1>, W2>> foldable() {
+                return Instances.foldable();
             }
 
             @Override
@@ -715,6 +704,17 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             };
 
         }
+        public static <W1,W2,C2, T, R> Higher<C2, Higher<Higher<Higher<nested, W1>, W2>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<Higher<nested, W1>, W2>, T> ds){
+            Nested<W1, W2, T> n = narrowK(ds);
+            ComposedTraverse<W1,W2> ct = ComposedTraverse.of(n.def1.traverse(),n.def2.traverse(),n.def2.applicative());
+            Higher<C2, Higher<W1, Higher<W2, R>>> r = ct.traverse(applicative,fn,n.nested);
+            Higher<C2, Higher<Higher<Higher<nested, W1>, W2>, R>> x = applicative.map(nr -> Nested.of(nr, n.def1, n.def2), r);
+            return x;
+
+        }
+        public static <W1,W2,T> Traverse<Higher<Higher<nested, W1>, W2>> traverse(InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2, TransformerFactory<W1,W2> factory){
+            return General.traverseByTraverse(applicative(def1,def2,factory), (a, b, c)-> traverseA(a,b,c));
+        }
 
         public static <W1,W2> Monad<Higher<Higher<nested, W1>, W2>> monad(InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2,TransformerFactory<W1,W2> factory) {
             return new Monad<Higher<Higher<nested, W1>, W2>>() {
@@ -782,12 +782,12 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
                 @Override
                 public <T> T foldRight(Monoid<T> monoid, Higher<Higher<Higher<nested, W1>, W2>, T> ds) {
-                    return narrowK(ds).foldsUnsafe().foldBothRight(monoid);
+                    return narrowK(ds).foldBothRight(monoid);
                 }
 
                 @Override
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<Higher<nested, W1>, W2>, T> ds) {
-                    return narrowK(ds).foldsUnsafe().foldBothLeft(monoid);
+                    return narrowK(ds).foldBothLeft(monoid);
                 }
             };
         }
@@ -867,7 +867,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         public  <R1, R> Nested<W1,W2,R> forEach2(Function<? super T, ? extends Nested<W1,W2,R1>> value2,
                                                  BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
-            Higher<Higher<Higher<Witness.nested, W1>, W2>, R> x = monad.flatMap_(value1, in -> {
+            Higher<Higher<Higher<nested, W1>, W2>, R> x = monad.flatMap_(value1, in -> {
 
                 Nested<W1, W2, R1> a = value2.apply(in);
                 monad.map_(a, in2 -> yieldingFunction.apply(in, in2));

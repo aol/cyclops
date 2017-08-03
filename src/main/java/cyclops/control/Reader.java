@@ -232,7 +232,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
                 @Override
                 public <T> Foldable<Higher<reader, IN>> foldable() {
-                    return Instances.foldable(in)
+                    return Instances.foldable(in);
                 }
 
                 @Override
