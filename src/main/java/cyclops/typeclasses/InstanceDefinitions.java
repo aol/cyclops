@@ -26,19 +26,16 @@ public interface InstanceDefinitions<W> {
     default Eq<W> eq(){
         return new Eq<W>(){};
     }
-    public  <T,R>Functor<W> functor();
 
+    <T,R>Functor<W> functor();
     <T> Pure<W> unit();
-
     <T,R> Applicative<W> applicative();
-
     <T,R> Monad<W> monad();
-
     <T,R> Maybe<MonadZero<W>> monadZero();
-
     <T> Maybe<MonadPlus<W>> monadPlus();
-
     <T> MonadRec<W> monadRec();
+    <T> Foldable<W> foldable();
+    <C2,T> Traverse<W> traverse();
 
 
     default <T> Maybe<ContravariantFunctor<W>> contravariantFunctor(){
@@ -54,8 +51,8 @@ public interface InstanceDefinitions<W> {
 
     <T> Maybe<MonadPlus<W>> monadPlus(Monoid<Higher<W,T>> m);
 
-    <C2,T> Maybe<Traverse<W>> traverse();
-    <T> Maybe<Foldable<W>> foldable();
+
+
     <T> Maybe<Comonad<W>> comonad();
 
     default  <T> Maybe<Unfoldable<W>> unfoldable(){

@@ -202,7 +202,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param <E> Enum type
      * @return Stream over enum
      */
-    static <E extends Enum<E>> ReactiveSeq<E> enums(Class<E> c,E start,E end){
+    static <E extends Enum<E>> ReactiveSeq<E> enumsFromTo(Class<E> c,E start,E end){
         E[] values = c.getEnumConstants();
         return Enumeration.enums( values).streamTo(start,end);
 

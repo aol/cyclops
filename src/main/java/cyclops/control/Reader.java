@@ -1,5 +1,6 @@
 package cyclops.control;
 
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -15,6 +16,7 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.ContravariantFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.functor.ProFunctor;
+import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -179,7 +181,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
     }
 
     public static class Instances {
-        public static <IN> InstanceDefinitions<Higher<reader, IN>> definitions() {
+        public static <IN> InstanceDefinitions<Higher<reader, IN>> definitions(IN in) {
             return new InstanceDefinitions<Higher<reader, IN>>() {
 
                 @Override
@@ -224,13 +226,13 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<reader, IN>>> traverse() {
-                    return Maybe.none();
+                public <C2, T> Traverse<Higher<reader, IN>> traverse() {
+                    return Instances.traversable(in);
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<reader, IN>>> foldable() {
-                    return Maybe.none();
+                public <T> Foldable<Higher<reader, IN>> foldable() {
+                    return Instances.foldable(in)
                 }
 
                 @Override
@@ -289,6 +291,36 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
             };
         }
 
+        public static <IN> Foldable<Higher<reader, IN>> foldable(IN t) {
+            return new Foldable<Higher<reader, IN>>() {
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<Higher<reader, IN>, T> ds) {
+                    return foldLeft(monoid,ds);
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<reader, IN>, T> ds) {
+                    Reader<IN, T> r = narrowK(ds);
+                    return r.foldLeft(t,monoid);
+
+                }
+            };
+        }
+
+        public static <IN,C2, T, R> Higher<C2, Higher<Higher<reader, IN>, R>> traverseA(IN t,Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<reader, IN>, T> ds) {
+            Reader<IN, T> r = narrowK(ds);
+
+            return applicative.map(i -> {
+                Reader<IN,R> res = a->i;
+                return res;
+            }, fn.apply(r.apply(t)));
+
+        }
+        public static <IN> Traverse<Higher<reader, IN>> traversable(IN t) {
+
+            return General.traverseByTraverse(applicative(), (a,b,c)-> traverseA(t,a,b,c));
+
+        }
         public static <IN> Monad<Higher<reader, IN>> monad() {
             return new Monad<Higher<reader, IN>>() {
 
@@ -329,6 +361,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
                     }
                 };
             }
+
         public static <IN, T, R> MonadRec<Higher<reader, IN>> monadRec() {
              return new MonadRec<Higher<reader, IN>>() {
                 @Override
@@ -358,5 +391,10 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
 
         }
+    }
+
+    default R foldLeft(T t, Monoid<R> monoid){
+        Fn1<T, R> x = this.andThen(v -> monoid.apply(monoid.zero(), v));
+        return x.apply(t);
     }
 }

@@ -355,6 +355,10 @@ public class Active<W,T> implements Filters<T>,
         return new Plus(plus);
     }
 
+    public TraverseOps traverseUnsafe() {
+        return new TraverseOps(def1.traverse().get());
+
+    }
     @Deprecated
     public Unfolds unfoldsUnsafe(){
         return new Unfolds(def1.unfoldable().get());
