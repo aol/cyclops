@@ -128,6 +128,20 @@ public interface Effect extends Runnable{
 
         };
     }
+    default Effect cycleAsync(Executor ex){
+        return  ()->{
+            while(true)
+                async(ex).run();
+
+        };
+    }
+    default Effect cycleAsync(long times,Executor ex){
+        return  ()->{
+            for(long i=0;i<times;i++)
+                async(ex).run();
+
+        };
+    }
     default Effect cycleForever(Consumer<Throwable> onError){
         return  ()-> {
             while (true){

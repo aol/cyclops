@@ -15,6 +15,8 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
+import cyclops.typeclasses.EnumerationTest;
+import cyclops.typeclasses.EnumerationTest.Days;
 import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -51,6 +53,11 @@ import static org.junit.Assert.fail;
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
+    @Test
+    public void testEnums(){
+        ReactiveSeq.enums(Days.class)
+                   .printOut();
+    }
     @Test
     public void takeOne(){
 

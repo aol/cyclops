@@ -61,7 +61,38 @@ public class SpoutsTest {
 
                             s.onNext("hello " + i++);
                         };
-                        e.cycle(30).run();
+                        e.cycle(30).runAsync();
+                    }
+                }
+
+                @Override
+                public void cancel() {
+
+                }
+            });
+
+        }).forEach(2, in->count++);
+
+        Thread.sleep(500);
+        sub.request(30);
+
+        assertThat(i,equalTo(30));
+        assertThat(count,equalTo(18));
+    }
+    @Test
+    public void reactiveBufferCycle() throws InterruptedException {
+
+        Subscription sub = Spouts.reactiveBuffer(10, s -> {
+
+            s.onSubscribe(new Subscription() {
+                @Override
+                public void request(long n) {
+                    if(i==0) {
+                        Effect e = () -> {
+
+                            s.onNext("hello " + i++);
+                        };
+                        e.cycleAsync(30,Executors.newFixedThreadPool(10)).run();
                     }
                 }
 

@@ -10,6 +10,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.Xor;
 import cyclops.typeclasses.Active;
+import cyclops.typeclasses.Enumeration;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.OneShotStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.*;
@@ -128,6 +129,108 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Unit<T>,
                                         Higher<reactiveSeq,T> {
 
+
+    /**
+     *
+     * Stream over the values of an enum
+     * <pre>
+     *     {@code
+     *     ReactiveSeq.enums(Days.class)
+                      .printOut();
+     *     }
+     *
+     *     Monday
+     *     Tuesday
+     *     Wednesday
+     *     Thursday
+     *     Friday
+     *     Saturday
+     *     Sunday
+     * </pre>
+     *
+     * @param c Enum to process
+     * @param <E> Enum type
+     * @return Stream over enum
+     */
+    static <E extends Enum<E>> ReactiveSeq<E> enums(Class<E> c){
+        E[] values = c.getEnumConstants();
+        return Enumeration.enums( values).stream(values[0]);
+
+    }
+
+    /**
+     *
+     * Stream over the values of an enum
+     * <pre>
+     *     {@code
+     *     ReactiveSeq.enums(Days.class,Days.Wednesday)
+                     .printOut();
+     *     }
+     *
+     *     Wednesday
+     *     Thursday
+     *     Friday
+     *     Saturday
+     *     Sunday
+     * </pre>
+     * @param c Enum to process
+     * @param start Start value
+     * @param <E> Enum type
+     * @return Stream over enum
+     */
+    static <E extends Enum<E>> ReactiveSeq<E> enums(Class<E> c,E start){
+        E[] values = c.getEnumConstants();
+        return Enumeration.enums( values).stream(start);
+
+    }
+    /**
+     *
+     * Stream over the values of an enum
+     * <pre>
+     *     {@code
+     *     ReactiveSeq.enums(Days.class,Days.Wednesday,Days.Friday)
+    .printOut();
+     *     }
+     *
+     *     Wednesday
+     *     Thursday
+     *     Friday
+     * </pre>
+     * @param c Enum to process
+     * @param start Start value
+     * @param end End value
+     * @param <E> Enum type
+     * @return Stream over enum
+     */
+    static <E extends Enum<E>> ReactiveSeq<E> enums(Class<E> c,E start,E end){
+        E[] values = c.getEnumConstants();
+        return Enumeration.enums( values).streamTo(start,end);
+
+    }
+    /**
+     *
+     * Stream over the values of an enum
+     * <pre>
+     *     {@code
+     *     ReactiveSeq.enums(Days.class,Days.Monday,Days.Wednesday,Days.Friday)
+                      .printOut();
+     *     }
+     *     Monday
+     *     Wednesday
+     *     Friday
+     * </pre>
+     * @param c Enum to process
+     * @param start Start value
+     * @param step Values for which the Distance from start in terms of the enum ordinal determines the stepping function
+     * @param end End value
+     * @param <E> Enum type
+     * @return Stream over enum
+     */
+    static <E extends Enum<E>> ReactiveSeq<E> enums(Class<E> c,E start,E step,E end){
+        E[] values = c.getEnumConstants();
+        return Enumeration.enums( values).streamThenTo(start,step,end);
+
+    }
     public static  <T> Kleisli<reactiveSeq,ReactiveSeq<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), ReactiveSeq::widen);
     }

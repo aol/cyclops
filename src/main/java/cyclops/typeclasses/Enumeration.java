@@ -31,6 +31,9 @@ public interface Enumeration<E> {
     static <E extends Enum<E>> Enumeration<E> enums(E... values){
         return new EnumerationByEnum<E>(values);
     }
+    static <E extends Enum<E>> Enumeration<E> enums(Class<E> c){
+        return new EnumerationByEnum<E>(c.getEnumConstants());
+    }
 
     static <E> Enumeration<E> enums(IndexedSequenceX<E> seq){
         return new EnumerationByIndexed<E>(seq);
