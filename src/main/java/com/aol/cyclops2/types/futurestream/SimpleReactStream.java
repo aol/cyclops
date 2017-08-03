@@ -829,7 +829,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Merge this reactive dataflow with another - recommended for merging
+     * Merge this reactiveBuffer dataflow with another - recommended for merging
      * different types. To merge flows of the same type the instance method
      * merge is more appropriate.
      *
@@ -1013,7 +1013,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * React and <b>allOf</b>
      *
      * allOf is a non-blocking equivalent of block. The current thread is not
-     * impacted by the calculations, but the reactive chain does not continue
+     * impacted by the calculations, but the reactiveBuffer chain does not continue
      * until all currently alloted tasks complete. The allOf task is transform
      * provided with a list of the results from the previous tasks in the chain.
      *

@@ -84,7 +84,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 /**
  * A powerful extended, sequential Stream type.
  * Extends JDK 8 java.util.reactiveStream.Stream.
- * Implements the reactive-reactiveStream publisher api.
+ * Implements the reactiveBuffer-reactiveStream publisher api.
  * Replayable Stream by default, using primitive operators (ints,longs, doubles or jool results in conversion toNested a oneshot Stream
  * (as of 2.0.0-MI1)
  *
@@ -165,7 +165,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
-     * reactive-streams susbscription can be used toNested determine demand (or ignored and data passed
+     * reactiveBuffer-streams susbscription can be used toNested determine demand (or ignored and data passed
      * via onNext, onError) excess supply over demand is enqueued
      *
      * <pre>
@@ -1837,7 +1837,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * A potentially non-blocking analog of {@link ReactiveSeq#forEach}.
-     * For push based reactive Stream types (created via Spouts or FutureStream)
+     * For push based reactiveBuffer Stream types (created via Spouts or FutureStream)
      *
      * @param action a <a href="package-summary.html#NonInterference">
      *               non-interfering</a> action toNested perform on the elements
@@ -2058,8 +2058,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Optional<T> findFirst();
 
     /**
-     * Lazy / reactive analogue of findFirst / findAny from JDK
-     * For push based reactive-streams (created via Spouts.XXX) data will be pushed toNested the returned Maybe on arrival.
+     * Lazy / reactiveBuffer analogue of findFirst / findAny from JDK
+     * For push based reactiveBuffer-streams (created via Spouts.XXX) data will be pushed toNested the returned Maybe on arrival.
      * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Maybe is takeOne accessed.
      *
      * @return
@@ -2067,10 +2067,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Maybe<T> findOne();
 
     /**
-     * Lazy / reactive look up of takeOne value , capturing the takeOne error, if one occurs. If no values are
+     * Lazy / reactiveBuffer look up of takeOne value , capturing the takeOne error, if one occurs. If no values are
      * present a NoSuchElementException is returned.
      *
-     * For push based reactive-streams (created via Spouts.XXX) data will be pushed toNested the returned Either on arrival.
+     * For push based reactiveBuffer-streams (created via Spouts.XXX) data will be pushed toNested the returned Either on arrival.
      * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Either is takeOne accessed.
 
      *
@@ -4592,7 +4592,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured toNested publish asynchronously.
      * The QueueFactory parameter can be used by pull based Streams toNested control the maximum queued elements @see {@link QueueFactories}
-     * Push based reactive-streams signal demand via their subscription.
+     * Push based reactiveBuffer-streams signal demand via their subscription.
      *
      *
      */

@@ -131,7 +131,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         return fromFuture(Future.of(s,ex));
     }
     /**
-     * Create a reactive CompletableEither
+     * Create a reactiveBuffer CompletableEither
      *
      * <pre>
      *  {@code

@@ -45,7 +45,7 @@ import java.util.stream.Stream;
  * BagX is lazy - chainging functional operations such as map / filter / flatMap only results in the toX
  * being traversed once. It is materialized and cached on takeOne access (or via {@link BagX#materialize()}
  *
- * It is also possible to populate BagX asynchronously using reactive-streams publishers such as those created via the
+ * It is also possible to populate BagX asynchronously using reactiveBuffer-streams publishers such as those created via the
  * {@link Spouts} class
  *
  *

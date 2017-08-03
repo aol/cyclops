@@ -1,9 +1,13 @@
 package cyclops.stream;
 
 import com.aol.cyclops2.hkt.Higher;
+
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
+import com.aol.cyclops2.types.reactive.BufferOverflowPolicy;
+import com.aol.cyclops2.types.reactive.PushSubscriber;
 import cyclops.async.SimpleReact;
 import cyclops.control.Xor;
+import cyclops.function.C4;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
@@ -24,12 +28,15 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
+import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
+import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.Optional;
+import java.util.Queue;
 import java.util.Spliterator;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,7 +50,7 @@ import java.util.stream.Stream;
 import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
- * reactive : is used toNested denote creational methods for reactive-streams that support non-blocking backpressure
+ * reactiveBuffer : is used toNested denote creational methods for reactiveBuffer-streams that support non-blocking backpressure
  * async : is used toNested denote creational methods for asynchronous streams that do not support backpressure
  */
 
@@ -65,7 +72,7 @@ public interface Spouts {
 
     /**
      * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
-     * reactive-streams susbscription is ignored (i.e. this Stream is backpressure free)
+     * reactiveBuffer-streams susbscription is ignored (i.e. this Stream is backpressure free)
      *
      * <pre>
      *     {@code
@@ -81,7 +88,7 @@ public interface Spouts {
      * @param <T>
      * @return
      */
-    static <T> ReactiveSeq<T> async(Consumer<? super Subscriber<T>> sub){
+    static <T> ReactiveSeq<T> async(Consumer<? super PushSubscriber<T>> sub){
         AsyncSubscriber<T> s = asyncSubscriber();
         return s.registerAndstream(()->{
             while(!s.isInitialized()){
@@ -105,11 +112,77 @@ public interface Spouts {
 
             ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
 
-                Subscriber<T> local = s;
+                PushSubscriber<T> local = s;
                 t.forEach(local::onNext,local::onError,local::onComplete);
                 return null;
             });
         });
+    }
+
+    /**
+     * Create a buffering reactive-streams source. Your subscriber can respect or ignore reactive-streams backpressure.
+     * This operator will buffer incoming data before sending on when downstream streams are ready.
+     * This operator drops values once buffer size has been exceeded
+     *
+     * E.g. In the example below 2 elements are requested, we ignore this and send 30 elements instead
+     * <pre>
+     *     {@code
+     *     Subscription sub = Spouts.reactiveBuffer(10, s -> {
+                                                        s.onSubscribe(new Subscription() {
+                                                                @Override
+                                                                public void request(long n) {
+                                                                    //ignore back pressure
+                                                                    //send lots of data downstream regardless
+                                                                        Effect e = () -> {
+                                                                            s.onNext("hello " + i++);
+                                                                        }
+                                                                        e.cycle(30).run();
+
+                                                                }
+
+                                                                @Override
+                                                                public void cancel() {
+
+                                                                }
+                                                                });
+
+
+                                                }).forEach(2, System.out::println);
+
+
+            //only 2 elements will be printed out
+            //10 will be buffered and potentially 18 dropped
+            Thread.sleep(500);
+            sub.request(20);
+     *
+     *
+     *     }
+     *
+     *
+     * </pre>
+     *
+     * @param buffer
+     * @param onNext
+     * @param <T>
+     * @return
+     */
+    static <T> ReactiveSeq<T> reactiveBuffer(int buffer, Consumer<? super Subscriber<T>> onNext){
+        return Spouts.reactiveStream(new BufferingSinkOperator<T>(new ManyToManyConcurrentArrayQueue<T>(buffer), onNext, BufferOverflowPolicy.DROP));
+    }
+    static <T> ReactiveSeq<T> reactiveBufferBlock(int buffer, Consumer<? super Subscriber<T>> onNext){
+        return Spouts.reactiveStream(new BufferingSinkOperator<T>(new ManyToManyConcurrentArrayQueue<T>(buffer), onNext,BufferOverflowPolicy.BLOCK));
+    }
+    static <T> ReactiveSeq<T> reactiveBuffer(Queue<T> buffer,BufferOverflowPolicy policy, Consumer<? super Subscriber<T>> onNext){
+        return Spouts.reactiveStream(new BufferingSinkOperator<T>(buffer, onNext, policy));
+    }
+    static <T> ReactiveSeq<T> asyncBuffer(int buffer, Consumer<? super PushSubscriber<T>> onNext){
+        return Spouts.asyncStream(new BufferingSinkOperator<T>(new ManyToManyConcurrentArrayQueue<T>(buffer),c-> onNext.accept(PushSubscriber.of(c)), BufferOverflowPolicy.DROP));
+    }
+    static <T> ReactiveSeq<T> asyncBufferBlock(int buffer, Consumer<? super PushSubscriber<T>> onNext){
+        return Spouts.asyncStream(new BufferingSinkOperator<T>(new ManyToManyConcurrentArrayQueue<T>(buffer), c-> onNext.accept(PushSubscriber.of(c)), BufferOverflowPolicy.BLOCK));
+    }
+    static <T> ReactiveSeq<T> asyncBuffer(Queue<T> buffer,BufferOverflowPolicy policy, Consumer<? super PushSubscriber<T>> onNext){
+        return Spouts.asyncStream(new BufferingSinkOperator<T>(buffer, c-> onNext.accept(PushSubscriber.of(c)), policy));
     }
     static <T> ReactiveSeq<T> reactive(Stream<T> seq, Executor exec){
         Future<Subscriber<T>> subscriber = Future.future();
@@ -140,7 +213,7 @@ public interface Spouts {
                     Thread.yield();
                 }else {
                     while (!requested.compareAndSet(next, 0)) {
-                        Thread.yield();
+                        next = requested.get();
                     }
                     streamSub.request(next);
                 }
@@ -166,13 +239,13 @@ public interface Spouts {
     /**
      *   The recommended way toNested connect a Spout toNested a Publisher is via Spouts#from
      *   Create an Subscriber for Observable style asynchronous push based Streams,
-     *   that implements backpressure internally via the reactive-streams spec.
+     *   that implements backpressure internally via the reactiveBuffer-streams spec.
      *
      *   Subscribers signal demand via their subscription and publishers push data toNested subscribers
      *   synchronously or asynchronously, never exceeding signalled demand
      *
      * @param <T> Stream data type
-     * @return An async Stream Subscriber that supports efficient backpressure via reactive-streams
+     * @return An async Stream Subscriber that supports efficient backpressure via reactiveBuffer-streams
      */
     static <T> ReactiveSubscriber<T> reactiveSubscriber(){
         return new ReactiveSubscriber<T>();
@@ -415,10 +488,10 @@ public interface Spouts {
         });
 
         s[0] = ReactiveSeq.iterate(1, a -> a + 1)
-                .takeWhile(e -> isOpen.get())
-                .schedule(cron, exec)
-                .connect()
-                .forEach(1, e -> sub.onNext(e));
+                          .takeWhile(e -> isOpen.get())
+                          .schedule(cron, exec)
+                          .connect()
+                          .forEach(1, e -> sub.onNext(e));
 
         return sub.reactiveStream();
 

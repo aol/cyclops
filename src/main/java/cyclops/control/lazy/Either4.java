@@ -74,7 +74,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         return Cokleisli.of(Either4::narrowK);
     }
     /**
-     * Create a reactive CompletableEither
+     * Create a reactiveBuffer CompletableEither
      *
      * <pre>
      *  {@code

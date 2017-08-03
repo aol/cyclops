@@ -122,7 +122,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                                 secondary, primary);
     }
     /**
-     * Construct an Ior that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
+     * Construct an Ior that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
 
      * <pre>
      * {@code

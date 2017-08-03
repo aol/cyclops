@@ -8,9 +8,11 @@ import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Topic;
 import cyclops.collections.mutable.ListX;
 
+import cyclops.function.Effect;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.jooq.lambda.tuple.Tuple2;
+import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
@@ -37,7 +39,101 @@ import static org.junit.Assert.*;
  */
 public class SpoutsTest {
 
+    int i=0;
 
+    int count = 0;
+    @Before
+    public void setup(){
+        i=0;
+        count=0;
+    }
+    @Test
+    public void reactiveBuffer() throws InterruptedException {
+
+        Subscription sub = Spouts.reactiveBuffer(10, s -> {
+
+            s.onSubscribe(new Subscription() {
+                @Override
+                public void request(long n) {
+                    if(i==0) {
+                        Effect e = () -> {
+
+
+                            s.onNext("hello " + i++);
+                        };
+                        e.cycle(30).run();
+                    }
+                }
+
+                @Override
+                public void cancel() {
+
+                }
+            });
+
+        }).forEach(2, in->count++);
+
+        Thread.sleep(500);
+        sub.request(30);
+
+        assertThat(i,equalTo(30));
+        assertThat(count,equalTo(18));
+    }
+    @Test
+    public void reactiveBufferBlock() throws InterruptedException {
+
+        Subscription sub = Spouts.reactiveBufferBlock(10, s -> {
+
+            s.onSubscribe(new Subscription() {
+                @Override
+                public void request(long n) {
+                    if(i==0) {
+                        Effect e = () -> {
+
+
+                            s.onNext("hello " + i++);
+                        };
+                        e.cycle(30).runAsync();
+                    }
+                }
+
+                @Override
+                public void cancel() {
+
+                }
+            });
+
+        }).forEach(2, in->count++);
+
+        Thread.sleep(500);
+        sub.request(30);
+        Thread.sleep(500);
+        assertThat(i,equalTo(30));
+        assertThat(count,equalTo(30));
+    }
+
+    @Test
+    public void asyncBufferBlock() throws InterruptedException {
+
+        Subscription sub = Spouts.asyncBufferBlock(10, s -> {
+                    if (i == 0) {
+                        Effect e = () -> {
+                            s.onNext("hello " + i++);
+                        };
+                        e.cycle(30).runAsync();
+                    }
+                }
+            ).forEach(2, in->count++);
+
+
+
+        Thread.sleep(500);
+        sub.request(30);
+        Thread.sleep(500);
+        assertThat(i,equalTo(30));
+        assertThat(count,equalTo(30));
+
+    }
     @Test
     public void asyncStream(){
         assertThat(ListX.of(1,2,3),equalTo(Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1)).toListX()));
@@ -459,7 +555,7 @@ public class SpoutsTest {
 
             sub.awaitInitialization();
             try {
-                //not a reactive-stream so we don't know with certainty when demand signalled
+                //not a reactiveBuffer-stream so we don't know with certainty when demand signalled
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();

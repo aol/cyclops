@@ -72,7 +72,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
 
 
     /**
-     * Create a reactive CompletableEither
+     * Create a reactiveBuffer CompletableEither
      *
      * <pre>
      *  {@code

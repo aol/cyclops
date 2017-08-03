@@ -508,7 +508,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * toNested change toNested a different pool
      * 
      * @param array
-     *            Array of value toNested form the reactive reactiveStream / sequence
+     *            Array of value toNested form the reactiveBuffer reactiveStream / sequence
      * @return SimpleReact Stage
      */
     public static <U> SimpleReactStream<U> parallel(final U... array) {

@@ -56,7 +56,7 @@ import java.util.stream.Stream;
 import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
- * Totally lazy, reactive  more powerful general Option type. Maybe is maybe like a Java
+ * Totally lazy, reactiveBuffer  more powerful general Option type. Maybe is maybe like a Java
  * 8 Stream that represents 0 or 1 values rather than eager like a Java 8
  * Optional. map / peek/ filter and flatMap build the execution chaing, but are
  * not executed until the value inside the Maybe is required.
@@ -103,7 +103,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  * 
  * Maybe is a functor (map) monad (flatMap) and an applicative (ap)
  * 
- * Maybe is reactive via fromPublisher and maybe() methods
+ * Maybe is reactiveBuffer via fromPublisher and maybe() methods
  * 
  * Maybe is convertable to all cyclops2-react data types.
  *
@@ -159,7 +159,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
 
     /**
-     * Create a reactive CompletableMaybe
+     * Create a reactiveBuffer CompletableMaybe
      * <pre>
      *     {@code
      *     CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
@@ -183,7 +183,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * </pre>
      *
      * @param <T> Data input type to the Maybe
-     * @return A reactive CompletableMaybe
+     * @return A reactiveBuffer CompletableMaybe
      */
     static <T> CompletableMaybe<T,T> maybe(){
         Completable.CompletablePublisher<T> c = new Completable.CompletablePublisher<T>();
@@ -361,7 +361,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
     /**
-     * Construct a Maybe  that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
+     * Construct a Maybe  that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);

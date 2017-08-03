@@ -107,13 +107,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     
-    public ReactiveSeq<T> fold(Monoid<T> monoid){
-        Spliterator<T> s = this.spliterator();
-        FoldingSinkSpliterator<T> fs = new FoldingSinkSpliterator<>(s.estimateSize(), s.characteristics(), s, monoid);
-        
-        
-        return createSeq(new ValueEmittingSpliterator<T>(1, s.characteristics(),createSeq(fs)));
-    }
+
 
     
 

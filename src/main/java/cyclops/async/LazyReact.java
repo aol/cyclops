@@ -899,7 +899,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive flow from a JDK Iterator
+     * Start a reactiveBuffer flow from a JDK Iterator
      * <pre>
      * {@code 
      *  Iterator<Integer> iterator;
@@ -908,7 +908,7 @@ public class LazyReact implements ReactBuilder {
      * 
      * }
      * </pre>
-     * @param iterator SimpleReact will iterate over this iterator concurrently toNested skip the reactive dataflow
+     * @param iterator SimpleReact will iterate over this iterator concurrently toNested skip the reactiveBuffer dataflow
      * @return  FutureStream
      */
     @SuppressWarnings("unchecked")
@@ -918,7 +918,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive flow from a Collection using an Iterator
+     * Start a reactiveBuffer flow from a Collection using an Iterator
      * 
      * 
      * <pre>
@@ -941,9 +941,9 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a reactiveStream.
+     * Start a reactiveBuffer dataflow from a reactiveStream.
      * 
-     * @param stream that will be used toNested drive the reactive dataflow
+     * @param stream that will be used toNested drive the reactiveBuffer dataflow
      * @return  FutureStream
      */
     public FutureStream<Integer> from(final IntStream stream) {
@@ -953,9 +953,9 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a reactiveStream.
+     * Start a reactiveBuffer dataflow from a reactiveStream.
      * 
-     * @param stream that will be used toNested drive the reactive dataflow
+     * @param stream that will be used toNested drive the reactiveBuffer dataflow
      * @return  FutureStream
      */
     public FutureStream<Double> from(final DoubleStream stream) {
@@ -963,9 +963,9 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a reactiveStream.
+     * Start a reactiveBuffer dataflow from a reactiveStream.
      * 
-     * @param stream that will be used toNested drive the reactive dataflow
+     * @param stream that will be used toNested drive the reactiveBuffer dataflow
      * @return FutureStream
      */
     public FutureStream<Long> from(final LongStream stream) {

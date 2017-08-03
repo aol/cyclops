@@ -68,7 +68,7 @@ public interface Value<T> extends   Folds<T>,
     }
 
     /**
-     * @return A factory class generating Values from reactive-streams Subscribers
+     * @return A factory class generating Values from reactiveBuffer-streams Subscribers
      */
     default ValueSubscriber<T> newSubscriber() {
         return ValueSubscriber.subscriber();

@@ -309,7 +309,7 @@ public class Future<T> implements To<Future<T>>,
 
     }
     /**
-     * Construct a Future asyncrhonously that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
+     * Construct a Future asyncrhonously that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
      *
      *
      * <pre>
@@ -357,7 +357,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Construct a Future syncrhonously that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
+     * Construct a Future syncrhonously that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);

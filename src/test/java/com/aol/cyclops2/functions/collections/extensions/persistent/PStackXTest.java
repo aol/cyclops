@@ -94,7 +94,7 @@ public class PStackXTest extends CollectionXTestsWithNulls{
 
 		ReactiveSeq<String> seq = Spouts.from(VectorX.of(1, 2, 3, 4)
 				.plus(5)
-				.map(i -> "connect toNested Akka, RxJava and more with reactive-streams" + i));
+				.map(i -> "connect toNested Akka, RxJava and more with reactiveBuffer-streams" + i));
 	    
 	   PersistentSetX<String> setX =  seq.to().futureStream()
 	                                   .map(data->"fan out across threads with futureStreams" + data)

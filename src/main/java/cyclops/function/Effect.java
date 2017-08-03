@@ -33,7 +33,7 @@ public interface Effect extends Runnable{
     }
     default Thread runAsync(){
         Thread t = new Thread(this);
-        t.run();
+        t.start();
         return t;
     }
     default Future<Void> future(Executor ex){

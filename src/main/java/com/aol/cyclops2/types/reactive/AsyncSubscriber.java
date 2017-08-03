@@ -1,5 +1,6 @@
 package com.aol.cyclops2.types.reactive;
 
+import com.aol.cyclops2.internal.stream.spliterators.push.BufferingSinkOperator;
 import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -18,7 +19,7 @@ import java.util.concurrent.locks.LockSupport;
  *
  * <pre>
  *    {@code
- *          AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
+ *          PushSubscriber<Integer> sub = Spouts.asyncSubscriber();
  *
  *          //on a seperate thread
  *          for(int i=0;i<100;i++)
@@ -42,7 +43,7 @@ import java.util.concurrent.locks.LockSupport;
  * @param <T> Subscriber type
  */
 @AllArgsConstructor//(access=AccessLevel.PRIVATE)
-public class AsyncSubscriber<T> implements Subscriber<T> {
+public class AsyncSubscriber<T> implements Subscriber<T>, PushSubscriber<T> {
 
 
     volatile boolean isOpen;
@@ -72,7 +73,7 @@ public class AsyncSubscriber<T> implements Subscriber<T> {
     /**
      * <pre>
      *    {@code
-     *          AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
+     *          PushSubscriber<Integer> sub = Spouts.asyncSubscriber();
      *
      *          //on a seperate thread
      *          for(int i=0;i<100;i++)

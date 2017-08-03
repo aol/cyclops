@@ -3096,7 +3096,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
     /**
      * A potentially non-blocking analog of {@link ReactiveSeq#forEach}.
-     * For push based reactive Stream types (created via Spouts of FutureStream}
+     * For push based reactiveBuffer Stream types (created via Spouts of FutureStream}
      *
      * @param action a <a href="package-summary.html#NonInterference">
      *               non-interfering</a> action toNested perform on the elements

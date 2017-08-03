@@ -15,7 +15,7 @@ import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 import lombok.val;
 
 /**
- * A Subscriber for Observable type event driven Streams that implement backpressure via the reactive-streams API
+ * A Subscriber for Observable type event driven Streams that implement backpressure via the reactiveBuffer-streams API
 
  * 
  * @author johnmcclean
@@ -59,7 +59,7 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
      *    }
      * </pre>
      *
-     * @return A push-based asychronous event driven Observable-style Stream that implements Backpressure via the reactive-streams API
+     * @return A push-based asychronous event driven Observable-style Stream that implements Backpressure via the reactiveBuffer-streams API
      */
     public ReactiveSeq<T> reactiveStream(){
         streamCreated = true;

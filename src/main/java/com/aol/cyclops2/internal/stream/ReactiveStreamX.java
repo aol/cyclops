@@ -658,7 +658,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
         }
 
-        //should we force all Stream types on reactive-streams path?
+        //should we force all Stream types on reactiveBuffer-streams path?
         sub.onSubscribe(source.subscribe(sub::onNext, sub::onError, sub::onComplete));
     }
 
@@ -1122,7 +1122,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             ListX<ReactiveSeq<T>> result = ListX.empty();
             for(int i=0;i<num;i++) {
                 ReactiveSeq<T> seq = Spouts.<T>async(s1 -> {
-                    subs.add(s1);
+                    subs.add(s1.asSubscriber());
                     if (subs.size() == num) {
                         this.forEach(e -> subs.forEach(s -> s.onNext(e)), ex -> subs.forEach(s -> s.onError(ex)), () -> subs.forEach(s -> s.onComplete()));
                     }

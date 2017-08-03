@@ -68,7 +68,7 @@ import org.reactivestreams.Subscription;
  * Handle exceptions conciously, not coding bugs
  * Fluent step builders
  * Fail fast
- * Support eager, lazy and reactive execution modes
+ * Support eager, lazy and reactiveBuffer execution modes
  *
  * Examples :
  *
@@ -418,7 +418,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return new Try<>(pub,new Class[0]);
     }
     /**
-     * Construct a Try  that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher, will catch any Exceptions
+     * Construct a Try  that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher, will catch any Exceptions
      * of the provided types
      * <pre>
      * {@code
@@ -450,7 +450,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * Construct a Try  that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
+     * Construct a Try  that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
      *
      * <pre>
      * {@code
