@@ -1428,13 +1428,13 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<deque>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<deque> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<deque>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<deque> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

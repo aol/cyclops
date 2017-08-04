@@ -182,13 +182,13 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<list>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<list> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<list>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<list> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

@@ -363,13 +363,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
     public  Active<Higher<Higher<product,W1>,W2>,T> allTypeClasses(){
         return  Active.of(this, Instances.<W1, W2>definitions(def1, def2));
     }
-/**
-    public  <W2, R> Higher<W2, Higher<W, R>> flatTraverse(Applicative<W2> applicative,
-                                                          Function<? super T,? extends Higher<W2, Higher<W, R>>>f) {
-        return def1.traverse()
-                .flatTraverse(applicative,def1.monad(),single,f);
-    }
- **/
+
     public <C2, R> Higher<C2, Product<W1,W2,R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn){
         return traverseA(applicative,fn,this);
 

@@ -132,13 +132,13 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<identity>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<identity> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<identity>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<identity> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

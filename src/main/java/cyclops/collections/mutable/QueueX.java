@@ -1274,13 +1274,13 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<queue>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<queue> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<queue>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<queue> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

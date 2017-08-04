@@ -54,20 +54,20 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
     public static  <T,R> Cokleisli<Higher<reader,T>,R,Reader<T,R>> kindCokleisli(){
         return Cokleisli.of(Reader::narrowK);
     }
-    public static <W1,T,R> Nested<Higher<reader,T>,W1,R> nested(Reader<T,Higher<W1,R>> nested, InstanceDefinitions<W1> def2){
-        return Nested.of(nested, Instances.definitions(),def2);
+    public static <W1,T,R> Nested<Higher<reader,T>,W1,R> nested(Reader<T,Higher<W1,R>> nested, T defaultValue,InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(defaultValue),def2);
     }
-    default <W1> Product<Higher<reader,T>,W1,R> product(Active<W1,R> active){
-        return Product.of(allTypeclasses(),active);
+    default <W1> Product<Higher<reader,T>,W1,R> product(T defaultValue,Active<W1,R> active){
+        return Product.of(allTypeclasses(defaultValue),active);
     }
-    default <W1> Coproduct<W1,Higher<reader,T>,R> coproduct(InstanceDefinitions<W1> def2){
-        return Coproduct.right(this,def2, Instances.definitions());
+    default <W1> Coproduct<W1,Higher<reader,T>,R> coproduct(T defaultValue, InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions(defaultValue));
     }
-    default Active<Higher<reader,T>,R> allTypeclasses(){
-        return Active.of(this, Instances.definitions());
+    default Active<Higher<reader,T>,R> allTypeclasses(T defaultValue){
+        return Active.of(this, Instances.definitions(defaultValue));
     }
-    default <W2,R2> Nested<Higher<reader,T>,W2,R2> mapM(Function<? super R,? extends Higher<W2,R2>> fn, InstanceDefinitions<W2> defs){
-        return Nested.of(map(fn), Instances.definitions(), defs);
+    default <W2,R2> Nested<Higher<reader,T>,W2,R2> mapM(T defaultValue,Function<? super R,? extends Higher<W2,R2>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(defaultValue), defs);
     }
 
     default  <R2> Reader<T, Tuple2<R,R2>> zip(Reader<T, R2> o){

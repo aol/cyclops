@@ -1241,13 +1241,13 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<set>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<set> traverse() {
+                    return  Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<set>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<set> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

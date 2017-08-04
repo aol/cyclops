@@ -634,13 +634,13 @@ public class CompletableFutures {
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<completableFuture>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<completableFuture> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<completableFuture>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<completableFuture> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

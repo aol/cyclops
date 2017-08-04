@@ -285,13 +285,13 @@ public final class State<S, T> implements Higher2<state,S,T> {
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<state, S>>> traverse() {
-                    return Maybe.none();
+                public <C2, T> Traverse<Higher<state, S>> traverse() {
+                    return Instances.traverse(val);
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<state, S>>> foldable() {
-                    return Maybe.just(Instances.foldable(val));
+                public <T> Foldable<Higher<state, S>> foldable() {
+                    return Instances.foldable(val);
                 }
 
                 @Override
@@ -365,6 +365,36 @@ public final class State<S, T> implements Higher2<state,S,T> {
                 @Override
                 public <T, R> Higher<Higher<state, S>, R> flatMap(Function<? super T, ? extends Higher<Higher<state, S>, R>> fn, Higher<Higher<state, S>, T> ds) {
                     return narrowK(ds).flatMap(fn.andThen(h->narrowK(h)));
+                }
+            };
+        }
+        public static <S> Traverse<Higher<state, S>> traverse(S defaultValue) {
+            return new Traverse<Higher<state, S>>() {
+                @Override
+                public <C2, T, R> Higher<C2, Higher<Higher<state, S>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<state, S>, T> ds) {
+                    State<S, T> s = narrowK(ds);
+                    Higher<C2, R> x = fn.apply(s.eval(defaultValue));
+                    return applicative.map(r->State.constant(r),x);
+                }
+
+                @Override
+                public <C2, T> Higher<C2, Higher<Higher<state, S>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<state, S>, Higher<C2, T>> ds) {
+                    return traverseA(applicative,Function.identity(),ds);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<state, S>, R> ap(Higher<Higher<state, S>, ? extends Function<T, R>> fn, Higher<Higher<state, S>, T> apply) {
+                        return Instances.<S>applicative().ap(fn,apply);
+                }
+
+                @Override
+                public <T> Higher<Higher<state, S>, T> unit(T value) {
+                    return Instances.<S>unit().unit(value);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<state, S>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<state, S>, T> ds) {
+                    return Instances.<S>functor().map(fn,ds);
                 }
             };
         }

@@ -71,16 +71,13 @@ public class ActiveTest {
 
     @Test
     public void folds(){
-       int res = active.folds()
-                .get()
-                .foldLeft(Monoids.intMax);
+       int res = active.foldLeft(Monoids.intMax);
        assertThat(res,equalTo(3));
     }
     @Test
     public void traverse(){
 
-        Higher<maybe, Higher<list, Integer>> res = active.traverse()
-                .get()
+        Higher<maybe, Higher<list, Integer>> res = active
                 .<maybe,Integer>flatTraverse(applicative(), t->Maybe.just(ListX.of(t*2)));
 
         Maybe<ListX<Integer>> raw = res.convert(Maybe::narrowK)

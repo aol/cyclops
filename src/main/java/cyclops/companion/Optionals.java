@@ -681,13 +681,13 @@ public class Optionals {
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<optional>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<optional> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<optional>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<optional> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

@@ -6,6 +6,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.writer;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
@@ -284,13 +285,13 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<writer, W>>> traverse() {
-                    return Maybe.none();
+                public <C2, T> Traverse<Higher<writer, W>> traverse() {
+                    return Instances.traverse(monoid);
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<writer, W>>> foldable() {
-                    return Maybe.just(Writer.Instances.foldable());
+                public <T> Foldable<Higher<writer, W>> foldable() {
+                    return Writer.Instances.foldable();
                 }
 
                 @Override
@@ -364,6 +365,38 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 @Override
                 public <T, R> Higher<Higher<writer, W>, R> flatMap(Function<? super T, ? extends Higher<Higher<writer, W>, R>> fn, Higher<Higher<writer, W>, T> ds) {
                     return narrowK(ds).flatMap(fn.andThen(h->narrowK(h)));
+                }
+            };
+        }
+        public static <W> Traverse<Higher<writer, W>> traverse(Monoid<W> monoid) {
+            return new Traverse<Higher<writer, W>>() {
+                @Override
+                public <C2, T, R> Higher<C2, Higher<Higher<writer, W>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<writer, W>, T> ds) {
+                    Writer<W, T> w = narrowK(ds);
+                    Higher<C2, R> r = w.visit((t, m) -> fn.apply(t.v1));
+                    Higher<C2, Higher<Higher<writer, W>, R>> x = applicative.map_(r, t -> widen(Writer.writer(t, monoid)));
+                    return x;
+
+                }
+
+                @Override
+                public <C2, T> Higher<C2, Higher<Higher<writer, W>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<writer, W>, Higher<C2, T>> ds) {
+                    return traverseA(applicative,Function.identity(),ds);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<writer, W>, R> ap(Higher<Higher<writer, W>, ? extends Function<T, R>> fn, Higher<Higher<writer, W>, T> apply) {
+                    return Instances.applicative(monoid).ap(fn,apply);
+                }
+
+                @Override
+                public <T> Higher<Higher<writer, W>, T> unit(T value) {
+                    return Instances.unit(monoid).unit(value);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<writer, W>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<writer, W>, T> ds) {
+                    return Instances.<W>functor().map(fn,ds);
                 }
             };
         }

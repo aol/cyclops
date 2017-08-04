@@ -1906,13 +1906,13 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<Higher<Higher<either4, L1>, L2>,L3>>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<Higher<Higher<Higher<either4, L1>, L2>,L3>> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<Higher<Higher<either4, L1>, L2>,L3>>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<Higher<Higher<Higher<either4, L1>, L2>,L3>> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

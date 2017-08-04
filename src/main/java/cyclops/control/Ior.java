@@ -1511,13 +1511,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<ior, L>>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<Higher<ior, L>> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<ior, L>>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<Higher<ior, L>> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

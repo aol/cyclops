@@ -1620,13 +1620,13 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<Higher<either3, L1>, L2>>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<Higher<Higher<either3, L1>, L2>> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<Higher<either3, L1>, L2>>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<Higher<Higher<either3, L1>, L2>> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

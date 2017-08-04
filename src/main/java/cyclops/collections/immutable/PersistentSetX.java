@@ -1227,13 +1227,13 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<persistentSetX>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<persistentSetX> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<persistentSetX>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<persistentSetX> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

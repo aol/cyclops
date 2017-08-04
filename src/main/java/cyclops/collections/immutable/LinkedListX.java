@@ -1389,13 +1389,13 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<linkedListX>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<linkedListX> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<linkedListX>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<linkedListX> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

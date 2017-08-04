@@ -626,13 +626,13 @@ public interface Spouts {
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<reactiveSeq>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<reactiveSeq> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<reactiveSeq>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<reactiveSeq> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override

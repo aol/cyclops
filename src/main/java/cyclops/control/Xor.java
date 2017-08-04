@@ -1440,13 +1440,13 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<xor, L>>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<Higher<xor, L>> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<xor, L>>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<Higher<xor, L>> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
