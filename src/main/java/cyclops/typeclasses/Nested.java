@@ -453,7 +453,29 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         }
     }
 
+    public <C2, R> Higher<C2, Nested<W1,W2,R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn){
+        Nested<W1, W2, T> n = this;
+        ComposedTraverse<W1,W2> ct = ComposedTraverse.of(n.def1.traverse(),n.def2.traverse(),n.def2.applicative());
+        Higher<C2, Higher<W1, Higher<W2, R>>> r = ct.traverse(applicative,fn,n.nested);
+        Higher<C2, Nested<W1,W2,R>> x = applicative.map(nr -> Nested.of(nr, n.def1, n.def2), r);
+        return x;
 
+    }
+    public  <C2,T> Higher<C2, Nested<W1,W2,T>> sequenceA(Applicative<C2> applicative,
+                                                     Nested<W1,W2,Higher<C2,T>> ds){
+        Higher<C2, Higher<Higher<Higher<nested, W1>, W2>, T>> x = Instances.traverseA(applicative, a -> a, ds);
+        return (Higher)x;
+
+    }
+
+    public   <C2, R> Higher<C2, Nested<W1,W2,R>> flatTraverse(Applicative<C2> applicative,
+                                                                Function<? super T,? extends Higher<C2, Nested<W1,W2, R>>> f, TransformerFactory<W1,W2> factory) {
+        return applicative.map_(traverseA(applicative, f), it->  it.transformer(factory).flatMap(a->a));
+    }
+
+    public  <C2,T> Higher<C2, Nested<W1,W2,T>> flatSequence(Applicative<C2> applicative, Nested<W1,W2,Higher<C2,Nested<W1,W2,T>>> fgfa,TransformerFactory<W1,W2> factory) {
+        return applicative.map(i -> i.transformer(factory).flatMap(Function.identity()),sequenceA(applicative, fgfa) );
+    }
     public Nested<W2, W1, T> sequence(){
         Higher<W2, Higher<W1, T>> res = def1.traverse().sequenceA(def2.applicative(), nested);
         return of(res,def2,def1);

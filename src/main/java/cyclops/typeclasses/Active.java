@@ -8,6 +8,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.function.*;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -16,8 +17,10 @@ import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.ComposedTraverse;
 import cyclops.typeclasses.monad.MonadPlus;
 import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.transformers.TransformerFactory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -337,44 +340,25 @@ public class Active<W,T> implements Filters<T>,
         return of(semigroupK.apply(single,add.getSingle()),def1);
     }
 
-    public TraverseOps traverse(Traverse<W> traverse) {
-        return new TraverseOps(traverse);
-
-    }
-    public Maybe<TraverseOps> traverse(){
-        return def1.traverse().visit(e->Maybe.just(new TraverseOps(e)),Maybe::none);
-    }
 
     public Unfolds unfolds(Unfoldable<W> unfoldable){
         return new Unfolds(unfoldable);
     }
-    public Folds folds(Foldable<W> foldable){
-        return new Folds(foldable);
-    }
+
     public Plus plus(MonadPlus<W> plus){
         return new Plus(plus);
     }
 
-    public TraverseOps traverseUnsafe() {
-        return new TraverseOps(def1.traverse().get());
+    public Unfolds unfoldsDefault(){
+        return new Unfolds(def1.unfoldable().visit(p->p,()->new Unfoldable.UnsafeValueUnfoldable<>()));
+    }
 
-    }
-    @Deprecated
-    public Unfolds unfoldsUnsafe(){
-        return new Unfolds(def1.unfoldable().get());
-    }
-    @Deprecated
-    public Folds foldsUnsafe(){
-        return new Folds(def1.foldable().get());
-    }
     @Deprecated
     public Plus plusUnsafe(){
         return new Plus(def1.monadPlus().get());
     }
 
-    public Maybe<Folds> folds(){
-        return def1.foldable().visit(e->Maybe.just(new Folds(e)),Maybe::none);
-    }
+
     public Maybe<Unfolds> unfolds(){
         return def1.unfoldable().visit(e->Maybe.just(new Unfolds(e)),Maybe::none);
     }
@@ -449,46 +433,61 @@ public class Active<W,T> implements Filters<T>,
     }
 
 
-    @AllArgsConstructor
-    public class Folds {
-        private final Foldable<W> foldable;
-        public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
-            return def1.foldable().visit(p->p.foldMap(mb,fn,single),()->mb.zero());
-        }
 
-        public T foldRight(Monoid<T> monoid) {
-            return  def1.foldable().visit(p -> p.foldRight(monoid, single), () -> monoid.zero());
-        }
+    public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
+        return def1.foldable().foldMap(mb,fn,single);
+    }
+
+    public T foldRight(Monoid<T> monoid) {
+        return  def1.foldable().foldRight(monoid, single);
+    }
 
 
-        public T foldRight(T identity, BinaryOperator<T> semigroup) {
-            return foldRight(Monoid.fromBiFunction(identity, semigroup));
-        }
+    public T foldRight(T identity, BinaryOperator<T> semigroup) {
+        return foldRight(Monoid.fromBiFunction(identity, semigroup));
+    }
 
-        public T foldLeft(Monoid<T> monoid) {
-            return def1.foldable().visit(p -> p.foldLeft(monoid, single), () -> monoid.zero());
-        }
+    public T foldLeft(Monoid<T> monoid) {
+        return def1.foldable().foldLeft(monoid, single);
+    }
 
 
-        public T foldLeft(T identity, BinaryOperator<T> semigroup) {
-            return foldLeft(Monoid.fromBiFunction(identity, semigroup));
-        }
+    public T foldLeft(T identity, BinaryOperator<T> semigroup) {
+        return foldLeft(Monoid.fromBiFunction(identity, semigroup));
+    }
+
+    public  <W2, R> Higher<W2, Higher<W, R>> flatTraverse(Applicative<W2> applicative,
+                                                          Function<? super T,? extends Higher<W2, Higher<W, R>>>f) {
+        return def1.traverse()
+                .flatTraverse(applicative,def1.monad(),single,f);
+    }
+    public <C2, R> Higher<C2, Active<W,R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn){
+        return traverseA(applicative,fn,this);
+
+    }
+    public static <W,T,C2, R> Higher<C2, Active<W,R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,Active<W,T> n){
+
+        Traverse<W> traverse = n.def1.traverse();
+        Higher<C2, Higher<W, R>> r = traverse.traverseA(applicative,fn,n.single);
+        Higher<C2, Active<W,R>> x = applicative.map(nr -> Active.of(nr, n.def1), r);
+        return x;
+
+    }
+    public  <C2,T> Higher<C2, Active<W,T>> sequenceA(Applicative<C2> applicative,
+                                                         Active<W,Higher<C2,T>> ds){
+       return traverseA(applicative, i -> i, ds);
 
     }
 
-    @AllArgsConstructor
-    public class TraverseOps {
-        private final Traverse<W> traverse;
-
-        public  <W2, R> Higher<W2, Higher<W, R>> flatTraverse(Applicative<W2> applicative,
-                                                               Function<? super T,? extends Higher<W2, Higher<W, R>>>f) {
-            return traverse
-                       .flatTraverse(applicative,def1.monad(),single,f);
-        }
-        public <R> R foldMap(Monoid<R> mb, final Function<? super T,? extends R> fn) {
-            return traverse.foldMap(mb,fn,single);
-        }
+    public   <C2, R> Higher<C2, Active<W,R>> flatTraverseA(Applicative<C2> applicative,
+                                                              Function<? super T,? extends Higher<C2, Active<W, R>>> f) {
+        return applicative.map_(traverseA(applicative, f), it->  it.flatMapA(a->a));
     }
+
+    public  <C2,T> Higher<C2, Active<W,T>> flatSequenceA(Applicative<C2> applicative, Active<W,Higher<C2,Active<W,T>>> fgfa) {
+        return applicative.map(i -> i.flatMapA(Function.identity()),sequenceA(applicative, fgfa) );
+    }
+
 
     public <W2> Product<W,W2,T> concat(Active<W2,T> active){
         return Product.of(this,active);

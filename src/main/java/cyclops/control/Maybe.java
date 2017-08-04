@@ -127,6 +127,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
         return Cokleisli.of(Maybe::narrowK);
     }
     public static <W1,T> Nested<maybe,W1,T> nested(Maybe<Higher<W1,T>> nested,InstanceDefinitions<W1> def2){
+
         return Nested.of(nested,Instances.definitions(),def2);
     }
     default <W1> Product<maybe,W1,T> product(Active<W1,T> active){

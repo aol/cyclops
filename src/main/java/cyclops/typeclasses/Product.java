@@ -211,37 +211,33 @@ public class Product<W1,W2,T> implements  Filters<T>,
     public Product<W2,W1,T> swap(){
         return of(run.swap(),def2,def1);
     }
-    /**
-     * @return An Instance of Folds that will use Monoid.zero if the foldable type class is unavailable
-     */
-    public Folds foldsUnsafe(){
-        return new Folds();
+
+    public Unfolds unfoldsDefault(){
+        return new Unfolds(def1.unfoldable().visit(p->p,()->new Unfoldable.UnsafeValueUnfoldable<>()),
+                def2.unfoldable().visit(p->p,()->new Unfoldable.UnsafeValueUnfoldable<>()));
     }
-    public Unfolds unfoldsUnsafe(){
-        return new Unfolds();
-    }
-    public Maybe<Folds> folds(){
-        if(def1.foldable().isPresent() && def2.foldable().isPresent())
-            return Maybe.just(new Folds());
-        return Maybe.none();
-    }
+
     public Maybe<Unfolds> unfolds(){
         if(def1.unfoldable().isPresent() && def2.unfoldable().isPresent())
-            return Maybe.just(new Unfolds());
+            return Maybe.just(new Unfolds(def1.unfoldable().get(),def2.unfoldable().get()));
         return Maybe.none();
     }
     public Plus plusUnsafe(){
-        return new Plus();
+        return new Plus(def1.monadPlus().get(),def2.monadPlus().get());
     }
     public Maybe<Plus> plus(){
         if(def1.monadPlus().isPresent() && def2.monadPlus().isPresent())
-            return Maybe.just(new Plus());
+            return Maybe.just(new Plus(def1.monadPlus().get(),def2.monadPlus().get()));
         return Maybe.none();
     }
-    public class Unfolds {
+    @AllArgsConstructor
+    public  class Unfolds {
+
+        private final Unfoldable<W1> unf1;
+        private final Unfoldable<W2> unf2;
 
         public <R, T> Product<W1,W2, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn){
-            Tuple2<Higher<W1, R>, Higher<W2, R>> res = run.map((left, right) -> Tuple.tuple(def1.unfoldable().get().unfold(b, fn), def2.unfoldable().get().unfold(b, fn)));
+            Tuple2<Higher<W1, R>, Higher<W2, R>> res = run.map((left, right) -> Tuple.tuple(unf1.unfold(b, fn), unf2.unfold(b, fn)));
             return Product.of(res, def1, def2);
         }
 
@@ -256,89 +252,89 @@ public class Product<W1,W2,T> implements  Filters<T>,
             return replicate(1, a);
         }
     }
+    @AllArgsConstructor
     public class Plus{
+        private final MonadPlus<W1> plus1;
+        private final MonadPlus<W2> plus2;
 
         public Product<W1,W2,T> plus(Product<W1,W2,T> a){
-            Active<W1, T> r1 = Active.of(run.v1, def1).plusUnsafe().plusA(a.v1());
-            Active<W2, T> r2 = Active.of(run.v2, def2).plusUnsafe().plusA(a.v2());
+            Active<W1, T> r1 = Active.of(run.v1, def1).plus(plus1).plusA(a.v1());
+            Active<W2, T> r2 = Active.of(run.v2, def2).plus(plus2).plusA(a.v2());
             return of(r1,r2);
         }
         public Product<W1,W2,T> sum(ListX<Product<W1,W2,T>> list){
 
-            Active<W1, T> r1 = Active.of(run.v1, def1).plusUnsafe().sumA(list.map(p->p.asActiveTuple().v1));
-            Active<W2, T> r2 = Active.of(run.v2, def2).plusUnsafe().sumA(list.map(p->p.asActiveTuple().v2));
+            Active<W1, T> r1 = Active.of(run.v1, def1).plus(plus1).sumA(list.map(p->p.asActiveTuple().v1));
+            Active<W2, T> r2 = Active.of(run.v2, def2).plus(plus2).sumA(list.map(p->p.asActiveTuple().v2));
             return of(r1,r2);
         }
 
     }
-    public class Folds {
-
-        public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
-            return run.map((a, b) -> {
-                R r1 = def1.foldable().visit(p -> p.foldMap(mb, fn, a), () -> mb.zero());
-                R r2 = def2.foldable().visit(p -> p.foldMap(mb, fn, b), () -> mb.zero());
-                return mb.foldRightI(Arrays.asList(r2, r1));
-            });
-        }
-        public T foldRight(Monoid<T> monoid) {
-            return run.map((a, b) -> {
-                T r1 = def1.foldable().visit(p -> p.foldRight(monoid, a), () -> monoid.zero());
-                T r2 = def2.foldable().visit(p -> p.foldRight(monoid, b), () -> monoid.zero());
-                return monoid.foldRightI(Arrays.asList(r2, r1));
-            });
-
-        }
-
-        public T foldRight(T identity, BinaryOperator<T> semigroup) {
-            return foldRight(Monoid.fromBiFunction(identity, semigroup));
-
-        }
-
-        public T foldLeft(Monoid<T> monoid) {
-            return run.map((a, b) -> {
-                T r1 = def1.foldable().visit(p -> p.foldRight(monoid, a), () -> monoid.zero());
-                T r2 = def2.foldable().visit(p -> p.foldRight(monoid, b), () -> monoid.zero());
-                return monoid.foldLeftI(Arrays.asList(r1, r2));
-            });
-        }
-
-        public T foldLeft(T identity, BinaryOperator<T> semigroup) {
-            return foldLeft(Monoid.fromBiFunction(identity, semigroup));
-        }
-        public <R> Tuple2<R,R> foldMapTuple(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
-            return run.map((a, b) -> {
-                R r1 = def1.foldable().visit(p -> p.foldMap(mb, fn, a), () -> mb.zero());
-                R r2 = def2.foldable().visit(p -> p.foldMap(mb, fn, b), () -> mb.zero());
-                return Tuple.tuple(r2, r1);
-            });
-        }
-        public Tuple2<T,T> foldRightTuple(Monoid<T> monoid) {
-            return run.map((a, b) -> {
-                T r1 = def1.foldable().visit(p -> p.foldRight(monoid, a), () -> monoid.zero());
-                T r2 = def2.foldable().visit(p -> p.foldRight(monoid, b), () -> monoid.zero());
-                return Tuple.tuple(r2, r1);
-            });
-
-        }
-
-        public Tuple2<T,T> foldRightTuple(T identity, BinaryOperator<T> semigroup) {
-            return foldRightTuple(Monoid.fromBiFunction(identity, semigroup));
-
-        }
-
-        public Tuple2<T,T> foldLeftTuple(Monoid<T> monoid) {
-            return run.map((a, b) -> {
-                T r1 = def1.foldable().visit(p -> p.foldRight(monoid, a), () -> monoid.zero());
-                T r2 = def2.foldable().visit(p -> p.foldRight(monoid, b), () -> monoid.zero());
-                return Tuple.tuple(r1, r2);
-            });
-        }
-
-        public Tuple2<T,T> foldLeftTuple(T identity, BinaryOperator<T> semigroup) {
-            return foldLeftTuple(Monoid.fromBiFunction(identity, semigroup));
-        }
+    public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
+        return run.map((a, b) -> {
+            R r1 = def1.foldable().foldMap(mb, fn, a);
+            R r2 = def2.foldable().foldMap(mb, fn, b);
+            return mb.foldRightI(Arrays.asList(r2, r1));
+        });
+    }
+    public T foldRight(Monoid<T> monoid) {
+        return run.map((a, b) -> {
+            T r1 = def1.foldable().foldRight(monoid, a);
+            T r2 = def2.foldable().foldRight(monoid, b);
+            return monoid.foldRightI(Arrays.asList(r2, r1));
+        });
 
     }
+
+    public T foldRight(T identity, BinaryOperator<T> semigroup) {
+        return foldRight(Monoid.fromBiFunction(identity, semigroup));
+
+    }
+
+    public T foldLeft(Monoid<T> monoid) {
+        return run.map((a, b) -> {
+            T r1 = def1.foldable().foldRight(monoid, a);
+            T r2 = def2.foldable().foldRight(monoid, b);
+            return monoid.foldLeftI(Arrays.asList(r1, r2));
+        });
+    }
+
+    public T foldLeft(T identity, BinaryOperator<T> semigroup) {
+        return foldLeft(Monoid.fromBiFunction(identity, semigroup));
+    }
+    public <R> Tuple2<R,R> foldMapTuple(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
+        return run.map((a, b) -> {
+            R r1 = def1.foldable().foldMap(mb, fn, a);
+            R r2 = def2.foldable().foldMap(mb, fn, b);
+            return Tuple.tuple(r2, r1);
+        });
+    }
+    public Tuple2<T,T> foldRightTuple(Monoid<T> monoid) {
+        return run.map((a, b) -> {
+            T r1 = def1.foldable().foldRight(monoid, a);
+            T r2 = def2.foldable().foldRight(monoid, b);
+            return Tuple.tuple(r2, r1);
+        });
+
+    }
+
+    public Tuple2<T,T> foldRightTuple(T identity, BinaryOperator<T> semigroup) {
+        return foldRightTuple(Monoid.fromBiFunction(identity, semigroup));
+
+    }
+
+    public Tuple2<T,T> foldLeftTuple(Monoid<T> monoid) {
+        return run.map((a, b) -> {
+            T r1 = def1.foldable().foldRight(monoid, a);
+            T r2 = def2.foldable().foldRight(monoid, b);
+            return Tuple.tuple(r1, r2);
+        });
+    }
+
+    public Tuple2<T,T> foldLeftTuple(T identity, BinaryOperator<T> semigroup) {
+        return foldLeftTuple(Monoid.fromBiFunction(identity, semigroup));
+    }
+
 
     public <R1, R> Product<W1,W2,R> forEach2(Function<? super T, ? extends Product<W1,W2,R1>> value1, final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         return flatMap(a->{
@@ -367,6 +363,42 @@ public class Product<W1,W2,T> implements  Filters<T>,
     public  Active<Higher<Higher<product,W1>,W2>,T> allTypeClasses(){
         return  Active.of(this, Instances.<W1, W2>definitions(def1, def2));
     }
+/**
+    public  <W2, R> Higher<W2, Higher<W, R>> flatTraverse(Applicative<W2> applicative,
+                                                          Function<? super T,? extends Higher<W2, Higher<W, R>>>f) {
+        return def1.traverse()
+                .flatTraverse(applicative,def1.monad(),single,f);
+    }
+ **/
+    public <C2, R> Higher<C2, Product<W1,W2,R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn){
+        return traverseA(applicative,fn,this);
+
+    }
+
+    public static <W1,W2,T,C2, R> Higher<C2, Product<W1,W2,R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,Product<W1,W2,T> n){
+
+        Higher<C2, Active<W1, R>> v1 = n.v1().traverseA(applicative, fn);
+
+        Higher<C2, Active<W2, R>> v2 = n.v2().traverseA(applicative, fn);
+
+
+        return applicative.zip(v1,v2,(a,b)->a.concat(b));
+    }
+    public  <C2,T> Higher<C2, Product<W1,W2,T>> sequenceA(Applicative<C2> applicative,
+                                                     Product<W1,W2,Higher<C2,T>> ds){
+        return traverseA(applicative, i -> i, ds);
+
+    }
+
+    public   <C2, R> Higher<C2, Product<W1,W2,R>> flatTraverseA(Applicative<C2> applicative,
+                                                           Function<? super T,? extends Higher<C2, Product<W1,W2, R>>> f) {
+        return applicative.map_(traverseA(applicative, f), it->  it.flatMap(a->a));
+    }
+
+    public  <C2,T> Higher<C2, Product<W1,W2,T>> flatSequenceA(Applicative<C2> applicative, Product<W1,W2,Higher<C2,Product<W1,W2,T>>> fgfa) {
+        return applicative.map(i -> i.flatMap(Function.identity()),sequenceA(applicative, fgfa) );
+    }
+
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Instances<W1,W2> implements InstanceDefinitions<Higher<Higher<product, W1>, W2>>{
@@ -593,25 +625,52 @@ public class Product<W1,W2,T> implements  Filters<T>,
         }
 
         @Override
-        public <C2, T> Maybe<cyclops.typeclasses.monad.Traverse<Higher<Higher<product, W1>, W2>>> traverse() {
-            return Maybe.none();
+        public <C2, T> Traverse<Higher<Higher<product, W1>, W2>> traverse() {
+            return new Traverse<Higher<Higher<product, W1>, W2>>() {
+                @Override
+                public <C2, T, R> Higher<C2, Higher<Higher<Higher<product, W1>, W2>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<Higher<product, W1>, W2>, T> ds) {
+                    Product<W1, W2, T> pr = narrowK(ds);
+                    Higher<C2, Product<W1, W2, R>> x = pr.traverseA(applicative, fn);
+                    return (Higher)x;
+                }
+
+                @Override
+                public <C2, T> Higher<C2, Higher<Higher<Higher<product, W1>, W2>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<Higher<product, W1>, W2>, Higher<C2, T>> ds) {
+                    return traverseA(applicative,Function.identity(),ds);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<Higher<product, W1>, W2>, R> ap(Higher<Higher<Higher<product, W1>, W2>, ? extends Function<T, R>> fn, Higher<Higher<Higher<product, W1>, W2>, T> apply) {
+                    return Instances.this.applicative().ap(fn,apply);
+                }
+
+                @Override
+                public <T> Higher<Higher<Higher<product, W1>, W2>, T> unit(T value) {
+                    return Instances.this.<T>unit().unit(value);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<Higher<product, W1>, W2>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<product, W1>, W2>, T> ds) {
+                    return Instances.this.functor().map(fn,ds);
+                }
+            };
         }
         @Override
-        public <T> Maybe<Foldable<Higher<Higher<product, W1>, W2>>> foldable() {
-                return Maybe.just(new Foldable<Higher<Higher<product, W1>, W2>>(){
+        public <T> Foldable<Higher<Higher<product, W1>, W2>> foldable() {
+                return new Foldable<Higher<Higher<product, W1>, W2>>(){
 
                         @Override
                         public <T> T foldRight(Monoid<T> monoid, Higher<Higher<Higher<product, W1>, W2>, T> ds) {
                             Product<W1, W2, T> p = narrowK(ds);
-                            return p.foldsUnsafe().foldRight(monoid);
+                            return p.foldRight(monoid);
                         }
 
                         @Override
                         public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<Higher<product, W1>, W2>, T> ds) {
                             Product<W1, W2, T> p = narrowK(ds);
-                            return p.foldsUnsafe().foldLeft(monoid);
+                            return p.foldLeft(monoid);
                         }
-                    });
+                    };
         }
 
         @Override

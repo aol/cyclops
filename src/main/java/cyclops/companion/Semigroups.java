@@ -46,6 +46,7 @@ import java.util.stream.Stream;
  */
 public interface Semigroups {
 
+
     /**
      * To manage javac type inference takeOne assign the semigroup
      * <pre>
