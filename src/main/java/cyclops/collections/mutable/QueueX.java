@@ -76,7 +76,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         public QueueX<T> asQueueX(){
             QueueX f = (QueueX) Proxy.newProxyInstance(QueueX.class.getClassLoader(),
-                    new Class[] { DequeX.class },
+                    new Class[] { QueueX.class },
                     this);
             return f;
         }

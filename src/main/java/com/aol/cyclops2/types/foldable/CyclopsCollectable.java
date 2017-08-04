@@ -25,6 +25,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      * Collect the collectable into an {@link ArrayList}.
      */
     default List<T> toList(){
+
         return  collectors().toList();
     }
     /**

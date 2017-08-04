@@ -8,6 +8,7 @@ import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.SetX;
 import cyclops.companion.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
@@ -1463,7 +1464,9 @@ public abstract class AbstractCollectionXTest {
 	    @Test
 	    public void testSorted() {
 	        CollectionX<Tuple2<Integer, String>> t1 = of(tuple(2, "two"), tuple(1, "replaceWith"));
+
 	        List<Tuple2<Integer, String>> s1 = t1.sorted().toList();
+	        System.out.println(s1);
 	        assertEquals(tuple(1, "replaceWith"), s1.get(0));
 	        assertEquals(tuple(2, "two"), s1.get(1));
 

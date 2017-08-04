@@ -89,14 +89,28 @@ public class ReactiveSeqTest {
         System.out.println("B " + b);
         assertEquals(asList(1, 2,3, 1, 2,3),b);
     }
+    @Test
+    public void combineNoOrderMonoid(){
+        assertThat(ReactiveSeq.of(1,2,3)
+                .combine(Monoids.intSum,(a, b)->a.equals(b))
+                .toListX(),equalTo(ListX.of(1,2,3)));
 
+    }
     @Test
     public void testCombineMonoid(){
-        ReactiveSeq.of(1,2).to();
+
         assertThat(ReactiveSeq.of(1,1,2,3)
                 .combine(Monoids.intMult,(a, b)->a.equals(b))
                 .findFirst().get()
                , equalTo(1));
+    }
+    @Test
+    public void testCombineMonoidTwo(){
+
+        assertThat(ReactiveSeq.of(1,1,2,3)
+                        .combine((a, b)->a.equals(b),Monoids.intMult)
+                        .findFirst().get()
+                , equalTo(1));
     }
     @Test
     public void crossJoinTest(){

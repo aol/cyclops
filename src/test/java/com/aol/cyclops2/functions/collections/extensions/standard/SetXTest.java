@@ -1,10 +1,14 @@
 package com.aol.cyclops2.functions.collections.extensions.standard;
 
+import static java.util.Comparator.comparing;
 import static org.hamcrest.Matchers.equalTo;
+import static org.jooq.lambda.tuple.Tuple.tuple;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +18,9 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
@@ -50,6 +56,29 @@ public class SetXTest extends AbstractCollectionXTest {
         Thread.sleep(400);
         assertTrue(current<counter.get());
     }
+
+    @Test
+    public void testSorted() {
+
+        CollectionX<Tuple2<Integer, String>> t1 = of(tuple(2, "two"), tuple(1, "replaceWith"));
+
+        List<Tuple2<Integer, String>> s1 = t1.sorted().toList();
+        System.out.println(s1);
+        assertEquals(tuple(1, "replaceWith"), s1.get(0));
+        assertEquals(tuple(2, "two"), s1.get(1));
+
+        CollectionX<Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "replaceWith"));
+        List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t.v1())).toList();
+        assertEquals(tuple(1, "replaceWith"), s2.get(0));
+        assertEquals(tuple(2, "two"), s2.get(1));
+
+        CollectionX<Tuple2<Integer, String>> t3 = of(tuple(2, "two"), tuple(1, "replaceWith"));
+        List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toList();
+        assertEquals(tuple(1, "replaceWith"), s3.get(0));
+        assertEquals(tuple(2, "two"), s3.get(1));
+
+    }
+
     @Test
     public void onEmptySwitch() {
         assertThat(SetX.empty()

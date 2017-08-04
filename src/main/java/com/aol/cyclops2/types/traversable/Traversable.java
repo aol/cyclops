@@ -10,6 +10,7 @@ import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
@@ -150,7 +151,7 @@ public interface Traversable<T> extends Publisher<T>,
 
     /**
      * Combine two adjacent elements in a traversable using the supplied BinaryOperator
-     * This is a stateful grouping and reduction operation. The emitted of a combination may in turn be combined
+     * This is a stateful grouping and reduction operation. The emitted result of a combination may in turn be combined
      * with it's neighbour
      * <pre>
      * {@code
@@ -171,8 +172,21 @@ public interface Traversable<T> extends Publisher<T>,
      */
     default Traversable<T> combine(final Monoid<T> op,final BiPredicate<? super T, ? super T> predicate) {
 
+        boolean[] firstFailed = {false};
+        boolean[] first = {false};
+        int[] dropped = {0};
+        BiPredicate<? super T, ? super T> toUse = (a,b)->{
+            if(!first[0]){
+                firstFailed[0] = !predicate.test(a,b);
+                first[0]=true;
+                return !firstFailed[0];
+            }
+            return predicate.test(a,b);
+        };
+
         return prepend(op.zero()).traversable()
-                                 .combine(predicate, op).drop(1);
+                                 .combine(toUse, op)
+                                 .dropWhile(i->firstFailed[0] && (dropped[0]++==0));
     }
 
     /**
