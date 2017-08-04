@@ -19,8 +19,8 @@ import java.util.stream.Stream;
  * 
  * Also inteded for use with Java 8 Streams (reduce method)
  * 
- * Practically the method signature toNested reduce matches the Monoid interface
- * Monoids could regrarded as immutable equivalents toNested JDK CyclopsCollectors for Immutable Reduction
+ * Practically the method signature to reduce matches the Monoid interface
+ * Monoids could regrarded as immutable equivalents to JDK CyclopsCollectors for Immutable Reduction
  * 
  * @author johnmcclean
  *
@@ -30,7 +30,7 @@ public interface Monoid<T> extends Semigroup<T> {
 
     /**
      * 
-     * An element that when provided as a parameter toNested the combiner with another value, results
+     * An element that when provided as a parameter to the combiner with another value, results
      * in the other value being returned
      * e.g.
      * <pre>
@@ -57,7 +57,7 @@ public interface Monoid<T> extends Semigroup<T> {
     /**
      * Perform a reduction operation on the supplied Stream
      * 
-     * @param toReduce Stream toNested reduce
+     * @param toReduce Stream to reduce
      * @return Reduced value
      */
     default T reduce(final Stream<T> toReduce) {

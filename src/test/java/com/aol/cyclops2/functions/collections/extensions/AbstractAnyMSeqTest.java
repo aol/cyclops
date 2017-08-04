@@ -62,7 +62,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
     @Test
     public void prependAppend(){
         assertThat(of(1).prependS(Stream.of(2)).append(3).prepend(4).append(5,6).prepend(7,8).insertAt(4,9).deleteBetween(1,2)
-                .insertAtS(5,Stream.of(11,12)).stream().count(),equalTo(10));
+                .insertAtS(5,Stream.of(11,12)).stream().count(),equalTo(10L));
     }
     @Test
     public void testRecover1(){

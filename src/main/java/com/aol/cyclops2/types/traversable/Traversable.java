@@ -99,7 +99,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * @return This Traversable converted toNested a Stream
+     * @return This Traversable converted to a Stream
      */
     default ReactiveSeq<T> stream() {
         return ReactiveSeq.fromIterable(this);
@@ -114,7 +114,7 @@ public interface Traversable<T> extends Publisher<T>,
      * }
      * </pre>
      *
-     * @param U Iterator toNested create new IterableFunctor from
+     * @param U Iterator to create new IterableFunctor from
      * @return New IterableFunctor instance
      */
     <U> Traversable<U> unitIterator(Iterator<U> U);
@@ -139,9 +139,9 @@ public interface Traversable<T> extends Publisher<T>,
      *  //ListX(3,4) 
      * }</pre>
      * 
-     * @param predicate Test toNested see if two neighbours should be joined. The takeOne parameter toNested the bi-predicate is the currently
+     * @param predicate Test to see if two neighbours should be joined. The first parameter to the bi-predicate is the currently
      *                  accumulated result and the second is the next element
-     * @param op BinaryOperator toNested combine neighbours
+     * @param op BinaryOperator to combine neighbours
      * @return Combined / Partially Reduced Traversable
      */
     default Traversable<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
@@ -161,22 +161,22 @@ public interface Traversable<T> extends Publisher<T>,
      *  //ListX(1)
      * }</pre>
      *
-     * Simalar toNested @see {@link Traversable#combine(BiPredicate, BinaryOperator)} but differs in that the takeOne comparison is always toNested the Monoid zero
-     * This allows us toNested terminate with just a singleUnsafe value
+     * Simalar to @see {@link Traversable#combine(BiPredicate, BinaryOperator)} but differs in that the first comparison is always to the Monoid zero
+     * This allows us to terminate with just a single value
      *
-     * @param predicate Test toNested see if two neighbours should be joined. The takeOne parameter toNested the bi-predicate is the currently
+     * @param predicate Test to see if two neighbours should be joined. The first parameter to the bi-predicate is the currently
      *                  accumulated result and the second is the next element
-     * @param op Monoid toNested combine neighbours
+     * @param op Monoid to combine neighbours
      * @return Combined / Partially Reduced Traversable
      */
     default Traversable<T> combine(final Monoid<T> op,final BiPredicate<? super T, ? super T> predicate) {
 
         return prepend(op.zero()).traversable()
-                                 .combine(predicate, op);
+                                 .combine(predicate, op).drop(1);
     }
 
     /**
-     * Convert toNested a Stream with the values repeated specified times
+     * Convert to a Stream with the values repeated specified times
      * 
      * <pre>
      * {@code 
@@ -198,7 +198,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Convert toNested a Stream with the result of a reduction operation repeated
+     * Convert to a Stream with the result of a reduction operation repeated
      * specified times
      * 
      * <pre>
@@ -211,7 +211,7 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      * 
      * @param m
-     *            Monoid toNested be used in reduction
+     *            Monoid to be used in reduction
      * @param times
      *            Number of times value should be repeated
      * @return Stream with reduced values repeated
@@ -307,7 +307,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Add an index toNested the current Stream
+     * Add an index to the current Stream
      * 
      * <pre>
      * {@code 
@@ -412,7 +412,7 @@ public interface Traversable<T> extends Publisher<T>,
      * Create Travesable of Lists where
      * each List is populated while the supplied bipredicate holds. The
      * bipredicate recieves the List from the last window as well as the
-     * current value and can choose toNested aggregate the current value or create a
+     * current value and can choose to aggregate the current value or create a
      * new window
      * 
      * <pre>
@@ -434,7 +434,7 @@ public interface Traversable<T> extends Publisher<T>,
     /**
      * Zip (combine) this Zippable with the supplied Stream combining both into a Tuple2
      *
-     * @param other Stream toNested combine with
+     * @param other Stream to combine with
      * @return Combined Zippable
      */
     @Override
@@ -538,7 +538,7 @@ public interface Traversable<T> extends Publisher<T>,
      * Group this Traversable by the provided classifying function and collected by the provided Collector
      * 
      * @param classifier Grouping function
-     * @param downstream Collector toNested create the grouping toX
+     * @param downstream Collector to create the grouping toX
      * @return Traversable of grouped data
      */
     default <K, A, D> Traversable<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
@@ -646,7 +646,7 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      * 
      * @param c
-     *            Compartor toNested sort with
+     *            Compartor to sort with
      * @return Sorted Stream
      */
     default Traversable<T> sorted(final Comparator<? super T> c) {
@@ -663,8 +663,8 @@ public interface Traversable<T> extends Publisher<T>,
      * }
      * </pre>
      * 
-     * @param p Predicate toNested determine when values should be taken
-     * @return Traversable generated by application of the predicate toNested the elements in this Traversable in order
+     * @param p Predicate to determine when values should be taken
+     * @return Traversable generated by application of the predicate to the elements in this Traversable in order
      */
     default Traversable<T> takeWhile(final Predicate<? super T> p) {
         return limitWhile(p);
@@ -678,8 +678,8 @@ public interface Traversable<T> extends Publisher<T>,
      *     //[3]
      * }
      * </pre> 
-     * @param p Predicate toNested determine when values should be dropped
-     * @return Traversable generated by application of the predicate toNested the elements in this Traversable in order
+     * @param p Predicate to determine when values should be dropped
+     * @return Traversable generated by application of the predicate to the elements in this Traversable in order
      */
     default Traversable<T> dropWhile(final Predicate<? super T> p) {
         return skipWhile(p);
@@ -694,8 +694,8 @@ public interface Traversable<T> extends Publisher<T>,
      * }
      * </pre>
      * 
-     * @param p Predicate toNested determine when values should be taken until
-     * @return  Traversable generated by application of the predicate toNested the elements in this Traversable in order
+     * @param p Predicate to determine when values should be taken until
+     * @return  Traversable generated by application of the predicate to the elements in this Traversable in order
      */
     default Traversable<T> takeUntil(final Predicate<? super T> p) {
         return limitUntil(p);
@@ -709,8 +709,8 @@ public interface Traversable<T> extends Publisher<T>,
      *     //[3]
      * }
      * </pre> 
-     * @param p Predicate toNested determine when values should be dropped
-     * @return Traversable generated by application of the predicate toNested the elements in this Traversable in order
+     * @param p Predicate to determine when values should be dropped
+     * @return Traversable generated by application of the predicate to the elements in this Traversable in order
      */
     default Traversable<T> dropUntil(final Predicate<? super T> p) {
         return skipUntil(p);
@@ -725,7 +725,7 @@ public interface Traversable<T> extends Publisher<T>,
      * }
      * </pre>
      * @param num Drop this number of elements from the take of this Traversable
-     * @return Traversable generated by application of the predicate toNested the elements in this Traversable in order
+     * @return Traversable generated by application of the predicate to the elements in this Traversable in order
      */
     default Traversable<T> dropRight(final int num) {
         return skipLast(num);
@@ -740,7 +740,7 @@ public interface Traversable<T> extends Publisher<T>,
      * }
      * </pre>
      * @param num Take this number of elements from the take of this Traversable
-     * @return Traversable generated by application of the predicate toNested the elements in this Traversable in order
+     * @return Traversable generated by application of the predicate to the elements in this Traversable in order
      */
     default Traversable<T> takeRight(final int num) {
         return limitLast(num);
@@ -753,7 +753,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * 
      * @param num
-     *            Number of elemenets toNested drop
+     *            Number of elemenets to drop
      * @return Traversable with specified number of elements skipped
      */
     default Traversable<T> drop(final long num) {
@@ -767,7 +767,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * 
      * @param num
-     *            Number of elemenets toNested skip
+     *            Number of elemenets to skip
      * @return Stream with specified number of elements skipped
      */
     default Traversable<T> skip(final long num) {
@@ -786,7 +786,7 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      * 
      * @param p
-     *            Predicate toNested skip while true
+     *            Predicate to skip while true
      * @return Stream with elements skipped while predicate holds
      */
     default Traversable<T> skipWhile(final Predicate<? super T> p) {
@@ -803,7 +803,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * 
      * @param p
-     *            Predicate toNested skip until true
+     *            Predicate to skip until true
      * @return Stream with elements skipped until predicate holds
      */
     default Traversable<T> skipUntil(final Predicate<? super T> p) {
@@ -817,8 +817,8 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      * 
      * @param num
-     *            Limit element size toNested num
-     * @return Monad converted toNested Stream with elements up toNested num
+     *            Limit element size to num
+     * @return Monad converted to Stream with elements up to num
      */
     default Traversable<T> take(final long num) {
         return traversable().limit(num);
@@ -832,8 +832,8 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      * 
      * @param num
-     *            Limit element size toNested num
-     * @return Monad converted toNested Stream with elements up toNested num
+     *            Limit element size to num
+     * @return Monad converted to Stream with elements up to num
      */
     default Traversable<T> limit(final long num) {
         return traversable().limit(num);
@@ -889,7 +889,7 @@ public interface Traversable<T> extends Publisher<T>,
      * - Sequence created via a range - Sequence created via a List - Sequence
      * created via an Array / var args
      * 
-     * Otherwise Sequence collected into a Collection prior toNested reversal
+     * Otherwise Sequence collected into a Collection prior to reversal
      * 
      * <pre> {@code assertThat( of(1, 2, 3).reverse().toList(),
      * equalTo(asList(3, 2, 1))); } </pre>
@@ -921,7 +921,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Limit results toNested the last x elements in a SequenceM
+     * Limit results to the last x elements in a SequenceM
      * 
      * <pre>
      * {@code 
@@ -932,8 +932,8 @@ public interface Traversable<T> extends Publisher<T>,
      * }
      * </pre>
      * 
-     * @param num of elements toNested return (last elements)
-     * @return SequenceM limited toNested last num elements
+     * @param num of elements to return (last elements)
+     * @return SequenceM limited to last num elements
      */
     default Traversable<T> limitLast(final int num) {
         return traversable().limitLast(num);
@@ -997,14 +997,14 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * @return This Traversable converted toNested a Stream and type narrowed toNested Traversable
+     * @return This Traversable converted to a Stream and type narrowed to Traversable
      */
     default Traversable<T> traversable() {
         return stream();
     }
 
     /**
-     * Prepend Stream toNested this ReactiveSeq
+     * Prepend Stream to this ReactiveSeq
      *
      * <pre>
      * {@code
@@ -1018,7 +1018,7 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      *
      * @param stream
-     *            toNested Prepend
+     *            to Prepend
      * @return ReactiveSeq with Stream prepended
      */
     default Traversable<T> prependS(Stream<? extends T> stream){
@@ -1026,7 +1026,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Append values toNested the take of this ReactiveSeq
+     * Append values to the take of this ReactiveSeq
      *
      * <pre>
      * {@code
@@ -1036,7 +1036,7 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      *
      * @param values
-     *            toNested append
+     *            to append
      * @return ReactiveSeq with appended values
      */
     default Traversable<T> append(T... values){
@@ -1054,7 +1054,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Prepend given values toNested the skip of the Stream
+     * Prepend given values to the skip of the Stream
      *
      * <pre>
      * {@code
@@ -1065,7 +1065,7 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
-     * @param values toNested prepend
+     * @param values to prepend
      * @return ReactiveSeq with values prepended
      */
     default Traversable<T> prepend(T... values){
@@ -1084,9 +1084,9 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      *
      * @param pos
-     *            toNested insert data at
+     *            to insert data at
      * @param values
-     *            toNested insert
+     *            to insert
      * @return Stream with new data inserted
      */
     default Traversable<T> insertAt(int pos, T... values){
@@ -1125,9 +1125,9 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      *
      * @param pos
-     *            toNested insert Stream at
+     *            to insert Stream at
      * @param stream
-     *            toNested insert
+     *            to insert
      * @return newly conjoined Traversable
      */
     default Traversable<T> insertAtS(int pos, Stream<T> stream){
@@ -1171,7 +1171,7 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      *
      * @param exceptionClass
-     *            Type toNested recover from
+     *            Type to recover from
      * @param fn
      *            That accepts an error and returns an alternative value
      * @return Traversable that can recover from a particular exception

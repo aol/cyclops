@@ -246,7 +246,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     /**
      * Get the element at the specified index (if it exists)
      * 
-     * @param index toNested look up element
+     * @param index to look up element
      * @return Optional.zero if the index does not exist, otherwise the element at the index supplied is returned
      */
     default Maybe<T> getAtIndex(final int index) {
@@ -272,7 +272,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     /**
      * Conctruct an Extended Collection from a standard Collection
      * 
-     * @param c Collection toNested extend
+     * @param c Collection to extend
      * @return Extended Collection
      */
     <T1> CollectionX<T1> from(Collection<T1> c);
@@ -362,7 +362,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * Perform a flatMap operation on this toX. Results from the returned Iterables (from the
      * provided transformation function) are flattened into the resulting toX.
      * 
-     * @param mapper Transformation function toNested be applied (and flattened)
+     * @param mapper Transformation function to be applied (and flattened)
      * @return A toX containing the flattened results of the transformation function
      */
     <R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
@@ -459,7 +459,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * Zip (merge) this toX with the supplied Iterable into a Colleciton containing Tuples
      * Each Tuple contains one element from this toX and one from the other
      * 
-     * @param other Collection toNested merge with this one
+     * @param other Collection to merge with this one
      * @return Merged toX
      */
     @Override
@@ -608,13 +608,13 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * </pre>
      * 
      * @param iterable1
-     *            Nested Stream toNested iterate over
+     *            Nested Stream to iterate over
      * @param iterable2
-     *            Nested Stream toNested iterate over
+     *            Nested Stream to iterate over
      * @param iterable3
-     *            Nested Stream toNested iterate over
+     *            Nested Stream to iterate over
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            Streams that generates the new elements
      * @return CollectionX with elements generated via nested iteration
      */
@@ -659,16 +659,16 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * 
      * 
      * @param iterable1
-     *            Nested Stream toNested iterate over
+     *            Nested Stream to iterate over
      * @param iterable2
-     *            Nested Stream toNested iterate over
+     *            Nested Stream to iterate over
      * @param iterable3
-     *            Nested Stream toNested iterate over
+     *            Nested Stream to iterate over
      * @param filterFunction
-     *            Filter toNested applyHKT over elements before passing non-filtered
-     *            values toNested the yielding function
+     *            Filter to applyHKT over elements before passing non-filtered
+     *            values to the yielding function
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            Streams that generates the new elements
      * @return CollectionX with elements generated via nested iteration
      */
@@ -712,11 +712,11 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * </pre>
      * 
      * @param iterable1
-     *            Nested Stream toNested iterate over
+     *            Nested Stream to iterate over
      * @param iterable2
-     *            Nested Stream toNested iterate over
+     *            Nested Stream to iterate over
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
@@ -756,14 +756,14 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * 
      * 
      * @param iterable1
-     *            Nested Stream toNested iterate over
+     *            Nested Stream to iterate over
      * @param iterable2
-     *            Nested Stream toNested iterate over
+     *            Nested Stream to iterate over
      * @param filterFunction
-     *            Filter toNested applyHKT over elements before passing non-filtered
-     *            values toNested the yielding function
+     *            Filter to applyHKT over elements before passing non-filtered
+     *            values to the yielding function
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
@@ -802,9 +802,9 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * 
      * 
      * @param iterable1
-     *            Nested Iterable toNested iterate over
+     *            Nested Iterable to iterate over
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
@@ -838,12 +838,12 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * </pre>
      * 
      * @param iterable1
-     *            Nested Stream toNested iterate over
+     *            Nested Stream to iterate over
      * @param filterFunction
-     *            Filter toNested applyHKT over elements before passing non-filtered
-     *            values toNested the yielding function
+     *            Filter to applyHKT over elements before passing non-filtered
+     *            values to the yielding function
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */

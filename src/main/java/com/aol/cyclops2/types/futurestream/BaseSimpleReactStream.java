@@ -51,14 +51,14 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /*
-     * Cast all elements in this reactiveStream toNested specified type. May throw {@link
+     * Cast all elements in this reactiveStream to specified type. May throw {@link
      * ClassCastException}.
      * 
      * SimpleReactStream.of(1, "a", 2, "b", 3).cast(Integer.class)
      * 
      * will throw a ClassCastException
      * 
-     * @param type Type toNested cast toNested
+     * @param type Type to cast to
      * 
      * @return SimpleReactStream
      * 
@@ -110,20 +110,20 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     StreamWrapper<U> getLastActive();
 
     /* 
-     * React toNested new events with the supplied function on the supplied Executor
+     * React to new events with the supplied function on the supplied Executor
      * 
-     *	@param fn Apply toNested incoming events
-     *	@param service Service toNested execute function on
+     *	@param fn Apply to incoming events
+     *	@param service Service to execute function on
      *	@return next stage in the Stream
      */
 
     <R> BaseSimpleReactStream<R> then(final Function<? super U, ? extends R> fn, Executor service);
 
     /* 
-     * React toNested new events with the supplied function on the supplied Executor
+     * React to new events with the supplied function on the supplied Executor
      * 
-     *	@param fn Apply toNested incoming events
-     *	@param service Service toNested execute function on
+     *	@param fn Apply to incoming events
+     *	@param service Service to execute function on
      *	@return next stage in the Stream
      */
     <R> BaseSimpleReactStream<R> thenSync(final Function<? super U, ? extends R> fn);
@@ -149,14 +149,14 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     			}
     </pre>
      *
-     * React transform allows event reactors toNested be chained. Unlike React with, which
+     * React transform allows event reactors to be chained. Unlike React with, which
      * returns a toX of Future references, React transform is a fluent
-     * interface that returns the React builder - allowing further reactors toNested
-     * be added toNested the chain.
+     * interface that returns the React builder - allowing further reactors to
+     * be added to the chain.
      * 
      * React transform does not block.
      * 
-     * React with can be called after React transform which gives access toNested the full
+     * React with can be called after React transform which gives access to the full
      * CompleteableFuture api. CompleteableFutures can be passed back into
      * SimpleReact via SimpleReact.react(streamOfCompleteableFutures);
      * 
@@ -166,9 +166,9 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * l </a>
      * 
      * @param fn
-     *            Function toNested be applied toNested the results of the currently active
+     *            Function to be applied to the results of the currently active
      *            event tasks
-     * @return A new builder object that can be used toNested define the next stage in
+     * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */
     @SuppressWarnings("unchecked")
@@ -176,11 +176,11 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
 
     /**
      * Peek asynchronously at the results in the current stage. Current results
-     * are passed through toNested the next stage.
+     * are passed through to the next stage.
      * 
      * @param consumer
      *            That will recieve current results
-     * @return A new builder object that can be used toNested define the next stage in
+     * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */
     BaseSimpleReactStream<U> peek(final Consumer<? super U> consumer);
@@ -207,7 +207,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * }
      * </pre>
      *
-     * In this example the result of the flatMapCompletableFuture is 'flattened' toNested the raw integer values
+     * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
      * 
      * 
      * @param flatFn flatMap function
@@ -227,7 +227,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     									.block(),equalTo(Arrays.asList(1,2,3)));
      * }
      *</pre>
-     * In this example the result of the flatMapCompletableFuture is 'flattened' toNested the raw integer values
+     * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
      * 
      * 
      * @param flatFn flatMap function
@@ -236,7 +236,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     <R> BaseSimpleReactStream<R> flatMapToCompletableFutureSync(Function<? super U, CompletableFuture<? extends R>> flatFn);
 
     /**
-     * Allows aggregate values in a Stream toNested be flatten into a singleUnsafe Stream.
+     * Allows aggregate values in a Stream to be flatten into a singleUnsafe Stream.
      * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
      * into a singleUnsafe flattened reactiveStream
      * 
@@ -250,9 +250,9 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * dataflow
      * 
      * @param p
-     *            Predicate that will be used toNested filter elements from the
+     *            Predicate that will be used to filter elements from the
      *            dataflow
-     * @return A new builder object that can be used toNested define the next stage in
+     * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */
     @SuppressWarnings("unchecked")
@@ -265,9 +265,9 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * dataflow
      * 
      * @param p
-     *            Predicate that will be used toNested filter elements from the
+     *            Predicate that will be used to filter elements from the
      *            dataflow
-     * @return A new builder object that can be used toNested define the next stage in
+     * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */
     BaseSimpleReactStream<U> filterSync(final Predicate<? super U> p);
@@ -283,7 +283,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * React <b>onFail</b>
      * 
      * 
-     * Define a function that can be used toNested recover from exceptions during the
+     * Define a function that can be used to recover from exceptions during the
      * preceeding stage of the dataflow. e.g.
      * 
      * 
@@ -291,8 +291,8 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * onFail allows disaster recovery for each task (a separate onFail should
      * be configured for each react phase that can fail). E.g. if reading data
      * from an external service fails, but default value is acceptable - onFail
-     * is a suitable mechanism toNested set the default value. Asynchronously applyHKT
-     * the function supplied toNested the currently active event tasks in the
+     * is a suitable mechanism to set the default value. Asynchronously applyHKT
+     * the function supplied to the currently active event tasks in the
      * dataflow.
      * 
      * <pre>
@@ -316,12 +316,12 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * 
      * 
      * In this example onFail recovers from the RuntimeException thrown when the
-     * input toNested the takeOne 'transform' stage is 100.
+     * input to the first 'transform' stage is 100.
      * 
      * @param fn
      *            Recovery function, the exception is input, and the recovery
      *            value is emitted
-     * @return A new builder object that can be used toNested define the next stage in
+     * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -329,7 +329,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
 
     /**
      * Recover for a particular class of exceptions only. Chain onFail methods from specific Exception classes
-     * toNested general, as Exceptions will be caught and handled in order.
+     * to general, as Exceptions will be caught and handled in order.
      * e.g.
      * <pre>
      * {@code
@@ -350,7 +350,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * recoveryFunction1 will not be called
      * 
      * 
-     * @param exceptionClass Class of exceptions toNested recover from
+     * @param exceptionClass Class of exceptions to recover from
      * @param fn Recovery function
      * @return recovery value
      */
@@ -360,8 +360,8 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     /**
      * React <b>capture</b>
      * 
-     * While onFail is used for disaster recovery (when it is possible toNested
-     * recover) - capture is used toNested capture those occasions where the full
+     * While onFail is used for disaster recovery (when it is possible to
+     * recover) - capture is used to capture those occasions where the full
      * pipeline has failed and is unrecoverable.
      * 
      * <pre>
@@ -397,7 +397,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * @param errorHandler
      *            A consumer that recieves and deals with an unrecoverable error
      *            in the dataflow
-     * @return A new builder object that can be used toNested define the next stage in
+     * @return A new builder object that can be used to define the next stage in
      *         the dataflow
      */
     @SuppressWarnings("unchecked")
@@ -407,7 +407,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * Execute subsequent stages on the completing thread (until async called)
      * 10X faster than async execution.
      * Use async for blocking IO or distributing work across threads or cores.
-     * Switch toNested sync for non-blocking tasks when desired thread utlisation reached
+     * Switch to sync for non-blocking tasks when desired thread utlisation reached
      * 
      *	@return Version of FutureStream that will use sync CompletableFuture methods
      * 
@@ -415,10 +415,10 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     BaseSimpleReactStream<U> sync();
 
     /* 
-     * Execute subsequent stages by submission toNested an Executor for async execution
+     * Execute subsequent stages by submission to an Executor for async execution
      * 10X slower than sync execution.
      * Use async for blocking IO or distributing work across threads or cores.
-     * Switch toNested sync for non-blocking tasks when desired thread utlisation reached
+     * Switch to sync for non-blocking tasks when desired thread utlisation reached
      *
      * 
      *	@return Version of FutureStream that will use async CompletableFuture methods
@@ -505,10 +505,10 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     /**
      * Construct an SimpleReactStream  from specified array, that will run in parallel
      * on the common Parallel executor service (by default the Common ForkJoinPool) see ThreadPools#setUseCommon 
-     * toNested change toNested a different pool
+     * to change to a different pool
      * 
      * @param array
-     *            Array of value toNested form the reactiveBuffer reactiveStream / sequence
+     *            Array of value to form the reactiveBuffer reactiveStream / sequence
      * @return SimpleReact Stage
      */
     public static <U> SimpleReactStream<U> parallel(final U... array) {
@@ -518,7 +518,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
 
     /**
      *  Create a 'free threaded' asynchronous reactiveStream that runs on the supplied CompletableFutures executor service (unless async operator invoked
-     *  , in which it will switch toNested the common 'free' thread executor)
+     *  , in which it will switch to the common 'free' thread executor)
      *  Subsequent tasks will be executed synchronously unless the async() operator is invoked.
      *  
      * @see Stream#of(Object)
@@ -531,7 +531,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
 
     /**
      *  Create a 'free threaded' asynchronous reactiveStream that runs on the supplied CompletableFutures executor service (unless async operator invoked
-     *  , in which it will switch toNested the common 'free' thread executor)
+     *  , in which it will switch to the common 'free' thread executor)
      *  Subsequent tasks will be executed synchronously unless the async() operator is invoked.
      *  
      * @see Stream#of(Object)

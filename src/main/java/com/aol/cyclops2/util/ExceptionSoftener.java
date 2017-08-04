@@ -93,7 +93,7 @@ public class ExceptionSoftener {
      * {@code 
      * 
      * Runnable runnable = ExceptionSoftener.softenRunnable(this::run);
-     * runnable.run() //thows IOException but doesn't need toNested declare it
+     * runnable.run() //thows IOException but doesn't need to declare it
      * 
      * private void  run() throws IOException{
     	 throw new IOException();
@@ -104,7 +104,7 @@ public class ExceptionSoftener {
      * 
      * 
      * @param s Supplier with CheckedException
-     * @return Supplier that throws the same exception, but doesn't need toNested declare it as a
+     * @return Supplier that throws the same exception, but doesn't need to declare it as a
      *  checked Exception
      */
     public static Runnable softenRunnable(final CheckedRunnable s) {
@@ -124,7 +124,7 @@ public class ExceptionSoftener {
      * {@code 
      * 
      * Supplier<String> supplier = ExceptionSoftener.softenSupplier(this::get);
-     * supplier.get(); //thows IOException but doesn't need toNested declare it
+     * supplier.get(); //thows IOException but doesn't need to declare it
      * 
      * private String get() throws IOException{
     	return "hello";
@@ -135,7 +135,7 @@ public class ExceptionSoftener {
      * 
      * 
      * @param s Supplier with CheckedException
-     * @return Supplier that throws the same exception, but doesn't need toNested declare it as a
+     * @return Supplier that throws the same exception, but doesn't need to declare it as a
      *  checked Exception
      */
     public static <T> Supplier<T> softenSupplier(final CheckedSupplier<T> s) {
@@ -155,7 +155,7 @@ public class ExceptionSoftener {
      * {@code 
      * 
      * Supplier<String> supplier = ExceptionSoftener.softenCallable(this);
-     * supplier.get(); //thows IOException but doesn't need toNested declare it
+     * supplier.get(); //thows IOException but doesn't need to declare it
      * 
      * public String call() throws IOException{
     	return "hello";
@@ -166,7 +166,7 @@ public class ExceptionSoftener {
      * 
      * 
      * @param s Callable with CheckedException
-     * @return Supplier that throws the same exception, but doesn't need toNested declare it as a
+     * @return Supplier that throws the same exception, but doesn't need to declare it as a
      *  checked Exception
      */
     public static <T> Supplier<T> softenCallable(final Callable<T> s) {
@@ -180,7 +180,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a BooleanSuppler that throws a checked exception into one that still throws the exception, but doesn't need toNested declare it.
+     * Soften a BooleanSuppler that throws a checked exception into one that still throws the exception, but doesn't need to declare it.
      * 
      * <pre>
      * {@code 
@@ -190,12 +190,12 @@ public class ExceptionSoftener {
     	
     	BooleanSupplier supplier = ExceptionSoftener.softenBooleanSupplier(()->{throw new IOException();});
     	
-    	supplier.get() //throws IOException but doesn't need toNested declare it
+    	supplier.get() //throws IOException but doesn't need to declare it
     
     
      * }
      * </pre>
-     * @param s CheckedBooleanSupplier toNested soften
+     * @param s CheckedBooleanSupplier to soften
      * @return Plain old BooleanSupplier
      */
     public static BooleanSupplier softenBooleanSupplier(final CheckedBooleanSupplier s) {
@@ -209,13 +209,13 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedIntSupplier toNested an IntSupplier that doesn't need toNested declare any checked exceptions thrown
+     * Soften a CheckedIntSupplier to an IntSupplier that doesn't need to declare any checked exceptions thrown
      * e.g.
      * <pre>
      * {@code
      *  IntSupplier supplier =   ExceptionSoftener.softenIntSupplier(()->{throw new IOException();})
      *  
-     *  supplier.getAsInt();//throws IOException but doesn't need toNested declare it
+     *  supplier.getAsInt();//throws IOException but doesn't need to declare it
      *  
      *  
      *  //as a method reference
@@ -223,7 +223,7 @@ public class ExceptionSoftener {
      * }
      * </pre>
      * 
-     * @param s CheckedIntSupplier toNested soften
+     * @param s CheckedIntSupplier to soften
      * @return IntSupplier that can throw checked exceptions
      */
     public static IntSupplier softenIntSupplier(final CheckedIntSupplier s) {
@@ -237,13 +237,13 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedLongSupplier toNested an LongSupplier that doesn't need toNested declare any checked exceptions thrown
+     * Soften a CheckedLongSupplier to an LongSupplier that doesn't need to declare any checked exceptions thrown
      * e.g.
      * <pre>
      * {@code
      *  LongSupplier supplier =   ExceptionSoftener.softenLongSupplier(()->{throw new IOException();})
      *  
-     *  supplier.getAsLong();//throws IOException but doesn't need toNested declare it
+     *  supplier.getAsLong();//throws IOException but doesn't need to declare it
      *  
      *  
      *  //as a method reference
@@ -251,7 +251,7 @@ public class ExceptionSoftener {
      * }
      * </pre>
      * 
-     * @param s CheckedLongSupplier toNested soften
+     * @param s CheckedLongSupplier to soften
      * @return LongSupplier that can throw checked exceptions
      */
     public static LongSupplier softenLongSupplier(final CheckedLongSupplier s) {
@@ -265,13 +265,13 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedDoubleSupplier toNested an DoubleSupplier that doesn't need toNested declare any checked exceptions thrown
+     * Soften a CheckedDoubleSupplier to an DoubleSupplier that doesn't need to declare any checked exceptions thrown
      * e.g.
      * <pre>
      * {@code
      *  DoubleSupplier supplier =   ExceptionSoftener.softenDoubleSupplier(()->{throw new IOException();})
      *  
-     *  supplier.getAsDouble();//throws IOException but doesn't need toNested declare it
+     *  supplier.getAsDouble();//throws IOException but doesn't need to declare it
      *  
      *  
      *  //as a method reference
@@ -279,7 +279,7 @@ public class ExceptionSoftener {
      * }
      * </pre>
      * 
-     * @param s CheckedDoubleSupplier toNested soften
+     * @param s CheckedDoubleSupplier to soften
      * @return DoubleSupplier that can throw checked exceptions
      */
     public static DoubleSupplier softenDoubleSupplier(final CheckedDoubleSupplier s) {
@@ -293,7 +293,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedFunction that can throw Checked Exceptions toNested a standard Function that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedFunction that can throw Checked Exceptions to a standard Function that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -304,7 +304,7 @@ public class ExceptionSoftener {
     	public Data load(String file) throws IOException
      * </pre>
      * 
-     * @param fn CheckedFunction toNested be converted toNested a standard Function
+     * @param fn CheckedFunction to be converted to a standard Function
      * @return Function that can throw checked Exceptions
      */
     public static <T, R> Function<T, R> softenFunction(final CheckedFunction<T, R> fn) {
@@ -318,7 +318,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedIntFunction that can throw Checked Exceptions toNested a standard IntFunction that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedIntFunction that can throw Checked Exceptions to a standard IntFunction that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -329,7 +329,7 @@ public class ExceptionSoftener {
     	public int load(int it) throws IOException
      * </pre>
      * 
-     * @param fn CheckedIntFunction toNested be converted toNested a standard IntFunction
+     * @param fn CheckedIntFunction to be converted to a standard IntFunction
      * @return IntFunction that can throw checked Exceptions
      */
     public static <R> IntFunction<R> softenIntFunction(final CheckedIntFunction<R> fn) {
@@ -343,7 +343,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedLongFunction that can throw Checked Exceptions toNested a standard LongFunction that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedLongFunction that can throw Checked Exceptions to a standard LongFunction that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -354,7 +354,7 @@ public class ExceptionSoftener {
     	public long load(long it) throws IOException
      * </pre>
      * 
-     * @param fn CheckedLongFunction toNested be converted toNested a standard LongFunction
+     * @param fn CheckedLongFunction to be converted to a standard LongFunction
      * @return LongFunction that can throw checked Exceptions
      */
     public static <R> LongFunction<R> softenLongFunction(final CheckedLongFunction<R> fn) {
@@ -368,7 +368,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedDoubleFunction that can throw Checked Exceptions toNested a standard DoubleFunction that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedDoubleFunction that can throw Checked Exceptions to a standard DoubleFunction that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -379,7 +379,7 @@ public class ExceptionSoftener {
     	public double load(double it) throws IOException
      * </pre>
      * 
-     * @param fn CheckedDoubleFunction toNested be converted toNested a standard DoubleFunction
+     * @param fn CheckedDoubleFunction to be converted to a standard DoubleFunction
      * @return DoubleFunction that can throw checked Exceptions
      */
     public static <R> DoubleFunction<R> softenDoubleFunction(final CheckedDoubleFunction<R> fn) {
@@ -393,7 +393,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedLongToDoubleFunction that can throw Checked Exceptions toNested a standard LongToDoubleFunction that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedLongToDoubleFunction that can throw Checked Exceptions to a standard LongToDoubleFunction that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -404,7 +404,7 @@ public class ExceptionSoftener {
     	public double load(long it) throws IOException
      * </pre>
      * 
-     * @param fn CheckedLongToDoubleFunction toNested be converted toNested a standard LongToDoubleFunction
+     * @param fn CheckedLongToDoubleFunction to be converted to a standard LongToDoubleFunction
      * @return LongToDoubleFunction that can throw checked Exceptions
      */
     public static LongToDoubleFunction softenLongToDoubleFunction(final CheckedLongToDoubleFunction fn) {
@@ -418,7 +418,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedLongToIntFunction that can throw Checked Exceptions toNested a standard LongToIntFunction that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedLongToIntFunction that can throw Checked Exceptions to a standard LongToIntFunction that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -429,7 +429,7 @@ public class ExceptionSoftener {
     	public int load(long it) throws IOException
      * </pre>
      * 
-     * @param fn CheckedLongToIntFunction toNested be converted toNested a standard LongToIntFunction
+     * @param fn CheckedLongToIntFunction to be converted to a standard LongToIntFunction
      * @return LongToIntFunction that can throw checked Exceptions
      */
     public static LongToIntFunction softenLongToIntFunction(final CheckedLongToIntFunction fn) {
@@ -443,7 +443,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedIntToDoubleFunction that can throw Checked Exceptions toNested a standard IntToDoubleFunction that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedIntToDoubleFunction that can throw Checked Exceptions to a standard IntToDoubleFunction that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -454,7 +454,7 @@ public class ExceptionSoftener {
     	public double load(int it) throws IOException
      * </pre>
      * 
-     * @param fn CheckedIntToDoubleFunction toNested be converted toNested a standard IntToDoubleFunction
+     * @param fn CheckedIntToDoubleFunction to be converted to a standard IntToDoubleFunction
      * @return IntToDoubleFunction that can throw checked Exceptions
      */
     public static IntToDoubleFunction softenIntToDoubleFunction(final CheckedIntToDoubleFunction fn) {
@@ -468,7 +468,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedIntToLongFunction that can throw Checked Exceptions toNested a standard IntToLongFunction that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedIntToLongFunction that can throw Checked Exceptions to a standard IntToLongFunction that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -479,7 +479,7 @@ public class ExceptionSoftener {
     	public long load(int it) throws IOException
      * </pre>
      * 
-     * @param fn CheckedIntToLongFunction toNested be converted toNested a standard IntToLongFunction
+     * @param fn CheckedIntToLongFunction to be converted to a standard IntToLongFunction
      * @return IntToLongFunction that can throw checked Exceptions
      */
     public static IntToLongFunction softenIntToLongFunction(final CheckedIntToLongFunction fn) {
@@ -493,7 +493,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedDoubleToIntFunction that can throw Checked Exceptions toNested a standard DoubleToIntFunction that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedDoubleToIntFunction that can throw Checked Exceptions to a standard DoubleToIntFunction that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -504,7 +504,7 @@ public class ExceptionSoftener {
     	public int load(double it) throws IOException
      * </pre>
      * 
-     * @param fn CheckedDoubleToIntFunction toNested be converted toNested a standard DoubleToIntFunction
+     * @param fn CheckedDoubleToIntFunction to be converted to a standard DoubleToIntFunction
      * @return DoubleToIntFunction that can throw checked Exceptions
      */
     public static DoubleToIntFunction softenDoubleToIntFunction(final CheckedDoubleToIntFunction fn) {
@@ -518,7 +518,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedDoubleToLongFunction that can throw Checked Exceptions toNested a standard DoubleToLongFunction that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedDoubleToLongFunction that can throw Checked Exceptions to a standard DoubleToLongFunction that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -529,7 +529,7 @@ public class ExceptionSoftener {
     	public long load(double it) throws IOException
      * </pre>
      * 
-     * @param fn CheckedDoubleToLongFunction toNested be converted toNested a standard DoubleToLongFunction
+     * @param fn CheckedDoubleToLongFunction to be converted to a standard DoubleToLongFunction
      * @return DoubleToLongFunction that can throw checked Exceptions
      */
     public static DoubleToLongFunction softenDoubleToLongFunction(final CheckedDoubleToLongFunction fn) {
@@ -543,7 +543,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * 	Soften a CheckedBiFunction that can throw Checked Exceptions toNested a standard BiFunction that can also throw Checked Exceptions (without declaring them)
+     * 	Soften a CheckedBiFunction that can throw Checked Exceptions to a standard BiFunction that can also throw Checked Exceptions (without declaring them)
      * 
     
      * <pre>
@@ -556,7 +556,7 @@ public class ExceptionSoftener {
      *  
      *  }
      *  </pre>
-     * @param fn CheckedBiLongFunction toNested be converted toNested a standard BiFunction
+     * @param fn CheckedBiLongFunction to be converted to a standard BiFunction
      * @return BiFunction that can throw checked Exceptions
      */
     public static <T1, T2, R> BiFunction<T1, T2, R> softenBiFunction(final CheckedBiFunction<T1, T2, R> fn) {
@@ -570,7 +570,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedPredicate that can throw Checked Exceptions toNested a standard Predicate that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedPredicate that can throw Checked Exceptions to a standard Predicate that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -581,7 +581,7 @@ public class ExceptionSoftener {
     	public boolean exists(Double id) throws IOException
      * </pre>
      * 
-     * @param fn CheckedPredicate toNested be converted toNested a standard Predicate
+     * @param fn CheckedPredicate to be converted to a standard Predicate
      * @return Predicate that can throw checked Exceptions
      */
     public static <T> Predicate<T> softenPredicate(final CheckedPredicate<T> fn) {
@@ -595,7 +595,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedDoublePredicate that can throw Checked Exceptions toNested a standard DoublePredicate that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedDoublePredicate that can throw Checked Exceptions to a standard DoublePredicate that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -606,7 +606,7 @@ public class ExceptionSoftener {
     	public boolean exists(double id) throws IOException
      * </pre>
      * 
-     * @param fn CheckedDoublePredicate toNested be converted toNested a standard DoublePredicate
+     * @param fn CheckedDoublePredicate to be converted to a standard DoublePredicate
      * @return DoublePredicate that can throw checked Exceptions
      */
     public static DoublePredicate softenDoublePredicate(final CheckedDoublePredicate fn) {
@@ -620,7 +620,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedIntPredicate that can throw Checked Exceptions toNested a standard IntPredicate that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedIntPredicate that can throw Checked Exceptions to a standard IntPredicate that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -631,7 +631,7 @@ public class ExceptionSoftener {
     	public boolean exists(int id) throws IOException
      * </pre>
      * 
-     * @param fn CheckedIntPredicate toNested be converted toNested a standard IntPredicate
+     * @param fn CheckedIntPredicate to be converted to a standard IntPredicate
      * @return IntPredicate that can throw checked Exceptions
      */
     public static IntPredicate softenIntPredicate(final CheckedIntPredicate fn) {
@@ -645,7 +645,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedLongPredicate that can throw Checked Exceptions toNested a standard LongPredicate that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedLongPredicate that can throw Checked Exceptions to a standard LongPredicate that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -656,7 +656,7 @@ public class ExceptionSoftener {
     	public boolean exists(long id) throws IOException
      * </pre>
      * 
-     * @param fn CheckedLongPredicate toNested be converted toNested a standard LongPredicate
+     * @param fn CheckedLongPredicate to be converted to a standard LongPredicate
      * @return LongPredicate that can throw checked Exceptions
      */
     public static LongPredicate softenLongPredicate(final CheckedLongPredicate fn) {
@@ -670,7 +670,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedBiPredicate that can throw Checked Exceptions toNested a standard BiPredicate that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedBiPredicate that can throw Checked Exceptions to a standard BiPredicate that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -681,7 +681,7 @@ public class ExceptionSoftener {
     	public boolean exists(int id, String context) throws IOException
      * </pre>
      * 
-     * @param fn CheckedBiPredicate toNested be converted toNested a standard BiPredicate
+     * @param fn CheckedBiPredicate to be converted to a standard BiPredicate
      * @return BiPredicate that can throw checked Exceptions
      */
     public static <T1, T2> BiPredicate<T1, T2> softenBiPredicate(final CheckedBiPredicate<T1, T2> fn) {
@@ -695,7 +695,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedConsumer that can throw Checked Exceptions toNested a standard Consumer that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedConsumer that can throw Checked Exceptions to a standard Consumer that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -706,7 +706,7 @@ public class ExceptionSoftener {
     	public void save(Data data) throws IOException
      * </pre>
      * 
-     * @param fn CheckedConsumer toNested be converted toNested a standard Consumer
+     * @param fn CheckedConsumer to be converted to a standard Consumer
      * @return Consumer that can throw checked Exceptions
      */
     public static <T> Consumer<T> softenConsumer(final CheckedConsumer<T> fn) {
@@ -720,7 +720,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedDoubleConsumer that can throw Checked Exceptions toNested a standard DoubleConsumer that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedDoubleConsumer that can throw Checked Exceptions to a standard DoubleConsumer that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -731,7 +731,7 @@ public class ExceptionSoftener {
     	public void save(double data) throws IOException
      * </pre>
      * 
-     * @param fn CheckedDoubleConsumer toNested be converted toNested a standard DoubleConsumer
+     * @param fn CheckedDoubleConsumer to be converted to a standard DoubleConsumer
      * @return DoubleConsumer that can throw checked Exceptions
      */
     public static DoubleConsumer softenDoubleConsumer(final CheckedDoubleConsumer fn) {
@@ -745,7 +745,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedIntConsumer that can throw Checked Exceptions toNested a standard IntConsumer that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedIntConsumer that can throw Checked Exceptions to a standard IntConsumer that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -756,7 +756,7 @@ public class ExceptionSoftener {
     	public void save(int data) throws IOException
      * </pre>
      * 
-     * @param fn CheckedIntConsumer toNested be converted toNested a standard IntConsumer
+     * @param fn CheckedIntConsumer to be converted to a standard IntConsumer
      * @return IntConsumer that can throw checked Exceptions
      */
     public static IntConsumer softenIntConsumer(final CheckedIntConsumer fn) {
@@ -770,7 +770,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedLongConsumer that can throw Checked Exceptions toNested a standard LongConsumer that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedLongConsumer that can throw Checked Exceptions to a standard LongConsumer that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -781,7 +781,7 @@ public class ExceptionSoftener {
     	public void save(long data) throws IOException
      * </pre>
      * 
-     * @param fn CheckedLongConsumer toNested be converted toNested a standard LongConsumer
+     * @param fn CheckedLongConsumer to be converted to a standard LongConsumer
      * @return LongConsumer that can throw checked Exceptions
      */
     public static LongConsumer softenLongConsumer(final CheckedLongConsumer fn) {
@@ -795,7 +795,7 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Soften a CheckedBiConsumer that can throw Checked Exceptions toNested a standard BiConsumer that can also throw Checked Exceptions (without declaring them)
+     * Soften a CheckedBiConsumer that can throw Checked Exceptions to a standard BiConsumer that can also throw Checked Exceptions (without declaring them)
      * 
      * e.g.
      * 
@@ -806,7 +806,7 @@ public class ExceptionSoftener {
     	public void save(Data data,long timestamp) throws IOException
      * </pre>
      * 
-     * @param fn CheckedBiConsumer toNested be converted toNested a standard BiConsumer
+     * @param fn CheckedBiConsumer to be converted to a standard BiConsumer
      * @return BiConsumer that can throw checked Exceptions
      */
     public static <T1, T2> BiConsumer<T1, T2> softenBiConsumer(final CheckedBiConsumer<T1, T2> fn) {
@@ -822,14 +822,14 @@ public class ExceptionSoftener {
     /**
      * Convert any throwable into an unchecked exception. The original exception will stay as is,
      * this simply tricks the Java compiler into thinking the specified throwable is an unchecked exception.
-     * There is no need toNested wrap your checked Exceptions inside RuntimeExceptions toNested propagate them without having toNested declare them.
+     * There is no need to wrap your checked Exceptions inside RuntimeExceptions to propagate them without having to declare them.
      * 
      * e.g.
      * 
      * <pre>
      * {@code 
      * 
-     * //IOException does not need toNested be declared
+     * //IOException does not need to be declared
      * 
      *  public Data load(String input) {
      *   try{
@@ -855,7 +855,7 @@ public class ExceptionSoftener {
      * Throw the exception as upwards if the predicate holds, otherwise do nothing
      * 
      * @param e Exception
-     * @param p Predicate toNested check exception should be thrown or not
+     * @param p Predicate to check exception should be thrown or not
      */
     public static <X extends Throwable> void throwIf(final X e, final Predicate<X> p) {
         if (p.test(e))
@@ -863,10 +863,10 @@ public class ExceptionSoftener {
     }
 
     /**
-     * Throw the exception as upwards if the predicate holds, otherwise pass toNested the handler
+     * Throw the exception as upwards if the predicate holds, otherwise pass to the handler
      * 
      * @param e  Exception
-     * @param p Predicate toNested check exception should be thrown or not
+     * @param p Predicate to check exception should be thrown or not
      * @param handler Handles exceptions that should not be thrown
      */
     public static <X extends Throwable> void throwOrHandle(final X e, final Predicate<X> p, final Consumer<X> handler) {

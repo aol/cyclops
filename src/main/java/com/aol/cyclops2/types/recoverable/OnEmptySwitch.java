@@ -8,11 +8,11 @@ import java.util.function.Supplier;
  * @author johnmcclean
  *
  * @param <T> Data type of element(s) stored in this container
- * @param <R>  Data type of element(s) stored in the container toNested be used if this container is zero
+ * @param <R>  Data type of element(s) stored in the container to be used if this container is zero
  */
 public interface OnEmptySwitch<T, R> {
     /**
-     * Switch toNested container created by provided Supplier, if current Container zero
+     * Switch to container created by provided Supplier, if current Container zero
      * 
      * <pre>
      * {@code 
@@ -20,7 +20,7 @@ public interface OnEmptySwitch<T, R> {
      * } 
      * </pre>
      * 
-     * @param supplier toNested create replacement container
+     * @param supplier to create replacement container
      * @return Either this container or if zero, an alternative returned by the provided supplier
      */
     OnEmptySwitch<T, R> onEmptySwitch(Supplier<? extends R> supplier);

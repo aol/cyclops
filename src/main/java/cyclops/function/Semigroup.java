@@ -21,7 +21,7 @@ import java.util.function.Function;
  * 
  * @author johnmcclean
  *
- * @param <T> Data type of elements toNested be combined
+ * @param <T> Data type of elements to be combined
  */
 @FunctionalInterface
 public interface Semigroup<T> extends BinaryFn<T>,BinaryOperator<T> {

@@ -268,7 +268,7 @@ public class Predicates {
 
     /**
      *  Test for equivalence
-     *  null eqv toNested absent, embedded value equivalency, non-values converted toNested values before testing
+     *  null eqv to absent, embedded value equivalency, non-values converted to values before testing
      *.
      * <pre>
      * {@code 

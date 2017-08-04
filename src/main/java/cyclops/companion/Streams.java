@@ -433,7 +433,7 @@ public class Streams {
     }
 
     /**
-     * Convert an Optional toNested a Stream
+     * Convert an Optional to a Stream
      * 
      * <pre>
      * {@code 
@@ -445,7 +445,7 @@ public class Streams {
      * }
      * </pre>
      * 
-     * @param optional Optional toNested convert toNested a Stream
+     * @param optional Optional to convert to a Stream
      * @return Stream with a singleUnsafe value (if present) created from an Optional
      */
     public final static <T> Stream<T> optionalToStream(final Optional<T> optional) {
@@ -466,9 +466,9 @@ public class Streams {
     }
 
     /**
-     * Convert a CompletableFuture toNested a Stream
+     * Convert a CompletableFuture to a Stream
      * 
-     * @param future CompletableFuture toNested convert
+     * @param future CompletableFuture to convert
      * @return  Stream with a singleUnsafe value created from a CompletableFuture
      */
     public final static <T> Stream<T> completableFutureToStream(final CompletableFuture<T> future) {
@@ -500,7 +500,7 @@ public class Streams {
      * }
      * </pre>
      * 
-     * @param Stream - the Stream toNested consume data from
+     * @param Stream - the Stream to consume data from
      * @param numberOfElements To consume from the Stream at this time
      * @param consumer To accept incoming events from the Stream
      * @return Subscription so that further processing can be continued or cancelled.
@@ -537,7 +537,7 @@ public class Streams {
      * }
      * </pre>	 
      * 
-     * @param Stream - the Stream toNested consume data from
+     * @param Stream - the Stream to consume data from
      * @param numberOfElements To consume from the Stream at this time
      * @param consumer To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
@@ -579,7 +579,7 @@ public class Streams {
      *     The take!
      * }
      * </pre>
-     * @param Stream - the Stream toNested consume data from
+     * @param Stream - the Stream to consume data from
      * @param numberOfElements To consume from the Stream at this time
      * @param consumer To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
@@ -613,7 +613,7 @@ public class Streams {
      *     
      * }
      * </pre>
-     * @param Stream - the Stream toNested consume data from
+     * @param Stream - the Stream to consume data from
      * @param consumer To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      */
@@ -648,7 +648,7 @@ public class Streams {
      *     
      * }
      * </pre>
-     * @param Stream - the Stream toNested consume data from
+     * @param Stream - the Stream to consume data from
      * @param consumer To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      * @param onComplete To run after an onComplete event
@@ -674,7 +674,7 @@ public class Streams {
      * }
      * </pre>
      * 
-     * Connect toNested the Scheduled Stream
+     * Connect to the Scheduled Stream
      * 
      * <pre>
      * {@code 
@@ -688,7 +688,7 @@ public class Streams {
      * </pre>
      * 
      * 
-     * @param stream the reactiveStream toNested schedule element processing on
+     * @param stream the reactiveStream to schedule element processing on
      * @param cron Expression that determines when each job will run
      * @param ex ScheduledExecutorService
      * @return Connectable HotStream of emitted from scheduled Stream
@@ -710,7 +710,7 @@ public class Streams {
      * }
      * </pre>
      * 
-     * Connect toNested the Scheduled Stream
+     * Connect to the Scheduled Stream
      * 
      * <pre>
      * {@code 
@@ -724,7 +724,7 @@ public class Streams {
      * </pre>
      * 
      * 
-     * @param stream the reactiveStream toNested schedule element processing on
+     * @param stream the reactiveStream to schedule element processing on
      * @param delay Between last element completes passing through the Stream until the next one starts
      * @param ex ScheduledExecutorService
      * @return Connectable HotStream of emitted from scheduled Stream
@@ -746,7 +746,7 @@ public class Streams {
      * }
      * </pre>
      * 
-     * Connect toNested the Scheduled Stream
+     * Connect to the Scheduled Stream
      * 
      * <pre>
      * {@code 
@@ -758,7 +758,7 @@ public class Streams {
      * data.connect().forEach(this::logToDB);
      * }
      * </pre>
-     * @param stream the reactiveStream toNested schedule element processing on
+     * @param stream the reactiveStream to schedule element processing on
      * @param rate Time in millis between job runs
      * @param ex ScheduledExecutorService
      * @return Connectable HotStream of emitted from scheduled Stream
@@ -820,7 +820,7 @@ public class Streams {
 
     /**
      * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied toNested the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading reactiveStream. Not thread-safe.
      * <pre>
      * {@code 
      *  Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
@@ -840,7 +840,7 @@ public class Streams {
     }
     /**
      * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied toNested the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading reactiveStream. Not thread-safe.
      * <pre>
      * {@code
      *  Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
@@ -869,7 +869,7 @@ public class Streams {
     /**
      * Triplicates a Stream
      * Buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied toNested the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading reactiveStream. Not thread-safe.
      * <pre>
      * {@code 
      * 	Tuple3<ReactiveSeq<Tuple3<T1,T2,T3>>,ReactiveSeq<Tuple3<T1,T2,T3>>,ReactiveSeq<Tuple3<T1,T2,T3>>> Tuple3 = sequence.triplicate();
@@ -891,7 +891,7 @@ public class Streams {
     /**
      * Triplicates a Stream
      * Buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied toNested the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading reactiveStream. Not thread-safe.
      * <pre>
      * {@code
      * 	Tuple3<ReactiveSeq<Tuple3<T1,T2,T3>>,ReactiveSeq<Tuple3<T1,T2,T3>>,ReactiveSeq<Tuple3<T1,T2,T3>>> Tuple3 = sequence.triplicate();
@@ -914,7 +914,7 @@ public class Streams {
     /**
      * Makes four copies of a Stream
      * Buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied toNested the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading reactiveStream. Not thread-safe.
      * 
      * <pre>
      * {@code
@@ -937,7 +937,7 @@ public class Streams {
     /**
      * Makes four copies of a Stream
      * Buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied toNested the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading reactiveStream. Not thread-safe.
      *
      * <pre>
      * {@code
@@ -959,7 +959,7 @@ public class Streams {
     }
 
     /**
-     * Append Stream toNested this Stream
+     * Append Stream to this Stream
      * 
      * <pre>
      * {@code 
@@ -971,7 +971,7 @@ public class Streams {
      * }
      * </pre>
      * 
-     * @param stream toNested append
+     * @param stream to append
      * @return Stream with Stream appended
      */
     public static final <T> Stream<T> appendStream(final Stream<T> stream1, final Stream<T> append) {
@@ -979,7 +979,7 @@ public class Streams {
     }
 
     /**
-     * Prepend Stream toNested this Stream
+     * Prepend Stream to this Stream
      * 
      * <pre>
      * {@code 
@@ -991,7 +991,7 @@ public class Streams {
      * }
      * </pre>
      * 
-     * @param stream toNested Prepend
+     * @param stream to Prepend
      * @return Stream with Stream prepended
      */
     public static final <T> Stream<T> prependStream(final Stream<T> stream1, final Stream<T> prepend) {
@@ -1000,7 +1000,7 @@ public class Streams {
     }
 
     /**
-     * Append values toNested the take of this Stream
+     * Append values to the take of this Stream
      * <pre>
      * {@code 
      * List<String> result = 	of(1,2,3).append(100,200,300)
@@ -1010,7 +1010,7 @@ public class Streams {
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
      * }
      * </pre>
-     * @param values toNested append
+     * @param values to append
      * @return Stream with appended values
      */
     public static final <T> Stream<T> append(final Stream<T> stream, final T... values) {
@@ -1018,7 +1018,7 @@ public class Streams {
     }
 
     /**
-     * Prepend given values toNested the skip of the Stream
+     * Prepend given values to the skip of the Stream
      * <pre>
      * {@code 
      * List<String> result = 	of(1,2,3).prepend(100,200,300)
@@ -1026,7 +1026,7 @@ public class Streams {
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
-     * @param values toNested prepend
+     * @param values to prepend
      * @return Stream with values prepended
      */
     public static final <T> Stream<T> prepend(final Stream<T> stream, final T... values) {
@@ -1044,8 +1044,8 @@ public class Streams {
      * 
      * }
      * </pre>
-     * @param pos toNested insert data at
-     * @param values toNested insert
+     * @param pos to insert data at
+     * @param values to insert
      * @return Stream with new data inserted
      */
     public static final <T> Stream<T> insertAt(final Stream<T> stream, final int pos, final T... values) {
@@ -1084,8 +1084,8 @@ public class Streams {
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
      * }
      * </pre>
-     * @param pos toNested insert Stream at
-     * @param stream toNested insert
+     * @param pos to insert Stream at
+     * @param stream to insert
      * @return newly conjoined Stream
      */
     public static final <T> Stream<T> insertStreamAt(final Stream<T> stream1, final int pos, final Stream<T> insert) {
@@ -1095,7 +1095,7 @@ public class Streams {
     }
 
     /**
-     * Convert toNested a Stream with the result of a reduction operation repeated
+     * Convert to a Stream with the result of a reduction operation repeated
      * specified times
      * 
      * <pre>
@@ -1108,7 +1108,7 @@ public class Streams {
      * </pre>
      * 
      * @param m
-     *            Monoid toNested be used in reduction
+     *            Monoid to be used in reduction
      * @param times
      *            Number of times value should be repeated
      * @return Stream with reduced values repeated
@@ -1148,8 +1148,8 @@ public class Streams {
      *  // [6,7]
      *  }</pre>
     
-     * @param stream Stream toNested skip elements from
-     * @param predicate toNested applyHKT
+     * @param stream Stream to skip elements from
+     * @param predicate to applyHKT
      * @return Stream with elements skipped
      */
     public static <U> Stream<U> skipUntil(final Stream<U> stream, final Predicate<? super U> predicate) {
@@ -1316,7 +1316,7 @@ public class Streams {
      * }
      * </pre>
      * 
-     * @param stream Stream toNested reverse
+     * @param stream Stream to reverse
      * @return Reversed reactiveStream
      */
     public static <U> Stream<U> reverse(final Stream<U> stream) {
@@ -1339,7 +1339,7 @@ public class Streams {
      * }
      * </pre>
      * 
-     * @param list List toNested create a reversed Stream from
+     * @param list List to create a reversed Stream from
      * @return Reversed Stream
      */
     public static <U> Stream<U> reversedStream(final List<U> list) {
@@ -1358,7 +1358,7 @@ public class Streams {
      * 								equalTo(Arrays.asList(1,2,3,1,2,3)));
     	}
      * </pre>
-     * @param s Stream toNested cycle
+     * @param s Stream to cycle
      * @return New cycling reactiveStream
      */
     public static <U> Stream<U> cycle(final Stream<U> s) {
@@ -1367,7 +1367,7 @@ public class Streams {
 
     /**
      * Create a Stream that infiniteable cycles the provided Streamable
-     * @param s Streamable toNested cycle
+     * @param s Streamable to cycle
      * @return New cycling reactiveStream
      */
     public static <U> Stream<U> cycle(final Streamable<U> s) {
@@ -1385,7 +1385,7 @@ public class Streams {
     								equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
      * }
      * </pre>
-     * @param s Streamable toNested cycle
+     * @param s Streamable to cycle
      * @return New cycling reactiveStream
      */
     public static <U> Stream<U> cycle(final long times, final Streamable<U> s) {
@@ -1405,7 +1405,7 @@ public class Streams {
      * 
      * }
      * </pre>
-     * @param it Iterable toNested convert toNested a Stream
+     * @param it Iterable to convert to a Stream
      * @return Stream from iterable
      */
     public static <U> Stream<U> stream(final Iterable<U> it) {
@@ -1426,7 +1426,7 @@ public class Streams {
     
      * }
      * </pre>
-     * @param it Iterator toNested convert toNested a Stream
+     * @param it Iterator to convert to a Stream
      * @return Stream from iterator
      */
     public static <U> Stream<U> stream(final Iterator<U> it) {
@@ -1438,8 +1438,8 @@ public class Streams {
      * If the Object is a Stream, Streamable or Iterable will be converted (or left) in Stream form and concatonated
      * Otherwise a new Stream.of(o) is created
      * 
-     * @param o Object toNested concat
-     * @param stream  Stream toNested concat
+     * @param o Object to concat
+     * @param stream  Stream to concat
      * @return Concatonated Stream
      */
     public static <U> Stream<U> concat(final Object o, final Stream<U> stream) {
@@ -1468,7 +1468,7 @@ public class Streams {
      * }</pre>
      * 
      * 
-     * @param it Iterator toNested convert toNested a Stream
+     * @param it Iterator to convert to a Stream
      * @return Stream from a map
      */
     public final static <K, V> Stream<Map.Entry<K, V>> stream(final Map<K, V> it) {
@@ -1496,8 +1496,8 @@ public class Streams {
     	assertThat(result,equalTo(Arrays.asList(10,24)));
     	}</pre>
      * 
-     * @param stream Stream toNested reduce
-     * @param reducers Reducers toNested reduce Stream
+     * @param stream Stream to reduce
+     * @param reducers Reducers to reduce Stream
      * @return Reduced Stream values as List entries
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -1519,8 +1519,8 @@ public class Streams {
      * }
      * </pre>
      * 
-     *  @param stream Stream toNested reduce
-     * @param reducers Reducers toNested reduce Stream
+     *  @param stream Stream to reduce
+     * @param reducers Reducers to reduce Stream
      * @return Reduced Stream values as List entries
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -1584,7 +1584,7 @@ public class Streams {
      * }
      * </pre>
      * @param second
-     *            Monad toNested zip with
+     *            Monad to zip with
      * @param zipper
      *            Zipping function
      * @return Stream zipping two Monads
@@ -1649,7 +1649,7 @@ public class Streams {
        </pre>
      * 
      * @param second
-     *            Stream toNested zip with
+     *            Stream to zip with
      * @param zipper
      *            Zip funciton
      * @return This monad zipped with a Stream
@@ -1756,7 +1756,7 @@ public class Streams {
      * }
      * </pre> 
      * 
-     * @param stream Stream toNested create sliding view on
+     * @param stream Stream to create sliding view on
      * @param windowSize size of window
      * @return
      */
@@ -1779,7 +1779,7 @@ public class Streams {
         assertThat(list.get(1),hasItems(4,5,6));
         }
      * </pre>
-     * @param stream Stream toNested group
+     * @param stream Stream to group
      * @param groupSize
      *            Size of each Group
      * @return Stream with elements grouped by size
@@ -1807,7 +1807,7 @@ public class Streams {
         }
      * </pre>
      * 
-     * @param stream Stream toNested group
+     * @param stream Stream to group
      * @param groupSize Size of each Group
      * @param factory Supplier for creating Collections for holding grouping
      * @return  Stream with elements grouped by size
@@ -1951,10 +1951,10 @@ public class Streams {
     }
 
     /**
-     * Attempt toNested map this Monad toNested the same type as the supplied Monoid (using mapToType on the monoid interface)
-     * Then use Monoid toNested reduce values
+     * Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+     * Then use Monoid to reduce values
      * 
-     * @param reducer Monoid toNested reduce values
+     * @param reducer Monoid to reduce values
      * @return Reduce result
      */
     public final static <T, R> R mapReduce(final Stream<T> stream, final Reducer<R> reducer) {
@@ -1962,11 +1962,11 @@ public class Streams {
     }
 
     /**
-     *  Attempt toNested map this Monad toNested the same type as the supplied Monoid, using supplied function
-     *  Then use Monoid toNested reduce values
+     *  Attempt to map this Monad to the same type as the supplied Monoid, using supplied function
+     *  Then use Monoid to reduce values
      *  
-     * @param mapper Function toNested map Monad type
-     * @param reducer Monoid toNested reduce values
+     * @param mapper Function to map Monad type
+     * @param reducer Monoid to reduce values
      * @return Reduce result
      */
     public final static <T, R> R mapReduce(final Stream<T> stream, final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
@@ -1976,7 +1976,7 @@ public class Streams {
     /**
      * 
      * 
-     * @param reducer Use supplied Monoid toNested reduce values starting via foldLeft
+     * @param reducer Use supplied Monoid to reduce values starting via foldLeft
      * @return Reduced result
      */
     public final static <T> T foldLeft(final Stream<T> stream, final Monoid<T> reducer) {
@@ -1984,10 +1984,10 @@ public class Streams {
     }
 
     /**
-     *  Attempt toNested map this Monad toNested the same type as the supplied Monoid (using mapToType on the monoid interface)
-     * Then use Monoid toNested reduce values
+     *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+     * Then use Monoid to reduce values
      * 
-     * @param reducer Monoid toNested reduce values
+     * @param reducer Monoid to reduce values
      * @return Reduce result
      */
     public final static <T> T foldLeftMapToType(final Stream<T> stream, final Reducer<T> reducer) {
@@ -1997,7 +1997,7 @@ public class Streams {
     /**
      * 
      * 
-     * @param reducer Use supplied Monoid toNested reduce values starting via foldRight
+     * @param reducer Use supplied Monoid to reduce values starting via foldRight
      * @return Reduced result
      */
     public final static <T> T foldRight(final Stream<T> stream, final Monoid<T> reducer) {
@@ -2005,10 +2005,10 @@ public class Streams {
     }
 
     /**
-     *  Attempt toNested map this Monad toNested the same type as the supplied Monoid (using mapToType on the monoid interface)
-     * Then use Monoid toNested reduce values
+     *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+     * Then use Monoid to reduce values
      * 
-     * @param reducer Monoid toNested reduce values
+     * @param reducer Monoid to reduce values
      * @return Reduce result
      */
     public final static <T> T foldRightMapToType(final Stream<T> stream, final Reducer<T> reducer) {
@@ -2016,21 +2016,21 @@ public class Streams {
     }
 
     /**
-     * @return Underlying monad converted toNested a Streamable instance
+     * @return Underlying monad converted to a Streamable instance
      */
     public final static <T> Streamable<T> toStreamable(final Stream<T> stream) {
         return Streamable.fromStream(stream);
     }
 
     /**
-     * @return This monad converted toNested a set
+     * @return This monad converted to a set
      */
     public final static <T> Set<T> toSet(final Stream<T> stream) {
         return stream.collect(java.util.stream.Collectors.toSet());
     }
 
     /**
-     * @return this monad converted toNested a list
+     * @return this monad converted to a list
      */
     public final static <T> List<T> toList(final Stream<T> stream) {
 
@@ -2169,7 +2169,7 @@ public class Streams {
     }
 
     /**
-     * Cast all elements in a reactiveStream toNested a given type, possibly throwing a
+     * Cast all elements in a reactiveStream to a given type, possibly throwing a
      * {@link ClassCastException}.
      * 
      * <pre>
@@ -2195,7 +2195,7 @@ public class Streams {
     }
 
     /**
-     * flatMap operation that allows a Collection toNested be returned
+     * flatMap operation that allows a Collection to be returned
      * <pre>
      * {@code 
      * 	assertThat(Streams.flatMapCollection(Stream.of(20),i->Arrays.asList(1,2,i))
@@ -2615,12 +2615,12 @@ public class Streams {
     private static final Object UNSET = new Object();
 
     /**
-     * Group data in a Stream using knowledge of the current batch and the next entry toNested determing grouping limits
+     * Group data in a Stream using knowledge of the current batch and the next entry to determing grouping limits
      * 
      * @see ReactiveSeq#groupedStatefullyUntil(BiPredicate)
      * 
-     * @param stream Stream toNested group
-     * @param predicate Predicate toNested determine grouping
+     * @param stream Stream to group
+     * @param predicate Predicate to determine grouping
      * @return Stream grouped into Lists determined by predicate
      */
     public final static <T> Stream<ListX<T>> groupedStatefullyUntil(final Stream<T> stream,
@@ -2633,8 +2633,8 @@ public class Streams {
      * 
      * @see ReactiveSeq#groupedWhile(Predicate)
      * 
-     * @param stream Stream toNested group
-     * @param predicate Predicate toNested determine grouping
+     * @param stream Stream to group
+     * @param predicate Predicate to determine grouping
      * @return Stream grouped into Lists determined by predicate
      */
     public final static <T> Stream<ListX<T>> groupedWhile(final Stream<T> stream, final Predicate<? super T> predicate) {
@@ -2650,9 +2650,9 @@ public class Streams {
      * 
      * @see ReactiveSeq#groupedWhile(Predicate, Supplier)
      * 
-     * @param stream Stream toNested group
-     * @param predicate Predicate toNested determine grouping
-     * @param factory Supplier toNested create toX for groupings
+     * @param stream Stream to group
+     * @param predicate Predicate to determine grouping
+     * @param factory Supplier to create toX for groupings
      * @return Stream grouped into Collections determined by predicate
      */
     public final static <T, C extends Collection<? super T>> Stream<C> groupedWhile(final Stream<T> stream, final Predicate<? super T> predicate,
@@ -2670,8 +2670,8 @@ public class Streams {
      * 
      * @see ReactiveSeq#groupedUntil(Predicate)
      * 
-     * @param stream Stream toNested group
-     * @param predicate Predicate toNested determine grouping
+     * @param stream Stream to group
+     * @param predicate Predicate to determine grouping
      * @return Stream grouped into Lists determined by predicate
      */
     public final static <T> Stream<ListX<T>> groupedUntil(final Stream<T> stream, final Predicate<? super T> predicate) {
@@ -2686,7 +2686,7 @@ public class Streams {
      * 
      * @see ReactiveSeq#groupedBySizeAndTime(int, long, TimeUnit)
      * 
-     * @param stream Stream toNested group
+     * @param stream Stream to group
      * @param size Max group size 
      * @param time Max group time
      * @param t Time unit for max group time
@@ -2703,11 +2703,11 @@ public class Streams {
      * 
      * @see ReactiveSeq#groupedBySizeAndTime(int, long, TimeUnit, Supplier)
      * 
-     * @param stream Stream toNested group
+     * @param stream Stream to group
      * @param size Max group size 
      * @param time Max group time
      * @param t Time unit for max group time
-     * @param factory Supplier toNested create toX for groupings
+     * @param factory Supplier to create toX for groupings
      * @return Stream grouped by time and size
      */
     public final static <T, C extends Collection<? super T>> Stream<C> groupedBySizeAndTime(final Stream<T> stream, final int size, final long time,
@@ -2724,8 +2724,8 @@ public class Streams {
      * 
      * @see ReactiveSeq#debounce(long, TimeUnit)
      * 
-     * @param stream Stream toNested debounce
-     * @param time Time toNested applyHKT debouncing over
+     * @param stream Stream to debounce
+     * @param time Time to applyHKT debouncing over
      * @param t Time unit for debounce period
      * @return Stream with debouncing applied
      */
@@ -2739,7 +2739,7 @@ public class Streams {
      * 
      * @see ReactiveSeq#onePer(long, TimeUnit)
      * 
-     * @param stream Stream toNested emit one element per time period from
+     * @param stream Stream to emit one element per time period from
      * @param time  Time period
      * @param t Time Pure
      * @return Stream with slowed emission
@@ -2754,7 +2754,7 @@ public class Streams {
      *  
      *  @see ReactiveSeq#jitter(long)
      *  
-     * @param stream  Stream toNested introduce jitter toNested
+     * @param stream  Stream to introduce jitter to
      * @param jitterInNanos Max jitter period - random number less than this is used for each jitter
      * @return Jittered Stream
      */
@@ -3123,7 +3123,7 @@ public class Streams {
          * }
          * </pre>
          *
-         * @param m Monoid toNested use for combining Streams
+         * @param m Monoid to use for combining Streams
          * @return Type class for combining Streams
          */
         public static <T> MonadPlus<stream> monadPlus(Monoid<StreamKind<T>> m){
@@ -3210,13 +3210,13 @@ public class Streams {
             return widen(Stream.of(elements));
         }
         /**
-         * Convert a Stream toNested a simulated HigherKindedType that captures Stream nature
+         * Convert a Stream to a simulated HigherKindedType that captures Stream nature
          * and Stream element data type separately. Recover via @see StreamKind#narrow
          *
          * If the supplied Stream implements StreamKind it is returned already, otherwise it
          * is wrapped into a Stream implementation that does implement StreamKind
          *
-         * @param Stream Stream toNested widen toNested a StreamKind
+         * @param Stream Stream to widen to a StreamKind
          * @return StreamKind encoding HKT info about Streams
          */
         public static <T> StreamKind<T> widen(final Stream<T> stream) {
@@ -3228,7 +3228,7 @@ public class Streams {
         /**
          * Widen a StreamKind nested inside another HKT encoded type
          *
-         * @param stream HTK encoded type containing  a Stream toNested widen
+         * @param stream HTK encoded type containing  a Stream to widen
          * @return HKT encoded type with a widened Stream
          */
         public static <C2,T> Higher<C2, Higher<stream,T>> widen2(Higher<C2, StreamKind<T>> stream){
@@ -3248,7 +3248,7 @@ public class Streams {
         /**
          * Convert the HigherKindedType definition for a Stream into
          *
-         * @param Stream Type Constructor toNested convert back into narrowed type
+         * @param Stream Type Constructor to convert back into narrowed type
          * @return StreamX from Higher Kinded Type
          */
         public static <T> Stream<T> narrow(final Higher<stream, T> stream) {

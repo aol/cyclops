@@ -292,7 +292,7 @@ public interface Value<T> extends   Folds<T>,
     }
 
     /**
-     * Returns a function result or a supplier result. The takeOne one if the function isn't null and the second one if it is.
+     * Returns a function result or a supplier result. The first one if the function isn't null and the second one if it is.
      * @return new Maybe with the result of a function or supplier.
      */
     default Maybe<T> toMaybeEager() {

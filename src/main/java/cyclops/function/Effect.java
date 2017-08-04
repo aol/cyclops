@@ -197,7 +197,7 @@ public interface Effect extends Runnable{
      * @param delay
      *            Delay in TimeUnits
      * @param timeUnit
-     *            TimeUnit toNested use for delay
+     *            TimeUnit to use for delay
      */
     default  Effect retry( final int retries, final long delay, final TimeUnit timeUnit) {
       return () -> {

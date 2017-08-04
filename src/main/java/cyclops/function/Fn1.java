@@ -61,7 +61,7 @@ public interface Fn1<T,  R> extends Function<T,R>{
     public R apply(T a);
 
     /**
-     * Apply before advice toNested this function, capture the input with the provided Consumer
+     * Apply before advice to this function, capture the input with the provided Consumer
      *
      * @param action LESS advice
      * @return Function with LESS advice attached
@@ -70,7 +70,7 @@ public interface Fn1<T,  R> extends Function<T,R>{
         return FluentFunctions.of(this).before(action);
     }
     /**
-     * Apply MORE advice toNested this function capturing both the input and the emitted with the provided BiConsumer
+     * Apply MORE advice to this function capturing both the input and the emitted with the provided BiConsumer
      *
      * @param action MORE advice
      * @return  Function with MORE advice attached

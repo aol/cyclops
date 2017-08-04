@@ -390,7 +390,7 @@ public class Optionals {
      * </pre>
      * 
      * 
-     * @param maybes Maybes toNested Sequence
+     * @param maybes Maybes to Sequence
      * @return  Maybe with a List of values
      */
     public static <T> Optional<ListX<T>> sequence(final CollectionX<Optional<T>> opts) {
@@ -412,7 +412,7 @@ public class Optionals {
      * }
      * </pre>
      * 
-     * @param opts Optionals toNested Sequence
+     * @param opts Optionals to Sequence
      * @return Optional with a List of values
      */
     public static <T> Optional<ListX<T>> sequencePresent(final CollectionX<Optional<T>> opts) {
@@ -436,7 +436,7 @@ public class Optionals {
      * </pre>
      * 
      * 
-     * @param opts Maybes toNested Sequence
+     * @param opts Maybes to Sequence
      * @return  Optional with a List of values
      */
     public static <T> Optional<ReactiveSeq<T>> sequence(final Stream<Optional<T>> opts) {
@@ -446,7 +446,7 @@ public class Optionals {
 
     }
     /**
-     * Accummulating operation using the supplied Reducer (@see cyclops2.Reducers). A typical use case is toNested accumulate into a Persistent Collection type.
+     * Accummulating operation using the supplied Reducer (@see cyclops2.Reducers). A typical use case is to accumulate into a Persistent Collection type.
      * Accumulates the present results, ignores zero Optionals.
      * 
      * <pre>
@@ -460,15 +460,15 @@ public class Optionals {
      * }
      * </pre>
      * 
-     * @param optionals Optionals toNested accumulate
-     * @param reducer Reducer toNested accumulate values with
+     * @param optionals Optionals to accumulate
+     * @param reducer Reducer to accumulate values with
      * @return Optional with reduced value
      */
     public static <T, R> Optional<R> accumulatePresent(final CollectionX<Optional<T>> optionals, final Reducer<R> reducer) {
         return sequencePresent(optionals).map(s -> s.mapReduce(reducer));
     }
     /**
-     * Accumulate the results only from those Optionals which have a value present, using the supplied mapping function toNested
+     * Accumulate the results only from those Optionals which have a value present, using the supplied mapping function to
      * convert the data from each Optional before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * 
@@ -484,9 +484,9 @@ public class Optionals {
      * }
      * </pre>
      * 
-     * @param optionals Optionals toNested accumulate
-     * @param mapper Mapping function toNested be applied toNested the result of each Optional
-     * @param reducer Monoid toNested combine values from each Optional
+     * @param optionals Optionals to accumulate
+     * @param mapper Mapping function to be applied to the result of each Optional
+     * @param reducer Monoid to combine values from each Optional
      * @return Optional with reduced value
      */
     public static <T, R> Optional<R> accumulatePresent(final CollectionX<Optional<T>> optionals, final Function<? super T, R> mapper,
@@ -511,9 +511,9 @@ public class Optionals {
      * }
      * </pre>
      * 
-     * @param optionals Optionals toNested accumulate
-     * @param mapper Mapping function toNested be applied toNested the result of each Optional
-     * @param reducer Monoid toNested combine values from each Optional
+     * @param optionals Optionals to accumulate
+     * @param mapper Mapping function to be applied to the result of each Optional
+     * @param reducer Monoid to combine values from each Optional
      * @return Optional with reduced value
      */
     public static <T> Optional<T> accumulatePresent(final Monoid<T> reducer, final CollectionX<Optional<T>> optionals) {
@@ -535,8 +535,8 @@ public class Optionals {
      *  
      * }
      * </pre>
-     * @param f Optional toNested combine with a value
-     * @param v Value toNested combine
+     * @param f Optional to combine with a value
+     * @param v Value to combine
      * @param fn Combining function
      * @return Optional combined with supplied value
      */
@@ -561,8 +561,8 @@ public class Optionals {
      * }
      * </pre>
      * 
-     * @param f Optional toNested combine with a value
-     * @param v Optional toNested combine
+     * @param f Optional to combine with a value
+     * @param v Optional to combine
      * @param fn Combining function
      * @return Optional combined with supplied value, or zero Optional if no value present
      */
@@ -584,8 +584,8 @@ public class Optionals {
      *  
      * }
      * </pre>
-     * @param f Optional toNested combine with takeOne element in Iterable (if present)
-     * @param v Iterable toNested combine
+     * @param f Optional to combine with first element in Iterable (if present)
+     * @param v Iterable to combine
      * @param fn Combining function
      * @return Optional combined with supplied Iterable, or zero Optional if no value present
      */
@@ -610,8 +610,8 @@ public class Optionals {
      * }
      * </pre> 
      * 
-     * @param p Publisher toNested combine
-     * @param f  Optional toNested combine with
+     * @param p Publisher to combine
+     * @param f  Optional to combine with
      * @param fn Combining function
      * @return Optional combined with supplied Publisher, or zero Optional if no value present
      */
@@ -894,7 +894,7 @@ public class Optionals {
          * }
          * </pre>
          *
-         * @param m Monoid toNested use for combining Optionals
+         * @param m Monoid to use for combining Optionals
          * @return Type class for combining Optionals
          */
         public static <T> MonadPlus<optional> monadPlus(Monoid<OptionalKind<T>> m){
@@ -980,7 +980,7 @@ public class Optionals {
             return widen(Optional.empty());
         }
         /**
-         * @param value Value toNested embed in an Optional
+         * @param value Value to embed in an Optional
          * @return An HKT encoded Optional
          */
         public static <T> OptionalKind<T> of(T value) {
@@ -990,13 +990,13 @@ public class Optionals {
              return widen(Optional.ofNullable(value));
          }
         /**
-         * Convert a Optional toNested a simulated HigherKindedType that captures Optional nature
+         * Convert a Optional to a simulated HigherKindedType that captures Optional nature
          * and Optional element data type separately. Recover via @see OptionalKind#narrow
          *
          * If the supplied Optional implements OptionalKind it is returned already, otherwise it
          * is wrapped into a Optional implementation that does implement OptionalKind
          *
-         * @param Optional Optional toNested widen toNested a OptionalKind
+         * @param Optional Optional to widen to a OptionalKind
          * @return OptionalKind encoding HKT info about Optionals
          */
         public static <T> OptionalKind<T> widen(final Optional<T> Optional) {
@@ -1015,11 +1015,11 @@ public class Optionals {
         /**
          * Convert the HigherKindedType definition for a Optional into
          *
-         * @param Optional Type Constructor toNested convert back into narrowed type
+         * @param Optional Type Constructor to convert back into narrowed type
          * @return Optional from Higher Kinded Type
          */
         public static <T> Optional<T> narrowK(final Higher<optional, T> Optional) {
-            //has toNested be an OptionalKind as only OptionalKind can implement Higher<optional, T>
+            //has to be an OptionalKind as only OptionalKind can implement Higher<optional, T>
             return ((OptionalKind<T>)Optional).boxed;
 
         }

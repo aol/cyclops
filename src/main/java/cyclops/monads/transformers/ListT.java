@@ -41,7 +41,7 @@ import org.reactivestreams.Subscriber;
 /**
  * Monad Transformer for Java Lists
  * 
- * ListT allows the deeply wrapped List toNested be manipulating within it's nest /contained context
+ * ListT allows the deeply wrapped List to be manipulating within it's nest /contained context
  *
  * <pre>
  *     {@code
@@ -94,7 +94,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * }
      * </pre>
      * 
-     * @param peek  Consumer toNested accept current value of List
+     * @param peek  Consumer to accept current value of List
      * @return ListT with peek call
      */
     @Override
@@ -116,7 +116,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      *     //ListT<AnyM<Stream<List[11]>>>
      * }
      * </pre>
-     * @param test Predicate toNested filter the wrapped List
+     * @param test Predicate to filter the wrapped List
      * @return ListT that applies the provided filter
      */
     @Override
@@ -138,7 +138,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * </pre>
      * 
      * @param f Mapping function for the wrapped List
-     * @return ListT that applies the map function toNested the wrapped List
+     * @return ListT that applies the map function to the wrapped List
      */
     @Override
     public <B> ListT<W,B> map(final Function<? super T, ? extends B> f) {
@@ -164,7 +164,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * }
      * </pre>
      * @param f FlatMap function
-     * @return ListT that applies the flatMap function toNested the wrapped List
+     * @return ListT that applies the flatMap function to the wrapped List
      */
     public <B> ListT<W,B> flatMapT(final Function<? super T, ListT<W,B>> f) {
 
@@ -178,7 +178,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
     /**
      * Construct an ListT from an AnyM that contains a monad type that contains type other than List
-     * The values in the underlying monad will be mapped toNested List<A>
+     * The values in the underlying monad will be mapped to List<A>
      * 
      * @param anyM AnyM that doesn't contain a monad wrapping an List
      * @return ListT

@@ -432,7 +432,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * </pre>
      *
      * @param pub Publisher to extract value from
-     * @return Try populated with takeOne value from Publisher
+     * @return Try populated with first value from Publisher
      */
     @SafeVarargs
     public static <T, X extends Throwable> Try<T, X> fromPublisher(final Publisher<T> pub, final Class<X>... classes) {
@@ -464,7 +464,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * </pre>
      *
      * @param pub Publisher to extract value from
-     * @return Try populated with takeOne value from Publisher
+     * @return Try populated with first value from Publisher
      */
     public static <T> Try<T, Throwable> fromPublisher(final Publisher<T> pub) {
         return new Try<>(Either.fromPublisher(pub),new Class[0]);
@@ -486,7 +486,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * </pre>
      *
      * @param iterable Iterable to extract value from
-     * @return Try populated with takeOne value from Iterable
+     * @return Try populated with first value from Iterable
      */
     public static <T, X extends Throwable> Try<T, X> fromIterable(final Iterable<T> iterable) {
         return new Try<>(Either.fromIterable(iterable), new Class[0]);
@@ -1386,7 +1386,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * Equivalent to ap, but accepts an Iterable and takes the takeOne value
+     * Equivalent to ap, but accepts an Iterable and takes the first value
      * only from that iterable.
      *
      * @param app
@@ -1400,7 +1400,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * Equivalent to ap, but accepts a Publisher and takes the takeOne value
+     * Equivalent to ap, but accepts a Publisher and takes the first value
      * only from that publisher.
      *
      * @param app

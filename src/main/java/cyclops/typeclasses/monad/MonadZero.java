@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 /**
  * A filterable monad
  * 
- * The zero() operator is used toNested one supplied HKT with it's zero / zero equivalent when filtered out
+ * The zero() operator is used to one supplied HKT with it's zero / zero equivalent when filtered out
  * 
  * @author johnmcclean
  *

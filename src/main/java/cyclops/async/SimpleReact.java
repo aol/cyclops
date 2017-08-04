@@ -86,7 +86,7 @@ public class SimpleReact implements ReactBuilder {
     /**
      * Construct a SimpleReact builder using standard thread pool.
      * By default, unless ThreadPools is configured otherwise this will be sized
-     * toNested the available processors
+     * to the available processors
      * 
      * @see ThreadPools#getStandard()
      */
@@ -97,10 +97,10 @@ public class SimpleReact implements ReactBuilder {
     /**
      * Construct a SimpleReact builder from the provided Executor, Retrier.
      * 
-     * @param executor Task executor toNested execute tasks on
-     * @param retrier Retrier toNested use for asyncrhonous retry
+     * @param executor Task executor to execute tasks on
+     * @param retrier Retrier to use for asyncrhonous retry
      * @param async If false, subsequent tasks are executed on the completing thread
-     *              If true each subsequent task is resubmitted toNested a task executor,
+     *              If true each subsequent task is resubmitted to a task executor,
      */
     public SimpleReact(final Executor executor, final Boolean async) {
         queueService = ThreadPools.getQueueCopyExecutor();
@@ -117,7 +117,7 @@ public class SimpleReact implements ReactBuilder {
     /**
      * Construct a SimpleReact builder from the provided Executor
      * 
-     * @param executor Task executor toNested execute tasks on
+     * @param executor Task executor to execute tasks on
      */
     public SimpleReact(final Executor executor) {
         queueService = ThreadPools.getQueueCopyExecutor();
@@ -127,9 +127,9 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * 
-     * @param executor Task executor toNested execute tasks on
+     * @param executor Task executor to execute tasks on
      * @param retrier
-     * @param queueCopier Task executor toNested transfer results during flatMap operations
+     * @param queueCopier Task executor to transfer results during flatMap operations
      */
     public SimpleReact(final Executor executor, final Executor queueCopier) {
         queueService = ThreadPools.getQueueCopyExecutor();
@@ -147,7 +147,7 @@ public class SimpleReact implements ReactBuilder {
      * Start a reactiveBuffer dataflow with a list of one-off-suppliers
      * 
      * @param actions
-     *           Stream of Suppliers toNested provide data (and thus events) that
+     *           Stream of Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
      * @return Next stage in the reactiveBuffer flow
      */
@@ -162,7 +162,7 @@ public class SimpleReact implements ReactBuilder {
      * Construct a SimpleReactStream from an Publisher
      * 
      * @param publisher
-     *            toNested construct SimpleReactStream from
+     *            to construct SimpleReactStream from
      * @return SimpleReactStream
      */
     public <T> SimpleReactStream<T> fromPublisher(final Publisher<? extends T> publisher) {
@@ -177,7 +177,7 @@ public class SimpleReact implements ReactBuilder {
      * Start a reactiveBuffer dataflow with a list of one-off-suppliers
      * 
      * @param actions
-     *           Iterator over Suppliers toNested provide data (and thus events) that
+     *           Iterator over Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
      * @return Next stage in the reactiveBuffer flow
      */
@@ -194,7 +194,7 @@ public class SimpleReact implements ReactBuilder {
      * Start a reactiveBuffer dataflow with a list of one-off-suppliers
      * 
      * @param actions
-     *           Stream of Suppliers toNested provide data (and thus events) that
+     *           Stream of Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
      * @return Next stage in the reactiveBuffer flow
      */
@@ -211,7 +211,7 @@ public class SimpleReact implements ReactBuilder {
      * 
      * Start a reactiveBuffer dataflow with an array of one-off-suppliers
      * 
-     * @param actions Array of Suppliers toNested provide data (and thus events) that
+     * @param actions Array of Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
      * @return Next stage in the reactiveBuffer flow
      */
@@ -238,7 +238,7 @@ public class SimpleReact implements ReactBuilder {
     /**
      * Start a reactiveBuffer dataflow from a reactiveStream.
      * 
-     * @param stream that will be used toNested drive the reactiveBuffer dataflow
+     * @param stream that will be used to drive the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
     public <U> SimpleReactStream<U> from(final Stream<U> stream) {
@@ -302,7 +302,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * @return new eager SimpleReact builder configured toNested run on a separate thread (non-blocking current thread), sequentially
+     * @return new eager SimpleReact builder configured to run on a separate thread (non-blocking current thread), sequentially
      * New ForkJoinPool will be created
      */
     public static SimpleReact sequentialBuilder() {
@@ -315,7 +315,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * @return new eager SimpleReact builder configured toNested run on a separate thread (non-blocking current thread), sequentially
+     * @return new eager SimpleReact builder configured to run on a separate thread (non-blocking current thread), sequentially
      * Common free thread Executor from
      */
     public static SimpleReact sequentialCommonBuilder() {
@@ -333,7 +333,7 @@ public class SimpleReact implements ReactBuilder {
     /**
      * Start a reactiveBuffer flow from a JDK Iterator
      * 
-     * @param iterator SimpleReact will iterate over this iterator concurrently toNested skip the reactiveBuffer dataflow
+     * @param iterator SimpleReact will iterate over this iterator concurrently to skip the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
     @SuppressWarnings("unchecked")
@@ -345,7 +345,7 @@ public class SimpleReact implements ReactBuilder {
     /**
      * Start a reactiveBuffer flow from a JDK Iterator
      * 
-     * @param iter SimpleReact will iterate over this iterator concurrently toNested skip the reactiveBuffer dataflow
+     * @param iter SimpleReact will iterate over this iterator concurrently to skip the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
     @SuppressWarnings("unchecked")
@@ -360,7 +360,7 @@ public class SimpleReact implements ReactBuilder {
     /**
      * Start a reactiveBuffer dataflow from a reactiveStream of CompletableFutures.
      * 
-     * @param stream of CompletableFutures that will be used toNested drive the reactiveBuffer dataflow
+     * @param stream of CompletableFutures that will be used to drive the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
     public <U> SimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
@@ -372,7 +372,7 @@ public class SimpleReact implements ReactBuilder {
     /**
      * Start a reactiveBuffer dataflow from a reactiveStream.
      * 
-     * @param stream that will be used toNested drive the reactiveBuffer dataflow
+     * @param stream that will be used to drive the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
     public <U> SimpleReactStream<Integer> from(final IntStream stream) {
@@ -384,7 +384,7 @@ public class SimpleReact implements ReactBuilder {
     /**
      * Start a reactiveBuffer dataflow from a reactiveStream.
      * 
-     * @param stream that will be used toNested drive the reactiveBuffer dataflow
+     * @param stream that will be used to drive the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
     public <U> SimpleReactStream<Double> from(final DoubleStream stream) {
@@ -396,7 +396,7 @@ public class SimpleReact implements ReactBuilder {
     /**
      * Start a reactiveBuffer dataflow from a reactiveStream.
      * 
-     * @param stream that will be used toNested drive the reactiveBuffer dataflow
+     * @param stream that will be used to drive the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
     public <U> SimpleReactStream<Long> from(final LongStream stream) {
@@ -416,7 +416,7 @@ public class SimpleReact implements ReactBuilder {
     /**
      * Construct a simpleReactStream from an Array of CompletableFutures
      * 
-     * @param cf CompletableFutures toNested turn into a Stream
+     * @param cf CompletableFutures to turn into a Stream
      * @return SimpleReactStream from an Array of CompletableFutures
      */
     public <U> SimpleReactStream<U> from(final CompletableFuture<U>... cf) {

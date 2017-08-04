@@ -108,7 +108,7 @@ public class MonoidKs {
 
 
     /**
-     * @return Combination of two ReactiveSeq Streams b is appended toNested a
+     * @return Combination of two ReactiveSeq Streams b is appended to a
      */
     static <T> MonoidK<reactiveSeq,T> combineReactiveSeq() {
         return MonoidK.of(ReactiveSeq.empty(),SemigroupKs.combineReactiveSeq());
@@ -128,7 +128,7 @@ public class MonoidKs {
 
 
     /**
-     * @return Combination of two Stream's : b is appended toNested a
+     * @return Combination of two Stream's : b is appended to a
      */
     static <T> MonoidK<stream,T> combineStream() {
         return MonoidK.of(Streams.StreamKind.widen(Stream.empty()),SemigroupKs.combineStream());
@@ -136,13 +136,13 @@ public class MonoidKs {
 
 
     /**
-     * @return Combine two CompletableFuture's by taking the takeOne present
+     * @return Combine two CompletableFuture's by taking the first present
      */
     static <T> MonoidK<completableFuture,T> firstCompleteCompletableFuture() {
         return MonoidK.of(CompletableFutures.CompletableFutureKind.widen(new CompletableFuture<>()),SemigroupKs.firstCompleteCompletableFuture());
     }
     /**
-     * @return Combine two Future's by taking the takeOne result
+     * @return Combine two Future's by taking the first result
      */
     static <T> MonoidK<future,T> firstCompleteFuture() {
             return MonoidK.of(Future.future(),SemigroupKs.firstCompleteFuture());
@@ -150,19 +150,19 @@ public class MonoidKs {
 
 
     /**
-     * @return Combine two Future's by taking the takeOne successful
+     * @return Combine two Future's by taking the first successful
      */
     static <T> MonoidK<future,T> firstSuccessfulFuture() {
         return MonoidK.of(Future.future(),SemigroupKs.firstSuccessfulFuture());
     }
     /**
-     * @return Combine two Xor's by taking the takeOne primary
+     * @return Combine two Xor's by taking the first primary
      */
     static <ST,PT> MonoidK<Higher<xor,ST>,PT> firstPrimaryXor(ST zero) {
         return MonoidK.of(Xor.secondary(zero),SemigroupKs.firstPrimaryXor());
     }
     /**
-     * @return Combine two Xor's by taking the takeOne secondary
+     * @return Combine two Xor's by taking the first secondary
      */
     static <ST,PT> MonoidK<Higher<xor,ST>,PT> firstSecondaryXor(PT zero) {
         return MonoidK.of(Xor.primary(zero),SemigroupKs.firstSecondaryXor());
@@ -180,13 +180,13 @@ public class MonoidKs {
         return MonoidK.of(Xor.primary(zero),SemigroupKs.lastSecondaryXor());
     }
     /**
-     * @return Combine two Try's by taking the takeOne primary
+     * @return Combine two Try's by taking the first primary
      */
     static <T,X extends Throwable> MonoidK<Higher<tryType,X>,T> firstTrySuccess(X zero) {
         return MonoidK.of(Try.failure(zero),SemigroupKs.firstTrySuccess());
     }
     /**
-     * @return Combine two Try's by taking the takeOne secondary
+     * @return Combine two Try's by taking the first secondary
      */
     static <T,X extends Throwable> MonoidK<Higher<tryType,X>,T> firstTryFailure(T zero) {
         return MonoidK.of(Try.success(zero),SemigroupKs.firstTryFailure());
@@ -204,13 +204,13 @@ public class MonoidKs {
         return MonoidK.of(Try.success(zero),SemigroupKs.lastTryFailure());
     }
     /**
-     * @return Combine two Ior's by taking the takeOne primary
+     * @return Combine two Ior's by taking the first primary
      */
     static <ST,PT> MonoidK<Higher<ior,ST>,PT> firstPrimaryIor(ST zero) {
         return MonoidK.of(Ior.secondary(zero),SemigroupKs.firstPrimaryIor());
     }
     /**
-     * @return Combine two Ior's by taking the takeOne secondary
+     * @return Combine two Ior's by taking the first secondary
      */
     static <ST,PT> MonoidK<Higher<ior,ST>,PT> firstSecondaryIor(PT zero) {
         return MonoidK.of(Ior.primary(zero),SemigroupKs.firstSecondaryIor());
@@ -229,14 +229,14 @@ public class MonoidKs {
     }
 
     /**
-     * @return Combine two Maybe's by taking the takeOne present
+     * @return Combine two Maybe's by taking the first present
      */
     static <T> MonoidK<maybe,T> firstPresentMaybe() {
         return MonoidK.of(Maybe.none(),SemigroupKs.firstPresentMaybe());
     }
 
     /**
-     * @return Combine two optionals by taking the takeOne present
+     * @return Combine two optionals by taking the first present
      */
     static <T> MonoidK<optional,T> firstPresentOptional() {
         return MonoidK.of(OptionalKind.empty(),SemigroupKs.firstPresentOptional());

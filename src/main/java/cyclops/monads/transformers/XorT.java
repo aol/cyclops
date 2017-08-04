@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 * Monad Transformer for Xor's
 
  * 
- * MaybeT allows the deeply wrapped Maybe toNested be manipulating within it's nested /contained context
+ * MaybeT allows the deeply wrapped Maybe to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
  *
@@ -100,7 +100,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
      * }
      * </pre>
      * 
-     * @param peek  Consumer toNested accept current value of Maybe
+     * @param peek  Consumer to accept current value of Maybe
      * @return MaybeWT with peek call
      */
     @Override
@@ -125,7 +125,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
      * </pre>
      * 
      * @param f Mapping function for the wrapped Maybe
-     * @return MaybeWT that applies the map function toNested the wrapped Maybe
+     * @return MaybeWT that applies the map function to the wrapped Maybe
      */
     @Override
     public <B> XorT<W,ST,B> map(final Function<? super T, ? extends B> f) {
@@ -145,7 +145,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
      * }
      * </pre>
      * @param f FlatMap function
-     * @return MaybeWT that applies the flatMap function toNested the wrapped Maybe
+     * @return MaybeWT that applies the flatMap function to the wrapped Maybe
      */
 
     public <B> XorT<W,ST,B> flatMapT(final Function<? super T, XorT<W,ST,B>> f) {
@@ -168,9 +168,9 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
 
     /**
      * Lift a function into one that accepts and returns an MaybeWT
-     * This allows multiple monad types toNested add functionality toNested existing function and methods
+     * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. toNested add list handling  / iteration (via Maybe) and iteration (via Stream) toNested an existing function
+     * e.g. to add list handling  / iteration (via Maybe) and iteration (via Stream) to an existing function
      * <pre>
      * {@code 
         Function<Integer,Integer> add2 = i -> i+2;
@@ -192,7 +192,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
      * }</pre>
      * 
      * 
-     * @param fn Function toNested enhance with functionality from Maybe and another monad type
+     * @param fn Function to enhance with functionality from Maybe and another monad type
      * @return Function that accepts and returns an MaybeWT
      */
     public static <W extends WitnessType<W>,U,ST, R> Function<XorT<W,ST,U>, XorT<W,ST,R>> lift(final Function<? super U, ? extends R> fn) {
@@ -201,10 +201,10 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
 
     /**
      * Lift a BiFunction into one that accepts and returns  MaybeWTs
-     * This allows multiple monad types toNested add functionality toNested existing function and methods
+     * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. toNested add list handling / iteration (via Maybe), iteration (via Stream)  and asynchronous execution (Maybe)
-     * toNested an existing function
+     * e.g. to add list handling / iteration (via Maybe), iteration (via Stream)  and asynchronous execution (Maybe)
+     * to an existing function
      * 
      * <pre>
      * {@code 
@@ -226,7 +226,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     		//Maybe.completedMaybe(List[3,4,5]);
       }
       </pre>
-     * @param fn BiFunction toNested enhance with functionality from Maybe and another monad type
+     * @param fn BiFunction to enhance with functionality from Maybe and another monad type
      * @return Function that accepts and returns an MaybeWT
      */
     public static <W extends WitnessType<W>, ST,U1,  U2, R> BiFunction<XorT<W,ST,U1>, XorT<W,ST,U2>, XorT<W,ST,R>> lift2(
@@ -236,7 +236,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
 
     /**
      * Construct an MaybeWT from an AnyM that contains a monad type that contains type other than Maybe
-     * The values in the underlying monad will be mapped toNested Maybe<A>
+     * The values in the underlying monad will be mapped to Maybe<A>
      * 
      * @param anyM AnyM that doesn't contain a monad wrapping an Maybe
      * @return MaybeWT

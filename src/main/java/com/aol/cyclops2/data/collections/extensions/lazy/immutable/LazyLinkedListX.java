@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  * }
  * </pre>
  * The map operation above is not executed immediately. It will only be executed when (if) the data inside the
- * queue is accessed. This allows lazy operations toNested be chained and executed more efficiently e.g.
+ * queue is accessed. This allows lazy operations to be chained and executed more efficiently e.g.
  *
  * <pre>
  * {@code

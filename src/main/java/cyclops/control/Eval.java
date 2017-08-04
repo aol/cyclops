@@ -573,7 +573,7 @@ public interface Eval<T> extends To<Eval<T>>,
         return (Eval<R>) MonadicValue.super.combine(app, fn);
     }
 
-    /* Equivalent to combine, but accepts an Iterable and takes the takeOne value only from that iterable.
+    /* Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
      * (non-Javadoc)
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
@@ -583,7 +583,7 @@ public interface Eval<T> extends To<Eval<T>>,
         return (Eval<R>) MonadicValue.super.zip(app, fn);
     }
 
-    /* Equivalent to combine, but accepts a Publisher and takes the takeOne value only from that publisher.
+    /* Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
      *
      * (non-Javadoc)
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)

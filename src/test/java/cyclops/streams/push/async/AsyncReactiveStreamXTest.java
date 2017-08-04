@@ -239,7 +239,7 @@ public  class AsyncReactiveStreamXTest {
 	}
 	@Test
 	public void limitTime() throws InterruptedException {
-			Thread.sleep(100); //sleep toNested allow any background tasks toNested complete
+			Thread.sleep(100); //sleep to allow any background tasks to complete
 									//before time sensitive test
 		    System.out.println("Next iteration...");
             List<Integer> result = of(1, 2, 3, 4, 5, 6)

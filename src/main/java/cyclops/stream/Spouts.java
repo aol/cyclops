@@ -50,8 +50,8 @@ import java.util.stream.Stream;
 import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
- * reactiveBuffer : is used toNested denote creational methods for reactiveBuffer-streams that support non-blocking backpressure
- * async : is used toNested denote creational methods for asynchronous streams that do not support backpressure
+ * reactiveBuffer : is used to denote creational methods for reactiveBuffer-streams that support non-blocking backpressure
+ * async : is used to denote creational methods for asynchronous streams that do not support backpressure
  */
 
 public interface Spouts {
@@ -100,9 +100,9 @@ public interface Spouts {
 
     /**
      * Create a push based Stream with <b>no backpressure</b> fromm the provided Stream.
-     * The provided Stream will be executed on the provided executor and pushed toNested the returned Stream
+     * The provided Stream will be executed on the provided executor and pushed to the returned Stream
      *
-     * @param seq Stream toNested execute and push toNested a new non-backpressure aware Stream
+     * @param seq Stream to execute and push to a new non-backpressure aware Stream
      * @param exec
      * @param <T>
      * @return
@@ -237,11 +237,11 @@ public interface Spouts {
 
 
     /**
-     *   The recommended way toNested connect a Spout toNested a Publisher is via Spouts#from
+     *   The recommended way to connect a Spout to a Publisher is via Spouts#from
      *   Create an Subscriber for Observable style asynchronous push based Streams,
      *   that implements backpressure internally via the reactiveBuffer-streams spec.
      *
-     *   Subscribers signal demand via their subscription and publishers push data toNested subscribers
+     *   Subscribers signal demand via their subscription and publishers push data to subscribers
      *   synchronously or asynchronously, never exceeding signalled demand
      *
      * @param <T> Stream data type
@@ -827,7 +827,7 @@ public interface Spouts {
          * }
          * </pre>
          *
-         * @param m Monoid toNested use for combining Lists
+         * @param m Monoid to use for combining Lists
          * @return Type class for combining Lists
          */
         public static <T> MonadPlus<reactiveSeq> monadPlus(Monoid<ReactiveSeq<T>> m){
@@ -910,7 +910,7 @@ public interface Spouts {
         /**
          * Widen a ReactiveSeq nest inside another HKT encoded type
          *
-         * @param flux HTK encoded type containing  a List toNested widen
+         * @param flux HTK encoded type containing  a List to widen
          * @return HKT encoded type with a widened List
          */
         public static <C2, T> Higher<C2, Higher<reactiveSeq, T>> widen2(Higher<C2, ReactiveSeq<T>> flux) {
@@ -927,7 +927,7 @@ public interface Spouts {
         /**
          * Convert the HigherKindedType definition for a List into
          *
-         * @param List Type Constructor toNested convert back into narrowed type
+         * @param List Type Constructor to convert back into narrowed type
          * @return List from Higher Kinded Type
          */
         public static <T> ReactiveSeq<T> narrow(final Higher<reactiveSeq, T> completableList) {

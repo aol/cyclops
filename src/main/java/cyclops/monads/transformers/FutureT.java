@@ -32,7 +32,7 @@ import cyclops.function.Fn3;
 * Monad Transformer for Future's nest within another monadic type
 
  * 
- * FutureT allows the deeply wrapped Future toNested be manipulating within it's nest /contained context
+ * FutureT allows the deeply wrapped Future to be manipulating within it's nest /contained context
  *
  * @author johnmcclean
  *
@@ -104,7 +104,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
      * }
      * </pre>
      * 
-     * @param peek  Consumer toNested accept current value of Future
+     * @param peek  Consumer to accept current value of Future
      * @return FutureT with peek call
      */
     @Override
@@ -129,7 +129,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
      * </pre>
      * 
      * @param f Mapping function for the wrapped Future
-     * @return FutureT that applies the map function toNested the wrapped Future
+     * @return FutureT that applies the map function to the wrapped Future
      */
     @Override
     public <B> FutureT<W,B> map(final Function<? super T, ? extends B> f) {
@@ -153,7 +153,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
      * }
      * </pre>
      * @param f FlatMap function
-     * @return FutureT that applies the flatMap function toNested the wrapped Future
+     * @return FutureT that applies the flatMap function to the wrapped Future
      */
 
     public <B> FutureT<W,B> flatMapT(final Function<? super T, FutureT<W,B>> f) {
@@ -176,9 +176,9 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
 
     /**
      * Lift a function into one that accepts and returns an FutureT
-     * This allows multiple monad types toNested add functionality toNested existing function and methods
+     * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. toNested add list handling  / iteration (via Future) and iteration (via Stream) toNested an existing function
+     * e.g. to add list handling  / iteration (via Future) and iteration (via Stream) to an existing function
      * <pre>
      * {@code 
         Function<Integer,Integer> add2 = i -> i+2;
@@ -200,7 +200,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
      * }</pre>
      * 
      * 
-     * @param fn Function toNested enhance with functionality from Future and another monad type
+     * @param fn Function to enhance with functionality from Future and another monad type
      * @return Function that accepts and returns an FutureT
      */
     public static <W extends WitnessType<W>,U, R> Function<FutureT<W,U>, FutureT<W,R>> lift(final Function<? super U, ? extends R> fn) {
@@ -209,10 +209,10 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
 
     /**
      * Lift a BiFunction into one that accepts and returns  FutureTs
-     * This allows multiple monad types toNested add functionality toNested existing function and methods
+     * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. toNested add list handling / iteration (via Future), iteration (via Stream)  and asynchronous execution (Future)
-     * toNested an existing function
+     * e.g. to add list handling / iteration (via Future), iteration (via Stream)  and asynchronous execution (Future)
+     * to an existing function
      * 
      * <pre>
      * {@code 
@@ -234,7 +234,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     		//Future.completedFuture(List[3,4,5]);
       }
       </pre>
-     * @param fn BiFunction toNested enhance with functionality from Future and another monad type
+     * @param fn BiFunction to enhance with functionality from Future and another monad type
      * @return Function that accepts and returns an FutureT
      */
     public static <W extends WitnessType<W>, U1,  U2, R> BiFunction<FutureT<W,U1>, FutureT<W,U2>, FutureT<W,R>> lift2(
@@ -244,7 +244,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
 
     /**
      * Construct an FutureT from an AnyM that contains a monad type that contains type other than Future
-     * The values in the underlying monad will be mapped toNested Future<A>
+     * The values in the underlying monad will be mapped to Future<A>
      * 
      * @param anyM AnyM that doesn't contain a monad wrapping an Future
      * @return FutureT

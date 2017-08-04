@@ -63,7 +63,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
      * </pre>
      * 
      * 
-     * @param t Monad toNested compare toNested
+     * @param t Monad to compare to
      * @return true if equivalent
      */
     default boolean eqv(final AnyMValue2<?, T2,T> t) {

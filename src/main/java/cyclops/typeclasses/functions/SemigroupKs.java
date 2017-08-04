@@ -118,7 +118,7 @@ public class SemigroupKs{
 
 
     /**
-     * @return Combination of two ReactiveSeq Streams b is appended toNested a
+     * @return Combination of two ReactiveSeq Streams b is appended to a
      */
     static <T> SemigroupK<reactiveSeq,T> combineReactiveSeq() {
         return (a, b) -> ReactiveSeq.narrowK(a).appendS(ReactiveSeq.narrowK(b));
@@ -138,7 +138,7 @@ public class SemigroupKs{
 
 
     /**
-     * @return Combination of two Stream's : b is appended toNested a
+     * @return Combination of two Stream's : b is appended to a
      */
     static <T> SemigroupK<stream,T> combineStream() {
         return (a, b) ->  Streams.StreamKind.widen(Stream.concat(Streams.StreamKind.narrow(a), Streams.StreamKind.narrow(b)));
@@ -146,7 +146,7 @@ public class SemigroupKs{
 
 
     /**
-     * @return Combine two CompletableFuture's by taking the takeOne present
+     * @return Combine two CompletableFuture's by taking the first present
      */
     static <T> SemigroupK<completableFuture,T> firstCompleteCompletableFuture() {
         return (a, b) -> {
@@ -155,7 +155,7 @@ public class SemigroupKs{
         };
     }
     /**
-     * @return Combine two Future's by taking the takeOne result
+     * @return Combine two Future's by taking the first result
      */
     static <T> SemigroupK<future,T> firstCompleteFuture() {
         return (a, b) -> Future.anyOf(Future.narrowK(a),Future.narrowK(b));
@@ -163,19 +163,19 @@ public class SemigroupKs{
 
 
     /**
-     * @return Combine two Future's by taking the takeOne successful
+     * @return Combine two Future's by taking the first successful
      */
     static <T> SemigroupK<future,T> firstSuccessfulFuture() {
         return (a, b) -> Future.firstSuccess(Future.narrowK(a),Future.narrowK(b));
     }
     /**
-     * @return Combine two Xor's by taking the takeOne primary
+     * @return Combine two Xor's by taking the first primary
      */
     static <ST,PT> SemigroupK<Higher<xor,ST>,PT> firstPrimaryXor() {
         return  (a, b) -> Xor.narrowK(a).isPrimary() ? a : b;
     }
     /**
-     * @return Combine two Xor's by taking the takeOne secondary
+     * @return Combine two Xor's by taking the first secondary
      */
     static <ST,PT> SemigroupK<Higher<xor,ST>,PT> firstSecondaryXor() {
         return  (a, b) -> Xor.narrowK(a).isSecondary() ? a : b;
@@ -193,13 +193,13 @@ public class SemigroupKs{
         return  (a, b) -> Xor.narrowK(b).isSecondary() ? b : a;
     }
     /**
-     * @return Combine two Try's by taking the takeOne primary
+     * @return Combine two Try's by taking the first primary
      */
     static <T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> firstTrySuccess() {
         return  (a, b) -> Try.narrowK(a).isSuccess() ? a : b;
     }
     /**
-     * @return Combine two Try's by taking the takeOne secondary
+     * @return Combine two Try's by taking the first secondary
      */
     static <T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> firstTryFailure() {
         return  (a, b) -> Try.narrowK(a).isFailure() ? a : b;
@@ -217,13 +217,13 @@ public class SemigroupKs{
         return  (a, b) -> Try.narrowK(b).isFailure() ? b : a;
     }
     /**
-     * @return Combine two Ior's by taking the takeOne primary
+     * @return Combine two Ior's by taking the first primary
      */
     static <ST,PT> SemigroupK<Higher<ior,ST>,PT> firstPrimaryIor() {
         return  (a, b) -> Ior.narrowK(a).isPrimary() ? a : b;
     }
     /**
-     * @return Combine two Ior's by taking the takeOne secondary
+     * @return Combine two Ior's by taking the first secondary
      */
     static <ST,PT> SemigroupK<Higher<ior,ST>,PT> firstSecondaryIor() {
         return  (a, b) -> Ior.narrowK(a).isSecondary() ? a : b;
@@ -242,14 +242,14 @@ public class SemigroupKs{
     }
 
     /**
-     * @return Combine two Maybe's by taking the takeOne present
+     * @return Combine two Maybe's by taking the first present
      */
     static <T> SemigroupK<maybe,T> firstPresentMaybe() {
         return (a, b) -> Maybe.narrowK(a).isPresent() ? a : b;
     }
 
     /**
-     * @return Combine two optionals by taking the takeOne present
+     * @return Combine two optionals by taking the first present
      */
     static <T> SemigroupK<optional,T> firstPresentOptional() {
         return (a, b) -> OptionalKind.narrowK(a).isPresent() ? a : b;

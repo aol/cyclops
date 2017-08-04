@@ -28,7 +28,7 @@ import cyclops.collections.mutable.SortedSetX;
  */
 public interface CyclopsCollectors {
     /**
-     * @return Collector toNested QueueX
+     * @return Collector to QueueX
      */
     static <T> Collector<T, ?, QueueX<T>> toQueueX() {
         return java.util.stream.Collectors.collectingAndThen(QueueX.defaultCollector(), (final Queue<T> d) -> new LazyQueueX<>(

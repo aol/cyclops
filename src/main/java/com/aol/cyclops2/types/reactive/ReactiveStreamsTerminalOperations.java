@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import org.reactivestreams.Subscription;
 
 /**
- * Interface for reactiveBuffer-streams based terminal operations, requires simple-react toNested be on the classpath.
+ * Interface for reactiveBuffer-streams based terminal operations, requires simple-react to be on the classpath.
  *
  * 
  * @author johnmcclean

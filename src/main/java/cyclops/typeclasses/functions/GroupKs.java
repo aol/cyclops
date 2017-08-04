@@ -95,7 +95,7 @@ public interface GroupKs {
 
 
     /**
-     * @return Combination of two ReactiveSeq Streams b is appended toNested a
+     * @return Combination of two ReactiveSeq Streams b is appended to a
      */
     static <T> GroupK<reactiveSeq,T> combineReactiveSeq() {
         return GroupK.of(l->l.convert(ReactiveSeq::narrowK),MonoidKs.combineReactiveSeq());
@@ -110,7 +110,7 @@ public interface GroupKs {
 
     
     /**
-     * @return Combination of two Stream's : b is appended toNested a
+     * @return Combination of two Stream's : b is appended to a
      */
     static <T> GroupK<stream,T> combineStream() {
         return GroupK.of(l-> Streams.StreamKind.widen(Streams.reverse(l.convert(Streams.StreamKind::narrowK))), MonoidKs.combineStream());

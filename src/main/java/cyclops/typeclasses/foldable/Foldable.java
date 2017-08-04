@@ -20,8 +20,8 @@ public interface Foldable<CRE> {
     /**
      * Starting from the right combine each value in turn with an accumulator
      * 
-     * @param monoid Monoid toNested combine values
-     * @param ds DataStructure toNested foldRight
+     * @param monoid Monoid to combine values
+     * @param ds DataStructure to foldRight
      * @return Reduced value
      */
     public <T> T foldRight(Monoid<T> monoid, Higher<CRE, T> ds);
@@ -31,7 +31,7 @@ public interface Foldable<CRE> {
      * 
      * @param identity Identity value &amp; default
      * @param semigroup Combining function
-     * @param ds DataStructure toNested foldRight
+     * @param ds DataStructure to foldRight
      * @return reduced value
      */
     default <T>  T foldRight(T identity, BinaryOperator<T> semigroup, Higher<CRE, T> ds){
@@ -40,8 +40,8 @@ public interface Foldable<CRE> {
     /**
      * Starting from the left combine each value in turn with an accumulator
      * 
-     * @param monoid  Monoid toNested combine values
-     * @param ds DataStructure toNested foldLeft
+     * @param monoid  Monoid to combine values
+     * @param ds DataStructure to foldLeft
      * @return Reduced value
      */
     public <T> T foldLeft(Monoid<T> monoid, Higher<CRE, T> ds);
@@ -51,7 +51,7 @@ public interface Foldable<CRE> {
      * 
      * @param identity Identity value &amp; default
      * @param semigroup Combining function
-     * @param ds DataStructure toNested foldLeft
+     * @param ds DataStructure to foldLeft
      * @return Reduced value
      */
     default <T>  T foldLeft(T identity, BinaryOperator<T> semigroup, Higher<CRE, T> ds){

@@ -105,7 +105,7 @@ public interface General {
         
        
         Applicative<CRE> applicative;
-        BiFunction<? extends Higher<CRE,A>,Function<? super A,? extends Higher<CRE,B>>,? extends Higher<CRE,B>> bindRef; //reference toNested bind / flatMap method
+        BiFunction<? extends Higher<CRE,A>,Function<? super A,? extends Higher<CRE,B>>,? extends Higher<CRE,B>> bindRef; //reference to bind / flatMap method
        
         
         <T,R> BiFunction<Higher<CRE,T>,Function<? super T,? extends Higher<CRE,R>>,Higher<CRE,R>> bindRef(){

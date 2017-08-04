@@ -39,7 +39,7 @@ public class ReactiveZippingRSTest {
 		/**
 		 List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6).limit(6)
 		 .zip( of(100,200,300,400).limit(4))
-		 .toNested(Streamable::fromStream).collect(CyclopsCollectors.toList());**/
+		 .to(Streamable::fromStream).collect(CyclopsCollectors.toList());**/
 
 		assertThat(list.get(0).v1,is(1));
 		assertThat(list.get(0).v2,is(100));

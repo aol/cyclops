@@ -178,7 +178,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Select the takeOne Future to complete
+     * Select the first Future to complete
      *
      * @see CompletableFuture#anyOf(CompletableFuture...)
      * @param fts Futures to race
@@ -273,7 +273,7 @@ public class Future<T> implements To<Future<T>>,
 
     }
     /**
-     * Select the takeOne Future to return with a successful result
+     * Select the first Future to return with a successful result
      *
      * <pre>
      * {@code
@@ -1316,7 +1316,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /*
-     * Equivalent to combine, but accepts an Iterable and takes the takeOne value
+     * Equivalent to combine, but accepts an Iterable and takes the first value
      * only from that iterable. (non-Javadoc)
      *
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable,
@@ -1329,7 +1329,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /*
-     * Equivalent to combine, but accepts a Publisher and takes the takeOne value
+     * Equivalent to combine, but accepts a Publisher and takes the first value
      * only from that publisher.
      *
      * (non-Javadoc)
