@@ -63,7 +63,7 @@ public class SetXTest extends AbstractCollectionXTest {
         CollectionX<Tuple2<Integer, String>> t1 = of(tuple(2, "two"), tuple(1, "replaceWith"));
 
         List<Tuple2<Integer, String>> s1 = t1.sorted().toList();
-        System.out.println(s1);
+        //System.out.println(s1);
         assertEquals(tuple(1, "replaceWith"), s1.get(0));
         assertEquals(tuple(2, "two"), s1.get(1));
 

@@ -11,6 +11,7 @@ import cyclops.typeclasses.functions.MonoidK;
 
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 
 /**
@@ -76,6 +77,7 @@ public interface Foldable<CRE> {
         return foldLeft(monoid, ds);
     }
 
+
     default <T> long size(Higher<CRE, T> ds) {
         return foldMap(Monoids.longSum, __ -> 1l, ds);
     }
@@ -85,7 +87,15 @@ public interface Foldable<CRE> {
     default  <T> ReactiveSeq<T> stream(Higher<CRE, T> ds){
         return listX(ds).stream();
     }
+    default <T> T intercalate(Monoid<T> monoid, T value, Higher<CRE, T> ds ){
+        return listX(ds).intersperse(value).foldLeft(monoid);
+    }
 
-
+    default<T> boolean anyMatch(Predicate<? super T> pred, Higher<CRE, T> ds){
+        return foldMap(Monoids.booleanDisjunction,i->pred.test(i),ds);
+    }
+    default<T> boolean allMatch(Predicate<? super T> pred, Higher<CRE, T> ds){
+        return foldMap(Monoids.booleanConjunction,i->pred.test(i),ds);
+    }
 
 }
