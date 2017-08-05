@@ -10,6 +10,7 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.CompletableFutures;
 import cyclops.companion.CompletableFutures.CompletableFutureKind;
+import cyclops.companion.Monoids;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.companion.Streams;
@@ -21,6 +22,7 @@ import cyclops.function.Group;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
+import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -149,6 +151,30 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public <R> Nested<W1,W2,R> map(Function<? super T,? extends R> fn){
         Higher<W1, Higher<W2, R>> res = composedFunctor.map(fn, nested);
         return new Nested<>(res,composedFunctor,def1,def2);
+    }
+    public  Active<W1,ListX<T>> toListX(){
+        return Active.of(def1.functor().map(i->def2.foldable().listX(i),nested),def1);
+    }
+    public  ListX<T> toListXBoth(){
+        return toListX().foldLeft(Monoids.listXConcat());
+    }
+    public Active<W1,ReactiveSeq<T>> stream(){
+        return toListX().map(i->i.stream());
+    }
+    public ReactiveSeq<T> streamBoth(){
+        return stream().foldLeft(Monoids.combineReactiveSeq());
+    }
+    public  Active<W1,Long> size() {
+        return Active.of(def1.functor().map(i->def2.foldable().size(i),nested),def1);
+    }
+    public  long totalSize() {
+        return size().foldLeft(Monoids.longSum);
+    }
+    public <R> Nested<W1,W2,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f) {
+        return of(composedFunctor.mapWithIndex(f,nested),def1,def2);
+    }
+    public <R> Nested<W1,W2,Tuple2<T,Long>> zipWithIndex() {
+        return mapWithIndex(Tuple::tuple);
     }
 
     public  Nested<W1,W2,T> peek(Consumer<? super T> fn){

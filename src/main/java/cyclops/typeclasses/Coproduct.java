@@ -143,6 +143,19 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
             return (Higher<W1, R>)x;
         }),def1,def2);
     }
+    public <R> Coproduct<W1,W2,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f) {
+        return of(xor.map(m->{
+        Higher<W2, ? extends R> x = def2.<T, R>functor().mapWithIndex(f, m);
+        return (Higher<W2, R>)x;
+    }).secondaryMap(m->{
+        Higher<W1, ? extends R> x = def1.<T, R>functor().mapWithIndex(f, m);
+        return (Higher<W1, R>)x;
+    }),def1,def2);
+
+    }
+    public <R> Coproduct<W1,W2,Tuple2<T,Long>> zipWithIndex() {
+        return mapWithIndex(Tuple::tuple);
+    }
 
     public Xor<Higher<W1,T>,Higher<W2,T>> asXor(){
         return xor;
@@ -259,6 +272,17 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public T foldRight(T identity, BinaryOperator<T> semigroup) {
         return foldRight(Monoid.fromBiFunction(identity,semigroup));
 
+    }
+    public  ListX<T> toListX(){
+        return xor.visit(left->def1.foldable().listX(left),
+                right->def2.foldable().listX(right));
+    }
+    public  ReactiveSeq<T> stream(){
+        return toListX().stream();
+    }
+    public  long size() {
+        return xor.visit(left->def1.foldable().size(left),
+                right->def2.foldable().size(right));
     }
 
     public T foldLeft(Monoid<T> monoid) {

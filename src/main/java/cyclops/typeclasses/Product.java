@@ -15,6 +15,7 @@ import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
+import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -137,6 +138,12 @@ public class Product<W1,W2,T> implements  Filters<T>,
         Active<W2,R> b4 = b1.zip(b2,b3,zipper);
 
         return of(a4,b4);
+    }
+    public <R> Product<W1,W2,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f) {
+        return of(Tuple.tuple(def1.functor().mapWithIndex(f,run.v1),def2.functor().mapWithIndex(f,run.v2)),def1,def2);
+    }
+    public <R> Product<W1,W2,Tuple2<T,Long>> zipWithIndex() {
+        return mapWithIndex(Tuple::tuple);
     }
     @Override
     public <R> Product<W1,W2,R> map(Function<? super T, ? extends R> fn) {
@@ -289,6 +296,28 @@ public class Product<W1,W2,T> implements  Filters<T>,
     public T foldRight(T identity, BinaryOperator<T> semigroup) {
         return foldRight(Monoid.fromBiFunction(identity, semigroup));
 
+    }
+
+    public  Tuple2<ListX<T>,ListX<T>> toListX(){
+        return run.map((a,b)->Tuple.tuple(def1.foldable().listX(a),
+                def2.foldable().listX(b)));
+    }
+    public  ListX<T> toListXBoth(){
+        return toListX().map((a,b)->a.plusAll(b));
+    }
+    public Tuple2<ReactiveSeq<T>,ReactiveSeq<T>> stream(){
+        return toListX().map((a,b)->Tuple.tuple(a.stream(),b.stream()));
+    }
+    public ReactiveSeq<T> streamBoth(){
+        return stream().map((a,b)->a.appendS(b));
+    }
+
+    public  Tuple2<Long,Long> size() {
+        return run.map((a,b)->Tuple.tuple(def1.foldable().size(a),
+                def2.foldable().size(b)));
+    }
+    public long totalSize() {
+        return size().map((a,b)->a+b);
     }
 
     public T foldLeft(Monoid<T> monoid) {

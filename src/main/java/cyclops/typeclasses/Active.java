@@ -6,10 +6,12 @@ import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collections.mutable.ListX;
+import cyclops.companion.Monoids;
 import cyclops.control.*;
 import cyclops.function.*;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
+import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.FunctionK;
@@ -166,6 +168,16 @@ public class Active<W,T> implements Filters<T>,
     }
     public <R> Active<W,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f) {
         return of(def1.functor().mapWithIndex(f,single),def1);
+    }
+
+    public  ListX<T> toListX(){
+        return def1.foldable().listX(single);
+    }
+    public  ReactiveSeq<T> stream(){
+        return toListX().stream();
+    }
+    public  long size() {
+        return def1.foldable().size(single);
     }
     public <R> Active<W,Tuple2<T,Long>> zipWithIndex() {
         return mapWithIndex(Tuple::tuple);

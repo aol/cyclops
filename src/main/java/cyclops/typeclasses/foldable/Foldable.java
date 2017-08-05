@@ -1,8 +1,13 @@
 package cyclops.typeclasses.foldable;
 
+import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.stream.ReactiveSeq;
+import cyclops.typeclasses.functions.MonoidK;
 
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -62,9 +67,25 @@ public interface Foldable<CRE> {
         return foldr( (T a) -> (R b) -> mb.apply(fn.apply(a), b), mb.zero(), nestedA);
     }
 
-    default <T, R> R foldr(final Function< T, Function< R, R>> fn, R b, Higher<CRE, T> as) {
+    default <T, R> R foldr(final Function< T, Function< R, R>> fn, R b, Higher<CRE, T> ds) {
 
-        return foldMap(Monoids.functionComposition(), fn, as).apply(b);
+        return foldMap(Monoids.functionComposition(), fn, ds).apply(b);
     }
+
+    default <C2,T,R> Higher<C2,T> foldK(MonoidK<C2,T> monoid, Higher<CRE,Higher<C2,T>> ds) {
+        return foldLeft(monoid, ds);
+    }
+
+    default <T> long size(Higher<CRE, T> ds) {
+        return foldMap(Monoids.longSum, __ -> 1l, ds);
+    }
+    default  <T> ListX<T> listX(Higher<CRE, T> ds){
+        return ListX.defer(()->foldMap(Monoid.of(ListX.empty(),(a, b)-> a.plusAll(b)), t->ListX.of(t),ds));
+    }
+    default  <T> ReactiveSeq<T> stream(Higher<CRE, T> ds){
+        return listX(ds).stream();
+    }
+
+
 
 }
