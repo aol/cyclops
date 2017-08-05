@@ -1,56 +1,7 @@
 package cyclops.stream;
 
-import static java.util.Spliterators.spliteratorUnknownSize;
-
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
-import java.util.stream.*;
-
-import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.futurestream.*;
-import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalFutureOperations;
-import cyclops.async.*;
-import cyclops.async.adapters.Adapter;
-import cyclops.async.adapters.Queue;
-import cyclops.collections.immutable.VectorX;
-import cyclops.companion.*;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
-import cyclops.control.lazy.Either;
-import cyclops.function.Lambda;
-import cyclops.function.Monoid;
-import cyclops.monads.AnyM;
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
-import cyclops.async.adapters.Queue.ClosedQueueException;
-import cyclops.async.adapters.Queue.QueueTimeoutException;
-import cyclops.async.adapters.QueueFactory;
-import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;
+import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
 import com.aol.cyclops2.internal.react.stream.CloseableIterator;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops2.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
@@ -59,14 +10,51 @@ import com.aol.cyclops2.internal.stream.FutureOpterationsImpl;
 import com.aol.cyclops2.react.SimpleReactFailedStageException;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 import com.aol.cyclops2.react.collectors.lazy.LazyResultConsumer;
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import cyclops.monads.Witness;
-import com.aol.cyclops2.types.stream.HotStream;
+import com.aol.cyclops2.types.futurestream.*;
 import com.aol.cyclops2.types.reactive.FutureStreamSynchronousPublisher;
-import cyclops.function.Fn4;
+import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalFutureOperations;
+import com.aol.cyclops2.types.stream.HotStream;
+import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import cyclops.async.Future;
+import cyclops.async.LazyReact;
+import cyclops.async.QueueFactories;
+import cyclops.async.SimpleReact;
+import cyclops.async.adapters.Adapter;
+import cyclops.async.adapters.Queue;
+import cyclops.async.adapters.Queue.ClosedQueueException;
+import cyclops.async.adapters.Queue.QueueTimeoutException;
+import cyclops.async.adapters.QueueFactory;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.ListX;
+import cyclops.companion.Streams;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
+import cyclops.control.lazy.Either;
 import cyclops.function.Fn3;
-
+import cyclops.function.Fn4;
+import cyclops.function.Lambda;
+import cyclops.function.Monoid;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
 import lombok.val;
+import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
+import java.util.function.*;
+import java.util.stream.*;
 
 public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                           LazyStream<U>,
@@ -3513,6 +3501,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         t2.v2.run();
     }
 
-
+    @Override
+    default FutureStream<U> complete(final Runnable fn) {
+        return fromStream(stream().complete(fn));
+    }
 
 }
