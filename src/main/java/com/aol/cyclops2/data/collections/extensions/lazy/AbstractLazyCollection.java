@@ -56,6 +56,10 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
         return (T)get();
     }
     @Override
+    public Iterator<T> iterator() {
+        return get().iterator();
+    }
+    @Override
     public C get() {
         if (seq.get() != null) {
             if(updating.compareAndSet(false, true)) { //check if can materialize
@@ -114,10 +118,7 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
             get();
     }
 
-    @Override
-    public Iterator<T> iterator() {
-        return get().iterator();
-    }
+
 
     @Override
     public ReactiveSeq<T> stream() {

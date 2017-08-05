@@ -124,8 +124,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
 
     @Override
     public Iterator<T> iterator() {
-        if(seq.get()!=null)
-            return seq.get().iterator();
+
         return get().iterator();
     }
 
