@@ -57,7 +57,7 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
     }
     @Override
     public Iterator<T> iterator() {
-        return get().iterator();
+        return stream().iterator();
     }
     @Override
     public C get() {
