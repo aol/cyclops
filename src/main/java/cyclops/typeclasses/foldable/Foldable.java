@@ -82,7 +82,7 @@ public interface Foldable<CRE> {
         return foldMap(Monoids.longSum, __ -> 1l, ds);
     }
     default  <T> ListX<T> listX(Higher<CRE, T> ds){
-        return ListX.defer(()->foldMap(Monoid.of(ListX.empty(),(a, b)-> a.plusAll(b)), t->ListX.of(t),ds));
+        return ListX.defer(()->foldMap(Monoids.listXConcat(), t->ListX.of(t),ds));
     }
     default  <T> ReactiveSeq<T> stream(Higher<CRE, T> ds){
         return listX(ds).stream();
