@@ -150,6 +150,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         Higher<W1, Higher<W2, R>> res = composedFunctor.map(fn, nested);
         return new Nested<>(res,composedFunctor,def1,def2);
     }
+
     public  Nested<W1,W2,T> peek(Consumer<? super T> fn){
         Higher<W1, Higher<W2, T>> res = composedFunctor.peek(fn, nested);
         return new Nested<>(res,composedFunctor,def1,def2);

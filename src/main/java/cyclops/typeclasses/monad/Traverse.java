@@ -2,10 +2,13 @@ package cyclops.typeclasses.monad;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Constant;
+import cyclops.control.State;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.constant;
+import org.jooq.lambda.tuple.Tuple;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static cyclops.control.Constant.Instances.applicative;
@@ -31,4 +34,5 @@ public interface Traverse<CRE> extends Applicative<CRE>{
     default <T, R> R foldMap(Monoid<R> mb, final Function<? super T,? extends R> fn, Higher<CRE, T> ds) {
         return Constant.narrowK(traverseA(applicative(mb), a -> Constant.of(fn.apply(a)), ds)).get();
     }
+
 }

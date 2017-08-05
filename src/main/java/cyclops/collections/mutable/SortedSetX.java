@@ -312,14 +312,13 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         return (SortedSetX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
     default ConvertableSequence<T> to(){
-        if(isLazy() && !isMaterialized())
-            return new ConvertableSequence<T>(distinct().sorted(this.comparator()));
+
 
         return new ConvertableSequence<>(this);
     }
     default Collectable<T> collectors(){
-        if(isLazy() && !isMaterialized())
-            return Seq.seq(distinct().sorted(this.comparator()));
+
+
 
         return Seq.seq(this);
     }

@@ -164,6 +164,12 @@ public class Active<W,T> implements Filters<T>,
     public <R> Active<W, R> map(Function<? super T, ? extends R> fn) {
         return of(def1.functor().map(fn, single), def1);
     }
+    public <R> Active<W,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f) {
+        return of(def1.functor().mapWithIndex(f,single),def1);
+    }
+    public <R> Active<W,Tuple2<T,Long>> zipWithIndex() {
+        return mapWithIndex(Tuple::tuple);
+    }
     public static void main(String[] args){
 
         Active<list,Integer> list = ListX.of(1,2,3).allTypeclasses();

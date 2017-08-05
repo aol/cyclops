@@ -224,14 +224,11 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     }
     PersistentSetX<T> type(Reducer<? extends PSet<T>> reducer);
     default ConvertableSequence<T> to(){
-        if(isLazy() && !isMaterialized())
-            return new ConvertableSequence<T>(distinct());
 
         return new ConvertableSequence<>(this);
     }
     default Collectable<T> collectors(){
-        if(isLazy() && !isMaterialized())
-            return Seq.seq(distinct());
+
 
         return Seq.seq(this);
     }

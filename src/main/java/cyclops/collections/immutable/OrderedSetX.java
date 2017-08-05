@@ -256,15 +256,13 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     @Override
     default ConvertableSequence<T> to(){
-        if(isLazy() && !isMaterialized())
-            return new ConvertableSequence<T>(distinct());
+
 
         return new ConvertableSequence<>(this);
     }
     @Override
     default Collectable<T> collectors(){
-        if(isLazy() && !isMaterialized())
-            return Seq.seq(distinct());
+        
 
         return Seq.seq(this);
     }

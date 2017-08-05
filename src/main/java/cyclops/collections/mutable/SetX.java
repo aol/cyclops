@@ -701,16 +701,12 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                    .listX(LAZY);
     }
     default ConvertableSequence<T> to(){
-        if(isLazy() && !isMaterialized())
-            return new ConvertableSequence<T>(distinct());
+
 
         return new ConvertableSequence<>(this);
     }
     default Collectable<T> collectors(){
 
-        if(isLazy() && !isMaterialized()) {
-            return Seq.seq(distinct());
-        }
 
         return Seq.seq(this);
     }

@@ -1,9 +1,13 @@
 package cyclops.typeclasses.functor;
 
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.State;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 /**
  * Functor type class, performs a transformation operation over the supplied data structure
@@ -48,6 +52,19 @@ public interface Functor<CRE> {
     default <T, R> Function<Higher<CRE, T>, Higher<CRE, R>> lift(final Function<? super T, ? extends R> fn) {
         return t -> map(fn, t);
     }
-    
+    default <T,R> Higher<CRE,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f, Higher<CRE, T> ds) {
+
+        return map(a -> {
+
+            R r = State.state((Long s) -> Tuple.tuple(s + 1, f.apply(a, s))).run(0l).v2;
+            return r;
+        } ,ds);
+
+
+    }
+    default <T,R> Higher<CRE,Tuple2<T,Long>> zipWithIndex(Higher<CRE, T> ds) {
+        return mapWithIndex(Tuple::tuple, ds);
+    }
+
  
 }

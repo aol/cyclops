@@ -116,8 +116,6 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
 
     @Override
     public Iterator<T> iterator() {
-        if(!isMaterialized())
-            return seq.get().iterator();
         return get().iterator();
     }
 

@@ -14,8 +14,10 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.SimpleTimer;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.FluentFunctions;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -46,6 +48,15 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     public void setup(){
 
         counter = new AtomicLong(0);
+    }
+    @Test
+    public void combinations2NoOrder2() {
+
+        //ListX.of(1, 2, 3).combinations(2).map(t->t.toListX()).printOut();
+        CollectionX<ListX<Integer>> st = of(1, 2, 3).combinations(2).map(s -> s.toListX());
+        st.toListX().printOut();
+       // assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX().get(0).size(),
+        //        equalTo(2));
     }
     @Test
     public void asyncTest() throws InterruptedException {
