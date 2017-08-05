@@ -11,6 +11,7 @@ import cyclops.monads.Witness.maybe;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import static cyclops.control.Maybe.Instances.applicative;
@@ -22,6 +23,16 @@ import static org.junit.Assert.*;
  */
 public class ActiveTest {
     Active<list,Integer> active = Active.of(ListX.of(1,2,3), ListX.Instances.definitions());
+
+    @Test
+    public void zipWithIndex(){
+        ListX<Tuple2<Integer, Long>> l = ListX.of(1, 2, 3)
+                                              .allTypeclasses()
+                                              .zipWithIndex()
+                                              .getSingle()
+                                              .convert(ListX::narrowK);
+        assertThat(l,equalTo(ListX.of(1,2,3).zipWithIndex()));
+    }
     @Test
     public void map() {
 

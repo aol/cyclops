@@ -2200,7 +2200,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Return the elementAt index or Optional.zero
+     * Return the elementAt index or Optional.empty
      * <pre>
      * {@code
      * 	assertThat(Streamable.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
@@ -2448,7 +2448,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return fromStream(reactiveSeq().jool(s->s.rightOuterJoin(other, predicate)));
     }
 
-    /** If this Streamable is zero one it with a another Stream
+    /** If this Streamable is empty one it with a another Stream
      * 
      * <pre>
      * {@code 
@@ -2459,7 +2459,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * @param switchTo Supplier that will generate the alternative Stream
-     * @return Streamable that will switch to an alternative Stream if zero
+     * @return Streamable that will switch to an alternative Stream if empty
      */
     default Streamable<T> onEmptySwitch(final Supplier<Streamable<T>> switchTo) {
         return fromStream(reactiveSeq().onEmptySwitch(() -> switchTo.get()

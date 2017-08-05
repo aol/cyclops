@@ -140,7 +140,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
         return of(a4,b4);
     }
     public <R> Product<W1,W2,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f) {
-        return of(Tuple.tuple(def1.functor().mapWithIndex(f,run.v1),def2.functor().mapWithIndex(f,run.v2)),def1,def2);
+        return of(Tuple.tuple(def1.traverse().mapWithIndex(f,run.v1),def2.traverse().mapWithIndex(f,run.v2)),def1,def2);
     }
     public <R> Product<W1,W2,Tuple2<T,Long>> zipWithIndex() {
         return mapWithIndex(Tuple::tuple);

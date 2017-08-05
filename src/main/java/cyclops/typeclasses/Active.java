@@ -167,7 +167,7 @@ public class Active<W,T> implements Filters<T>,
         return of(def1.functor().map(fn, single), def1);
     }
     public <R> Active<W,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f) {
-        return of(def1.functor().mapWithIndex(f,single),def1);
+        return of(def1.traverse().mapWithIndex(f,single),def1);
     }
     public T intercalate(Monoid<T> monoid, T value) {
         return def1.foldable().intercalate(monoid,value,single);

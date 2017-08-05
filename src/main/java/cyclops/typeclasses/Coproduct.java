@@ -145,10 +145,10 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     }
     public <R> Coproduct<W1,W2,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f) {
         return of(xor.map(m->{
-        Higher<W2, ? extends R> x = def2.<T, R>functor().mapWithIndex(f, m);
+        Higher<W2, ? extends R> x = def2.<T, R>traverse().mapWithIndex(f, m);
         return (Higher<W2, R>)x;
     }).secondaryMap(m->{
-        Higher<W1, ? extends R> x = def1.<T, R>functor().mapWithIndex(f, m);
+        Higher<W1, ? extends R> x = def1.<T, R>traverse().mapWithIndex(f, m);
         return (Higher<W1, R>)x;
     }),def1,def2);
 

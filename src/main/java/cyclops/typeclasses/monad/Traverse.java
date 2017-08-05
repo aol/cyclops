@@ -6,12 +6,16 @@ import cyclops.control.State;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.constant;
+import cyclops.monads.Witness.state;
 import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static cyclops.control.Constant.Instances.applicative;
+import static cyclops.control.State.state;
+import static org.jooq.lambda.tuple.Tuple.tuple;
 
 
 public interface Traverse<CRE> extends Applicative<CRE>{
@@ -34,5 +38,14 @@ public interface Traverse<CRE> extends Applicative<CRE>{
     default <T, R> R foldMap(Monoid<R> mb, final Function<? super T,? extends R> fn, Higher<CRE, T> ds) {
         return Constant.narrowK(traverseA(applicative(mb), a -> Constant.of(fn.apply(a)), ds)).get();
     }
+    default <T,R> Higher<CRE,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f, Higher<CRE, T> ds) {
 
+        State<Long,  Higher<CRE, R>> st = State.narrowK(traverseA(State.Instances.applicative(),
+                a -> state((Long s) -> tuple(s + 1, f.apply(a, s))), ds));
+        return st.run(0l).v2;
+
+    }
+    default <T,R> Higher<CRE,Tuple2<T,Long>> zipWithIndex(Higher<CRE, T> ds) {
+        return mapWithIndex(Tuple::tuple, ds);
+    }
 }
