@@ -11,7 +11,7 @@ import com.aol.cyclops2.internal.stream.ReversedIterator;
 import com.aol.cyclops2.internal.stream.SeqUtils;
 
 /**
- * Interface that represents a data type that can be converted toNested a Stream
+ * Interface that represents a data type that can be converted to a Stream
  * 
  * @author johnmcclean
  *
@@ -20,11 +20,11 @@ import com.aol.cyclops2.internal.stream.SeqUtils;
 public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
 
     /**
-     * Convert this type toNested a FutureStream using the provided LazyReact futureStream builder
-     * toNested configure parallelism / executors and more.
+     * Convert this type to a FutureStream using the provided LazyReact futureStream builder
+     * to configure parallelism / executors and more.
      * 
      * @param react LazyReact futureStream builder (configurer)
-     * @return This convertable type converted toNested a FutureStream
+     * @return This convertable type converted to a FutureStream
      */
     default FutureStream<T> futureStream(final LazyReact react) {
         return react.fromIterable(this);
@@ -40,7 +40,7 @@ public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
 
 
     /**
-     * @return This type narrowed toNested an Iterable
+     * @return This type narrowed to an Iterable
      */
     default Iterable<T> getStreamable() {
         return this;
@@ -75,7 +75,7 @@ public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
     }
 
     /**
-     * @return True if this type is empty, false otherwise
+     * @return True if this type is zero, false otherwise
      */
     default boolean isEmpty() {
 
@@ -84,7 +84,7 @@ public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
     }
 
     /**
-     * @return This type converted toNested a JDK Stream
+     * @return This type converted to a JDK Stream
      */
     default Stream<T> jdkStream() {
         return StreamSupport.stream(getStreamable().spliterator(), false);

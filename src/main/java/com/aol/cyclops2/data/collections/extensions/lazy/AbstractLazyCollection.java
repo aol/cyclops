@@ -5,6 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
+import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -37,11 +39,13 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
     final AtomicReference<Throwable> error = new AtomicReference<>(null);
 
 
-    public AbstractLazyCollection(C list, ReactiveSeq<T> seq, Collector<T, ?, C> collector,Evaluation strict) {
+    private final Function<ReactiveSeq<C>,C> fn;
+    public AbstractLazyCollection(C list, ReactiveSeq<T> seq, Collector<T, ?, C> collector,Evaluation strict,Function<ReactiveSeq<C>,C> fn) {
         this.list = list;
         this.seq.set(seq);
         this.collectorInternal = collector;
         this.strict = strict;
+        this.fn = fn;
         handleStrict();
     }
 
@@ -50,6 +54,10 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
     @Override
     public <T> T unwrap(){
         return (T)get();
+    }
+    @Override
+    public Iterator<T> iterator() {
+        return get().iterator();
     }
     @Override
     public C get() {
@@ -61,8 +69,10 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
                     ReactiveSeq<T> toUse = seq.get();
                     if(toUse!=null){//dbl check - as we may pass null check on on thread and set updating false on another
 
-                        list = toUse.collect(collectorInternal);
 
+                        list = toUse.visit(s->toUse.collect(collectorInternal),
+                                            r->fn.apply(toUse.collectStream(collectorInternal)),
+                                                    a->fn.apply(toUse.collectStream(collectorInternal)));
                         seq.set(null);
                     }
                 }catch(Throwable t){
@@ -87,6 +97,8 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
     }
 
 
+
+
     @Override
     public boolean isLazy() {
         return strict == Evaluation.LAZY;
@@ -106,13 +118,11 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
             get();
     }
 
-    @Override
-    public Iterator<T> iterator() {
-        return get().iterator();
-    }
+
 
     @Override
     public ReactiveSeq<T> stream() {
+
 
         ReactiveSeq<T> toUse = seq.get();
         if (toUse != null) {
@@ -121,6 +131,10 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
         return ReactiveSeq.fromIterable(list);
     }
 
+    public boolean isMaterialized(){
+
+        return seq.get()==null;
+    }
     @Override
     public CollectionX<T> materialize() {
         get();

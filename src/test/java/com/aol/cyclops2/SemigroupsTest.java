@@ -18,8 +18,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.collections.immutable.*;
+import cyclops.control.Maybe;
 import cyclops.function.Semigroup;
 import cyclops.companion.Semigroups;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.maybe;
+import cyclops.typeclasses.functions.SemigroupK;
 import org.jooq.lambda.Seq;
 import org.junit.Test;
 import org.pcollections.PVector;
@@ -34,7 +38,13 @@ import cyclops.collections.mutable.SetX;
 import cyclops.collections.mutable.SortedSetX;
 public class SemigroupsTest {
 
+    @Test
+    public void kinds(){
+        Semigroup<Maybe<Integer>> m = Semigroups.combineZippables(Semigroups.intMax);
+        SemigroupK<maybe, Integer> x = m.toSemigroupK(Maybe.kindKleisli(), Maybe.kindCokleisli());
 
+        assertThat(x.apply(Maybe.just(10),Maybe.just(2)),equalTo(Maybe.just(10)));
+    }
     @Test
     public void testMutableListConcat() {
         List<Integer> list1 = new ArrayList<>();

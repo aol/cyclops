@@ -29,7 +29,7 @@ public class LazyFutureStreamFunctions {
     }
 
     /**
-     * Zip two streams into one using a {@link BiFunction} toNested produce resulting
+     * Zip two streams into one using a {@link BiFunction} to produce resulting
      * values.
      * <p>
      * <code>
@@ -74,8 +74,8 @@ public class LazyFutureStreamFunctions {
     }
 
     /**
-     * Returns a reactiveStream limited toNested all elements for which a predicate evaluates
-     * toNested <code>true</code>.
+     * Returns a reactiveStream limited to all elements for which a predicate evaluates
+     * to <code>true</code>.
      * <p>
      * <code>
      * // (1, 2)
@@ -87,7 +87,7 @@ public class LazyFutureStreamFunctions {
     }
 
     /**
-     * Returns a reactiveStream ed toNested all elements for which a predicate evaluates toNested
+     * Returns a reactiveStream ed to all elements for which a predicate evaluates to
      * <code>true</code>.
      * <p>
      * <code>
@@ -109,7 +109,7 @@ public class LazyFutureStreamFunctions {
 
                     if (test = predicate.test(next)) {
                         next = (T) NULL;
-                        close(it); // need toNested close any open queues
+                        close(it); // need to close any open queues
                     }
                 }
             }

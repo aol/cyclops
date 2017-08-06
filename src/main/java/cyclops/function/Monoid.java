@@ -3,6 +3,10 @@ package cyclops.function;
 import cyclops.companion.Semigroups;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
+import cyclops.typeclasses.Cokleisli;
+import cyclops.typeclasses.Kleisli;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.SemigroupK;
 import org.reactivestreams.Publisher;
 
 import java.util.Arrays;
@@ -15,8 +19,8 @@ import java.util.stream.Stream;
  * 
  * Also inteded for use with Java 8 Streams (reduce method)
  * 
- * Practically the method signature toNested reduce matches the Monoid interface
- * Monoids could regrarded as immutable equivalents toNested JDK CyclopsCollectors for Immutable Reduction
+ * Practically the method signature to reduce matches the Monoid interface
+ * Monoids could regrarded as immutable equivalents to JDK CyclopsCollectors for Immutable Reduction
  * 
  * @author johnmcclean
  *
@@ -26,7 +30,7 @@ public interface Monoid<T> extends Semigroup<T> {
 
     /**
      * 
-     * An element that when provided as a parameter toNested the combiner with another value, results
+     * An element that when provided as a parameter to the combiner with another value, results
      * in the other value being returned
      * e.g.
      * <pre>
@@ -53,7 +57,7 @@ public interface Monoid<T> extends Semigroup<T> {
     /**
      * Perform a reduction operation on the supplied Stream
      * 
-     * @param toReduce Stream toNested reduce
+     * @param toReduce Stream to reduce
      * @return Reduced value
      */
     default T reduce(final Stream<T> toReduce) {
@@ -105,6 +109,9 @@ public interface Monoid<T> extends Semigroup<T> {
         return Spouts.from(toFold).foldRight(this);
     }
 
+    default <W,R> MonoidK<W,R> toMonoidK(Kleisli<W,T,R> widen,Cokleisli<W,R,T> narrow){
+        return  MonoidK.of(widen.apply(zero()),toSemigroupK(widen,narrow));
+    }
     /**
      * Construct a Monoid from the supplied identity element and Semigroup (combiner)
      * @see Semigroups

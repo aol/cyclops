@@ -16,7 +16,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Memoize;
 
 /**
- * A reactive-streams Subscriber that can take 1 value from a reactive-streams publisher and convert
+ * A reactiveBuffer-streams Subscriber that can take 1 value from a reactiveBuffer-streams publisher and convert
  * it into various forms
  * 
  * <pre>

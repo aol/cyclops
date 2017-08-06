@@ -73,8 +73,17 @@ import java.util.stream.Stream;
  */
 public interface Eval<T> extends To<Eval<T>>,
                                     MonadicValue<T>,
-                                    Higher<eval ,T> {
+                                    Higher<eval ,T>{
 
+    public static  <T> Kleisli<eval,Eval<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Eval::widen);
+    }
+    public static <T> Higher<eval, T> widen(Eval<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<eval,T,Eval<T>> kindCokleisli(){
+        return Cokleisli.of(Eval::narrowK);
+    }
     public static <W1,T> Nested<eval,W1,T> nested(Eval<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
@@ -102,6 +111,8 @@ public interface Eval<T> extends To<Eval<T>>,
         return AnyM.fromEval(this);
     }
 
+
+
     /**
      * Convert the raw Higher Kinded Type for Evals types into the Eval interface
      *
@@ -112,7 +123,7 @@ public interface Eval<T> extends To<Eval<T>>,
         return (Eval<T>)future;
     }
     /**
-     * Create an Eval instance from a reactive-streams publisher
+     * Create an Eval instance from a reactiveBuffer-streams publisher
      *
      * <pre>
      * {@code
@@ -130,7 +141,7 @@ public interface Eval<T> extends To<Eval<T>>,
     }
 
     /**
-     * Create a reactive CompletableEval
+     * Create a reactiveBuffer CompletableEval
      *
      * <pre>
      *     {@code
@@ -146,7 +157,7 @@ public interface Eval<T> extends To<Eval<T>>,
      * </pre>
      *
      * @param <T> Data input type to the Eval
-     * @return A reactive CompletableEval
+     * @return A reactiveBuffer CompletableEval
      */
     static <T> CompletableEval<T,T> eval(){
         Completable.CompletablePublisher<T> c = new Completable.CompletablePublisher<T>();
@@ -562,7 +573,7 @@ public interface Eval<T> extends To<Eval<T>>,
         return (Eval<R>) MonadicValue.super.combine(app, fn);
     }
 
-    /* Equivalent to combine, but accepts an Iterable and takes the takeOne value only from that iterable.
+    /* Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
      * (non-Javadoc)
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
@@ -572,7 +583,7 @@ public interface Eval<T> extends To<Eval<T>>,
         return (Eval<R>) MonadicValue.super.zip(app, fn);
     }
 
-    /* Equivalent to combine, but accepts a Publisher and takes the takeOne value only from that publisher.
+    /* Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
      *
      * (non-Javadoc)
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
@@ -899,7 +910,6 @@ public interface Eval<T> extends To<Eval<T>>,
             }
 
 
-
             public void forEach(Consumer<? super T> cons){
                 input.peek(e->e.forEach(cons));
             }
@@ -1185,7 +1195,7 @@ public interface Eval<T> extends To<Eval<T>>,
 
                 @Override
                 public <T> Maybe<MonadPlus<eval>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Maybe.none();
                 }
 
                 @Override
@@ -1195,17 +1205,17 @@ public interface Eval<T> extends To<Eval<T>>,
 
                 @Override
                 public <T> Maybe<MonadPlus<eval>> monadPlus(Monoid<Higher<eval, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                    return Maybe.none();
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<eval>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T>Traverse<eval> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<eval>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<eval> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -1219,6 +1229,8 @@ public interface Eval<T> extends To<Eval<T>>,
                 }
             };
         }
+
+
         /**
          *
          * Transform a list, mulitplying every element by 2
@@ -1374,46 +1386,8 @@ public interface Eval<T> extends To<Eval<T>>,
                 }
             };
         }
-        /**
-         * <pre>
-         * {@code
-         *  Eval<Integer> list = Evals.<Integer>monadPlus()
-        .plus(Eval.widen(Arrays.asEval()), Eval.widen(Arrays.asEval(10)))
-        .convert(Eval::narrowK3);
-        //Arrays.asEval(10))
-         *
-         * }
-         * </pre>
-         * @return Type class for combining Evals by concatenation
-         */
-        public static <T> MonadPlus<eval> monadPlus(){
-            Monoid<Eval<T>> mn = Monoid.of(Eval.now(null), (a,b)->a.get()!=null?a :b);
-            Monoid<Eval<T>> m = Monoid.of(mn.zero(), (f,g)->
-                    mn.apply(Eval.narrow(f), Eval.narrow(g)));
 
-            Monoid<Higher<eval,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
-        }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<Eval<Integer>> m = Monoid.of(Eval.widen(Arrays.asEval()), (a,b)->a.isEmpty() ? b : a);
-        Eval<Integer> list = Evals.<Integer>monadPlus(m)
-        .plus(Eval.widen(Arrays.asEval(5)), Eval.widen(Arrays.asEval(10)))
-        .convert(Eval::narrowK3);
-        //Arrays.asEval(5))
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining Evals
-         * @return Type class for combining Evals
-         */
-        public static <T> MonadPlus<eval> monadPlus(Monoid<Eval<T>> m){
-            Monoid<Higher<eval,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
-        }
+
 
         /**
          * @return Type class for traversables with traverse / sequence operations
@@ -1438,10 +1412,11 @@ public interface Eval<T> extends To<Eval<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<eval> foldable(){
+        public static <T,R> Foldable<eval> foldable(){
             BiFunction<Monoid<T>,Higher<eval,T>,T> foldRightFn =  (m,l)-> Eval.narrowK(l).orElse(m.zero());
             BiFunction<Monoid<T>,Higher<eval,T>,T> foldLeftFn = (m,l)-> Eval.narrowK(l).orElse(m.zero());
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.eval, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
         public static <T> Comonad<eval> comonad(){
@@ -1465,7 +1440,6 @@ public interface Eval<T> extends To<Eval<T>>,
 
         private static <C2,T,R> Higher<C2, Higher<eval, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
                                                                         Higher<eval, T> ds){
-
             Eval<T> eval = Eval.narrowK(ds);
             return applicative.map(Eval::now, fn.apply(eval.get()));
         }

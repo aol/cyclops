@@ -82,7 +82,7 @@ For efficiency reasons, PStack prepends values to the PStack when plusAll is cal
 ----
 PStack<String> list = PStacks.of("suspended","b","c");
 PStack<String> list = PStacks.fromCollection(Arrays.asList("suspended","b","c"));
-List<String> empty = PStacks.empty();
+List<String> zero = PStacks.zero();
 PStack<String> single = PStacks.singleton("1");
 ----
 ====
@@ -117,7 +117,7 @@ Unlike PStacks, PVector append new data to the persistent List when plusAll is c
 ----
 PVectorX<String> list = PVectorX.of("suspended","b","c");
 PVector<String> list = PVectors.of("suspended","b","c");
-List<String> empty = PVectors.empty();
+List<String> zero = PVectors.zero();
 PVectorX<String> single = PVectorX.singleton("1");
 PVector<String> single = PVectors.singleton("1");
 PVector<String> list = PVector.fromCollection(Arrays.asList("suspended","b","c"));
@@ -147,7 +147,7 @@ PVector<String> list = PVectors.toPVector().reduce(Stream.of("suspended","b","c"
 ----
 PSetX<String> list = PSetX.of("suspended","b","c");
 
-Set<String> empty = PSets.empty();
+Set<String> zero = PSets.zero();
 
 ----
 ====
@@ -166,7 +166,7 @@ PSetX<Integer> list = PSetX.fromStream(Stream.of(1,2,3));
 ----
 PBagX<String> list = PBagX.of("suspended","b","c");
 
-Collection<String> empty = PBags.empty();
+Collection<String> zero = PBags.zero();
 
 ----
 ====
@@ -185,7 +185,7 @@ PBagX<Integer> list = PBagX.fromStream(Stream.of(1,2,3));
 ----
 PQueueX<String> list = PQueueX.of("suspended","b","c");
 
-Queue<String> empty = PQueues.empty();
+Queue<String> zero = PQueues.zero();
 
 ----
 ====
@@ -204,7 +204,7 @@ PQueueX<Integer> list = PQueueX.fromStream(Stream.of(1,2,3));
 ----
 POrderedSetX<String> list = POrderedSetX.of("suspended","b","c");
 
-Set<String> empty = POrderedSets.empty();
+Set<String> zero = POrderedSets.zero();
 
 ----
 ====

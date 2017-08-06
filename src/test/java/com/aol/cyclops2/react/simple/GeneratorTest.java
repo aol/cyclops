@@ -134,7 +134,7 @@ public class GeneratorTest {
 				.<Optional<Integer>> react(() -> {
 						synchronized(lock1) {
 							if(!iterator.hasNext()) 
-								return Optional.empty();
+								return Optional.zero();
 						return Optional.of(iterator.next());
 						}
 					},SimpleReact.times(400))

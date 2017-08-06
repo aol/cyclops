@@ -32,7 +32,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
 
     /**
      * Combine two applicatives together using the provided BinaryOperator (Semigroup, Monoid and Reducer all
-     * extend BinaryOperator - checkout Semigroups and Monoids for a large number of canned combinations).
+     * extend BinaryOperator - checkout SemigroupK and Monoids for a large number of canned combinations).
      * If this Applicative is a scalar value the provided value is combined with that value,
      * otherwise the value is combined pair wise with all value in a non-scalar datastructure
      *
@@ -41,15 +41,15 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
      * @see Monoid
      * @see Monoids
      *
-     * To lift any Semigroup (or monoid) up toNested handling Applicatives use the combineApplicatives operator in Semigroups
-     * {@see com.aol.cyclops2.Semigroups#combineApplicatives(BiFunction) } or Monoids
+     * To lift any Semigroup (or monoid) up to handling Applicatives use the combineApplicatives operator in SemigroupK
+     * {@see com.aol.cyclops2.SemigroupK#combineApplicatives(BiFunction) } or Monoids
      * { {@see com.aol.cyclops2.Monoids#combineApplicatives(java.util.function.Function, com.aol.cyclops2.function.Monoid)
      *  }
      * <pre>
      * {@code
      *
      *
-     *  BinaryOperator<Zippable<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
+     *  BinaryOperator<Zippable<Integer>> sumMaybes = SemigroupK.combineScalarFunctors(SemigroupK.intSum);
         Maybe.just(1).zip(sumMaybes, Maybe.just(5))
        //Maybe.just(6));
      * }
@@ -76,7 +76,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
     /**
      * Zip (combine) this Zippable with the supplied Iterable using the supplied combining function
      * 
-     * @param iterable toNested zip with
+     * @param iterable to zip with
      * @param fn Zip function
      * @return Combined zippable
      */
@@ -89,7 +89,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
     /**
      * Zip (combine) this Zippable with the supplied Publisher, using the supplied combining function
      * 
-     * @param publisher toNested combine with
+     * @param publisher to combine with
      * @param fn Zip / combining function
      * @return Combined zippable
      */
@@ -103,7 +103,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
     /**
      * Zip (combine) this Zippable with the supplied Stream, using the supplied combining function
      * 
-     * @param other Stream toNested combine with
+     * @param other Stream to combine with
      * @param zipper Zip / combining function
      * @return Combined zippable
      */
@@ -114,7 +114,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
     /**
      * Zip (combine) this Zippable with the supplied Stream combining both into a Tuple2
      * 
-     * @param other Stream toNested combine with
+     * @param other Stream to combine with
      * @return Combined Zippable
      */
     default <U> Zippable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -127,7 +127,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
     /**
      * Zip (combine) this Zippable with the supplied Iterable combining both into a Tuple2
      * 
-     * @param other Iterable toNested combine with
+     * @param other Iterable to combine with
      * @return
      */
     default <U> Zippable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {

@@ -35,7 +35,7 @@ import cyclops.stream.FutureStream;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 
 /**
- * Represents a non-scalar Data Structure that can be converted toNested other types
+ * Represents a non-scalar Data Structure that can be converted to other types
  * 
  * @author johnmcclean
  *
@@ -230,7 +230,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
     /**
      * Lazily converts this ReactiveSeq into a Collection. This does not trigger
-     * the Stream. E.g. Collection is not thread safe on the takeOne iteration.
+     * the Stream. E.g. Collection is not thread safe on the first iteration.
      *
      * <pre>
      * {@code
@@ -241,7 +241,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
      *  col.forEach(System.out::println);
      * }
      *
-     * // Will print out "takeOne!" before anything else
+     * // Will print out "first!" before anything else
      * </pre>
      *
      * @return
@@ -263,7 +263,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
      *  col.forEach(System.out::println);
      * }
      *
-     * // Will print out "takeOne!" before anything else
+     * // Will print out "first!" before anything else
      * </pre>
      *
      * @return

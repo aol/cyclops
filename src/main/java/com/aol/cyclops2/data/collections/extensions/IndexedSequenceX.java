@@ -30,8 +30,8 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
     /**
      * Replace the value at the specifed index with the supplied value
      * 
-     * @param i Index toNested one value at
-     * @param e Value toNested use
+     * @param i Index to one value at
+     * @param e Value to use
      * @return FluentSequence with value replaced
      */
     public IndexedSequenceX<T> with(int i, T e);
@@ -39,8 +39,8 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
     /**
      * Add the supplied element at the supplied index 
      * 
-     * @param i Index toNested add element at
-     * @param e Element toNested add
+     * @param i Index to add element at
+     * @param e Element to add
      * @return FluentSequence with element added
      */
     public IndexedSequenceX<T> plus(int i, T e);
@@ -48,8 +48,8 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
     /**
      * Add all of the supplied elements at the supplied index
      * 
-     * @param i Index toNested add element at
-     * @param list Collection of elements toNested add
+     * @param i Index to add element at
+     * @param list Collection of elements to add
      * @return  FluentSequence with elements added
      */
     public IndexedSequenceX<T> plusAll(int i, Collection<? extends T> list);
@@ -69,7 +69,7 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
     /**
      * Remove the element at the supplied index
      * 
-     * @param i Index at which toNested remvoe element
+     * @param i Index at which to remvoe element
      * @return FluentSequence with element removed
      */
     public IndexedSequenceX<T> minus(int i);

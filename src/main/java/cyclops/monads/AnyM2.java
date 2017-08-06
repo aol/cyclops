@@ -212,13 +212,13 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * </pre>
      * 
      * @param fn Function inside an Applicative
-     * @return Function toNested applyHKT an Applicative's value toNested function
+     * @return Function to applyHKT an Applicative's value to function
      */
     public static <W extends WitnessType<W>,T2,T,R> Function<AnyM2<W,T2,T>,AnyM2<W,T2,R>> ap(AnyM2<W, T2,Function<T, R>> fn){
         return apply->(AnyM2<W,T2,R>)apply.adapter().ap(fn,apply);
     }
     /**
-     * Applicative ap2 method toNested use fluently toNested applyHKT toNested a curried function
+     * Applicative ap2 method to use fluently to applyHKT to a curried function
      * <pre>
      * {@code 
      *    AnyM<optional,Function<Integer,Function<Integer,Integer>>> add = AnyM.fromNullable(Curry.curry2(this::add));
@@ -230,7 +230,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * }
      * </pre>
      * @param fn Curried function inside an Applicative
-     * @return Function toNested applyHKT two Applicative's values toNested a function
+     * @return Function to applyHKT two Applicative's values to a function
      */
     public static <W extends WitnessType<W>,T2,T,R,T3> BiFunction<AnyM2<W,T3,T>,AnyM2<W,T3,T2>,AnyM2<W,T3,R>> ap2(AnyM2<W, T3,Function<T, Function<T2, R>>> fn){
         return (apply1,apply2)->(AnyM2<W,T3,R>)apply1.adapter().ap2(fn,apply1,apply2);
@@ -243,7 +243,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * {@code
      *   AnyM.fromOptional(Optional.of(10)).filter(i->i<10);
      * 
-     *   //AnyM[Optional.empty()]
+     *   //AnyM[Optional.zero()]
      *   
      *   AnyM.fromStream(Stream.of(5,10)).filter(i->i<10);
      *   
@@ -405,13 +405,13 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
     
 
     /**
-     * Construct an AnyM wrapping a new empty instance of the wrapped type 
+     * Construct an AnyM wrapping a new zero instance of the wrapped type
      * 
      * e.g.
      * <pre>
      * {@code 
      * Any<Integer> ints = AnyM.fromStream(Stream.of(1,2,3));
-     * AnyM<Integer> empty=ints.empty();
+     * AnyM<Integer> zero=ints.zero();
      * }
      * </pre>
      * @return Empty AnyM
@@ -532,7 +532,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
               return a+b;
       }
    * }</pre>
-   * The add method has no null handling, but we can lift the method toNested Monadic form, and use Optionals toNested automatically handle null / empty value cases.
+   * The add method has no null handling, but we can lift the method to Monadic form, and use Optionals to automatically handle null / zero value cases.
    * 
    * 
    * @param fn BiFunction to lift

@@ -1,9 +1,14 @@
 package cyclops.stream;
 
 import com.aol.cyclops2.hkt.Higher;
+
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
+import com.aol.cyclops2.types.reactive.BufferOverflowPolicy;
+import com.aol.cyclops2.types.reactive.PushSubscriber;
 import cyclops.async.SimpleReact;
 import cyclops.control.Xor;
+import cyclops.function.C4;
+import cyclops.function.Fn3;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
@@ -24,12 +29,15 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
+import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
+import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.jooq.lambda.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.Optional;
+import java.util.Queue;
 import java.util.Spliterator;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,8 +51,8 @@ import java.util.stream.Stream;
 import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
- * reactive : is used toNested denote creational methods for reactive-streams that support non-blocking backpressure
- * async : is used toNested denote creational methods for asynchronous streams that do not support backpressure
+ * reactiveBuffer : is used to denote creational methods for reactiveBuffer-streams that support non-blocking backpressure
+ * async : is used to denote creational methods for asynchronous streams that do not support backpressure
  */
 
 public interface Spouts {
@@ -65,7 +73,7 @@ public interface Spouts {
 
     /**
      * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
-     * reactive-streams susbscription is ignored (i.e. this Stream is backpressure free)
+     * reactiveBuffer-streams susbscription is ignored (i.e. this Stream is backpressure free)
      *
      * <pre>
      *     {@code
@@ -81,7 +89,7 @@ public interface Spouts {
      * @param <T>
      * @return
      */
-    static <T> ReactiveSeq<T> async(Consumer<? super Subscriber<T>> sub){
+    static <T> ReactiveSeq<T> async(Consumer<? super PushSubscriber<T>> sub){
         AsyncSubscriber<T> s = asyncSubscriber();
         return s.registerAndstream(()->{
             while(!s.isInitialized()){
@@ -93,9 +101,9 @@ public interface Spouts {
 
     /**
      * Create a push based Stream with <b>no backpressure</b> fromm the provided Stream.
-     * The provided Stream will be executed on the provided executor and pushed toNested the returned Stream
+     * The provided Stream will be executed on the provided executor and pushed to the returned Stream
      *
-     * @param seq Stream toNested execute and push toNested a new non-backpressure aware Stream
+     * @param seq Stream to execute and push to a new non-backpressure aware Stream
      * @param exec
      * @param <T>
      * @return
@@ -105,11 +113,77 @@ public interface Spouts {
 
             ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
 
-                Subscriber<T> local = s;
+                PushSubscriber<T> local = s;
                 t.forEach(local::onNext,local::onError,local::onComplete);
                 return null;
             });
         });
+    }
+
+    /**
+     * Create a buffering reactive-streams source. Your subscriber can respect or ignore reactive-streams backpressure.
+     * This operator will buffer incoming data before sending on when downstream streams are ready.
+     * This operator drops values once buffer size has been exceeded
+     *
+     * E.g. In the example below 2 elements are requested, we ignore this and send 30 elements instead
+     * <pre>
+     *     {@code
+     *     Subscription sub = Spouts.reactiveBuffer(10, s -> {
+                                                        s.onSubscribe(new Subscription() {
+                                                                @Override
+                                                                public void request(long n) {
+                                                                    //ignore back pressure
+                                                                    //send lots of data downstream regardless
+                                                                        Effect e = () -> {
+                                                                            s.onNext("hello " + i++);
+                                                                        }
+                                                                        e.cycle(30).run();
+
+                                                                }
+
+                                                                @Override
+                                                                public void cancel() {
+
+                                                                }
+                                                                });
+
+
+                                                }).forEach(2, System.out::println);
+
+
+            //only 2 elements will be printed out
+            //10 will be buffered and potentially 18 dropped
+            Thread.sleep(500);
+            sub.request(20);
+     *
+     *
+     *     }
+     *
+     *
+     * </pre>
+     *
+     * @param buffer
+     * @param onNext
+     * @param <T>
+     * @return
+     */
+    static <T> ReactiveSeq<T> reactiveBuffer(int buffer, Consumer<? super Subscriber<T>> onNext){
+        return Spouts.reactiveStream(new BufferingSinkOperator<T>(new ManyToManyConcurrentArrayQueue<T>(buffer), onNext, BufferOverflowPolicy.DROP));
+    }
+    static <T> ReactiveSeq<T> reactiveBufferBlock(int buffer, Consumer<? super Subscriber<T>> onNext){
+        return Spouts.reactiveStream(new BufferingSinkOperator<T>(new ManyToManyConcurrentArrayQueue<T>(buffer), onNext,BufferOverflowPolicy.BLOCK));
+    }
+    static <T> ReactiveSeq<T> reactiveBuffer(Queue<T> buffer,BufferOverflowPolicy policy, Consumer<? super Subscriber<T>> onNext){
+        return Spouts.reactiveStream(new BufferingSinkOperator<T>(buffer, onNext, policy));
+    }
+    static <T> ReactiveSeq<T> asyncBuffer(int buffer, Consumer<? super PushSubscriber<T>> onNext){
+        return Spouts.asyncStream(new BufferingSinkOperator<T>(new ManyToManyConcurrentArrayQueue<T>(buffer),c-> onNext.accept(PushSubscriber.of(c)), BufferOverflowPolicy.DROP));
+    }
+    static <T> ReactiveSeq<T> asyncBufferBlock(int buffer, Consumer<? super PushSubscriber<T>> onNext){
+        return Spouts.asyncStream(new BufferingSinkOperator<T>(new ManyToManyConcurrentArrayQueue<T>(buffer), c-> onNext.accept(PushSubscriber.of(c)), BufferOverflowPolicy.BLOCK));
+    }
+    static <T> ReactiveSeq<T> asyncBuffer(Queue<T> buffer,BufferOverflowPolicy policy, Consumer<? super PushSubscriber<T>> onNext){
+        return Spouts.asyncStream(new BufferingSinkOperator<T>(buffer, c-> onNext.accept(PushSubscriber.of(c)), policy));
     }
     static <T> ReactiveSeq<T> reactive(Stream<T> seq, Executor exec){
         Future<Subscriber<T>> subscriber = Future.future();
@@ -126,6 +200,7 @@ public interface Spouts {
             sub.complete(new Subscription() {
                 @Override
                 public void request(long n) {
+                    System.out.println("Requesting n..");
                     requested.addAndGet(n);
                 }
 
@@ -140,7 +215,7 @@ public interface Spouts {
                     Thread.yield();
                 }else {
                     while (!requested.compareAndSet(next, 0)) {
-                        Thread.yield();
+                        next = requested.get();
                     }
                     streamSub.request(next);
                 }
@@ -164,15 +239,15 @@ public interface Spouts {
 
 
     /**
-     *   The recommended way toNested connect a Spout toNested a Publisher is via Spouts#from
+     *   The recommended way to connect a Spout to a Publisher is via Spouts#from
      *   Create an Subscriber for Observable style asynchronous push based Streams,
-     *   that implements backpressure internally via the reactive-streams spec.
+     *   that implements backpressure internally via the reactiveBuffer-streams spec.
      *
-     *   Subscribers signal demand via their subscription and publishers push data toNested subscribers
+     *   Subscribers signal demand via their subscription and publishers push data to subscribers
      *   synchronously or asynchronously, never exceeding signalled demand
      *
      * @param <T> Stream data type
-     * @return An async Stream Subscriber that supports efficient backpressure via reactive-streams
+     * @return An async Stream Subscriber that supports efficient backpressure via reactiveBuffer-streams
      */
     static <T> ReactiveSubscriber<T> reactiveSubscriber(){
         return new ReactiveSubscriber<T>();
@@ -415,10 +490,10 @@ public interface Spouts {
         });
 
         s[0] = ReactiveSeq.iterate(1, a -> a + 1)
-                .takeWhile(e -> isOpen.get())
-                .schedule(cron, exec)
-                .connect()
-                .forEach(1, e -> sub.onNext(e));
+                          .takeWhile(e -> isOpen.get())
+                          .schedule(cron, exec)
+                          .connect()
+                          .forEach(1, e -> sub.onNext(e));
 
         return sub.reactiveStream();
 
@@ -510,7 +585,7 @@ public interface Spouts {
     }
 
     static class Instances {
-        public static InstanceDefinitions<reactiveSeq> definitions(){
+        public static InstanceDefinitions<reactiveSeq> definitions(Executor ex){
             return new InstanceDefinitions<reactiveSeq>() {
                 @Override
                 public <T, R> Functor<reactiveSeq> functor() {
@@ -544,7 +619,7 @@ public interface Spouts {
 
                 @Override
                 public <T> MonadRec<reactiveSeq> monadRec() {
-                    return Instances.monadRec();
+                    return Instances.monadRec(ex);
                 }
 
                 @Override
@@ -553,13 +628,13 @@ public interface Spouts {
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<reactiveSeq>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<reactiveSeq> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<reactiveSeq>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<reactiveSeq> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -569,15 +644,15 @@ public interface Spouts {
 
                 @Override
                 public <T> Maybe<Unfoldable<reactiveSeq>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                    return Maybe.just(Instances.unfoldable(ex));
                 }
             };
         }
-        public static Unfoldable<reactiveSeq> unfoldable(){
+        public static Unfoldable<reactiveSeq> unfoldable(Executor ex){
             return new Unfoldable<reactiveSeq>() {
                 @Override
                 public <R, T> Higher<reactiveSeq, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
-                    return Spouts.unfold(b,fn);
+                    return Spouts.reactive(Spouts.unfold(b,fn),ex);
                 }
             };
         }
@@ -754,33 +829,20 @@ public interface Spouts {
          * }
          * </pre>
          *
-         * @param m Monoid toNested use for combining Lists
+         * @param m Monoid to use for combining Lists
          * @return Type class for combining Lists
          */
         public static <T> MonadPlus<reactiveSeq> monadPlus(Monoid<ReactiveSeq<T>> m){
             Monoid<Higher<reactiveSeq,T>> m2= (Monoid)m;
             return General.monadPlus(monadZero(),m2);
         }
-        public static <T,R> MonadRec<reactiveSeq> monadRec(){
+        public static <T,R> MonadRec<reactiveSeq> monadRec(Executor ex){
 
             return new MonadRec<reactiveSeq>(){
                 @Override
                 public <T, R> Higher<reactiveSeq, R> tailRec(T initial, Function<? super T, ? extends Higher<reactiveSeq,? extends Xor<T, R>>> fn) {
-                   //TODO Switch to async reactive-streams once onComplete event available..
-                    return ReactiveSeq.deferred(()-> {
-                        ReactiveSeq<Xor<T, R>> next = ReactiveSeq.of(Xor.secondary(initial));
-                        boolean newValue[] = {false};
-                        for (; ; ) {
-                            next = next.flatMap(e -> e.visit(s -> {
-                                newValue[0] = true;
-                                return narrowK(fn.apply(s));
-                            }, p -> ReactiveSeq.of(e)));
-                            if (!newValue[0])
-                                break;
-                        }
+                    return  Spouts.reactive(ReactiveSeq.deferred( ()-> ReactiveSeq.tailRec(initial, fn.andThen(ReactiveSeq::narrowK))),ex);
 
-                        return Xor.sequencePrimary(next.to().listX(LAZY)).map(l -> l.stream()).get();
-                    });
                 }
             };
         }
@@ -823,10 +885,11 @@ public interface Spouts {
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<reactiveSeq> foldable(){
+        public static <T,R> Foldable<reactiveSeq> foldable(){
             BiFunction<Monoid<T>,Higher<reactiveSeq,T>,T> foldRightFn =  (m,l)-> narrow(l).foldRight(m);
             BiFunction<Monoid<T>,Higher<reactiveSeq,T>,T> foldLeftFn = (m,l)-> narrow(l).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.reactiveSeq, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
         private static  <T> ReactiveSeq<T> concat(ReactiveSeq<T> l1, ReactiveSeq<T> l2){
@@ -850,7 +913,7 @@ public interface Spouts {
         /**
          * Widen a ReactiveSeq nest inside another HKT encoded type
          *
-         * @param flux HTK encoded type containing  a List toNested widen
+         * @param flux HTK encoded type containing  a List to widen
          * @return HKT encoded type with a widened List
          */
         public static <C2, T> Higher<C2, Higher<reactiveSeq, T>> widen2(Higher<C2, ReactiveSeq<T>> flux) {
@@ -867,7 +930,7 @@ public interface Spouts {
         /**
          * Convert the HigherKindedType definition for a List into
          *
-         * @param List Type Constructor toNested convert back into narrowed type
+         * @param List Type Constructor to convert back into narrowed type
          * @return List from Higher Kinded Type
          */
         public static <T> ReactiveSeq<T> narrow(final Higher<reactiveSeq, T> completableList) {

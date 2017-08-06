@@ -51,7 +51,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
 
     /**
      * Perform a coflatMap operation. The mapping function accepts this MonadicValue and returns
-     * a singleUnsafe value toNested be wrapped inside a Monad.
+     * a singleUnsafe value to be wrapped inside a Monad.
      * 
      * <pre>
      * {@code 
@@ -61,7 +61,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * </pre>
      * 
      * @param mapper Mapping / transformation function
-     * @return MonadicValue wrapping return value from transformation function applied toNested the value inside this MonadicValue
+     * @return MonadicValue wrapping return value from transformation function applied to the value inside this MonadicValue
      */
     default <R> MonadicValue<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
         return mapper.andThen(r -> unit(r))
@@ -110,13 +110,13 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * </pre>
      * 
      * @param value1
-     *            Nested MonadicValue toNested iterate over
+     *            Nested MonadicValue to iterate over
      * @param value2
-     *            Nested MonadicValue toNested iterate over
+     *            Nested MonadicValue to iterate over
      * @param value3
-     *            Nested MonadicValue toNested iterate over
+     *            Nested MonadicValue to iterate over
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            MonadicValue that generates the new elements
      * @return MonadicValue with elements generated via nested iteration
      */
@@ -158,16 +158,16 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * 
      * 
      * @param value1
-     *            Nested MonadicValue toNested iterate over
+     *            Nested MonadicValue to iterate over
      * @param value2
-     *            Nested MonadicValue toNested iterate over
+     *            Nested MonadicValue to iterate over
      * @param value3
-     *            Nested MonadicValue toNested iterate over
+     *            Nested MonadicValue to iterate over
      * @param filterFunction
-     *            Filter toNested applyHKT over elements before passing non-filtered
-     *            values toNested the yielding function
+     *            Filter to applyHKT over elements before passing non-filtered
+     *            values to the yielding function
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            MonadicValue that generates the new elements
      * @return MonadicValue with elements generated via nested iteration
      */
@@ -208,11 +208,11 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * </pre>
      * 
      * @param value1
-     *            Nested MonadicValue toNested iterate over
+     *            Nested MonadicValue to iterate over
      * @param value2
-     *            Nested MonadicValue toNested iterate over
+     *            Nested MonadicValue to iterate over
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            MonadicValue that generates the new elements
      * @return MonadicValue with elements generated via nested iteration
      */
@@ -249,14 +249,14 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * 
      * 
      * @param value1
-     *            Nested MonadicValue toNested iterate over
+     *            Nested MonadicValue to iterate over
      * @param value2
-     *            Nested MonadicValue toNested iterate over
+     *            Nested MonadicValue to iterate over
      * @param filterFunction
-     *            Filter toNested applyHKT over elements before passing non-filtered
-     *            values toNested the yielding function
+     *            Filter to applyHKT over elements before passing non-filtered
+     *            values to the yielding function
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            MonadicValue that generates the new elements
      * @return MonadicValue with elements generated via nested iteration
      */
@@ -293,9 +293,9 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * 
      * 
      * @param value1
-     *            Nested Monadic Type toNested iterate over
+     *            Nested Monadic Type to iterate over
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            monad types that generates the new elements
      * @return MonadicValue with elements generated via nested iteration
      */
@@ -325,12 +325,12 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * </pre>
      * 
      * @param monad1
-     *            Nested monadic type toNested iterate over
+     *            Nested monadic type to iterate over
      * @param filterFunction
-     *            Filter toNested applyHKT over elements before passing non-filtered
-     *            values toNested the yielding function
+     *            Filter to applyHKT over elements before passing non-filtered
+     *            values to the yielding function
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            Streams that generates the new elements
      * @return MonadicValue with elements generated via nested iteration
      */
@@ -352,7 +352,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * <pre>
      * {@code 
      * 
-     *  Monoid<Integer> add = Monoid.of(1,Semigroups.intSum);
+     *  Monoid<Integer> add = Monoid.of(1,SemigroupK.intSum);
      *  Maybe.of(10).combineEager(add,Maybe.none());
      *  //Maybe[10]
      *  
@@ -365,7 +365,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      *  Maybe.of(10).combineEager(add,Maybe.of(10));
      *  //Maybe[20]
      *  
-     *  Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+     *  Monoid<Integer> firstNonNull = Monoid.of(null , SemigroupK.firstNonNull());
      *  Maybe.of(10).combineEager(firstNonNull,Maybe.of(10));
      *  //Maybe[10]
      * }</pre>
@@ -397,7 +397,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);*/
 
     /**
-     * A flattening transformation operation that takes the takeOne value from the returned Iterable.
+     * A flattening transformation operation that takes the first value from the returned Iterable.
      * 
      * <pre>
      * {@code 
@@ -423,11 +423,11 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     }
 
     /**
-     * A flattening transformation operation that takes the takeOne value from the returned Publisher.
+     * A flattening transformation operation that takes the first value from the returned Publisher.
      * <pre>
      * {@code 
-     *   FutureW.ofResult(1).map(i->i+2).flatMapP(i->Flux.just(()->i*3,20);
-     *   //FutureW[9]
+     *   Future.ofResult(1).map(i->i+2).flatMapP(i->Flux.just(()->i*3,20);
+     *   //Future[9]
      * 
      * }</pre>
      * 
@@ -465,8 +465,8 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * }
      * </pre>
      *
-     * @param app Value toNested combine with this one.
-     * @param fn BiFunction toNested combine them
+     * @param app Value to combine with this one.
+     * @param fn BiFunction to combine them
      * @return New Applicativefunctor that represents the combined values
      */
     default <T2, R> MonadicValue<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {

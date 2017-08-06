@@ -27,7 +27,7 @@ public interface Filters<T> {
      * </pre>
      * 
      * 
-     * @param predicate toNested filter elements by, retaining matches
+     * @param predicate to filter elements by, retaining matches
      * @return Filters with elements removed where the predicate does not hold
      */
     Filters<T> filter(Predicate<? super T> predicate);
@@ -49,7 +49,7 @@ public interface Filters<T> {
     }
 
     /**
-     * Remove any elements for which the predicate holds (inverse operation toNested filter)
+     * Remove any elements for which the predicate holds (inverse operation to filter)
      * 
      * e.g.
      * <pre>
@@ -63,7 +63,7 @@ public interface Filters<T> {
      * </pre>
      * 
      * 
-     * @param predicate toNested filter elements by, retaining matches
+     * @param predicate to filter elements by, retaining matches
      * @return Filters with elements removed where the predicate does not hold
      */
     default Filters<T> filterNot(final Predicate<? super T> predicate) {

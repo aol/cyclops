@@ -68,7 +68,7 @@ public interface Value<T> extends   Folds<T>,
     }
 
     /**
-     * @return A factory class generating Values from reactive-streams Subscribers
+     * @return A factory class generating Values from reactiveBuffer-streams Subscribers
      */
     default ValueSubscriber<T> newSubscriber() {
         return ValueSubscriber.subscriber();
@@ -198,7 +198,7 @@ public interface Value<T> extends   Folds<T>,
      * Convert to an Xor where the secondary value will be used if no primary value is present
      *
     * @param secondary Value to use in case no primary value is present
-    * @return Primary Xor with same value as this Value, or a Secondary Xor with the provided Value if this Value is empty
+    * @return Primary Xor with same value as this Value, or a Secondary Xor with the provided Value if this Value is zero
     */
     default <ST> Xor<ST, T> toXor(final ST secondary) {
         final Optional<T> o = toOptional();
@@ -222,7 +222,7 @@ public interface Value<T> extends   Folds<T>,
                      .swap();
     }
     /**
-     * @param throwable Exception to use if this Value is empty
+     * @param throwable Exception to use if this Value is zero
      * @return Try that has the same value as this Value or the provided Exception
      */
     default <X extends Throwable> Try<T, X> toTry(final X throwable) {
@@ -231,7 +231,7 @@ public interface Value<T> extends   Folds<T>,
     }
 
     /**
-     * @return This Value converted to a Try. If this Value is empty the Try will contain a NoSuchElementException
+     * @return This Value converted to a Try. If this Value is zero the Try will contain a NoSuchElementException
      */
     default Try<T, Throwable> toTry() {
         return Try.fromPublisher(this);
@@ -292,7 +292,7 @@ public interface Value<T> extends   Folds<T>,
     }
 
     /**
-     * Returns a function result or a supplier result. The takeOne one if the function isn't null and the second one if it is.
+     * Returns a function result or a supplier result. The first one if the function isn't null and the second one if it is.
      * @return new Maybe with the result of a function or supplier.
      */
     default Maybe<T> toMaybeEager() {

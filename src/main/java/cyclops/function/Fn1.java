@@ -26,7 +26,6 @@ import cyclops.async.Future;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.functor.Functor;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -43,25 +42,38 @@ public interface Fn1<T,  R> extends Function<T,R>{
         return triFunc;
     }
 
+    default Fn0<R> applyLazy(T t){
+        return ()->apply(t);
+    }
+
+    default Eval<R> later(T t){
+        return Eval.later(()->apply(t));
+    }
+    default Eval<R> always(T t){
+        return Eval.always(()->apply(t));
+    }
+    default Eval<R> now(T t){
+        return Eval.now(apply(t));
+    }
     default Reader<T,R> reader(){
         return in->apply(in);
     }
     public R apply(T a);
 
     /**
-     * Apply before advice toNested this function, capture the input with the provided Consumer
+     * Apply before advice to this function, capture the input with the provided Consumer
      *
-     * @param action Before advice
-     * @return Function with Before advice attached
+     * @param action LESS advice
+     * @return Function with LESS advice attached
      */
     default Fn1<T, R> before(final Consumer<? super T> action){
         return FluentFunctions.of(this).before(action);
     }
     /**
-     * Apply After advice toNested this function capturing both the input and the emitted with the provided BiConsumer
+     * Apply MORE advice to this function capturing both the input and the emitted with the provided BiConsumer
      *
-     * @param action After advice
-     * @return  Function with After advice attached
+     * @param action MORE advice
+     * @return  Function with MORE advice attached
      */
     default Fn1<T, R> after(final BiConsumer<? super T,? super R> action) {
         return FluentFunctions.of(this).after(action);
@@ -285,6 +297,7 @@ public interface Fn1<T,  R> extends Function<T,R>{
             return in -> VectorX.of(apply(in));
         }
     }
+
 
 
 }

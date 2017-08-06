@@ -17,14 +17,16 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     private final long max;
     private long index;
     private long start;
+    private final long step;
 
     @Getter
     @Setter
     private boolean reverse;
 
-    public ReversingRangeLongSpliterator(final long min, final long max, final boolean reverse) {
+    public ReversingRangeLongSpliterator(final long min, final long max, final long step,final boolean reverse) {
         this.min = min;
         this.max = max;
+        this.step = step;
 
         this.reverse = reverse;
         if(!reverse)
@@ -35,7 +37,7 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
 
     @Override
     public ReversableSpliterator invert() {
-        return new ReversingRangeLongSpliterator(min,max,!reverse);
+        return new ReversingRangeLongSpliterator(min,max,step,!reverse);
 
     }
 
@@ -44,13 +46,15 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
         Objects.requireNonNull(consumer);
         if (!reverse) {
             if (index < max && index >= min) {
-                consumer.accept(index++);
+                consumer.accept(index);
+                index = index+step;
                 return true;
             }
         }
         if (reverse) {
             if (index > min && index <= max) {
-                consumer.accept(index--);
+                consumer.accept(index);
+                index = index-step;
                 return true;
             }
         }
@@ -75,7 +79,7 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     @Override
     public ReversableSpliterator copy() {
         return new ReversingRangeLongSpliterator(
-                min, max, reverse);
+                min, max, step,reverse);
     }
 
     /* (non-Javadoc)
@@ -86,13 +90,15 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
         long index = this.index; //use local index making spliterator reusable
         if (!reverse) {
             for( ;index < max && index >= min;) {
-                action.accept(index++);
+                action.accept(index);
+                index = index+step;
 
             }
         }
         if (reverse) {
             for( ;index > min && index <= max;) {
-                action.accept(index--);
+                action.accept(index);
+                index = index-step;
 
             }
 
@@ -107,12 +113,14 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
         long index = this.index; //use local index making spliterator reusable
         if (!reverse) {
             for( ;index < max && index >= min;) {
-                action.accept(index++);
+                action.accept(index);
+                index = index+step;
             }
         }
         if (reverse) {
             for( ;index > min && index <= max;) {
-                action.accept(index--);
+                action.accept(index);
+                index = index-step;
             }
 
         }
@@ -122,11 +130,11 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     public Spliterator<Long> skip(long offset) {
         if(reverse){
             return new ReversingRangeLongSpliterator(
-                    min, max-(int)offset, reverse);
+                    min, max-(int)offset,step, reverse);
 
         }else{
             return new ReversingRangeLongSpliterator(
-                    start+(int)offset, max, reverse);
+                    start+(int)offset, max,step, reverse);
         }
 
 
@@ -136,12 +144,12 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     public Spliterator<Long> take(long number) {
         if(reverse){
             return new ReversingRangeLongSpliterator(
-                    max-(int)number, max, reverse);
+                    max-(int)number, max, step,reverse);
 
         }
         else{
             return new ReversingRangeLongSpliterator(
-                    min, start+(int)number, reverse);
+                    min, start+(int)number, step,reverse);
 
         }
 

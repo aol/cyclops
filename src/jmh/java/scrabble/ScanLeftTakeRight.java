@@ -120,7 +120,7 @@ public class ScanLeftTakeRight extends ShakespearePlaysScrabble {
         ;
 
         // Placing the word on the board
-        // Building the streams of takeOne and last letters
+        // Building the streams of first and last letters
         Function<String, ReactiveSeq<Integer>> first3 =
                 word -> chars(word).limit(3) ;
         Function<String, ReactiveSeq<Integer>> last3 =

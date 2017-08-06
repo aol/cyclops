@@ -69,13 +69,13 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      *
      * 
      * @param monad1
-     *            Nested Monad toNested iterate over
+     *            Nested Monad to iterate over
      * @param monad2
-     *            Nested Monad toNested iterate over
+     *            Nested Monad to iterate over
      * @param monad3
-     *            Nested Monad toNested iterate over
+     *            Nested Monad to iterate over
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            Monad that generates the new elements
      * @return AnyMSeq with elements generated via nested iteration
      */
@@ -105,16 +105,16 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
      * 
      * @param monad1
-     *            Nested Monad toNested iterate over
+     *            Nested Monad to iterate over
      * @param monad2
-     *            Nested Monad toNested iterate over
+     *            Nested Monad to iterate over
      * @param monad3
-     *            Nested Monad toNested iterate over
+     *            Nested Monad to iterate over
      * @param filterFunction
-     *            Filter toNested applyHKT over elements before passing non-filtered
-     *            values toNested the yielding function
+     *            Filter to applyHKT over elements before passing non-filtered
+     *            values to the yielding function
      * @param yieldingFunction
-     *            Function with pointers toNested the current element from both
+     *            Function with pointers to the current element from both
      *            Streams that generates the new elements
      * @return ReactiveSeq with elements generated via nested iteration
      */
@@ -143,7 +143,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
     /**
      * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
-     * etc toNested be injected, for example)
+     * etc to be injected, for example)
      * 
      * <pre>
      * {@code 
@@ -157,8 +157,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * </pre>
      * 
      * 
-     * @param monad Nested Monad toNested iterate over
-     * @param yieldingFunction Function with pointers toNested the current element from both Streams that generates the new elements
+     * @param monad Nested Monad to iterate over
+     * @param yieldingFunction Function with pointers to the current element from both Streams that generates the new elements
      * @return FutureStream with elements generated via nested iteration
      */
     default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad,
@@ -173,7 +173,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
     /**
      * Perform a two level nested internal iteration over this Stream and the supplied monad (allowing null handling, exception handling
-     * etc toNested be injected, for example)
+     * etc to be injected, for example)
      * 
      * <pre>
      * {@code 
@@ -186,9 +186,9 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      *  //AnyM[14,15]
      * }
      * </pre>
-     * @param monad Nested Monad toNested iterate over
-     * @param filterFunction Filter toNested applyHKT over elements before passing non-filtered values toNested the yielding function
-     * @param yieldingFunction Function with pointers toNested the current element from both monads that generates the new elements
+     * @param monad Nested Monad to iterate over
+     * @param filterFunction Filter to applyHKT over elements before passing non-filtered values to the yielding function
+     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
      * @return
      */
    default <R1, R> AnyMSeq<W,R> forEach2(Function<? super T, ? extends AnyM<W,R1>> monad, 
@@ -220,10 +220,10 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      *  
      * }
      * </pre> 
-     * @param monad1 Nested monad toNested flatMap over
-     * @param monad2 Nested monad toNested flatMap over
-     * @param filterFunction Filter toNested applyHKT over elements before passing non-filtered values toNested the yielding function
-     * @param yieldingFunction Function with pointers toNested the current element from both monads that generates the new elements
+     * @param monad1 Nested monad to flatMap over
+     * @param monad2 Nested monad to flatMap over
+     * @param filterFunction Filter to applyHKT over elements before passing non-filtered values to the yielding function
+     * @param yieldingFunction Function with pointers to the current element from both monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
@@ -260,9 +260,9 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * }
     * </pre> 
      * 
-     * @param monad1 Nested Stream toNested iterate over
-     * @param monad2 Nested Stream toNested iterate over
-     * @param yieldingFunction Function with pointers toNested the current element from both Monads that generates the new elements
+     * @param monad1 Nested Stream to iterate over
+     * @param monad2 Nested Stream to iterate over
+     * @param yieldingFunction Function with pointers to the current element from both Monads that generates the new elements
      * @return AnyM with elements generated via nested iteration
      */
     default <R1, R2, R> AnyMSeq<W,R> forEach3(Function<? super T, ? extends AnyM<W,R1>> monad1,
@@ -280,7 +280,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     
     }
     /**
-     * Equivalence test, returns true if this Monad is equivalent toNested the supplied monad
+     * Equivalence test, returns true if this Monad is equivalent to the supplied monad
      * e.g.
      * <pre>
      * {code
@@ -289,7 +289,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      * </pre>
      * 
      * 
-     * @param t Monad toNested compare toNested
+     * @param t Monad to compare to
      * @return true if equivalent
      */
     default boolean eqv(final AnyMSeq<?,T> t) {
@@ -399,7 +399,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
     
     /**
-     * @return The takeOne value of this monad
+     * @return The first value of this monad
      */
     default Value<T> toFirstValue() {
 
@@ -601,7 +601,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
     @Override
     default AnyMSeq<W,T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.combine(op,predicate);
+        return fromIterable(FoldableTraversable.super.combine(op,predicate));
     }
 
     /* (non-Javadoc)
@@ -946,7 +946,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer)
+     * @see com.aol.cyclops2.types.reactiveStream.reactiveBuffer.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer)
      */
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer) {
@@ -955,7 +955,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.aol.cyclops2.types.reactiveStream.reactiveBuffer.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
@@ -965,7 +965,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
+     * @see com.aol.cyclops2.types.reactiveStream.reactiveBuffer.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
      */
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
@@ -975,7 +975,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.reactive.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.aol.cyclops2.types.reactiveStream.reactiveBuffer.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
@@ -985,7 +985,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.reactive.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
+     * @see com.aol.cyclops2.types.reactiveStream.reactiveBuffer.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
      */
     @Override
     default <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
@@ -1039,55 +1039,54 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     default <R> AnyMSeq<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
         return (AnyMSeq<W,R>)AnyM.super.retry(fn,retries,delay,timeUnit);
     }
-
     @Override
     default AnyMSeq<W,T> prependS(Stream<? extends T> stream) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.prependS(stream);
+        return fromIterable(FoldableTraversable.super.prependS(stream));
     }
 
     @Override
     default AnyMSeq<W,T> append(T... values) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.append(values);
+        return fromIterable(FoldableTraversable.super.append(values));
     }
 
     @Override
     default AnyMSeq<W,T> append(T value) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.append(value);
+        return fromIterable(FoldableTraversable.super.append(value));
     }
 
     @Override
     default AnyMSeq<W,T> prepend(T value) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.prepend(value);
+        return fromIterable(FoldableTraversable.super.prepend(value));
     }
 
     @Override
     default AnyMSeq<W,T> prepend(T... values) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.prepend(values);
+        return fromIterable(FoldableTraversable.super.prepend(values));
     }
 
     @Override
     default AnyMSeq<W,T> insertAt(int pos, T... values) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.insertAt(pos,values);
+        return fromIterable(FoldableTraversable.super.insertAt(pos,values));
     }
 
     @Override
     default AnyMSeq<W,T> deleteBetween(int start, int end) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.deleteBetween(start,end);
+        return fromIterable(FoldableTraversable.super.deleteBetween(start,end));
     }
 
     @Override
     default AnyMSeq<W,T> insertAtS(int pos, Stream<T> stream) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.insertAtS(pos,stream);
+        return fromIterable(FoldableTraversable.super.insertAtS(pos,stream));
     }
 
     @Override
     default AnyMSeq<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.recover(fn);
+        return fromIterable(FoldableTraversable.super.recover(fn));
     }
 
     @Override
     default <EX extends Throwable> AnyMSeq<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return (AnyMSeq<W,T>)FoldableTraversable.super.recover(exceptionClass,fn);
+        return fromIterable(FoldableTraversable.super.recover(exceptionClass,fn));
     }
 
 
@@ -1102,7 +1101,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.monad.AnyM#empty()
+     * @see com.aol.cyclops2.monad.AnyM#zero()
      */
     @Override
     default <T> AnyMSeq<W,T> empty(){
@@ -1174,7 +1173,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     /**
-     * Narrow this class toNested a Collectable
+     * Narrow this class to a Collectable
      *
      * @return Collectable
      */

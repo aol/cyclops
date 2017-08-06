@@ -60,7 +60,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Convert toNested a Stream with the values repeated specified times
+     * Convert to a Stream with the values repeated specified times
      * 
      * <pre>
      * {@code 
@@ -85,7 +85,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Convert toNested a Stream with the values infinitely cycled
+     * Convert to a Stream with the values infinitely cycled
      * 
      * <pre>
      * {@code 
@@ -106,7 +106,7 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Duplicate a Stream, buffers intermediate values, leaders may change
-     * positions so a limit can be safely applied toNested the leading reactiveStream. Not
+     * positions so a limit can be safely applied to the leading reactiveStream. Not
      * thread-safe.
      * 
      * <pre>
@@ -132,7 +132,7 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Triplicates a Stream. Buffers intermediate values, leaders may change
-     * positions so a limit can be safely applied toNested the leading reactiveStream. Not
+     * positions so a limit can be safely applied to the leading reactiveStream. Not
      * thread-safe.
      * 
      * <pre>
@@ -158,7 +158,7 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Makes four copies of a Stream Buffers intermediate values, leaders may
-     * change positions so a limit can be safely applied toNested the leading reactiveStream.
+     * change positions so a limit can be safely applied to the leading reactiveStream.
      * Not thread-safe.
      * <pre>
      * {@code 
@@ -184,7 +184,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Split a Stream at it's head (similar toNested headAndTail)
+     * Split a Stream at it's head (similar to headAndTail)
      * 
      * <pre>
      * {@code 
@@ -449,7 +449,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Add an index toNested the current Stream
+     * Add an index to the current Stream
      * 
      * <pre>
      * {@code 
@@ -573,7 +573,7 @@ public interface OperationsOnFutures<T> {
      * 
      * 
      * @param n
-     *            Number of elemenets toNested skip
+     *            Number of elemenets to skip
      * @return Stream with elements skipped
      */
     default FutureStream<T> skip(final long n) {
@@ -593,7 +593,7 @@ public interface OperationsOnFutures<T> {
      * </pre>
      * 
      * @param maxSize
-     *            Limit element size toNested num
+     *            Limit element size to num
      * @return Limited Stream
      */
     default FutureStream<T> limit(final long maxSize) {
@@ -606,7 +606,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * extract head and tail together, where head is expected toNested be present
+     * extract head and tail together, where head is expected to be present
      * 
      * <pre>
      * {@code 
@@ -676,7 +676,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Append Stream toNested this Stream
+     * Append Stream to this Stream
      * 
      * <pre>
      * {@code 
@@ -690,7 +690,7 @@ public interface OperationsOnFutures<T> {
      * </pre>
      * 
      * @param stream
-     *            toNested append
+     *            to append
      * @return SequenceM with Stream appended
      */
     default FutureStream<T> appendStream(final Stream<T> stream) {
@@ -700,7 +700,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Append a Stream of Futures toNested this Stream
+     * Append a Stream of Futures to this Stream
      * 
      * <pre>
      * {@code 
@@ -725,7 +725,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Prepend Stream toNested this SequenceM
+     * Prepend Stream to this SequenceM
      * 
      * <pre>
      * {@code 
@@ -740,7 +740,7 @@ public interface OperationsOnFutures<T> {
      * </pre>
      * 
      * @param stream
-     *            toNested Prepend
+     *            to Prepend
      * @return SequenceM with Stream prepended
      */
     default FutureStream<T> prependStream(final Stream<T> stream) {
@@ -770,7 +770,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Append values toNested the take of this SequenceM
+     * Append values to the take of this SequenceM
      * 
      * <pre>
      * {@code 
@@ -784,7 +784,7 @@ public interface OperationsOnFutures<T> {
      * </pre>
      * 
      * @param values
-     *            toNested append
+     *            to append
      * @return FutureStream with appended values
      */
     default FutureStream<T> append(final T... values) {
@@ -795,7 +795,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Append the provided Futures toNested this Stream
+     * Append the provided Futures to this Stream
      * 
      * <pre>
      * {@code 
@@ -810,7 +810,7 @@ public interface OperationsOnFutures<T> {
      * </pre>
      * 
      * 
-     * @param values Futures toNested append
+     * @param values Futures to append
      * @return Stream with values appended
      */
     default FutureStream<T> appendFutures(final CompletableFuture<T>... values) {
@@ -821,7 +821,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Prepend given values toNested the skip of the Stream
+     * Prepend given values to the skip of the Stream
      * 
      * <pre>
      * {@code 
@@ -833,7 +833,7 @@ public interface OperationsOnFutures<T> {
      * 						assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
      * </pre>
-     * @param values toNested prepend
+     * @param values to prepend
      * @return SequenceM with values prepended
      */
     default FutureStream<T> prepend(final T... values) {
@@ -882,9 +882,9 @@ public interface OperationsOnFutures<T> {
      * </pre>
      * 
      * @param pos
-     *            toNested insert data at
+     *            to insert data at
      * @param values
-     *            toNested insert
+     *            to insert
      * @return Stream with new data inserted
      */
     default FutureStream<T> insertAt(final int pos, final T... values) {
@@ -936,9 +936,9 @@ public interface OperationsOnFutures<T> {
      * </pre>
      * 
      * @param pos
-     *            toNested insert Stream at
+     *            to insert Stream at
      * @param stream
-     *            toNested insert
+     *            to insert
      * @return newly conjoined SequenceM
      */
     default FutureStream<T> insertStreamAt(final int pos, final Stream<T> stream) {
@@ -964,9 +964,9 @@ public interface OperationsOnFutures<T> {
      * </pre>
      * 
      * @param pos
-     *            toNested insert Stream at
+     *            to insert Stream at
      * @param stream
-     *            toNested insert
+     *            to insert
      * @return newly conjoined SequenceM
      */
     default FutureStream<T> insertStreamFuturesAt(final int pos, final Stream<CompletableFuture<T>> stream) {
@@ -997,7 +997,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Limit results toNested the last x elements in a SequenceM
+     * Limit results to the last x elements in a SequenceM
      * 
      * <pre>
      * {@code 
@@ -1007,8 +1007,8 @@ public interface OperationsOnFutures<T> {
      * 
      * }
      * </pre>
-     * @param num of elements toNested return (last elements)
-     * @return SequenceM limited toNested last num elements
+     * @param num of elements to return (last elements)
+     * @return SequenceM limited to last num elements
      */
     default FutureStream<T> limitLast(final int num) {
         return fromStreamOfFutures(this.getLastActive()
@@ -1017,7 +1017,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Return the elementAt index or Optional.empty
+     * Return the elementAt index or Optional.zero
      * 
      * <pre>
      * {@code
@@ -1026,7 +1026,7 @@ public interface OperationsOnFutures<T> {
      * </pre>
      * 
      * @param index
-     *            toNested extract element from
+     *            to extract element from
      * @return elementAt index
      */
     default Optional<T> elementAt(final long index) {
@@ -1050,7 +1050,7 @@ public interface OperationsOnFutures<T> {
      * </pre>
      * 
      * @param index
-     *            toNested extract element from
+     *            to extract element from
      * @return Element and Sequence
      */
     default Tuple2<T, FutureStream<T>> get(final long index) {
@@ -1073,7 +1073,7 @@ public interface OperationsOnFutures<T> {
      * assertThat(of(1,2,3,4).actOnFutures().thenCombine((a,b)->a+b).toList(),equalTo(Arrays.asList(3,7)));
      * }
      * </pre>
-     * @param combiner Function toNested Combine pairs of values
+     * @param combiner Function to Combine pairs of values
      * @return
      */
     default <R> FutureStream<R> thenCombine(final BiFunction<T, T, R> combiner) {
@@ -1119,7 +1119,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Concat supplied Futures toNested this Stream
+     * Concat supplied Futures to this Stream
      * 
      * <pre>
      * {@code 
@@ -1138,7 +1138,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /** 
-     * Concat supplied Futures toNested this Stream
+     * Concat supplied Futures to this Stream
      * 
      * <pre>
      * {@code 
@@ -1190,7 +1190,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Convert this FutureStream toNested a Stream of CompletableFutures
+     * Convert this FutureStream to a Stream of CompletableFutures
      * 
      * @return Stream of CompletableFutures
      */
@@ -1211,7 +1211,7 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Collect a Stream 
-     * @param collector Collecto toNested use
+     * @param collector Collecto to use
      * @return Collection
      */
     default <R, A> R collect(final Collector<? super CompletableFuture<T>, A, R> collector) {

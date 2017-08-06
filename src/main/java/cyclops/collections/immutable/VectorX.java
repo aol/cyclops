@@ -5,6 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.async.Future;
 import cyclops.control.Xor;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.*;
@@ -37,10 +38,14 @@ import lombok.experimental.UtilityClass;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
+import org.pcollections.PSet;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -65,7 +70,49 @@ public interface VectorX<T> extends To<VectorX<T>>,
                                      PVector<T>>,
                                      Comparable<T>,
                                      Higher<vectorX,T>{
+    default Maybe<T> headMaybe(){
+        return headAndTail().headMaybe();
+    }
+    default T head(){
+        return headAndTail().head();
+    }
+    default VectorX<T> tail(){
+        return headAndTail().tail().to().vectorX(Evaluation.LAZY);
+    }
+    VectorX<T> lazy();
+    VectorX<T> eager();
+    static <T> CompletableVectorX<T> completable(){
+        return new CompletableVectorX<>();
+    }
 
+    static class CompletableVectorX<T> implements InvocationHandler {
+        Future<VectorX<T>> future = Future.future();
+        public boolean complete(PVector<T> result){
+            return future.complete(VectorX.fromIterable(result));
+        }
+
+        public VectorX<T> asVectorX(){
+            VectorX f = (VectorX) Proxy.newProxyInstance(VectorX.class.getClassLoader(),
+                    new Class[] { VectorX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            VectorX<T> target = future.get();
+            return method.invoke(target,args);
+        }
+    }
+    public static  <T> Kleisli<vectorX,VectorX<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), VectorX::widen);
+    }
+    public static <T> Higher<vectorX, T> widen(VectorX<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<vectorX,T,VectorX<T>> kindCokleisli(){
+        return Cokleisli.of(VectorX::narrowK);
+    }
     public static <W1,T> Nested<vectorX,W1,T> nested(VectorX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
@@ -89,7 +136,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     /**
      * Widen a PVectorType nest inside another HKT encoded type
      *
-     * @param list HTK encoded type containing  a PVector toNested widen
+     * @param list HTK encoded type containing  a PVector to widen
      * @return HKT encoded type with a widened PVector
      */
     public static <C2,T> Higher<C2, Higher<vectorX,T>> widen2(Higher<C2, VectorX<T>> list){
@@ -116,7 +163,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * }
      * </pre>
      * 
-     * @param vectorX toNested narrow generic type
+     * @param vectorX to narrow generic type
      * @return OrderedSetX with narrowed type
      */
     public static <T> VectorX<T> narrow(final VectorX<? extends T> vectorX) {
@@ -128,9 +175,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * Create a VectorX that contains the Integers between skip and take
      * 
      * @param start
-     *            Number of range toNested skip from
+     *            Number of range to skip from
      * @param end
-     *            Number for range toNested take at
+     *            Number for range to take at
      * @return Range VectorX
      */
     public static VectorX<Integer> range(final int start, final int end) {
@@ -142,9 +189,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * Create a VectorX that contains the Longs between skip and take
      * 
      * @param start
-     *            Number of range toNested skip from
+     *            Number of range to skip from
      * @param end
-     *            Number for range toNested take at
+     *            Number for range to take at
      * @return Range VectorX
      */
     public static VectorX<Long> rangeLong(final long start, final long end) {
@@ -157,14 +204,14 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * 
      * <pre>
      * {@code 
-     *  VectorX.unfold(1,i->i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.empty());
+     *  VectorX.unfold(1,i->i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.zero());
      * 
      * //(1,2,3,4,5)
      * 
      * }</code>
      * 
      * @param seed Initial value 
-     * @param unfolder Iteratively applied function, terminated by an empty Optional
+     * @param unfolder Iteratively applied function, terminated by an zero Optional
      * @return VectorX generated by unfolder function
      */
     static <U, T> VectorX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
@@ -173,10 +220,10 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     /**
-     * Generate a VectorX from the provided Supplier up toNested the provided limit number of times
+     * Generate a VectorX from the provided Supplier up to the provided limit number of times
      * 
-     * @param limit Max number of elements toNested generate
-     * @param s Supplier toNested generate VectorX elements
+     * @param limit Max number of elements to generate
+     * @param s Supplier to generate VectorX elements
      * @return VectorX generated from the provided Supplier
      */
     public static <T> VectorX<T> generate(final long limit, final Supplier<T> s) {
@@ -186,9 +233,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
                           .vectorX(LAZY);
     }  
     /**
-     * Generate a VectorX from the provided value up toNested the provided limit number of times
+     * Generate a VectorX from the provided value up to the provided limit number of times
      * 
-     * @param limit Max number of elements toNested generate
+     * @param limit Max number of elements to generate
      * @param s Value for VectorX elements
      * @return VectorX generated from the provided Supplier
      */
@@ -200,11 +247,11 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     /**
-     * Create a VectorX by iterative application of a function toNested an initial element up toNested the supplied limit number of times
+     * Create a VectorX by iterative application of a function to an initial element up to the supplied limit number of times
      * 
-     * @param limit Max number of elements toNested generate
+     * @param limit Max number of elements to generate
      * @param seed Initial element
-     * @param f Iteratively applied toNested each element toNested generate the next element
+     * @param f Iteratively applied to each element to generate the next element
      * @return VectorX generated by iterative application
      */
     public static <T> VectorX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
@@ -230,7 +277,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * </pre>
      * 
      * 
-     * @param values To add toNested PVector
+     * @param values To add to PVector
      * @return new PVector
      */
     public static <T> VectorX<T> of(final T... values) {
@@ -240,7 +287,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * 
      * Construct a VectorX from the provided Iterator
      * 
-     * @param it Iterator toNested populate VectorX
+     * @param it Iterator to populate VectorX
      * @return Newly populated VectorX
      */
     public static <T> VectorX<T> fromIterator(final Iterator<T> it) {
@@ -249,13 +296,13 @@ public interface VectorX<T> extends To<VectorX<T>>,
     /**
      * <pre>
      * {@code 
-     *     List<String> empty = PVectors.empty();
+     *     List<String> zero = PVectors.zero();
      *    //or
      *    
-     *     PVector<String> empty = PVectors.empty();
+     *     PVector<String> zero = PVectors.zero();
      * }
      * </pre>
-     * @return an empty PVector
+     * @return an zero PVector
      */
     public static <T> VectorX<T> empty() {
         return new LazyPVectorX<T>(
@@ -287,7 +334,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * Construct a VectorX from an Publisher
      * 
      * @param publisher
-     *            toNested construct VectorX from
+     *            to construct VectorX from
      * @return VectorX
      */
     public static <T> VectorX<T> fromPublisher(final Publisher<? extends T> publisher) {
@@ -333,7 +380,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     /**
-     * Reduce (immutable Collection) a Stream toNested a PVector
+     * Reduce (immutable Collection) a Stream to a PVector
      * 
      * <pre>
      * {@code 
@@ -343,7 +390,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * }</pre>
      * 
      * 
-     * @param stream toNested convert toNested a PVector
+     * @param stream to convert to a PVector
      * @return
      */
     default <T> VectorX<T> fromStream(final ReactiveSeq<T> stream) {
@@ -358,14 +405,14 @@ public interface VectorX<T> extends To<VectorX<T>>,
     * <pre>
     * {@code 
     *  VectorX.of(1,1,2,3)
-                 .combine((a, b)->a.equals(b),Semigroups.intSum)
+                 .combine((a, b)->a.equals(b),SemigroupK.intSum)
                  .listX()
                  
     *  //ListX(3,4) 
     * }</pre>
     * 
-    * @param predicate Test toNested see if two neighbors should be joined
-    * @param op Reducer toNested combine neighbors
+    * @param predicate Test to see if two neighbors should be joined
+    * @param op Reducer to combine neighbors
     * @return Combined / Partially Reduced VectorX
     */
     @Override
@@ -465,7 +512,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     
 
     /**
-     * coflatMap pattern, can be used toNested perform maybe reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 
@@ -1285,13 +1332,13 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<vectorX>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<vectorX> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<vectorX>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<vectorX> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -1501,7 +1548,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * }
          * </pre>
          *
-         * @param m Monoid toNested use for combining PVectors
+         * @param m Monoid to use for combining PVectors
          * @return Type class for combining PVectors
          */
         public static <T> MonadPlus<vectorX> monadPlus(Monoid<VectorX<T>> m){
@@ -1549,9 +1596,26 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * @return Type class for folding / reduction operations
          */
         public static <T> Foldable<vectorX> foldable(){
-            BiFunction<Monoid<T>,Higher<vectorX,T>,T> foldRightFn =  (m, l)-> VectorX.narrowK(l).foldRight(m);
-            BiFunction<Monoid<T>,Higher<vectorX,T>,T> foldLeftFn = (m, l)-> VectorX.narrowK(l).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            return new Foldable<vectorX>() {
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<vectorX, T> ds) {
+                    return  VectorX.fromIterable(narrowK(ds)).foldRight(monoid);
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<vectorX, T> ds) {
+                    return  VectorX.fromIterable(narrowK(ds)).foldLeft(monoid);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<vectorX, T> nestedA) {
+                    Monoid<? extends R> m = mb;
+                    Object x = narrowK(nestedA).map(fn).foldLeft((Monoid) m);
+                    return (R)x;
+
+                }
+            };
+
         }
 
         private static  <T> VectorX<T> concat(PVector<T> l1, PVector<T> l2){
@@ -1571,5 +1635,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
             return lt.map(fn);
         }
     }
-
+    public static  <T,R> VectorX<R> tailRec(T initial, Function<? super T, ? extends VectorX<? extends Xor<T, R>>> fn) {
+        return ListX.tailRec(initial,fn).to().vectorX(Evaluation.LAZY);
+    }
 }

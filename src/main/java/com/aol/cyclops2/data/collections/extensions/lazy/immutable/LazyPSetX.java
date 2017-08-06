@@ -6,11 +6,13 @@ import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
+import org.pcollections.PQueue;
 import org.pcollections.PSet;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
@@ -42,10 +44,16 @@ import java.util.function.Supplier;
  */
 public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> implements PersistentSetX<T> {
 
-
+    public static final <T> Function<ReactiveSeq<PSet<T>>, PSet<T>> asyncSet() {
+        return r -> {
+            CompletablePersistentSetX<T> res = new CompletablePersistentSetX<>();
+            r.forEachAsync(l -> res.complete(l));
+            return res.asPersistentSetX();
+        };
+    }
 
     public LazyPSetX(PSet<T> list, ReactiveSeq<T> seq, Reducer<PSet<T>> reducer,Evaluation strict) {
-        super(list, seq, reducer,strict);
+        super(list, seq, reducer,strict,asyncSet());
 
 
     }

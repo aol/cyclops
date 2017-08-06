@@ -22,7 +22,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
     FutureStream<U> peekSync(final Consumer<? super U> consumer);
 
     /**
-     * Convert the current Stream toNested a simple-react Queue
+     * Convert the current Stream to a simple-react Queue
      * 
      * @return Queue populated asynchrnously by this Stream
      */
@@ -47,11 +47,11 @@ public interface LazyToQueue<U> extends ToQueue<U> {
     }
 
     /* 
-     * Convert the current Stream toNested a simple-react Queue.
-     * The supplied function can be used toNested determine properties of the Queue toNested be used
+     * Convert the current Stream to a simple-react Queue.
+     * The supplied function can be used to determine properties of the Queue to be used
      * 
-     *  @param fn Function toNested be applied toNested default Queue. Returned Queue will be used toNested conver this Stream toNested a Queue
-     *	@return This reactiveStream converted toNested a Queue
+     *  @param fn Function to be applied to default Queue. Returned Queue will be used to conver this Stream to a Queue
+     *	@return This reactiveStream converted to a Queue
      * @see com.aol.cyclops2.react.reactiveStream.traits.ToQueue#toQueue(java.util.function.Function)
      */
     @Override
@@ -89,15 +89,15 @@ public interface LazyToQueue<U> extends ToQueue<U> {
     /* 
      * Populate provided queues with the sharded data from this Stream.
      * 
-     *	@param shards Map of key toNested Queue shards
-     *	@param sharder Sharding function, element toNested key converter
+     *	@param shards Map of key to Queue shards
+     *	@param sharder Sharding function, element to key converter
      * @see com.aol.cyclops2.react.reactiveStream.traits.ToQueue#toQueue(java.util.Map, java.util.function.Function)
      */
     @Override
     default <K> void toQueue(final Map<K, Queue<U>> shards, final Function<? super U, ? extends K> sharder) {
 
-        //in this case all the items have toNested be pushed toNested the shards,
-        //we can't rely on the client pulling them all toNested get them in toNested the right shards
+        //in this case all the items have to be pushed to the shards,
+        //we can't rely on the client pulling them all to get them in to the right shards
         final LazyReact service = getPopulator();
         then(it -> shards.get(sharder.apply(it))
                          .offer(it),

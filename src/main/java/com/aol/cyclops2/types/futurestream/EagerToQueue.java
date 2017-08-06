@@ -32,11 +32,11 @@ public interface EagerToQueue<U> extends ToQueue<U> {
     }
 
     /* 
-     * Convert the current Stream toNested a simple-react Queue.
-     * The supplied function can be used toNested determine properties of the Queue toNested be used
+     * Convert the current Stream to a simple-react Queue.
+     * The supplied function can be used to determine properties of the Queue to be used
      * 
-     *  @param fn Function toNested be applied toNested default Queue. Returned Queue will be used toNested conver this Stream toNested a Queue
-     *	@return This reactiveStream converted toNested a Queue
+     *  @param fn Function to be applied to default Queue. Returned Queue will be used to conver this Stream to a Queue
+     *	@return This reactiveStream converted to a Queue
      * @see com.aol.cyclops2.react.reactiveStream.traits.ToQueue#toQueue(java.util.function.Function)
      */
     @Override
@@ -56,8 +56,8 @@ public interface EagerToQueue<U> extends ToQueue<U> {
     /* 
      * Populate provided queues with the sharded data from this Stream.
      * 
-     *	@param shards Map of key toNested Queue shards
-     *	@param sharder Sharding function, element toNested key converter
+     *	@param shards Map of key to Queue shards
+     *	@param sharder Sharding function, element to key converter
      * @see com.aol.cyclops2.react.reactiveStream.traits.ToQueue#toQueue(java.util.Map, java.util.function.Function)
      */
     @Override

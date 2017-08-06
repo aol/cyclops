@@ -28,7 +28,7 @@ public class HeadAndTail<T> {
     /** 
      * Construct a HeadAndTail from an Iterator
      * 
-     * @param it Iterator toNested construct head and tail from
+     * @param it Iterator to construct head and tail from
      */
     public HeadAndTail(final Iterator<T> it) {
         isHead = Memoize.memoizeSupplier(() -> it.hasNext());
@@ -55,14 +55,14 @@ public class HeadAndTail<T> {
     }
 
     /**
-     * @return Head (takeOne) value, will throw an exception if the head is not present
+     * @return Head (first) value, will throw an exception if the head is not present
      */
     public T head() {
         return head.get();
     }
 
     /**
-     * @return Optional.empty if the head is not present, otherwise an Optional containing the head
+     * @return Optional.zero if the head is not present, otherwise an Optional containing the head
      */
     public Optional<T> headOptional() {
         return isHeadPresent() ? Optional.of(head()) : Optional.empty();
@@ -70,7 +70,7 @@ public class HeadAndTail<T> {
     }
 
     /**
-     * @return Maybe.none if the head is not present, otherwise a Maybe.some containing the takeOne value
+     * @return Maybe.none if the head is not present, otherwise a Maybe.some containing the first value
      */
     public Maybe<T> headMaybe() {
         return isHeadPresent() ? Maybe.fromEval(Eval.later(head)) : Maybe.none();

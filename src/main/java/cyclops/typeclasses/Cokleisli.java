@@ -13,8 +13,8 @@ import org.jooq.lambda.tuple.Tuple2;
 import java.util.function.Function;
 
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
-public class Cokleisli<T,R,W extends WitnessType<W>> implements Fn1<Higher<W,T>,R>,
-                                                                Transformable<R>{
+public class Cokleisli<W,T,R> implements Fn1<Higher<W,T>,R>,
+                                            Transformable<R>{
 
     public final Fn1<Higher<W, T>,R> fn;
 
@@ -23,23 +23,26 @@ public class Cokleisli<T,R,W extends WitnessType<W>> implements Fn1<Higher<W,T>,
     public R apply(Higher<W, T> a) {
         return fn.apply(a);
     }
-    public <R1> Cokleisli<T,R1,W> map(Function<? super R, ? extends R1> mapper){
+    public <R1> Cokleisli<W,T,R1> map(Function<? super R, ? extends R1> mapper){
         return cokleisli(fn.andThen(mapper));
     }
 
-    public <R2> Cokleisli<T, Tuple2<R, R2>,W> fanout(Cokleisli<T, R2, W> f2) {
+    public <R2> Cokleisli<W,T, Tuple2<R, R2>> fanout(Cokleisli<W,T, R2> f2) {
         return product(f2);
 
     }
 
-    public <R2> Cokleisli<T, Tuple2<R, R2>,W> product(Cokleisli<T, R2, W> f2) {
+    public <R2> Cokleisli<W,T, Tuple2<R, R2>> product(Cokleisli<W,T, R2> f2) {
         return cokleisli(fn.product(f2));
     }
 
 
 
-    public static <T,R,W extends WitnessType<W>> Cokleisli<T,R,W> cokleisli(Function<? super Higher<W,T>,? extends R> fn){
-        return new Cokleisli<T, R, W>(Fn1.narrow(fn));
+    public static <W,T,R> Cokleisli<W,T,R> cokleisli(Function<? super Higher<W,T>,? extends R> fn){
+        return new Cokleisli<W,T, R>(Fn1.narrow(fn));
+    }
+    public static <W,T,R> Cokleisli<W,T,R> of(Function<? super Higher<W,T>,? extends R> fn){
+        return new Cokleisli<W,T, R>(Fn1.narrow(fn));
     }
 
 

@@ -42,7 +42,7 @@ import java.util.stream.*;
 import static java.util.Comparator.comparing;
 /*
  * Note on Organization
- * Composite operators (those that work by composing calls toNested existing operators) should move toNested ReactiveSeq
+ * Composite operators (those that work by composing calls to existing operators) should move to ReactiveSeq
  * Shared operators should be defined here
  * Specific operators in the specific base class
  *
@@ -107,15 +107,6 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     }
 
-
-
-    public ReactiveSeq<T> fold(Monoid<T> monoid){
-        Spliterator<T> s = this.spliterator();
-        FoldingSinkSpliterator<T> fs = new FoldingSinkSpliterator<>(s.estimateSize(), s.characteristics(), s, monoid);
-
-
-        return createSeq(new ValueEmittingSpliterator<T>(1, s.characteristics(),createSeq(fs)));
-    }
 
 
 
@@ -384,8 +375,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
-     * are configured toNested publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
-     * method toNested forEachAsync asynchronously also. A default limit of 10k active publishers is enforced, along with a default limit of 5k queued values before
+     * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
+     * method to forEachAsync asynchronously also. A default limit of 10k active publishers is enforced, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param mapper
@@ -397,8 +388,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
-     * are configured toNested publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
-     * method toNested forEachAsync asynchronously also. Active publishers are limited by the maxConcurrency parameter, along with a default limit of 5k queued values before
+     * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
+     * method to forEachAsync asynchronously also. Active publishers are limited by the maxConcurrency parameter, along with a default limit of 5k queued values before
      * backpressure is applied.
      *
      * @param mapper
@@ -410,8 +401,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     /**
      * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
-     * are configured toNested publish asynchronously.
-     * Active publishers are limited by the maxConcurrency parameter. The QueueFactory parameter can be used toNested control the maximum queued elements @see {@link QueueFactories}
+     * are configured to publish asynchronously.
+     * Active publishers are limited by the maxConcurrency parameter. The QueueFactory parameter can be used to control the maximum queued elements @see {@link QueueFactories}
      *
      *
      */
@@ -639,7 +630,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     }
     public  <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn){
-        //not composable toNested the 'left' (as statefulness is lost)
+        //not composable to the 'left' (as statefulness is lost)
         return createSeq(new LazyMappingSpliterator<T,R>(this.get(),fn), reversible);
 
     }

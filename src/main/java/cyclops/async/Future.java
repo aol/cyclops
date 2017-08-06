@@ -75,6 +75,15 @@ public class Future<T> implements To<Future<T>>,
                                   Higher<future,T>,
                                   RecoverableFrom<Throwable,T> {
 
+    public static  <T> Kleisli<future,Future<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Future::widen);
+    }
+    public static <T> Higher<future, T> widen(Future<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<future,T,Future<T>> kindCokleisli(){
+        return Cokleisli.of(Future::narrowK);
+    }
     public static <W1,T> Nested<future,W1,T> nested(Future<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
@@ -150,7 +159,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * An empty Future
+     * An zero Future
      *
      * @return A Future that wraps a CompletableFuture with a null result
      */
@@ -159,7 +168,7 @@ public class Future<T> implements To<Future<T>>,
                            CompletableFuture.completedFuture(null));
     }
     /**
-     * An empty Future
+     * An zero Future
      *
      * @return A Future that wraps a CompletableFuture with a null result
      */
@@ -169,10 +178,10 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Select the takeOne Future to complete
+     * Select the first Future to complete
      *
      * @see CompletableFuture#anyOf(CompletableFuture...)
-     * @param fts FutureWs to race
+     * @param fts Futures to race
      * @return First Future to complete
      */
     public static <T> Future<T> anyOf(Future<T>... fts) {
@@ -187,7 +196,7 @@ public class Future<T> implements To<Future<T>>,
      *
      * @see CompletableFuture#allOf(CompletableFuture...)
      *
-     * @param fts FutureWs to  wait on
+     * @param fts Futures to  wait on
      * @return Future that completes when all the provided Futures Complete. Empty Future result, or holds an Exception
      *         from a provided Future that failed.
      */
@@ -216,7 +225,7 @@ public class Future<T> implements To<Future<T>>,
      *
      * @param breakout Predicate that determines whether the block should be
      *            continued or removed
-     * @param fts FutureWs to  wait on results from
+     * @param fts Futures to  wait on results from
      * @param errorHandler Consumer to handle any exceptions thrown
      * @return Future which will be populated with a Quorum of results
      */
@@ -249,7 +258,7 @@ public class Future<T> implements To<Future<T>>,
      *
      * @param breakout Predicate that determines whether the block should be
      *            continued or removed
-     * @param fts FutureWs to  wait on results from
+     * @param fts Futures to  wait on results from
      * @return Future which will be populated with a Quorum of results
      */
     @SafeVarargs
@@ -264,7 +273,7 @@ public class Future<T> implements To<Future<T>>,
 
     }
     /**
-     * Select the takeOne Future to return with a successful result
+     * Select the first Future to return with a successful result
      *
      * <pre>
      * {@code
@@ -300,7 +309,7 @@ public class Future<T> implements To<Future<T>>,
 
     }
     /**
-     * Construct a Future asyncrhonously that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
+     * Construct a Future asyncrhonously that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
      *
      *
      * <pre>
@@ -348,7 +357,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Construct a Future syncrhonously that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
+     * Construct a Future syncrhonously that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
@@ -460,6 +469,7 @@ public class Future<T> implements To<Future<T>>,
      * @return Future populated on a Cron based Schedule
      */
     public static <T> Future<T> schedule(final String cron, final ScheduledExecutorService ex, final Supplier<T> t) {
+
         final CompletableFuture<T> future = new CompletableFuture<>();
         final Future<T> wrapped = Future.of(future);
         ReactiveSeq.generate(() -> {
@@ -514,7 +524,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Asynchronous sequence operation that convert a Collection of FutureWs to a Future with a List
+     * Asynchronous sequence operation that convert a Collection of Futures to a Future with a List
      *
      * <pre>
      * {@code
@@ -534,7 +544,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Sequence operation that convert a Stream of FutureWs to a Future with a Stream
+     * Sequence operation that convert a Stream of Futures to a Future with a Stream
      *
      * <pre>
      * {@code
@@ -1112,7 +1122,7 @@ public class Future<T> implements To<Future<T>>,
      *            Mapping function for successful outcomes
      * @param failure
      *            Mapping function for failed outcomes
-     * @return New futureW mapped to a new state
+     * @return New Future mapped to a new state
      */
     public <R> Future<R> map(final Function<? super T, R> success, final Function<Throwable, R> failure) {
         return Future.of(future.thenApply(success)
@@ -1306,7 +1316,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /*
-     * Equivalent to combine, but accepts an Iterable and takes the takeOne value
+     * Equivalent to combine, but accepts an Iterable and takes the first value
      * only from that iterable. (non-Javadoc)
      *
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable,
@@ -1319,7 +1329,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /*
-     * Equivalent to combine, but accepts a Publisher and takes the takeOne value
+     * Equivalent to combine, but accepts a Publisher and takes the first value
      * only from that publisher.
      *
      * (non-Javadoc)
@@ -1425,7 +1435,7 @@ public class Future<T> implements To<Future<T>>,
         return this.future;
     }
     /**
-     * Companion class for creating Type Class instances for working with FutureWs
+     * Companion class for creating Type Class instances for working with Futures
      * @author johnmcclean
      *
      */
@@ -1474,13 +1484,13 @@ public class Future<T> implements To<Future<T>>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<future>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<future> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<future>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<future> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -1501,7 +1511,7 @@ public class Future<T> implements To<Future<T>>,
          *
          * <pre>
          * {@code
-         *  Future<Integer> future = FutureWs.functor().map(i->i*2, Future.widen(FutureW.ofResult(2));
+         *  Future<Integer> future = Futures.functor().map(i->i*2, Future.widen(Future.ofResult(2));
          *
          *  //[4]
          *
@@ -1509,19 +1519,19 @@ public class Future<T> implements To<Future<T>>,
          * }
          * </pre>
          *
-         * An example fluent api working with FutureWs
+         * An example fluent api working with Futures
          * <pre>
          * {@code
-         *   Future<Integer> future = FutureWs.unit()
+         *   Future<Integer> future = Futures.unit()
         .unit("hello")
-        .applyHKT(h->FutureWs.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Futures.functor().map((String v) ->v.length(), h))
         .convert(Future::narrowK3);
          *
          * }
          * </pre>
          *
          *
-         * @return A functor for FutureWs
+         * @return A functor for Futures
          */
         public static <T,R> Functor<future> functor(){
             BiFunction<Future<T>,Function<? super T, ? extends R>,Future<R>> map = Instances::map;
@@ -1530,17 +1540,17 @@ public class Future<T> implements To<Future<T>>,
         /**
          * <pre>
          * {@code
-         * Future<String> future = FutureWs.unit()
+         * Future<String> future = Futures.unit()
         .unit("hello")
         .convert(Future::narrowK3);
 
-        //FutureW("hello")
+        //Future("hello")
          *
          * }
          * </pre>
          *
          *
-         * @return A factory for FutureWs
+         * @return A factory for Futures
          */
         public static <T> Pure<future> unit(){
             return General.<future,T>unit(Instances::of);
@@ -1551,10 +1561,10 @@ public class Future<T> implements To<Future<T>>,
          * {@code
          * import static com.aol.cyclops.hkt.jdk.Future.widen;
          * import static com.aol.cyclops.util.function.Lambda.l1;
-         * import static java.util.Arrays.asFutureW;
+         * import static java.util.Arrays.asFuture;
          *
-        FutureWs.zippingApplicative()
-        .ap(widen(asFutureW(l1(this::multiplyByTwo))),widen(asFutureW(1,2,3)));
+        Futures.zippingApplicative()
+        .ap(widen(asFuture(l1(this::multiplyByTwo))),widen(asFuture(1,2,3)));
          *
          * //[2,4,6]
          * }
@@ -1564,23 +1574,23 @@ public class Future<T> implements To<Future<T>>,
          * Example fluent API
          * <pre>
          * {@code
-         * Future<Function<Integer,Integer>> futureFn =FutureWs.unit()
+         * Future<Function<Integer,Integer>> futureFn =Futures.unit()
          *                                                  .unit(Lambda.l1((Integer i) ->i*2))
          *                                                  .convert(Future::narrowK3);
 
-        Future<Integer> future = FutureWs.unit()
+        Future<Integer> future = Futures.unit()
         .unit("hello")
-        .applyHKT(h->FutureWs.functor().map((String v) ->v.length(), h))
-        .applyHKT(h->FutureWs.applicative().ap(futureFn, h))
+        .applyHKT(h->Futures.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Futures.applicative().ap(futureFn, h))
         .convert(Future::narrowK3);
 
-        //FutureW("hello".length()*2))
+        //Future("hello".length()*2))
          *
          * }
          * </pre>
          *
          *
-         * @return A zipper for FutureWs
+         * @return A zipper for Futures
          */
         public static <T,R> Applicative<future> applicative(){
             BiFunction<Future< Function<T, R>>,Future<T>,Future<R>> ap = Instances::ap;
@@ -1591,8 +1601,8 @@ public class Future<T> implements To<Future<T>>,
          * <pre>
          * {@code
          * import static com.aol.cyclops.hkt.jdk.Future.widen;
-         * Future<Integer> future  = FutureWs.monad()
-        .flatMap(i->widen(FutureW.ofResult(0)), widen(FutureW.ofResult(2)))
+         * Future<Integer> future  = Futures.monad()
+        .flatMap(i->widen(Future.ofResult(0)), widen(Future.ofResult(2)))
         .convert(Future::narrowK3);
          * }
          * </pre>
@@ -1600,17 +1610,17 @@ public class Future<T> implements To<Future<T>>,
          * Example fluent API
          * <pre>
          * {@code
-         *    Future<Integer> future = FutureWs.unit()
+         *    Future<Integer> future = Futures.unit()
         .unit("hello")
-        .applyHKT(h->FutureWs.monad().flatMap((String v) ->FutureWs.unit().unit(v.length()), h))
+        .applyHKT(h->Futures.monad().flatMap((String v) ->Futures.unit().unit(v.length()), h))
         .convert(Future::narrowK3);
 
-        //FutureW("hello".length())
+        //Future("hello".length())
          *
          * }
          * </pre>
          *
-         * @return Type class with monad functions for FutureWs
+         * @return Type class with monad functions for Futures
          */
         public static <T,R> Monad<future> monad(){
 
@@ -1621,12 +1631,12 @@ public class Future<T> implements To<Future<T>>,
          *
          * <pre>
          * {@code
-         *  Future<String> future = FutureWs.unit()
+         *  Future<String> future = Futures.unit()
         .unit("hello")
-        .applyHKT(h->FutureWs.monadZero().filter((String t)->t.startsWith("he"), h))
+        .applyHKT(h->Futures.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(Future::narrowK3);
 
-        //FutureW["hello"]
+        //Future["hello"]
          *
          * }
          * </pre>
@@ -1669,14 +1679,14 @@ public class Future<T> implements To<Future<T>>,
         /**
          * <pre>
          * {@code
-         *  Future<Integer> future = FutureWs.<Integer>monadPlus()
-        .plus(Future.widen(FutureW.future()), Future.widen(FutureW.ofResult(10)))
+         *  Future<Integer> future = Futures.<Integer>monadPlus()
+        .plus(Future.widen(Future.future()), Future.widen(Future.ofResult(10)))
         .convert(Future::narrowK3);
-        //FutureW[10]
+        //Future[10]
          *
          * }
          * </pre>
-         * @return Type class for combining FutureWs by concatenation
+         * @return Type class for combining Futures by concatenation
          */
         public static <T> MonadPlus<future> monadPlus(){
             Monoid<Future<T>> mn = Monoids.firstSuccessfulFuture();
@@ -1690,17 +1700,17 @@ public class Future<T> implements To<Future<T>>,
          *
          * <pre>
          * {@code
-         *  Monoid<Future<Integer>> m = Monoid.of(Future.widen(FutureW.future()()), (a,b)->a.isDone() ? b : a);
-        Future<Integer> future = FutureWs.<Integer>monadPlus(m)
-        .plus(Future.widen(FutureW.ofResult(5)), Future.widen(FutureW.ofResult(10)))
+         *  Monoid<Future<Integer>> m = Monoid.of(Future.widen(Future.future()()), (a,b)->a.isDone() ? b : a);
+        Future<Integer> future = Futures.<Integer>monadPlus(m)
+        .plus(Future.widen(Future.ofResult(5)), Future.widen(Future.ofResult(10)))
         .convert(Future::narrowK3);
-        //FutureW(5)
+        //Future(5)
          *
          * }
          * </pre>
          *
-         * @param m Monoid to use for combining FutureWs
-         * @return Type class for combining FutureWs
+         * @param m Monoid to use for combining Futures
+         * @return Type class for combining Futures
          */
         public static <T> MonadPlus<future> monadPlus(Monoid<Future<T>> m){
             Monoid<Higher<future,T>> m2= (Monoid)m;
@@ -1719,8 +1729,8 @@ public class Future<T> implements To<Future<T>>,
          *
          * <pre>
          * {@code
-         * int sum  = FutureWs.foldable()
-        .foldLeft(0, (a,b)->a+b, Future.widen(FutureW.ofResult(4)));
+         * int sum  = Futures.foldable()
+        .foldLeft(0, (a,b)->a+b, Future.widen(Future.ofResult(4)));
 
         //4
          *
@@ -1730,10 +1740,11 @@ public class Future<T> implements To<Future<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<future> foldable(){
+        public static <T,R> Foldable<future> foldable(){
             BiFunction<Monoid<T>,Higher<future,T>,T> foldRightFn =  (m,l)-> m.apply(m.zero(), Future.narrowK(l).get());
             BiFunction<Monoid<T>,Higher<future,T>,T> foldLeftFn = (m,l)->  m.apply(m.zero(), Future.narrowK(l).get());
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.future, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
         public static <T> Comonad<future> comonad(){
             Function<? super Higher<future, T>, ? extends T> extractFn = maybe -> maybe.convert(Future::narrowK).get();

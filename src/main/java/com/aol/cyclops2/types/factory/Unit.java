@@ -1,6 +1,8 @@
 package com.aol.cyclops2.types.factory;
 
-/** 
+import java.util.function.Supplier;
+
+/**
  * A Data type that supports instantiation of instances of the same type 
  * 
  * @author johnmcclean

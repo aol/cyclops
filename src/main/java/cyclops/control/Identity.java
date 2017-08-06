@@ -13,6 +13,7 @@ import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -25,9 +26,9 @@ import java.util.function.Supplier;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Identity<T> implements Higher<identity,T>, Iterable<T> {
-     private final T value;
+    private final T value;
 
-     public static <T> Identity<T> of(T value){
+    public static <T> Identity<T> of(T value){
          return new Identity<>(value);
      }
 
@@ -55,7 +56,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
      public <R> Identity<R> coflatMap(Function<? super Identity<? super T>, ? extends R> fn){
          return of(fn.apply(this));
      }
-     public <R> Identity<R> map(Function<? super T,? extends R> fn){
+    public <R> Identity<R> map(Function<? super T,? extends R> fn){
          return new Identity<>(fn.apply(value));
      }
     public <R> Identity<R> flatMap(Function<? super T,? extends Identity<? extends R>> fn){
@@ -131,13 +132,13 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<identity>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<identity> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<identity>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<identity> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -219,6 +220,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
                 }
             };
         }
+
         public static  MonadRec<identity> monadRec() {
 
             return new MonadRec<identity>(){
@@ -288,6 +290,11 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
                 public <T> T foldLeft(Monoid<T> monoid, Higher<identity, T> ds) {
                     return monoid.apply(monoid.zero(),narrowK(ds).get());
                 }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<identity, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                }
             };
         }
         public static Comonad<identity> comonad(){
@@ -311,6 +318,15 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
             };
         }
 
+    }
+    public static  <T> Kleisli<identity,Identity<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Identity::widen);
+    }
+    public static <T> Higher<identity, T> widen(Identity<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<identity,T,Identity<T>> kindCokleisli(){
+        return Cokleisli.of(Identity::narrowK);
     }
 
 }

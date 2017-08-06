@@ -4,6 +4,7 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.async.Future;
 import cyclops.control.Eval;
 import cyclops.control.Xor;
 
@@ -43,6 +44,9 @@ import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -67,6 +71,49 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                     Higher<linkedListX,T> {
 
 
+    default Maybe<T> headMaybe(){
+        return headAndTail().headMaybe();
+    }
+    default T head(){
+        return headAndTail().head();
+    }
+    default LinkedListX<T> tail(){
+        return headAndTail().tail().to().linkedListX(Evaluation.LAZY);
+    }
+
+
+    static <T> CompletableLinkedListX<T> completable(){
+        return new CompletableLinkedListX<>();
+    }
+
+    static class CompletableLinkedListX<T> implements InvocationHandler {
+        Future<LinkedListX<T>> future = Future.future();
+        public boolean complete(PStack<T> result){
+            return future.complete(LinkedListX.fromIterable(result));
+        }
+
+        public LinkedListX<T> asLinkedListX(){
+            LinkedListX f = (LinkedListX) Proxy.newProxyInstance(LinkedListX.class.getClassLoader(),
+                    new Class[] { LinkedListX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            LinkedListX<T> target = future.get();
+            return method.invoke(target,args);
+        }
+    }
+    public static  <T> Kleisli<linkedListX,LinkedListX<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), LinkedListX::widen);
+    }
+    public static <T> Higher<linkedListX, T> widen(LinkedListX<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<linkedListX,T,LinkedListX<T>> kindCokleisli(){
+        return Cokleisli.of(LinkedListX::narrowK);
+    }
     public static <W1,T> Nested<linkedListX,W1,T> nested(LinkedListX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
@@ -91,7 +138,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     /**
      * Widen a PStackType nest inside another HKT encoded type
      *
-     * @param list HTK encoded type containing  a PStack toNested widen
+     * @param list HTK encoded type containing  a PStack to widen
      * @return HKT encoded type with a widened PStack
      */
     public static <C2,T> Higher<C2, Higher<linkedListX,T>> widen2(Higher<C2, LinkedListX<T>> list){
@@ -122,7 +169,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * }
      * </pre>
      * 
-     * @param stackX toNested narrow generic type
+     * @param stackX to narrow generic type
      * @return OrderedSetX with narrowed type
      */
     public static <T> LinkedListX<T> narrow(final LinkedListX<? extends T> stackX) {
@@ -133,9 +180,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * Create a LinkedListX that contains the Integers between skip and take
      * 
      * @param start
-     *            Number of range toNested skip from
+     *            Number of range to skip from
      * @param end
-     *            Number for range toNested take at
+     *            Number for range to take at
      * @return Range LinkedListX
      */
     public static LinkedListX<Integer> range(final int start, final int end) {
@@ -147,9 +194,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * Create a LinkedListX that contains the Longs between skip and take
      * 
      * @param start
-     *            Number of range toNested skip from
+     *            Number of range to skip from
      * @param end
-     *            Number for range toNested take at
+     *            Number for range to take at
      * @return Range LinkedListX
      */
     public static LinkedListX<Long> rangeLong(final long start, final long end) {
@@ -162,14 +209,14 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * 
      * <pre>
      * {@code 
-     *  LinkedListX.unfold(1,i->i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.empty());
+     *  LinkedListX.unfold(1,i->i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.zero());
      * 
      * //(1,2,3,4,5)
      * 
      * }</code>
      * 
      * @param seed Initial value 
-     * @param unfolder Iteratively applied function, terminated by an empty Optional
+     * @param unfolder Iteratively applied function, terminated by an zero Optional
      * @return LinkedListX generated by unfolder function
      */
     static <U, T> LinkedListX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
@@ -178,10 +225,10 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /**
-     * Generate a LinkedListX from the provided Supplier up toNested the provided limit number of times
+     * Generate a LinkedListX from the provided Supplier up to the provided limit number of times
      * 
-     * @param limit Max number of elements toNested generate
-     * @param s Supplier toNested generate LinkedListX elements
+     * @param limit Max number of elements to generate
+     * @param s Supplier to generate LinkedListX elements
      * @return LinkedListX generated from the provided Supplier
      */
     public static <T> LinkedListX<T> generate(final long limit, final Supplier<T> s) {
@@ -192,9 +239,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /**
-     * Generate a LinkedListX from the provided value up toNested the provided limit number of times
+     * Generate a LinkedListX from the provided value up to the provided limit number of times
      * 
-     * @param limit Max number of elements toNested generate
+     * @param limit Max number of elements to generate
      * @param s Value for LinkedListX elements
      * @return LinkedListX generated from the provided Supplier
      */
@@ -206,11 +253,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
     
     /**
-     * Create a LinkedListX by iterative application of a function toNested an initial element up toNested the supplied limit number of times
+     * Create a LinkedListX by iterative application of a function to an initial element up to the supplied limit number of times
      * 
-     * @param limit Max number of elements toNested generate
+     * @param limit Max number of elements to generate
      * @param seed Initial element
-     * @param f Iteratively applied toNested each element toNested generate the next element
+     * @param f Iteratively applied to each element to generate the next element
      * @return LinkedListX generated by iterative application
      */
     public static <T> LinkedListX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
@@ -258,7 +305,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * </pre>
      * 
      * 
-     * @param values To add toNested PStack
+     * @param values To add to PStack
      * @return new PStack
      */
     @SafeVarargs
@@ -270,7 +317,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * 
      * Construct a LinkedListX from the provided Iterator
      * 
-     * @param it Iterator toNested populate LinkedListX
+     * @param it Iterator to populate LinkedListX
      * @return Newly populated LinkedListX
      */
     public static <T> LinkedListX<T> fromIterator(final Iterator<T> it) {
@@ -280,7 +327,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * Construct a LinkedListX from an Publisher
      * 
      * @param publisher
-     *            toNested construct LinkedListX from
+     *            to construct LinkedListX from
      * @return LinkedListX
      */
     public static <T> LinkedListX<T> fromPublisher(final Publisher<? extends T> publisher) {
@@ -307,13 +354,13 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     /**
      * <pre>
      * {@code 
-     *     List<String> empty = PStack.empty();
+     *     List<String> zero = PStack.zero();
      *    //or
      *    
-     *     PStack<String> empty = PStack.empty();
+     *     PStack<String> zero = PStack.zero();
      * }
      * </pre>
-     * @return an empty PStack
+     * @return an zero PStack
      */
     public static <T> LinkedListX<T> empty() {
         return new LazyLinkedListX<>(
@@ -342,7 +389,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /**
-     * Reduce (immutable Collection) a Stream toNested a PStack, note for efficiency reasons,
+     * Reduce (immutable Collection) a Stream to a PStack, note for efficiency reasons,
      * the emitted PStack is reversed.
      * 
      * 
@@ -354,7 +401,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * }</pre>
      * 
      * 
-     * @param stream toNested convert toNested a PVector
+     * @param stream to convert to a PVector
      * @return
      */
     default <T> LinkedListX<T> fromStream(final ReactiveSeq<T> stream) {
@@ -451,7 +498,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /**
-     * coflatMap pattern, can be used toNested perform maybe reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 
@@ -479,14 +526,14 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     * <pre>
     * {@code 
     *  LinkedListX.of(1,1,2,3)
-                 .combine((a, b)->a.equals(b),Semigroups.intSum)
+                 .combine((a, b)->a.equals(b),SemigroupK.intSum)
                  .listX()
                  
     *  //ListX(3,4) 
     * }</pre>
     * 
-    * @param predicate Test toNested see if two neighbors should be joined
-    * @param op Reducer toNested combine neighbors
+    * @param predicate Test to see if two neighbors should be joined
+    * @param op Reducer to combine neighbors
     * @return Combined / Partially Reduced LinkedListX
     */
     @Override
@@ -1342,13 +1389,13 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<linkedListX>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<linkedListX> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<linkedListX>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<linkedListX> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -1535,14 +1582,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return new MonadRec<linkedListX>(){
                 @Override
                 public <T, R> Higher<linkedListX, R> tailRec(T initial, Function<? super T, ? extends Higher<linkedListX,? extends Xor<T, R>>> fn) {
-                    LinkedListX<Xor<T, R>> next = LinkedListX.of(Xor.secondary(initial));
-                    boolean newValue[] = {false};
-                    for(;;){
-                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> LinkedListX.of(e)));
-                        if(!newValue[0])
-                            break;
-                    }
-                    return Xor.sequencePrimary(next).map(l->l.to().linkedListX(LAZY)).get();
+                    return LinkedListX.tailRec(initial,fn.andThen(LinkedListX::narrowK));
                 }
             };
         }
@@ -1559,7 +1599,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * }
          * </pre>
          *
-         * @param m Monoid toNested use for combining PStacks
+         * @param m Monoid to use for combining PStacks
          * @return Type class for combining PStacks
          */
         public static <T> MonadPlus<linkedListX> monadPlus(Monoid<LinkedListX<T>> m){
@@ -1608,10 +1648,12 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<linkedListX> foldable(){
+        public static <T,R> Foldable<linkedListX> foldable(){
             BiFunction<Monoid<T>,Higher<linkedListX,T>,T> foldRightFn =  (m, l)-> LinkedListX.narrowK(l).foldRight(m);
             BiFunction<Monoid<T>,Higher<linkedListX,T>,T> foldLeftFn = (m, l)-> LinkedListX.narrowK(l).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<linkedListX, T>, R> foldMapFn = (m,f,l)->narrowK(l).map(f).foldLeft(m);
+
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
         private static  <T> LinkedListX<T> concat(PStack<T> l1, PStack<T> l2){
@@ -1630,5 +1672,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         private static <T,R> LinkedListX<R> map(LinkedListX<T> lt, Function<? super T, ? extends R> fn){
             return LinkedListX.fromIterable(lt).map(fn);
         }
+    }
+
+    public static  <T,R> LinkedListX<R> tailRec(T initial, Function<? super T, ? extends LinkedListX<? extends Xor<T, R>>> fn) {
+       return ListX.tailRec(initial,fn).to().linkedListX(Evaluation.LAZY);
     }
 }

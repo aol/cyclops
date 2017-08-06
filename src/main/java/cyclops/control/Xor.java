@@ -25,6 +25,7 @@ import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -73,7 +74,7 @@ import java.util.stream.Stream;
  *  Xor's have two states
  *  Primary : Most methods operate naturally on the primary type, if it is present. If it is not, nothing happens.
  *  Secondary : Most methods do nothing to the secondary type if it is present.
- *              To operate on the Secondary type takeOne call swap() or use secondary analogs of the main operators.
+ *              To operate on the Secondary type first call swap() or use secondary analogs of the main operators.
  *
  *  Instantiating an Xor - Primary
  *  <pre>
@@ -99,7 +100,7 @@ import java.util.stream.Stream;
  *  Xor.accumulateSecondary(ListX.of(Xor.secondary("failed1"),
                                                     Xor.secondary("failed2"),
                                                     Xor.primary("success")),
-                                                    Semigroups.stringConcat)
+                                                    SemigroupK.stringConcat)
  *
  *  //failed1failed2
  *
@@ -125,11 +126,20 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                                      BiTransformable<ST,PT>,
                                      Higher2<xor,ST,PT> {
 
-
+    public static  <L,T> Kleisli<Higher<xor,L>,Xor<L,T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Xor::widen);
+    }
+    public static <L,T> Higher<Higher<xor,L>, T> widen(Xor<L,T> narrow) {
+        return narrow;
+    }
+    public static  <L,T> Cokleisli<Higher<xor,L>,T,Xor<L,T>> kindCokleisli(){
+        return Cokleisli.of(Xor::narrowK);
+    }
     public static <W1,ST,PT> Nested<Higher<xor,ST>,W1,PT> nested(Xor<ST,Higher<W1,PT>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
-    default <W1> Product<Higher<xor,ST>,W1,PT> product(Active<W1,PT> active){
+
+     default <W1> Product<Higher<xor,ST>,W1,PT> product(Active<W1,PT> active){
         return Product.of(allTypeclasses(),active);
     }
     default <W1> Coproduct<W1,Higher<xor,ST>,PT> coproduct(InstanceDefinitions<W1> def2){
@@ -747,7 +757,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * Xor.accumulateSecondary(ListX.of(Xor.secondary("failed1"),
     												Xor.secondary("failed2"),
     												Xor.primary("success")),
-    												Semigroups.stringConcat)
+    												SemigroupK.stringConcat)
 
 
      * //Xors.Primary[failed1failed2]
@@ -858,11 +868,11 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      */
     ST secondaryGet();
     /**
-     * @return The Secondary value wrapped in an Optional if present, otherwise an empty Optional
+     * @return The Secondary value wrapped in an Optional if present, otherwise an zero Optional
      */
     Optional<ST> secondaryToOptional();
     /**
-     * @return A Stream containing the secondary value if present, otherwise an empty Stream
+     * @return A Stream containing the secondary value if present, otherwise an zero Stream
      */
     ReactiveSeq<ST> secondaryToStream();
 
@@ -929,7 +939,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      * <pre>
      * {@code
      *  Xor<String,String> fail1 =  Xor.secondary("failed1");
-        Xor<LinkedListX<String>,String> result = fail1.list().combine(Xor.secondary("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
+        Xor<LinkedListX<String>,String> result = fail1.list().combine(Xor.secondary("failed2").list(), SemigroupK.collectionConcat(),(a,b)->a+b);
 
         //Secondary of [LinkedListX.of("failed1","failed2")))]
      * }
@@ -1423,19 +1433,20 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                     return Instances.monadRec();
                 }
 
+
                 @Override
                 public <T> Maybe<MonadPlus<Higher<xor, L>>> monadPlus(Monoid<Higher<Higher<xor, L>, T>> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<xor, L>>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<Higher<xor, L>> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<xor, L>>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<Higher<xor, L>> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -1539,6 +1550,14 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
 
         }
+        public static BiFunctor<xor> bifunctor(){
+            return new BiFunctor<xor>() {
+                @Override
+                public <T, R, T2, R2> Higher2<xor, R, R2> bimap(Function<? super T, ? extends R> fn, Function<? super T2, ? extends R2> fn2, Higher2<xor, T, T2> ds) {
+                    return narrowK(ds).bimap(fn,fn2);
+                }
+            };
+        }
         public static <L> Traverse<Higher<xor, L>> traverse() {
             return new Traverse<Higher<xor, L>>() {
 
@@ -1587,6 +1606,11 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<xor, L>, T> ds) {
                     Xor<L,T> xor = Xor.narrowK(ds);
                     return xor.foldLeft(monoid);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<xor, L>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
                 }
             };
         }
@@ -1659,6 +1683,41 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                 @Override
                 public <T> Higher<Higher<xor, L>, T> unit(T value) {
                     return Instances.<L>unit().unit(value);
+                }
+            };
+        }
+        public static <L> ApplicativeError<Higher<xor, L>,L> applicativeError(){
+            return new ApplicativeError<Higher<xor, L>,L>() {
+
+                @Override
+                public <T, R> Higher<Higher<xor, L>, R> ap(Higher<Higher<xor, L>, ? extends Function<T, R>> fn, Higher<Higher<xor, L>, T> apply) {
+                    return Instances.<L>applicative().ap(fn,apply);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<xor, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<xor, L>, T> ds) {
+                    return Instances.<L>applicative().map(fn,ds);
+                }
+
+                @Override
+                public <T> Higher<Higher<xor, L>, T> unit(T value) {
+                    return Instances.<L>applicative().unit(value);
+                }
+
+                @Override
+                public <T> Higher<Higher<xor, L>, T> raiseError(L l) {
+                    return Xor.secondary(l);
+                }
+
+                @Override
+                public <T> Higher<Higher<xor, L>, T> handleErrorWith(Function<? super L, ? extends Higher<Higher<xor, L>, ? extends T>> fn, Higher<Higher<xor, L>, T> ds) {
+                    Function<? super L, ? extends Xor<L, T>> fn2 = fn.andThen(s -> {
+
+                        Higher<Higher<xor, L>, T> x = (Higher<Higher<xor, L>, T>)s;
+                        Xor<L, T> r = narrowK(x);
+                        return r;
+                    });
+                    return narrowK(ds).secondaryToPrimayFlatMap(fn2);
                 }
             };
         }

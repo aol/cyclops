@@ -1,9 +1,12 @@
 package cyclops.collections.mutable;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.stream.HeadAndTail;
+import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.box.MutableBoolean;
 import cyclops.control.Xor;
@@ -36,6 +39,9 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -62,6 +68,51 @@ public interface ListX<T> extends To<ListX<T>>,
                                   Higher<list,T> {
 
 
+    default Maybe<T> headMaybe(){
+        return headAndTail().headMaybe();
+    }
+    default T head(){
+        return headAndTail().head();
+    }
+    default ListX<T> tail(){
+        return headAndTail().tail().to().listX(Evaluation.LAZY);
+    }
+
+
+
+
+    public static <T> ListX<T> defer(Supplier<ListX<T>> s){
+        return ListX.of(s)
+                    .map(Supplier::get)
+                    .flatMap(l->l);
+    }
+
+    static <T> CompletableListX<T> completable(){
+        return new CompletableListX<>();
+    }
+
+    static class CompletableListX<T> implements InvocationHandler{
+        Future<ListX<T>> future = Future.future();
+        public boolean complete(List<T> result){
+            return future.complete(ListX.fromIterable(result));
+        }
+
+        public ListX<T> asListX(){
+            ListX f = (ListX) Proxy.newProxyInstance(ListX.class.getClassLoader(),
+                    new Class[] { ListX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            ListX<T> target = future.get();
+            return method.invoke(target,args);
+        }
+    }
+
+    ListX<T> lazy();
+    ListX<T> eager();
     public static <W1,T> Nested<list,W1,T> nested(ListX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
@@ -131,13 +182,13 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<list>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<list> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<list>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<list> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -286,17 +337,11 @@ public interface ListX<T> extends To<ListX<T>>,
             return new MonadRec<list>(){
                 @Override
                 public <T, R> Higher<list, R> tailRec(T initial, Function<? super T, ? extends Higher<list,? extends Xor<T, R>>> fn) {
-                    ListX<Xor<T, R>> next = ListX.of(Xor.secondary(initial));
-                    boolean newValue[] = {false};
-                    for(;;){
-                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> ListX.of(e)));
-                        if(!newValue[0])
-                            break;
-                    }
-                    return Xor.sequencePrimary(next).get();
+                    return ListX.tailRec(initial,fn.andThen(ListX::narrowK));
                 }
             };
         }
+
         /**
          *
          * <pre>
@@ -348,7 +393,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * }
          * </pre>
          *
-         * @param m Monoid toNested use for combining Lists
+         * @param m Monoid to use for combining Lists
          * @return Type class for combining Lists
          */
         public static <T> MonadPlus<list> monadPlus(Monoid<ListX<T>> m){
@@ -396,9 +441,25 @@ public interface ListX<T> extends To<ListX<T>>,
          * @return Type class for folding / reduction operations
          */
         public static <T> Foldable<list> foldable(){
-            BiFunction<Monoid<T>,Higher<list,T>,T> foldRightFn =  (m,l)-> ListX.fromIterable(narrow(l)).foldRight(m);
-            BiFunction<Monoid<T>,Higher<list,T>,T> foldLeftFn = (m,l)-> ListX.fromIterable(narrow(l)).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            return new Foldable<list>() {
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<list, T> ds) {
+                    return  ListX.fromIterable(narrow(ds)).foldRight(monoid);
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<list, T> ds) {
+                    return  ListX.fromIterable(narrow(ds)).foldLeft(monoid);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<list, T> nestedA) {
+                    return narrow(nestedA).<R>map(fn).foldLeft(mb);
+
+
+                }
+            };
+
         }
 
         private static  <T> ListX<T> concat(List<T> l1, List<T> l2){
@@ -422,7 +483,7 @@ public interface ListX<T> extends To<ListX<T>>,
         /**
          * Widen a ListType nest inside another HKT encoded type
          *
-         * @param flux HTK encoded type containing  a List toNested widen
+         * @param flux HTK encoded type containing  a List to widen
          * @return HKT encoded type with a widened List
          */
         public static <C2, T> Higher<C2, Higher<list, T>> widen2(Higher<C2, ListX<T>> flux) {
@@ -430,6 +491,10 @@ public interface ListX<T> extends To<ListX<T>>,
             // instead of casting
             // cast seems safer as Higher<list,T> must be a ListX
             return (Higher) flux;
+        }
+        public static <T> Higher<list, T> widen( ListX<T> flux) {
+
+            return flux;
         }
 
 
@@ -444,10 +509,11 @@ public interface ListX<T> extends To<ListX<T>>,
             return (ListX<T>) future;
         }
 
+
         /**
          * Convert the HigherKindedType definition for a List into
          *
-         * @param List Type Constructor toNested convert back into narrowed type
+         * @param List Type Constructor to convert back into narrowed type
          * @return List from Higher Kinded Type
          */
         public static <T> ListX<T> narrow(final Higher<list, T> completableList) {
@@ -455,6 +521,12 @@ public interface ListX<T> extends To<ListX<T>>,
             return ((ListX<T>) completableList);//.narrow();
 
         }
+    }
+    public static  <T> Kleisli<list,ListX<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(),Instances::widen);
+    }
+    public static  <T> Cokleisli<list,T,ListX<T>> kindCokleisli(){
+        return Cokleisli.of(Instances::narrowK);
     }
 
     default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {
@@ -470,9 +542,9 @@ public interface ListX<T> extends To<ListX<T>>,
      * Create a ListX that contains the Integers between skip and take
      * 
      * @param start
-     *            Number of range toNested skip from
+     *            Number of range to skip from
      * @param end
-     *            Number for range toNested take at
+     *            Number for range to take at
      * @return Range ListX
      */
     public static ListX<Integer> range(final int start, final int end) {
@@ -484,9 +556,9 @@ public interface ListX<T> extends To<ListX<T>>,
      * Create a ListX that contains the Longs between skip and take
      * 
      * @param start
-     *            Number of range toNested skip from
+     *            Number of range to skip from
      * @param end
-     *            Number for range toNested take at
+     *            Number for range to take at
      * @return Range ListX
      */
     public static ListX<Long> rangeLong(final long start, final long end) {
@@ -499,14 +571,14 @@ public interface ListX<T> extends To<ListX<T>>,
      * 
      * <pre>
      * {@code 
-     *  ListX.unfold(1,i->i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.empty());
+     *  ListX.unfold(1,i->i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.zero());
      * 
      * //(1,2,3,4,5)
      * 
      * }</pre>
      * 
      * @param seed Initial value 
-     * @param unfolder Iteratively applied function, terminated by an empty Optional
+     * @param unfolder Iteratively applied function, terminated by an zero Optional
      * @return ListX generated by unfolder function
      */
     static <U, T> ListX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
@@ -515,9 +587,9 @@ public interface ListX<T> extends To<ListX<T>>,
                           .listX(Evaluation.LAZY);
     }
     /**
-     * Generate a ListX from the provided value up toNested the provided limit number of times
+     * Generate a ListX from the provided value up to the provided limit number of times
      * 
-     * @param limit Max number of elements toNested generate
+     * @param limit Max number of elements to generate
      * @param s Value for ListX elements
      * @return ListX generated from the provided Supplier
      */
@@ -530,10 +602,10 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /**
-     * Generate a ListX from the provided Supplier up toNested the provided limit number of times
+     * Generate a ListX from the provided Supplier up to the provided limit number of times
      * 
-     * @param limit Max number of elements toNested generate
-     * @param s Supplier toNested generate ListX elements
+     * @param limit Max number of elements to generate
+     * @param s Supplier to generate ListX elements
      * @return ListX generated from the provided Supplier
      */
     public static <T> ListX<T> generate(final long limit, final Supplier<T> s) {
@@ -545,11 +617,11 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /**
-     * Create a ListX by iterative application of a function toNested an initial element up toNested the supplied limit number of times
+     * Create a ListX by iterative application of a function to an initial element up to the supplied limit number of times
      * 
-     * @param limit Max number of elements toNested generate
+     * @param limit Max number of elements to generate
      * @param seed Initial element
-     * @param f Iteratively applied toNested each element toNested generate the next element
+     * @param f Iteratively applied to each element to generate the next element
      * @return ListX generated by iterative application
      */
     public static <T> ListX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
@@ -658,7 +730,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /**
-     * @return Construct an empty ListX
+     * @return Construct an zero ListX
      */
     public static <T> ListX<T> empty() {
         return fromIterable((List<T>) defaultCollector().supplier()
@@ -676,7 +748,7 @@ public interface ListX<T> extends To<ListX<T>>,
      *
      * 
      * 
-     * @param values toNested construct a Deque from
+     * @param values to construct a Deque from
      * @return DequeX
      */
     @SafeVarargs
@@ -698,7 +770,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * Construct a ListX from an Publisher
      * 
      * @param publisher
-     *            toNested construct ListX from
+     *            to construct ListX from
      * @return ListX
      */
     public static <T> ListX<T> fromPublisher(final Publisher<? extends T> publisher) {
@@ -761,7 +833,7 @@ public interface ListX<T> extends To<ListX<T>>,
     ListX<T> withCollector(Collector<T, ?, List<T>> collector);
 
     /**
-     * coflatMap pattern, can be used toNested perform maybe reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 
@@ -818,7 +890,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /**
-     * @return A Collector toNested generate a List
+     * @return A Collector to generate a List
      */
     public <T> Collector<T, ?, List<T>> getCollector();
 
@@ -851,15 +923,15 @@ public interface ListX<T> extends To<ListX<T>>,
      * <pre>
      * {@code 
      *  ListX.of(1,1,2,3)
-                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .combine((a, b)->a.equals(b),SemigroupK.intSum)
                    .to()
                    .listX(Evaluation.LAZY)
                    
      *  //ListX(3,4) 
      * }</pre>
      * 
-     * @param predicate Test toNested see if two neighbors should be joined
-     * @param op Reducer toNested combine neighbors
+     * @param predicate Test to see if two neighbors should be joined
+     * @param op Reducer to combine neighbors
      * @return Combined / Partially Reduced ListX
      */
     @Override
@@ -1703,7 +1775,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * }
      * </pre>
      * 
-     * @param listX toNested narrow generic type
+     * @param listX to narrow generic type
      * @return ListX with narrowed type
      */
     public static <T> ListX<T> narrow(final ListX<? extends T> listX) {
@@ -1752,5 +1824,23 @@ public interface ListX<T> extends To<ListX<T>>,
     default <T2, T3, T4, R> ListX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (ListX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
+    public static  <T,R> ListX<R> tailRec(T initial, Function<? super T, ? extends Iterable<? extends Xor<T, R>>> fn) {
+        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
+        ListX<Xor<T, R>> next = lazy.eager();
+        boolean newValue[] = {true};
+        for(;;){
 
+            next = next.flatMap(e -> e.visit(s -> {
+                        newValue[0]=true;
+                        return fn.apply(s); },
+                    p -> {
+                        newValue[0]=false;
+                        return ListX.of(e);
+                    }));
+            if(!newValue[0])
+                break;
+
+        }
+        return Xor.sequencePrimary(next).get();
+    }
 }

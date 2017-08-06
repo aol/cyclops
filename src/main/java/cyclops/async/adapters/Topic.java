@@ -22,8 +22,8 @@ import lombok.Getter;
 import lombok.Synchronized;
 
 /**
- * A class that can accept input streams and generate emitted streams where data sent in the Topic is guaranteed toNested be
- * provided toNested all Topic subsribers
+ * A class that can accept input streams and generate emitted streams where data sent in the Topic is guaranteed to be
+ * provided to all Topic subsribers
  * 
  * @author johnmcclean
  *
@@ -50,7 +50,7 @@ public class Topic<T> implements Adapter<T> {
 
     /**
      * Construct a Topic using the Queue provided
-     * @param q Queue toNested back this Topic with
+     * @param q Queue to back this Topic with
      */
     public Topic(final Queue<T> q) {
         factory = QueueFactories.unboundedQueue();
@@ -63,7 +63,7 @@ public class Topic<T> implements Adapter<T> {
 
     /**
      * Topic will maintain a queue for each Subscribing Stream
-     * If a Stream is finished with a Topic it is good practice toNested disconnect from the Topic
+     * If a Stream is finished with a Topic it is good practice to disconnect from the Topic
      * so messages will no longer be stored for that Stream
      * 
      * @param stream
@@ -97,8 +97,8 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Generating a streamCompletableFutures will register the Stream as a reactiveSubscriber toNested this topic.
-     * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect toNested disconnect from the topic
+     * Generating a streamCompletableFutures will register the Stream as a reactiveSubscriber to this topic.
+     * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
      * 
      * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
      */
@@ -108,8 +108,8 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Generating a reactiveStream will register the Stream as a reactiveSubscriber toNested this topic.
-     * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect toNested disconnect from the topic
+     * Generating a reactiveStream will register the Stream as a reactiveSubscriber to this topic.
+     * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
      * @return Stream of data
      */
     @Override
@@ -167,9 +167,9 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Add a singleUnsafe datapoint toNested this Queue
+     * Add a singleUnsafe datapoint to this Queue
      * 
-     * @param data data toNested add
+     * @param data data to add
      * @return self
      */
     @Override

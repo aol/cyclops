@@ -33,7 +33,7 @@ public class NestedTest {
 
     @Test
     public void foldLeft()  {
-        assertThat(just.folds().get().foldLeft(Monoids.intSum).applyHKT(ListX::narrowK), equalTo(ListX.of(2)));
+        assertThat(just.foldLeft(Monoids.intSum).applyHKT(ListX::narrowK), equalTo(ListX.of(2)));
     }
 
     @Test
@@ -57,12 +57,12 @@ public class NestedTest {
 
     @Test
     public void sequence()  {
-        assertThat(just.traverseUnsafe().sequence().toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(2)),Optionals.Instances.definitions(),ListX.Instances.definitions()).toString()));
+        assertThat(just.sequence().toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(2)),Optionals.Instances.definitions(),ListX.Instances.definitions()).toString()));
     }
 
     @Test
     public void traverse() {
-        assertThat(just.traverse().get().traverse(i->i*2).toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(4)),Optionals.Instances.definitions(),ListX.Instances.definitions()).toString()));
+        assertThat(just.traverse(i->i*2).toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(4)),Optionals.Instances.definitions(),ListX.Instances.definitions()).toString()));
     }
 
 

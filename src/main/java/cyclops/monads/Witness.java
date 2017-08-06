@@ -566,4 +566,13 @@ public interface Witness {
         }
 
     }
+    public static enum predicate implements WitnessType<predicate>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<predicate> adapter() {
+            return null;
+        }
+
+    }
 }

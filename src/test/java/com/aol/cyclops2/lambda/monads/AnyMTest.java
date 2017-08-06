@@ -22,6 +22,8 @@ import java.util.stream.Stream;
 
 import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -38,6 +40,7 @@ import reactor.core.publisher.Flux;
 
 public class AnyMTest {
 
+
 	@Test
 	public void optionalAndStream(){
 
@@ -50,6 +53,9 @@ public class AnyMTest {
 		Stream<Integer> rawStream = stream.to(Witness::stream);
 
 		Optional<Integer> rawOptional = opt.to(Witness::optional);
+
+        Optional<Tuple2<Integer, Integer>> o = opt.zip(ListX.of(2)).to(Witness::optional);
+        assertThat(o.get(),equalTo(Tuple.tuple(10,2)));
 
 
 	}

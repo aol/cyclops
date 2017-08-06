@@ -37,6 +37,7 @@ import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.*;
@@ -67,7 +68,7 @@ import org.reactivestreams.Subscription;
  * Handle exceptions conciously, not coding bugs
  * Fluent step builders
  * Fail fast
- * Support eager, lazy and reactive execution modes
+ * Support eager, lazy and reactiveBuffer execution modes
  *
  * Examples :
  *
@@ -163,6 +164,16 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
     public Xor<X,T> asXor(){
         return xor;
+    }
+
+    public static  <X extends Throwable,T> Kleisli<Higher<tryType,X>,Try<T,X>,T> kindKleisli(){
+        return Kleisli.of(Try.Instances.monad(), Try::widen);
+    }
+    public static <X extends Throwable,T> Higher<Higher<tryType,X>, T> widen(Try<T,X> narrow) {
+        return narrow;
+    }
+    public static  <X extends Throwable,T> Cokleisli<Higher<tryType,X>,T,Try<T,X>> kindCokleisli(){
+        return Cokleisli.of(Try::narrowK);
     }
 
     public Active<Higher<tryType,X>,T> allTypeclasses(){
@@ -382,7 +393,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * {@code
      * Try.accumulateFailures(ListX.of(Try.failure(new NoSuchElementException());,
      * Try.failure(new NoSuchElementException());
-    Try.success("success")),Semigroups.stringConcat)
+    Try.success("success")),SemigroupK.stringConcat)
 
      * //Primary[NoSuchElementException, NoSuchElementException]
      * }
@@ -407,13 +418,13 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return new Try<>(pub,new Class[0]);
     }
     /**
-     * Construct a Try  that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher, will catch any Exceptions
+     * Construct a Try  that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher, will catch any Exceptions
      * of the provided types
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
 
-    Try<Integer,Throwable> attempt = Try.fromPublisher(reactiveStream, RuntimeException.class);
+    Try<Integer,Throwable> recover = Try.fromPublisher(reactiveStream, RuntimeException.class);
 
     //Try[1]
      *
@@ -421,7 +432,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * </pre>
      *
      * @param pub Publisher to extract value from
-     * @return Try populated with takeOne value from Publisher
+     * @return Try populated with first value from Publisher
      */
     @SafeVarargs
     public static <T, X extends Throwable> Try<T, X> fromPublisher(final Publisher<T> pub, final Class<X>... classes) {
@@ -439,13 +450,13 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * Construct a Try  that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
+     * Construct a Try  that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
      *
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
 
-    Try<Integer,Throwable> attempt = Try.fromPublisher(reactiveStream);
+    Try<Integer,Throwable> recover = Try.fromPublisher(reactiveStream);
 
     //Try[1]
      *
@@ -453,7 +464,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * </pre>
      *
      * @param pub Publisher to extract value from
-     * @return Try populated with takeOne value from Publisher
+     * @return Try populated with first value from Publisher
      */
     public static <T> Try<T, Throwable> fromPublisher(final Publisher<T> pub) {
         return new Try<>(Either.fromPublisher(pub),new Class[0]);
@@ -467,7 +478,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
 
-    Try<Integer,Throwable> attempt = Try.fromIterable(reactiveStream);
+    Try<Integer,Throwable> recover = Try.fromIterable(reactiveStream);
 
     //Try[1]
      *
@@ -475,7 +486,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * </pre>
      *
      * @param iterable Iterable to extract value from
-     * @return Try populated with takeOne value from Iterable
+     * @return Try populated with first value from Iterable
      */
     public static <T, X extends Throwable> Try<T, X> fromIterable(final Iterable<T> iterable) {
         return new Try<>(Either.fromIterable(iterable), new Class[0]);
@@ -680,14 +691,14 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      *  Try<Integer> just = Try.success(10);
      *  Try<Integer> none = Try.failure(new RuntimeException());
      *
-     *  Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+     *  Monoid<Integer> add = Monoid.of(0,SemigroupK.intSum);
      *
      *
     assertThat(just.combine(add,none),equalTo(Try.success(10)));
     assertThat(none.combine(add,just),equalTo(Try.success(0)));
     assertThat(none.combine(add,none),equalTo(Try.success(0)));
     assertThat(just.combine(add,Try.success(10)),equalTo(Try.success(20)));
-    Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+    Monoid<Integer> firstNonNull = Monoid.of(null , SemigroupK.firstNonNull());
     assertThat(just.combine(firstNonNull,Try.success(null)),equalTo(just));
 
      * }
@@ -966,7 +977,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
     /**
-     * @return Optional present if Success, Optional empty if failure
+     * @return Optional present if Success, Optional zero if failure
      */
     @Override
     public Optional<T> toOptional(){
@@ -982,7 +993,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * @return Optional present if Failure (with Exception), Optional empty if Success
+     * @return Optional present if Failure (with Exception), Optional zero if Success
      */
     public Optional<X> toFailedOptional(){
         return xor.swap().toOptional();
@@ -1060,7 +1071,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * Try to execute supplied Supplier and will Catch specified Excpetions or java.lang.Exception
      * if none specified.
      *
-     * @param cf CheckedSupplier to attempt to execute
+     * @param cf CheckedSupplier to recover to execute
      * @param classes  Exception types to catch (or java.lang.Exception if none specified)
      * @return New Try
      */
@@ -1088,7 +1099,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * Try to execute supplied Runnable and will Catch specified Excpetions or java.lang.Exception
      * if none specified.
      *
-     * @param cf CheckedRunnable to attempt to execute
+     * @param cf CheckedRunnable to recover to execute
      * @param classes  Exception types to catch (or java.lang.Exception if none specified)
      * @return New Try
      */
@@ -1375,7 +1386,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * Equivalent to ap, but accepts an Iterable and takes the takeOne value
+     * Equivalent to ap, but accepts an Iterable and takes the first value
      * only from that iterable.
      *
      * @param app
@@ -1389,7 +1400,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * Equivalent to ap, but accepts a Publisher and takes the takeOne value
+     * Equivalent to ap, but accepts a Publisher and takes the first value
      * only from that publisher.
      *
      * @param app
@@ -1555,13 +1566,13 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<tryType, L>>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<Higher<tryType, L>> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<tryType, L>>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<Higher<tryType, L>> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -1718,6 +1729,11 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<tryType, L>, T> ds) {
                     Try<T,L> tryType = Try.narrowK(ds);
                     return tryType.foldLeft(monoid);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<tryType, L>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
                 }
             };
         }

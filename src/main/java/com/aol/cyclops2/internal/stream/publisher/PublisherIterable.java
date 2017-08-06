@@ -39,7 +39,7 @@ public final class PublisherIterable<T>  implements Publisher<T> {
         
     }
     /**
-     * Calls onSubscribe on the target Subscriber with the empty instance followed by a call to onComplete.
+     * Calls onSubscribe on the target Subscriber with the zero instance followed by a call to onComplete.
      *
      * @param s
      */
@@ -204,7 +204,7 @@ public final class PublisherIterable<T>  implements Publisher<T> {
                 while (e != n) {
                     boolean b;
 
-                    try {//have toNested check for hasNext before next toNested handle case of a blocking iterable
+                    try {//have to check for hasNext before next to handle case of a blocking iterable
                          //index in iterator should not move beyond n in case blocks
                         b = a.hasNext();
                     } catch (Throwable ex) {

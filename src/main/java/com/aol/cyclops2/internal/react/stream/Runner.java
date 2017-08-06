@@ -70,7 +70,7 @@ public class Runner<U> {
 
                                                final FastFuture f = it.next();
 
-                                               handleFilter(cont, f);//if completableFuture has been filtered out, we need toNested move toNested the next one instead
+                                               handleFilter(cont, f);//if completableFuture has been filtered out, we need to move to the next one instead
 
                                                collector.accept(f);
                                            }

@@ -39,7 +39,10 @@ public class TryTest {
 	public void setUp() throws Exception {
 		just = Try.success(10);
 		none = Try.failure(exception);
+
+		just.toXor().secondaryMap(x-> new Exception()).toTry(Exception.class);
 	}
+
 
 	@Test
     public void recover(){
@@ -453,7 +456,7 @@ public class TryTest {
 
 	
 	@Test
-	public void testToFutureW() {
+	public void testToFuture() {
 		Future<Integer> cf = just.toFuture();
 		assertThat(cf.get(),equalTo(10));
 	}

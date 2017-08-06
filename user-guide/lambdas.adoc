@@ -516,7 +516,7 @@ Mutable is used inside cyclops-react for-comprehensions simplify the handling of
 ----
 build(ComprehensionData c, Function fn) {
 			
-	Mutable<PVector<String>> vars = new Mutable<>(TreePVector.empty());
+	Mutable<PVector<String>> vars = new Mutable<>(TreePVector.zero());
 	getAssigned().stream().forEach(e-> addToVar(e,vars,handleNext(e,c,vars.get())));
 	Mutable<Object> var = new Mutable<>(fn);
 		

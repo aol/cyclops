@@ -28,16 +28,16 @@ import java.util.stream.Stream;
 * Monad Transformer for CompletableFuture's nested within another monadic type
 
  * 
- * FutureT allows the deeply wrapped Future toNested be manipulating within it's nested /contained context
+ * FutureT allows the deeply wrapped Future to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
  *
  * @param <T> Type of data stored inside the nested Future(s)
  */
 public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
-                                                       implements To<CompletableFutureT<W,T>>,
-        Transformable<T>,
-        Filters<T> {
+                                                                  implements To<CompletableFutureT<W,T>>,
+                                                                             Transformable<T>,
+                                                                             Filters<T> {
 
     private final AnyM<W,CompletableFuture<T>> run;
 
@@ -93,15 +93,15 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      * Peek at the current value of the Future
      * <pre>
      * {@code 
-     *    FutureWT.of(AnyM.fromStream(Arrays.asFutureW(10))
+     *    FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
      *             .peek(System.out::println);
      *             
      *     //prints 10        
      * }
      * </pre>
      * 
-     * @param peek  Consumer toNested accept current value of Future
-     * @return FutureWT with peek call
+     * @param peek  Consumer to accept current value of Future
+     * @return FutureT with peek call
      */
     @Override
     public CompletableFutureT<W,T> peek(final Consumer<? super T> peek) {
@@ -116,16 +116,16 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      * 
      * <pre>
      * {@code 
-     *  FutureWT.of(AnyM.fromStream(Arrays.asFutureW(10))
+     *  FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
      *             .map(t->t=t+1);
      *  
      *  
-     *  //FutureWT<AnyMSeq<Stream<Future[11]>>>
+     *  //FutureT<AnyMSeq<Stream<Future[11]>>>
      * }
      * </pre>
      * 
      * @param f Mapping function for the wrapped Future
-     * @return FutureWT that applies the map function toNested the wrapped Future
+     * @return FutureT that applies the map function to the wrapped Future
      */
     @Override
     public <B> CompletableFutureT<W,B> map(final Function<? super T, ? extends B> f) {
@@ -141,15 +141,15 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      * Flat Map the wrapped Future
       * <pre>
      * {@code 
-     *  FutureWT.of(AnyM.fromStream(Arrays.asFutureW(10))
+     *  FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
      *             .flatMap(t->Future.completedFuture(20));
      *  
      *  
-     *  //FutureWT<AnyMSeq<Stream<Future[20]>>>
+     *  //FutureT<AnyMSeq<Stream<Future[20]>>>
      * }
      * </pre>
      * @param f FlatMap function
-     * @return FutureWT that applies the flatMap function toNested the wrapped Future
+     * @return FutureT that applies the flatMap function to the wrapped Future
      */
 
     public <B> CompletableFutureT<W,B> flatMapT(final Function<? super T, CompletableFutureT<W,B>> f) {
@@ -171,19 +171,19 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     }
 
     /**
-     * Lift a function into one that accepts and returns an FutureWT
-     * This allows multiple monad types toNested add functionality toNested existing function and methods
+     * Lift a function into one that accepts and returns an FutureT
+     * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. toNested add list handling  / iteration (via Future) and iteration (via Stream) toNested an existing function
+     * e.g. to add list handling  / iteration (via Future) and iteration (via Stream) to an existing function
      * <pre>
      * {@code 
         Function<Integer,Integer> add2 = i -> i+2;
-    	Function<FutureWT<Integer>, FutureWT<Integer>> optTAdd2 = FutureWT.lift(add2);
+    	Function<FutureT<Integer>, FutureT<Integer>> optTAdd2 = FutureT.lift(add2);
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<CompletableFuture<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
-    	List<Integer> results = optTAdd2.applyHKT(FutureWT.of(streamOpt))
+    	List<Integer> results = optTAdd2.applyHKT(FutureT.of(streamOpt))
     									.unwrap()
     									.<Stream<CompletableFuture<Integer>>>unwrap()
     									.map(Future::join)
@@ -196,24 +196,24 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      * }</pre>
      * 
      * 
-     * @param fn Function toNested enhance with functionality from Future and another monad type
-     * @return Function that accepts and returns an FutureWT
+     * @param fn Function to enhance with functionality from Future and another monad type
+     * @return Function that accepts and returns an FutureT
      */
     public static <W extends WitnessType<W>,U, R> Function<CompletableFutureT<W,U>, CompletableFutureT<W,R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
     /**
-     * Lift a BiFunction into one that accepts and returns  FutureWTs
-     * This allows multiple monad types toNested add functionality toNested existing function and methods
+     * Lift a BiFunction into one that accepts and returns  FutureTs
+     * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. toNested add list handling / iteration (via Future), iteration (via Stream)  and asynchronous execution (Future)
-     * toNested an existing function
+     * e.g. to add list handling / iteration (via Future), iteration (via Stream)  and asynchronous execution (Future)
+     * to an existing function
      * 
      * <pre>
      * {@code 
     	BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
-    	BiFunction<FutureWT<Integer>,FutureWT<Integer>,FutureWT<Integer>> optTAdd2 = FutureWT.lift2(add);
+    	BiFunction<FutureT<Integer>,FutureT<Integer>,FutureT<Integer>> optTAdd2 = FutureT.lift2(add);
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
@@ -221,7 +221,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     	
     	CompletableFuture<CompletableFuture<Integer>> two = Future.completedFuture(Future.completedFuture(2));
     	AnyMSeq<CompletableFuture<Integer>> future=  AnyM.fromFuture(two);
-    	List<Integer> results = optTAdd2.applyHKT(FutureWT.of(streamOpt),FutureWT.of(future))
+    	List<Integer> results = optTAdd2.applyHKT(FutureT.of(streamOpt),FutureT.of(future))
     									.unwrap()
     									.<Stream<CompletableFuture<Integer>>>unwrap()
     									.map(Future::join)
@@ -230,8 +230,8 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     		//Future.completedFuture(List[3,4,5]);
       }
       </pre>
-     * @param fn BiFunction toNested enhance with functionality from Future and another monad type
-     * @return Function that accepts and returns an FutureWT
+     * @param fn BiFunction to enhance with functionality from Future and another monad type
+     * @return Function that accepts and returns an FutureT
      */
     public static <W extends WitnessType<W>, U1,  U2, R> BiFunction<CompletableFutureT<W,U1>, CompletableFutureT<W,U2>, CompletableFutureT<W,R>> lift2(
             final BiFunction<? super U1, ? super U2, ? extends R> fn) {
@@ -239,11 +239,11 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     }
 
     /**
-     * Construct an FutureWT from an AnyM that contains a monad type that contains type other than Future
-     * The values in the underlying monad will be mapped toNested CompletableFuture<A>
+     * Construct an FutureT from an AnyM that contains a monad type that contains type other than Future
+     * The values in the underlying monad will be mapped to CompletableFuture<A>
      * 
      * @param anyM AnyM that doesn't contain a monad wrapping an Future
-     * @return FutureWT
+     * @return FutureT
      */
     public static <W extends WitnessType<W>,A> CompletableFutureT<W,A> fromAnyM(final AnyM<W,A> anyM) {
         return of(anyM.map(e-> {
@@ -254,10 +254,10 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     }
 
     /**
-     * Construct an FutureWT from an AnyM that wraps a monad containing  FutureWs
+     * Construct an FutureT from an AnyM that wraps a monad containing  Futures
      * 
      * @param monads AnyM that contains a monad wrapping an Future
-     * @return FutureWT
+     * @return FutureT
      */
     public static <W extends WitnessType<W>,A> CompletableFutureT<W,A> of(final AnyM<W,CompletableFuture<A>> monads) {
         return new CompletableFutureT<>(

@@ -97,7 +97,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
     }
 
     /* 
-     *	@return empty list
+     *	@return zero list
      * @see com.aol.cyclops2.react.collectors.lazy.LazyResultConsumer#getResults()
      */
     @Override
@@ -109,7 +109,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
     }
 
     /* 
-     *	@return empty list
+     *	@return zero list
      * @see com.aol.cyclops2.react.collectors.lazy.LazyResultConsumer#getAllResults()
      */
     @Override

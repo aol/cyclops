@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 * Monad Transformer for Eval's
 
  * 
- * EvalT allows the deeply wrapped Eval toNested be manipulating within it's nested /contained context
+ * EvalT allows the deeply wrapped Eval to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
  *
@@ -97,7 +97,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      * }
      * </pre>
      * 
-     * @param peek  Consumer toNested accept current value of Eval
+     * @param peek  Consumer to accept current value of Eval
      * @return EvalWT with peek call
      */
     @Override
@@ -122,7 +122,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      * </pre>
      * 
      * @param f Mapping function for the wrapped Eval
-     * @return EvalWT that applies the map function toNested the wrapped Eval
+     * @return EvalWT that applies the map function to the wrapped Eval
      */
     @Override
     public <B> EvalT<W,B> map(final Function<? super T, ? extends B> f) {
@@ -142,7 +142,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      * }
      * </pre>
      * @param f FlatMap function
-     * @return EvalWT that applies the flatMap function toNested the wrapped Eval
+     * @return EvalWT that applies the flatMap function to the wrapped Eval
      */
 
     public <B> EvalT<W,B> flatMapT(final Function<? super T, EvalT<W,B>> f) {
@@ -165,9 +165,9 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
 
     /**
      * Lift a function into one that accepts and returns an EvalWT
-     * This allows multiple monad types toNested add functionality toNested existing function and methods
+     * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. toNested add list handling  / iteration (via Eval) and iteration (via Stream) toNested an existing function
+     * e.g. to add list handling  / iteration (via Eval) and iteration (via Stream) to an existing function
      * <pre>
      * {@code 
         Function<Integer,Integer> add2 = i -> i+2;
@@ -189,7 +189,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      * }</pre>
      * 
      * 
-     * @param fn Function toNested enhance with functionality from Eval and another monad type
+     * @param fn Function to enhance with functionality from Eval and another monad type
      * @return Function that accepts and returns an EvalWT
      */
     public static <W extends WitnessType<W>,U, R> Function<EvalT<W,U>, EvalT<W,R>> lift(final Function<? super U, ? extends R> fn) {
@@ -198,10 +198,10 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
 
     /**
      * Lift a BiFunction into one that accepts and returns  EvalWTs
-     * This allows multiple monad types toNested add functionality toNested existing function and methods
+     * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. toNested add list handling / iteration (via Eval), iteration (via Stream)  and asynchronous execution (Eval)
-     * toNested an existing function
+     * e.g. to add list handling / iteration (via Eval), iteration (via Stream)  and asynchronous execution (Eval)
+     * to an existing function
      * 
      * <pre>
      * {@code 
@@ -223,7 +223,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     		//Eval.completedEval(List[3,4,5]);
       }
       </pre>
-     * @param fn BiFunction toNested enhance with functionality from Eval and another monad type
+     * @param fn BiFunction to enhance with functionality from Eval and another monad type
      * @return Function that accepts and returns an EvalWT
      */
     public static <W extends WitnessType<W>, U1,  U2, R> BiFunction<EvalT<W,U1>, EvalT<W,U2>, EvalT<W,R>> lift2(
@@ -233,7 +233,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
 
     /**
      * Construct an EvalWT from an AnyM that contains a monad type that contains type other than Eval
-     * The values in the underlying monad will be mapped toNested Eval<A>
+     * The values in the underlying monad will be mapped to Eval<A>
      * 
      * @param anyM AnyM that doesn't contain a monad wrapping an Eval
      * @return EvalWT

@@ -1,15 +1,20 @@
 package cyclops.function;
 
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.control.Maybe;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.predicate;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.Value;
+import cyclops.typeclasses.functor.ContravariantFunctor;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -118,7 +123,7 @@ public class Predicates {
      * {@code 
      *      import static cyclops2.function.Predicates.some;
      *      
-     *      ListX.of(Arrays.asList(),Arrays.asList(1),null, Optional.empty(),Maybe.none())
+     *      ListX.of(Arrays.asList(),Arrays.asList(1),null, Optional.zero(),Maybe.none())
      *            .filter(some());
      *            
      *       //ListX[List[1]]      
@@ -146,7 +151,7 @@ public class Predicates {
      * import static cyclops2.function.Predicates.some
 
      * 
-     * Eval<Integer> result = Xors.future(FutureW.ofResult(1))
+     * Eval<Integer> result = Xors.future(Future.ofResult(1))
                                          .matches(c-> c.is( when(some(1)), applyHKT(10)), c->c.is(when(instanceOf(RuntimeException.class)), applyHKT(2)),otherwise(3));
         
        //Eval[10]
@@ -263,7 +268,7 @@ public class Predicates {
 
     /**
      *  Test for equivalence
-     *  null eqv toNested absent, embedded value equivalency, non-values converted toNested values before testing
+     *  null eqv to absent, embedded value equivalency, non-values converted to values before testing
      *.
      * <pre>
      * {@code 
@@ -491,5 +496,22 @@ public static <T1> Predicate<? super T1> instanceOf(final Class<?> clazz) {
     static <T1> Predicate<T1> inSet(Set<T1> set) {
         return set::contains;
     }
+    static interface PredicateKind<T> extends Higher<predicate,T>,Predicate<T>{
 
+        public static <T> PredicateKind<T> narrow(Higher<predicate,T> ds){
+            return (PredicateKind<T>)ds;
+        }
+    }
+    public static class Instances{
+
+        public ContravariantFunctor<predicate> contravariantFunctor(){
+            return new ContravariantFunctor<predicate>() {
+                @Override
+                public <T, R> Higher<predicate, R> contramap(Function<? super R, ? extends T> fn, Higher<predicate, T> ds) {
+                    PredicateKind<R> r = in->PredicateKind.narrow(ds).test(fn.apply(in));
+                    return r;
+                }
+            };
+        }
+    }
 }

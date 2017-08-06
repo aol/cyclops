@@ -4,7 +4,7 @@ import cyclops.stream.ReactiveSeq;
 
 /**
  * 
- * Represents a data type that is convertable toNested a ReactiveSeq
+ * Represents a data type that is convertable to a ReactiveSeq
  * 
  * @author johnmcclean
  *

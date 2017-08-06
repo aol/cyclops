@@ -41,7 +41,7 @@ public class ValueSubscriberTest {
         
     }
     @Test
-    public void futureWFromPublisherTest(){
+    public void FutureFromPublisherTest(){
      
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
@@ -50,7 +50,7 @@ public class ValueSubscriberTest {
         
     }
     @Test
-    public void futureWAsyncFromPublisherTest(){
+    public void FutureAsyncFromPublisherTest(){
       
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         

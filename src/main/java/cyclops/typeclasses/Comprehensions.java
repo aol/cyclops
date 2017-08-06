@@ -23,7 +23,7 @@ public class Comprehensions<W1> {
     }
 
     private final Monad<W1> monad;
-    public  <T1, T2, T3, R1, R2, R3, R> Higher<W1,R> forEach4(Higher<W1,? extends T1> value1,
+    public  <T1, T2, T3, R1, R2, R3, R> Higher<W1,R> forEach4(Higher<W1,T1> value1,
                                                                    Function<? super T1, ? extends Higher<W1,R1>> value2,
                                                                    BiFunction<? super T1, ? super R1, ? extends Higher<W1,R2>> value3,
                                                                    Fn3<? super T1, ? super R1, ? super R2, ? extends Higher<W1,R3>> value4,
@@ -49,7 +49,7 @@ public class Comprehensions<W1> {
 
 
 
-    public  <T1, T2, R1, R2, R> Higher<W1,R> forEach3(Higher<W1,? extends T1> value1,
+    public  <T1, T2, R1, R2, R> Higher<W1,R> forEach3(Higher<W1,T1> value1,
                                                            Function<? super T1, ? extends Higher<W1,R1>> value2,
                                                            BiFunction<? super T1, ? super R1, ? extends Higher<W1,R2>> value3,
                                                            Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
@@ -69,7 +69,7 @@ public class Comprehensions<W1> {
 
 
 
-    public  <T, R1, R> Higher<W1,R> forEach2(Higher<W1,? extends T> value1, Function<? super T, ? extends Higher<W1,R1>> value2,
+    public  <T, R1, R> Higher<W1,R> forEach2(Higher<W1, T> value1, Function<? super T, ? extends Higher<W1,R1>> value2,
                                                   BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
         return monad.flatMap_(value1,in -> {

@@ -207,6 +207,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
     }
 
+
     public static <S, T> State<S, T> state(Function<? super S,? extends Tuple2<S, T>> runF) {
 
         return new State<>(s -> Free.done(runF.apply(s)));
@@ -214,6 +215,9 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
     public static <S> State<S, Nothing> of(S s) {
         return state(__ -> Tuple.tuple(s, (Nothing)Maybe.none()));
+    }
+    public static <S> State<S, Nothing> put(S s) {
+        return of(s);
     }
 
     public static <W1,T,S> Nested<Higher<state,S>,W1,T> nested(State<S,Higher<W1,T>> nested, S value,InstanceDefinitions<W1> def2){
@@ -285,13 +289,13 @@ public final class State<S, T> implements Higher2<state,S,T> {
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<state, S>>> traverse() {
-                    return Maybe.none();
+                public <C2, T> Traverse<Higher<state, S>> traverse() {
+                    return Instances.traverse(val);
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<state, S>>> foldable() {
-                    return Maybe.just(Instances.foldable(val));
+                public <T> Foldable<Higher<state, S>> foldable() {
+                    return Instances.foldable(val);
                 }
 
                 @Override
@@ -368,6 +372,36 @@ public final class State<S, T> implements Higher2<state,S,T> {
                 }
             };
         }
+        public static <S> Traverse<Higher<state, S>> traverse(S defaultValue) {
+            return new Traverse<Higher<state, S>>() {
+                @Override
+                public <C2, T, R> Higher<C2, Higher<Higher<state, S>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<state, S>, T> ds) {
+                    State<S, T> s = narrowK(ds);
+                    Higher<C2, R> x = fn.apply(s.eval(defaultValue));
+                    return applicative.map(r->State.constant(r),x);
+                }
+
+                @Override
+                public <C2, T> Higher<C2, Higher<Higher<state, S>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<state, S>, Higher<C2, T>> ds) {
+                    return traverseA(applicative,Function.identity(),ds);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<state, S>, R> ap(Higher<Higher<state, S>, ? extends Function<T, R>> fn, Higher<Higher<state, S>, T> apply) {
+                        return Instances.<S>applicative().ap(fn,apply);
+                }
+
+                @Override
+                public <T> Higher<Higher<state, S>, T> unit(T value) {
+                    return Instances.<S>unit().unit(value);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<state, S>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<state, S>, T> ds) {
+                    return Instances.<S>functor().map(fn,ds);
+                }
+            };
+        }
 
         public static <S> Foldable<Higher<state,S>> foldable(S val) {
             return new Foldable<Higher<state, S>>() {
@@ -383,6 +417,11 @@ public final class State<S, T> implements Higher2<state,S,T> {
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<state, S>, T> ds) {
                     return monoid.foldLeft(narrowK(ds).eval(val));
                 }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<state, S>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                }
             };
         }
         public static <S> MonadRec<Higher<state,S>> monadRec() {
@@ -396,6 +435,15 @@ public final class State<S, T> implements Higher2<state,S,T> {
         }
 
 
+    }
+    public static  <S,T> Kleisli<Higher<state, S>,State<S,T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), State::widen);
+    }
+    public static <S,T> Higher<Higher<state, S>, T> widen(State<S,T> narrow) {
+        return narrow;
+    }
+    public static  <S,T> Cokleisli<Higher<state, S>,T,State<S,T>> kindCokleisli(){
+        return Cokleisli.of(State::narrowK);
     }
 }
 
