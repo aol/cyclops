@@ -1804,10 +1804,11 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<maybe> foldable(){
+        public static <T,R> Foldable<maybe> foldable(){
             BiFunction<Monoid<T>,Higher<maybe,T>,T> foldRightFn =  (m,l)-> Maybe.narrowK(l).orElse(m.zero());
             BiFunction<Monoid<T>,Higher<maybe,T>,T> foldLeftFn = (m,l)-> Maybe.narrowK(l).orElse(m.zero());
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.maybe, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
         public static <T> Comonad<maybe> comonad(){

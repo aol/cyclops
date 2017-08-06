@@ -8,6 +8,7 @@ import com.aol.cyclops2.types.reactive.PushSubscriber;
 import cyclops.async.SimpleReact;
 import cyclops.control.Xor;
 import cyclops.function.C4;
+import cyclops.function.Fn3;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
@@ -884,10 +885,11 @@ public interface Spouts {
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<reactiveSeq> foldable(){
+        public static <T,R> Foldable<reactiveSeq> foldable(){
             BiFunction<Monoid<T>,Higher<reactiveSeq,T>,T> foldRightFn =  (m,l)-> narrow(l).foldRight(m);
             BiFunction<Monoid<T>,Higher<reactiveSeq,T>,T> foldLeftFn = (m,l)-> narrow(l).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.reactiveSeq, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
         private static  <T> ReactiveSeq<T> concat(ReactiveSeq<T> l1, ReactiveSeq<T> l2){

@@ -290,6 +290,11 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
                 public <T> T foldLeft(Monoid<T> monoid, Higher<identity, T> ds) {
                     return monoid.apply(monoid.zero(),narrowK(ds).get());
                 }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<identity, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                }
             };
         }
         public static Comonad<identity> comonad(){

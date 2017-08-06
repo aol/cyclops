@@ -17,6 +17,7 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.persistentSetX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -1483,10 +1484,11 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<persistentSetX> foldable(){
+        public static <T,R> Foldable<persistentSetX> foldable(){
             BiFunction<Monoid<T>,Higher<persistentSetX,T>,T> foldRightFn =  (m,l)-> PersistentSetX.fromIterable(narrow(l)).foldRight(m);
             BiFunction<Monoid<T>,Higher<persistentSetX,T>,T> foldLeftFn = (m,l)-> PersistentSetX.fromIterable(narrow(l)).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.persistentSetX, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
         private static  <T> PersistentSetX<T> concat(Set<T> l1, Set<T> l2){

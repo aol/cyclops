@@ -1730,6 +1730,11 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                     Try<T,L> tryType = Try.narrowK(ds);
                     return tryType.foldLeft(monoid);
                 }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<tryType, L>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                }
             };
         }
 

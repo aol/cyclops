@@ -329,6 +329,11 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
                     ReaderWriterState<R1, W, S, T> rws =narrowK(ds);
                     return rws.run(val1, val2).map((a, b, t) -> monoid.foldLeft(t));
                 }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<Higher<Higher<rws, R1>, W>, S>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                }
             };
         }
         public static <R1,W,S> Traverse<Higher<Higher<Higher<rws, R1>,W>,S>> traverse(R1 val1, S val2,Monoid<W> monoid) {

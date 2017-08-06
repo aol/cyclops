@@ -1648,10 +1648,12 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<linkedListX> foldable(){
+        public static <T,R> Foldable<linkedListX> foldable(){
             BiFunction<Monoid<T>,Higher<linkedListX,T>,T> foldRightFn =  (m, l)-> LinkedListX.narrowK(l).foldRight(m);
             BiFunction<Monoid<T>,Higher<linkedListX,T>,T> foldLeftFn = (m, l)-> LinkedListX.narrowK(l).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<linkedListX, T>, R> foldMapFn = (m,f,l)->narrowK(l).map(f).foldLeft(m);
+
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
         private static  <T> LinkedListX<T> concat(PStack<T> l1, PStack<T> l2){

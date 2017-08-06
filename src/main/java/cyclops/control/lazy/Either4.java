@@ -2075,6 +2075,11 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
 
                 @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<Higher<Higher<either4, L1>, L2>, L3>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                }
+
+                @Override
                 public <T> T foldRight(Monoid<T> monoid, Higher<Higher<Higher<Higher<either4, L1>, L2>,L3>, T> ds) {
                     return narrowK(ds).foldRight(monoid);
                 }

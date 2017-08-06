@@ -454,9 +454,8 @@ public interface ListX<T> extends To<ListX<T>>,
 
                 @Override
                 public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<list, T> nestedA) {
-                    Monoid<? extends R> m = mb;
-                    Object x = narrow(nestedA).map(fn).foldLeft((Monoid) m);
-                    return (R)x;
+                    return narrow(nestedA).<R>map(fn).foldLeft(mb);
+
 
                 }
             };

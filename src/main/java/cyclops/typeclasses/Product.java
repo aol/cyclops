@@ -699,7 +699,12 @@ public class Product<W1,W2,T> implements  Filters<T>,
                             Product<W1, W2, T> p = narrowK(ds);
                             return p.foldLeft(monoid);
                         }
-                    };
+
+                    @Override
+                    public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<Higher<product, W1>, W2>, T> nestedA) {
+                        return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                    }
+                };
         }
 
         @Override

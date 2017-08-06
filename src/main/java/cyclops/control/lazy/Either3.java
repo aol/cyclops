@@ -1788,6 +1788,11 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
 
 
                 @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<Higher<either3, L1>, L2>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                }
+
+                @Override
                 public <T> T foldRight(Monoid<T> monoid, Higher<Higher<Higher<either3, L1>, L2>, T> ds) {
                     return narrowK(ds).foldRight(monoid);
                 }

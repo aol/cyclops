@@ -1667,10 +1667,11 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<persistentQueueX> foldable(){
+        public static <T,R> Foldable<persistentQueueX> foldable(){
             BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldRightFn =  (m, l)-> PersistentQueueX.narrowK(l).foldRight(m);
             BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldLeftFn = (m, l)-> PersistentQueueX.narrowK(l).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<persistentQueueX, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
         private static  <T> PersistentQueueX<T> concat(PQueue<T> l1, PQueue<T> l2){

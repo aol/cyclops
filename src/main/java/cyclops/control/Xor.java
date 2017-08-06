@@ -1607,6 +1607,11 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                     Xor<L,T> xor = Xor.narrowK(ds);
                     return xor.foldLeft(monoid);
                 }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<xor, L>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                }
             };
         }
         public static <L> MonadZero<Higher<xor, L>> monadZero() {

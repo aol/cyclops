@@ -417,6 +417,11 @@ public final class State<S, T> implements Higher2<state,S,T> {
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<state, S>, T> ds) {
                     return monoid.foldLeft(narrowK(ds).eval(val));
                 }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<state, S>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                }
             };
         }
         public static <S> MonadRec<Higher<state,S>> monadRec() {

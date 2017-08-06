@@ -1531,9 +1531,22 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          * @return Type class for folding / reduction operations
          */
         public static <T> Foldable<queue> foldable(){
-            BiFunction<Monoid<T>,Higher<queue,T>,T> foldRightFn =  (m,l)-> QueueX.narrowK(l).foldRight(m);
-            BiFunction<Monoid<T>,Higher<queue,T>,T> foldLeftFn = (m,l)-> QueueX.narrowK(l).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            return new Foldable<queue>() {
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<queue, T> ds) {
+                    return  fromIterable(narrowK(ds)).foldRight(monoid);
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<queue, T> ds) {
+                    return  fromIterable(narrowK(ds)).foldLeft(monoid);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<queue, T> nestedA) {
+                    return narrowK(nestedA).<R>map(fn).foldLeft(mb);
+                }
+            };
         }
 
         private static  <T> QueueX<T> concat(Queue<T> l1, Queue<T> l2){

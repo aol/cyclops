@@ -415,6 +415,11 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<writer, W>, T> ds) {
                     return monoid.foldLeft(narrowK(ds).getValue().v1);
                 }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<writer, W>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                }
             };
         }
         public static <W, T, R> MonadRec<Higher<writer, W>> monadRec(Monoid<W> monoid) {

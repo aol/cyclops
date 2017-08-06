@@ -1658,6 +1658,11 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                     Ior<L,T> ior = Ior.narrowK(ds);
                     return ior.foldLeft(monoid);
                 }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<ior, L>, T> nestedA) {
+                    return narrowK(nestedA).<R>map(fn).foldLeft(mb);
+                }
             };
         }
         public static <L> MonadZero<Higher<ior, L>> monadZero() {

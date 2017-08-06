@@ -841,6 +841,10 @@ public class Nested<W1,W2,T> implements Transformable<T>,
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<Higher<nested, W1>, W2>, T> ds) {
                     return narrowK(ds).foldBothLeft(monoid);
                 }
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<Higher<nested, W1>, W2>, T> nestedA) {
+                    return narrowK(nestedA).<R>map(fn).foldBothLeft(mb);
+                }
             };
         }
 

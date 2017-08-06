@@ -925,10 +925,11 @@ public class Optionals {
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<optional> foldable(){
+        public static <T,R> Foldable<optional> foldable(){
             BiFunction<Monoid<T>,Higher<optional,T>,T> foldRightFn =  (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
             BiFunction<Monoid<T>,Higher<optional,T>,T> foldLeftFn = (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.optional, T>, R> foldMapFn = (m, f, l)->OptionalKind.narrowK(l).map(f).orElseGet(()->m.zero());
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
         public static <T> Comonad<optional> comonad(){
             Function<? super Higher<optional, T>, ? extends T> extractFn = maybe -> maybe.convert(OptionalKind::narrow).get();

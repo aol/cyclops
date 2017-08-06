@@ -64,10 +64,7 @@ public interface Foldable<CRE> {
         return foldLeft(Monoid.fromBiFunction(identity, semigroup),ds);
     }
 
-    default <T, R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn, Higher<CRE, T> nestedA) {
-
-        return foldr( (T a) -> (R b) -> mb.apply(fn.apply(a), b), mb.zero(), nestedA);
-    }
+    <T, R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn, Higher<CRE, T> nestedA);
 
     default <T, R> R foldr(final Function< T, Function< R, R>> fn, R b, Higher<CRE, T> ds) {
 

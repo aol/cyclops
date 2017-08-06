@@ -1501,9 +1501,22 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
          * @return Type class for folding / reduction operations
          */
         public static <T> Foldable<set> foldable(){
-            BiFunction<Monoid<T>,Higher<set,T>,T> foldRightFn =  (m,l)-> SetX.fromIterable(narrow(l)).foldRight(m);
-            BiFunction<Monoid<T>,Higher<set,T>,T> foldLeftFn = (m,l)-> SetX.fromIterable(narrow(l)).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            return new Foldable<set>() {
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<set, T> ds) {
+                    return  fromIterable(narrowK(ds)).foldRight(monoid);
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<set, T> ds) {
+                    return  fromIterable(narrowK(ds)).foldLeft(monoid);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<set, T> nestedA) {
+                    return narrowK(nestedA).<R>map(fn).foldLeft(mb);
+                }
+            };
         }
 
         private static  <T> SetX<T> concat(Set<T> l1, Set<T> l2){

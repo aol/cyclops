@@ -861,10 +861,11 @@ public class CompletableFutures {
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<completableFuture> foldable(){
+        public static <T,R> Foldable<completableFuture> foldable(){
             BiFunction<Monoid<T>,Higher<completableFuture,T>,T> foldRightFn =  (m, l)-> m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
             BiFunction<Monoid<T>,Higher<completableFuture,T>,T> foldLeftFn = (m, l)->  m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.completableFuture, T>, R> foldMapFn = (m, f, l)-> Future.of(CompletableFutureKind.narrowK(l).thenApply(f)).foldLeft(m);
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
         public static <T> Comonad<completableFuture> comonad(){
             Function<? super Higher<completableFuture, T>, ? extends T> extractFn = maybe -> maybe.convert(CompletableFutureKind::narrowK).join();

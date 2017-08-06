@@ -3169,10 +3169,11 @@ public class Streams {
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<stream> foldable(){
+        public static <T,R> Foldable<stream> foldable(){
             BiFunction<Monoid<T>,Higher<stream,T>,T> foldRightFn =  (m,l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).foldRight(m);
             BiFunction<Monoid<T>,Higher<stream,T>,T> foldLeftFn = (m,l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.stream, T>, R> foldMapFn = (m, f, l)->StreamKind.narrowK(l).map(f).reduce(m.zero(),m);
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
         private static  <T> StreamKind<T> concat(Stream<T> l1, Stream<T> l2){

@@ -1685,9 +1685,23 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * @return Type class for folding / reduction operations
          */
         public static <T> Foldable<deque> foldable(){
-            BiFunction<Monoid<T>,Higher<deque,T>,T> foldRightFn =  (m,l)-> DequeX.narrowK(l).foldRight(m);
-            BiFunction<Monoid<T>,Higher<deque,T>,T> foldLeftFn = (m,l)-> DequeX.narrowK(l).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            return new Foldable<deque>() {
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<deque, T> ds) {
+                    return  DequeX.fromIterable(narrowK(ds)).foldRight(monoid);
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<deque, T> ds) {
+                    return  DequeX.fromIterable(narrowK(ds)).foldLeft(monoid);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<deque, T> nestedA) {
+                    return narrowK(nestedA).<R>map(fn).foldLeft(mb);
+                }
+            };
+
         }
 
         private static  <T> DequeX<T> concat(Deque<T> l1, Deque<T> l2){
