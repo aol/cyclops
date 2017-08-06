@@ -61,7 +61,6 @@ public interface Traverse<CRE> extends Applicative<CRE>{
 
             return State.<S>get().forEach2(s1->{
                 Tuple2<S, R> t2 = f.apply(s1, a);
-                System.out.println(t2);
                 return State.state(__->t2);
             },(s1,b)->b);
 

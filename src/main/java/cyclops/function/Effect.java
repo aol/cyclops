@@ -18,15 +18,7 @@ import java.util.function.Supplier;
 @FunctionalInterface
 public interface Effect extends Runnable{
 
-    public static Effect test(){
-        return ()->System.out.println("hello");
-    }
-    public static void main(){
-        Effect e = ()->{};
-        e.flatMap(Effect::test)
-                .flatMap(Effect::test)
-                .andThen(Effect::test);
-    }
+
     default Effect memoize(){
         return ()->Memoize.memoizeRunnable(this)
                           .run();
