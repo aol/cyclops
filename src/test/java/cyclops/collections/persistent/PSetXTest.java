@@ -1,5 +1,6 @@
 package cyclops.collections.persistent;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.immutable.PersistentSetX;
@@ -12,6 +13,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +23,10 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
 import static org.hamcrest.Matchers.equalTo;
+import static org.jooq.lambda.tuple.Tuple.tuple;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -46,6 +51,28 @@ public class PSetXTest extends AbstractCollectionXTest {
         long current = counter.get();
         Thread.sleep(400);
         assertTrue(current<counter.get());
+    }
+
+    @Test
+    public void testSorted() {
+
+        CollectionX<Tuple2<Integer, String>> t1 = of(tuple(2, "two"), tuple(1, "replaceWith"));
+
+        List<Tuple2<Integer, String>> s1 = t1.sorted().toListX().sorted();
+        //System.out.println(s1);
+        assertEquals(tuple(1, "replaceWith"), s1.get(0));
+        assertEquals(tuple(2, "two"), s1.get(1));
+
+        CollectionX<Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "replaceWith"));
+        List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t.v1())).toListX().sorted();
+        assertEquals(tuple(1, "replaceWith"), s2.get(0));
+        assertEquals(tuple(2, "two"), s2.get(1));
+
+        CollectionX<Tuple2<Integer, String>> t3 = of(tuple(2, "two"), tuple(1, "replaceWith"));
+        List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toListX().sorted();
+        assertEquals(tuple(1, "replaceWith"), s3.get(0));
+        assertEquals(tuple(2, "two"), s3.get(1));
+
     }
     @Override
     public <T> FluentCollectionX<T> of(T... values) {
