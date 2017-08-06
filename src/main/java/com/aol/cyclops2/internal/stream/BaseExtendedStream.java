@@ -1,18 +1,16 @@
 package com.aol.cyclops2.internal.stream;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.Unwrapable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
+import cyclops.companion.Streams;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
 
 import java.io.BufferedReader;
 import java.io.File;

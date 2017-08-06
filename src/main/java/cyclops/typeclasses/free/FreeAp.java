@@ -86,8 +86,8 @@ public interface FreeAp<F, T> extends Higher2<freeAp,F, T> {
         @Override
         public <P,R> R visit(Function<? super A, ? extends R> pure, BiFunction<? super Higher<F, P>, FreeAp<F, Function<P, A>>, ? extends R> ap) {
            Higher<F,P> p = (Higher)pivot;
-            return (R)ap.apply(p, (FreeAp) fn);
-        }
+            return (R)ap.apply((Higher<F, P>)pivot, (FreeAp) fn);
+         }
     }
     static <F,T> FreeAp<F,T> narrowK(Higher<Higher<freeAp, F>, T> ds){
         return (FreeAp<F,T>)ds;

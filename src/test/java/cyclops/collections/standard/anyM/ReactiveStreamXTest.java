@@ -120,10 +120,10 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<Wit
 	}
 	@Test
     public void when(){
-        
+
         String res= AnyM.fromStream(ReactiveSeq.of(1,2,3)).visit((x,xs)->
                                 xs.join(x>2? "hello" : "world"),()->"boo!");
-                    
+
         assertThat(res,equalTo("2world3"));
     }
 	@Test
@@ -135,12 +135,12 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<Wit
         },()->"boo!") );
         String res= of(5,2,3).visit((x,xs)->
                                 xs.join(x>2? "hello" : "world"),()->"boo!");
-                
+
         assertThat(res,equalTo("2hello3"));
     }
     @Test
     public void when2(){
-        
+
         Integer res =   of(1,2,3).visit((x,xs)->x,()->10);
         System.out.println(res);
     }
@@ -150,13 +150,31 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<Wit
     }
     @Test
     public void whenNilOrNotJoinWithFirstElement(){
-        
-        
+
+
         String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
         assertThat(res,equalTo("2world3"));
     }
-	
-	
 
+    public static class BooleanProxy {
+        public boolean value;
+
+        public BooleanProxy(boolean b) {
+            value = b;
+        }
+    }
+
+    @Test
+    public void testOnComplete() {
+        BooleanProxy completed = new BooleanProxy(false);
+
+        ReactiveSeq.ofInts(1, 2, 3, 4).complete(() -> {
+            completed.value = true;
+        }).forEach(x -> {
+            assertFalse(completed.value);
+        } );
+
+        assertTrue(completed.value);
+    }
 }
 

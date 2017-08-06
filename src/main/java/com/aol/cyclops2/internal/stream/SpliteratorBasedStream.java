@@ -50,28 +50,30 @@ import static java.util.Comparator.comparing;
 public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     final Spliterator<T> stream;
-    
+
     final Optional<ReversableSpliterator> reversible;
 
     public SpliteratorBasedStream(final Stream<T> stream) {
 
         this.stream = stream.spliterator();
         this.reversible = Optional.empty();
-        
+
 
     }
     public SpliteratorBasedStream(final Spliterator<T> stream, final Optional<ReversableSpliterator> rev) {
         this.stream = stream;
         this.reversible = rev;
-        
-
     }
     public SpliteratorBasedStream(final Stream<T> stream, final Optional<ReversableSpliterator> rev) {
         this.stream = stream.spliterator();
         this.reversible = rev;
-        
-
     }
+
+    @Override
+    public SpliteratorBasedStream<T> complete(final Runnable fn) {
+        return (SpliteratorBasedStream<T>) this.createSeq(new CompleteSpliterator<>(stream, fn));
+    }
+
     @Override
     public Iterator<T> iterator(){
         return Spliterators.iterator(copy());
@@ -95,21 +97,18 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     public Maybe<T> findOne(){
         return Maybe.fromLazy(Eval.later(()->Maybe.fromOptional(findFirst())));
     }
-    
+
     public  <A,R> ReactiveSeq<R> collectSeq(Collector<? super T,A,R> c){
         Spliterator<T> s = this.spliterator();
         CollectingSinkSpliterator<T,A,R> fs = new CollectingSinkSpliterator<T,A,R>(s.estimateSize(), s.characteristics(), s,c);
-        
+
         return createSeq(new ValueEmittingSpliterator<R>(1, s.characteristics(),createSeq(fs)));
 
 
     }
 
 
-    
 
-
-    
 
 
     /* (non-Javadoc)
@@ -124,7 +123,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
 
-   
+
 
 
     public Stream<T> unwrapStream() {
@@ -468,8 +467,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     }
 
-   
-    
+
+
     @Override
     public Spliterator<T> spliterator() {
 
@@ -654,7 +653,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     }
 
-   
+
     @Override
     public ReactiveSeq<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
         return groupedWhile(predicate.negate());
@@ -738,11 +737,11 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     public <EX extends Throwable> ReactiveSeq<T> recover(final Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
         return createSeq(new RecoverSpliterator<T,EX>(get(),fn,exceptionClass), this.reversible);
     }
-    
 
-  
- 
-    
+
+
+
+
 
     @Override
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer) {

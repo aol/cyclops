@@ -3878,6 +3878,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     ReactiveSeq<T> jitter(long maxJitterPeriodInNanos);
 
+
+    /**
+     * Provide a simpler method to handle stream or async operations.
+     *
+     * @param fn
+     *            Function that accepts and returns completed value
+     * @return ReactiveSeq that can handle stream or async operations simpler
+     */
+    ReactiveSeq<T> complete(final Runnable fn);
+
     /**
      * Recover from an exception with an alternative value
      *
