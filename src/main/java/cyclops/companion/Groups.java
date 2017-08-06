@@ -125,13 +125,13 @@ public interface Groups {
 
 
     /**
-     * @return Combination of two LazyFutureStreams Streams b is appended toNested a
+     * @return Combination of two LazyFutureStreams Streams b is appended to a
      */
     static <T> Group<FutureStream<T>> combineFutureStream() {
         return Group.of(FutureStream::reverse,Monoids.combineFutureStream());
     }
     /**
-     * @return Combination of two ReactiveSeq Streams b is appended toNested a
+     * @return Combination of two ReactiveSeq Streams b is appended to a
      */
     static <T> Group<ReactiveSeq<T>> combineReactiveSeq() {
         return Group.of(ReactiveSeq::reverse,Monoids.combineReactiveSeq());
@@ -147,14 +147,14 @@ public interface Groups {
 
 
     /**
-     * @return Combination of two Seq's : b is appended toNested a
+     * @return Combination of two Seq's : b is appended to a
      */
     static <T> Group<Seq<T>> combineSeq() {
         return Group.of(s->s.reverse(), Monoids.combineSeq());
     }
 
     /**
-     * @return Combination of two Stream's : b is appended toNested a
+     * @return Combination of two Stream's : b is appended to a
      */
     static <T> Group<Stream<T>> combineStream() {
         return Group.of(s->ReactiveSeq.fromStream(s).reverse(), Monoids.combineStream());

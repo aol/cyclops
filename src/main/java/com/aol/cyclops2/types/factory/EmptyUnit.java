@@ -1,7 +1,7 @@
 package com.aol.cyclops2.types.factory;
 
 /**
- * Represents a type that can be instantiated in empty form.
+ * Represents a type that can be instantiated in zero form.
  * 
  * @author johnmcclean
  *
@@ -9,7 +9,7 @@ package com.aol.cyclops2.types.factory;
  */
 public interface EmptyUnit<T> extends Unit<T> {
     /**
-     * @return A new, empty instance of this EmptyUnit type
+     * @return A new, zero instance of this EmptyUnit type
      */
     public <T> Unit<T> emptyUnit();
 }

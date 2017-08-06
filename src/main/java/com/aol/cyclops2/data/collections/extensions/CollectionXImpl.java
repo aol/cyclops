@@ -236,6 +236,11 @@ public class CollectionXImpl<T> implements LazyCollectionX<T> {
         return ReactiveSeq.fromIterable(this);
     }
 
+    @Override
+    public boolean isMaterialized() {
+        return true;
+    }
+
     /**
      * @return
      * @see java.util.Collection#parallelStream()

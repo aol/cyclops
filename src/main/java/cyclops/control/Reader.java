@@ -1,14 +1,11 @@
 package cyclops.control;
 
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.async.Future;
-import cyclops.async.SimpleReact;
 import cyclops.function.*;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.reader;
@@ -16,7 +13,10 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functor.ContravariantFunctor;
 import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.functor.ProFunctor;
+import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -36,22 +36,38 @@ import org.jooq.lambda.tuple.Tuple2;
  * @param <T> Current input type of Function
  * @param <R> Current return type of Function
  */
+@FunctionalInterface
 public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<reader,T>,R> {
 
-    public static <W1,T,R> Nested<Higher<reader,T>,W1,R> nested(Reader<T,Higher<W1,R>> nested, InstanceDefinitions<W1> def2){
-        return Nested.of(nested, Instances.definitions(),def2);
+    public static <T,R> Reader<T,R> of(Reader<T,R> i){
+        return i;
     }
-    default <W1> Product<Higher<reader,T>,W1,R> product(Active<W1,R> active){
-        return Product.of(allTypeclasses(),active);
+    public static <IN,T,R> Reader<IN,R> tailRec(T initial,Function<? super T,? extends Reader<IN, ? extends Xor<T, R>>> fn ){
+        return narrowK(Instances.<IN, T, R>monadRec().tailRec(initial, fn));
     }
-    default <W1> Coproduct<W1,Higher<reader,T>,R> coproduct(InstanceDefinitions<W1> def2){
-        return Coproduct.right(this,def2, Instances.definitions());
+    public static  <R,T> Kleisli<Higher<reader,T>,Reader<T,R>,R> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Reader::widen);
     }
-    default Active<Higher<reader,T>,R> allTypeclasses(){
-        return Active.of(this, Instances.definitions());
+    public static <T,R> Higher<Higher<reader,T>, R> widen(Reader<T,R> narrow) {
+        return narrow;
     }
-    default <W2,R2> Nested<Higher<reader,T>,W2,R2> mapM(Function<? super R,? extends Higher<W2,R2>> fn, InstanceDefinitions<W2> defs){
-        return Nested.of(map(fn), Instances.definitions(), defs);
+    public static  <T,R> Cokleisli<Higher<reader,T>,R,Reader<T,R>> kindCokleisli(){
+        return Cokleisli.of(Reader::narrowK);
+    }
+    public static <W1,T,R> Nested<Higher<reader,T>,W1,R> nested(Reader<T,Higher<W1,R>> nested, T defaultValue,InstanceDefinitions<W1> def2){
+        return Nested.of(nested, Instances.definitions(defaultValue),def2);
+    }
+    default <W1> Product<Higher<reader,T>,W1,R> product(T defaultValue,Active<W1,R> active){
+        return Product.of(allTypeclasses(defaultValue),active);
+    }
+    default <W1> Coproduct<W1,Higher<reader,T>,R> coproduct(T defaultValue, InstanceDefinitions<W1> def2){
+        return Coproduct.right(this,def2, Instances.definitions(defaultValue));
+    }
+    default Active<Higher<reader,T>,R> allTypeclasses(T defaultValue){
+        return Active.of(this, Instances.definitions(defaultValue));
+    }
+    default <W2,R2> Nested<Higher<reader,T>,W2,R2> mapM(T defaultValue,Function<? super R,? extends Higher<W2,R2>> fn, InstanceDefinitions<W2> defs){
+        return Nested.of(map(fn), Instances.definitions(defaultValue), defs);
     }
 
     default  <R2> Reader<T, Tuple2<R,R2>> zip(Reader<T, R2> o){
@@ -163,8 +179,9 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
     public static <T,R> Reader<T,  R> narrowK(Higher<Higher<reader,T>,R> hkt){
         return (Reader<T,R>)hkt;
     }
+
     public static class Instances {
-        public static <IN> InstanceDefinitions<Higher<reader, IN>> definitions() {
+        public static <IN> InstanceDefinitions<Higher<reader, IN>> definitions(IN in) {
             return new InstanceDefinitions<Higher<reader, IN>>() {
 
                 @Override
@@ -209,13 +226,13 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<reader, IN>>> traverse() {
-                    return Maybe.none();
+                public <C2, T> Traverse<Higher<reader, IN>> traverse() {
+                    return Instances.traversable(in);
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<reader, IN>>> foldable() {
-                    return Maybe.none();
+                public <T> Foldable<Higher<reader, IN>> foldable() {
+                    return Instances.foldable(in);
                 }
 
                 @Override
@@ -274,6 +291,41 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
             };
         }
 
+        public static <IN> Foldable<Higher<reader, IN>> foldable(IN t) {
+            return new Foldable<Higher<reader, IN>>() {
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<Higher<reader, IN>, T> ds) {
+                    return foldLeft(monoid,ds);
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<reader, IN>, T> ds) {
+                    Reader<IN, T> r = narrowK(ds);
+                    return r.foldLeft(t,monoid);
+
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<reader, IN>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                }
+            };
+        }
+
+        public static <IN,C2, T, R> Higher<C2, Higher<Higher<reader, IN>, R>> traverseA(IN t,Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<reader, IN>, T> ds) {
+            Reader<IN, T> r = narrowK(ds);
+
+            return applicative.map(i -> {
+                Reader<IN,R> res = a->i;
+                return res;
+            }, fn.apply(r.apply(t)));
+
+        }
+        public static <IN> Traverse<Higher<reader, IN>> traversable(IN t) {
+
+            return General.traverseByTraverse(applicative(), (a,b,c)-> traverseA(t,a,b,c));
+
+        }
         public static <IN> Monad<Higher<reader, IN>> monad() {
             return new Monad<Higher<reader, IN>>() {
 
@@ -301,6 +353,19 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
             };
 
         }
+
+        public static <IN,R> ProFunctor<reader> profunctor() {
+                return new ProFunctor<reader>() {
+
+                    @Override
+                    public <A, B, C, D> Higher<Higher<reader, C>, D> dimap(Function<? super C, ? extends A> f, Function<? super B, ? extends D> g, Higher<Higher<reader, A>, B> p) {
+                        Reader<A, B> r = narrowK(p);
+                        Function<? super C, ? extends D> f1 = g.compose(r).compose(f);
+                        Reader<C,D> r1 = in->f1.apply(in);
+                        return r1;
+                    }
+                };
+            }
 
         public static <IN, T, R> MonadRec<Higher<reader, IN>> monadRec() {
              return new MonadRec<Higher<reader, IN>>() {
@@ -331,5 +396,10 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
 
         }
+    }
+
+    default R foldLeft(T t, Monoid<R> monoid){
+        Fn1<T, R> x = this.andThen(v -> monoid.apply(monoid.zero(), v));
+        return x.apply(t);
     }
 }

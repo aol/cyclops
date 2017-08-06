@@ -56,7 +56,7 @@ import java.util.stream.Stream;
 import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
- * Totally lazy, reactive  more powerful general Option type. Maybe is maybe like a Java
+ * Totally lazy, reactiveBuffer  more powerful general Option type. Maybe is maybe like a Java
  * 8 Stream that represents 0 or 1 values rather than eager like a Java 8
  * Optional. map / peek/ filter and flatMap build the execution chaing, but are
  * not executed until the value inside the Maybe is required.
@@ -103,7 +103,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  * 
  * Maybe is a functor (map) monad (flatMap) and an applicative (ap)
  * 
- * Maybe is reactive via fromPublisher and maybe() methods
+ * Maybe is reactiveBuffer via fromPublisher and maybe() methods
  * 
  * Maybe is convertable to all cyclops2-react data types.
  *
@@ -117,7 +117,17 @@ public interface Maybe<T> extends To<Maybe<T>>,
                                   Recoverable<T>,
                                   Higher<maybe,T> {
 
+    public static  <T> Kleisli<maybe,Maybe<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Maybe::widen);
+    }
+    public static <T> Higher<maybe, T> widen(Maybe<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<maybe,T,Maybe<T>> kindCokleisli(){
+        return Cokleisli.of(Maybe::narrowK);
+    }
     public static <W1,T> Nested<maybe,W1,T> nested(Maybe<Higher<W1,T>> nested,InstanceDefinitions<W1> def2){
+
         return Nested.of(nested,Instances.definitions(),def2);
     }
     default <W1> Product<maybe,W1,T> product(Active<W1,T> active){
@@ -150,7 +160,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
 
     /**
-     * Create a reactive CompletableMaybe
+     * Create a reactiveBuffer CompletableMaybe
      * <pre>
      *     {@code
      *     CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
@@ -174,7 +184,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * </pre>
      *
      * @param <T> Data input type to the Maybe
-     * @return A reactive CompletableMaybe
+     * @return A reactiveBuffer CompletableMaybe
      */
     static <T> CompletableMaybe<T,T> maybe(){
         Completable.CompletablePublisher<T> c = new Completable.CompletablePublisher<T>();
@@ -278,8 +288,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
      *   MaybeType<Integer> some = MaybeType.fromOptional(Optional.of(10));
      *   //Maybe[10], Some[10]
      *
-     *   MaybeType<Integer> none = MaybeType.fromOptional(Optional.empty());
-     *   //Maybe.empty, None[]
+     *   MaybeType<Integer> none = MaybeType.fromOptional(Optional.zero());
+     *   //Maybe.zero, None[]
      * }
      * </pre>
      *
@@ -321,7 +331,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     final static Maybe EMPTY = new Nothing<>();
 
     /**
-     * @return Get the empty Maybe (singleUnsafe instance)
+     * @return Get the zero Maybe (singleUnsafe instance)
      */
     @SuppressWarnings("unchecked")
     static <T> Maybe<T> none() {
@@ -352,7 +362,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
     /**
-     * Construct a Maybe  that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
+     * Construct a Maybe  that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
@@ -365,7 +375,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * </pre>
      *
      * @param pub Publisher to extract value from
-     * @return Maybe populated with takeOne value from Publisher (Maybe.empty if Publisher empty)
+     * @return Maybe populated with first value from Publisher (Maybe.zero if Publisher zero)
      */
     public static <T> Maybe<T> fromPublisher(final Publisher<T> pub) {
         return fromFuture(Future.fromPublisher(pub));
@@ -384,7 +394,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      * }
      * </pre>
      * @param iterable Iterable  to extract value from
-     * @return Maybe populated with takeOne value from Iterable (Maybe.empty if Publisher empty)
+     * @return Maybe populated with first value from Iterable (Maybe.zero if Publisher zero)
      */
     static <T> Maybe<T> fromIterable(final Iterable<T> iterable) {
         return Maybe.fromEvalNullable(Eval.fromIterable(iterable));
@@ -401,8 +411,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
      *   Maybe<Integer> some = Maybe.fromOptional(Optional.of(10));
      *   //Maybe[10], Some[10]
      *
-     *   Maybe<Integer> none = Maybe.fromOptional(Optional.empty());
-     *   //Maybe.empty, None[]
+     *   Maybe<Integer> none = Maybe.fromOptional(Optional.zero());
+     *   //Maybe.zero, None[]
      * }
      * </pre>
      *
@@ -531,7 +541,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     /**
      * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
-     * Only successes are retained. By constrast with {@link Maybe#sequence(CollectionX)} Maybe#empty/ None types are
+     * Only successes are retained. By constrast with {@link Maybe#sequence(CollectionX)} Maybe#zero/ None types are
      * tolerated and ignored.
      *
      * <pre>
@@ -554,8 +564,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     /**
      * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
-     * By constrast with {@link Maybe#sequenceJust(CollectionX)} if any Maybe types are None / empty
-     * the return type will be an empty Maybe / None
+     * By constrast with {@link Maybe#sequenceJust(CollectionX)} if any Maybe types are None / zero
+     * the return type will be an zero Maybe / None
      *
      * <pre>
      * {@code
@@ -580,8 +590,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     /**
      * Sequence operation, take a Stream of Maybes and turn it into a Maybe with a Stream
-     * By constrast with {@link Maybe#sequenceJust(CollectionX)} Maybe#empty/ None types are
-     * result in the returned Maybe being Maybe.empty / None
+     * By constrast with {@link Maybe#sequenceJust(CollectionX)} Maybe#zero/ None types are
+     * result in the returned Maybe being Maybe.zero / None
      *
      *
      * <pre>
@@ -610,7 +620,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     /**
      * Accummulating operation using the supplied Reducer (@see cyclops2.Reducers). A typical use case is to accumulate into a Persistent Collection type.
-     * Accumulates the present results, ignores empty Maybes.
+     * Accumulates the present results, ignores zero Maybes.
      *
      * <pre>
      * {@code
@@ -641,7 +651,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
         Maybe<Integer> none = Maybe.none();
 
      *  Maybe<String> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), i -> "" + i,
-                                                     Semigroups.stringConcat);
+                                                     SemigroupK.stringConcat);
         //Maybe.of("101")
      *
      * }
@@ -825,7 +835,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
     /*
-     * Equivalent to combine, but accepts an Iterable and takes the takeOne value
+     * Equivalent to combine, but accepts an Iterable and takes the first value
      * only from that iterable. (non-Javadoc)
      *
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable,
@@ -841,7 +851,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
 
     /*
-     * Equivalent to combine, but accepts a Publisher and takes the takeOne value
+     * Equivalent to combine, but accepts a Publisher and takes the first value
      * only from that publisher. (non-Javadoc)
      *
      * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction,
@@ -1555,13 +1565,13 @@ public interface Maybe<T> extends To<Maybe<T>>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<maybe>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2,T> Traverse<maybe> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<maybe>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<maybe> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -1794,10 +1804,11 @@ public interface Maybe<T> extends To<Maybe<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<maybe> foldable(){
+        public static <T,R> Foldable<maybe> foldable(){
             BiFunction<Monoid<T>,Higher<maybe,T>,T> foldRightFn =  (m,l)-> Maybe.narrowK(l).orElse(m.zero());
             BiFunction<Monoid<T>,Higher<maybe,T>,T> foldLeftFn = (m,l)-> Maybe.narrowK(l).orElse(m.zero());
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.maybe, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
         public static <T> Comonad<maybe> comonad(){

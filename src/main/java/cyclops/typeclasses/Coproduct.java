@@ -30,12 +30,15 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 
@@ -91,7 +94,25 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public <U> Coproduct<W1,W2,U> ofType(Class<? extends U> type) {
         return (Coproduct<W1,W2,U>)Filters.super.ofType(type);
     }
+    public Active<W1,T> activeLeft(MonoidK<W1,T> m, Higher<W1,T> concat){
+        Higher<W1, T> h = xor.visit(s -> m.apply(s, concat), p -> m.zero());
+        return Active.of(h,def1);
+    }
+    public Active<W2,T> activeSecond(MonoidK<W2,T> m, Higher<W2,T> concat){
+        Higher<W2, T> h = xor.visit(s -> m.zero(), p -> m.apply(p, concat));
+        return Active.of(h,def2);
+    }
 
+    public Coproduct<W1,W2,T> plusLeft(SemigroupK<W1,T> semigroupK, Higher<W1,T> add){
+        return of(xor.secondaryFlatMap(s -> Xor.secondary(semigroupK.apply(s, add))),def1,def2);
+    }
+    public Coproduct<W1,W2,T> plusRight(SemigroupK<W2,T> semigroupK, Higher<W2,T> add){
+        return of(xor.flatMap(p -> Xor.primary(semigroupK.apply(p, add))),def1,def2);
+    }
+
+    public Product<W1,W2,T> product(MonoidK<W1,T> m1, MonoidK<W2,T> m2){
+        return Product.of(xor.visit(s -> Tuple.tuple(s, m2.zero()), p -> Tuple.tuple(m1.zero(), p)),def1,def2);
+    }
     @Override
     public Coproduct<W1,W2,T> filterNot(Predicate<? super T> predicate) {
         return filter(predicate.negate());
@@ -107,13 +128,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return (Coproduct<W1,W2,U>)Transformable.super.cast(type);
     }
 
-    public <R> Coproduct<W1,W2, R> tailRecLeft(T initial, Function<? super T,? extends Higher<W1, ? extends Xor<T, R>>> left,
-                                                          Function<? super T,? extends Higher<W2, ? extends Xor<T, R>>> right){
 
-        return Coproduct.of(xor.secondaryFlatMap(x -> Xor.secondary(Active.of(x,def1).tailRec(initial,left)))
-                              .flatMap(x->Xor.primary(Active.of(x, def2).tailRec(initial,right))),def1,def2);
-
-    }
 
 
 
@@ -128,9 +143,25 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
             return (Higher<W1, R>)x;
         }),def1,def2);
     }
+    public <R> Coproduct<W1,W2,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f) {
+        return of(xor.map(m->{
+        Higher<W2, ? extends R> x = def2.<T, R>traverse().mapWithIndex(f, m);
+        return (Higher<W2, R>)x;
+    }).secondaryMap(m->{
+        Higher<W1, ? extends R> x = def1.<T, R>traverse().mapWithIndex(f, m);
+        return (Higher<W1, R>)x;
+    }),def1,def2);
+
+    }
+    public <R> Coproduct<W1,W2,Tuple2<T,Long>> zipWithIndex() {
+        return mapWithIndex(Tuple::tuple);
+    }
 
     public Xor<Higher<W1,T>,Higher<W2,T>> asXor(){
         return xor;
+    }
+    public Xor<Active<W1,T>,Active<W2,T>> asActiveXor(){
+        return xor.bimap(s->Active.of(s,def1),p->Active.of(p,def2));
     }
 
 
@@ -173,39 +204,40 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return of(xor.swap(),def2,def1);
     }
 
-    /**
-     * @return An Instance of Folds that will use Monoid.zero if the foldable type class is unavailable
-     */
-    public Folds foldsUnsafe(){
-        return new Folds();
+
+    public Maybe<Plus> plus(){
+        MonadPlus<W1> plus1 = def1.monadPlus().visit(p->p,()->null);
+        MonadPlus<W2> plus2 = def2.monadPlus().visit(p->p,()->null);
+        return xor.visit(s->def1.monadPlus().isPresent() ? Maybe.just(new Plus(plus1,plus2)) : Maybe.none(),
+                                p->def2.monadPlus().isPresent() ? Maybe.just(new Plus(plus1,plus2)) : Maybe.none());
     }
 
-    public Unfolds unfoldsUnsafe(){
-        return xor.visit(s-> def1.unfoldable().isPresent() ? new Unfolds() : null,p-> def2.foldable().isPresent() ? new Unfolds() : null);
-    }
-    public Traverse traverseUnsafe(){
-        return xor.visit(s-> def1.traverse().isPresent() ? new Traverse() : null,p-> def2.traverse().isPresent() ? new Traverse() : null);
+    public Unfolds unfoldsDefault(){
+        Unfoldable<W1> unf1 = def1.unfoldable().visit(a->  a ,()-> new Unfoldable.UnsafeValueUnfoldable<>());
+        Unfoldable<W2> unf2 = def2.unfoldable().visit(a->  a ,()-> new Unfoldable.UnsafeValueUnfoldable<>());
+        return new Unfolds(unf1,unf2);
     }
 
-    public Maybe<Folds> folds(){
-        return xor.visit(s-> def1.foldable().isPresent() ? Maybe.just(new Folds()) : Maybe.none(),p-> def2.foldable().isPresent() ? Maybe.just(new Folds()) : Maybe.none());
-    }
+
     public Maybe<Unfolds> unfolds(){
-        return xor.visit(s-> def1.unfoldable().isPresent() ? Maybe.just(new Unfolds()) : Maybe.none(),p-> def2.unfoldable().isPresent() ? Maybe.just(new Unfolds()) : Maybe.none());
-    }
-    public Maybe<Traverse> traverse(){
-        return xor.visit(s-> def1.traverse().isPresent() ? Maybe.just(new Traverse()) : Maybe.none(),p-> def2.traverse().isPresent() ? Maybe.just(new Traverse()) : Maybe.none());
-    }
-    public class Plus{
+        Unfoldable<W1> unf1 = def1.unfoldable().visit(a->  a ,()-> new Unfoldable.UnsafeValueUnfoldable<>());
+        Unfoldable<W2> unf2 = def2.unfoldable().visit(a->  a ,()-> new Unfoldable.UnsafeValueUnfoldable<>());
 
+        return xor.visit(s-> def1.unfoldable().isPresent() ? Maybe.just(new Unfolds(unf1,unf2)) : Maybe.none(),p-> def2.unfoldable().isPresent() ? Maybe.just(new Unfolds(unf1,unf2)) : Maybe.none());
+    }
+
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public class Plus{
+        private final  MonadPlus<W1> plus1;
+        private final  MonadPlus<W2> plus2;
         public Coproduct<W1,W2,T> plus(Coproduct<W1,W2,T> a){
 
             if(xor.isSecondary() && a.xor.isSecondary()){
-                    Higher<W1, T> plused = def1.monadPlus().get().plus(xor.secondaryGet(), a.xor.secondaryGet());
+                    Higher<W1, T> plused = plus1.plus(xor.secondaryGet(), a.xor.secondaryGet());
                     return Coproduct.left(plused,def1,def2);
             }
             if(xor.isPrimary() && a.xor.isPrimary()){
-                Higher<W2, T> plused = def2.monadPlus().get().plus(xor.get(), a.getXor().get());
+                Higher<W2, T> plused = plus2.plus(xor.get(), a.getXor().get());
                 return Coproduct.right(plused,def1,def2);
             }
             return Coproduct.this;
@@ -214,11 +246,11 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         public Coproduct<W1,W2,T> sum(ListX<Coproduct<W1,W2,T>> l){
             ListX<Coproduct<W1,W2,T>> list = l.plus(Coproduct.this);
             if(xor.isSecondary()){
-                Higher<W1, T> summed = def1.monadPlus().get().sum(list.map(c -> c.xor.secondaryGet()));
+                Higher<W1, T> summed = plus1.sum(list.map(c -> c.xor.secondaryGet()));
                 return Coproduct.left(summed,def1,def2);
             }
             if(xor.isPrimary()){
-                Higher<W2, T> summed = def2.monadPlus().get().sum(list.map(c -> c.xor.get()));
+                Higher<W2, T> summed = plus2.sum(list.map(c -> c.xor.get()));
                 return Coproduct.right(summed,def1,def2);
             }
             return Coproduct.this;
@@ -227,38 +259,55 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     }
 
 
-    public class Folds {
-
-        public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
-            return xor.visit(left->def1.foldable().visit(p -> p.foldMap(mb, fn, left), () -> mb.zero()),
-                            right->def2.foldable().visit(p -> p.foldMap(mb, fn, right), () -> mb.zero()));
-        }
-        public T foldRight(Monoid<T> monoid) {
-            return xor.visit(left->def1.foldable().visit(p->p.foldRight(monoid, left),()->monoid.zero()),
-                    right->def2.foldable().visit(p->p.foldRight(monoid, right),()->monoid.zero()));
-
-        }
-
-        public T foldRight(T identity, BinaryOperator<T> semigroup) {
-            return foldRight(Monoid.fromBiFunction(identity,semigroup));
-
-        }
-
-        public T foldLeft(Monoid<T> monoid) {
-            return xor.visit(left->def1.foldable().visit(p->p.foldLeft(monoid, left),()->monoid.zero()),
-                    right->def2.foldable().visit(p->p.foldLeft(monoid, right),()->monoid.zero()));
-        }
-
-
-        public T foldLeft(T identity, BinaryOperator<T> semigroup) {
-            return foldLeft(Monoid.fromBiFunction(identity,semigroup));
-        }
+    public <R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn) {
+        return xor.visit(left->def1.foldable().foldMap(mb, fn, left),
+                right->def2.foldable().foldMap(mb, fn, right));
+    }
+    public T foldRight(Monoid<T> monoid) {
+        return xor.visit(left->def1.foldable().foldRight(monoid, left),
+                right->def2.foldable().foldRight(monoid, right));
 
     }
 
+    public T foldRight(T identity, BinaryOperator<T> semigroup) {
+        return foldRight(Monoid.fromBiFunction(identity,semigroup));
+
+    }
+    public  ListX<T> toListX(){
+        return xor.visit(left->def1.foldable().listX(left),
+                right->def2.foldable().listX(right));
+    }
+    public  ReactiveSeq<T> stream(){
+        return toListX().stream();
+    }
+    public Coproduct<W1,W2,T> reverse() {
+        return xor.visit(l -> {
+            return Coproduct.of(Xor.secondary(def1.traverse().reverse(l)), def1, def2);
+        }, r -> {
+            return Coproduct.of(Xor.primary(def2.traverse().reverse(r)), def1, def2);
+        });
+
+    }
+    public  long size() {
+        return xor.visit(left->def1.foldable().size(left),
+                right->def2.foldable().size(right));
+    }
+
+    public T foldLeft(Monoid<T> monoid) {
+        return xor.visit(left->def1.foldable().foldLeft(monoid, left),
+                right->def2.foldable().foldLeft(monoid, right));
+    }
+
+
+    public T foldLeft(T identity, BinaryOperator<T> semigroup) {
+        return foldLeft(Monoid.fromBiFunction(identity,semigroup));
+    }
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public class Unfolds{
+        private final Unfoldable<W1> unf1;
+        private final Unfoldable<W2> unf2;
         public <R, T> Coproduct<W1,W2, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn){
-            Xor<Higher<W1,R>,Higher<W2,R>> res = xor.visit(left -> Xor.secondary(def1.unfoldable().get().unfold(b, fn)), r -> Xor.primary(def2.unfoldable().get().unfold(b, fn)));
+            Xor<Higher<W1,R>,Higher<W2,R>> res = xor.visit(left -> Xor.secondary(unf1.unfold(b, fn)), r -> Xor.primary(unf2.unfold(b, fn)));
             Coproduct<W1, W2, R> cop = Coproduct.of(res, def1, def2);
             return cop;
         }
@@ -275,16 +324,22 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         }
 
     }
-    public class Traverse{
 
-        public <W3, R> Higher<W3,Coproduct<W1,W2, R>> traverse(Applicative<W3> applicative, Function<? super T, Higher<W3, R>> f){
-            return xor.visit(it->{
-                return applicative.map(x->of(Xor.secondary(x),def1,def2),def1.traverse().get().traverseA(applicative, f, it));
-            },it->{
-                return applicative.map(x->of(Xor.primary(x),def1,def2),def2.traverse().get().traverseA(applicative, f, it));
-            });
-        }
+    public <W3, R> Higher<W3,Coproduct<W1,W2, R>> traverseA(Applicative<W3> applicative, Function<? super T, Higher<W3, R>> f){
+        return traverseA(applicative,f,this);
+    }
+    public static <W1,W2,T,C2, R> Higher<C2, Coproduct<W1,W2,R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,Coproduct<W1,W2,T> n){
 
+        return n.xor.visit(it->{
+            return applicative.map(x->of(Xor.secondary(x),n.def1,n.def2),n.def1.traverse().traverseA(applicative, fn, it));
+        },it->{
+            return applicative.map(x->of(Xor.primary(x),n.def1,n.def2),n.def2.traverse().traverseA(applicative, fn, it));
+        });
+
+    }
+    public  <C2,T> Higher<C2, Coproduct<W1,W2,T>> sequenceA(Applicative<C2> applicative,
+                                                          Coproduct<W1,W2,Higher<C2,T>> ds){
+        return traverseA(applicative, i -> i, ds);
 
     }
 
@@ -384,12 +439,17 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
 
                 @Override
                 public <T> T foldRight(Monoid<T> monoid, Higher<Higher<Higher<coproduct, W1>, W2>, T> ds) {
-                    return narrowK(ds).foldsUnsafe().foldRight(monoid);
+                    return narrowK(ds).foldRight(monoid);
                 }
 
                 @Override
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<Higher<coproduct, W1>, W2>, T> ds) {
-                    return narrowK(ds).foldsUnsafe().foldLeft(monoid);
+                    return narrowK(ds).foldLeft(monoid);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<Higher<coproduct, W1>, W2>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
                 }
             };
         }

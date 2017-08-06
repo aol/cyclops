@@ -1,7 +1,7 @@
 package cyclops.async.wait;
 
 /**
- * An interface that defines a Waiting strategy to be employed when an async.Queue is full or empty
+ * An interface that defines a Waiting strategy to be employed when an async.Queue is full or zero
  * 
  * @author johnmcclean
  *
@@ -54,7 +54,7 @@ public interface WaitStrategy<T> {
     /**
      * Push data into a recievable type using the provided offerable
      * 
-     * @param o Offerable toNested push data toNested recievable type
+     * @param o Offerable to push data to recievable type
      * @return true if data pushed via Offerable
      * @throws InterruptedException
      */

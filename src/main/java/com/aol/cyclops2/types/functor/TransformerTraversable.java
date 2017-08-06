@@ -3,6 +3,8 @@ package com.aol.cyclops2.types.functor;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.reactiveSeq;
 import cyclops.stream.ReactiveSeq;
 import cyclops.monads.transformers.ListT;
 import cyclops.collections.mutable.ListX;
@@ -19,10 +21,10 @@ public interface TransformerTraversable<T>{
 
     /**
      * Group the elements in this Traversable into batches of the provided size.
-     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists toNested be manipulated directly.
+     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly.
      * The data will remain nested (as List's inside the current
-     * Traversable), but the ListTransformer will be able toNested operate aggregate operations across all nested Lists, each operation
-     * on the List Transformer is applied, by the transformer toNested all Lists.
+     * Traversable), but the ListTransformer will be able to operate aggregate operations across all nested Lists, each operation
+     * on the List Transformer is applied, by the transformer to all Lists.
      * 
      * <pre>
      * {@code
@@ -41,19 +43,19 @@ public interface TransformerTraversable<T>{
       
        
      * 
-     * @param groupSize Size of each batch of elements toNested be grouped into Lists
+     * @param groupSize Size of each batch of elements to be grouped into Lists
      * @return List Transformer view into batched / grouped data
      */
-    default ListT<stream,T> groupedT(final int groupSize) {
+    default ListT<reactiveSeq,T> groupedT(final int groupSize) {
         return ListT.fromStream(stream().grouped(groupSize));
     }
 
     /**
      * Create a Sliding window into the data in this traversble.
-     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists toNested be manipulated directly.
+     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly.
      * The data will remain nested (as List's inside the current
-     * Traversable), but the ListTransformer will be able toNested operate aggregate operations across all nested Lists, each operation
-     * on the List Transformer is applied, by the transformer toNested all Lists.
+     * Traversable), but the ListTransformer will be able to operate aggregate operations across all nested Lists, each operation
+     * on the List Transformer is applied, by the transformer to all Lists.
      * 
      * <pre>
      * {@code 
@@ -69,16 +71,16 @@ public interface TransformerTraversable<T>{
      * @param increment Increment between windows
      * @return List Transformer view into the Sliding windows
      */
-    default ListT<stream,T> slidingT(final int windowSize, final int increment) {
+    default ListT<reactiveSeq,T> slidingT(final int windowSize, final int increment) {
         return ListT.fromStream(stream().sliding(windowSize, increment));
     }
 
     /**
      * Create a Sliding window into the data in this traversble.
-     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists toNested be manipulated directly.
+     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly.
      * The data will remain nested (as List's inside the current
-     * Traversable), but the ListTransformer will be able toNested operate aggregate operations across all nested Lists, each operation
-     * on the List Transformer is applied, by the transformer toNested all Lists. ( @see TransformerTraversable#grouped(int) )
+     * Traversable), but the ListTransformer will be able to operate aggregate operations across all nested Lists, each operation
+     * on the List Transformer is applied, by the transformer to all Lists. ( @see TransformerTraversable#grouped(int) )
      
        <pre>
        {@code 
@@ -93,17 +95,17 @@ public interface TransformerTraversable<T>{
      * @param windowSize Size of sliding window
      * @return List Transformer view into the Sliding windows
      */
-    default ListT<stream,T> slidingT(final int windowSize) {
+    default ListT<reactiveSeq,T> slidingT(final int windowSize) {
         return ListT.fromStream(stream().sliding(windowSize));
     }
 
     /**
      * Create a Traversable batched by List, where each batch is populated until
      * the predicate holds.
-     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists toNested be manipulated directly.
+     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly.
      * The data will remain nested (as List's inside the current
-     * Traversable), but the ListTransformer will be able toNested operate aggregate operations across all nested Lists, each operation
-     * on the List Transformer is applied, by the transformer toNested all Lists.
+     * Traversable), but the ListTransformer will be able to operate aggregate operations across all nested Lists, each operation
+     * on the List Transformer is applied, by the transformer to all Lists.
      * 
      * <pre>
      * {@code 
@@ -116,10 +118,10 @@ public interface TransformerTraversable<T>{
      * }
      * </pre>
      * 
-     * @param predicate Predicate toNested determine batch termination point
+     * @param predicate Predicate to determine batch termination point
      * @return List Transformer view into batched Traversable
      */
-    default ListT<stream,T> groupedUntilT(final Predicate<? super T> predicate) {
+    default ListT<reactiveSeq,T> groupedUntilT(final Predicate<? super T> predicate) {
         return ListT.fromStream(stream().groupedUntil(predicate));
     }
 
@@ -127,26 +129,26 @@ public interface TransformerTraversable<T>{
      * List Transformer view into batched Lists where
      * each List is populated while the supplied bipredicate holds. The
      * bipredicate recieves the List from the last window as well as the
-     * current value and can choose toNested aggregate the current value or create a
+     * current value and can choose to aggregate the current value or create a
      * new window
      * 
     
      * 
      * 
-     * @param predicate Predicate toNested determine batch
+     * @param predicate Predicate to determine batch
      * @return List Transformer view into batched Traversable
      */
-    default ListT<stream,T> groupedStatefullyUntilT(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default ListT<reactiveSeq,T> groupedStatefullyUntilT(final BiPredicate<ListX<? super T>, ? super T> predicate) {
         return ListT.fromStream(stream().groupedStatefullyUntil(predicate));
     }
 
     /**
      * Create a Traversable batched by List, where each batch is populated while
      * the predicate holds.
-     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists toNested be manipulated directly.
+     * A List Transformer view into the data will be provided, ListTransformers allow nested Lists to be manipulated directly.
      * The data will remain nested (as List's inside the current
-     * Traversable), but the ListTransformer will be able toNested operate aggregate operations across all nested Lists, each operation
-     * on the List Transformer is applied, by the transformer toNested all Lists.
+     * Traversable), but the ListTransformer will be able to operate aggregate operations across all nested Lists, each operation
+     * on the List Transformer is applied, by the transformer to all Lists.
      * <pre>
      * {@code 
      *  ListTSeq<Integer> grouped = ReactiveSeq.of(1,2,3,4,5,6,7,8,9,5)
@@ -157,10 +159,10 @@ public interface TransformerTraversable<T>{
      *  
      * }
      * </pre>
-     * @param predicate Predicate toNested determine batch termination point
+     * @param predicate Predicate to determine batch termination point
      * @return List Transformer view into batched Traversable
      */
-    default ListT<stream,T> groupedWhileT(final Predicate<? super T> predicate) {
+    default ListT<reactiveSeq,T> groupedWhileT(final Predicate<? super T> predicate) {
         return ListT.fromStream(stream().groupedUntil(predicate));
     }
 

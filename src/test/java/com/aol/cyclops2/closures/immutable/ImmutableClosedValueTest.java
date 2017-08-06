@@ -29,7 +29,7 @@ public class ImmutableClosedValueTest {
 	public void testSetOnce2Attempts() {
 		LazyImmutable<Integer> value = new LazyImmutable<>();
 		Supplier s= () -> value.setOnce(10);
-		value.setOnce(20); //takeOne time set
+		value.setOnce(20); //first time set
 		
 		s.get();
 		

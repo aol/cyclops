@@ -19,6 +19,7 @@ import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -38,19 +39,22 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     private final Evaluation strict;
     final AtomicBoolean updating = new AtomicBoolean(false);
     final AtomicReference<Throwable> error = new AtomicReference<>(null);
+    private final Function<ReactiveSeq<C>,C> fn;
 
-    public AbstractLazyPersistentCollection(C list, ReactiveSeq<T> seq, Reducer<C> collector,Evaluation strict) {
+    public AbstractLazyPersistentCollection(C list, ReactiveSeq<T> seq, Reducer<C> collector,Evaluation strict,Function<ReactiveSeq<C>,C> fn) {
         this.list = list;
         this.seq = new AtomicReference<>(seq);
         this.collectorInternal = collector;
         this.strict = strict;
+        this.fn = fn;
         handleStrict();
     }
-     AbstractLazyPersistentCollection(Evaluation strict,C list, ReactiveSeq<T> seq, Reducer<C> collector) {
+     AbstractLazyPersistentCollection(Evaluation strict,C list, ReactiveSeq<T> seq, Reducer<C> collector,Function<ReactiveSeq<C>,C> fn) {
         this.list = list;
         this.seq = new AtomicReference<>(seq);
         this.collectorInternal = collector;
         this.strict = strict;
+        this.fn = fn;
 
     }
 
@@ -61,14 +65,20 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     }
 
     public C materializeList(ReactiveSeq<T> toUse){
+        ReactiveSeq<C> mapped = ReactiveSeq.fromStream(collectorInternal.mapToType(toUse));
 
-        return collectorInternal.mapReduce(toUse);
+        return toUse.visit(s -> fn.apply(mapped.reduceAll(collectorInternal.zero(), collectorInternal)),
+                            r -> fn.apply(mapped.reduceAll(collectorInternal.zero(), collectorInternal)),
+                            a -> fn.apply(mapped.reduceAll(collectorInternal.zero(), collectorInternal)));
+
     }
     @Override
     public boolean isLazy() {
         return strict == Evaluation.LAZY;
     }
-
+    public boolean isMaterialized(){
+        return seq.get()==null;
+    }
     @Override
     public boolean isEager() {
         return strict == Evaluation.EAGER;
@@ -85,6 +95,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     public C get() {
         if (seq.get() != null) {
             if(updating.compareAndSet(false, true)) { //check if can materialize
+
                 try{
                     ReactiveSeq<T> toUse = seq.get();
                     if(toUse!=null){//dbl check - as we may pass null check on on thread and set updating false on another
@@ -113,6 +124,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
 
     @Override
     public Iterator<T> iterator() {
+
         return get().iterator();
     }
 

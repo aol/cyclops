@@ -29,16 +29,26 @@ import java.util.stream.Stream;
 
 /**
  * 
- * A static class with a large number of Semigroups  or Combiners.
+ * A static class with a large number of SemigroupK  or Combiners.
  * 
- * A semigroup is an Object that can be used toNested combine objects of the same type.
+ * A semigroup is an Object that can be used to combine objects of the same type.
+ *
+ * Using raw Semigroups with container types
+ * <pre>
+ *     {@code
+ *       Semigroup<Maybe<Integer>> m = Semigroups.combineZippables(Semigroups.intMax);
+ *       Semigroup<ReactiveSeq<Integer>> m = Semigroups.combineZippables(Semigroups.intSum);
+ *     }
+ * </pre>
+ *
  *
  *  @author johnmcclean
  */
 public interface Semigroups {
 
+
     /**
-     * To manage javac type inference takeOne assign the semigroup
+     * To manage javac type inference first assign the semigroup
      * <pre>
      * {@code
      *    
@@ -52,13 +62,14 @@ public interface Semigroups {
      * @return A Semigroup that can combine any cyclops2-react extended Collection type
      */
     static <T, C extends FluentCollectionX<T>> Semigroup<C> collectionXConcat() {
+
         return (a, b) -> (C) a.plusAll(b);
     }
 
     /**
      * Concatenate mutable collections
      * 
-     * To manage javac type inference takeOne assign the semigroup
+     * To manage javac type inference first assign the semigroup
      * <pre>
      * {@code
      *    
@@ -192,12 +203,12 @@ public interface Semigroups {
     }
 
     /**
-     * This Semigroup will attempt toNested combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
+     * This Semigroup will recover to combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
      * or a pCollection persisent toX a new Collection type is created that contains the entries from both supplied collections.
-     * If the supplied Collections are standard JDK mutable collections Colleciton b is appended toNested Collection a and a is returned.
+     * If the supplied Collections are standard JDK mutable collections Colleciton b is appended to Collection a and a is returned.
      * 
      * 
-     * To manage javac type inference takeOne assign the semigroup
+     * To manage javac type inference first assign the semigroup
      * <pre>
      * {@code
      *    
@@ -208,7 +219,7 @@ public interface Semigroups {
      * 
      * }
      * </pre>
-     * @return A Semigroup that attempts toNested combine the supplied Collections
+     * @return A Semigroup that attempts to combine the supplied Collections
      */
     static <T, C extends Collection<T>> Semigroup<C> collectionConcat() {
         return (a, b) -> {
@@ -231,15 +242,16 @@ public interface Semigroups {
     /**
      * <pre>
      * {@code 
-     *  BinaryOperator<Zippable<Integer>> sumInts = Semigroups.combineZippables(Semigroups.intSum);
-        sumInts.applyHKT(ListX.of(1,2,3), ListX.of(4,5,6));
+     *  BinaryOperator<ListX<Integer>> sumInts = Semigroups.combineZippables(Semigroups.intSum);
+
+        sumInts.apply(ListX.of(1,2,3), ListX.of(4,5,6));
         
         //List[5,7,9];
      * 
      * }
      * </pre>
      * 
-     * @param semigroup Semigroup toNested combine the values inside the zippables
+     * @param semigroup Semigroup to combine the values inside the zippables
      * @return Combination of two Zippables
      */
     static <T,A extends Zippable<T>> Semigroup<A> combineZippables(BiFunction<T,T,T> semigroup) {
@@ -250,7 +262,7 @@ public interface Semigroups {
      * <pre>
      * {@code 
      * 
-     *  BinaryOperator<Combiner<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
+     *  BinaryOperator<Maybe<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
      *  Maybe.just(1)
      *       .combine(sumMaybes, Maybe.just(5))
      *       
@@ -259,7 +271,7 @@ public interface Semigroups {
      * </pre>
      * 
      * 
-     * @param semigroup Semigroup toNested combine the values inside the Scalar Functors (Maybe, Xor, Ior, Try, Eva, FeatureToggle etc)
+     * @param semigroup Semigroup to combine the values inside the Scalar Functors (Maybe, Xor, Ior, Try, Eva, FeatureToggle etc)
      * @return Combination of two Scalar Functors
      */
     static <T,A extends Zippable<T>> Semigroup<A> combineScalarFunctors(BiFunction<T,T,T> semigroup) {
@@ -267,7 +279,7 @@ public interface Semigroups {
     }
 
     /**
-     * @return Combination of two LazyFutureStreams Streams b is appended toNested a
+     * @return Combination of two LazyFutureStreams Streams b is appended to a
      */
     static <T> Semigroup<FutureStream<T>> combineFutureStream() {
         return (a, b) -> a.appendS(b);
@@ -275,7 +287,7 @@ public interface Semigroups {
 
 
     /**
-     * @return Combination of two ReactiveSeq Streams b is appended toNested a
+     * @return Combination of two ReactiveSeq Streams b is appended to a
      */
     static <T> Semigroup<ReactiveSeq<T>> combineReactiveSeq() {
         return (a, b) -> a.appendS(b);
@@ -300,47 +312,47 @@ public interface Semigroups {
     }
 
     /**
-     * @return Combination of two Seq's : b is appended toNested a
+     * @return Combination of two Seq's : b is appended to a
      */
     static <T> Semigroup<Seq<T>> combineSeq() {
         return (a, b) -> Seq.concat(a, b);
     }
 
     /**
-     * @return Combination of two Stream's : b is appended toNested a
+     * @return Combination of two Stream's : b is appended to a
      */
     static <T> Semigroup<Stream<T>> combineStream() {
         return (a, b) -> Stream.concat(a, b);
     }
     
     /**
-     * @return Combination of two Collection, takeOne non-empty is returned
+     * @return Combination of two Collection, first non-zero is returned
      */
     static <T,C extends Collection<T>> Semigroup<C> firstNonEmpty() {
         return (a, b) -> a.isEmpty() ? b: a;
     }
     /**
-     * @return Combination of two Collection, last non-empty is returned
+     * @return Combination of two Collection, last non-zero is returned
      */
     static <T,C extends Collection<T>> Semigroup<C> lastNonEmpty() {
         return (a, b) -> b.isEmpty() ? a: b;
     }
 
     /**
-     * @return Combination of two Objects of same type, takeOne non-null is returned
+     * @return Combination of two Objects of same type, first non-null is returned
      */
     static <T> Semigroup<T> firstNonNull() {
         return (a, b) -> a != null ? a : b;
     }
     
     /**
-     * @return Combine two CompletableFuture's by taking the takeOne present
+     * @return Combine two CompletableFuture's by taking the first present
      */
     static <T> Semigroup<CompletableFuture<T>> firstCompleteCompletableFuture() {
         return (a, b) -> (CompletableFuture<T>)CompletableFuture.<T>anyOf(a,b);
     }
     /**
-     * @return Combine two Future's by taking the takeOne result
+     * @return Combine two Future's by taking the first result
      */
     static <T> Semigroup<Future<T>> firstCompleteFuture() {
         return (a, b) -> Future.anyOf(a,b);
@@ -350,19 +362,19 @@ public interface Semigroups {
         return (a, b) -> EagerFutureStreamFunctions.firstOf(a,b);
     }
     /**
-     * @return Combine two Future's by taking the takeOne successful
+     * @return Combine two Future's by taking the first successful
      */
     static <T> Semigroup<Future<T>> firstSuccessfulFuture() {
         return (a, b) -> Future.firstSuccess(a,b);
     }
     /**
-     * @return Combine two Xor's by taking the takeOne primary
+     * @return Combine two Xor's by taking the first primary
      */
     static <ST,PT> Semigroup<Xor<ST,PT>> firstPrimaryXor() {
         return  (a, b) -> a.isPrimary() ? a : b;
     }
     /**
-     * @return Combine two Xor's by taking the takeOne secondary
+     * @return Combine two Xor's by taking the first secondary
      */
     static <ST,PT> Semigroup<Xor<ST,PT>> firstSecondaryXor() {
         return  (a, b) -> a.isSecondary() ? a : b;
@@ -380,13 +392,13 @@ public interface Semigroups {
         return  (a, b) -> b.isSecondary() ? b : a;
     }
     /**
-     * @return Combine two Try's by taking the takeOne primary
+     * @return Combine two Try's by taking the first primary
      */
     static <T,X extends Throwable> Semigroup<Try<T,X>> firstTrySuccess() {
         return  (a, b) -> a.isSuccess() ? a : b;
     }
     /**
-     * @return Combine two Try's by taking the takeOne secondary
+     * @return Combine two Try's by taking the first secondary
      */
     static <T,X extends Throwable> Semigroup<Try<T,X>> firstTryFailure() {
         return  (a, b) -> a.isFailure() ? a : b;
@@ -404,13 +416,13 @@ public interface Semigroups {
         return  (a, b) -> b.isFailure() ? b : a;
     }
     /**
-     * @return Combine two Ior's by taking the takeOne primary
+     * @return Combine two Ior's by taking the first primary
      */
     static <ST,PT> Semigroup<Ior<ST,PT>> firstPrimaryIor() {
         return  (a, b) -> a.isPrimary() ? a : b;
     }
     /**
-     * @return Combine two Ior's by taking the takeOne secondary
+     * @return Combine two Ior's by taking the first secondary
      */
     static <ST,PT> Semigroup<Ior<ST,PT>> firstSecondaryIor() {
         return  (a, b) -> a.isSecondary() ? a : b;
@@ -429,14 +441,14 @@ public interface Semigroups {
     }
 
     /**
-     * @return Combine two Maybe's by taking the takeOne present
+     * @return Combine two Maybe's by taking the first present
      */
     static <T> Semigroup<Maybe<T>> firstPresentMaybe() {
         return (a, b) -> a.isPresent() ? a : b;
     }
 
     /**
-     * @return Combine two optionals by taking the takeOne present
+     * @return Combine two optionals by taking the first present
      */
     static <T> Semigroup<Optional<T>> firstPresentOptional() {
         return (a, b) -> a.isPresent() ? a : b;
@@ -496,6 +508,7 @@ public interface Semigroups {
         return (a, b) -> a.compareTo((T) b) > 0 ? a : b;
     }
     
+   
     /**
      * Combine two Integers by summing them
      */
@@ -594,5 +607,6 @@ public interface Semigroups {
     static <A> Semigroup<NaturalTransformation<A,A>> naturalTransformationComposition(){
         return  (a,b)->a.andThen(b);
     }
+    
 
 }

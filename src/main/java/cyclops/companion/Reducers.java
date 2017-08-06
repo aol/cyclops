@@ -27,9 +27,9 @@ import com.aol.cyclops2.types.mixins.TupleWrapper;
 import lombok.experimental.UtilityClass;
 
 /**
- * Class that holds Reducers, Monoids with a type conversion for reducing a dataset toNested a singleUnsafe value.
+ * Class that holds Reducers, Monoids with a type conversion for reducing a dataset to a singleUnsafe value.
  * 
- * Primary use case is the reduction of Streams toNested persistent collections
+ * Primary use case is the reduction of Streams to persistent collections
  * 
  * e.g.
  * <pre>
@@ -65,7 +65,7 @@ public class Reducers {
      * 
      * }
      * </pre>
-     * @return Reducer toNested PersistentQueueX types
+     * @return Reducer to PersistentQueueX types
      */
     public static <T> Reducer<PersistentQueueX<T>> toPersistentQueueX() {
         
@@ -80,7 +80,7 @@ public class Reducers {
      * 
      * }
      * </pre>
-     * @return Reducer toNested OrderedSetX
+     * @return Reducer to OrderedSetX
      */
     public static <T> Reducer<OrderedSetX<T>> toOrderedSetX() {
         return Reducer.<OrderedSetX<T>> of(OrderedSetX.<T> empty(), (final OrderedSetX<T> a) -> b -> a.plusAll(b),
@@ -158,7 +158,7 @@ public class Reducers {
      * 
      * }
      * </pre>
-     * @return Reducer toNested PQueue types
+     * @return Reducer to PQueue types
      */
     public static <T> Reducer<PQueue<T>> toPQueue() {
         return Reducer.<PQueue<T>> of(AmortizedPQueue.empty(), (final PQueue<T> a) -> b -> a.plusAll(b), (final T x) -> queueSingleton(x));
@@ -171,7 +171,7 @@ public class Reducers {
      * 
      * }
      * </pre>
-     * @return Reducer toNested POrderedSet
+     * @return Reducer to POrderedSet
      */
     public static <T> Reducer<POrderedSet<T>> toPOrderedSet() {
         return Reducer.<POrderedSet<T>> of(OrderedPSet.empty(), (final POrderedSet<T> a) -> b -> a.plusAll(b),
@@ -309,7 +309,7 @@ public class Reducers {
     }
 
     /**
-     * @return Reducer for counting doubles by converting toString toNested Double.valueOf( )
+     * @return Reducer for counting doubles by converting toString to Double.valueOf( )
      */
     public static Reducer<Double> toCountDouble() {
         return Reducer.of(0.0, a -> b -> a + 1, (x) -> Double.valueOf("" + x));

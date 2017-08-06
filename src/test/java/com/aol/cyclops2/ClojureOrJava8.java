@@ -7,8 +7,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.aol.cyclops2.types.stream.HeadAndTail;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -128,7 +131,10 @@ public class ClojureOrJava8 {
     public void listToString(){
         assertThat(listToString(ListX.of("a","b","c")),equalTo("a b c "));
     }
-    
+
+
+
+
     public String listToString(ListX<String> list){
         
         return list.visit(((x,xs)->x+" "+listToString(xs.toListX())),()->"");

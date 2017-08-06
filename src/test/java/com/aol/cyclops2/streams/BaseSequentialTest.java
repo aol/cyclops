@@ -239,7 +239,7 @@ public class BaseSequentialTest {
     @Test
     public void publishToAndMerge() {
         for (int k = 0; k < ITERATIONS; k++) {
-            System.out.println("Publish toNested and product iteration " + k);
+            System.out.println("Publish toNested and zip iteration " + k);
             cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
@@ -403,10 +403,10 @@ public class BaseSequentialTest {
     public void triplicateFanOut() {
 
         for (int k = 0; k < ITERATIONS; k++) {
-            System.out.println("******************Triplicate & product.. " + k);
-            System.out.println("******************Triplicate & product.. " + k);
-            System.out.println("******************Triplicate & product.. " + k);
-            System.out.println("******************Triplicate & product.. " + k);
+            System.out.println("******************Triplicate & zip.. " + k);
+            System.out.println("******************Triplicate & zip.. " + k);
+            System.out.println("******************Triplicate & zip.. " + k);
+            System.out.println("******************Triplicate & zip.. " + k);
             ListX<Integer> res = of(1, 2, 3, 4, 5, 6, 7, 8, 9)
                     .fanOut(s1 -> s1.peek(System.out::println).filter(i -> i % 3 == 0).map(i -> i * 2),
                             s2 -> s2.filter(i -> i % 3 == 1).map(i -> i * 100),

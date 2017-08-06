@@ -98,7 +98,7 @@ public class ReactPool<REACTOR extends ReactBuilder> {
     }
 
     /**
-     * @param next REACTOR toNested add toNested the Pool
+     * @param next REACTOR to add to the Pool
      */
     public void populate(final REACTOR next) {
 

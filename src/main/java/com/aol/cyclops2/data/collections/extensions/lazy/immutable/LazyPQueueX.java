@@ -2,15 +2,18 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.OrderedSetX;
 import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PQueue;
+import org.pcollections.PStack;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
@@ -41,10 +44,16 @@ import java.util.function.Supplier;
  * @param <T> the type of elements held in this toX
  */
 public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>> implements PersistentQueueX<T> {
-
+    public static final <T> Function<ReactiveSeq<PQueue<T>>, PQueue<T>> asyncQueue() {
+        return r -> {
+            CompletablePersistentQueueX<T> res = new CompletablePersistentQueueX<>();
+            r.forEachAsync(l -> res.complete(l));
+            return res.asPersistentQueueX();
+        };
+    }
 
     public LazyPQueueX(PQueue<T> list, ReactiveSeq<T> seq, Reducer<PQueue<T>> reducer,Evaluation strict) {
-        super(list, seq, reducer,strict);
+        super(list, seq, reducer,strict,asyncQueue());
     }
 
     

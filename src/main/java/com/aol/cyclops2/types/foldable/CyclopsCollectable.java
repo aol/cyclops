@@ -25,6 +25,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      * Collect the collectable into an {@link ArrayList}.
      */
     default List<T> toList(){
+
         return  collectors().toList();
     }
     /**
@@ -126,7 +127,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
     }
 
     /**
-     * Narrow this class toNested a Collectable
+     * Narrow this class to a Collectable
      * 
      * @return Collectable
      */
@@ -200,7 +201,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
 
 
     /**
-     * True if predicate matches all elements when Monad converted toNested a Stream
+     * True if predicate matches all elements when Monad converted to a Stream
      * 
      * <pre>
      * {@code 
@@ -209,7 +210,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      * </pre>
      * 
      * @param c
-     *            Predicate toNested check if all match
+     *            Predicate to check if all match
      */
     
     default boolean allMatch(final Predicate<? super T> c) {
@@ -217,7 +218,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
     }
 
     /**
-     * True if a singleUnsafe element matches when Monad converted toNested a Stream
+     * True if a singleUnsafe element matches when Monad converted to a Stream
      * 
      * <pre>
      * {@code 
@@ -227,7 +228,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      * </pre>
      * 
      * @param c
-     *            Predicate toNested check if any match
+     *            Predicate to check if any match
      */
     
     default boolean anyMatch(final Predicate<? super T> c) {

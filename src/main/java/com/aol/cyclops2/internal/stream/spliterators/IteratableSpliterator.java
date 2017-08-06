@@ -28,7 +28,8 @@ public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T
     public void forEachRemaining(Consumer<? super T> action) {
 
         if(active==null)
-            active=source.iterator();
+            active = source.iterator();
+
 
         active.forEachRemaining(action);
 

@@ -47,12 +47,12 @@ public class Functions {
 
     /**
      * KleisliM arrow : A function that takes an input value t and embeds it inside a monadic context.
-     * arrowM makes use of Witness Types toNested simulate higher-kinded types, and wraps the new monadic type
-     * inside an AnyM. AnyM makes use of sub-type polymorphism (Object Orientd inheritance) toNested define monadic
+     * arrowM makes use of Witness Types to simulate higher-kinded types, and wraps the new monadic type
+     * inside an AnyM. AnyM makes use of sub-type polymorphism (Object Orientd inheritance) to define monadic
      * functions (map / flatMap etc) on the returned Object (for parametric polymorphism use {@link Functions#arrow}
      *
      * @param w WitnessType Object: defines the returned monad type (e.g. see {@link Witness.stream} for HKT encoding for Streams)
-     * @param <T> Value type toNested be embedded inside a monad
+     * @param <T> Value type to be embedded inside a monad
      * @param <W> The type of the WitnessType (Witness.stream, Witness.Future, Witness.list and so on)
      * @return A function that can embed a value inisde a Monad
      */
@@ -61,7 +61,7 @@ public class Functions {
     }
 
     /**
-     * Use an existing instance of a type that implements Unit toNested create a KleisliM arrow for that type
+     * Use an existing instance of a type that implements Unit to create a KleisliM arrow for that type
      *
      * <pre>
      *     {@code

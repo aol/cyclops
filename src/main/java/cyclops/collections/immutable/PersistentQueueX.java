@@ -4,6 +4,7 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.async.Future;
 import cyclops.control.Xor;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.*;
@@ -36,8 +37,12 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.pcollections.AmortizedPQueue;
 import org.pcollections.PQueue;
+import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collector;
@@ -59,6 +64,42 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                                     OnEmptySwitch<T, PQueue<T>>,
                                     Higher<persistentQueueX,T>{
 
+    PersistentQueueX<T> lazy();
+    PersistentQueueX<T> eager();
+
+    static <T> CompletablePersistentQueueX<T> completable(){
+        return new CompletablePersistentQueueX<>();
+    }
+
+    static class CompletablePersistentQueueX<T> implements InvocationHandler {
+        Future<PersistentQueueX<T>> future = Future.future();
+        public boolean complete(PQueue<T> result){
+            return future.complete(PersistentQueueX.fromIterable(result));
+        }
+
+        public PersistentQueueX<T> asPersistentQueueX(){
+            PersistentQueueX f = (PersistentQueueX) Proxy.newProxyInstance(PersistentQueueX.class.getClassLoader(),
+                    new Class[] { PersistentQueueX.class },
+                    this);
+            return f;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            PersistentQueueX<T> target = future.get();
+            return method.invoke(target,args);
+        }
+    }
+
+    public static  <T> Kleisli<persistentQueueX,PersistentQueueX<T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), PersistentQueueX::widen);
+    }
+    public static <T> Higher<persistentQueueX, T> widen(PersistentQueueX<T> narrow) {
+        return narrow;
+    }
+    public static  <T> Cokleisli<persistentQueueX,T,PersistentQueueX<T>> kindCokleisli(){
+        return Cokleisli.of(PersistentQueueX::narrowK);
+    }
     public static <W1,T> Nested<persistentQueueX,W1,T> nested(PersistentQueueX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
@@ -90,7 +131,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * }
      * </pre>
      * 
-     * @param queueX toNested narrow generic type
+     * @param queueX to narrow generic type
      * @return OrderedSetX with narrowed type
      */
     public static <T> PersistentQueueX<T> narrow(final PersistentQueueX<? extends T> queueX) {
@@ -100,7 +141,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     /**
      * Widen a PersistentQueueX nest inside another HKT encoded type
      *
-     * @param list HTK encoded type containing  a PQueue toNested widen
+     * @param list HTK encoded type containing  a PQueue to widen
      * @return HKT encoded type with a widened PQueue
      */
     public static <C2,T> Higher<C2, Higher<persistentQueueX,T>> widen2(Higher<C2, PersistentQueueX<T>> list){
@@ -121,9 +162,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * Create a PersistentQueueX that contains the Integers between skip and take
      * 
      * @param start
-     *            Number of range toNested skip from
+     *            Number of range to skip from
      * @param end
-     *            Number for range toNested take at
+     *            Number for range to take at
      * @return Range PersistentQueueX
      */
     public static PersistentQueueX<Integer> range(final int start, final int end) {
@@ -135,9 +176,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * Create a PersistentQueueX that contains the Longs between skip and take
      * 
      * @param start
-     *            Number of range toNested skip from
+     *            Number of range to skip from
      * @param end
-     *            Number for range toNested take at
+     *            Number for range to take at
      * @return Range PersistentQueueX
      */
     public static PersistentQueueX<Long> rangeLong(final long start, final long end) {
@@ -150,14 +191,14 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * 
      * <pre>
      * {@code 
-     *  PersistentQueueX.unfold(1,i->i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.empty());
+     *  PersistentQueueX.unfold(1,i->i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.zero());
      * 
      * //(1,2,3,4,5)
      * 
      * }</code>
      * 
      * @param seed Initial value 
-     * @param unfolder Iteratively applied function, terminated by an empty Optional
+     * @param unfolder Iteratively applied function, terminated by an zero Optional
      * @return PersistentQueueX generated by unfolder function
      */
     static <U, T> PersistentQueueX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
@@ -166,10 +207,10 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
     /**
-     * Generate a PersistentQueueX from the provided Supplier up toNested the provided limit number of times
+     * Generate a PersistentQueueX from the provided Supplier up to the provided limit number of times
      * 
-     * @param limit Max number of elements toNested generate
-     * @param s Supplier toNested generate PersistentQueueX elements
+     * @param limit Max number of elements to generate
+     * @param s Supplier to generate PersistentQueueX elements
      * @return PersistentQueueX generated from the provided Supplier
      */
     public static <T> PersistentQueueX<T> generate(final long limit, final Supplier<T> s) {
@@ -180,9 +221,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
     
     /**
-     * Generate a PersistentQueueX from the provided value up toNested the provided limit number of times
+     * Generate a PersistentQueueX from the provided value up to the provided limit number of times
      * 
-     * @param limit Max number of elements toNested generate
+     * @param limit Max number of elements to generate
      * @param s Value for PersistentQueueX elements
      * @return PersistentQueueX generated from the provided Supplier
      */
@@ -194,11 +235,11 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
     /**
-     * Create a PersistentQueueX by iterative application of a function toNested an initial element up toNested the supplied limit number of times
+     * Create a PersistentQueueX by iterative application of a function to an initial element up to the supplied limit number of times
      * 
-     * @param limit Max number of elements toNested generate
+     * @param limit Max number of elements to generate
      * @param seed Initial element
-     * @param f Iteratively applied toNested each element toNested generate the next element
+     * @param f Iteratively applied to each element to generate the next element
      * @return PersistentQueueX generated by iterative application
      */
     public static <T> PersistentQueueX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
@@ -226,7 +267,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * Construct a PersistentQueueX from an Publisher
      * 
      * @param publisher
-     *            toNested construct PersistentQueueX from
+     *            to construct PersistentQueueX from
      * @return PersistentQueueX
      */
     public static <T> PersistentQueueX<T> fromPublisher(final Publisher<? extends T> publisher) {
@@ -272,7 +313,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         return persistentQueueX(stream);
     }
     /**
-     * coflatMap pattern, can be used toNested perform maybe reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 
@@ -387,7 +428,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * <pre>
      * {@code 
      *  PersistentQueueX.of(1,1,2,3)
-                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .combine((a, b)->a.equals(b),SemigroupK.intSum)
                    .listX()
                    
      *  //ListX(3,4) 
@@ -395,9 +436,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * </pre>
      * 
      * @param predicate
-     *            Test toNested see if two neighbors should be joined
+     *            Test to see if two neighbors should be joined
      * @param op
-     *            Reducer toNested combine neighbors
+     *            Reducer to combine neighbors
      * @return Combined / Partially Reduced PersistentQueueX
      */
     @Override
@@ -1368,13 +1409,13 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<persistentQueueX>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<persistentQueueX> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<persistentQueueX>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<persistentQueueX> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -1562,14 +1603,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
             return new MonadRec<persistentQueueX>(){
                 @Override
                 public <T, R> Higher<persistentQueueX, R> tailRec(T initial, Function<? super T, ? extends Higher<persistentQueueX,? extends Xor<T, R>>> fn) {
-                    PersistentQueueX<Xor<T, R>> next = PersistentQueueX.of(Xor.secondary(initial));
-                    boolean newValue[] = {false};
-                    for(;;){
-                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> PersistentQueueX.of(e)));
-                        if(!newValue[0])
-                            break;
-                    }
-                    return Xor.sequencePrimary(next).map(l->l.to().persistentQueueX(LAZY)).get();
+                    return PersistentQueueX.tailRec(initial,fn.andThen(PersistentQueueX::narrowK));
                 }
             };
         }
@@ -1586,7 +1620,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          * }
          * </pre>
          *
-         * @param m Monoid toNested use for combining PQueues
+         * @param m Monoid to use for combining PQueues
          * @return Type class for combining PQueues
          */
         public static <T> MonadPlus<persistentQueueX> monadPlus(Monoid<PersistentQueueX<T>> m){
@@ -1633,10 +1667,11 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T> Foldable<persistentQueueX> foldable(){
+        public static <T,R> Foldable<persistentQueueX> foldable(){
             BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldRightFn =  (m, l)-> PersistentQueueX.narrowK(l).foldRight(m);
             BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldLeftFn = (m, l)-> PersistentQueueX.narrowK(l).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            Fn3<Monoid<R>, Function<T, R>, Higher<persistentQueueX, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
         private static  <T> PersistentQueueX<T> concat(PQueue<T> l1, PQueue<T> l2){
@@ -1655,5 +1690,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         private static <T,R> PersistentQueueX<R> map(PersistentQueueX<T> lt, Function<? super T, ? extends R> fn){
             return lt.map(fn);
         }
+    }
+
+    public static  <T,R> PersistentQueueX<R> tailRec(T initial, Function<? super T, ? extends PersistentQueueX<? extends Xor<T, R>>> fn) {
+        return ListX.tailRec(initial,fn).to().persistentQueueX(Evaluation.LAZY);
     }
 }

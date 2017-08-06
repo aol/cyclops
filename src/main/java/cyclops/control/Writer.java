@@ -217,6 +217,15 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
     public <W1> Coproduct<W1,Higher<writer,W>,T> coproduct(Monoid<W> monoid,InstanceDefinitions<W1> def2){
         return Coproduct.right(this,def2, Instances.definitions(monoid));
     }
+    public static  <W,T> Kleisli<Higher<writer, W>,Writer<W,T>,T> kindKleisli(Monoid<W> m){
+        return Kleisli.of(Instances.monad(m), Writer::widen);
+    }
+    public static <W,T> Higher<Higher<writer, W>, T> widen(Writer<W,T> narrow) {
+        return narrow;
+    }
+    public static  <W,T> Cokleisli<Higher<writer, W>,T,Writer<W,T>> kindCokleisli(){
+        return Cokleisli.of(Writer::narrowK);
+    }
 
     public Active<Higher<writer,W>,T> allTypeclasses(Monoid<W> monoid){
         return Active.of(this, Instances.definitions(monoid));
@@ -276,13 +285,13 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<writer, W>>> traverse() {
-                    return Maybe.none();
+                public <C2, T> Traverse<Higher<writer, W>> traverse() {
+                    return Instances.traverse(monoid);
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<writer, W>>> foldable() {
-                    return Maybe.just(Writer.Instances.foldable());
+                public <T> Foldable<Higher<writer, W>> foldable() {
+                    return Writer.Instances.foldable();
                 }
 
                 @Override
@@ -359,6 +368,38 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 }
             };
         }
+        public static <W> Traverse<Higher<writer, W>> traverse(Monoid<W> monoid) {
+            return new Traverse<Higher<writer, W>>() {
+                @Override
+                public <C2, T, R> Higher<C2, Higher<Higher<writer, W>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<writer, W>, T> ds) {
+                    Writer<W, T> w = narrowK(ds);
+                    Higher<C2, R> r = w.visit((t, m) -> fn.apply(t.v1));
+                    Higher<C2, Higher<Higher<writer, W>, R>> x = applicative.map_(r, t -> widen(Writer.writer(t, monoid)));
+                    return x;
+
+                }
+
+                @Override
+                public <C2, T> Higher<C2, Higher<Higher<writer, W>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<writer, W>, Higher<C2, T>> ds) {
+                    return traverseA(applicative,Function.identity(),ds);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<writer, W>, R> ap(Higher<Higher<writer, W>, ? extends Function<T, R>> fn, Higher<Higher<writer, W>, T> apply) {
+                    return Instances.applicative(monoid).ap(fn,apply);
+                }
+
+                @Override
+                public <T> Higher<Higher<writer, W>, T> unit(T value) {
+                    return Instances.unit(monoid).unit(value);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<writer, W>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<writer, W>, T> ds) {
+                    return Instances.<W>functor().map(fn,ds);
+                }
+            };
+        }
 
         public static <W> Foldable<Higher<writer,W>> foldable() {
             return new Foldable<Higher<writer, W>>() {
@@ -373,6 +414,11 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 @Override
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<writer, W>, T> ds) {
                     return monoid.foldLeft(narrowK(ds).getValue().v1);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<writer, W>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
                 }
             };
         }
@@ -397,4 +443,5 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
 
 
     }
+
 }

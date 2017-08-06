@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 /**
  * Class that represents a Closed Variable
- * In Java 8 because of the effectively final rule references toNested captured
+ * In Java 8 because of the effectively final rule references to captured
  * variables can't be changed.
  * e.g.
  *<pre>{@code 
@@ -98,7 +98,7 @@ public class MutableFloat implements To<MutableFloat>,Supplier<Float>, Consumer<
     }
 
     /**
-     * Use the supplied function toNested perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy map operation when get is called
      * <pre>
      * {@code 
      *  MutableFloat mutable = MutableFlaot.fromExternal(()->!this.value,val->!this.value);
@@ -112,8 +112,8 @@ public class MutableFloat implements To<MutableFloat>,Supplier<Float>, Consumer<
      * </pre>
      * 
      * 
-     * @param fn Map function toNested be applied toNested the result when get is called
-     * @return Mutable that lazily applies the provided function when get is called toNested the return value
+     * @param fn Map function to be applied to the result when get is called
+     * @return Mutable that lazily applies the provided function when get is called to the return value
      */
     public <R> Mutable<R> mapOutputToObj(final Function<Float, R> fn) {
         final MutableFloat host = this;
@@ -127,7 +127,7 @@ public class MutableFloat implements To<MutableFloat>,Supplier<Float>, Consumer<
     }
 
     /**
-     * Use the supplied function toNested perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy map operation when get is called
      * <pre>
      * {@code 
      *  MutableFloat mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
@@ -141,8 +141,8 @@ public class MutableFloat implements To<MutableFloat>,Supplier<Float>, Consumer<
      * </pre>
      * 
      * 
-     * @param fn Map function toNested be applied toNested the input when set is called
-     * @return Mutable that lazily applies the provided function when set is called toNested the input value
+     * @param fn Map function to be applied to the input when set is called
+     * @return Mutable that lazily applies the provided function when set is called to the input value
      */
     public <T1> Mutable<T1> mapInputToObj(final Function<T1, Float> fn) {
         final MutableFloat host = this;

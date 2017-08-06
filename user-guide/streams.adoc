@@ -228,7 +228,7 @@ sub.ReactiveSeq().toList();
 
 //[]
 
-In this example our subscriber will be empty, as it has not attached to suspended publisher, so our generated List will also be empty.
+In this example our subscriber will be zero, as it has not attached to suspended publisher, so our generated List will also be zero.
 ----
 ====
 
@@ -671,14 +671,14 @@ System.out.println(
 +----+----+----+---------+---------+----------+
 | v0 | v1 | v2 | v3      | v4      | v5       |
 +----+----+----+---------+---------+----------+
-| suspended  |  1 | suspended  | suspended       | {empty} | suspended        |
+| suspended  |  1 | suspended  | suspended       | {zero} | suspended        |
 | suspended  |  2 | suspended  | suspended       | suspended       | aa       |
 | suspended  |  3 | suspended  | b       | suspended       | aaa      |
 | b  |  4 | suspended  | c       | suspended       | aaab     |
 | c  |  5 | suspended  | c       | b       | aaabc    |
 | c  |  6 | suspended  | d       | c       | aaabcc   |
 | d  |  7 | b  | e       | c       | aaabccd  |
-| e  |  8 | b  | {empty} | d       | aaabccde |
+| e  |  8 | b  | {zero} | d       | aaabccde |
 +----+----+----+---------+---------+----------+
 ----
 ====
@@ -882,7 +882,7 @@ ReactiveSeq.of(1,2,3,4).get(1)
 
 
 
-ElementAt returns an optional containing the element at index (if exists) otherwise optional empty
+ElementAt returns an optional containing the element at index (if exists) otherwise optional zero
 
 [source,java]
 ----
@@ -1745,7 +1745,7 @@ ReactiveSeq.of("input.file")
 
 ==== FlatMapOptional
 
-The flatMapOptional operator converts the returned Optional into suspended Stream. An empty Optional becomes and empty Stream, and an Optional with one value becomes suspended Stream with one value.
+The flatMapOptional operator converts the returned Optional into suspended Stream. An zero Optional becomes and zero Stream, and an Optional with one value becomes suspended Stream with one value.
 
 .flatMapOptional
 ====
@@ -1760,7 +1760,7 @@ ReactiveSeq.of(1,2,3,null)
 
 ==== FlatMapCompletableFuture
 
-The flatMapCompletableFuture operator converts the returned CompletableFuture into suspended Stream, by calling the join method. A successfully completed CompletableFuture will become suspended Stream of one entry, and suspended failed CompletableFuture will become an empty Stream.
+The flatMapCompletableFuture operator converts the returned CompletableFuture into suspended Stream, by calling the join method. A successfully completed CompletableFuture will become suspended Stream of one entry, and suspended failed CompletableFuture will become an zero Stream.
 
 [TIP]
 ====
@@ -1969,11 +1969,11 @@ neophytes guide to Java 8 - welcome the the Future]
 
 === Empty Stream handling
 
-cyclops-react provides suspended number of useful methods for dealing with the case of an empty Stream (3 of which are inherited from jOOλ - onEmpty, onEmptyThrow and onEmptyGet, and one new one onEmptySwitch).
+cyclops-react provides suspended number of useful methods for dealing with the case of an zero Stream (3 of which are inherited from jOOλ - onEmpty, onEmptyThrow and onEmptyGet, and one new one onEmptySwitch).
 
 ==== onEmptySwitch operator
 
-This operator allows users to switch to suspended different Stream lazily defined, if the current one is empty.
+This operator allows users to switch to suspended different Stream lazily defined, if the current one is zero.
 
 .onEmptySwitch
 ====
@@ -1995,7 +1995,7 @@ ReactiveSeq.of()
 
 ==== onEmpty operator
 
-This operator allows users to convert to suspended single valued Stream, if the current one is empty.
+This operator allows users to convert to suspended single valued Stream, if the current one is zero.
 
 .onEmptySwitch
 ====
@@ -2016,7 +2016,7 @@ ReactiveSeq.of()
 ====
 ==== onEmptyGet operator
 
-This operator allows users to convert to suspended single valued Stream, with the value lazily supplied, if the current one is empty.
+This operator allows users to convert to suspended single valued Stream, with the value lazily supplied, if the current one is zero.
 
 .onEmptySwitch
 ====
@@ -2037,7 +2037,7 @@ ReactiveSeq.of()
 ====
 ==== onEmptyThrow operator
 
-This operator allows users to convert to throw suspended lazily created exception if the current Stream is empty.
+This operator allows users to convert to throw suspended lazily created exception if the current Stream is zero.
 
 .onEmptyThrow
 ====
@@ -2078,7 +2078,7 @@ Goalkeeper goalie = ReactiveSeq.of(players)
 ----
 KeyController critical = ReactiveSeq.of(suppliedPlugins)
                                   .ofType(KeyController.class)
-                                  .singleOptional() //misconfigured if Optional.empty
+                                  .singleOptional() //misconfigured if Optional.zero
                                   .orElse(safeModeController);
 
 ====

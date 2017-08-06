@@ -69,7 +69,7 @@ import java.util.stream.Stream;
  *  Either's have two states
  *  Right : Most methods operate naturally on the primary type, if it is present. If it is not, nothing happens.
  *  Left : Most methods do nothing to the secondary type if it is present.
- *              To operate on the Left type takeOne call swap() or use secondary analogs of the main operators.
+ *              To operate on the Left type first call swap() or use secondary analogs of the main operators.
  *
  *  Instantiating an Either - Right
  *  <pre>
@@ -95,7 +95,7 @@ import java.util.stream.Stream;
  *  Xor.accumulateLeft(ListX.of(Either.left("failed1"),
                                                     Either.left("failed2"),
                                                     Either.right("success")),
-                                                    Semigroups.stringConcat)
+                                                    SemigroupK.stringConcat)
  *
  *  //failed1failed2
  *
@@ -131,7 +131,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         return fromFuture(Future.of(s,ex));
     }
     /**
-     * Create a reactive CompletableEither
+     * Create a reactiveBuffer CompletableEither
      *
      * <pre>
      *  {@code
@@ -370,7 +370,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         return res.swap();
     }
     /**
-     * Traverse a Collection of Either producting an Either3 with a ListX, applying the transformation function to every
+     * TraverseOps a Collection of Either producting an Either3 with a ListX, applying the transformation function to every
      * element in the list
      *
      * @param xors Eithers to sequence and transform
@@ -1021,12 +1021,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     LT secondaryGet();
 
     /**
-     * @return The Left value wrapped in an Optional if present, otherwise an empty Optional
+     * @return The Left value wrapped in an Optional if present, otherwise an zero Optional
      */
     Optional<LT> secondaryToOptional();
 
     /**
-     * @return A Stream containing the secondary value if present, otherwise an empty Stream
+     * @return A Stream containing the secondary value if present, otherwise an zero Stream
      */
     ReactiveSeq<LT> secondaryToStream();
 
@@ -1109,7 +1109,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * <pre>
      * {@code
      *  Either<String,String> fail1 =  Either.left("failed1");
-        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.left("failed2").list(), Semigroups.collectionConcat(),(a,b)->a+b);
+        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.left("failed2").list(), SemigroupK.collectionConcat(),(a,b)->a+b);
 
         //Left of [LinkedListX.of("failed1","failed2")))]
      * }

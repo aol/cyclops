@@ -13,7 +13,7 @@ import lombok.ToString;
 
 /**
  * Class that represents a Closed Variable
- * In Java 8 because of the effectively final rule references toNested captured
+ * In Java 8 because of the effectively final rule references to captured
  * variables can't be changed.
  * e.g.
  *<pre>{@code 
@@ -99,7 +99,7 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
     }
 
     /**
-     * Use the supplied function toNested perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy map operation when get is called
      * <pre>
      * {@code 
      *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
@@ -113,8 +113,8 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * </pre>
      * 
      * 
-     * @param fn Map function toNested be applied toNested the result when get is called
-     * @return Mutable that lazily applies the provided function when get is called toNested the return value
+     * @param fn Map function to be applied to the result when get is called
+     * @return Mutable that lazily applies the provided function when get is called to the return value
      */
     public <R> Mutable<R> mapOutputToObj(final Function<Double, R> fn) {
         final MutableDouble host = this;
@@ -128,7 +128,7 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
     }
 
     /**
-     * Use the supplied function toNested perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy map operation when get is called
      * <pre>
      * {@code 
      *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
@@ -142,8 +142,8 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * </pre>
      * 
      * 
-     * @param fn Map function toNested be applied toNested the input when set is called
-     * @return Mutable that lazily applies the provided function when set is called toNested the input value
+     * @param fn Map function to be applied to the input when set is called
+     * @return Mutable that lazily applies the provided function when set is called to the input value
      */
     public <T1> Mutable<T1> mapInputToObj(final Function<T1, Double> fn) {
         final MutableDouble host = this;
@@ -158,7 +158,7 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
     }
 
     /**
-     * Use the supplied function toNested perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy map operation when get is called
      * <pre>
      * {@code 
      *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
@@ -172,8 +172,8 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * </pre>
      * 
      * 
-     * @param fn Map function toNested be applied toNested the result when get is called
-     * @return Mutable that lazily applies the provided function when get is called toNested the return value
+     * @param fn Map function to be applied to the result when get is called
+     * @return Mutable that lazily applies the provided function when get is called to the return value
      */
     public MutableDouble mapOutput(final DoubleUnaryOperator fn) {
         final MutableDouble host = this;
@@ -187,7 +187,7 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
     }
 
     /**
-     * Use the supplied function toNested perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy map operation when get is called
      * <pre>
      * {@code 
      *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
@@ -201,8 +201,8 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * </pre>
      * 
      * 
-     * @param fn Map function toNested be applied toNested the input when set is called
-     * @return Mutable that lazily applies the provided function when set is called toNested the input value
+     * @param fn Map function to be applied to the input when set is called
+     * @return Mutable that lazily applies the provided function when set is called to the input value
      */
     public MutableDouble mapInput(final DoubleUnaryOperator fn) {
         final MutableDouble host = this;

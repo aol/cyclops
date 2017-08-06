@@ -141,7 +141,7 @@ public class IxScanLeftTakeRight extends ShakespearePlaysScrabble {
                             .sumInt();
 
         // Placing the word on the board
-        // Building the streams of takeOne and last letters
+        // Building the streams of first and last letters
         IxFunction<String, Ix<Integer>> first3 =
                 word -> Ix.from(IterableSpliterator.of(word.chars().boxed().limit(3).spliterator())) ;
         IxFunction<String, Ix<Integer>> last3 =

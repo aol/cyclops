@@ -14,7 +14,7 @@ public class Lambda {
         return it;
     }
     /**
-     * E.g. toNested use a supplier toNested embed additional code inisde a ternary operator
+     * E.g. to use a supplier to embed additional code inisde a ternary operator
      * 
      * <pre>
      * {@code 
@@ -26,14 +26,14 @@ public class Lambda {
      * }
      * </pre>
      * 
-     * @param supplier Lambda / method toNested assign type of Supplier toNested
+     * @param supplier Lambda / method to assign type of Supplier to
      * @return Supplier
      */
     public static <T> Fn0<T> s(final Fn0<T> supplier) {
         return supplier;
     }
     /**
-     * E.g. toNested use a supplier toNested embed additional code inisde a ternary operator
+     * E.g. to use a supplier to embed additional code inisde a ternary operator
      * 
      * <pre>
      * {@code 
@@ -45,7 +45,7 @@ public class Lambda {
      * }
      * </pre>
      * 
-     * @param supplier Lambda / method toNested assign type of Supplier toNested
+     * @param supplier Lambda / method to assign type of Supplier to
      * @return Supplier
      */
     public static <T> Fn0<T> λ(final Fn0<T> supplier) {

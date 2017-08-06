@@ -186,7 +186,7 @@ public class FastFuture<T> {
         return new FastFuture<T>().completeExceptionally(t);
     }
 
-    /** Internal conversion method toNested convert CompletableFutures toNested FastFuture.
+    /** Internal conversion method to convert CompletableFutures to FastFuture.
      */
     public static <T> FastFuture<T> fromCompletableFuture(final CompletableFuture<T> cf) {
         final FastFuture<T> f = new FastFuture<>();
@@ -200,7 +200,7 @@ public class FastFuture<T> {
     }
 
     public static <R> FastFuture<List<R>> allOf(final Runnable onComplete, final FastFuture... futures) {
-        //needs toNested use onComplete
+        //needs to use onComplete
         final FastFuture allOf = new FastFuture(
                                                 FinalPipeline.empty(), futures.length);
 
@@ -220,7 +220,7 @@ public class FastFuture<T> {
     }
 
     public static <R> FastFuture<List<R>> xOf(final int x, final Runnable onComplete, final FastFuture... futures) {
-        //needs toNested use onComplete
+        //needs to use onComplete
         final FastFuture xOf = new FastFuture(
                                               FinalPipeline.empty(), x);
         for (final FastFuture next : futures) {

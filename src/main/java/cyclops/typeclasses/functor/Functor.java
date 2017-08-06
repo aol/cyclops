@@ -1,9 +1,13 @@
 package cyclops.typeclasses.functor;
 
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.State;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 /**
  * Functor type class, performs a transformation operation over the supplied data structure
@@ -27,7 +31,7 @@ public interface Functor<CRE> {
      * </pre>
      * 
      * @param fn Transformation function
-     * @param ds Datastructure toNested applyHKT
+     * @param ds Datastructure to applyHKT
      * @return
      */
     public <T,R> Higher<CRE,R> map(Function<? super T, ? extends R> fn, Higher<CRE, T> ds);
@@ -48,6 +52,7 @@ public interface Functor<CRE> {
     default <T, R> Function<Higher<CRE, T>, Higher<CRE, R>> lift(final Function<? super T, ? extends R> fn) {
         return t -> map(fn, t);
     }
-    
+
+
  
 }

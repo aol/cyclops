@@ -23,7 +23,7 @@ public class ScanTckPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createFailedPublisher() {
-		return null; //not possible toNested forEachAsync toNested failed Stream
+		return null; //not possible to forEachAsync to failed Stream
 		
 	}
 	

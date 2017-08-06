@@ -21,6 +21,7 @@ import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -56,7 +57,15 @@ import java.util.stream.Stream;
  */
 public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransformable<ST, PT> ,Higher2<ior,ST,PT> {
 
-
+    public static  <L,T> Kleisli<Higher<ior,L>,Ior<L,T>,T> kindKleisli(){
+        return Kleisli.of(Instances.monad(), Ior::widen);
+    }
+    public static <L,T> Higher<Higher<ior,L>, T> widen(Ior<L,T> narrow) {
+        return narrow;
+    }
+    public static  <L,T> Cokleisli<Higher<ior,L>,T,Ior<L,T>> kindCokleisli(){
+        return Cokleisli.of(Ior::narrowK);
+    }
     public static <W1,ST,PT> Nested<Higher<ior,ST>,W1,PT> nested(Ior<ST,Higher<W1,PT>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
@@ -113,7 +122,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                                 secondary, primary);
     }
     /**
-     * Construct an Ior that contains a singleUnsafe value extracted from the supplied reactive-streams Publisher
+     * Construct an Ior that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
 
      * <pre>
      * {@code
@@ -482,7 +491,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     }
 
     /**
-     * @return An empty Optional if this Ior only has lazy the Secondary or Primary type. Or an Optional containing a Tuple2
+     * @return An zero Optional if this Ior only has lazy the Secondary or Primary type. Or an Optional containing a Tuple2
      * with both the Secondary and Primary types if they are both present.
      */
     Optional<Tuple2<ST, PT>> both();
@@ -582,12 +591,12 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     ST secondaryGet();
 
     /**
-     * @return The Secondary value wrapped in an Optional if present, otherwise an empty Optional
+     * @return The Secondary value wrapped in an Optional if present, otherwise an zero Optional
      */
     Optional<ST> secondaryToOptional();
 
     /**
-     * @return A Stream containing the secondary value if present, otherwise an empty Stream
+     * @return A Stream containing the secondary value if present, otherwise an zero Stream
      */
     ReactiveSeq<ST> secondaryToStream();
 
@@ -775,14 +784,14 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     /**
      * Accumulate the results only from those Iors which have a Primary type present, using the supplied mapping function to
      * convert the data from each Ior before reducing them using the supplied Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see cyclops2.Semigroups }.
+     * input values of the same type and returns the combined result) {@see cyclops2.SemigroupK }.
      *
      * <pre>
      * {@code
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
 
-     * Ior<?,String> iors = Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),i->""+i,Semigroups.stringConcat);
+     * Ior<?,String> iors = Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),i->""+i,SemigroupK.stringConcat);
        //Ior.primary("101"));
      * }
      * </pre>
@@ -802,14 +811,14 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
 
     /**
      *  Accumulate the results only from those Iors which have a Primary type present, using the supplied  Semgigroup (a combining BiFunction/BinaryOperator that takes two
-     * input values of the same type and returns the combined result) {@see cyclops2.Semigroups }.
+     * input values of the same type and returns the combined result) {@see cyclops2.SemigroupK }.
      *
      * <pre>
      * {@code
      *  Ior<String,Integer> just  = Ior.primary(10);
         Ior<String,Integer> none = Ior.secondary("none");
      *
-     *  Ior<?,Integer> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Semigroups.intSum);
+     *  Ior<?,Integer> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),SemigroupK.intSum);
         //Ior.primary(11);
      *
      * }
@@ -1459,6 +1468,8 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
 
         public static <L> InstanceDefinitions<Higher<ior, L>> definitions(){
             return new InstanceDefinitions<Higher<ior, L>>() {
+
+
                 @Override
                 public <T, R> Functor<Higher<ior, L>> functor() {
                     return Instances.functor();
@@ -1500,13 +1511,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                 }
 
                 @Override
-                public <C2, T> Maybe<Traverse<Higher<ior, L>>> traverse() {
-                    return Maybe.just(Instances.traverse());
+                public <C2, T> Traverse<Higher<ior, L>> traverse() {
+                    return Instances.traverse();
                 }
 
                 @Override
-                public <T> Maybe<Foldable<Higher<ior, L>>> foldable() {
-                    return Maybe.just(Instances.foldable());
+                public <T> Foldable<Higher<ior, L>> foldable() {
+                    return Instances.foldable();
                 }
 
                 @Override
@@ -1559,6 +1570,14 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                 @Override
                 public <T> Higher<Higher<ior, L>, T> unit(T value) {
                     return Instances.<L>unit().unit(value);
+                }
+            };
+        }
+        public static BiFunctor<ior> bifunctor(){
+            return new BiFunctor<ior>() {
+                @Override
+                public <T, R, T2, R2> Higher2<ior, R, R2> bimap(Function<? super T, ? extends R> fn, Function<? super T2, ? extends R2> fn2, Higher2<ior, T, T2> ds) {
+                    return narrowK(ds).bimap(fn,fn2);
                 }
             };
         }
@@ -1638,6 +1657,11 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<ior, L>, T> ds) {
                     Ior<L,T> ior = Ior.narrowK(ds);
                     return ior.foldLeft(monoid);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<ior, L>, T> nestedA) {
+                    return narrowK(nestedA).<R>map(fn).foldLeft(mb);
                 }
             };
         }

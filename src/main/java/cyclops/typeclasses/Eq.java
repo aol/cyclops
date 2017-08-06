@@ -3,7 +3,7 @@ package cyclops.typeclasses;
 
 import com.aol.cyclops2.hkt.Higher;
 
-public interface Eq<CRE> {
+public interface Eq<CRE>{
 
     default <T> boolean equals(Higher<CRE,T> c1, Higher<CRE,T> c2){
         return c1.equals(c2);

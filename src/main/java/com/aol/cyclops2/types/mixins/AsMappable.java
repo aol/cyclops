@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 
 /**
  * Don't break encapsulation of classes for testing purposes
- * Coerce Objects toNested Map form in testing, toNested test their values.
+ * Coerce Objects to Map form in testing, to test their values.
  * 
  * @author johnmcclean
  *
@@ -27,7 +27,7 @@ public class AsMappable {
      * </pre>
      * 
      * 
-     * @param toCoerce Object toNested convert toNested a Mappable
+     * @param toCoerce Object to convert to a Mappable
      * @return  Mappable instance
      */
     public static Mappable asMappable(final Object toCoerce) {

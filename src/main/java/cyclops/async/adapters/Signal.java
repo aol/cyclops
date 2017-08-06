@@ -32,8 +32,8 @@ public class Signal<T> {
      * 
      * Construct a new Signal
      * 
-     * @param continuous Adapter toNested handle the continuous flow (not only different values)
-     * @param discrete  Adapter toNested handle the discrete (changed) flow
+     * @param continuous Adapter to handle the continuous flow (not only different values)
+     * @param discrete  Adapter to handle the discrete (changed) flow
      */
     public Signal(final Adapter<T> continuous, final Adapter<T> discrete) {
 

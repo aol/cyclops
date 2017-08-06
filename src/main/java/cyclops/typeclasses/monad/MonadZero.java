@@ -2,6 +2,7 @@ package cyclops.typeclasses.monad;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.typeclasses.Filterable;
+import cyclops.typeclasses.functions.MonoidK;
 
 
 import java.util.function.Predicate;
@@ -11,7 +12,7 @@ import java.util.function.Predicate;
 /**
  * A filterable monad
  * 
- * The zero() operator is used toNested one supplied HKT with it's zero / empty equivalent when filtered out
+ * The zero() operator is used to one supplied HKT with it's zero / zero equivalent when filtered out
  * 
  * @author johnmcclean
  *
@@ -19,13 +20,13 @@ import java.util.function.Predicate;
  */
 public interface MonadZero<CRE> extends Monad<CRE>, Filterable<CRE> {
     
-    
+
     /**
-     * e.g. for Optional we can use Optional.empty()
+     * e.g. for Optional we can use Optional.zero()
      * 
      * @return Identity value or zero value for the HKT type, the generic type is unknown
      */
-    public Higher<CRE, ?> zero();
+    public <T> Higher<CRE, T> zero();
     
     /* (non-Javadoc)
      * @see com.aol.com.aol.cyclops2.hkt.typeclasses.Filterable#filter(java.util.function.Predicate, com.aol.com.aol.cyclops2.hkt.alias.Higher)

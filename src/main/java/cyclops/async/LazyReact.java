@@ -97,7 +97,7 @@ public class LazyReact implements ReactBuilder {
 
 
     /**
-     * Turn automatic caching of values on for the FutureStream toNested be generated
+     * Turn automatic caching of values on for the FutureStream to be generated
      * by this Stream builder
      * 
      * <pre>
@@ -123,10 +123,10 @@ public class LazyReact implements ReactBuilder {
 
     /* 
      * The async flag determines whether, on completion, a Future executes the next task
-     * synchronously on it's current thread or redistributes it back toNested a task executor
-     * toNested handle execution.
+     * synchronously on it's current thread or redistributes it back to a task executor
+     * to handle execution.
      * E.g. if async is false, subsequent tasks will be executed on the calling thread.
-     *      if async is true, a task executor will be used toNested determine the executing thread.
+     *      if async is true, a task executor will be used to determine the executing thread.
      * 
      * 
      *  {@see LazyReact#autoOptimize}
@@ -141,9 +141,9 @@ public class LazyReact implements ReactBuilder {
     /**
      * Construct a LazyReact builder using standard thread pool.
      * By default, unless ThreadPools is configured otherwise this will be sized
-     * toNested the available processors
+     * to the available processors
      * 
-     * ThreadPools#getStandard is used toNested determine task executor for parallel task execution
+     * ThreadPools#getStandard is used to determine task executor for parallel task execution
      * 
      * @see ThreadPools#getStandard()
      */
@@ -156,7 +156,7 @@ public class LazyReact implements ReactBuilder {
     /**
      * Construct a LazyReact builder with provided Executor
      * 
-     * @param executor Executor toNested use
+     * @param executor Executor to use
      */
     public LazyReact(final Executor executor) {
 
@@ -174,7 +174,7 @@ public class LazyReact implements ReactBuilder {
 
     /**
      * @param maxActive Max active Future Tasks
-     * @param executor  Executor toNested use
+     * @param executor  Executor to use
      */
     public LazyReact(final int maxActive, final Executor executor) {
 
@@ -215,7 +215,7 @@ public class LazyReact implements ReactBuilder {
     /**
      * Construct a FutureStream containing a singleUnsafe Future
      * 
-     * @param cf CompletableFuture toNested create Stream from
+     * @param cf CompletableFuture to create Stream from
      * @return FutureStream of a singleUnsafe value
      */
     public <U> FutureStream<U> from(final CompletableFuture<U> cf) {
@@ -241,7 +241,7 @@ public class LazyReact implements ReactBuilder {
      * }
      * </pre>
      * 
-     * @param cf Array of Futures toNested construct Stream from
+     * @param cf Array of Futures to construct Stream from
      * @return FutureStream from array of Futures
      */
     public <U> FutureStream<U> from(final CompletableFuture<U>... cf) {
@@ -252,7 +252,7 @@ public class LazyReact implements ReactBuilder {
     /* 
      * Construct a new Stream from another Stream
      * 
-     *	@param s Stream toNested copy
+     *	@param s Stream to copy
      *	@param org ignored for LazyFutureStreams
      *	@return
      * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#construct(java.util.reactiveStream.Stream, java.util.List)
@@ -317,10 +317,10 @@ public class LazyReact implements ReactBuilder {
     /**
      * Turn on automatic threading optimization. Tasks will be 'fanned' out across threads initially
      * and subsequent task completion events will trigger further processing on the same thread. Where
-     * operations require working on the results of multiple tasks, data will be forwarded toNested a Queue, data
+     * operations require working on the results of multiple tasks, data will be forwarded to a Queue, data
      * read from the queue will transform also be 'fanned' out for processing across threads (with subsequent events
-     *  again occuring on the same thread). This is equivalent toNested optimal use of the async() and sync() operators
-     * on a Stream. autoOptimize overrides direct calls toNested sync() and async() on the Stream.
+     *  again occuring on the same thread). This is equivalent to optimal use of the async() and sync() operators
+     * on a Stream. autoOptimize overrides direct calls to sync() and async() on the Stream.
      * By default autoOptimize is On.
      * 
      * <pre>
@@ -340,7 +340,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Turn off automatic threading management. This allows use async() and sync() toNested control fan out directly in a FutureStream
+     * Turn off automatic threading management. This allows use async() and sync() to control fan out directly in a FutureStream
      * By default autoOptimize is On.
      * 
      *  <pre>
@@ -363,7 +363,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start any created Streams in asyncrhonous mode - that is tasks will be submited toNested an Executor toNested be run.
+     * Start any created Streams in asyncrhonous mode - that is tasks will be submited to an Executor to be run.
      * 
      * <pre>
      * {@code 
@@ -405,7 +405,7 @@ public class LazyReact implements ReactBuilder {
      * </pre>
      * 
      * @param publisher
-     *            toNested construct FutureStream from
+     *            to construct FutureStream from
      * @return FutureStream
      */
     public <T> FutureStream<T> fromPublisher(final Publisher<? extends T> publisher) {
@@ -465,7 +465,7 @@ public class LazyReact implements ReactBuilder {
      * </pre>
      * 
      * 
-     *	@param reactiveStream Stream that serves as input toNested FutureStream
+     *	@param reactiveStream Stream that serves as input to FutureStream
      *	@return FutureStream
      * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStream(java.util.reactiveStream.Stream)
      */
@@ -504,7 +504,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /* 
-     *  Construct a FutureStream from the provided Stream, Stream will be mapped toNested a Stream of CompeltableFutures internally
+     *  Construct a FutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
      * 
      * <pre>
      * {@code 
@@ -518,7 +518,7 @@ public class LazyReact implements ReactBuilder {
      * </pre>
      * 
      * 
-     *	@param reactiveStream Stream that serves as input toNested FutureStream
+     *	@param reactiveStream Stream that serves as input to FutureStream
      *	@return FutureStream
      * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStreamWithoutFutures(java.util.reactiveStream.Stream)
      */
@@ -532,7 +532,7 @@ public class LazyReact implements ReactBuilder {
     /* 
      * 
      * Construct a FutureStream from specified Suppliers. Each Supplier is executed asyncrhonously,
-     * and it's results provided toNested next phase of the Stream
+     * and it's results provided to next phase of the Stream
      * 
      * <pre>
      * {@code 
@@ -544,7 +544,7 @@ public class LazyReact implements ReactBuilder {
      * }
      * </pre>
      * 
-     *	@param actions Suppliers toNested execute
+     *	@param actions Suppliers to execute
      *	@return FutureStream
      * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.List)
      */
@@ -563,7 +563,7 @@ public class LazyReact implements ReactBuilder {
 
     /**
      * @param executor Task Executor for concurrent tasks
-     * @param async If true each task will be submitted toNested an executor service
+     * @param async If true each task will be submitted to an executor service
      */
     public LazyReact(final Executor executor, final Boolean async, final MaxActive maxActive,
             final boolean streamOfFutures, final boolean objectPoolingActive, final boolean autoOptimize, final boolean autoMemoize,
@@ -585,7 +585,7 @@ public class LazyReact implements ReactBuilder {
 
     /**
      * @param executor Task Executor for concurrent tasks
-     * @param async If true each task will be submitted toNested an executor service
+     * @param async If true each task will be submitted to an executor service
      * @param maxActive2 Max Active Future Tasks
      */
     public LazyReact(final Executor executor,  final boolean async, final MaxActive maxActive2) {
@@ -622,7 +622,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /* 
-     * Build an FutureStream that reacts Asynchronously toNested the Suppliers within the
+     * Build an FutureStream that reacts Asynchronously to the Suppliers within the
      * specified Stream
      * 
      * <pre>
@@ -635,7 +635,7 @@ public class LazyReact implements ReactBuilder {
      * }
      * </pre>
      * 
-     *	@param actions Stream toNested react toNested
+     *	@param actions Stream to react to
      *	@return FutureStream
      * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.reactiveStream.Stream)
      */
@@ -645,7 +645,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /* 
-     * Build an FutureStream that reacts Asynchronously toNested the Suppliers within the
+     * Build an FutureStream that reacts Asynchronously to the Suppliers within the
      * specified Iterator 
      * 
      * <pre>
@@ -662,7 +662,7 @@ public class LazyReact implements ReactBuilder {
      * 
      * 
      * 
-     *	@param actions Iterator toNested react toNested
+     *	@param actions Iterator to react to
      *	@return FutureStream
      * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.Iterator)
      */
@@ -675,7 +675,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /*
-     * Build an FutureStream that reacts Asynchronously toNested the Suppliers within the
+     * Build an FutureStream that reacts Asynchronously to the Suppliers within the
      * specified Iterator 
      *   
      * <pre>
@@ -703,9 +703,9 @@ public class LazyReact implements ReactBuilder {
     /**
      * * Construct a LazyReact builder using standard thread pool.
      * By default, unless ThreadPools is configured otherwise this will be sized
-     * toNested the available processors
+     * to the available processors
      * 
-     * ThreadPools#getStandard is used toNested determine task executor for parallel task execution
+     * ThreadPools#getStandard is used to determine task executor for parallel task execution
      * 
      * @see ThreadPools#getStandard()
      * 
@@ -743,7 +743,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * @return new LazyReact builder configured toNested run on a separate thread
+     * @return new LazyReact builder configured to run on a separate thread
      *         (non-blocking current thread), sequentially New ForkJoinPool will
      *         be created
      */
@@ -756,7 +756,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * @return LazyReact builder configured toNested run on a separate thread
+     * @return LazyReact builder configured to run on a separate thread
      *         (non-blocking current thread), sequentially Common free thread
      *         Executor from
      */
@@ -768,7 +768,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * @return LazyReact builder configured toNested run on a separate thread
+     * @return LazyReact builder configured to run on a separate thread
      *         (non-blocking current thread), sequentially Common free thread
      *         Executor from
      */
@@ -784,7 +784,7 @@ public class LazyReact implements ReactBuilder {
 
     /**
      * Iterate infinitely using the supplied seed and function
-     * Iteration is synchronized toNested support multiple threads using the same iterator.
+     * Iteration is synchronized to support multiple threads using the same iterator.
      * 
      * <pre>
      * {@code 
@@ -839,7 +839,7 @@ public class LazyReact implements ReactBuilder {
      * </pre>
      * 
      * 
-     * @param adapter Adapter toNested construct FutureStream from
+     * @param adapter Adapter to construct FutureStream from
      * @return FutureStream
      */
     public <U> FutureStream<U> fromAdapter(final Adapter<U> adapter) {
@@ -861,7 +861,7 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      *  new LazyReact().generate(()->"hello")
                        .limit(5)
-                       .reduce(Semigroups.stringConcat);
+                       .reduce(SemigroupK.stringConcat);
                        
         //Optional[hellohellohellohellohello]         
      * 
@@ -884,12 +884,12 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      *  new LazyReact().generate(this::load)
                        .limit(5)
-                       .reduce(Semigroups.stringConcat);
+                       .reduce(SemigroupK.stringConcat);
                        
         //Optional["data1data2data3data4data5"]         
      * 
      * }</pre>
-     * @param s Supplier toNested execute asynchronously toNested create an infinite Stream
+     * @param s Supplier to execute asynchronously to create an infinite Stream
      * @return Infinite FutureStream
      */
     public <U> FutureStream<U> generateAsync(final Supplier<U> s) {
@@ -899,7 +899,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive flow from a JDK Iterator
+     * Start a reactiveBuffer flow from a JDK Iterator
      * <pre>
      * {@code 
      *  Iterator<Integer> iterator;
@@ -908,7 +908,7 @@ public class LazyReact implements ReactBuilder {
      * 
      * }
      * </pre>
-     * @param iterator SimpleReact will iterate over this iterator concurrently toNested skip the reactive dataflow
+     * @param iterator SimpleReact will iterate over this iterator concurrently to skip the reactiveBuffer dataflow
      * @return  FutureStream
      */
     @SuppressWarnings("unchecked")
@@ -918,7 +918,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive flow from a Collection using an Iterator
+     * Start a reactiveBuffer flow from a Collection using an Iterator
      * 
      * 
      * <pre>
@@ -941,9 +941,9 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a reactiveStream.
+     * Start a reactiveBuffer dataflow from a reactiveStream.
      * 
-     * @param stream that will be used toNested drive the reactive dataflow
+     * @param stream that will be used to drive the reactiveBuffer dataflow
      * @return  FutureStream
      */
     public FutureStream<Integer> from(final IntStream stream) {
@@ -953,9 +953,9 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a reactiveStream.
+     * Start a reactiveBuffer dataflow from a reactiveStream.
      * 
-     * @param stream that will be used toNested drive the reactive dataflow
+     * @param stream that will be used to drive the reactiveBuffer dataflow
      * @return  FutureStream
      */
     public FutureStream<Double> from(final DoubleStream stream) {
@@ -963,9 +963,9 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactive dataflow from a reactiveStream.
+     * Start a reactiveBuffer dataflow from a reactiveStream.
      * 
-     * @param stream that will be used toNested drive the reactive dataflow
+     * @param stream that will be used to drive the reactiveBuffer dataflow
      * @return FutureStream
      */
     public FutureStream<Long> from(final LongStream stream) {
@@ -982,7 +982,7 @@ public class LazyReact implements ReactBuilder {
      * 
      * }
      * </pre>
-     * @param array Array toNested construct FutureStream from
+     * @param array Array to construct FutureStream from
      * @return  FutureStream
      */
     @SafeVarargs

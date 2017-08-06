@@ -213,12 +213,12 @@ public class MergeLatestTest {
     private Publisher<Integer> nextAsync() {
         return flux(1,2);
         /**
-         AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
+         PushSubscriber<Integer> sub = Spouts.asyncSubscriber();
          new Thread(()->{
 
          sub.awaitInitialization();
          try {
-         //not a reactive-stream so we don't know with certainty when demand signalled
+         //not a reactiveBuffer-stream so we don't know with certainty when demand signalled
          Thread.sleep(10);
          } catch (InterruptedException e) {
          e.printStackTrace();

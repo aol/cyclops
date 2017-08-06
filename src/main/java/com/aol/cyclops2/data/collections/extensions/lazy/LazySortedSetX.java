@@ -7,7 +7,10 @@ import cyclops.collections.mutable.SortedSetX;
 import cyclops.stream.ReactiveSeq;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collector;
+
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * An extended Set type {@see java.util.List}
@@ -37,18 +40,25 @@ import java.util.stream.Collector;
  */
 public class LazySortedSetX<T> extends AbstractLazyCollection<T,SortedSet<T>> implements SortedSetX<T> {
 
+    public static final <T> Function<ReactiveSeq<SortedSet<T>>, SortedSet<T>> asyncSortedSet() {
+        return r -> {
+            CompletableSortedSetX<T> res = new CompletableSortedSetX<>();
+            r.forEachAsync(l -> res.complete(l));
+            return res.asSortedSetX();
+        };
+    }
 
     public LazySortedSetX(SortedSet<T> list, ReactiveSeq<T> seq, Collector<T, ?, SortedSet<T>> collector,Evaluation strict) {
-        super(list, seq, collector,strict);
+        super(list, seq, collector,strict,asyncSortedSet());
 
     }
     public LazySortedSetX(SortedSet<T> list, Collector<T, ?, SortedSet<T>> collector,Evaluation strict) {
-        super(list, null, collector,strict);
+        super(list, null, collector,strict,asyncSortedSet());
 
     }
 
     public LazySortedSetX(ReactiveSeq<T> seq, Collector<T, ?, SortedSet<T>> collector,Evaluation strict) {
-        super(null, seq, collector,strict);
+        super(null, seq, collector,strict,asyncSortedSet());
 
     }
     @Override

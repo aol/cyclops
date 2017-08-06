@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 * Monad Transformer for Optional's
 
  * 
- * OptionalT allows the deeply wrapped Optional toNested be manipulating within it's nested /contained context
+ * OptionalT allows the deeply wrapped Optional to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
  *
@@ -101,7 +101,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      * }
      * </pre>
      * 
-     * @param peek  Consumer toNested accept current value of Optional
+     * @param peek  Consumer to accept current value of Optional
      * @return OptionalWT with peek call
      */
     @Override
@@ -126,7 +126,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      * </pre>
      * 
      * @param f Mapping function for the wrapped Optional
-     * @return OptionalWT that applies the map function toNested the wrapped Optional
+     * @return OptionalWT that applies the map function to the wrapped Optional
      */
     @Override
     public <B> OptionalT<W,B> map(final Function<? super T, ? extends B> f) {
@@ -146,7 +146,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      * }
      * </pre>
      * @param f FlatMap function
-     * @return OptionalWT that applies the flatMap function toNested the wrapped Optional
+     * @return OptionalWT that applies the flatMap function to the wrapped Optional
      */
 
     public <B> OptionalT<W,B> flatMapT(final Function<? super T, OptionalT<W,B>> f) {
@@ -169,9 +169,9 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
 
     /**
      * Lift a function into one that accepts and returns an OptionalWT
-     * This allows multiple monad types toNested add functionality toNested existing function and methods
+     * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. toNested add list handling  / iteration (via Optional) and iteration (via Stream) toNested an existing function
+     * e.g. to add list handling  / iteration (via Optional) and iteration (via Stream) to an existing function
      * <pre>
      * {@code 
         Function<Integer,Integer> add2 = i -> i+2;
@@ -193,7 +193,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      * }</pre>
      * 
      * 
-     * @param fn Function toNested enhance with functionality from Optional and another monad type
+     * @param fn Function to enhance with functionality from Optional and another monad type
      * @return Function that accepts and returns an OptionalWT
      */
     public static <W extends WitnessType<W>,U, R> Function<OptionalT<W,U>, OptionalT<W,R>> lift(final Function<? super U, ? extends R> fn) {
@@ -202,10 +202,10 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
 
     /**
      * Lift a BiFunction into one that accepts and returns  OptionalWTs
-     * This allows multiple monad types toNested add functionality toNested existing function and methods
+     * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. toNested add list handling / iteration (via Optional), iteration (via Stream)  and asynchronous execution (Optional)
-     * toNested an existing function
+     * e.g. to add list handling / iteration (via Optional), iteration (via Stream)  and asynchronous execution (Optional)
+     * to an existing function
      * 
      * <pre>
      * {@code 
@@ -227,7 +227,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     		//Optional.completedOptional(List[3,4,5]);
       }
       </pre>
-     * @param fn BiFunction toNested enhance with functionality from Optional and another monad type
+     * @param fn BiFunction to enhance with functionality from Optional and another monad type
      * @return Function that accepts and returns an OptionalWT
      */
     public static <W extends WitnessType<W>, U1,  U2, R> BiFunction<OptionalT<W,U1>, OptionalT<W,U2>, OptionalT<W,R>> lift2(
@@ -237,7 +237,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
 
     /**
      * Construct an OptionalWT from an AnyM that contains a monad type that contains type other than Optional
-     * The values in the underlying monad will be mapped toNested Optional<A>
+     * The values in the underlying monad will be mapped to Optional<A>
      * 
      * @param anyM AnyM that doesn't contain a monad wrapping an Optional
      * @return OptionalWT

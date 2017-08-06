@@ -3,14 +3,17 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.immutable.BagX;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.OrderedSetX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.POrderedSet;
+import org.pcollections.PStack;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
@@ -41,10 +44,16 @@ import java.util.function.Supplier;
  * @param <T> the type of elements held in this toX
  */
 public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrderedSet<T>> implements OrderedSetX<T> {
-
+    public static final <T> Function<ReactiveSeq<POrderedSet<T>>, POrderedSet<T>> asyncOrderedSet() {
+        return r -> {
+            CompletableOrderedSetX<T> res = new CompletableOrderedSetX<>();
+            r.forEachAsync(l -> res.complete(l));
+            return res.asOrderedSetX();
+        };
+    }
 
     public LazyPOrderedSetX(POrderedSet<T> list, ReactiveSeq<T> seq, Reducer<POrderedSet<T>> reducer,Evaluation strict) {
-        super(list, seq, reducer,strict);
+        super(list, seq, reducer,strict,asyncOrderedSet());
 
 
     }

@@ -5,7 +5,7 @@ import java.util.concurrent.locks.LockSupport;
 import lombok.AllArgsConstructor;
 
 /**
- * Will attempt toNested recieve or push data toNested a Queue, backing off by an exponentially increasing wait time
+ * Will recover to recieve or push data to a Queue, backing off by an exponentially increasing wait time
  * until successful.
  * 
  * @author johnmcclean

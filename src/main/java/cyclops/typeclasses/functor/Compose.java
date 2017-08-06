@@ -1,14 +1,20 @@
 package cyclops.typeclasses.functor;
 
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
 
+import cyclops.control.State;
+import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.monad.Monad;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+
 /**
  * Compose two functors so operations are applied to the inner functor
  * 
@@ -32,10 +38,23 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
 public class Compose<CRE,C2>{
-    Functor<CRE> f;
-    Functor<C2> g;
+    private final Functor<CRE> f;
+    private final Functor<C2> g;
 
 
+    public  <T,R> Higher<CRE,Higher<C2,R>> mapWithIndex(BiFunction<? super T,Long,? extends R> f, Higher<CRE,Higher<C2,T>> ds) {
+
+        return map(a -> {
+
+            R r = State.state((Long s) -> Tuple.tuple(s + 1, f.apply(a, s))).run(0l).v2;
+            return r;
+        } ,ds);
+
+
+    }
+    public <T,R> Higher<CRE,Higher<C2,Tuple2<T,Long>>> zipWithIndex(Higher<CRE,Higher<C2,T>> ds) {
+        return mapWithIndex(Tuple::tuple, ds);
+    }
     /**
      * Compose two functors
      * 

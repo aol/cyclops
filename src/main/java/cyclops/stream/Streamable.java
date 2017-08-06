@@ -66,7 +66,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /**
      * (Lazily) Construct a Streamable from a Stream.
      * 
-     * @param stream toNested construct Streamable from
+     * @param stream to construct Streamable from
      * @return Streamable
      */
     public static <T> Streamable<T> fromStream(final Stream<T> stream) {
@@ -77,7 +77,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /**
      * (Lazily) Construct a Streamable from an Iterable.
      * 
-     * @param iterable toNested construct Streamable from
+     * @param iterable to construct Streamable from
      * @return Streamable
      */
     public static <T> Streamable<T> fromIterable(final Iterable<T> iterable) {
@@ -303,7 +303,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * Construct a FutureStream from an Publisher
      * 
      * @param publisher
-     *            toNested construct ReactiveSeq from
+     *            to construct ReactiveSeq from
      * @return FutureStream
      */
     public static <T> Streamable<T> fromPublisher(final Publisher<? extends T> publisher) {
@@ -333,7 +333,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /**
      * Construct a Streamable that returns a Stream
      * 
-     * @param values toNested construct Streamable from
+     * @param values to construct Streamable from
      * @return Streamable
      */
     public static <T> Streamable<T> of(final T... values) {
@@ -401,7 +401,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param t Streamable toNested append
+     * @param t Streamable to append
      * @return New Streamable with provided Streamable appended
      */
     default Streamable<T> appendAll(final Streamable<T> t) {
@@ -418,7 +418,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param t element toNested remove
+     * @param t element to remove
      * @return Filtered Streamable
      */
     default Streamable<T> remove(final T t) {
@@ -426,7 +426,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Prepend given values toNested the skip of the Stream
+     * Prepend given values to the skip of the Stream
      * <pre>
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
@@ -437,7 +437,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
      * </pre>
-     * @param t value toNested prepend
+     * @param t value to prepend
      * @return Streamable with values prepended
      */
     default Streamable<T> prepend(final T t) {
@@ -499,7 +499,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Map the values in the Streamable from one set of values / types toNested another
+     * Map the values in the Streamable from one set of values / types to another
      * 
      * <pre>
      * {@code 
@@ -531,7 +531,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param fn Consumer toNested peek with
+     * @param fn Consumer to peek with
      * @return Streamable that will peek at values as they pass through
      */
     @Override
@@ -555,7 +555,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
                                                                   .reactiveSeq()));
     }
     /**
-     * coflatMap pattern, can be used toNested perform maybe reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      *
      * <pre>
      * {@code
@@ -615,7 +615,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @return Streamable converted toNested a List
+     * @return Streamable converted to a List
      */
     default List<T> toList() {
 
@@ -694,7 +694,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param index toNested extract element from
+     * @param index to extract element from
      * @return Element and Sequence
      */
     default T elementAt(final int index) {
@@ -702,7 +702,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * [equivalent toNested count]
+     * [equivalent to count]
      * 
      * @return size
      */
@@ -787,7 +787,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * 
      * </pre>
-     * @return this Streamable converted toNested an Optional List
+     * @return this Streamable converted to an Optional List
 
     @Override
     default Optional<ListX<T>> optional() {
@@ -796,7 +796,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
 
     /**
-     * Convert toNested a Stream with the values repeated specified times
+     * Convert to a Stream with the values repeated specified times
      * 
      * <pre>
      * {@code 
@@ -818,7 +818,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Convert toNested a Stream with the values infinitely cycled
+     * Convert to a Stream with the values infinitely cycled
      * 
      * <pre>
      * {@code 
@@ -834,7 +834,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     /**
      * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied toNested the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading reactiveStream. Not thread-safe.
      * <pre>
      * {@code 
      *  Tuple2<Streamable<Integer>, Streamable<Integer>> copies =of(1,2,3,4,5,6).duplicate();
@@ -881,7 +881,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Split this Streamable after the takeOne element (if present)
+     * Split this Streamable after the first element (if present)
      * 
      * <pre>
      * {@code 
@@ -896,7 +896,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     default Tuple2<Optional<T>, Streamable<T>> splitAtHead() {
         return reactiveSeq().splitAtHead()
-                            .map2(s -> fromStream(s));
+                            .zip(s -> fromStream(s));
     }*/
 
     /**
@@ -933,7 +933,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Convert toNested a Stream with the result of a reduction operation repeated
+     * Convert to a Stream with the result of a reduction operation repeated
      * specified times
      * 
      * <pre>
@@ -946,7 +946,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      * 
      * @param m
-     *            Monoid toNested be used in reduction
+     *            Monoid to be used in reduction
      * @param times
      *            Number of times value should be repeated
      * @return Stream with reduced values repeated
@@ -1053,7 +1053,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /** 
-     * Add an index toNested the current Stream
+     * Add an index to the current Stream
      * 
      * <pre>
      * {@code 
@@ -1144,7 +1144,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Use classifier function toNested group elements in this Sequence into a Map
+     * Use classifier function to group elements in this Sequence into a Map
      * <pre>
      * {@code 
      * Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
@@ -1243,7 +1243,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * @param c
-     *            Compartor toNested sort with
+     *            Compartor to sort with
      * @return Sorted Monad
      */
     @Override
@@ -1259,8 +1259,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     
      * 
      * @param num
-     *            Number of elemenets toNested skip
-     * @return Monad converted toNested Stream with specified number of elements
+     *            Number of elemenets to skip
+     * @return Monad converted to Stream with specified number of elements
      *         skipped
      */
     @Override
@@ -1278,8 +1278,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      * 
      * @param p
-     *            Predicate toNested skip while true
-     * @return Monad converted toNested Stream with elements skipped while predicate
+     *            Predicate to skip while true
+     * @return Monad converted to Stream with elements skipped while predicate
      *         holds
      */
     @Override
@@ -1296,8 +1296,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * 
      * @param p
-     *            Predicate toNested skip until true
-     * @return Monad converted toNested Stream with elements skipped until predicate
+     *            Predicate to skip until true
+     * @return Monad converted to Stream with elements skipped until predicate
      *         holds
      */
     @Override
@@ -1313,8 +1313,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      * 
      * @param num
-     *            Limit element size toNested num
-     * @return Monad converted toNested Stream with elements up toNested num
+     *            Limit element size to num
+     * @return Monad converted to Stream with elements up to num
      */
     @Override
     default Streamable<T> limit(final long num) {
@@ -1330,7 +1330,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param p
      *            Limit while predicate is true
-     * @return Monad converted toNested Stream with limited elements
+     * @return Monad converted to Stream with limited elements
      */
     @Override
     default Streamable<T> limitWhile(final Predicate<? super T> p) {
@@ -1346,7 +1346,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param p
      *            Limit until predicate is true
-     * @return Monad converted toNested Stream with limited elements
+     * @return Monad converted to Stream with limited elements
      */
     @Override
     default Streamable<T> limitUntil(final Predicate<? super T> p) {
@@ -1355,13 +1355,13 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * True if predicate matches all elements when Monad converted toNested a Stream
+     * True if predicate matches all elements when Monad converted to a Stream
      * <pre>
      * {@code 
      * assertThat(Streamable.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
      * }
      * </pre>
-     * @param c Predicate toNested check if all match
+     * @param c Predicate to check if all match
      */
     @Override
     default boolean allMatch(final Predicate<? super T> c) {
@@ -1369,13 +1369,13 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * True if a singleUnsafe element matches when Monad converted toNested a Stream
+     * True if a singleUnsafe element matches when Monad converted to a Stream
      * <pre>
      * {@code 
      * assertThat(Streamable.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
      * }
      * </pre>
-     * @param c Predicate toNested check if any match
+     * @param c Predicate to check if any match
      */
     @Override
     default boolean anyMatch(final Predicate<? super T> c) {
@@ -1502,7 +1502,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * @return takeOne matching element,  but order is not guaranteed
+     * @return first matching element,  but order is not guaranteed
      * <pre>
      * {@code
      * Streamable.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
@@ -1520,8 +1520,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Attempt toNested map this Sequence toNested the same type as the supplied Monoid (Reducer)
-     * Then use Monoid toNested reduce values
+     * Attempt to map this Sequence to the same type as the supplied Monoid (Reducer)
+     * Then use Monoid to reduce values
      * <pre>
      * {@code 
      * Streamable.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
@@ -1530,7 +1530,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param reducer Monoid toNested reduce values
+     * @param reducer Monoid to reduce values
      * @return Reduce result
      */
     @Override
@@ -1539,8 +1539,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     *  Attempt toNested map this Monad toNested the same type as the supplied Monoid, using supplied function
-     *  Then use Monoid toNested reduce values
+     *  Attempt to map this Monad to the same type as the supplied Monoid, using supplied function
+     *  Then use Monoid to reduce values
      *  
      *  <pre>
      *  {@code
@@ -1563,8 +1563,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *  }
      *  </pre>
      *  
-     * @param mapper Function toNested map Monad type
-     * @param reducer Monoid toNested reduce values
+     * @param mapper Function to map Monad type
+     * @param reducer Monoid to reduce values
      * @return Reduce result
      */
     @Override
@@ -1580,7 +1580,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * //hello,2,world,4
      * }</pre>
      * 
-     * @param reducer Use supplied Monoid toNested reduce values
+     * @param reducer Use supplied Monoid to reduce values
      * @return reduced values
      */
     @Override
@@ -1620,7 +1620,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /**
      * Reduce with multiple reducers in parallel
      * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
-     * To reduce over the values on the list, called streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
+     * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
      * {@code 
@@ -1647,7 +1647,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /**
      * Reduce with multiple reducers in parallel
      * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
-     * To reduce over the values on the list, called streamedMonad() takeOne. I.e. streamedMonad().reduce(reducer)
+     * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
      * 
      * <pre>
      * {@code 
@@ -1678,7 +1678,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
         // "cab"
         }
         </pre>
-     * @param reducer Use supplied Monoid toNested reduce values starting via foldRight
+     * @param reducer Use supplied Monoid to reduce values starting via foldRight
      * @return Reduced result
      */
     @Override
@@ -1687,7 +1687,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Immutable reduction from right toNested left
+     * Immutable reduction from right to left
      * <pre>
      * {@code 
      *  assertTrue(Streamable.of("a","b","c").foldRight("", String::concat).equals("cba"));
@@ -1704,8 +1704,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     *  Attempt toNested map this Monad toNested the same type as the supplied Monoid (using mapToType on the monoid interface)
-     * Then use Monoid toNested reduce values
+     *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+     * Then use Monoid to reduce values
      * <pre>
     	{@code
     	Streamable.of(1,2,3).foldRightMapToType(Reducers.toString(""));
@@ -1715,7 +1715,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
         </pre>
      * 
      * 
-     * @param reducer Monoid toNested reduce values
+     * @param reducer Monoid to reduce values
      * @return Reduce result
      */
     @Override
@@ -1750,14 +1750,14 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * @return this Streamable converted toNested AnyM format
+     * @return this Streamable converted to AnyM format
      */
     default AnyM<Witness.streamable,T> anyM() {
         return AnyM.fromStreamable(this);
     }
 
     /**
-     * Allows flatMap return type toNested be any Monad type
+     * Allows flatMap return type to be any Monad type
      * <pre>
      * {@code 
      * 	assertThat(Streamable.of(1,2,3)).flatMapAnyM(i-> fromEither5(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
@@ -1765,8 +1765,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }</pre>
      * 
      * 
-     * @param fn toNested be applied
-     * @return new stage in Sequence with flatMap operation toNested be lazily applied
+     * @param fn to be applied
+     * @return new stage in Sequence with flatMap operation to be lazily applied
      */
     default <R> Streamable<R> flatMapAnyM(final Function<? super T, ? extends AnyM<Witness.streamable,? extends R>> fn) {
         return flatMap(fn.andThen(Witness::streamable));
@@ -1807,8 +1807,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param fn toNested be applied
-     * @return new stage in Sequence with flatMap operation toNested be lazily applied
+     * @param fn to be applied
+     * @return new stage in Sequence with flatMap operation to be lazily applied
     */
     default <R> Streamable<R> flatMapStream(final Function<? super T, BaseStream<? extends R, ?>> fn) {
         return fromStream(reactiveSeq().flatMapStream(fn));
@@ -1841,7 +1841,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Cast all elements in a reactiveStream toNested a given type, possibly throwing a
+     * Cast all elements in a reactiveStream to a given type, possibly throwing a
      * {@link ClassCastException}.
      * 
      * 
@@ -1861,7 +1861,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * - Sequence created via a List
      * - Sequence created via an Array / var args
      * 
-     * Otherwise Sequence collected into a Collection prior toNested reversal
+     * Otherwise Sequence collected into a Collection prior to reversal
      * 
      * <pre>
      * {@code
@@ -1883,7 +1883,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Append Stream toNested this Streamable
+     * Append Stream to this Streamable
      * 
      * <pre>
      * {@code 
@@ -1896,7 +1896,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param stream toNested append
+     * @param stream to append
      * @return Streamable with Stream appended
      */
     default Streamable<T> appendStreamable(final Streamable<T> stream) {
@@ -1904,7 +1904,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Prepend Stream toNested this Streamable
+     * Prepend Stream to this Streamable
      * 
      * <pre>
      * {@code 
@@ -1918,7 +1918,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param stream toNested Prepend
+     * @param stream to Prepend
      * @return Streamable with Stream prepended
      */
     default Streamable<T> prependStreamable(final Streamable<T> stream) {
@@ -1939,7 +1939,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Append values toNested the take of this Streamable
+     * Append values to the take of this Streamable
      * <pre>
      * {@code 
      * List<String> result = Streamable.of(1,2,3)
@@ -1950,7 +1950,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
      * }
      * </pre>
-     * @param values toNested append
+     * @param values to append
      * @return Streamable with appended values
      */
     default Streamable<T> append(final T... values) {
@@ -1958,7 +1958,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Prepend given values toNested the skip of the Stream
+     * Prepend given values to the skip of the Stream
      * <pre>
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
@@ -1969,7 +1969,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
      * </pre>
-     * @param values toNested prepend
+     * @param values to prepend
      * @return Streamable with values prepended
      */
     default Streamable<T> prepend(final T... values) {
@@ -1989,8 +1989,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * }
      * </pre>
-     * @param pos toNested insert data at
-     * @param values toNested insert
+     * @param pos to insert data at
+     * @param values to insert
      * @return Stream with new data inserted
      */
     default Streamable<T> insertAt(final int pos, final T... values) {
@@ -2029,8 +2029,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
      * }
      * </pre>
-     * @param pos toNested insert Stream at
-     * @param stream toNested insert
+     * @param pos to insert Stream at
+     * @param stream to insert
      * @return newly conjoined Streamable
      */
     default Streamable<T> insertStreamableAt(final int pos, final Streamable<T> stream) {
@@ -2047,7 +2047,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param iterable Values toNested check
+     * @param iterable Values to check
      * @return true if Streamable ends with values in the supplied iterable
      */
     @Override
@@ -2063,7 +2063,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param stream Values toNested check
+     * @param stream Values to check
      * @return true if Streamable endswith values in the supplied Stream
      */
     default boolean endsWith(final Streamable<T> stream) {
@@ -2128,7 +2128,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Limit results toNested the last x elements in a Streamable
+     * Limit results to the last x elements in a Streamable
      * <pre>
      * {@code 
      * 	assertThat(Streamable.of(1,2,3,4,5)
@@ -2138,8 +2138,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param num of elements toNested return (last elements)
-     * @return Streamable limited toNested last num elements
+     * @param num of elements to return (last elements)
+     * @return Streamable limited to last num elements
      */
     @Override
     default Streamable<T> limitLast(final int num) {
@@ -2161,7 +2161,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *  
      * }
      * </pre>
-     * @param e Executor toNested execute this Streamable on
+     * @param e Executor to execute this Streamable on
      * @return a Connectable HotStream
      */
     default HotStream<T> hotStream(final Executor e) {
@@ -2177,7 +2177,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     				.firstValue(),equalTo("hello"));
      * }
      * </pre>
-     * @return takeOne value in this Stream
+     * @return first value in this Stream
      */
     @Override
     default T firstValue() {
@@ -2206,7 +2206,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 	assertThat(Streamable.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
      * }
      * </pre>
-     * @param index toNested extract element from
+     * @param index to extract element from
      * @return elementAt index
      */
     @Override
@@ -2225,7 +2225,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param index toNested extract element from
+     * @param index to extract element from
      * @return Element and Sequence
      */
     default Tuple2<T, Streamable<T>> elementAt(final long index) {
@@ -2242,7 +2242,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @return Sequence that adds the time between elements in millis toNested each element
+     * @return Sequence that adds the time between elements in millis to each element
      */
     default Streamable<Tuple2<T, Long>> elapsed() {
         return fromStream(reactiveSeq().elapsed());
@@ -2259,7 +2259,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * </pre>
      * 
-     * @return Sequence that adds a timestamp toNested each element
+     * @return Sequence that adds a timestamp to each element
      */
     default Streamable<Tuple2<T, Long>> timestamp() {
         return fromStream(reactiveSeq().timestamp());
@@ -2291,8 +2291,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /**
      * Create an efficiently reversable Sequence that produces the integers between skip
      * and take
-     * @param start Number of range toNested skip from
-     * @param end Number for range toNested take at
+     * @param start Number of range to skip from
+     * @param end Number for range to take at
      * @return Range Streamable
      */
     public static Streamable<Integer> range(final int start, final int end) {
@@ -2303,8 +2303,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /**
      * Create an efficiently reversable Sequence that produces the integers between skip
      * and take
-     * @param start Number of range toNested skip from
-     * @param end Number for range toNested take at
+     * @param start Number of range to skip from
+     * @param end Number for range to take at
      * @return Range Streamable
      */
     public static Streamable<Long> rangeLong(final long start, final long end) {
@@ -2314,7 +2314,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     /**
      * Construct a Sequence from a Stream
-     * @param stream Stream toNested construct Sequence from
+     * @param stream Stream to construct Sequence from
      * @return
      */
     public static Streamable<Integer> fromIntStream(final IntStream stream) {
@@ -2325,7 +2325,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /**
      * Construct a Sequence from a Stream
      * 
-     * @param stream Stream toNested construct Sequence from
+     * @param stream Stream to construct Sequence from
      * @return
      */
     public static Streamable<Long> fromLongStream(final LongStream stream) {
@@ -2335,7 +2335,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     /**
      * Construct a Sequence from a Stream
-     * @param stream Stream toNested construct Sequence from
+     * @param stream Stream to construct Sequence from
      * @return
      */
     public static Streamable<Double> fromDoubleStream(final DoubleStream stream) {
@@ -2459,7 +2459,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * @param switchTo Supplier that will generate the alternative Stream
-     * @return Streamable that will switch toNested an alternative Stream if empty
+     * @return Streamable that will switch to an alternative Stream if empty
      */
     default Streamable<T> onEmptySwitch(final Supplier<Streamable<T>> switchTo) {
         return fromStream(reactiveSeq().onEmptySwitch(() -> switchTo.get()
@@ -2527,7 +2527,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     
      * }
      * </pre>
-     * @param x number of elements toNested emit
+     * @param x number of elements to emit
      * @param time period
      * @param t Time unit
      * @return Streamable that emits x elements per time period
@@ -2595,7 +2595,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      * 
      * @param size Max size of a batch
-     * @param time (Max) time period toNested build a singleUnsafe batch in
+     * @param time (Max) time period to build a singleUnsafe batch in
      * @param t time unit for batch
      * @return Streamable batched by size and time
      */
@@ -2613,7 +2613,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * @param size Max size of a batch
-     * @param time (Max) time period toNested build a singleUnsafe batch in
+     * @param time (Max) time period to build a singleUnsafe batch in
      * @param unit time unit for batch
      * @param factory Collection factory
      * @return Streamable batched by size and time
@@ -2633,7 +2633,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param time - time period toNested build a singleUnsafe batch in
+     * @param time - time period to build a singleUnsafe batch in
      * @param t  time unit for batch
      * @return Streamable batched into lists by time period
      */
@@ -2654,7 +2654,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param time - time period toNested build a singleUnsafe batch in
+     * @param time - time period to build a singleUnsafe batch in
      * @param unit time unit for batch
      * @param factory Collection factory
      * @return Streamable batched into toX types by time period
@@ -2835,7 +2835,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param exceptionClass Type toNested recover from
+     * @param exceptionClass Type to recover from
      * @param fn That accepts an error and returns an alternative value
      * @return Streamable that can recover from a particular exception
      */
@@ -2845,7 +2845,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Retry a transformation if it fails. Default settings are toNested retry up toNested 7 times, with an doubling
+     * Retry a transformation if it fails. Default settings are to retry up to 7 times, with an doubling
      * backoff period starting @ 2 seconds delay before retry.
      * 
      * <pre>
@@ -2863,7 +2863,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     	assertThat(result, is("42"));
      * }
      * </pre>
-     * @param fn Function toNested retry if fails
+     * @param fn Function to retry if fails
      * 
      */
     @Override
@@ -2878,7 +2878,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * assertThat(Streamable.of(1,2,3,4,5).contains(3),equalTo(true));
      * }
      * </pre>
-     * @param t element toNested check for
+     * @param t element to check for
      */
     default boolean contains(final T t) {
         return stream().anyMatch(c -> t.equals(c));

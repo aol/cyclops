@@ -79,7 +79,7 @@ public class SimplePerfCheck {
 	@Test
 	public void pStackXMap(){
 		
-		LinkedListX<Integer> list = LinkedListX.empty();
+		LinkedListX<Integer> list = LinkedListX.zero();
 		for(int i=0;i<10_000;i++){
 			list = list.plus(1);
 		}
@@ -93,7 +93,7 @@ public class SimplePerfCheck {
 	@Test
 	public void pVectorXMapt(){
 		
-		VectorX<Integer> list = VectorX.empty();
+		VectorX<Integer> list = VectorX.zero();
 		for(int i=0;i<1_000_000;i++){
 			list = list.plus(1);
 		}
@@ -135,7 +135,7 @@ public class SimplePerfCheck {
 	@Test
 	public void jsListPrepend(){
 		long skip = System.currentTimeMillis();
-		javaslang.toX.List<Integer> list = javaslang.toX.List.empty();
+		javaslang.toX.List<Integer> list = javaslang.toX.List.zero();
 		for(int i=0;i<1_000_000;i++){
 			list = list.prepend(i);
 		}
@@ -148,7 +148,7 @@ public class SimplePerfCheck {
 	@Test
 	public void jsListMap(){
 		
-		javaslang.toX.List<Integer> list = javaslang.toX.List.empty();
+		javaslang.toX.List<Integer> list = javaslang.toX.List.zero();
 		for(int i=0;i<10_000;i++){
 			list = list.prepend(i);
 		}

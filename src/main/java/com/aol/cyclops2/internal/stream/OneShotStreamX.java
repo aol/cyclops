@@ -162,19 +162,19 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
 
     @Override @SafeVarargs
     public  final ReactiveSeq<T> insertAt(final int pos, final T... values) {
-        return createSeq(Streams.insertAt(this, pos, values), Optional.empty());
+        return createSeq(Streams.insertAt(this, pos, values), Optional.zero());
 
     }
 
     @Override
     public ReactiveSeq<T> deleteBetween(final int start, final int end) {
-        return createSeq(Streams.deleteBetween(this, start, end), Optional.empty());
+        return createSeq(Streams.deleteBetween(this, start, end), Optional.zero());
     }
 
     @Override
     public ReactiveSeq<T> insertAtS(final int pos, final Stream<T> stream) {
 
-        return createSeq(Streams.insertStreamAt(this, pos, stream), Optional.empty());
+        return createSeq(Streams.insertStreamAt(this, pos, stream), Optional.zero());
 
     }
     **/

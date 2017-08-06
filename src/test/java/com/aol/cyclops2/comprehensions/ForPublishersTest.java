@@ -1,6 +1,7 @@
 package com.aol.cyclops2.comprehensions;
 
 import cyclops.monads.Witness;
+import cyclops.monads.Witness.reactiveSeq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
@@ -16,7 +17,7 @@ public class ForPublishersTest {
     @Test
     public void groupedT(){
         
-       ListT<Witness.stream,Integer> nestedList = ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10)
+       ListT<reactiveSeq,Integer> nestedList = ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10)
                                                              .groupedT(2)
                                                              .map(i->i*2);
        

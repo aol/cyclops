@@ -105,7 +105,7 @@ public interface General {
         
        
         Applicative<CRE> applicative;
-        BiFunction<? extends Higher<CRE,A>,Function<? super A,? extends Higher<CRE,B>>,? extends Higher<CRE,B>> bindRef; //reference toNested bind / flatMap method
+        BiFunction<? extends Higher<CRE,A>,Function<? super A,? extends Higher<CRE,B>>,? extends Higher<CRE,B>> bindRef; //reference to bind / flatMap method
        
         
         <T,R> BiFunction<Higher<CRE,T>,Function<? super T,? extends Higher<CRE,R>>,Higher<CRE,R>> bindRef(){
@@ -348,15 +348,19 @@ public interface General {
         
     }
     @AllArgsConstructor
-    static class GeneralFoldable<CRE,T> implements Foldable<CRE> {
+    static class GeneralFoldable<CRE,T,R> implements Foldable<CRE> {
         BiFunction<Monoid<T>,Higher<CRE,T>,T> foldRightFn;
         BiFunction<Monoid<T>,Higher<CRE,T>,T> foldLeftFn;
+        Fn3<Monoid<R>,Function<T,R>,Higher<CRE,T>,R> foldMapFn;
         
         <T> BiFunction<Monoid<T>,Higher<CRE,T>,T> foldRightFn(){
             return (BiFunction)foldRightFn;
         }
         <T> BiFunction<Monoid<T>,Higher<CRE,T>,T> foldLeftFn(){
             return (BiFunction)foldLeftFn;
+        }
+        <T,R> Fn3<Monoid<R>,Function<? super T,? extends R>,Higher<CRE,T>,R>  foldMapFn(){
+            return (Fn3)foldMapFn;
         }
         
         public <T> T foldRight(Monoid<T> monoid, Higher<CRE,T> ds){
@@ -366,10 +370,16 @@ public interface General {
         public <T> T foldLeft(Monoid<T> monoid, Higher<CRE,T> ds){
             return this.<T>foldLeftFn().apply(monoid,ds);
         }
+
+        @Override
+        public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<CRE, T> nestedA) {
+            return this.<T,R>foldMapFn().apply(mb,fn,nestedA);
+        }
     }
     
-    static <CRE,T> GeneralFoldable<CRE,T> foldable(BiFunction<Monoid<T>, Higher<CRE, T>, T> foldRightFn, BiFunction<Monoid<T>, Higher<CRE, T>, T> foldLeftFn){
-        return new GeneralFoldable<CRE,T>(foldRightFn,foldLeftFn);
+    static <CRE,T,R> GeneralFoldable<CRE,T,R> foldable(BiFunction<Monoid<T>, Higher<CRE, T>, T> foldRightFn, BiFunction<Monoid<T>, Higher<CRE, T>, T> foldLeftFn,
+                                                       Fn3<Monoid<R>,Function<T,R>,Higher<CRE,T>,R> foldMapFn){
+        return new GeneralFoldable<>(foldRightFn,foldLeftFn,foldMapFn);
     }
     @AllArgsConstructor
     static class GeneralTraverse<CRE,C2,A,B> implements TraverseBySequence<CRE> {

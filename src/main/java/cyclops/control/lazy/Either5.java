@@ -56,7 +56,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
 
     /**
-     * Create a reactive CompletableEither
+     * Create a reactiveBuffer CompletableEither
      *
      * <pre>
      *  {@code

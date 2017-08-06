@@ -38,7 +38,7 @@ public class Xors {
      * } 
      * </pre>
      * 
-     * @param adapter Adapter toNested match on
+     * @param adapter Adapter to match on
      * @return Structural pattern matcher for Adapter types.
      */
     public static <T> Xor<Queue<T>, Topic<T>> adapter(final Adapter<T> adapter) {
@@ -64,27 +64,27 @@ public class Xors {
      * }</pre>
      * 
      * 
-     * @param future Future toNested match on
+     * @param future Future to match on
      * @return Pattern Matcher for CompletableFutures
       USE EITHER HERE
     public static <T1> Xor<T1, Throwable> future(final CompletableFuture<T1> future) {
-        return () -> FutureW.of(future)
+        return () -> Future.of(future)
                             .toXor()
                             .swap();
     }*/
 
     /**
-     * Pattern Match on a FutureW handling success and failure cases differently
+     * Pattern Match on a Future handling success and failure cases differently
      * <pre>
      * {@code 
-     *  Eval<Integer> result = Xors.future(FutureW.ofResult(1))
+     *  Eval<Integer> result = Xors.future(Future.ofResult(1))
                                          .matches(c-> c.is( when(some(1)), transform(10)),
                                                   c->c.is(when(instanceOf(RuntimeException.class)), transform(2)),
                                                   otherwise(3));
         
         //Eval.now[10]
      * 
-     *  Eval<Integer> result = Xors.future(FutureW.ofError(new RuntimeException()))
+     *  Eval<Integer> result = Xors.future(Future.ofError(new RuntimeException()))
                                          .matches(c-> c.is( when(some(10)), transform(2)),
                                                   c->c.is(when(instanceOf(RuntimeException.class)), transform(2)),
                                                   otherwise(3));
@@ -98,10 +98,10 @@ public class Xors {
      * 
      * 
      * 
-     * @param future Future toNested match on
+     * @param future Future to match on
      * @return Pattern Matcher for Futures
 
-    public static <T1> MXor<T1, Throwable> future(final FutureW<T1> future) {
+    public static <T1> MXor<T1, Throwable> future(final Future<T1> future) {
         return () -> future.toXor()
                            .swap();
     }
@@ -138,7 +138,7 @@ USE EITHER
      * }
      * </pre>
      * 
-     * @param queue Queue toNested pattern match on
+     * @param queue Queue to pattern match on
      * @return Pattern matchier on the blocking / non-blocking nature of the supplied Queue
      */
     public static <T> Xor<BlockingQueue<T>, java.util.Queue<T>> blocking(final java.util.Queue<T> queue) {

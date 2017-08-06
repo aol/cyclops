@@ -8,10 +8,8 @@ import cyclops.stream.ReactiveSeq;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
@@ -25,7 +23,7 @@ import java.util.function.Supplier;
  * }
  * </pre>
  * The map operation above is not executed immediately. It will only be executed when (if) the data inside the
- * queue is accessed. This allows lazy operations toNested be chained and executed more efficiently e.g.
+ * queue is accessed. This allows lazy operations to be chained and executed more efficiently e.g.
  *
  * <pre>
  * {@code
@@ -45,8 +43,15 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
 
     private final FoldToList<T> generator;
 
+    public static final <T> Function<ReactiveSeq<PStack<T>>, PStack<T>> asyncLinkedList() {
+        return r -> {
+            CompletableLinkedListX<T> res = new CompletableLinkedListX<>();
+            r.forEachAsync(l -> res.complete(l));
+            return res.asLinkedListX();
+        };
+    }
     public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer, FoldToList<T> generator,Evaluation strict) {
-        super(strict,list, seq, reducer);
+        super(strict,list, seq, reducer,asyncLinkedList());
         this.generator = generator;
 
         handleStrict();
@@ -55,7 +60,7 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
 
     }
     public LazyLinkedListX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer,Evaluation strict) {
-        super(strict,list, seq, reducer);
+        super(strict,list, seq, reducer,asyncLinkedList());
         this.generator = new PStackGeneator<>();
         handleStrict();
 
@@ -73,9 +78,15 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
    
     public PStack<T> materializeList(ReactiveSeq<T> toUse){
 
-        PStack<T> res = generator.from(toUse.iterator(),0);
-        return new LazyLinkedListX<T>(
-                res,null, this.getCollectorInternal(),generator, evaluation());
+        return toUse.visit(s -> {
+            PStack<T> res = generator.from(toUse.iterator(),0);
+            return new LazyLinkedListX<T>(
+                    res,null, this.getCollectorInternal(),generator, evaluation());
+                },
+                r -> super.materializeList(toUse),
+                a -> super.materializeList(toUse));
+
+
 
     }
     

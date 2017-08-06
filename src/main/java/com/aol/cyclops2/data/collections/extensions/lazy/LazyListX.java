@@ -7,8 +7,11 @@ import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
+
+import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * An extended List type {@see java.util.List}
@@ -40,11 +43,17 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
 
 
     public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector,Evaluation strict) {
-        super(list, seq, collector,strict);
+
+        super(list, seq, collector,strict,r->{
+            CompletableListX<T> res = new CompletableListX<>();
+            r.forEachAsync(l->res.complete(l));
+            return res.asListX();
+        });
+
 
     }
     public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector) {
-       this(list, seq, collector,Evaluation.LAZY);
+       this(list, seq, collector, LAZY);
 
     }
 
@@ -59,7 +68,7 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
     }
     @Override
     public ListX<T> lazy() {
-        return new LazyListX<T>(getList(),getSeq().get(),getCollectorInternal(),Evaluation.LAZY) ;
+        return new LazyListX<T>(getList(),getSeq().get(),getCollectorInternal(), LAZY) ;
     }
 
     @Override

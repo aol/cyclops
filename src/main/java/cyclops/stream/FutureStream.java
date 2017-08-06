@@ -419,7 +419,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * coflatMap pattern, can be used toNested perform maybe reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      * 
      * <pre>
      * {@code 
@@ -486,7 +486,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * }
      * </pre>
      *
-     * @return FutureStream that adds the time between elements in millis toNested
+     * @return FutureStream that adds the time between elements in millis to
      *         each element
      */
     @Override
@@ -507,7 +507,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return (FutureStream<U>)ReactiveSeq.super.combine(op,predicate);
     }
     /**
-     * If this SequenceM is empty one it with a another Stream
+     * If this Stream is empty one it with a another Stream
      *
      * <pre>
      * {@code
@@ -520,7 +520,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @param switchTo
      *            Supplier that will generate the alternative Stream
-     * @return SequenceM that will switch toNested an alternative Stream if empty
+     * @return Stream that will switch to an alternative Stream if empty
      */
     @Override
     default FutureStream<U> onEmptySwitch(final Supplier<? extends Stream<U>> switchTo) {
@@ -600,7 +600,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /**
-     * Remove all occurances of the specified element from the SequenceM
+     * Remove all occurances of the specified element from the Stream
      * <pre>
      * {@code
      * 	FutureStream.of(1,2,3,4,5,1,2,3).remove(1)
@@ -609,7 +609,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * }
      * </pre>
      *
-     * @param t element toNested remove
+     * @param t element to remove
      * @return Filtered Stream
      */
     @Override
@@ -643,7 +643,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Generate the permutations based on values in the FutureStream
-     * Makes use of Streamable toNested store intermediate stages in a toX
+     * Makes use of Streamable to store intermediate stages in a toX
      *
      *
      * @return Permutations from this FutureStream
@@ -660,8 +660,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * {@code
      *   FutureStream.of(1,2,3).combinations()
      *
-     *   //FutureStream[SequenceM[],SequenceM[1],SequenceM[2],SequenceM[3].SequenceM[1,2],SequenceM[1,3],SequenceM[2,3]
-     *   			,SequenceM[1,2,3]]
+     *   //FutureStream[Stream[],Stream[1],Stream[2],Stream[3].Stream[1,2],Stream[1,3],Stream[2,3]
+     *   			,Stream[1,2,3]]
      * }
      * </pre>
      *
@@ -677,8 +677,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * FutureStream operators act on the results of the previous stage by default. That means limiting,
-     * skipping, zipping all occur once results being toNested reactiveStream in from active Future tasks. This
-     * operator allows access toNested a set of operators that behave differently. Limiting, skipping and zipping all occur on
+     * skipping, zipping all occur once results being to reactiveStream in from active Future tasks. This
+     * operator allows access to a set of operators that behave differently. Limiting, skipping and zipping all occur on
      * the underlying Stream of Futures.
      *
      * Operating on results
@@ -689,7 +689,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      *     //[fast,0l],[slow,1l]
      * }</pre>
-     * The takeOne result will be fast and will have index 0 (the result index)
+     * The first result will be fast and will have index 0 (the result index)
      *
      * Operating on futures
      * <pre>
@@ -700,7 +700,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      *     //[fast,1l],[slow,0l]
      * }</pre>
-     * The takeOne result will still be fast, but the index will now be the skip index 1
+     * The first result will still be fast, but the index will now be the skip index 1
      *
      * @return Access a set of operators that act on the underlying futures in this
      * Stream.
@@ -741,9 +741,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     LazyReact getSimpleReact();
 
     /*
-     * Subscribe toNested this Stream
+     * Subscribe to this Stream
      * If this Stream is executing in async mode it will operate as an Async Publisher, otherwise it will operate as a Synchronous publisher.
-     * async() or sync() can be used just prior toNested forEachAsync.
+     * async() or sync() can be used just prior to forEachAsync.
      *
      * <pre>
      * {@code
@@ -801,7 +801,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * @return a Stream that batches all completed elements from this reactiveStream since last read attempt into a toX
+     * @return a Stream that batches all completed elements from this reactiveStream since last read recover into a toX
      */
     default FutureStream<Collection<U>> chunkSinceLastRead() {
         final Queue queue = this.withQueueFactory(QueueFactories.unboundedQueue())
@@ -865,7 +865,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * }
      * </pre>
      *
-     *	@param e New executor toNested use
+     *	@param e New executor to use
      *	@return Stream ready for next stage definition
      * @see com.aol.cyclops2.react.reactiveStream.traits.ConfigurableStream#withTaskExecutor(java.util.concurrent.Executor)
      */
@@ -892,7 +892,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                 .toList();
      * }
      * </pre>
-     *	@param queue Queue factory toNested use for subsequent stages
+     *	@param queue Queue factory to use for subsequent stages
      *	@return Stream
      * @see com.aol.cyclops2.react.reactiveStream.traits.ConfigurableStream#withQueueFactory(com.aol.simple.react.async.QueueFactory)
      * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#unboundedWaitFree()
@@ -902,7 +902,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     FutureStream<U> withQueueFactory(QueueFactory<U> queue);
 
     /*
-     *	@param sub Queue Subscription toNested use for this Stream
+     *	@param sub Queue Subscription to use for this Stream
      * @see com.aol.cyclops2.react.reactiveStream.traits.LazySimpleReactStream#withSubscription(com.aol.simple.react.async.subscription.Continueable)
      */
     @Override
@@ -927,7 +927,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     }
 
-    /*  Transfer data in this Stream asyncrhonously toNested a Queue
+    /*  Transfer data in this Stream asyncrhonously to a Queue
      * <pre>
      * {@code
      *  Queue<String> q = new LazyReact().reactInfinitely(() -> "100")
@@ -1001,7 +1001,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * Execute subsequent stages on the completing thread (until async called)
      * 10X faster than async execution.
      * Use async for blocking IO or distributing work across threads or cores.
-     * Switch toNested sync for non-blocking tasks when desired thread utlisation reached
+     * Switch to sync for non-blocking tasks when desired thread utlisation reached
      * <pre>
      * {@code
      *      new LazyReact().of(1,2,3)
@@ -1020,10 +1020,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * Execute subsequent stages by submission toNested an Executor for async execution
+     * Execute subsequent stages by submission to an Executor for async execution
      * 10X slower than sync execution.
      * Use async for blocking IO or distributing work across threads or cores.
-     * Switch toNested sync for non-blocking tasks when desired thread utlisation reached
+     * Switch to sync for non-blocking tasks when desired thread utlisation reached
      * <pre>
      * {@code
      * FutureStream reactiveStream = of(1,2,3,4).async()
@@ -1043,7 +1043,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * This is the default setting, internal queues are backed by a ConcurrentLinkedQueue
-     * This operator will return the next stage toNested using this Queue type if it has been changed
+     * This operator will return the next stage to using this Queue type if it has been changed
      *
      * @return FutureStream backed by a ConcurrentLinkedQueue
      */
@@ -1054,7 +1054,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /**
      * Use an Agrona ManyToOneConcurrentArrayQueue for the next operations (wait-free, mechanical sympathy).
      * Note Queued data will be somewhat limited by configured concurrency level, but that flatMap operations
-     * can increase the amount of data toNested be buffered significantly.
+     * can increase the amount of data to be buffered significantly.
      *
      * <pre>
      * {@code
@@ -1091,7 +1091,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     public FutureStream<U> maxActive(int concurrentTasks);
 
     /*
-     * Equivalent functionally toNested map / applyHKT but always applied on the completing thread (from the previous stage)
+     * Equivalent functionally to map / applyHKT but always applied on the completing thread (from the previous stage)
      *
      * When autoOptimize functionality is enabled, thenSync is the default behaviour for applyHKT / map operations
      *
@@ -1113,7 +1113,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     *  Equivalent functionally toNested peek but always applied on the completing thread (from the previous stage)
+     *  Equivalent functionally to peek but always applied on the completing thread (from the previous stage)
      *  When autoOptimize functionality is enabled, peekSync is the default behaviour for peek operations
      * <pre>
      * {@code
@@ -1170,10 +1170,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Convert between an Lazy and Eager SimpleReact Stream, can be used toNested take
+     * Convert between an Lazy and Eager SimpleReact Stream, can be used to take
      * advantages of each approach during a singleUnsafe Stream
      *
-     * Allows callers toNested take advantage of functionality only available in
+     * Allows callers to take advantage of functionality only available in
      * SimpleReactStreams such as allOf
      *
      * <pre>
@@ -1205,7 +1205,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * Apply a function toNested all items in the reactiveStream.
+     * Apply a function to all items in the reactiveStream.
      * <pre>
      * {@code
      *  LazyReact.sequentialBuilder().react(()->1,()->2,()->3)
@@ -1214,7 +1214,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * }
      * //results in [100,200,300]
      * </pre>
-     *	@param mapper Function toNested be applied toNested all items in the Stream
+     *	@param mapper Function to be applied to all items in the Stream
      *	@return
      * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#map(java.util.function.Function)
      */
@@ -1244,7 +1244,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @param shards
      *            Map of Queue's keyed by shard identifier
      * @param sharder
-     *            Function toNested split split incoming elements into shards
+     *            Function to split split incoming elements into shards
      * @return Map of new sharded Streams
      */
     default <K> Map<K, FutureStream<U>> shard(final Map<K, Queue<U>> shards, final Function<? super U, ? extends K> sharder) {
@@ -1258,7 +1258,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Can be used toNested debounce (accept a singleUnsafe data point from a unit of time)
+     * Can be used to debounce (accept a singleUnsafe data point from a unit of time)
      * data. This drops data. For a method that slows emissions and keeps data
      * #see#onePer
      *
@@ -1272,7 +1272,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      *
      * @param time
-     *            Time from which toNested accept only one element
+     *            Time from which to accept only one element
      * @param unit
      *            Time unit for specified time
      * @return Next stage of reactiveStream, with only 1 element per specified time
@@ -1285,11 +1285,11 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Allows clients toNested control the emission of data for the next phase of the
+     * Allows clients to control the emission of data for the next phase of the
      * Stream. The user specified function can delay, drop, or change elements
      *
      * @param fn
-     *            Function takes a supplier, which can be used repeatedly toNested get
+     *            Function takes a supplier, which can be used repeatedly to get
      *            the next value from the Stream. If there are no more values, a
      *            ClosedQueueException will be thrown. This function should
      *            return a Supplier which returns the desired result for the
@@ -1305,7 +1305,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * Batch elements into a Stream of collections with user defined function
      *
      * @param fn
-     *            Function takes a supplier, which can be used repeatedly toNested get
+     *            Function takes a supplier, which can be used repeatedly to get
      *            the next value from the Stream. If there are no more values, a
      *            ClosedQueueException will be thrown. This function should
      *            return a Supplier which creates a toX of the batched
@@ -1390,7 +1390,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Introduce a random delay between events in a reactiveStream Can be used toNested
+     * Introduce a random delay between events in a reactiveStream Can be used to
      * prevent behaviour synchronizing within a system
      *
      * <pre>
@@ -1418,7 +1418,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Apply a fixed delay before emitting elements toNested the next phase of the
+     * Apply a fixed delay before emitting elements to the next phase of the
      * Stream. Note this doesn't neccessarily imply a fixed delay between
      * element creation (although it may do). e.g.
      *
@@ -1573,12 +1573,12 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
     /*
      *
-     * React toNested new events with the supplied function on the supplied
+     * React to new events with the supplied function on the supplied
      * Executor
      *
-     * @param fn Apply toNested incoming events
+     * @param fn Apply to incoming events
      *
-     * @param service Service toNested execute function on
+     * @param service Service to execute function on
      *
      * @return next stage in the Stream
      */
@@ -1589,9 +1589,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /*
      * Non-blocking asyncrhonous application of the supplied function.
-     * Equivalent toNested map from Streams / Seq apis.
+     * Equivalent to map from Streams / Seq apis.
      *
-     * @param fn Function toNested be applied asynchronously
+     * @param fn Function to be applied asynchronously
      *
      * @return Next stage in reactiveStream
      *
@@ -1616,7 +1616,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * }</pre>
      *
-     * @param times toNested copy this Stream
+     * @param times to copy this Stream
      * @return List with specified number of copies
      */
     default List<FutureStream<U>> copy(final int times) {
@@ -1709,7 +1709,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * Handle failure for a particular class of exceptions only
      *
-     * @param exceptionClass Class of exceptions toNested handle
+     * @param exceptionClass Class of exceptions to handle
      *
      * @param fn recovery function
      *
@@ -1804,7 +1804,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                         .block(),equalTo(Arrays.asList(1,2,3)));
      * }
      * </pre>
-     * In this example the result of the flatMapCompletableFuture is 'flattened' toNested the raw integer values
+     * In this example the result of the flatMapCompletableFuture is 'flattened' to the raw integer values
      *
      *
      * @param flatFn flatMap function
@@ -1830,7 +1830,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /*
-         * Convert the specified Stream toNested a FutureStream, using the configuration
+         * Convert the specified Stream to a FutureStream, using the configuration
          * of this FutureStream (task executors, current config settings)
          *
          * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#fromStream(java.util.reactiveStream.Stream)
@@ -1841,7 +1841,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * Convert the specified Stream toNested a FutureStream, using the configuration
+     * Convert the specified Stream to a FutureStream, using the configuration
      * of this FutureStream (task executors, current config settings)
      *
      * (non-Javadoc)
@@ -1907,14 +1907,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * Cast all elements in this reactiveStream toNested specified type. May throw {@link
+     * Cast all elements in this reactiveStream to specified type. May throw {@link
      * ClassCastException}.
      *
      * FutureStream.of(1, "a", 2, "b", 3).cast(Integer.class)
      *
      * will throw a ClassCastException
      *
-     * @param type Type toNested cast toNested
+     * @param type Type to cast to
      *
      * @return FutureStream
      *
@@ -1969,9 +1969,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * FutureStream.of(1,2,3,4).limit(2)
      *
-     * Will result in a Stream of (1,2). Only the takeOne two elements are used.
+     * Will result in a Stream of (1,2). Only the first two elements are used.
      *
-     * @param maxSize number of elements toNested take
+     * @param maxSize number of elements to take
      *
      * @return Limited FutureStream
      *
@@ -2041,9 +2041,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * FutureStream.of(1,2,3,4).skip(2)
      *
-     * Will result in a reactiveStream of (3,4). The takeOne two elements are skipped.
+     * Will result in a reactiveStream of (3,4). The first two elements are skipped.
      *
-     * @param n Number of elements toNested skip
+     * @param n Number of elements to skip
      *
      * @return FutureStream missing skipped elements
      *
@@ -2148,7 +2148,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Partition a reactiveStream in two given a predicate. Two LazyFutureStreams are
-     * returned but Seq interface specifies return type is Seq. See partitionFutureStream toNested
+     * returned but Seq interface specifies return type is Seq. See partitionFutureStream to
      * see an alternative which returns FutureStream
      *
      * <code>
@@ -2180,7 +2180,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * tuple((1, 3, 5), (2, 4, 6))
      * }</pre>
      * @param predicate
-     *            Predicate toNested split Stream
+     *            Predicate to split Stream
      * @return FutureStream
      * @see #partition(Predicate)
      */
@@ -2246,7 +2246,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Scan a reactiveStream toNested the left.
+     * Scan a reactiveStream to the left.
      *
      *
      * // ("", "a", "ab", "abc") FutureStream.of("a", "b", "c").scanLeft("",
@@ -2261,7 +2261,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Scan a reactiveStream toNested the right. - careful with infinite streams!
+     * Scan a reactiveStream to the right. - careful with infinite streams!
      *
      *
      * // ("", "c", "cb", "cba") FutureStream.of("a", "b",
@@ -2291,7 +2291,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<U> reverse() {
-        //reverse using FutureStream semantics toNested ensure concurrency / parallelism
+        //reverse using FutureStream semantics to ensure concurrency / parallelism
         return fromStream(fromStream(stream()).block()
                                                                          .reverse()
                                                                          .stream());
@@ -2326,7 +2326,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Returns a reactiveStream with all elements skipped for which a predicate
-     * evaluates toNested true.
+     * evaluates to true.
      *
      *
      * // (3, 4, 5) FutureStream.of(1, 2, 3, 4, 5).skipWhile(i &gt; i &lt;
@@ -2343,7 +2343,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Returns a reactiveStream with all elements skipped for which a predicate
-     * evaluates toNested false.
+     * evaluates to false.
      *
      *
      * // (3, 4, 5) FutureStream.of(1, 2, 3, 4, 5).skipUntil(i &gt; i == 3)
@@ -2358,8 +2358,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Returns a reactiveStream limited toNested all elements for which a predicate evaluates
-     * toNested true.
+     * Returns a reactiveStream limited to all elements for which a predicate evaluates
+     * to true.
      *
      *
      * // (1, 2) FutureStream.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
@@ -2374,8 +2374,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Returns a reactiveStream limited toNested all elements for which a predicate evaluates
-     * toNested false.
+     * Returns a reactiveStream limited to all elements for which a predicate evaluates
+     * to false.
      *
      *
      * // (1, 2) FutureStream.of(1, 2, 3, 4, 5).limitUntil(i &gt; i == 3)
@@ -2564,7 +2564,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /*
-     *	@return Convert toNested standard JDK 8 Stream
+     *	@return Convert to standard JDK 8 Stream
      * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#reactiveStream()
      */
     @Override
@@ -2574,7 +2574,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     *	@return New version of this reactiveStream converted toNested execute asynchronously and in parallel
+     *	@return New version of this reactiveStream converted to execute asynchronously and in parallel
      * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#parallel()
      */
     @Override
@@ -2585,7 +2585,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     *	@return New version of this reactiveStream  converted toNested execute synchronously and sequentially
+     *	@return New version of this reactiveStream  converted to execute synchronously and sequentially
      * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#sequential()
      */
     @Override
@@ -2641,7 +2641,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Give a consumer access toNested this Stream
+     * Give a consumer access to this Stream
      *
      * @param consumer
      *            Consumer that will recieve current stage
@@ -2685,7 +2685,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     }
 
-    /* Optional empty, if empty Stream. Otherwise collects toNested a List
+    /* Optional empty, if empty Stream. Otherwise collects to a List
      *	@return this Stream as an Optional
      * @see cyclops2.reactiveStream.ReactiveSeq#optional()
 
@@ -2849,7 +2849,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * Duplicate a FutureStream into two equivalent Streams.
      * Two LazyFutureStreams are
-     * returned but Seq interface specifies return type is Seq. See duplicateFutureStream toNested
+     * returned but Seq interface specifies return type is Seq. See duplicateFutureStream to
      * see an alternative which returns FutureStream
      *
      * <pre>
@@ -2873,7 +2873,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * Duplicate a FutureStream into two equivalent Streams.
      * Two LazyFutureStreams are
-     * returned but Seq interface specifies return type is Seq. See duplicateFutureStream toNested
+     * returned but Seq interface specifies return type is Seq. See duplicateFutureStream to
      * see an alternative which returns FutureStream
      *
      * <pre>
@@ -3084,10 +3084,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
     /**
      * A potentially non-blocking analog of {@link ReactiveSeq#forEach}.
-     * For push based reactive Stream types (created via Spouts of FutureStream}
+     * For push based reactiveBuffer Stream types (created via Spouts of FutureStream}
      *
      * @param action a <a href="package-summary.html#NonInterference">
-     *               non-interfering</a> action toNested perform on the elements
+     *               non-interfering</a> action to perform on the elements
      */
     @Override
     default void forEachAsync(final Consumer<? super U> action){
