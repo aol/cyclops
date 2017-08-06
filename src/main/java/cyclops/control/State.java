@@ -207,6 +207,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
     }
 
+
     public static <S, T> State<S, T> state(Function<? super S,? extends Tuple2<S, T>> runF) {
 
         return new State<>(s -> Free.done(runF.apply(s)));
@@ -214,6 +215,9 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
     public static <S> State<S, Nothing> of(S s) {
         return state(__ -> Tuple.tuple(s, (Nothing)Maybe.none()));
+    }
+    public static <S> State<S, Nothing> put(S s) {
+        return of(s);
     }
 
     public static <W1,T,S> Nested<Higher<state,S>,W1,T> nested(State<S,Higher<W1,T>> nested, S value,InstanceDefinitions<W1> def2){

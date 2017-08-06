@@ -57,7 +57,7 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
     }
     @Override
     public Iterator<T> iterator() {
-        return stream().iterator();
+        return get().iterator();
     }
     @Override
     public C get() {
@@ -122,6 +122,7 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
 
     @Override
     public ReactiveSeq<T> stream() {
+
 
         ReactiveSeq<T> toUse = seq.get();
         if (toUse != null) {

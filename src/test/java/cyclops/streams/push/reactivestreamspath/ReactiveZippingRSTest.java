@@ -412,5 +412,26 @@ public class ReactiveZippingRSTest {
 		assertTrue(u1.v4.limit(4).to(Streamable::fromStream).toList().containsAll(asList('z', 'y', 'x')));
 
 	}
+	@Test
+	public void zip3Stream(){
+		List<Tuple3<Integer,Integer,Character>> list =
+				of(1,2,3,4,5,6).zip3(of(100,200,300,400).stream(),of('a','b','c').stream())
+						.toListX();
+
+		System.out.println(list);
+		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		assertThat(right,hasItem(100));
+		assertThat(right,hasItem(200));
+		assertThat(right,hasItem(300));
+		assertThat(right,not(hasItem(400)));
+
+		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+
+		List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
+
+
+	}
 
 }

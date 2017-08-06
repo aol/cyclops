@@ -65,6 +65,7 @@ public interface Foldable<CRE> {
     }
 
     default <T, R> R foldMap(final Monoid<R> mb, final Function<? super T,? extends R> fn, Higher<CRE, T> nestedA) {
+
         return foldr( (T a) -> (R b) -> mb.apply(fn.apply(a), b), mb.zero(), nestedA);
     }
 
@@ -87,8 +88,13 @@ public interface Foldable<CRE> {
     default  <T> ReactiveSeq<T> stream(Higher<CRE, T> ds){
         return listX(ds).stream();
     }
+
     default <T> T intercalate(Monoid<T> monoid, T value, Higher<CRE, T> ds ){
         return listX(ds).intersperse(value).foldLeft(monoid);
+    }
+
+    default <T> T getAt(Higher<CRE, T> ds,int index){
+        return listX(ds).get(index);
     }
 
     default<T> boolean anyMatch(Predicate<? super T> pred, Higher<CRE, T> ds){

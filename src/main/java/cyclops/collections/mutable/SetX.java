@@ -700,6 +700,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                    .to()
                    .listX(LAZY);
     }
+    /**
 
     default ConvertableSequence<T> to(){
 
@@ -711,6 +712,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
         return Seq.seq(this);
     }
+     **/
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycleUntil(java.util.function.Predicate)

@@ -223,6 +223,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
                                HashTreePSet.singleton(value),null,Reducers.toPSet(), LAZY);
     }
     PersistentSetX<T> type(Reducer<? extends PSet<T>> reducer);
+    /**
     default ConvertableSequence<T> to(){
 
         return new ConvertableSequence<>(this);
@@ -232,6 +233,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
 
         return Seq.seq(this);
     }
+     **/
     /**
      *
      * <pre>

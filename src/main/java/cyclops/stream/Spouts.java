@@ -199,6 +199,7 @@ public interface Spouts {
             sub.complete(new Subscription() {
                 @Override
                 public void request(long n) {
+                    System.out.println("Requesting n..");
                     requested.addAndGet(n);
                 }
 

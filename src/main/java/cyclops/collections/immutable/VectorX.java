@@ -1596,9 +1596,26 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * @return Type class for folding / reduction operations
          */
         public static <T> Foldable<vectorX> foldable(){
-            BiFunction<Monoid<T>,Higher<vectorX,T>,T> foldRightFn =  (m, l)-> VectorX.narrowK(l).foldRight(m);
-            BiFunction<Monoid<T>,Higher<vectorX,T>,T> foldLeftFn = (m, l)-> VectorX.narrowK(l).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            return new Foldable<vectorX>() {
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<vectorX, T> ds) {
+                    return  VectorX.fromIterable(narrowK(ds)).foldRight(monoid);
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<vectorX, T> ds) {
+                    return  VectorX.fromIterable(narrowK(ds)).foldLeft(monoid);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<vectorX, T> nestedA) {
+                    Monoid<? extends R> m = mb;
+                    Object x = narrowK(nestedA).map(fn).foldLeft((Monoid) m);
+                    return (R)x;
+
+                }
+            };
+
         }
 
         private static  <T> VectorX<T> concat(PVector<T> l1, PVector<T> l2){

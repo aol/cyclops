@@ -280,6 +280,14 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public  ReactiveSeq<T> stream(){
         return toListX().stream();
     }
+    public Coproduct<W1,W2,T> reverse() {
+        return xor.visit(l -> {
+            return Coproduct.of(Xor.secondary(def1.traverse().reverse(l)), def1, def2);
+        }, r -> {
+            return Coproduct.of(Xor.primary(def2.traverse().reverse(r)), def1, def2);
+        });
+
+    }
     public  long size() {
         return xor.visit(left->def1.foldable().size(left),
                 right->def2.foldable().size(right));

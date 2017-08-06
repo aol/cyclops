@@ -125,7 +125,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     @Override
     public Iterator<T> iterator() {
 
-        return stream().iterator();
+        return get().iterator();
     }
 
     @Override

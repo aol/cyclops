@@ -167,6 +167,9 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public  Active<W1,Long> size() {
         return Active.of(def1.functor().map(i->def2.foldable().size(i),nested),def1);
     }
+    public Nested<W1,W2,T> reverse(){
+       return Nested.of(def1.traverse().reverse( def1.functor().map(i->def2.traverse().reverse(i),nested)),def1,def2);
+    }
     public  long totalSize() {
         return size().foldLeft(Monoids.longSum);
     }

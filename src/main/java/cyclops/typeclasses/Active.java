@@ -180,7 +180,13 @@ public class Active<W,T> implements Filters<T>,
         return def1.foldable().allMatch(pred,single);
     }
 
+    public T getAt(int index){
+        return toListX().get(index);
+    }
 
+    public Active<W,T> reverse(){
+        return Active.of(def1.traverse().reverse(single),def1);
+    }
     public  ListX<T> toListX(){
         return def1.foldable().listX(single);
     }
@@ -193,21 +199,14 @@ public class Active<W,T> implements Filters<T>,
     public <R> Active<W,Tuple2<T,Long>> zipWithIndex() {
         return mapWithIndex(Tuple::tuple);
     }
-    public static void main(String[] args){
 
-        Active<list,Integer> list = ListX.of(1,2,3).allTypeclasses();
-
-        list.concreteMonoid(kindKleisli(),ListX.kindCokleisli())
-                .sum(ListX.of(ListX.of(1,2,3)));
-
-        list.concreteFlatMap(ListX.kindKleisli())
-                .flatMap(i->ListX.of(1,2,3));
-
-        list.concreteTailRec(kindKleisli())
-                .tailRec(1,i-> 1<100_000 ? ListX.of(Xor.secondary(i+1)) : ListX.of(Xor.primary(i)));
-
-
+    public <W2,T2,R> Active<W,R> zipWith(Active<W2,T2> a,  BiFunction<? super T,? super Maybe<T2>,? extends R> f) {
+        return Active.of(def1.traverse().zipWith(a.def1.foldable(),f,single,a.single),def1);
     }
+    public <W2,T2,R> Active<W,R> zipWith(Foldable<W2> foldable,Higher<W2,T2> a,  BiFunction<? super T,? super Maybe<T2>,? extends R> f) {
+        return Active.of(def1.traverse().zipWith(foldable,f,single,a),def1);
+    }
+
 
     public <C> Narrowed<C> concreteMonoid(Kleisli<W,C,T> widen,Cokleisli<W,T,C> narrow){
         return new Narrowed<C>(widen,narrow);

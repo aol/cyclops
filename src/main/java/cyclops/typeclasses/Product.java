@@ -104,6 +104,9 @@ public class Product<W1,W2,T> implements  Filters<T>,
     public <U> Product<W1,W2,U> cast(Class<? extends U> type) {
         return (Product<W1,W2,U>)Transformable.super.cast(type);
     }
+    public <W2,T2,R> Active<W1,R> zipWithSecond(BiFunction<? super T,? super Maybe<T>,? extends R> f) {
+        return Active.of(def1.traverse().zipWith(def2.foldable(),f,run.v1,run.v2),def1);
+    }
     public Product<W1,W2,Tuple2<T,T>> zip(Product<W1,W2,T> p2){
         return zip(p2,Tuple::tuple);
     }
@@ -312,6 +315,9 @@ public class Product<W1,W2,T> implements  Filters<T>,
         return stream().map((a,b)->a.appendS(b));
     }
 
+    public Product<W1,W2,T> reverse(){
+        return Product.of(run.map((a,b)->Tuple.tuple(def1.traverse().reverse(a),def2.traverse().reverse(b))),def1,def2);
+    }
     public  Tuple2<Long,Long> size() {
         return run.map((a,b)->Tuple.tuple(def1.foldable().size(a),
                 def2.foldable().size(b)));

@@ -1,6 +1,7 @@
 package cyclops.typeclasses;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.control.Maybe;
@@ -11,9 +12,11 @@ import cyclops.monads.Witness.maybe;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 
+import static cyclops.collections.mutable.ListX.kindKleisli;
 import static cyclops.control.Maybe.Instances.applicative;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
@@ -24,6 +27,36 @@ import static org.junit.Assert.*;
 public class ActiveTest {
     Active<list,Integer> active = Active.of(ListX.of(1,2,3), ListX.Instances.definitions());
 
+
+    @Test
+    public void toList(){
+        assertThat(ListX.of(1,2,3).allTypeclasses().toListX(),equalTo(ListX.of(1,2,3)));
+    }
+    @Test
+    public void foldMap(){
+        System.out.println(ListX.of(1,2,3).allTypeclasses().foldMap(Monoids.intMax,a->a=a+1));
+    }
+    @Test
+    public void foldMapTraverse(){
+        System.out.println(ListX.of(1,2,3).allTypeclasses().foldMap(Monoids.intSum,a->a+1));
+    }
+    @Test
+    public void reverse(){
+        assertThat(ListX.of(1,2,3).allTypeclasses().reverse().getSingle().convert(ListX::narrowK),equalTo(ListX.of(3,2,1)));
+
+    }
+    @Test
+    public void zipWith(){
+        ListX<Integer> res =ListX.of(1,2,3).allTypeclasses()
+                .zipWith(VectorX.of(10,20).allTypeclasses(), (a,b)->{
+                    return b.visit(p->a+p,()->-1);
+                })
+                .getSingle()
+                .convert(ListX::narrowK);
+
+        res.printOut();
+
+    }
     @Test
     public void zipWithIndex(){
         ListX<Tuple2<Integer, Long>> l = ListX.of(1, 2, 3)
@@ -33,6 +66,22 @@ public class ActiveTest {
                                               .convert(ListX::narrowK);
         assertThat(l,equalTo(ListX.of(1,2,3).zipWithIndex()));
     }
+    public static void main(String[] args){
+
+        Active<list,Integer> list = ListX.of(1,2,3).allTypeclasses();
+
+        list.concreteMonoid(kindKleisli(),ListX.kindCokleisli())
+                .sum(ListX.of(ListX.of(1,2,3)));
+
+        list.concreteFlatMap(ListX.kindKleisli())
+                .flatMap(i->ListX.of(1,2,3));
+
+        list.concreteTailRec(kindKleisli())
+                .tailRec(1,i-> 1<100_000 ? ListX.of(Xor.secondary(i+1)) : ListX.of(Xor.primary(i)));
+
+
+    }
+
     @Test
     public void map() {
 

@@ -441,9 +441,26 @@ public interface ListX<T> extends To<ListX<T>>,
          * @return Type class for folding / reduction operations
          */
         public static <T> Foldable<list> foldable(){
-            BiFunction<Monoid<T>,Higher<list,T>,T> foldRightFn =  (m,l)-> ListX.fromIterable(narrow(l)).foldRight(m);
-            BiFunction<Monoid<T>,Higher<list,T>,T> foldLeftFn = (m,l)-> ListX.fromIterable(narrow(l)).reduce(m);
-            return General.foldable(foldRightFn, foldLeftFn);
+            return new Foldable<list>() {
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<list, T> ds) {
+                    return  ListX.fromIterable(narrow(ds)).foldRight(monoid);
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<list, T> ds) {
+                    return  ListX.fromIterable(narrow(ds)).foldLeft(monoid);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<list, T> nestedA) {
+                    Monoid<? extends R> m = mb;
+                    Object x = narrow(nestedA).map(fn).foldLeft((Monoid) m);
+                    return (R)x;
+
+                }
+            };
+
         }
 
         private static  <T> ListX<T> concat(List<T> l1, List<T> l2){
