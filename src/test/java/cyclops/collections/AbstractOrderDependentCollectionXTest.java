@@ -33,6 +33,7 @@ import com.aol.cyclops2.types.stream.HeadAndTail;
 public abstract class AbstractOrderDependentCollectionXTest extends AbstractCollectionXTest {
 
 
+
     @Test
     public void forEach2OD() {
 

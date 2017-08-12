@@ -50,12 +50,13 @@ public class SpoutsTest {
     @Test
     public void reactiveBuffer() throws InterruptedException {
 
-        Subscription sub = Spouts.reactiveBuffer(10, s -> {
+        Subscription sub = Spouts.reactiveBuffer(16, s -> {
 
             s.onSubscribe(new Subscription() {
                 @Override
                 public void request(long n) {
                     if(i==0) {
+
                         Effect e = () -> {
 
 
@@ -73,7 +74,9 @@ public class SpoutsTest {
 
         }).forEach(2, in->count++);
 
+        //count will be 2, buffer will be 16
         Thread.sleep(500);
+
         sub.request(30);
 
         assertThat(i,equalTo(30));

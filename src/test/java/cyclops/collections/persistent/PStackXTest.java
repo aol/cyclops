@@ -24,12 +24,19 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class PStackXTest extends CollectionXTestsWithNulls {
 	AtomicLong counter = new AtomicLong(0);
+	@Test
+	public void withTest(){
+
+		assertEquals(of("x", "b", "c"), LinkedListX.of("a", "b", "c").with(0, "x"));
+		assertEquals(of("a", "x", "c"), LinkedListX.of("a", "b", "c").with(1, "x"));
+		assertEquals(of("a", "b", "x"), LinkedListX.of("a", "b", "c").with(2, "x"));
+	}
+
 	@Before
 	public void setup(){
 

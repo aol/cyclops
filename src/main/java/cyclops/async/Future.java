@@ -74,7 +74,25 @@ public class Future<T> implements To<Future<T>>,
                                   Completable<T>,
                                   Higher<future,T>,
                                   RecoverableFrom<Throwable,T> {
-
+    public static  <T,R> Future<R> tailRec(T initial, Function<? super T, ? extends Future<? extends Xor<T, R>>> fn){
+        SimpleReact sr = SequentialElasticPools.simpleReact.nextReactor();
+        return Future.of(()->{
+            Future<? extends Xor<T, R>> next[] = new Future[1];
+            next[0]=Future.ofResult(Xor.secondary(initial));
+            boolean cont = true;
+            do {
+                cont = next[0].visit(p ->  p.visit(s -> {
+                    next[0] = narrowK(fn.apply(s));
+                    return true;
+                }, pr -> false), () -> false);
+            }while(cont);
+            return next[0].map(Xor::get);
+        }, sr.getExecutor()).flatMap(i->i)
+                .peek(e->SequentialElasticPools.simpleReact.populate(sr)).recover(t->{
+                    SequentialElasticPools.simpleReact.populate(sr);
+                    throw ExceptionSoftener.throwSoftenedException(t);
+                });
+    }
     public static  <T> Kleisli<future,Future<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), Future::widen);
     }
@@ -1651,27 +1669,12 @@ public class Future<T> implements To<Future<T>>,
 
         public static <T,R> MonadRec<future> monadRec(){
 
-            SimpleReact sr = SequentialElasticPools.simpleReact.nextReactor();
+
             return new MonadRec<future>(){
 
                 @Override
                 public <T, R> Higher<future, R> tailRec(T initial, Function<? super T, ? extends Higher<future, ? extends Xor<T, R>>> fn) {
-                   return Future.of(()->{
-                            Future<? extends Xor<T, R>> next[] = new Future[1];
-                            next[0]=Future.ofResult(Xor.secondary(initial));
-                            boolean cont = true;
-                            do {
-                                cont = next[0].visit(p ->  p.visit(s -> {
-                                    next[0] = narrowK(fn.apply(s));
-                                    return true;
-                                }, pr -> false), () -> false);
-                            }while(cont);
-                        return next[0].map(Xor::get);
-                        }, sr.getExecutor()).flatMap(i->i)
-                                .peek(e->SequentialElasticPools.simpleReact.populate(sr)).recover(t->{
-                               SequentialElasticPools.simpleReact.populate(sr);
-                               throw ExceptionSoftener.throwSoftenedException(t);
-                           });
+                    return Future.tailRec(initial,fn.andThen(Future::narrowK));
                 }
             };
         }

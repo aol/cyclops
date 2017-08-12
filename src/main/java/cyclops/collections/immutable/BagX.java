@@ -1135,8 +1135,6 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
         return (BagX<R>)LazyCollectionX.super.zipP(publisher,fn);
     }
 
-
-
     @Override
     default <U> BagX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
         return (BagX)LazyCollectionX.super.zipP(other);

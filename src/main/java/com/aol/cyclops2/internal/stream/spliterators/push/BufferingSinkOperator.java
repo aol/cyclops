@@ -48,8 +48,7 @@ public class BufferingSinkOperator<T> implements Operator<T> {
 
             @Override
             public void onNext(T t) {
-               // if(delegate[0]==null)
-                //    return;
+
 
                 if(!q.offer(t)){
                     policy.match(t).map(v->{
@@ -79,6 +78,7 @@ public class BufferingSinkOperator<T> implements Operator<T> {
     private void processQueue(StreamSubscription ss,Consumer<? super T> onNext) {
 
         if(active.compareAndSet(false,true)) {
+
             while(ss.isActive()) {
                 T next = q.poll();
                 if (next != null) {

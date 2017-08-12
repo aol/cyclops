@@ -3,7 +3,9 @@ package cyclops.control;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.anyM.AnyMValue;
+import com.sun.xml.internal.bind.v2.model.core.ID;
 import cyclops.async.Future;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -28,6 +30,20 @@ import java.util.function.Supplier;
 public class Identity<T> implements Higher<identity,T>, Iterable<T> {
     private final T value;
 
+
+    public static  <T,R> Identity<R> tailRec(T initial, Function<? super T, ? extends Identity<? extends Xor<T, R>>> fn){
+        Identity<? extends Xor<T, R>> next[] = new Identity[1];
+        next[0] = Identity.of(Xor.secondary(initial));
+        boolean cont = true;
+        do {
+
+            cont = next[0].visit(p -> p.visit(s -> {
+                next[0] = narrowK(fn.apply(s));
+                return true;
+            }, __ -> false));
+        } while (cont);
+        return next[0].map(Xor::get);
+    }
     public static <T> Identity<T> of(T value){
          return new Identity<>(value);
      }
@@ -226,17 +242,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
             return new MonadRec<identity>(){
                 @Override
                 public <T, R> Higher<identity, R> tailRec(T initial, Function<? super T, ? extends Higher<identity, ? extends Xor<T, R>>> fn) {
-                    Identity<? extends Xor<T, R>> next[] = new Identity[1];
-                    next[0] = Identity.of(Xor.secondary(initial));
-                    boolean cont = true;
-                    do {
-
-                        cont = next[0].visit(p -> p.visit(s -> {
-                            next[0] = narrowK(fn.apply(s));
-                            return true;
-                        }, __ -> false));
-                    } while (cont);
-                    return next[0].map(Xor::get);
+                   return Identity.tailRec(initial,fn.andThen(Identity::narrowK));
                 }
 
 

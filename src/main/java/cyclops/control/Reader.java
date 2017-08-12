@@ -319,7 +319,6 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
                 Reader<IN,R> res = a->i;
                 return res;
             }, fn.apply(r.apply(t)));
-
         }
         public static <IN> Traverse<Higher<reader, IN>> traversable(IN t) {
 

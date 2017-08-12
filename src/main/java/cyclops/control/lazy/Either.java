@@ -117,7 +117,18 @@ import java.util.stream.Stream;
  * @param <RT> Right type
  */
 public interface Either<LT, RT> extends Xor<LT, RT>{
-
+    public static  <L,T,R> Either<L,R> tailRec(T initial, Function<? super T, ? extends Either<L,? extends Xor<T, R>>> fn){
+        Either<L,? extends Xor<T, R>> next[] = new Either[1];
+        next[0] = Either.right(Xor.secondary(initial));
+        boolean cont = true;
+        do {
+            cont = next[0].visit(p -> p.visit(s -> {
+                next[0] = fn.apply(s);
+                return true;
+            }, pr -> false), () -> false);
+        } while (cont);
+        return next[0].map(Xor::get);
+    }
 
     static <LT1,RT> Either<LT1,RT> fromMonadicValue(MonadicValue<RT> mv2){
         if(mv2 instanceof Either){
