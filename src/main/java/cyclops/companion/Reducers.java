@@ -3,6 +3,7 @@ package cyclops.companion;
 import java.util.List;
 import java.util.stream.Stream;
 
+import cyclops.collections.adt.LazyList;
 import cyclops.collections.immutable.*;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -47,6 +48,14 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class Reducers {
+
+    public static <T> Reducer<LazyList<T>> toLazyList(){
+        return Reducer.of(LazyList.empty(),(LazyList<T> a)->(LazyList<T> b)->b.prependAll(a),(T x)->LazyList.of(x));
+    }
+    public static <T> Reducer<cyclops.collections.adt.List<T>> toList(){
+        return Reducer.of(cyclops.collections.adt.List.empty(),(cyclops.collections.adt.List<T> a)->(cyclops.collections.adt.List<T> b)->b.prependAll(a),(T x)->cyclops.collections.adt.List.of(x));
+    }
+
     private static <T> PQueue<T> queueOf(final T... values) {
         PQueue<T> result = AmortizedPQueue.empty();
         for (final T value : values) {

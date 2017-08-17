@@ -32,10 +32,10 @@ public interface EagerToQueue<U> extends ToQueue<U> {
     }
 
     /* 
-     * Convert the current Stream to a simple-react Queue.
+     * Convert the current LazyList to a simple-react Queue.
      * The supplied function can be used to determine properties of the Queue to be used
      * 
-     *  @param fn Function to be applied to default Queue. Returned Queue will be used to conver this Stream to a Queue
+     *  @param fn Function to be applied to default Queue. Returned Queue will be used to conver this LazyList to a Queue
      *	@return This reactiveStream converted to a Queue
      * @see com.aol.cyclops2.react.reactiveStream.traits.ToQueue#toQueue(java.util.function.Function)
      */

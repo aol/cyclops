@@ -19,7 +19,7 @@ import cyclops.stream.ReactiveSeq;
 import lombok.Value;
 
 /**
- * Interface that represents a singleUnsafe value that can be converted into a List, Stream or Optional
+ * Interface that represents a singleUnsafe value that can be converted into a List, LazyList or Optional
  *
  * @author johnmcclean
  *
@@ -29,11 +29,11 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
-     * A mutable reduction operation equivalent to Stream#collect
+     * A mutable reduction operation equivalent to LazyList#collect
      *
      * <pre>
      * {@code
-     *      AnyM<Integer> monad1 = AnyM.fromStream(Stream.of(1,2,3));
+     *      AnyM<Integer> monad1 = AnyM.fromStream(LazyList.of(1,2,3));
      *      AnyM<Integer> monad2 = AnyM.fromOptional(Optional.of(1));
      *
      *      List<Integer> list1 = monad1.collect(CyclopsCollectors.toList());
@@ -133,7 +133,7 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
     }
 
     /**
-     * @return Stream containing value returned by get(), Empty Stream if null
+     * @return LazyList containing value returned by get(), Empty LazyList if null
      */
     default ReactiveSeq<T> toStream() {
         return ReactiveSeq.of(toOptional())

@@ -72,7 +72,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Give a function access to the current stage of a SimpleReact Stream
+     * Give a function access to the current stage of a SimpleReact LazyList
      *
      * @param consumer
      *            Consumer that will recieve current stage
@@ -109,8 +109,8 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Duplicate a Stream into two equivalent LazyFutureStreams, underlying
-     * Stream of Futures is duplicated
+     * Duplicate a LazyList into two equivalent LazyFutureStreams, underlying
+     * LazyList of Futures is duplicated
      * <pre>
      * {@code
      * EagerFutureStream.of(1, 2, 3).duplicate()
@@ -156,7 +156,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
 
     /**
      * Zip two Streams, zipping against the underlying futures of both Streams
-     * Placeholders (Futures) will be populated immediately in the new zipped Stream and results
+     * Placeholders (Futures) will be populated immediately in the new zipped LazyList and results
      * will be populated asyncrhonously
      *
      * @param other  Another FutureStream to zip Futures with
@@ -176,7 +176,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Zip this Stream with an index, but Zip based on the underlying tasks, not completed results.
+     * Zip this LazyList with an index, but Zip based on the underlying tasks, not completed results.
      *
      * e.g.
      * two function that return method name, but take varying lengths of time.
@@ -186,7 +186,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      *  [["takesALotOfTime",0],["veryQuick",1]]
      *
-     *  Where as with standard zipWithIndex you would get a new Stream ordered by completion
+     *  Where as with standard zipWithIndex you would get a new LazyList ordered by completion
      *
      *  [["veryQuick",0],["takesALotOfTime",1]]
      * </code>
@@ -204,10 +204,10 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Return first Stream out of provided Streams that starts emitted results
+     * Return first LazyList out of provided Streams that starts emitted results
      *
      * @param futureStreams Streams to race
-     * @return First Stream to skip emitting values
+     * @return First LazyList to skip emitting values
      */
     @SafeVarargs
     public static <U> SimpleReactStream<U> firstOf(final SimpleReactStream<U>... futureStreams) {
@@ -238,7 +238,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Returns a limited interval from a given Stream.
+     * Returns a limited interval from a given LazyList.
      *
      * <pre>
      * {@code
@@ -256,7 +256,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Perform a limit operation on the underlying Stream of Futures
+     * Perform a limit operation on the underlying LazyList of Futures
      * In contrast to EagerFutureStream#limit this removes entries basaed on their
      * skip position
      *
@@ -271,8 +271,8 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      *
      *
-     * @param maxSize The size of the subsequent Stream
-     * @return limited Stream
+     * @param maxSize The size of the subsequent LazyList
+     * @return limited LazyList
      */
     default SimpleReactStream<U> limit(final long maxSize) {
 
@@ -286,7 +286,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
 
     /**
      * In contast to EagerFutureStream#skip skipFutures will skip the first n entries
-     * of the underlying Stream of Futures.
+     * of the underlying LazyList of Futures.
      * <pre>
      * {@code
      * EagerFutureStream.of(()>loadSlow(),()>loadMedium(),()>loadFast())
@@ -309,23 +309,23 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Return a Stream with the same values as this Stream, but with all values omitted until the provided reactiveStream starts emitting values.
-     * Provided Stream ends the reactiveStream of values from this reactiveStream.
+     * Return a LazyList with the same values as this LazyList, but with all values omitted until the provided reactiveStream starts emitting values.
+     * Provided LazyList ends the reactiveStream of values from this reactiveStream.
      *
-     * @param s Stream that will skip the emission of values from this reactiveStream
-     * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
+     * @param s LazyList that will skip the emission of values from this reactiveStream
+     * @return Next stage in the LazyList but with all values skipped until the provided LazyList starts emitting
      */
     default <T> ReactiveSeq<U> skipUntil(final SimpleReactStream<T> s) {
         return EagerFutureStreamFunctions.skipUntil(this, s);
     }
 
     /**
-     * Return a Stream with the same values, but will stop emitting values once the provided Stream starts to emit values.
-     * e.g. if the provided Stream is asynchronously refreshing state from some remote store, this reactiveStream can proceed until
-     * the provided Stream succeeds in retrieving data.
+     * Return a LazyList with the same values, but will stop emitting values once the provided LazyList starts to emit values.
+     * e.g. if the provided LazyList is asynchronously refreshing state from some remote store, this reactiveStream can proceed until
+     * the provided LazyList succeeds in retrieving data.
      *
-     * @param s Stream that will stop the emission of values from this reactiveStream
-     * @return Next stage in the Stream but will only emit values until provided Stream starts emitting values
+     * @param s LazyList that will stop the emission of values from this reactiveStream
+     * @return Next stage in the LazyList but will only emit values until provided LazyList starts emitting values
      */
     default <T> ReactiveSeq<U> takeUntil(final SimpleReactStream<T> s) {
         return EagerFutureStreamFunctions.takeUntil(this, s);
@@ -356,7 +356,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      *	@param fn Apply to incoming events
      *	@param service Service to execute function on
-     *	@return next stage in the Stream
+     *	@return next stage in the LazyList
      */
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -371,7 +371,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      *	@param fn Apply to incoming events
      *	@param service Service to execute function on
-     *	@return next stage in the Stream
+     *	@return next stage in the LazyList
      */
     @Override
     default <R> SimpleReactStream<R> thenSync(final Function<? super U, ? extends R> fn) {
@@ -415,7 +415,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
 
     /**
      * React to the completion of any of the events in the previous stage. Will not work reliably with Streams
-     * where filter has been applied in earlier stages. (As Filter completes the Stream for events that are filtered out, they
+     * where filter has been applied in earlier stages. (As Filter completes the LazyList for events that are filtered out, they
      * potentially shortcircuit the completion of the stage).
      *
      * @param fn Function to applyHKT when any of the previous events complete
@@ -447,9 +447,9 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Construct a SimpleReactStream from provided Stream of CompletableFutures
+     * Construct a SimpleReactStream from provided LazyList of CompletableFutures
      *
-     * @param stream JDK Stream to construct new SimpleReactStream from
+     * @param stream JDK LazyList to construct new SimpleReactStream from
      * @return SimpleReactStream
      */
     default <R> SimpleReactStream<R> fromStreamOfFutures(final Stream<CompletableFuture<R>> stream) {
@@ -563,7 +563,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
+     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting LazyList
      * If in async mode this operation is performed asyncrhonously
      * If in sync mode this operation is performed synchronously
      *
@@ -580,7 +580,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      *
      * @param flatFn flatMap function
-     * @return Flatten Stream with flatFn applied
+     * @return Flatten LazyList with flatFn applied
      */
     @Override
     default <R> SimpleReactStream<R> flatMapToCompletableFuture(final Function<? super U, CompletableFuture<? extends R>> flatFn) {
@@ -592,7 +592,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
+     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting LazyList
      * This operation is performed synchronously
      *
      * <pre>
@@ -607,7 +607,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      *
      * @param flatFn flatMap function
-     * @return Flatten Stream with flatFn applied
+     * @return Flatten LazyList with flatFn applied
      */
     @Override
     default <R> SimpleReactStream<R> flatMapToCompletableFutureSync(final Function<? super U, CompletableFuture<? extends R>> flatFn) {
@@ -617,11 +617,11 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Allows aggregate values in a Stream to be flatten into a singleUnsafe Stream.
-     * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
+     * Allows aggregate values in a LazyList to be flatten into a singleUnsafe LazyList.
+     * flatMap function turn each aggregate value into it's own LazyList, and SimpleReact aggregates those Streams
      * into a singleUnsafe flattened reactiveStream
      *
-     * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
+     * @param flatFn Function that coverts a value (e.g. a Collection) into a LazyList
      * @return SimpleReactStream
      */
     @Override
@@ -725,7 +725,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * @return A Stream of CompletableFutures that represent this stage in the
+     * @return A LazyList of CompletableFutures that represent this stage in the
      *         dataflow
      */
     @Override
@@ -738,7 +738,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /*
-      * Merge two simple-react Streams, by merging the Stream of underlying
+      * Merge two simple-react Streams, by merging the LazyList of underlying
      * futures - not suitable for merging infinite Streams - use
      * see FutureStream#switchOnNext for infinite Streams
      *
@@ -753,7 +753,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * }
      * </pre>
      *
-     * @param s Stream to zip
+     * @param s LazyList to zip
      *
      * @return Next stage in reactiveStream
      *
@@ -1056,7 +1056,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
 
     /**
      * Convert between an Lazy and Eager future reactiveStream,
-     * can be used to take advantages of each approach during a singleUnsafe Stream
+     * can be used to take advantages of each approach during a singleUnsafe LazyList
      *
      * @return An EagerFutureStream from this LazyFutureStream, will use the same executors
      */
@@ -1099,7 +1099,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      * flatMap / bind implementation that returns the correct type (SimpleReactStream)
      *
-     * @param stream Stream to flatMap
+     * @param stream LazyList to flatMap
      * @param flatFn flatMap function
      * @return
      */
@@ -1112,8 +1112,8 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     /**
      * flatten nested SimpleReactStreams
      *
-     * @param stream Stream to flatten
-     * @return flattened Stream
+     * @param stream LazyList to flatten
+     * @return flattened LazyList
      */
     static <U, R> SimpleReactStream<R> join(final SimpleReactStream<BaseSimpleReactStream<U>> stream) {
         final Queue queue = stream.getQueueFactory()

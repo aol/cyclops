@@ -29,7 +29,7 @@ import cyclops.monads.Witness.kleisli;
  * @param <W> Monad kind
  * @param <T> Function input type
  * @param <R> Function return type
- *              (inside monad e.g. Kleisli[stream,String,Integer] represents a function that takes a String and returns a Stream of Integers)
+ *              (inside monad e.g. Kleisli[stream,String,Integer] represents a function that takes a String and returns a LazyList of Integers)
  */
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

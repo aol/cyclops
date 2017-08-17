@@ -39,11 +39,11 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * 
      * LazyFutureStream.of(1, "a", 2, "b", 3).ofType(Integer.class)
      * 
-     * gives a Stream of (1,2,3)
+     * gives a LazyList of (1,2,3)
      * 
      * LazyFutureStream.of(1, "a", 2, "b", 3).ofType(String.class)
      * 
-     * gives a Stream of ("a","b")
+     * gives a LazyList of ("a","b")
      * 
      */
     default <U> BaseSimpleReactStream<U> ofType(final Class<? extends U> type) {
@@ -114,7 +114,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * 
      *	@param fn Apply to incoming events
      *	@param service Service to execute function on
-     *	@return next stage in the Stream
+     *	@return next stage in the LazyList
      */
 
     <R> BaseSimpleReactStream<R> then(final Function<? super U, ? extends R> fn, Executor service);
@@ -124,7 +124,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * 
      *	@param fn Apply to incoming events
      *	@param service Service to execute function on
-     *	@return next stage in the Stream
+     *	@return next stage in the LazyList
      */
     <R> BaseSimpleReactStream<R> thenSync(final Function<? super U, ? extends R> fn);
 
@@ -194,7 +194,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     BaseSimpleReactStream<U> peekSync(final Consumer<? super U> consumer);
 
     /**
-     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
+     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting LazyList
      * If in async mode this operation is performed asyncrhonously
      * If in sync mode this operation is performed synchronously
      * 
@@ -211,12 +211,12 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * 
      * 
      * @param flatFn flatMap function
-     * @return Flatten Stream with flatFn applied
+     * @return Flatten LazyList with flatFn applied
      */
     <R> BaseSimpleReactStream<R> flatMapToCompletableFuture(Function<? super U, CompletableFuture<? extends R>> flatFn);
 
     /**
-     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
+     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting LazyList
      * This operation is performed synchronously
      * 
      * <pre>
@@ -231,16 +231,16 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * 
      * 
      * @param flatFn flatMap function
-     * @return Flatten Stream with flatFn applied
+     * @return Flatten LazyList with flatFn applied
      */
     <R> BaseSimpleReactStream<R> flatMapToCompletableFutureSync(Function<? super U, CompletableFuture<? extends R>> flatFn);
 
     /**
-     * Allows aggregate values in a Stream to be flatten into a singleUnsafe Stream.
-     * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
+     * Allows aggregate values in a LazyList to be flatten into a singleUnsafe LazyList.
+     * flatMap function turn each aggregate value into it's own LazyList, and SimpleReact aggregates those Streams
      * into a singleUnsafe flattened reactiveStream
      * 
-     * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
+     * @param flatFn Function that coverts a value (e.g. a Collection) into a LazyList
      * @return SimpleReactStream
      */
     <R> BaseSimpleReactStream<R> flatMap(Function<? super U, ? extends Stream<? extends R>> flatFn);
@@ -273,7 +273,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     BaseSimpleReactStream<U> filterSync(final Predicate<? super U> p);
 
     /**
-     * @return A Stream of CompletableFutures that represent this stage in the
+     * @return A LazyList of CompletableFutures that represent this stage in the
      *         dataflow
      */
     @SuppressWarnings({ "unchecked" })
@@ -556,7 +556,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     * Wrap a Stream into a SimpleReactStream.
+     * Wrap a LazyList into a SimpleReactStream.
      */
     static <T> SimpleReactStream<T> simpleReactStream(Stream<T> stream) {
 

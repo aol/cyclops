@@ -2,6 +2,7 @@ package cyclops;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.To;
+import cyclops.collections.adt.*;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.MapX;
 import cyclops.companion.Reducers;
@@ -92,7 +93,14 @@ public interface Converters {
         return vec.unwrapIfInstance(LinkedBlockingDeque.class,
                 ()-> vec.collect(Collectors.toCollection(()->new LinkedBlockingDeque<T>())));
     }
-
+    public static <T> cyclops.collections.adt.List<T> List(CollectionX<T> vec){
+        return vec.unwrapIfInstance(cyclops.collections.adt.List.class,
+                ()-> Reducers.<T>toList().mapReduce(vec.stream()));
+    }
+    public static <T> LazyList<T> LazyList(CollectionX<T> vec){
+        return vec.unwrapIfInstance(cyclops.collections.adt.LazyList.class,
+                ()-> Reducers.<T>toLazyList().mapReduce(vec.stream()));
+    }
     public static <T> ArrayList<T> ArrayList(CollectionX<T> vec){
 
         return vec.unwrapIfInstance(ArrayList.class,

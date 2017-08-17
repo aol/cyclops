@@ -318,11 +318,11 @@ public interface Eval<T> extends To<Eval<T>>,
     }
 
     /**
-     * Turn a Stream of Evals into a singleUnsafe Eval with a Stream of values.
+     * Turn a LazyList of Evals into a singleUnsafe Eval with a LazyList of values.
      *
      * <pre>
      * {@code
-     *  Eval<ReactiveSeq<Integer>> maybes =Eval.sequence(Stream.of(Eval.now(10),Eval.now(1)));
+     *  Eval<ReactiveSeq<Integer>> maybes =Eval.sequence(LazyList.of(Eval.now(10),Eval.now(1)));
         //Eval.now(ReactiveSeq.of(10,1)));
      *
      * }
@@ -600,7 +600,7 @@ public interface Eval<T> extends To<Eval<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Eval<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -609,7 +609,7 @@ public interface Eval<T> extends To<Eval<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     default <U> Eval<Tuple2<T, U>> zipS(final Stream<? extends U> other) {

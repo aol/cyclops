@@ -884,7 +884,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      */
     Optional<ST> secondaryToOptional();
     /**
-     * @return A Stream containing the secondary value if present, otherwise an zero Stream
+     * @return A LazyList containing the secondary value if present, otherwise an zero LazyList
      */
     ReactiveSeq<ST> secondaryToStream();
 
@@ -991,7 +991,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Xor<ST, R> zipS(final Stream<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
@@ -1000,7 +1000,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     default <U> Xor<ST, Tuple2<PT, U>> zipS(final Stream<? extends U> other) {

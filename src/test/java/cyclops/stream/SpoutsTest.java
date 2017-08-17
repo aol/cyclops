@@ -379,7 +379,7 @@ public class SpoutsTest {
 
         //    assertThat(Monoids.<Integer>amb()
        //         .applyHKT(nextAsync(),Spouts.of(100,200,300)).listX(),equalTo(ListX.of(100,200,300)));
-     //   assertThat(Monoids.<Integer>amb().reduce(Stream.of((nextAsync()),Spouts.of(100,200,300))).listX(),equalTo(ListX.of(100,200,300)));
+     //   assertThat(Monoids.<Integer>amb().reduce(LazyList.of((nextAsync()),Spouts.of(100,200,300))).listX(),equalTo(ListX.of(100,200,300)));
        // assertThat(Spouts.amb(ListX.of(nextAsync(),Spouts.of(100,200,300))).listX(),equalTo(ListX.of(100,200,300)));
     }
 
@@ -523,7 +523,7 @@ public class SpoutsTest {
                     .map(i->i+2)
                     .collect(list);
         System.out.println("res " + res);
-     //   Stream.of(1,2,3).collect((Supplier)list.supplier(),list.accumulator(),list.combiner());
+     //   LazyList.of(1,2,3).collect((Supplier)list.supplier(),list.accumulator(),list.combiner());
     }
     @Test
     public void ambSemigroupTest(){

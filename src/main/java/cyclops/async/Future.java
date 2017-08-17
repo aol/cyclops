@@ -562,19 +562,19 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Sequence operation that convert a Stream of Futures to a Future with a Stream
+     * Sequence operation that convert a LazyList of Futures to a Future with a LazyList
      *
      * <pre>
      * {@code
      *   Future<Integer> just = Future.ofResult(10);
-     *   Future<ReactiveSeq<Integer>> futures =Future.sequence(Stream.of(just,Future.ofResult(1)));
+     *   Future<ReactiveSeq<Integer>> futures =Future.sequence(LazyList.of(just,Future.ofResult(1)));
          //ListX.of(10,1)
      *
      * }
      * </pre>
      *
-     * @param fts Strean of Futures to Sequence into a Future with a Stream
-     * @return Future with a Stream
+     * @param fts Strean of Futures to Sequence into a Future with a LazyList
+     * @return Future with a LazyList
      */
     public static <T> Future<ReactiveSeq<T>> sequence(final Stream<? extends Future<T>> fts) {
         return AnyM.sequence(fts.map(AnyM::fromFuture), Witness.future.INSTANCE)
@@ -1395,7 +1395,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList,
      * java.util.function.BiFunction)
      */
     @Override
@@ -1406,7 +1406,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     public <U> Future<Tuple2<T, U>> zipS(final Stream<? extends U> other) {

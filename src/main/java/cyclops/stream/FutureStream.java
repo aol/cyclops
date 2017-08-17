@@ -342,7 +342,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#append(java.util.reactiveStream.Stream)
+     * @see org.jooq.lambda.Seq#append(java.util.reactiveStream.LazyList)
      */
     @Override
     default FutureStream<U> appendS(Stream<? extends U> other) {
@@ -358,7 +358,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#prepend(java.util.reactiveStream.Stream)
+     * @see org.jooq.lambda.Seq#prepend(java.util.reactiveStream.LazyList)
      */
     @Override
     default FutureStream<U> prependS(Stream<? extends U> other) {
@@ -376,7 +376,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /**
-     * Create a Stream that finitely cycles this Stream, provided number of times
+     * Create a LazyList that finitely cycles this LazyList, provided number of times
      *
      * <pre>
      * {@code
@@ -507,7 +507,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return (FutureStream<U>)ReactiveSeq.super.combine(op,predicate);
     }
     /**
-     * If this Stream is empty one it with a another Stream
+     * If this LazyList is empty one it with a another LazyList
      *
      * <pre>
      * {@code
@@ -519,8 +519,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      *
      * @param switchTo
-     *            Supplier that will generate the alternative Stream
-     * @return Stream that will switch to an alternative Stream if empty
+     *            Supplier that will generate the alternative LazyList
+     * @return LazyList that will switch to an alternative LazyList if empty
      */
     @Override
     default FutureStream<U> onEmptySwitch(final Supplier<? extends Stream<U>> switchTo) {
@@ -600,7 +600,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /**
-     * Remove all occurances of the specified element from the Stream
+     * Remove all occurances of the specified element from the LazyList
      * <pre>
      * {@code
      * 	FutureStream.of(1,2,3,4,5,1,2,3).remove(1)
@@ -610,7 +610,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      *
      * @param t element to remove
-     * @return Filtered Stream
+     * @return Filtered LazyList
      */
     @Override
     default FutureStream<U> remove(final U t) {
@@ -619,7 +619,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Return a Stream with elements before the provided skip index removed, and elements after the provided
+     * Return a LazyList with elements before the provided skip index removed, and elements after the provided
      * take index removed
      *
      * <pre>
@@ -660,8 +660,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * {@code
      *   FutureStream.of(1,2,3).combinations()
      *
-     *   //FutureStream[Stream[],Stream[1],Stream[2],Stream[3].Stream[1,2],Stream[1,3],Stream[2,3]
-     *   			,Stream[1,2,3]]
+     *   //FutureStream[LazyList[],LazyList[1],LazyList[2],LazyList[3].LazyList[1,2],LazyList[1,3],LazyList[2,3]
+     *   			,LazyList[1,2,3]]
      * }
      * </pre>
      *
@@ -679,7 +679,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * FutureStream operators act on the results of the previous stage by default. That means limiting,
      * skipping, zipping all occur once results being to reactiveStream in from active Future tasks. This
      * operator allows access to a set of operators that behave differently. Limiting, skipping and zipping all occur on
-     * the underlying Stream of Futures.
+     * the underlying LazyList of Futures.
      *
      * Operating on results
      * <pre>
@@ -703,7 +703,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * The first result will still be fast, but the index will now be the skip index 1
      *
      * @return Access a set of operators that act on the underlying futures in this
-     * Stream.
+     * LazyList.
      *
      */
     default OperationsOnFutures<U> actOnFutures() {
@@ -712,7 +712,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @return an iterator over this Stream
+     * @return an iterator over this LazyList
      * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#iterator()
      */
     @Override
@@ -721,7 +721,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @return Queue membership subscription for this Stream
+     * @return Queue membership subscription for this LazyList
      * @see com.aol.cyclops2.react.reactiveStream.traits.LazySimpleReactStream#getSubscription()
      */
     @Override
@@ -734,15 +734,15 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     <R> FutureStream<R> withLastActive(LazyStreamWrapper<R> streamWrapper);
 
     /*
-     *	@return Stream Builder for this Stream
+     *	@return LazyList Builder for this LazyList
      * @see com.aol.cyclops2.react.reactiveStream.traits.LazySimpleReactStream#getSimpleReact()
      */
     @Override
     LazyReact getSimpleReact();
 
     /*
-     * Subscribe to this Stream
-     * If this Stream is executing in async mode it will operate as an Async Publisher, otherwise it will operate as a Synchronous publisher.
+     * Subscribe to this LazyList
+     * If this LazyList is executing in async mode it will operate as an Async Publisher, otherwise it will operate as a Synchronous publisher.
      * async() or sync() can be used just prior to forEachAsync.
      *
      * <pre>
@@ -801,7 +801,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * @return a Stream that batches all completed elements from this reactiveStream since last read recover into a toX
+     * @return a LazyList that batches all completed elements from this reactiveStream since last read recover into a toX
      */
     default FutureStream<Collection<U>> chunkSinceLastRead() {
         final Queue queue = this.withQueueFactory(QueueFactories.unboundedQueue())
@@ -843,7 +843,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#count()
+     * @see java.util.reactiveStream.LazyList#count()
      */
     @Override
     default long count() {
@@ -853,7 +853,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * Change task executor for the next stage of the Stream
+     * Change task executor for the next stage of the LazyList
      *
      * <pre>
      * {@code
@@ -866,7 +866,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      *
      *	@param e New executor to use
-     *	@return Stream ready for next stage definition
+     *	@return LazyList ready for next stage definition
      * @see com.aol.cyclops2.react.reactiveStream.traits.ConfigurableStream#withTaskExecutor(java.util.concurrent.Executor)
      */
     @Override
@@ -877,7 +877,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     FutureStream<U> withLazyCollector(Supplier<LazyResultConsumer<U>> lazy);
 
     /*
-     * Change the QueueFactory type for the next phase of the Stream.
+     * Change the QueueFactory type for the next phase of the LazyList.
      * Default for EagerFutureStream is an unbounded blocking queue, but other types
      * will work fine for a subset of the tasks (e.g. an unbonunded non-blocking queue).
      *
@@ -893,7 +893,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * }
      * </pre>
      *	@param queue Queue factory to use for subsequent stages
-     *	@return Stream
+     *	@return LazyList
      * @see com.aol.cyclops2.react.reactiveStream.traits.ConfigurableStream#withQueueFactory(com.aol.simple.react.async.QueueFactory)
      * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#unboundedWaitFree()
      * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#boundedWaitFree(int size)
@@ -902,7 +902,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     FutureStream<U> withQueueFactory(QueueFactory<U> queue);
 
     /*
-     *	@param sub Queue Subscription to use for this Stream
+     *	@param sub Queue Subscription to use for this LazyList
      * @see com.aol.cyclops2.react.reactiveStream.traits.LazySimpleReactStream#withSubscription(com.aol.simple.react.async.subscription.Continueable)
      */
     @Override
@@ -927,7 +927,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     }
 
-    /*  Transfer data in this Stream asyncrhonously to a Queue
+    /*  Transfer data in this LazyList asyncrhonously to a Queue
      * <pre>
      * {@code
      *  Queue<String> q = new LazyReact().reactInfinitely(() -> "100")
@@ -965,7 +965,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
+     * @see java.util.reactiveStream.LazyList#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
     @Override
@@ -1139,7 +1139,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Turns this FutureStream into a HotStream, a connectable Stream, being executed on a thread on the
+     * Turns this FutureStream into a HotStream, a connectable LazyList, being executed on a thread on the
      * in it's current task executor, that is producing data
      * <pre>
      * {@code
@@ -1170,8 +1170,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Convert between an Lazy and Eager SimpleReact Stream, can be used to take
-     * advantages of each approach during a singleUnsafe Stream
+     * Convert between an Lazy and Eager SimpleReact LazyList, can be used to take
+     * advantages of each approach during a singleUnsafe LazyList
      *
      * Allows callers to take advantage of functionality only available in
      * SimpleReactStreams such as allOf
@@ -1214,7 +1214,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * }
      * //results in [100,200,300]
      * </pre>
-     *	@param mapper Function to be applied to all items in the Stream
+     *	@param mapper Function to be applied to all items in the LazyList
      *	@return
      * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#map(java.util.function.Function)
      */
@@ -1226,7 +1226,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Break a reactiveStream into multiple Streams based of some characteristic of the
-     * elements of the Stream
+     * elements of the LazyList
      *
      * e.g.
      *
@@ -1286,15 +1286,15 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Allows clients to control the emission of data for the next phase of the
-     * Stream. The user specified function can delay, drop, or change elements
+     * LazyList. The user specified function can delay, drop, or change elements
      *
      * @param fn
      *            Function takes a supplier, which can be used repeatedly to get
-     *            the next value from the Stream. If there are no more values, a
+     *            the next value from the LazyList. If there are no more values, a
      *            ClosedQueueException will be thrown. This function should
      *            return a Supplier which returns the desired result for the
      *            next element (or just the next element).
-     * @return Next stage in Stream
+     * @return Next stage in LazyList
      */
     default FutureStream<U> control(final Function<Supplier<U>, Supplier<U>> fn) {
         final Queue queue = toQueue();
@@ -1302,15 +1302,15 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Batch elements into a Stream of collections with user defined function
+     * Batch elements into a LazyList of collections with user defined function
      *
      * @param fn
      *            Function takes a supplier, which can be used repeatedly to get
-     *            the next value from the Stream. If there are no more values, a
+     *            the next value from the LazyList. If there are no more values, a
      *            ClosedQueueException will be thrown. This function should
      *            return a Supplier which creates a toX of the batched
      *            values
-     * @return Stream of batched values
+     * @return LazyList of batched values
      */
     default <C extends Collection<U>> FutureStream<C> group(final Function<Supplier<U>, Supplier<C>> fn) {
         final Queue queue = toQueue();
@@ -1318,7 +1318,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * Batch the elements in the Stream by a combination of Size and Time
+     * Batch the elements in the LazyList by a combination of Size and Time
      * If batch exceeds max size it will be split
      * If batch exceeds max time it will be split
      * Excludes Null values (neccessary for timeout handling)
@@ -1380,7 +1380,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *            Size of batch
      * @param supplier
      *            Create the batch holding toX
-     * @return Stream of Collections
+     * @return LazyList of Collections
      */
     @Override
     default <C extends Collection<? super U>> FutureStream<C> grouped(final int size, final Supplier<C> supplier) {
@@ -1410,7 +1410,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @param jitterInNanos
      *            Max number of nanos for jitter (random number less than this
      *            will be selected)/
-     * @return Next stage in Stream with jitter applied
+     * @return Next stage in LazyList with jitter applied
      */
     @Override
     default FutureStream<U> jitter(final long jitterInNanos) {
@@ -1419,7 +1419,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Apply a fixed delay before emitting elements to the next phase of the
-     * Stream. Note this doesn't neccessarily imply a fixed delay between
+     * LazyList. Note this doesn't neccessarily imply a fixed delay between
      * element creation (although it may do). e.g.
      *
      * <pre>
@@ -1431,7 +1431,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * Will emit 1 on skip, applyHKT 2 after an hour, 3 after 2 hours and so on.
      *
-     * However all 4 numbers will be populated in the Stream immediately.
+     * However all 4 numbers will be populated in the LazyList immediately.
      *
      * <pre>
      * {@code
@@ -1442,13 +1442,13 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * }
      * </pre>
      *
-     * Will populate each number in the Stream an hour apart.
+     * Will populate each number in the LazyList an hour apart.
      *
      * @param time
      *            amount of time between emissions
      * @param unit
      *            TimeUnit for emissions
-     * @return Next Stage of the Stream
+     * @return Next Stage of the LazyList
      */
     @Override
     default FutureStream<U> fixedDelay(final long time, final TimeUnit unit) {
@@ -1472,7 +1472,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *            Frequency period of element emission
      * @param unit
      *            Time unit for frequency period
-     * @return Stream with emissions slowed down by specified emission frequency
+     * @return LazyList with emissions slowed down by specified emission frequency
      */
     @Override
     default FutureStream<U> onePer(final long time, final TimeUnit unit) {
@@ -1500,7 +1500,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *            Frequency time period
      * @param unit
      *            Frequency time unit
-     * @return Stream with emissions slowed down by specified emission frequency
+     * @return LazyList with emissions slowed down by specified emission frequency
      */
     @Override
     default FutureStream<U> xPer(final int x, final long time, final TimeUnit unit) {
@@ -1508,7 +1508,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Organise elements in a Stream into a Collections based on the time period
+     * Organise elements in a LazyList into a Collections based on the time period
      * they pass through this stage
      *
      * <pre>
@@ -1524,7 +1524,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *            Time period during which all elements should be collected
      * @param unit
      *            Time unit during which all elements should be collected
-     * @return Stream of Lists
+     * @return LazyList of Lists
      */
     @Override
     default FutureStream<ListX<U>> groupedByTime(final long time, final TimeUnit unit) {
@@ -1534,7 +1534,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Organise elements in a Stream into a Collections based on the time period
+     * Organise elements in a LazyList into a Collections based on the time period
      * they pass through this stage
      *
      * <pre>
@@ -1555,7 +1555,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *            Time unit during which all elements should be collected
      * @param factory
      *            Instantiates the collections used in the batching
-     * @return Stream of collections
+     * @return LazyList of collections
      */
     @Override
     default <C extends Collection<? super U>> FutureStream<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
@@ -1580,7 +1580,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @param service Service to execute function on
      *
-     * @return next stage in the Stream
+     * @return next stage in the LazyList
      */
     @Override
     default <R> FutureStream<R> then(final Function<? super U, ? extends R> fn, final Executor service) {
@@ -1605,7 +1605,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Copy this Stream the specified number of times
+     * Copy this LazyList the specified number of times
      *
      * <pre>
      * {@code
@@ -1616,7 +1616,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * }</pre>
      *
-     * @param times to copy this Stream
+     * @param times to copy this LazyList
      * @return List with specified number of copies
      */
     default List<FutureStream<U>> copy(final int times) {
@@ -1625,7 +1625,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Merges this reactiveStream and the supplied Streams into a singleUnsafe Stream where the next value
+     * Merges this reactiveStream and the supplied Streams into a singleUnsafe LazyList where the next value
      * is the next returned across any of the involved Streams. Suitable for merging infinite streams
      *
      * <pre>
@@ -1633,7 +1633,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * 	FutureStream<Integer> fast =  ... //  [1,2,3,4,5,6,7..]
      * 	FutureStream<Integer> slow =  ... //  [100,200,300,400,500,600..]
      *
-     *  FutureStream<Integer> merged = fast.switchOnNextValue(Stream.of(slow));  //[1,2,3,4,5,6,7,8,100,9,10,11,12,13,14,15,16,200..]
+     *  FutureStream<Integer> merged = fast.switchOnNextValue(LazyList.of(slow));  //[1,2,3,4,5,6,7,8,100,9,10,11,12,13,14,15,16,200..]
      * }
      * </pre>
      *
@@ -1649,7 +1649,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Merges this reactiveStream and the supplied Streams into a singleUnsafe Stream where the next value
+     * Merges this reactiveStream and the supplied Streams into a singleUnsafe LazyList where the next value
      * is the next returned across any of the involved Streams. Suitable for merging infinite streams
      *
      * <pre>
@@ -1792,7 +1792,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
+     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting LazyList
      * If in async mode this operation is performed asyncrhonously
      * If in sync mode this operation is performed synchronously
      *
@@ -1808,7 +1808,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      *
      * @param flatFn flatMap function
-     * @return Flatten Stream with flatFn applied
+     * @return Flatten LazyList with flatFn applied
      */
     default <R> FutureStream<R> flatMapCompletableFuture(final Function<? super U, CompletableFuture<? extends R>> flatFn) {
         return fromStream(Streams.flatMapCompletableFuture(stream(), flatFn));
@@ -1830,10 +1830,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /*
-         * Convert the specified Stream to a FutureStream, using the configuration
+         * Convert the specified LazyList to a FutureStream, using the configuration
          * of this FutureStream (task executors, current config settings)
          *
-         * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#fromStream(java.util.reactiveStream.Stream)
+         * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#fromStream(java.util.reactiveStream.LazyList)
          */
     @Override
     default <R> FutureStream<R> fromStream(final Stream<R> stream) {
@@ -1841,14 +1841,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * Convert the specified Stream to a FutureStream, using the configuration
+     * Convert the specified LazyList to a FutureStream, using the configuration
      * of this FutureStream (task executors, current config settings)
      *
      * (non-Javadoc)
      *
      * @see
      * com.aol.simple.react.reactiveStream.FutureStreamImpl#fromStreamCompletableFuture
-     * (java.util.reactiveStream.Stream)
+     * (java.util.reactiveStream.LazyList)
      */
 
     default <R> FutureStream<R> fromStreamOfFutures(final Stream<FastFuture<R>> stream) {
@@ -1934,11 +1934,11 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * FutureStream.of(1, "a", 2, "b", 3).ofType(Integer.class)
      *
-     * gives a Stream of (1,2,3)
+     * gives a LazyList of (1,2,3)
      *
      * FutureStream.of(1, "a", 2, "b", 3).ofType(String.class)
      *
-     * gives a Stream of ("a","b")
+     * gives a LazyList of ("a","b")
      *
      */
     @Override
@@ -1969,7 +1969,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * FutureStream.of(1,2,3,4).limit(2)
      *
-     * Will result in a Stream of (1,2). Only the first two elements are used.
+     * Will result in a LazyList of (1,2). Only the first two elements are used.
      *
      * @param maxSize number of elements to take
      *
@@ -2059,7 +2059,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @return distinct elements in this Stream (must be a finite reactiveStream!)
+     * @return distinct elements in this LazyList (must be a finite reactiveStream!)
      *
      * @see org.jooq.lambda.Seq#distinct()
      */
@@ -2071,7 +2071,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Create a sliding view over this Stream
+     * Create a sliding view over this LazyList
      *
      * <pre>
      * {@code
@@ -2087,7 +2087,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      * @param size
      *            Size of sliding window
-     * @return Stream with sliding view over data in this reactiveStream
+     * @return LazyList with sliding view over data in this reactiveStream
      */
     @Override
     default FutureStream<VectorX<U>> sliding(final int size) {
@@ -2097,7 +2097,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Create a sliding view over this Stream
+     * Create a sliding view over this LazyList
      *
      * <pre>
      * {@code
@@ -2113,7 +2113,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      * @param size
      *            Size of sliding window
-     * @return Stream with sliding view over data in this reactiveStream
+     * @return LazyList with sliding view over data in this reactiveStream
      */
     @Override
     default FutureStream<VectorX<U>> sliding(final int size, final int increment) {
@@ -2137,7 +2137,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @see FutureStream#copy(int)
      *
-     * @see #duplicate(Stream)
+     * @see #duplicate(LazyList)
      */
     default Tuple2<FutureStream<U>, FutureStream<U>> duplicateFutureStream() {
         final Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicated = this.duplicate();
@@ -2180,7 +2180,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * tuple((1, 3, 5), (2, 4, 6))
      * }</pre>
      * @param predicate
-     *            Predicate to split Stream
+     *            Predicate to split LazyList
      * @return FutureStream
      * @see #partition(Predicate)
      */
@@ -2201,7 +2201,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Zip a Stream with a corresponding Stream of indexes.
+     * Zip a LazyList with a corresponding LazyList of indexes.
      *
      * <code>
      *
@@ -2283,7 +2283,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Reverse a reactiveStream. - eager operation that materializes the Stream into a list - careful with infinite streams!
+     * Reverse a reactiveStream. - eager operation that materializes the LazyList into a list - careful with infinite streams!
      *
      *
      * // (3, 2, 1) FutureStream.of(1, 2, 3).reverse()
@@ -2502,7 +2502,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Create a Stream that infinitely cycles this Stream
+     * Create a LazyList that infinitely cycles this LazyList
      *
      * <pre>
      * {@code
@@ -2523,7 +2523,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /**
-     * Repeat in a Stream while specified predicate holds
+     * Repeat in a LazyList while specified predicate holds
      * <pre>
      * {@code
      *  int count =0;
@@ -2534,7 +2534,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      * @param predicate
      *            repeat while true
-     * @return Repeating Stream
+     * @return Repeating LazyList
      */
     @Override
     default FutureStream<U> cycleWhile(final Predicate<? super U> predicate) {
@@ -2542,7 +2542,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Repeat in a Stream until specified predicate holds
+     * Repeat in a LazyList until specified predicate holds
      *
      * <pre>
      * {@code
@@ -2554,7 +2554,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      * @param predicate
      *            repeat while true
-     * @return Repeating Stream
+     * @return Repeating LazyList
      */
     @Override
     default FutureStream<U> cycleUntil(final Predicate<? super U> predicate) {
@@ -2564,7 +2564,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /*
-     *	@return Convert to standard JDK 8 Stream
+     *	@return Convert to standard JDK 8 LazyList
      * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#reactiveStream()
      */
     @Override
@@ -2641,7 +2641,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Give a consumer access to this Stream
+     * Give a consumer access to this LazyList
      *
      * @param consumer
      *            Consumer that will recieve current stage
@@ -2685,8 +2685,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     }
 
-    /* Optional empty, if empty Stream. Otherwise collects to a List
-     *	@return this Stream as an Optional
+    /* Optional empty, if empty LazyList. Otherwise collects to a List
+     *	@return this LazyList as an Optional
      * @see cyclops2.reactiveStream.ReactiveSeq#optional()
 
     @Override
@@ -2706,7 +2706,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * }
      * </pre>
      * Future is populated asynchronously using current Streams task executor
-     * @return This Stream as a CompletableFuture
+     * @return This LazyList as a CompletableFuture
      * @see cyclops2.reactiveStream.ReactiveSeq#toCompletableFuture()
      */
     default CompletableFuture<ListX<U>> toCompletableFuture() {
@@ -2731,7 +2731,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#mapToInt(java.util.function.ToIntFunction)
+     * @see java.util.reactiveStream.LazyList#mapToInt(java.util.function.ToIntFunction)
      */
     @Override
     default IntStream mapToInt(final ToIntFunction<? super U> mapper) {
@@ -2739,7 +2739,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#mapToLong(java.util.function.ToLongFunction)
+     * @see java.util.reactiveStream.LazyList#mapToLong(java.util.function.ToLongFunction)
      */
     @Override
     default LongStream mapToLong(final ToLongFunction<? super U> mapper) {
@@ -2747,7 +2747,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#mapToDouble(java.util.function.ToDoubleFunction)
+     * @see java.util.reactiveStream.LazyList#mapToDouble(java.util.function.ToDoubleFunction)
      */
     @Override
     default DoubleStream mapToDouble(final ToDoubleFunction<? super U> mapper) {
@@ -2755,7 +2755,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#flatMapToInt(java.util.function.Function)
+     * @see java.util.reactiveStream.LazyList#flatMapToInt(java.util.function.Function)
      */
     @Override
     default IntStream flatMapToInt(final Function<? super U, ? extends IntStream> mapper) {
@@ -2763,7 +2763,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#flatMapToLong(java.util.function.Function)
+     * @see java.util.reactiveStream.LazyList#flatMapToLong(java.util.function.Function)
      */
     @Override
     default LongStream flatMapToLong(final Function<? super U, ? extends LongStream> mapper) {
@@ -2771,7 +2771,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#flatMapToDouble(java.util.function.Function)
+     * @see java.util.reactiveStream.LazyList#flatMapToDouble(java.util.function.Function)
      */
     @Override
     default DoubleStream flatMapToDouble(final Function<? super U, ? extends DoubleStream> mapper) {
@@ -2779,7 +2779,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#forEachOrdered(java.util.function.Consumer)
+     * @see java.util.reactiveStream.LazyList#forEachOrdered(java.util.function.Consumer)
      */
     @Override
     default void forEachOrdered(final Consumer<? super U> action) {
@@ -2788,7 +2788,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#toArray()
+     * @see java.util.reactiveStream.LazyList#toArray()
      */
     @Override
     default Object[] toArray() {
@@ -2796,7 +2796,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#toArray(java.util.function.IntFunction)
+     * @see java.util.reactiveStream.LazyList#toArray(java.util.function.IntFunction)
      */
     @Override
     default <A> A[] toArray(final IntFunction<A[]> generator) {
@@ -2863,7 +2863,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @see FutureStream#copy(int)
      *
-     * @see #duplicate(Stream)
+     * @see #duplicate(LazyList)
      */
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicate() {
@@ -2887,7 +2887,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @see FutureStream#copy(int)
      *
-     * @see #duplicate(Stream)
+     * @see #duplicate(LazyList)
      */
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicate(Supplier<Deque<U>> bufferFactory) {
@@ -2896,7 +2896,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * Triplicate the data in this Stream. To triplicate into 3 LazyFutureStreams use actOnFutures#triplicate
+     * Triplicate the data in this LazyList. To triplicate into 3 LazyFutureStreams use actOnFutures#triplicate
      *
      * @see cyclops2.reactiveStream.ReactiveSeq#triplicate()
      */
@@ -2909,7 +2909,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * Triplicate the data in this Stream. To triplicate into 3 LazyFutureStreams use actOnFutures#triplicate
+     * Triplicate the data in this LazyList. To triplicate into 3 LazyFutureStreams use actOnFutures#triplicate
      *
      * @see cyclops2.reactiveStream.ReactiveSeq#triplicate()
      */
@@ -2922,7 +2922,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * Quadruplicate the data in this Stream. To quadruplicate into 3 LazyFutureStreams use actOnFutures#quadruplicate
+     * Quadruplicate the data in this LazyList. To quadruplicate into 3 LazyFutureStreams use actOnFutures#quadruplicate
      * @see cyclops2.reactiveStream.ReactiveSeq#quadruplicate()
      */
     @Override
@@ -2933,7 +2933,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     }
     /*
-     * Quadruplicate the data in this Stream. To quadruplicate into 3 LazyFutureStreams use actOnFutures#quadruplicate
+     * Quadruplicate the data in this LazyList. To quadruplicate into 3 LazyFutureStreams use actOnFutures#quadruplicate
      * @see cyclops2.reactiveStream.ReactiveSeq#quadruplicate()
      */
     @Override
@@ -2987,7 +2987,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see cyclops2.reactiveStream.ReactiveSeq#zip3(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
      */
     @Override
     default <S, R> FutureStream<Tuple3<U, S, R>> zip3(final Iterable<? extends S> second, final Iterable<? extends R> third) {
@@ -2997,7 +2997,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see cyclops2.reactiveStream.ReactiveSeq#zip4(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
      */
     @Override
     default <T2, T3, T4> FutureStream<Tuple4<U, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -3058,7 +3058,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#endsWith(java.util.reactiveStream.Stream)
+     * @see cyclops2.reactiveStream.ReactiveSeq#endsWith(java.util.reactiveStream.LazyList)
      */
     @Override
     default boolean endsWith(final Stream<U> stream) {
@@ -3084,7 +3084,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
     /**
      * A potentially non-blocking analog of {@link ReactiveSeq#forEach}.
-     * For push based reactiveBuffer Stream types (created via Spouts of FutureStream}
+     * For push based reactiveBuffer LazyList types (created via Spouts of FutureStream}
      *
      * @param action a <a href="package-summary.html#NonInterference">
      *               non-interfering</a> action to perform on the elements
@@ -3150,7 +3150,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#insertAtS(int, java.util.reactiveStream.Stream)
+     * @see cyclops2.reactiveStream.ReactiveSeq#insertAtS(int, java.util.reactiveStream.LazyList)
      */
     @Override
     default FutureStream<U> insertAtS(final int pos, final Stream<U> stream) {
@@ -3208,7 +3208,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * Batch the elements in the Stream by a combination of Size and Time
+     * Batch the elements in the LazyList by a combination of Size and Time
      * If batch exceeds max size it will be split
      * If batch exceeds max time it will be split
      * Excludes Null values (neccessary for timeout handling)
@@ -3316,8 +3316,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Perform a forEach operation over the Stream, without closing it, consuming only the specified number of elements from
-     * the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
+     * Perform a forEach operation over the LazyList, without closing it, consuming only the specified number of elements from
+     * the LazyList, at this time. More elements can be consumed later, by called request on the returned Subscription
      * 
      * e.g.
      * <pre>
@@ -3342,8 +3342,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      * 
      * 
-     * @param numberOfElements To consume from the Stream at this time
-     * @param consumer To accept incoming events from the Stream
+     * @param numberOfElements To consume from the LazyList at this time
+     * @param consumer To accept incoming events from the LazyList
      * @return Subscription so that further processing can be continued or cancelled.
      */
     @Override
@@ -3354,8 +3354,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
-     * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
+     * Perform a forEach operation over the LazyList  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming
+     * the specified number of elements from the LazyList, at this time. More elements can be consumed later, by called request on the returned Subscription
      * <pre>
      * {@code
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
@@ -3381,9 +3381,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>	 
      * 
      * 
-     * @param numberOfElements To consume from the Stream at this time
-     * @param consumer To accept incoming elements from the Stream
-     * @param consumerError To accept incoming processing errors from the Stream
+     * @param numberOfElements To consume from the LazyList at this time
+     * @param consumer To accept incoming elements from the LazyList
+     * @param consumerError To accept incoming processing errors from the LazyList
      * @return Subscription so that further processing can be continued or cancelled.
      */
     @Override
@@ -3395,9 +3395,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
-     * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription,
-     * when the entire Stream has been processed an onComplete event will be recieved.
+     * Perform a forEach operation over the LazyList  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming
+     * the specified number of elements from the LazyList, at this time. More elements can be consumed later, by called request on the returned Subscription,
+     * when the entire LazyList has been processed an onComplete event will be recieved.
      * 
      * <pre>
      * {@code
@@ -3423,9 +3423,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *     The take!
      * }
      * </pre>	 
-     * @param numberOfElements To consume from the Stream at this time
-     * @param consumer To accept incoming elements from the Stream
-     * @param consumerError To accept incoming processing errors from the Stream
+     * @param numberOfElements To consume from the LazyList at this time
+     * @param consumer To accept incoming elements from the LazyList
+     * @param consumerError To accept incoming processing errors from the LazyList
      * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.
      */
@@ -3438,7 +3438,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
+     *  Perform a forEach operation over the LazyList    capturing any elements and errors in the supplied consumers,
      * <pre>
      * {@code
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
@@ -3458,8 +3458,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *     
      * }
      * </pre>	 
-     * @param consumerElement To accept incoming elements from the Stream
-     * @param consumerError To accept incoming processing errors from the Stream
+     * @param consumerElement To accept incoming elements from the LazyList
+     * @param consumerError To accept incoming processing errors from the LazyList
      */
     @Override
     default <X extends Throwable> void forEach(final Consumer<? super U> consumerElement, final Consumer<? super Throwable> consumerError) {
@@ -3468,8 +3468,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Perform a forEach operation over the Stream  capturing any elements and errors in the supplied consumers
-     * when the entire Stream has been processed an onComplete event will be recieved.
+     * Perform a forEach operation over the LazyList  capturing any elements and errors in the supplied consumers
+     * when the entire LazyList has been processed an onComplete event will be recieved.
      * 
      * <pre>
      * {@code
@@ -3490,8 +3490,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *     
      * }
      * </pre>	
-     * @param consumerElement To accept incoming elements from the Stream
-     * @param consumerError To accept incoming processing errors from the Stream
+     * @param consumerElement To accept incoming elements from the LazyList
+     * @param consumerError To accept incoming processing errors from the LazyList
      * @param onComplete To run after an onComplete event
      */
     @Override

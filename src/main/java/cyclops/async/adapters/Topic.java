@@ -62,9 +62,9 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Topic will maintain a queue for each Subscribing Stream
-     * If a Stream is finished with a Topic it is good practice to disconnect from the Topic
-     * so messages will no longer be stored for that Stream
+     * Topic will maintain a queue for each Subscribing LazyList
+     * If a LazyList is finished with a Topic it is good practice to disconnect from the Topic
+     * so messages will no longer be stored for that LazyList
      * 
      * @param stream
      */
@@ -87,7 +87,7 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * @param stream Input data from provided Stream
+     * @param stream Input data from provided LazyList
      */
     @Override
     public boolean fromStream(final Stream<T> stream) {
@@ -97,10 +97,10 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Generating a streamCompletableFutures will register the Stream as a reactiveSubscriber to this topic.
+     * Generating a streamCompletableFutures will register the LazyList as a reactiveSubscriber to this topic.
      * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
      * 
-     * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
+     * @return LazyList of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
      */
     @Override
     public ReactiveSeq<CompletableFuture<T>> streamCompletableFutures() {
@@ -108,9 +108,9 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Generating a reactiveStream will register the Stream as a reactiveSubscriber to this topic.
+     * Generating a reactiveStream will register the LazyList as a reactiveSubscriber to this topic.
      * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
-     * @return Stream of data
+     * @return LazyList of data
      */
     @Override
     public ReactiveSeq<T> stream() {

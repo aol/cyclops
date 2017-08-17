@@ -6,7 +6,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Represents a Transformable that is also Filters (e.g. a Stream or Optional type)
+ * Represents a Transformable that is also Filters (e.g. a LazyList or Optional type)
  * 
  * @author johnmcclean
  *

@@ -121,7 +121,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      *             .map(t->t=t+1);
      *  
      *  
-     *  //OptionalWT<AnyMSeq<Stream<Optional[11]>>>
+     *  //OptionalWT<AnyMSeq<LazyList<Optional[11]>>>
      * }
      * </pre>
      * 
@@ -142,7 +142,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      *             .flatMap(t->Optional.completedOptional(20));
      *  
      *  
-     *  //OptionalWT<AnyMSeq<Stream<Optional[20]>>>
+     *  //OptionalWT<AnyMSeq<LazyList<Optional[20]>>>
      * }
      * </pre>
      * @param f FlatMap function
@@ -171,18 +171,18 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      * Lift a function into one that accepts and returns an OptionalWT
      * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. to add list handling  / iteration (via Optional) and iteration (via Stream) to an existing function
+     * e.g. to add list handling  / iteration (via Optional) and iteration (via LazyList) to an existing function
      * <pre>
      * {@code 
         Function<Integer,Integer> add2 = i -> i+2;
     	Function<OptionalWT<Integer>, OptionalWT<Integer>> optTAdd2 = OptionalWT.lift(add2);
     	
-    	Stream<Integer> withNulls = Stream.of(1,2,3);
+    	LazyList<Integer> withNulls = LazyList.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.map(Optional::completedOptional);
     	List<Integer> results = optTAdd2.applyHKT(OptionalWT.of(streamOpt))
     									.unwrap()
-    									.<Stream<Optional<Integer>>>unwrap()
+    									.<LazyList<Optional<Integer>>>unwrap()
     									.map(Optional::join)
     									.collect(CyclopsCollectors.toList());
     	
@@ -204,7 +204,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      * Lift a BiFunction into one that accepts and returns  OptionalWTs
      * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. to add list handling / iteration (via Optional), iteration (via Stream)  and asynchronous execution (Optional)
+     * e.g. to add list handling / iteration (via Optional), iteration (via LazyList)  and asynchronous execution (Optional)
      * to an existing function
      * 
      * <pre>
@@ -212,7 +212,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     	BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
     	BiFunction<OptionalWT<Integer>,OptionalWT<Integer>,OptionalWT<Integer>> optTAdd2 = OptionalWT.lift2(add);
     	
-    	Stream<Integer> withNulls = Stream.of(1,2,3);
+    	LazyList<Integer> withNulls = LazyList.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
     	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.map(Optional::completedOptional);
     	
@@ -220,7 +220,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     	AnyMSeq<Optional<Integer>> Optional=  AnyM.fromOptionalW(two);
     	List<Integer> results = optTAdd2.applyHKT(OptionalWT.of(streamOpt),OptionalWT.of(Optional))
     									.unwrap()
-    									.<Stream<Optional<Integer>>>unwrap()
+    									.<LazyList<Optional<Integer>>>unwrap()
     									.map(Optional::join)
     									.collect(CyclopsCollectors.toList());
     									
@@ -359,7 +359,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.reactiveStream.Stream)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     public <U> OptionalT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {

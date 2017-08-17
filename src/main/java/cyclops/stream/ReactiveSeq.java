@@ -83,10 +83,10 @@ import java.util.stream.*;
 import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
- * A powerful extended, sequential Stream type.
- * Extends JDK 8 java.util.reactiveStream.Stream.
+ * A powerful extended, sequential LazyList type.
+ * Extends JDK 8 java.util.reactiveStream.LazyList.
  * Implements the reactiveBuffer-reactiveStream publisher api.
- * Replayable Stream by default, using primitive operators (ints,longs, doubles or jool results in conversion to a oneshot Stream
+ * Replayable LazyList by default, using primitive operators (ints,longs, doubles or jool results in conversion to a oneshot LazyList
  * (as of 2.0.0-MI1)
  *
  * Features include
@@ -120,7 +120,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  *
  * @author johnmcclean
  *
- * @param <T> Data type of elements within the Stream
+ * @param <T> Data type of elements within the LazyList
  */
 public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Stream<T>,
@@ -132,7 +132,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      *
-     * Stream over the values of an enum
+     * LazyList over the values of an enum
      * <pre>
      *     {@code
      *     ReactiveSeq.enums(Days.class)
@@ -150,7 +150,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param c Enum to process
      * @param <E> Enum type
-     * @return Stream over enum
+     * @return LazyList over enum
      */
     static <E extends Enum<E>> ReactiveSeq<E> enums(Class<E> c){
         E[] values = c.getEnumConstants();
@@ -160,7 +160,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      *
-     * Stream over the values of an enum
+     * LazyList over the values of an enum
      * <pre>
      *     {@code
      *     ReactiveSeq.enums(Days.class,Days.Wednesday)
@@ -176,7 +176,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param c Enum to process
      * @param start Start value
      * @param <E> Enum type
-     * @return Stream over enum
+     * @return LazyList over enum
      */
     static <E extends Enum<E>> ReactiveSeq<E> enums(Class<E> c,E start){
         E[] values = c.getEnumConstants();
@@ -185,7 +185,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     /**
      *
-     * Stream over the values of an enum
+     * LazyList over the values of an enum
      * <pre>
      *     {@code
      *     ReactiveSeq.enums(Days.class,Days.Wednesday,Days.Friday)
@@ -200,7 +200,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param start Start value
      * @param end End value
      * @param <E> Enum type
-     * @return Stream over enum
+     * @return LazyList over enum
      */
     static <E extends Enum<E>> ReactiveSeq<E> enumsFromTo(Class<E> c,E start,E end){
         E[] values = c.getEnumConstants();
@@ -209,7 +209,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     /**
      *
-     * Stream over the values of an enum
+     * LazyList over the values of an enum
      * <pre>
      *     {@code
      *     ReactiveSeq.enums(Days.class,Days.Monday,Days.Wednesday,Days.Friday)
@@ -224,7 +224,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param step Values for which the Distance from start in terms of the enum ordinal determines the stepping function
      * @param end End value
      * @param <E> Enum type
-     * @return Stream over enum
+     * @return LazyList over enum
      */
     static <E extends Enum<E>> ReactiveSeq<E> enums(Class<E> c,E start,E step,E end){
         E[] values = c.getEnumConstants();
@@ -267,7 +267,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
+     * Create a LazyList that accepts data via the Subsriber passed into the supplied Consumer.
      * reactiveBuffer-streams susbscription can be used to determine demand (or ignored and data passed
      * via onNext, onError) excess supply over demand is enqueued
      *
@@ -332,7 +332,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * @param values ints to populate Stream from
+     * @param values ints to populate LazyList from
      * @return ReactiveSeq of multiple Integers
      */
     public static ReactiveSeq<Integer> ofInts(int... values){
@@ -455,7 +455,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
        /**
      *
-     * @param values longs to populate Stream from
+     * @param values longs to populate LazyList from
      * @return ReactiveSeq of multiple Longs
      */
     public static ReactiveSeq<Long> ofLongs(long... values){
@@ -579,7 +579,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      *
-     * @param values longs to populate Stream from
+     * @param values longs to populate LazyList from
      * @return ReactiveSeq of multiple Longs
      */
     public static ReactiveSeq<Double> ofDoubles(double... values){
@@ -713,7 +713,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Construct a ReactiveSeq from the Supplied Spliterator
      *
-     * @param spliterator Spliterator to construct a Stream from
+     * @param spliterator Spliterator to construct a LazyList from
      * @return ReactiveSeq created from Spliterator
      */
     public static <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
@@ -822,10 +822,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Construct a Stream consisting of a singleUnsafe value repeatedly infinitely (use take / drop etc to
-     * switch to a finite Stream)
+     * Construct a LazyList consisting of a singleUnsafe value repeatedly infinitely (use take / drop etc to
+     * switch to a finite LazyList)
      *
-     * @param t Value to fill Stream with
+     * @param t Value to fill LazyList with
      * @return Infinite ReactiveSeq consisting of a singleUnsafe value
      */
     public static <T> ReactiveSeq<T> fill(T t){
@@ -945,7 +945,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
                     if(ref.get()==null && ref.compareAndSet(null,Continuation.empty())){
                         try {
-                            //use the first consuming thread to tell this Stream onto the Queue
+                            //use the first consuming thread to tell this LazyList onto the Queue
                             this.spliterator().forEachRemaining(queue::offer);
                         }finally {
                             queue.close();
@@ -1038,7 +1038,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Convert to a Stream with the values infinitely cycled
+     * Convert to a LazyList with the values infinitely cycled
      *
      * <pre>
      * {@code
@@ -1047,12 +1047,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *   }
      * </pre>
      *
-     * @return Stream with values repeated
+     * @return LazyList with values repeated
      */
     ReactiveSeq<T> cycle();
 
     /**
-     * Duplicate a Stream, buffers intermediate values, leaders may change
+     * Duplicate a LazyList, buffers intermediate values, leaders may change
      * positions so a limit can be safely applied to the leading reactiveStream. Not
      * thread-safe.
      *
@@ -1073,7 +1073,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate(Supplier<Deque<T>> bufferFactory);
 
     /**
-     * Triplicates a Stream Buffers intermediate values, leaders may change
+     * Triplicates a LazyList Buffers intermediate values, leaders may change
      * positions so a limit can be safely applied to the leading reactiveStream. Not
      * thread-safe.
      *
@@ -1090,7 +1090,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate(Supplier<Deque<T>> bufferFactory);
 
     /**
-     * Makes four copies of a Stream Buffers intermediate values, leaders may
+     * Makes four copies of a LazyList Buffers intermediate values, leaders may
      * change positions so a limit can be safely applied to the leading reactiveStream.
      * Not thread-safe.
      *
@@ -1111,7 +1111,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate(Supplier<Deque<T>> bufferFactory);
 
     /**
-     * Split a Stream at it's head (similar to headAndTail)
+     * Split a LazyList at it's head (similar to headAndTail)
      *
      * <pre>
      * {@code
@@ -1156,7 +1156,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitBy(Predicate<T> splitter);
 
     /**
-     * Partition a Stream into two one a per element basis, based on predicate's
+     * Partition a LazyList into two one a per element basis, based on predicate's
      * boolean value
      *
      * <pre>
@@ -1171,7 +1171,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partition(Predicate<? super T> splitter);
 
     /**
-     * Convert to a Stream with the result of a reduction operation repeated
+     * Convert to a LazyList with the result of a reduction operation repeated
      * specified times
      *
      * <pre>
@@ -1187,7 +1187,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Monoid to be used in reduction
      * @param times
      *            Number of times value should be repeated
-     * @return Stream with reduced values repeated
+     * @return LazyList with reduced values repeated
      */
     @Override
     default ReactiveSeq<T> cycle(Monoid<T> m, long times){
@@ -1195,7 +1195,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Repeat in a Stream while specified predicate holds
+     * Repeat in a LazyList while specified predicate holds
      *
      * <pre>
      * {@code
@@ -1210,7 +1210,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param predicate
      *            repeat while true
-     * @return Repeating Stream
+     * @return Repeating LazyList
      */
     @Override
     default ReactiveSeq<T> cycleWhile(Predicate<? super T> predicate){
@@ -1218,7 +1218,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Repeat in a Stream until specified predicate holds
+     * Repeat in a LazyList until specified predicate holds
      *
      * <pre>
      * {@code
@@ -1234,7 +1234,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param predicate
      *            repeat while true
-     * @return Repeating Stream
+     * @return Repeating LazyList
      */
     @Override
     default ReactiveSeq<T> cycleUntil(Predicate<? super T> predicate){
@@ -1350,7 +1350,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Add an index to the current Stream
+     * Add an index to the current LazyList
      *
      * <pre>
      * {@code
@@ -1412,7 +1412,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<VectorX<T>> sliding(int windowSize, int increment);
 
     /**
-     * Group elements in a Stream
+     * Group elements in a LazyList
      *
      * <pre>
      * {@code
@@ -1426,7 +1426,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param groupSize
      *            Size of each Group
-     * @return Stream with elements grouped by size
+     * @return LazyList with elements grouped by size
      */
     @Override
     ReactiveSeq<ListX<T>> grouped(int groupSize);
@@ -1512,7 +1512,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     <C extends Collection<? super T>,R> ReactiveSeq<R> groupedByTime(final long time, final TimeUnit unit,
                                                                      final Supplier<C> factory, Function<? super C, ? extends R> finalizer);
     /**
-     * Batch elements in a Stream by time period
+     * Batch elements in a LazyList by time period
      *
      * <pre>
      * {@code
@@ -1553,7 +1553,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     <C extends Collection<? super T>> ReactiveSeq<C> groupedByTime(long time, TimeUnit unit, Supplier<C> factory);
 
     /**
-     * Batch elements in a Stream by size into a toX created by the
+     * Batch elements in a LazyList by size into a toX created by the
      * supplied factory
      *
      * <pre>
@@ -1702,7 +1702,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /*
-     * Return the distinct Stream of elements
+     * Return the distinct LazyList of elements
      *
      * <pre> {@code List<Integer> list = ReactiveSeq.of(1,2,2,2,5,6) .distinct()
      * .collect(CyclopsCollectors.toList()); }</pre>
@@ -1812,7 +1812,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param c
      *            Compartor to sort with
-     * @return Sorted Stream
+     * @return Sorted LazyList
      */
     @Override
    default  ReactiveSeq<T> sorted(Comparator<? super T> c){
@@ -1906,13 +1906,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param num
      *            Number of elemenets to skip
-     * @return Stream with specified number of elements skipped
+     * @return LazyList with specified number of elements skipped
      */
     @Override
     ReactiveSeq<T> skip(long num);
 
     /**
-     * Performs an action for each element of this Stream.
+     * Performs an action for each element of this LazyList.
      *
      * For potentially non-blocking analogs see {@link ReactiveSeq#forEachAsync(Consumer)}   and forEach overloads
      * such as {@link ReactiveSeq#forEach(Consumer, Consumer)} and {@link ReactiveSeq#forEach(Consumer, Consumer,Runnable)}
@@ -1940,7 +1940,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * A potentially non-blocking analog of {@link ReactiveSeq#forEach}.
-     * For push based reactiveBuffer Stream types (created via Spouts or FutureStream)
+     * For push based reactiveBuffer LazyList types (created via Spouts or FutureStream)
      *
      * @param action a <a href="package-summary.html#NonInterference">
      *               non-interfering</a> action to perform on the elements
@@ -1950,7 +1950,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     /**
      *
-     * SkipWhile drops elements from the Stream while the predicate holds, once
+     * SkipWhile drops elements from the LazyList while the predicate holds, once
      * the predicte returns true all subsequent elements are included *
      *
      * <pre>
@@ -1961,13 +1961,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param p
      *            Predicate to skip while true
-     * @return Stream with elements skipped while predicate holds
+     * @return LazyList with elements skipped while predicate holds
      */
     @Override
     ReactiveSeq<T> skipWhile(Predicate<? super T> p);
 
     /**
-     * Drop elements from the Stream until the predicate returns true, after
+     * Drop elements from the LazyList until the predicate returns true, after
      * which all elements are included
      *
      * <pre>
@@ -1977,7 +1977,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param p
      *            Predicate to skip until true
-     * @return Stream with elements skipped until predicate holds
+     * @return LazyList with elements skipped until predicate holds
      */
     @Override
     default ReactiveSeq<T> skipUntil(Predicate<? super T> p) {
@@ -2000,13 +2000,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param num
      *            Limit element size to num
-     * @return Monad converted to Stream with elements up to num
+     * @return Monad converted to LazyList with elements up to num
      */
     @Override
     ReactiveSeq<T> limit(long num);
 
     /**
-     * Take elements from the Stream while the predicate holds, once the
+     * Take elements from the LazyList while the predicate holds, once the
      * predicate returns false all subsequent elements are excluded
      *
      * <pre>
@@ -2015,13 +2015,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param p
      *            Limit while predicate is true
-     * @return Stream with limited elements
+     * @return LazyList with limited elements
      */
     @Override
     ReactiveSeq<T> limitWhile(Predicate<? super T> p);
 
     /**
-     * Take elements from the Stream until the predicate returns true, after
+     * Take elements from the LazyList until the predicate returns true, after
      * which all elements are excluded.
      *
      * <pre>
@@ -2030,7 +2030,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param p
      *            Limit until predicate is true
-     * @return Stream with limited elements
+     * @return LazyList with limited elements
      */
     @Override
     ReactiveSeq<T> limitUntil(Predicate<? super T> p);
@@ -2050,7 +2050,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> parallel();
 
     /**
-     * True if predicate matches all elements when Monad converted to a Stream
+     * True if predicate matches all elements when Monad converted to a LazyList
      *
      * <pre>
      * {@code
@@ -2065,7 +2065,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     boolean allMatch(Predicate<? super T> c);
 
     /**
-     * True if a singleUnsafe element matches when Monad converted to a Stream
+     * True if a singleUnsafe element matches when Monad converted to a LazyList
      *
      * <pre>
      * {@code
@@ -2081,7 +2081,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Check that there are specified number of matches of predicate in the
-     * Stream
+     * LazyList
      *
      * <pre>
      * {@code
@@ -2109,7 +2109,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * @return Stream as concatenated String
+     * @return LazyList as concatenated String
      */
     @Override
     String join();
@@ -2121,7 +2121,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * @return Stream as concatenated String
+     * @return LazyList as concatenated String
      */
     @Override
     String join(String sep);
@@ -2133,7 +2133,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * @return Stream as concatenated String
+     * @return LazyList as concatenated String
      */
     @Override
     String join(String sep, String start, String end);
@@ -2163,7 +2163,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /**
      * Lazy / reactiveBuffer analogue of findFirst / findAny from JDK
      * For push based reactiveBuffer-streams (created via Spouts.XXX) data will be pushed to the returned Maybe on arrival.
-     * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Maybe is first accessed.
+     * For pull based Streams (created via ReactiveSeq.XXX) the LazyList will be executed when the Maybe is first accessed.
      *
      * @return
      */
@@ -2174,7 +2174,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * present a NoSuchElementException is returned.
      *
      * For push based reactiveBuffer-streams (created via Spouts.XXX) data will be pushed to the returned Either on arrival.
-     * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Either is first accessed.
+     * For pull based Streams (created via ReactiveSeq.XXX) the LazyList will be executed when the Either is first accessed.
 
      *
      * @return
@@ -2314,7 +2314,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
+     * @see java.util.reactiveStream.LazyList#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
     @Override
@@ -2326,7 +2326,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
+     * @see java.util.reactiveStream.LazyList#reduce(java.lang.Object,
      * java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
     @Override
@@ -2546,14 +2546,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * @return This Stream converted to a set
+     * @return This LazyList converted to a set
      */
     default Set<T> toSet(){
         return collect(Collectors.toSet());
     }
 
     /**
-     * @return this Stream converted to a list
+     * @return this LazyList converted to a list
      */
     default List<T> toList(){
         return collect(Collectors.toList());
@@ -2562,7 +2562,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Convert this ReactiveSeq into a Stream
+     * Convert this ReactiveSeq into a LazyList
      */
     @Override
     public ReactiveSeq<T> stream();
@@ -2583,7 +2583,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * <pre>
-     * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
+     * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(LazyList.of(1,2,3))) }
      * </pre>
      *
      * @param stream
@@ -2600,7 +2600,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#map(java.util.function.Function)
+     * @see java.util.reactiveStream.LazyList#map(java.util.function.Function)
      */
     @Override
     <R> ReactiveSeq<R> map(Function<? super T, ? extends R> fn);
@@ -2609,7 +2609,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#peek(java.util.function.Consumer)
+     * @see java.util.reactiveStream.LazyList#peek(java.util.function.Consumer)
      */
     @Override
     default ReactiveSeq<T> peek(Consumer<? super T> c){
@@ -2696,7 +2696,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#filter(java.util.function.Predicate)
+     * @see java.util.reactiveStream.LazyList#filter(java.util.function.Predicate)
      */
     @Override
     ReactiveSeq<T> filter(Predicate<? super T> fn);
@@ -2797,7 +2797,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Prepend Stream to this ReactiveSeq
+     * Prepend LazyList to this ReactiveSeq
      *
      * <pre>
      * {@code
@@ -2812,7 +2812,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param stream
      *            to Prepend
-     * @return ReactiveSeq with Stream prepended
+     * @return ReactiveSeq with LazyList prepended
      */
     ReactiveSeq<T> prependS(Stream<? extends T> stream);
 
@@ -2839,7 +2839,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> prepend(T value);
 
     /**
-     * Prepend given values to the skip of the Stream
+     * Prepend given values to the skip of the LazyList
      *
      * <pre>
      * {@code
@@ -2871,7 +2871,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to insert data at
      * @param values
      *            to insert
-     * @return Stream with new data inserted
+     * @return LazyList with new data inserted
      */
     default ReactiveSeq<T> insertAt(int pos, T... values){
         if(pos==0){
@@ -2918,7 +2918,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Delete elements between given indexes in a Stream
+     * Delete elements between given indexes in a LazyList
      *
      * <pre>
      * {@code
@@ -2931,7 +2931,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            index
      * @param end
      *            index
-     * @return Stream with elements removed
+     * @return LazyList with elements removed
      */
     default ReactiveSeq<T> deleteBetween(int start, int end){
         long check =  new Long(start);
@@ -2950,7 +2950,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Insert a Stream into the middle of this reactiveStream at the specified position
+     * Insert a LazyList into the middle of this reactiveStream at the specified position
      *
      * <pre>
      * {@code
@@ -2961,7 +2961,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param pos
-     *            to insert Stream at
+     *            to insert LazyList at
      * @param stream
      *            to insert
      * @return newly conjoined ReactiveSeq
@@ -3005,13 +3005,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     * 				.endsWith(Stream.of(5,6)));
+     * 				.endsWith(LazyList.of(5,6)));
      * }
      * </pre>
      *
      * @param stream
      *            Values to check
-     * @return true if ReactiveSeq endswith values in the supplied Stream
+     * @return true if ReactiveSeq endswith values in the supplied LazyList
      */
     @Override
     boolean endsWith(Stream<T> stream);
@@ -3085,11 +3085,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> limitLast(int num);
 
     /**
-     * Turns this ReactiveSeq into a HotStream, a connectable Stream, being executed on a thread on the
+     * Turns this ReactiveSeq into a HotStream, a connectable LazyList, being executed on a thread on the
      * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
      * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedHotStream(Executor)}.
      * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#pausableHotStream(Executor)}.
-     * Turns this ReactiveSeq into a HotStream, a connectable Stream, being
+     * Turns this ReactiveSeq into a HotStream, a connectable LazyList, being
      * executed on a thread on the supplied executor, that is producing data
      *
      * <pre>
@@ -3114,8 +3114,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Return a HotStream that will skip emitting data when the first connecting Stream connects.
-     * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
+     * Return a HotStream that will skip emitting data when the first connecting LazyList connects.
+     * Note this method creates a HotStream that starts emitting data only when the first connecting LazyList connects.
      *  For a hotStream that starts to emitted data immediately @see {@link ReactiveSeq#hotStream(Executor)}.
      * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
      * <pre>
@@ -3142,7 +3142,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Turns this ReactiveSeq into a HotStream, a connectable & pausable Stream, being executed on a thread on the
+     * Turns this ReactiveSeq into a HotStream, a connectable & pausable LazyList, being executed on a thread on the
      * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
      * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
      * The generated HotStream is pausable, for a unpausable HotStream (slightly faster execution) @see {@link ReactiveSeq#hotStream(Executor)}.
@@ -3154,7 +3154,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     	ints.connect().forEach(System.out::println);
 
-    	ints.pause(); //on a separate thread pause the generating Stream
+    	ints.pause(); //on a separate thread pause the generating LazyList
 
      *  //print out all the ints
      *  //multiple consumers are possible, so other Streams can connect on different Threads
@@ -3169,8 +3169,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Return a pausable HotStream that will skip emitting data when the first connecting Stream connects.
-     * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
+     * Return a pausable HotStream that will skip emitting data when the first connecting LazyList connects.
+     * Note this method creates a HotStream that starts emitting data only when the first connecting LazyList connects.
      *  For a hotStream that starts to emitted data immediately @see {@link ReactiveSeq#pausableHotStream(Executor)}.
      * The generated HotStream is pausable, for a unpausable HotStream @see {@link ReactiveSeq#primedHotStream(Executor)}.
      * <pre>
@@ -3203,7 +3203,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * @return first value in this Stream
+     * @return first value in this LazyList
      */
     @Override
     T firstValue();
@@ -3224,7 +3224,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @return a singleUnsafe value or an UnsupportedOperationException if 0/1 values
-     *         in this Stream
+     *         in this LazyList
      */
     @Override
     default T singleUnsafe() {
@@ -3261,7 +3261,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * @return An Maybe with singleUnsafe value if this Stream has exactly one
+     * @return An Maybe with singleUnsafe value if this LazyList has exactly one
      *         element, otherwise Maybe.none
      */
     @Override
@@ -3498,10 +3498,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Construct a ReactiveSeq from a Stream
+     * Construct a ReactiveSeq from a LazyList
      *
      * @param stream
-     *            Stream to construct Sequence from
+     *            LazyList to construct Sequence from
      * @return
      */
     public static <T> ReactiveSeq<T> fromStream(final Stream<T> stream) {
@@ -3518,10 +3518,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Construct a ReactiveSeq from a Stream
+     * Construct a ReactiveSeq from a LazyList
      *
      * @param stream
-     *            Stream to construct Sequence from
+     *            LazyList to construct Sequence from
      * @return
      */
     public static ReactiveSeq<Integer> fromIntStream(final IntStream stream) {
@@ -3531,10 +3531,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Construct a ReactiveSeq from a Stream
+     * Construct a ReactiveSeq from a LazyList
      *
      * @param stream
-     *            Stream to construct Sequence from
+     *            LazyList to construct Sequence from
      * @return
      */
     public static ReactiveSeq<Long> fromLongStream(final LongStream stream) {
@@ -3543,10 +3543,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Construct a ReactiveSeq from a Stream
+     * Construct a ReactiveSeq from a LazyList
      *
      * @param stream
-     *            Stream to construct Sequence from
+     *            LazyList to construct Sequence from
      * @return
      */
     public static ReactiveSeq<Double> fromDoubleStream(final DoubleStream stream) {
@@ -3556,7 +3556,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * Construct a ReactiveSeq from a List (prefer this method if the source is a
-     * list, as it allows more efficient Stream reversal).
+     * list, as it allows more efficient LazyList reversal).
      *
      * @param list
      *            to construct Sequence from
@@ -3672,6 +3672,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return ReactiveSeq.fromSpliterator(new UnfoldSpliterator<>(seed, unfolder));
     }
 
+
     /**
      * @see Stream#generate(Supplier)
      */
@@ -3681,7 +3682,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Unzip a zipped Stream
+     * Unzip a zipped LazyList
      *
      * <pre>
      * {@code
@@ -3700,7 +3701,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Unzip a zipped Stream into 3
+     * Unzip a zipped LazyList into 3
      *
      * <pre>
      * {@code
@@ -3716,7 +3717,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Unzip a zipped Stream into 4
+     * Unzip a zipped LazyList into 4
      *
      * <pre>
      * {@code
@@ -3736,7 +3737,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * If this ReactiveSeq is empty one it with a another Stream
+     * If this ReactiveSeq is empty one it with a another LazyList
      *
      * <pre>
      * {@code
@@ -3748,8 +3749,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param switchTo
-     *            Supplier that will generate the alternative Stream
-     * @return ReactiveSeq that will switch to an alternative Stream if empty
+     *            Supplier that will generate the alternative LazyList
+     * @return ReactiveSeq that will switch to an alternative LazyList if empty
      */
     @Override
     ReactiveSeq<T> onEmptySwitch(final Supplier<? extends Stream<T>> switchTo) ;
@@ -4029,7 +4030,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param t
      *            element to remove
-     * @return Filtered Stream / ReactiveSeq
+     * @return Filtered LazyList / ReactiveSeq
      */
     default ReactiveSeq<T> remove(final T t) {
         return this.filter(v -> v != t);
@@ -4053,7 +4054,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Return a Stream with elements before the provided skip index removed,
+     * Return a LazyList with elements before the provided skip index removed,
      * and elements after the provided take index removed
      *
      * <pre>
@@ -4128,7 +4129,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Execute this Stream on a schedule
+     * Execute this LazyList on a schedule
      *
      * <pre>
      * {@code
@@ -4139,7 +4140,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * Connect to the Scheduled Stream
+     * Connect to the Scheduled LazyList
      *
      * <pre>
      * {@code
@@ -4157,7 +4158,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Expression that determines when each job will run
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled LazyList
      */
     @Override
     default HotStream<T> schedule(String cron, ScheduledExecutorService ex){
@@ -4167,7 +4168,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Execute this Stream on a schedule
+     * Execute this LazyList on a schedule
      *
      * <pre>
      * {@code
@@ -4178,7 +4179,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * Connect to the Scheduled Stream
+     * Connect to the Scheduled LazyList
      *
      * <pre>
      * {@code
@@ -4192,11 +4193,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param delay
-     *            Between last element completes passing through the Stream
+     *            Between last element completes passing through the LazyList
      *            until the next one starts
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled LazyList
      */
     @Override
     default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex){
@@ -4204,7 +4205,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Execute this Stream on a schedule
+     * Execute this LazyList on a schedule
      *
      * <pre>
      * {@code
@@ -4215,7 +4216,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      *
-     * Connect to the Scheduled Stream
+     * Connect to the Scheduled LazyList
      *
      * <pre>
      * {@code
@@ -4230,7 +4231,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Time in millis between job runs
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled LazyList
      */
     @Override
     default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex){
@@ -4247,7 +4248,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                    .size();
     }
     /**
-     * Perform a four level nested internal iteration over this Stream and the
+     * Perform a four level nested internal iteration over this LazyList and the
      * supplied streams
      *
      * <pre>
@@ -4265,11 +4266,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param stream1
-     *            Nested Stream to iterate over
+     *            Nested LazyList to iterate over
      * @param stream2
-     *            Nested Stream to iterate over
+     *            Nested LazyList to iterate over
      * @param stream3
-     *            Nested Stream to iterate over
+     *            Nested LazyList to iterate over
      * @param yieldingFunction
      *            Function with pointers to the current element from both
      *            Streams that generates the new elements
@@ -4294,7 +4295,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         });
     }
     /**
-     * Perform a four level nested internal iteration over this Stream and the
+     * Perform a four level nested internal iteration over this LazyList and the
      * supplied streams
      *
      * <pre>
@@ -4302,8 +4303,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  //ReactiveSeq [1,2,3]
      *
      * seq.forEach4(a->ReactiveSeq.range(10,13),
-     *                     (a,b)->Stream.of(""+(a+b),"hello world"),
-     *                     (a,b,c)->Stream.of(a,b,c),
+     *                     (a,b)->LazyList.of(""+(a+b),"hello world"),
+     *                     (a,b,c)->LazyList.of(a,b,c),
      *                     (a,b,c,d)-> c!=3,
      *                      (a,b,c)->c+":"a+":"+b);
      *
@@ -4314,11 +4315,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param stream1
-     *            Nested Stream to iterate over
+     *            Nested LazyList to iterate over
      * @param stream2
-     *            Nested Stream to iterate over
+     *            Nested LazyList to iterate over
      * @param stream3
-     *            Nested Stream to iterate over
+     *            Nested LazyList to iterate over
      * @param filterFunction
      *            Filter to applyHKT over elements before passing non-filtered
      *            values to the yielding function
@@ -4352,14 +4353,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         });
     }
     /**
-     * Perform a three level nested internal iteration over this Stream and the
+     * Perform a three level nested internal iteration over this LazyList and the
      * supplied streams
      *
      * <pre>
      * {@code
      * ReactiveSeq.of(1,2)
      *                      .forEach3(a->IntStream.range(10,13),
-     *                               (a,b)->Stream.of(""+(a+b),"hello world"),
+     *                               (a,b)->LazyList.of(""+(a+b),"hello world"),
      *                               (a,b,c)->c+":"a+":"+b);
      *
      *
@@ -4368,9 +4369,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param stream1
-     *            Nested Stream to iterate over
+     *            Nested LazyList to iterate over
      * @param stream2
-     *            Nested Stream to iterate over
+     *            Nested LazyList to iterate over
      * @param yieldingFunction
      *            Function with pointers to the current element from both
      *            Streams that generates the new elements
@@ -4395,14 +4396,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Perform a three level nested internal iteration over this Stream and the
+     * Perform a three level nested internal iteration over this LazyList and the
      * supplied streams
      *
      * <pre>
      * {@code
      * ReactiveSeq.of(1,2,3)
      *                      .forEach3(a->IntStream.range(10,13),
-     *                                (a,b)->Stream.of(""+(a+b),"hello world"),
+     *                                (a,b)->LazyList.of(""+(a+b),"hello world"),
      *                                (a,b,c)-> c!=3,
      *                                (a,b,c)->c+":"a+":"+b);
      *
@@ -4413,9 +4414,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param stream1
-     *            Nested Stream to iterate over
+     *            Nested LazyList to iterate over
      * @param stream2
-     *            Nested Stream to iterate over
+     *            Nested LazyList to iterate over
      * @param filterFunction
      *            Filter to applyHKT over elements before passing non-filtered
      *            values to the yielding function
@@ -4444,7 +4445,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Perform a two level nested internal iteration over this Stream and the
+     * Perform a two level nested internal iteration over this LazyList and the
      * supplied reactiveStream
      *
      * <pre>
@@ -4460,7 +4461,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      * @param stream1
-     *            Nested Stream to iterate over
+     *            Nested LazyList to iterate over
      * @param yieldingFunction
      *            Function with pointers to the current element from both
      *            Streams that generates the new elements
@@ -4480,15 +4481,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /**
      * crossJoin two Streams forming a cartesian zip over both
-     * @param other Stream to crossJoin
-     * @return Active Stream with each pair across both Streams in a Tuple
+     * @param other LazyList to crossJoin
+     * @return Active LazyList with each pair across both Streams in a Tuple
      */
     default <U> ReactiveSeq<Tuple2<T, U>> crossJoin(ReactiveSeq<? extends U> other) {
         return forEach2(a->other, Tuple::tuple);
     }
 
     /**
-     * Perform a two level nested internal iteration over this Stream and the
+     * Perform a two level nested internal iteration over this LazyList and the
      * supplied reactiveStream
      *
      * <pre>
@@ -4504,7 +4505,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param stream1
-     *            Nested Stream to iterate over
+     *            Nested LazyList to iterate over
      * @param filterFunction
      *            Filter to applyHKT over elements before passing non-filtered
      *            values to the yielding function
@@ -4574,7 +4575,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Append Stream to this ReactiveSeq
+     * Append LazyList to this ReactiveSeq
      *
      * <pre>
      * {@code
@@ -4585,7 +4586,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param stream
      *            to append
-     * @return ReactiveSeq with Stream appended
+     * @return ReactiveSeq with LazyList appended
      */
      ReactiveSeq<T> appendS(Stream<? extends T> other);
     /* (non-Javadoc)
@@ -4600,7 +4601,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Convert to a Stream with the values repeated specified times
+     * Convert to a LazyList with the values repeated specified times
      *
      * <pre>
      * {@code
@@ -4614,8 +4615,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param times
-     *            Times values should be repeated within a Stream
-     * @return Stream with values repeated
+     *            Times values should be repeated within a LazyList
+     * @return LazyList with values repeated
      */
     ReactiveSeq<T> cycle(long times);
 
@@ -4714,7 +4715,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * backpressure is applied.
      *
      * @param publishers Publishers to merge
-     * @return Return Stream of merged data
+     * @return Return LazyList of merged data
      */
     default ReactiveSeq<T> mergeP(final Publisher<T>... publishers) {
         return mergeP(QueueFactories.boundedQueue(5_000),publishers);
@@ -4791,19 +4792,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     <R> R visit(Function<? super ReactiveSeq<T>,? extends R> sync,Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
                        Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure);
     /**
-     * Broadcast the contents of this Stream to multiple downstream Streams (determined by supplier parameter).
-     * For pull based Streams this Stream will be buffered.
+     * Broadcast the contents of this LazyList to multiple downstream Streams (determined by supplier parameter).
+     * For pull based Streams this LazyList will be buffered.
      * For push based Streams elements are broadcast downstream on receipt, the emitted downstream Streams remain asynchonous
      *
      * This contrasts with
      *  {@link ReactiveSeq#duplicate}
      *  {@link ReactiveSeq#triplate}
      *  {@link ReactiveSeq#quadruplicate()}
-     * Which buffer all Stream types and produce a synchronous downstream stream.
+     * Which buffer all LazyList types and produce a synchronous downstream stream.
      *
      *
      * @param num Number of downstream Streams to multicast to
-     * @return List of Streams that recieve data from this Stream
+     * @return List of Streams that recieve data from this LazyList
      */
     default ListX<ReactiveSeq<T>> multicast(int num){
         return Streams.toBufferingCopier(() -> iterator(),num,()->new ArrayDeque<T>(100))
@@ -4957,7 +4958,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * @return A Stream that contains only changes in the values in the current Stream, useful for converting a Continuous sequence into one with discrete steps
+     * @return A LazyList that contains only changes in the values in the current LazyList, useful for converting a Continuous sequence into one with discrete steps
      */
     ReactiveSeq<T> changes();
 
@@ -4977,7 +4978,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                     if(wip.compareAndSet(false,true)){
                         try {
 
-                            //use the first consuming thread to tell this Stream onto the Queue
+                            //use the first consuming thread to tell this LazyList onto the Queue
                             if(!split.tryAdvance(topic::offer)){
                                 topic.close();
                                 return Continuation.empty();

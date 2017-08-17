@@ -1,6 +1,7 @@
 package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.patterns.Sealed2;
 import cyclops.typeclasses.*;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.typeclasses.Active;
@@ -57,7 +58,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * Totally lazy, reactiveBuffer  more powerful general Option type. Maybe is maybe like a Java
- * 8 Stream that represents 0 or 1 values rather than eager like a Java 8
+ * 8 LazyList that represents 0 or 1 values rather than eager like a Java 8
  * Optional. map / peek/ filter and flatMap build the execution chaing, but are
  * not executed until the value inside the Maybe is required.
  * 
@@ -592,7 +593,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
     /**
-     * Sequence operation, take a Stream of Maybes and turn it into a Maybe with a Stream
+     * Sequence operation, take a LazyList of Maybes and turn it into a Maybe with a LazyList
      * By constrast with {@link Maybe#sequenceJust(CollectionX)} Maybe#zero/ None types are
      * result in the returned Maybe being Maybe.zero / None
      *
@@ -603,7 +604,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      *  Maybe<Integer> just = Maybe.of(10);
         Maybe<Integer> none = Maybe.none();
 
-     *  Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(Stream.of(just, none, Maybe.of(1)));
+     *  Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(LazyList.of(just, none, Maybe.of(1)));
         //Maybe.none();
      *
      * }
@@ -611,7 +612,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
      *
      *
      * @param maybes Maybes to Sequence
-     * @return  Maybe with a Stream of values
+     * @return  Maybe with a LazyList of values
      */
     public static <T> Maybe<ReactiveSeq<T>> sequence(final Stream<Maybe<T>> maybes) {
         return AnyM.sequence(maybes.map(AnyM::fromMaybe), maybe.INSTANCE)
@@ -882,7 +883,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList,
      * java.util.function.BiFunction)
      */
     @Override
@@ -894,7 +895,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     default <U> Maybe<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -1198,6 +1199,8 @@ public interface Maybe<T> extends To<Maybe<T>>,
         public void forEach(Consumer<? super T> action) {
             this.lazy.forEach(action);
         }
+
+
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)

@@ -87,7 +87,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  * {@code 
  *    AnyMValue<optional,String> monad1 = AnyM.fromOptional(Optional.of("hello"));
  *    
- *    AnyMSeq<stream,String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
+ *    AnyMSeq<stream,String> monad2 = AnyM.fromStream(LazyList.of("hello","world"));
  *  
  * }
  * </pre>
@@ -117,11 +117,11 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
-     * A mutable reduction operation equivalent to Stream#collect
+     * A mutable reduction operation equivalent to LazyList#collect
      *
      * <pre>
      * {@code
-     *      AnyM<Integer> monad1 = AnyM.fromStream(Stream.of(1,2,3));
+     *      AnyM<Integer> monad1 = AnyM.fromStream(LazyList.of(1,2,3));
      *      AnyM<Integer> monad2 = AnyM.fromOptional(Optional.of(1));
      *
      *      List<Integer> list1 = monad1.collect(CyclopsCollectors.toList());
@@ -278,9 +278,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * 
      *   //AnyM[Optional.zero()]
      *   
-     *   AnyM.fromStream(Stream.of(5,10)).filter(i->i<10);
+     *   AnyM.fromStream(LazyList.of(5,10)).filter(i->i<10);
      *   
-     *   //AnyM[Stream[5]]
+     *   //AnyM[LazyList[5]]
      * }
      * 
      * 
@@ -316,9 +316,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * 
      * <pre>
      * {@code
-     *    boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(Stream.of(1)));
+     *    boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(LazyList.of(1)));
      *    //true
-     *     boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(Stream.of(1,2)));
+     *     boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(LazyList.of(1,2)));
      *    //false
      * }
      * </pre>
@@ -353,13 +353,13 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
 
     /* 
-     * Convert this AnyM to an extended Stream (ReactiveSeq)
+     * Convert this AnyM to an extended LazyList (ReactiveSeq)
      * 
      * <pre>
      * {@code 
      *    AnyM<Integer> monad =  AnyM.fromOptional(Optional.of(10));
      *    
-     *    Stream<Integer> reactiveStream = monad.reactiveStream();
+     *    LazyList<Integer> reactiveStream = monad.reactiveStream();
      *    //ReactiveSeq[10]
      * }
      * </pre>
@@ -410,12 +410,12 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * 
      * <pre>{@code 
      * 
-     * AnyM.fromStream(Stream.of(1,2,3,4))
+     * AnyM.fromStream(LazyList.of(1,2,3,4))
      * 							.aggregate(fromEither5(Optional.of(5)))
      * 
-     * AnyM[Stream[List[1,2,3,4,5]]
+     * AnyM[LazyList[List[1,2,3,4,5]]
      * 
-     * List<Integer> result = AnyM.fromStream(Stream.of(1,2,3,4))
+     * List<Integer> result = AnyM.fromStream(LazyList.of(1,2,3,4))
      * 							.aggregate(fromEither5(Optional.of(5)))
      * 							.toSequence()
      *                          .flatten()
@@ -443,7 +443,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * e.g.
      * <pre>
      * {@code 
-     * Any<Integer> ints = AnyM.fromStream(Stream.of(1,2,3));
+     * Any<Integer> ints = AnyM.fromStream(LazyList.of(1,2,3));
      * AnyM<Integer> zero=ints.zero();
      * }
      * </pre>
@@ -573,22 +573,22 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return AnyMFactory.instance.seq(set, Witness.bagX.INSTANCE);
     }
     /**
-     * Create an AnyM wrapping a Stream of the supplied data
+     * Create an AnyM wrapping a LazyList of the supplied data
      * 
-     * @param streamData values to populate a Stream
-     * @return AnyMSeq wrapping a Stream that encompasses the supplied Array
+     * @param streamData values to populate a LazyList
+     * @return AnyMSeq wrapping a LazyList that encompasses the supplied Array
      */
     public static <T> AnyMSeq<stream,T> fromArray(final T... streamData) {
         return AnyMFactory.instance.seq(Stream.of(streamData),Witness.stream.INSTANCE);
     }
 
     /**
-     * Create an AnyM wrapping a Stream of the supplied data
+     * Create an AnyM wrapping a LazyList of the supplied data
      * 
      * Identical to fromArray, exists as it may appear functionally more obvious to users than fromArray (which fits the convention)
      * 
-     * @param streamData values to populate a Stream
-     * @return  AnyMSeq wrapping a Stream that encompasses the supplied Array
+     * @param streamData values to populate a LazyList
+     * @return  AnyMSeq wrapping a LazyList that encompasses the supplied Array
      */
     public static <T> AnyMSeq<stream,T> streamOf(final T... streamData) {
         return AnyMFactory.instance.seq(Stream.of(streamData),Witness.stream.INSTANCE);
@@ -622,10 +622,10 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return AnyMFactory.instance.seq(Spouts.from(publisher),reactiveSeq.REACTIVE);
     }
     /**
-     * Create an AnyM instance that wraps a Stream
+     * Create an AnyM instance that wraps a LazyList
      *
-     * @param stream Stream to wrap
-     * @return AnyM that wraps the provided Stream
+     * @param stream LazyList to wrap
+     * @return AnyM that wraps the provided LazyList
      */
     public static <T> AnyMSeq<reactiveSeq,T> fromStream(final ReactiveSeq<T> stream) {
         Objects.requireNonNull(stream);
@@ -640,7 +640,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * Create an AnyM instance that wraps a FutureStream
      *
      * @param stream FutureStream to wrap
-     * @return AnyM that wraps the provided Stream
+     * @return AnyM that wraps the provided LazyList
      */
     public static <T> AnyMSeq<futureStream,T> fromFutureStream(final FutureStream<T> stream) {
         Objects.requireNonNull(stream);
@@ -656,10 +656,10 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
     }
     /**
-     * Create an AnyM instance that wraps a Stream
+     * Create an AnyM instance that wraps a LazyList
      * 
-     * @param stream Stream to wrap
-     * @return AnyM that wraps the provided Stream
+     * @param stream LazyList to wrap
+     * @return AnyM that wraps the provided LazyList
      */
     public static <T> AnyMSeq<stream,T> fromStream(final Stream<T> stream) {
         Objects.requireNonNull(stream);
@@ -1075,9 +1075,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * Take an iterable containing Streams and convert them into a List of AnyMs
      * e.g.
      * {@code 
-     *     List<AnyM<Integer>> anyMs = AnyM.listFromStream(Arrays.asList(Stream.of(1,2,3),Stream.of(10,20,30));
+     *     List<AnyM<Integer>> anyMs = AnyM.listFromStream(Arrays.asList(LazyList.of(1,2,3),LazyList.of(10,20,30));
      *     
-     *     //List[AnyM[Stream[1,2,3],Stream[10,20,30]]]
+     *     //List[AnyM[LazyList[1,2,3],LazyList[10,20,30]]]
      * }
      * 
      * @param anyM Iterable containing Streams
@@ -1239,7 +1239,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * {@code 
      *     List<AnyM<Integer>> anyMs = AnyM.listFromStreamable(Arrays.asList(Arrays.asList(1,2,3).iterator(),Arrays.asList(10,20,30)).iterator();
      *     
-     *     //List[AnyM[Stream[1,2,3],Stream[10,20,30]]]
+     *     //List[AnyM[LazyList[1,2,3],LazyList[10,20,30]]]
      * }
      * 
      * @param fromEither5 Iterable containing Iterators

@@ -327,7 +327,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * }
      * </pre>
      * @param stream To create DequeX from
-     * @param <T> DequeX generated from Stream
+     * @param <T> DequeX generated from LazyList
      * @return
      */
     public static <T> DequeX<T> dequeX(ReactiveSeq<T> stream){
@@ -469,7 +469,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#fromStream(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#fromStream(java.util.reactiveStream.LazyList)
      */
     @Override
     default <X> DequeX<X> fromStream(final ReactiveSeq<X> stream) {
@@ -736,7 +736,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#zip(java.util.reactiveStream.LazyList, java.util.function.BiFunction)
      */
     @Override
     default <U, R> DequeX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -883,7 +883,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     default <U> DequeX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -894,7 +894,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
      */
     @Override
     default <S, U> DequeX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -903,7 +903,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
      */
     @Override
     default <T2, T3, T4> DequeX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -1120,7 +1120,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.reactiveStream.LazyList)
      */
     @Override
     default DequeX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1156,7 +1156,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.reactiveStream.LazyList)
      */
     @Override
     default DequeX<T> retainAllS(final Stream<? extends T> seq) {

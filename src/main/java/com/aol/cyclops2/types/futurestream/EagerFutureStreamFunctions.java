@@ -32,7 +32,7 @@ public class EagerFutureStreamFunctions {
     /**
      * Close all streams except the active one
      * 
-     * @param active Stream not to close
+     * @param active LazyList not to close
      * @param all  All streams potentially including the active reactiveStream
      */
     static void closeOthers(final SimpleReactStream active, final List<SimpleReactStream> all) {
@@ -52,10 +52,10 @@ public class EagerFutureStreamFunctions {
     }
 
     /**
-     * Return first Stream out of provided Streams that starts emitted results
+     * Return first LazyList out of provided Streams that starts emitted results
      * 
      * @param futureStreams Streams to race
-     * @return First Stream to skip emitting values
+     * @return First LazyList to skip emitting values
      */
     @SafeVarargs
     public static <U> SimpleReactStream<U> firstOf(final SimpleReactStream<U>... futureStreams) {

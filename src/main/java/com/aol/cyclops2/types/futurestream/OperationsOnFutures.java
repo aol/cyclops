@@ -290,7 +290,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Zip two Streams. Futures from this Stream will be paired with data from provided Stream (if the other Stream is also a FutureStream this operator will pair based on
+     * Zip two Streams. Futures from this LazyList will be paired with data from provided LazyList (if the other LazyList is also a FutureStream this operator will pair based on
      * Futures from this Stream with results from the other].
      * 
      * <pre>
@@ -676,7 +676,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Append Stream to this Stream
+     * Append LazyList to this LazyList
      * 
      * <pre>
      * {@code 
@@ -700,7 +700,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Append a Stream of Futures to this Stream
+     * Append a LazyList of Futures to this LazyList
      * 
      * <pre>
      * {@code 
@@ -752,7 +752,7 @@ public interface OperationsOnFutures<T> {
     /**
      * <pre>
      * {@code 
-     *  	Stream<CompletableFuture<Integer>> streamOfFutures = Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
+     *  	LazyList<CompletableFuture<Integer>> streamOfFutures = LazyList.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
     		List<String> result = 	of(1,2,3).actOnFutures()
     										.prependStreamFutures(streamOfFutures)
     										.map(it ->it+"!!")
@@ -952,7 +952,7 @@ public interface OperationsOnFutures<T> {
      * 
      * <pre>
      * {@code 
-     		Stream<CompletableFuture<Integer>> streamOfFutures = Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
+     		LazyList<CompletableFuture<Integer>> streamOfFutures = LazyList.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
     
     		List<String> result = 	of(1,2,3).actOnFutures()
     								.insertStreamFuturesAt(1,streamOfFutures)

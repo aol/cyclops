@@ -37,11 +37,11 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * Represents something that can generate a Stream, repeatedly
+ * Represents something that can generate a LazyList, repeatedly
  * 
  * @author johnmcclean
  *
- * @param <T> Data type for Stream
+ * @param <T> Data type for LazyList
  */
 public interface Streamable<T> extends To<Streamable<T>>,
                                         ToStream<T>,
@@ -64,7 +64,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * (Lazily) Construct a Streamable from a Stream.
+     * (Lazily) Construct a Streamable from a LazyList.
      * 
      * @param stream to construct Streamable from
      * @return Streamable
@@ -88,7 +88,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * @param toCoerce Efficiently / lazily Makes Stream repeatable, guards iteration with locks on initial iteration
+     * @param toCoerce Efficiently / lazily Makes LazyList repeatable, guards iteration with locks on initial iteration
      * @return
      */
     public static <T> Streamable<T> synchronizedFromStream(final Stream<T> toCoerce) {
@@ -191,7 +191,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     default <U> Streamable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -200,7 +200,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip3(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
      */
     @Override
     default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -209,7 +209,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip4(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
      */
     @Override
     default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -331,7 +331,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Construct a Streamable that returns a Stream
+     * Construct a Streamable that returns a LazyList
      * 
      * @param values to construct Streamable from
      * @return Streamable
@@ -426,7 +426,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Prepend given values to the skip of the Stream
+     * Prepend given values to the skip of the LazyList
      * <pre>
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
@@ -445,7 +445,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /*
-     * Return the distinct Stream of elements
+     * Return the distinct LazyList of elements
      * 
      * <pre>
      * {@code List<Integer> list =  Streamable.of(1,2,2,2,5,6)
@@ -540,7 +540,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#filtered(java.util.function.Predicate)
+     * @see java.util.reactiveStream.LazyList#filtered(java.util.function.Predicate)
      */
     @Override
     default Streamable<T> filter(final Predicate<? super T> fn) {
@@ -548,7 +548,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#flatMap(java.util.function.Function)
+     * @see java.util.reactiveStream.LazyList#flatMap(java.util.function.Function)
      */
     default <R> Streamable<R> flatMap(final Function<? super T, Streamable<? extends R>> fn) {
         return Streamable.fromStream(reactiveSeq().flatMap(i -> fn.apply(i)
@@ -585,21 +585,21 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#forEachOrdered(java.util.function.Consumer)
+     * @see java.util.reactiveStream.LazyList#forEachOrdered(java.util.function.Consumer)
      */
     default void forEachOrdered(final Consumer<? super T> action) {
         reactiveSeq().forEachOrdered(action);
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#toArray()
+     * @see java.util.reactiveStream.LazyList#toArray()
      */
     default Object[] toArray() {
         return reactiveSeq().toArray();
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#toArray(java.util.function.IntFunction)
+     * @see java.util.reactiveStream.LazyList#toArray(java.util.function.IntFunction)
      */
     default <A> A[] toArray(final IntFunction<A[]> generator) {
         return reactiveSeq().toArray(generator);
@@ -796,7 +796,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
 
     /**
-     * Convert to a Stream with the values repeated specified times
+     * Convert to a LazyList with the values repeated specified times
      * 
      * <pre>
      * {@code 
@@ -809,7 +809,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * @param times
-     *            Times values should be repeated within a Stream
+     *            Times values should be repeated within a LazyList
      * @return Streamable with values repeated
      */
     @Override
@@ -818,7 +818,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Convert to a Stream with the values infinitely cycled
+     * Convert to a LazyList with the values infinitely cycled
      * 
      * <pre>
      * {@code 
@@ -826,14 +826,14 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *   }
      * </pre>
      * 
-     * @return Stream with values repeated
+     * @return LazyList with values repeated
      */
     default Streamable<T> cycle() {
         return Streamable.fromStream(reactiveSeq().cycle());
     }
 
     /**
-     * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
+     * Duplicate a LazyList, buffers intermediate values, leaders may change positions so a limit
      * can be safely applied to the leading reactiveStream. Not thread-safe.
      * <pre>
      * {@code 
@@ -916,7 +916,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Partition a Stream into two one a per element basis, based on predicate's boolean value
+     * Partition a LazyList into two one a per element basis, based on predicate's boolean value
      * <pre>
      * {@code 
      *  Streamable.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
@@ -933,12 +933,12 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Convert to a Stream with the result of a reduction operation repeated
+     * Convert to a LazyList with the result of a reduction operation repeated
      * specified times
      * 
      * <pre>
      * {@code 
-     *   		List<Integer> list = AsGenericMonad,asMonad(Stream.of(1,2,2))
+     *   		List<Integer> list = AsGenericMonad,asMonad(LazyList.of(1,2,2))
      * 										.cycle(Reducers.toCountInt(),3)
      * 										.collect(CyclopsCollectors.toList());
      * 	//is asList(3,3,3);
@@ -949,7 +949,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *            Monoid to be used in reduction
      * @param times
      *            Number of times value should be repeated
-     * @return Stream with reduced values repeated
+     * @return LazyList with reduced values repeated
      */
     @Override
     default Streamable<T> cycle(final Monoid<T> m, final long times) {
@@ -957,7 +957,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Repeat in a Stream while specified predicate holds
+     * Repeat in a LazyList while specified predicate holds
      * 
      * <pre>
      * {@code
@@ -971,7 +971,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param predicate
      *            repeat while true
-     * @return Repeating Stream
+     * @return Repeating LazyList
      */
     @Override
     default Streamable<T> cycleWhile(final Predicate<? super T> predicate) {
@@ -979,7 +979,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Repeat in a Stream until specified predicate holds
+     * Repeat in a LazyList until specified predicate holds
      * <pre>
      * {@code 
      * 	count =0;
@@ -993,7 +993,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param predicate
      *            repeat while true
-     * @return Repeating Stream
+     * @return Repeating LazyList
      */
     @Override
     default Streamable<T> cycleUntil(final Predicate<? super T> predicate) {
@@ -1053,7 +1053,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /** 
-     * Add an index to the current Stream
+     * Add an index to the current LazyList
      * 
      * <pre>
      * {@code 
@@ -1073,7 +1073,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * <pre>
      * {@code 
-     * List<List<Integer>> list = fromEither5(Stream.of(1,2,3,4,5,6))
+     * List<List<Integer>> list = fromEither5(LazyList.of(1,2,3,4,5,6))
     								.asSequence()
     								.sliding(2)
     								.collect(CyclopsCollectors.toList());
@@ -1098,7 +1098,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *  Create a sliding view over this Sequence
      * <pre>
      * {@code 
-     * List<List<Integer>> list = fromEither5(Stream.of(1,2,3,4,5,6))
+     * List<List<Integer>> list = fromEither5(LazyList.of(1,2,3,4,5,6))
     								.asSequence()
     								.sliding(3,2)
     								.collect(CyclopsCollectors.toList());
@@ -1121,11 +1121,11 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Group elements in a Stream
+     * Group elements in a LazyList
      * 
      * <pre>
      * {@code
-     *  List<List<Integer>> list = monad(Stream.of(1, 2, 3, 4, 5, 6)).grouped(3)
+     *  List<List<Integer>> list = monad(LazyList.of(1, 2, 3, 4, 5, 6)).grouped(3)
      *          .collect(CyclopsCollectors.toList());
      * 
      *  assertThat(list.get(0), hasItems(1, 2, 3));
@@ -1136,7 +1136,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param groupSize
      *            Size of each Group
-     * @return Stream with elements grouped by size
+     * @return LazyList with elements grouped by size
      */
     @Override
     default Streamable<ListX<T>> grouped(final int groupSize) {
@@ -1260,7 +1260,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param num
      *            Number of elemenets to skip
-     * @return Monad converted to Stream with specified number of elements
+     * @return Monad converted to LazyList with specified number of elements
      *         skipped
      */
     @Override
@@ -1279,7 +1279,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param p
      *            Predicate to skip while true
-     * @return Monad converted to Stream with elements skipped while predicate
+     * @return Monad converted to LazyList with elements skipped while predicate
      *         holds
      */
     @Override
@@ -1297,7 +1297,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param p
      *            Predicate to skip until true
-     * @return Monad converted to Stream with elements skipped until predicate
+     * @return Monad converted to LazyList with elements skipped until predicate
      *         holds
      */
     @Override
@@ -1314,7 +1314,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param num
      *            Limit element size to num
-     * @return Monad converted to Stream with elements up to num
+     * @return Monad converted to LazyList with elements up to num
      */
     @Override
     default Streamable<T> limit(final long num) {
@@ -1330,7 +1330,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param p
      *            Limit while predicate is true
-     * @return Monad converted to Stream with limited elements
+     * @return Monad converted to LazyList with limited elements
      */
     @Override
     default Streamable<T> limitWhile(final Predicate<? super T> p) {
@@ -1346,7 +1346,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * @param p
      *            Limit until predicate is true
-     * @return Monad converted to Stream with limited elements
+     * @return Monad converted to LazyList with limited elements
      */
     @Override
     default Streamable<T> limitUntil(final Predicate<? super T> p) {
@@ -1355,7 +1355,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * True if predicate matches all elements when Monad converted to a Stream
+     * True if predicate matches all elements when Monad converted to a LazyList
      * <pre>
      * {@code 
      * assertThat(Streamable.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
@@ -1369,7 +1369,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * True if a singleUnsafe element matches when Monad converted to a Stream
+     * True if a singleUnsafe element matches when Monad converted to a LazyList
      * <pre>
      * {@code 
      * assertThat(Streamable.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
@@ -1383,7 +1383,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Check that there are specified number of matches of predicate in the Stream
+     * Check that there are specified number of matches of predicate in the LazyList
      * 
      * <pre>
      * {@code 
@@ -1417,7 +1417,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @return Stream as concatenated String
+     * @return LazyList as concatenated String
      */
     @Override
     default String join() {
@@ -1430,7 +1430,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * assertEquals("1, 2, 3".length(), Streamable.of(1, 2, 3).join(", ").length());
      * }
      * </pre>
-     * @return Stream as concatenated String
+     * @return LazyList as concatenated String
      */
     @Override
     default String join(final String sep) {
@@ -1443,7 +1443,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * assertEquals("^1|2|3$".length(), of(1, 2, 3).join("|", "^", "$").length());
      * }
      * </pre> 
-     *  @return Stream as concatenated String
+     *  @return LazyList as concatenated String
      */
     @Override
     default String join(final String sep, final String start, final String end) {
@@ -1460,7 +1460,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#min(java.util.Comparator)
+     * @see java.util.reactiveStream.LazyList#min(java.util.Comparator)
      */
     @Override
     default Optional<T> min(final Comparator<? super T> comparator) {
@@ -1477,7 +1477,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#max(java.util.Comparator)
+     * @see java.util.reactiveStream.LazyList#max(java.util.Comparator)
      */
     @Override
     default Optional<T> max(final Comparator<? super T> comparator) {
@@ -1602,7 +1602,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-    * @see java.util.reactiveStream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
+    * @see java.util.reactiveStream.LazyList#reduce(java.lang.Object, java.util.function.BinaryOperator)
     */
     @Override
     default T reduce(final T identity, final BinaryOperator<T> accumulator) {
@@ -1610,7 +1610,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-    * @see java.util.reactiveStream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
+    * @see java.util.reactiveStream.LazyList#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
     */
     @Override
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
@@ -1739,7 +1739,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * 	<pre>{@code assertTrue(Streamable.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }</pre>
+     * 	<pre>{@code assertTrue(Streamable.of(1,2,3,4).startsWith(LazyList.of(1,2,3))) }</pre>
     
      * @param iterator
      * @return True if Monad starts with Iterators sequence of data
@@ -1883,7 +1883,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Append Stream to this Streamable
+     * Append LazyList to this Streamable
      * 
      * <pre>
      * {@code 
@@ -1897,14 +1897,14 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      * 
      * @param stream to append
-     * @return Streamable with Stream appended
+     * @return Streamable with LazyList appended
      */
     default Streamable<T> appendStreamable(final Streamable<T> stream) {
         return fromStream(reactiveSeq().appendS(stream.reactiveSeq()));
     }
 
     /**
-     * Prepend Stream to this Streamable
+     * Prepend LazyList to this Streamable
      * 
      * <pre>
      * {@code 
@@ -1919,7 +1919,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      * 
      * @param stream to Prepend
-     * @return Streamable with Stream prepended
+     * @return Streamable with LazyList prepended
      */
     default Streamable<T> prependStreamable(final Streamable<T> stream) {
         return fromStream(reactiveSeq().prependS(stream.reactiveSeq()));
@@ -1958,7 +1958,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Prepend given values to the skip of the Stream
+     * Prepend given values to the skip of the LazyList
      * <pre>
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
@@ -1991,14 +1991,14 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      * @param pos to insert data at
      * @param values to insert
-     * @return Stream with new data inserted
+     * @return LazyList with new data inserted
      */
     default Streamable<T> insertAt(final int pos, final T... values) {
         return fromStream(reactiveSeq().insertAt(pos, values));
     }
 
     /**
-     * Delete elements between given indexes in a Stream
+     * Delete elements between given indexes in a LazyList
      * <pre>
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3,4,5,6)
@@ -2011,14 +2011,14 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      * @param start index
      * @param end index
-     * @return Stream with elements removed
+     * @return LazyList with elements removed
      */
     default Streamable<T> deleteBetween(final int start, final int end) {
         return fromStream(reactiveSeq().deleteBetween(start, end));
     }
 
     /**
-     * Insert a Stream into the middle of this reactiveStream at the specified position
+     * Insert a LazyList into the middle of this reactiveStream at the specified position
      * <pre>
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
@@ -2029,7 +2029,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
      * }
      * </pre>
-     * @param pos to insert Stream at
+     * @param pos to insert LazyList at
      * @param stream to insert
      * @return newly conjoined Streamable
      */
@@ -2059,12 +2059,12 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * <pre>
      * {@code
      * assertTrue(Streamable.of(1,2,3,4,5,6)
-    			.endsWith(Stream.of(5,6))); 
+    			.endsWith(LazyList.of(5,6)));
      * }
      * </pre>
      * 
      * @param stream Values to check
-     * @return true if Streamable endswith values in the supplied Stream
+     * @return true if Streamable endswith values in the supplied LazyList
      */
     default boolean endsWith(final Streamable<T> stream) {
         return reactiveSeq().endsWithIterable(stream);
@@ -2147,7 +2147,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Turns this Streamable into a HotStream, a connectable Stream, being executed on a thread on the 
+     * Turns this Streamable into a HotStream, a connectable LazyList, being executed on a thread on the
      * supplied executor, that is producing data
      * <pre>
      * {@code 
@@ -2177,7 +2177,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     				.firstValue(),equalTo("hello"));
      * }
      * </pre>
-     * @return first value in this Stream
+     * @return first value in this LazyList
      */
     @Override
     default T firstValue() {
@@ -2191,7 +2191,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @return a singleUnsafe value or an exception if 0/1 values in this Stream
+     * @return a singleUnsafe value or an exception if 0/1 values in this LazyList
      */
     @Override
     default T singleUnsafe() {
@@ -2313,8 +2313,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Construct a Sequence from a Stream
-     * @param stream Stream to construct Sequence from
+     * Construct a Sequence from a LazyList
+     * @param stream LazyList to construct Sequence from
      * @return
      */
     public static Streamable<Integer> fromIntStream(final IntStream stream) {
@@ -2323,9 +2323,9 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Construct a Sequence from a Stream
+     * Construct a Sequence from a LazyList
      * 
-     * @param stream Stream to construct Sequence from
+     * @param stream LazyList to construct Sequence from
      * @return
      */
     public static Streamable<Long> fromLongStream(final LongStream stream) {
@@ -2334,8 +2334,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Construct a Sequence from a Stream
-     * @param stream Stream to construct Sequence from
+     * Construct a Sequence from a LazyList
+     * @param stream LazyList to construct Sequence from
      * @return
      */
     public static Streamable<Double> fromDoubleStream(final DoubleStream stream) {
@@ -2365,7 +2365,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Unzip a zipped Stream 
+     * Unzip a zipped LazyList
      * 
      * <pre>
      * {@code 
@@ -2384,7 +2384,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Unzip a zipped Stream into 3
+     * Unzip a zipped LazyList into 3
      * <pre>
      * {@code 
      *    unzip3(Streamable.of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3,"c", 4l)))
@@ -2400,7 +2400,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Unzip a zipped Stream into 4
+     * Unzip a zipped LazyList into 4
      * 
      * <pre>
      * {@code 
@@ -2420,21 +2420,21 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#crossJoin(java.util.reactiveStream.Stream)
+     * @see org.jooq.lambda.Seq#crossJoin(java.util.reactiveStream.LazyList)
      */
     default <U> Streamable<Tuple2<T, U>> crossJoin(final Streamable<U> other) {
         return fromStream(seq().crossJoin(other));
     }
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#innerJoin(java.util.reactiveStream.Stream, java.util.function.BiPredicate)
+     * @see org.jooq.lambda.Seq#innerJoin(java.util.reactiveStream.LazyList, java.util.function.BiPredicate)
      */
     default <U> Streamable<Tuple2<T, U>> innerJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
         return fromStream(seq().innerJoin(other, predicate));
     }
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.reactiveStream.Stream, java.util.function.BiPredicate)
+     * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.reactiveStream.LazyList, java.util.function.BiPredicate)
      */
     default <U> Streamable<Tuple2<T, U>> leftOuterJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
         return fromStream(reactiveSeq().jool(s->s.leftOuterJoin(other, predicate)));
@@ -2442,13 +2442,13 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.reactiveStream.Stream, java.util.function.BiPredicate)
+     * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.reactiveStream.LazyList, java.util.function.BiPredicate)
      */
     default <U> Streamable<Tuple2<T, U>> rightOuterJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
         return fromStream(reactiveSeq().jool(s->s.rightOuterJoin(other, predicate)));
     }
 
-    /** If this Streamable is empty one it with a another Stream
+    /** If this Streamable is empty one it with a another LazyList
      * 
      * <pre>
      * {@code 
@@ -2458,8 +2458,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     						equalTo(Arrays.asList(4,5,6)));
      * }
      * </pre>
-     * @param switchTo Supplier that will generate the alternative Stream
-     * @return Streamable that will switch to an alternative Stream if empty
+     * @param switchTo Supplier that will generate the alternative LazyList
+     * @return Streamable that will switch to an alternative LazyList if empty
      */
     default Streamable<T> onEmptySwitch(final Supplier<Streamable<T>> switchTo) {
         return fromStream(reactiveSeq().onEmptySwitch(() -> switchTo.get()
@@ -2624,7 +2624,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Batch elements in a Stream by time period
+     * Batch elements in a LazyList by time period
      * 
      * <pre>
      * {@code 
@@ -2664,7 +2664,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Batch elements in a Stream by size into a toX created by the supplied factory
+     * Batch elements in a LazyList by size into a toX created by the supplied factory
      * <pre>
      * {@code
      * assertThat(Streamable.of(1,1,1,1,1,1)

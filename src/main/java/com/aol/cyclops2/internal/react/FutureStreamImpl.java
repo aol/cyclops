@@ -265,7 +265,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     public Collectable<U> collectors() {
         //in order for tasks to be executed concurrently we need to make sure that collect is
         //ultimately called via LazyStream#collect. Passing 'this' directly into Seq results in 'this' being returned
-        //Seq implements the toX extensions on SeqImpl, so we need to construct a SeqImpl with this as the Stream.
+        //Seq implements the toX extensions on SeqImpl, so we need to construct a SeqImpl with this as the LazyList.
         return Seq.seq(new DelegateStream<U>(
                                              this));
     }

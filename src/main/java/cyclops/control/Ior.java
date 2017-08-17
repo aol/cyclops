@@ -596,7 +596,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     Optional<ST> secondaryToOptional();
 
     /**
-     * @return A Stream containing the secondary value if present, otherwise an zero Stream
+     * @return A LazyList containing the secondary value if present, otherwise an zero LazyList
      */
     ReactiveSeq<ST> secondaryToStream();
 

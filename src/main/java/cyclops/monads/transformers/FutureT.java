@@ -184,7 +184,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
         Function<Integer,Integer> add2 = i -> i+2;
     	Function<FutureT<Integer>, FutureT<Integer>> optTAdd2 = FutureT.lift(add2);
     	
-    	Stream<Integer> withNulls = Stream.of(1,2,3);
+    	LazyList<Integer> withNulls = LazyList.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
     	List<Integer> results = optTAdd2.applyHKT(FutureT.of(streamOpt))
@@ -219,7 +219,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     	BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
     	BiFunction<FutureT<Integer>,FutureT<Integer>,FutureT<Integer>> optTAdd2 = FutureT.lift2(add);
     	
-    	Stream<Integer> withNulls = Stream.of(1,2,3);
+    	LazyList<Integer> withNulls = LazyList.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
     	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
     	
