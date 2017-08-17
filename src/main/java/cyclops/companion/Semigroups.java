@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.futurestream.EagerFutureStreamFunctions;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 import cyclops.async.Future;
+import cyclops.collections.adt.NonEmptyList;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.control.Ior;
@@ -90,6 +91,9 @@ public interface Semigroups {
         };
     }
 
+    static <T> Semigroup<NonEmptyList<T>> nonEmptyList(){
+        return (a,b)->b.prependAll(a);
+    }
     /**
      * @return A combiner for mutable lists
      */

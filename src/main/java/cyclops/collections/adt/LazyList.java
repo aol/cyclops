@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 
 import static cyclops.patterns.Sealed2.matcher;
 
+//safe LazyList (Stream) that does not support exceptional states
 public interface LazyList<T> extends Sealed2<LazyList.Cons<T>,LazyList.Nil>{
 
     default ReactiveSeq<T> stream(){
@@ -44,7 +45,7 @@ public interface LazyList<T> extends Sealed2<LazyList.Cons<T>,LazyList.Nil>{
     }
     static <T> LazyList<T> of(T... value){
         LazyList<T> result = empty();
-        for(int i=value.length;i>=0;i++){
+        for(int i=value.length;i>0;i--){
             result = result.prepend(value[i-1]);
         }
         return result;
@@ -77,10 +78,7 @@ public interface LazyList<T> extends Sealed2<LazyList.Cons<T>,LazyList.Nil>{
         }
         return acc;
     }
-    @Override
-    default <R> R match(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2){
-        return matcher(this,LazyList.Cons.class,LazyList.Nil.class).match(fn1,fn2);
-    }
+
 
     default Iterable<T> iterable(){
         return ()->new Iterator<T>() {
@@ -170,6 +168,11 @@ public interface LazyList<T> extends Sealed2<LazyList.Cons<T>,LazyList.Nil>{
             }
             return result;
         }
+
+        @Override
+        public <R> R match(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2) {
+            return fn1.apply(this);
+        }
     }
 
     public class Nil<T> implements LazyList<T> {
@@ -187,6 +190,11 @@ public interface LazyList<T> extends Sealed2<LazyList.Cons<T>,LazyList.Nil>{
         @Override
         public boolean isEmpty() {
             return true;
+        }
+
+        @Override
+        public <R> R match(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2) {
+            return fn2.apply(this);
         }
     }
 

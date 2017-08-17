@@ -4,6 +4,7 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
+import cyclops.collections.adt.NonEmptyList;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
 import cyclops.function.*;
@@ -19,6 +20,8 @@ import cyclops.monads.AnyM;
 import cyclops.monads.Witness.xor;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.XorT;
+import cyclops.patterns.Sealed1Or;
+import cyclops.patterns.Sealed2;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
@@ -126,6 +129,37 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                                      BiTransformable<ST,PT>,
                                      Higher2<xor,ST,PT> {
 
+    default Xor<NonEmptyList<ST>, PT> nel() {
+        return visit(s->Xor.secondary(NonEmptyList.of(s)),p->Xor.primary(p));
+    }
+    default Xor<ST,PT> accumulate(Xor<ST,PT> next,Semigroup<PT> sg){
+        return flatMap(s1->next.map(s2->sg.apply(s1,s2)));
+    }
+    default Xor<ST,PT> accumulatePrimary(Semigroup<PT> sg, Xor<ST,PT>... values){
+        Xor<ST,PT> acc= this;
+        for(Xor<ST,PT> next : values){
+            acc = acc.accumulatePrimary(sg,next);
+        }
+        return acc;
+    }
+    default Xor<ST,PT> accumulate(Semigroup<ST> sg, Xor<ST,PT> next){
+        return secondaryFlatMap(s1->next.secondaryMap(s2->sg.apply(s1,s2)));
+    }
+    default Xor<ST,PT> accumulate(Semigroup<ST> sg, Xor<ST,PT>... values){
+        Xor<ST,PT> acc= this;
+        for(Xor<ST,PT> next : values){
+            acc = acc.accumulate(sg,next);
+        }
+        return acc;
+    }
+    default Sealed2<ST,PT> adt(){
+        return new Sealed2<ST,PT>() {
+            @Override
+            public <R> R match(Function<? super ST, ? extends R> fn1, Function<? super PT, ? extends R> fn2) {
+                return Xor.this.visit(fn1,fn2);
+            }
+        };
+    }
     public static  <L,T,R> Xor<L,R> tailRec(T initial, Function<? super T, ? extends Xor<L,? extends Xor<T, R>>> fn){
         Xor<L,? extends Xor<T, R>> next[] = new Xor[1];
         next[0] = Xor.primary(Xor.secondary(initial));

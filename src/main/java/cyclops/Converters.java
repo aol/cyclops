@@ -93,8 +93,8 @@ public interface Converters {
         return vec.unwrapIfInstance(LinkedBlockingDeque.class,
                 ()-> vec.collect(Collectors.toCollection(()->new LinkedBlockingDeque<T>())));
     }
-    public static <T> cyclops.collections.adt.List<T> List(CollectionX<T> vec){
-        return vec.unwrapIfInstance(cyclops.collections.adt.List.class,
+    public static <T> SList<T> List(CollectionX<T> vec){
+        return vec.unwrapIfInstance(SList.class,
                 ()-> Reducers.<T>toList().mapReduce(vec.stream()));
     }
     public static <T> LazyList<T> LazyList(CollectionX<T> vec){

@@ -115,7 +115,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void subscribeEmpty(){
-        cyclops.collections.adt.List result = new ArrayList<>();
+        List result = new ArrayList<>();
         Subscription s= of().forEachSubscribe(i->result.add(i));
         s.request(1l);
         assertThat(result.size(),equalTo(0));
@@ -127,7 +127,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void subscribe(){
-        cyclops.collections.adt.List<Integer> result = new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
         Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i));
         s.request(1l);
         assertThat(result.size(),equalTo(1));
@@ -139,7 +139,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void subscribe3(){
-        cyclops.collections.adt.List<Integer> result = new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
         Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i));
         s.request(3l);
         assertThat(result.size(),equalTo(3));
@@ -147,7 +147,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void subscribeErrorEmpty(){
-        cyclops.collections.adt.List result = new ArrayList<>();
+        List result = new ArrayList<>();
         Subscription s= of().forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(1l);
         assertThat(result.size(),equalTo(0));
@@ -159,7 +159,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void subscribeError(){
-        cyclops.collections.adt.List<Integer> result = new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
         Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(1l);
         assertThat(result.size(),equalTo(1));
@@ -171,7 +171,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void subscribe3Error() throws InterruptedException {
-        cyclops.collections.adt.List<Integer> result = new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
         Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace());
         s.request(3l);
 
@@ -180,7 +180,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void subscribeErrorEmptyOnComplete(){
-        cyclops.collections.adt.List result = new ArrayList<>();
+        List result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
         Subscription s= of().forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
         s.request(1l);
@@ -194,7 +194,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void subscribeErrorOnComplete(){
-        cyclops.collections.adt.List<Integer> result = new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
         Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
 
@@ -213,7 +213,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void subscribe3ErrorOnComplete(){
-        cyclops.collections.adt.List<Integer> result = new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
         AtomicBoolean onComplete = new AtomicBoolean(false);
         Subscription s= of(1,2,3).forEachSubscribe(i->result.add(i), e->e.printStackTrace(),()->onComplete.set(true));
         assertThat(onComplete.get(),equalTo(false));
@@ -228,7 +228,7 @@ public abstract class AbstractCollectionXTest {
     @Test
     public void iterate(){
         Iterator<Integer> it = of(1,2,3).iterator();
-        cyclops.collections.adt.List<Integer> list2 = new ArrayList<>();
+        List<Integer> list2 = new ArrayList<>();
         while(it.hasNext())
             list2.add(it.next());
         assertThat(list2.size(),equalTo(3));
@@ -236,7 +236,7 @@ public abstract class AbstractCollectionXTest {
     @Test
     public void iterateStream(){
         Iterator<Integer> it = of(1,2,3).stream().iterator();
-        cyclops.collections.adt.List<Integer> list2 = new ArrayList<>();
+        List<Integer> list2 = new ArrayList<>();
         while(it.hasNext())
             list2.add(it.next());
         assertThat(list2.size(),equalTo(3));
@@ -424,7 +424,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void forEach() {
-        cyclops.collections.adt.List<Integer> list = new ArrayList<>();
+        List<Integer> list = new ArrayList<>();
         of(1,5,3,4,2).forEach(it-> list.add(it));
         assertThat(list,hasItem(1));
         assertThat(list,hasItem(2));
@@ -468,7 +468,7 @@ public abstract class AbstractCollectionXTest {
     @Test
     public void testPeek2(){
         val = null;
-        cyclops.collections.adt.List l = of(1).map(it->it+100)
+        List l = of(1).map(it->it+100)
                         .peek(it -> val=it)
                         .collect(java.util.stream.Collectors.toList());
         System.out.println(l);
@@ -649,7 +649,7 @@ public abstract class AbstractCollectionXTest {
 	@Test
 	public void takeWhileTest(){
 		
-		cyclops.collections.adt.List<Integer> list = new ArrayList<>();
+		List<Integer> list = new ArrayList<>();
 		while(list.size()==0){
 			list = of(1,2,3,4,5,6).takeWhile(it -> it<4)
 						.peek(it -> System.out.println(it)).collect(java.util.stream.Collectors.toList());
@@ -664,7 +664,7 @@ public abstract class AbstractCollectionXTest {
 	@Test
     public void limitWhileTest(){
         
-        cyclops.collections.adt.List<Integer> list = new ArrayList<>();
+        List<Integer> list = new ArrayList<>();
         while(list.size()==0){
             list = of(1,2,3,4,5,6).limitWhile(it -> it<4)
                         .toListX();
@@ -715,7 +715,7 @@ public abstract class AbstractCollectionXTest {
     
     @Test
     public void testIterable() {
-        cyclops.collections.adt.List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
+        List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
 
         for (Integer i :of(1, 2, 3)) {
             assertThat(list,hasItem(i));
@@ -839,21 +839,21 @@ public abstract class AbstractCollectionXTest {
 
 		@Test
 		public void zip(){
-			cyclops.collections.adt.List<Tuple2<Integer,Integer>> list =
+			List<Tuple2<Integer,Integer>> list =
 					of(1,2,3,4,5,6).zip(of(100,200,300,400))
 													.peek(it -> System.out.println(it))
 													
 													.collect(java.util.stream.Collectors.toList());
 			System.out.println(list);
 			
-			cyclops.collections.adt.List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
+			List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
 			
 			assertThat(right,hasItem(100));
 			assertThat(right,hasItem(200));
 			assertThat(right,hasItem(300));
 			assertThat(right,hasItem(400));
 			
-			cyclops.collections.adt.List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
+			List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
 			assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 			
 			
@@ -996,7 +996,7 @@ public abstract class AbstractCollectionXTest {
 	
 	@Test
 	public void limitTimeEmpty(){
-		cyclops.collections.adt.List<Integer> result = ReactiveSeq.<Integer>of()
+		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
 										.limit(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -1007,7 +1007,7 @@ public abstract class AbstractCollectionXTest {
 	
 	@Test
 	public void skipTimeEmpty(){
-		cyclops.collections.adt.List<Integer> result = ReactiveSeq.<Integer>of()
+		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
 										.skip(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -1173,7 +1173,7 @@ public abstract class AbstractCollectionXTest {
 	}
 	@Test
 	public void testMap() {
-		  cyclops.collections.adt.List<Integer> list = AnyM.fromStream(Stream.of(asList(1,3)))
+		  List<Integer> list = AnyM.fromStream(Stream.of(asList(1,3)))
 				  				.flatMap(c->AnyM.fromStream(c.stream()))
 				  				.stream()
 				  				.map(i->i*2)
@@ -1214,25 +1214,25 @@ public abstract class AbstractCollectionXTest {
 	@Test
 	public void zip2of(){
 		
-		cyclops.collections.adt.List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
+		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
 											.zip(of(100,200,300,400).stream())
 											.toListX();
 				
 	
-		cyclops.collections.adt.List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
+		List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,hasItem(400));
 		
-		cyclops.collections.adt.List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
+		List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
 	}
 	@Test
 	public void zipInOrder(){
 		
-		cyclops.collections.adt.List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6)
+		List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6)
 													.zip( of(100,200,300,400).stream())
 													.toListX();
 		
@@ -1308,7 +1308,7 @@ public abstract class AbstractCollectionXTest {
 
 	@Test
 	public void testZipDifferingLength() {
-		cyclops.collections.adt.List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
+		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
 
 		assertEquals(2, list.size());
 		assertTrue(asList(1, 2).contains(list.get(0).v1));
@@ -1343,7 +1343,7 @@ public abstract class AbstractCollectionXTest {
 
 	@Test
 	public void testZipDifferingLengthStream() {
-		cyclops.collections.adt.List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
+		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
 
 		assertEquals(2, list.size());
 		assertTrue(asList(1, 2).contains(list.get(0).v1));
@@ -1465,37 +1465,37 @@ public abstract class AbstractCollectionXTest {
 	    public void testSorted() {
 	        CollectionX<Tuple2<Integer, String>> t1 = of(tuple(2, "two"), tuple(1, "replaceWith"));
 
-	        cyclops.collections.adt.List<Tuple2<Integer, String>> s1 = t1.sorted().toList();
+	        List<Tuple2<Integer, String>> s1 = t1.sorted().toList();
 	        System.out.println(s1);
 	        assertEquals(tuple(1, "replaceWith"), s1.get(0));
 	        assertEquals(tuple(2, "two"), s1.get(1));
 
 	        CollectionX<Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "replaceWith"));
-	        cyclops.collections.adt.List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t.v1())).toList();
+	        List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t.v1())).toList();
 	        assertEquals(tuple(1, "replaceWith"), s2.get(0));
 	        assertEquals(tuple(2, "two"), s2.get(1));
 
 	        CollectionX<Tuple2<Integer, String>> t3 = of(tuple(2, "two"), tuple(1, "replaceWith"));
-	        cyclops.collections.adt.List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toList();
+	        List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toList();
 	        assertEquals(tuple(1, "replaceWith"), s3.get(0));
 	        assertEquals(tuple(2, "two"), s3.get(1));
 	    }
 
 	    @Test
 	    public void zip2(){
-	        cyclops.collections.adt.List<Tuple2<Integer,Integer>> list =
+	        List<Tuple2<Integer,Integer>> list =
 	                of(1,2,3,4,5,6).zipS(Stream.of(100,200,300,400))
 	                                                .peek(it -> System.out.println(it))
 	                                                
 	                                                .collect(java.util.stream.Collectors.toList());
 	        
-	        cyclops.collections.adt.List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
+	        List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
 	        assertThat(right,hasItem(100));
 	        assertThat(right,hasItem(200));
 	        assertThat(right,hasItem(300));
 	        assertThat(right,hasItem(400));
 	        
-	        cyclops.collections.adt.List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
+	        List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
 	        assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 	        
 	        
@@ -1689,7 +1689,7 @@ public abstract class AbstractCollectionXTest {
 
 	        @Test
 	        public void slidingIncrementNoOrder() {
-	            cyclops.collections.adt.List<cyclops.collections.adt.List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(java.util.stream.Collectors.toList());
+	            List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(java.util.stream.Collectors.toList());
 
 	            System.out.println(list);
 	           
@@ -1719,44 +1719,44 @@ public abstract class AbstractCollectionXTest {
 	        }
 	        @Test
 	        public void zip3NoOrder(){
-	            cyclops.collections.adt.List<Tuple3<Integer,Integer,Character>> list =
+	            List<Tuple3<Integer,Integer,Character>> list =
 	                    of(1,2,3,4).zip3(of(100,200,300,400).stream(),of('a','b','c','d').stream())
 	                                                    .toListX();
 	            
 	            System.out.println(list);
-	            cyclops.collections.adt.List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
+	            List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
 	            assertThat(right,hasItem(100));
 	            assertThat(right,hasItem(200));
 	            assertThat(right,hasItem(300));
 	            assertThat(right,hasItem(400));
 	            
-	            cyclops.collections.adt.List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
+	            List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
 	            assertThat(Arrays.asList(1,2,3,4),hasItem(left.get(0)));
 	            
-	            cyclops.collections.adt.List<Character> three = list.stream().map(t -> t.v3).collect(java.util.stream.Collectors.toList());
+	            List<Character> three = list.stream().map(t -> t.v3).collect(java.util.stream.Collectors.toList());
 	            assertThat(Arrays.asList('a','b','c','d'),hasItem(three.get(0)));
 	            
 	            
 	        }
 	        @Test
 	        public void zip4NoOrder(){
-	            cyclops.collections.adt.List<Tuple4<Integer,Integer,Character,String>> list =
+	            List<Tuple4<Integer,Integer,Character,String>> list =
 	                    of(1,2,3,4).zip4(of(100,200,300,400).stream(),of('a','b','c','d').stream(),of("hello","world","boo!","2").stream())
 	                                                    .toListX();
 	            System.out.println(list);
-	            cyclops.collections.adt.List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
+	            List<Integer> right = list.stream().map(t -> t.v2).collect(java.util.stream.Collectors.toList());
 	            assertThat(right,hasItem(100));
 	            assertThat(right,hasItem(200));
 	            assertThat(right,hasItem(300));
 	            assertThat(right,hasItem(400));
 	            
-	            cyclops.collections.adt.List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
+	            List<Integer> left = list.stream().map(t -> t.v1).collect(java.util.stream.Collectors.toList());
 	            assertThat(Arrays.asList(1,2,3,4),hasItem(left.get(0)));
 	            
-	            cyclops.collections.adt.List<Character> three = list.stream().map(t -> t.v3).collect(java.util.stream.Collectors.toList());
+	            List<Character> three = list.stream().map(t -> t.v3).collect(java.util.stream.Collectors.toList());
 	            assertThat(Arrays.asList('a','b','c','d'),hasItem(three.get(0)));
 	        
-	            cyclops.collections.adt.List<String> four = list.stream().map(t -> t.v4).collect(java.util.stream.Collectors.toList());
+	            List<String> four = list.stream().map(t -> t.v4).collect(java.util.stream.Collectors.toList());
 	            assertThat(Arrays.asList("hello","world","boo!","2"),hasItem(four.get(0)));
 	            
 	            

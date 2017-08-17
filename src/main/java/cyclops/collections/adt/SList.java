@@ -2,13 +2,13 @@ package cyclops.collections.adt;
 
 
 import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.mutable.ListX;
 import cyclops.control.Trampoline;
 import cyclops.patterns.CaseClass2;
 import cyclops.patterns.Sealed2;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
@@ -18,10 +18,10 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static cyclops.collections.adt.List.Cons.cons;
-import static cyclops.patterns.Sealed2.matcher;
+import static cyclops.collections.adt.SList.Cons.cons;
 
-public interface List<T> extends Sealed2<List.Cons<T>,List.Nil> {
+//safe list implementation that does not support exceptional states
+public interface SList<T> extends Sealed2<SList.Cons<T>,SList.Nil> {
 
     default ReactiveSeq<T> stream(){
         return ReactiveSeq.fromIterable(iterable());
@@ -29,20 +29,20 @@ public interface List<T> extends Sealed2<List.Cons<T>,List.Nil> {
     default LinkedListX<T> linkedListX(){
         return LinkedListX.fromIterable(iterable());
     }
-    static <T> List<T> of(T... value){
-        List<T> result = empty();
-        for(int i=value.length;i>=0;i++){
+    static <T> SList<T> of(T... value){
+        SList<T> result = empty();
+        for(int i=value.length;i>0;i--){
             result = result.prepend(value[i-1]);
         }
         return result;
     }
-    static <T> List<T> empty(){
+    static <T> SList<T> empty(){
         return Nil.Instance;
     }
 
     default Optional<T> get(int pos){
         T result = null;
-        List<T> l = this;
+        SList<T> l = this;
         for(int i=0;i<pos;i++){
            l = l.match(c->c.tail,n->n);
            if(l instanceof Nil){ //short circuit
@@ -51,20 +51,17 @@ public interface List<T> extends Sealed2<List.Cons<T>,List.Nil> {
         }
         return Optional.ofNullable(l.match(c->c.head,n->null));
     }
-    default List<T> prepend(T value){
+    default SList<T> prepend(T value){
         return cons(value,this);
     }
-    default List<T> prependAll(List<T> value){
+    default SList<T> prependAll(SList<T> value){
         return value.prependAll(this);
     }
-    @Override
-    default <R> R match(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2){
-        return matcher(this,List.Cons.class,List.Nil.class).match(fn1,fn2);
-    }
+
 
     default Iterable<T> iterable(){
         return ()->new Iterator<T>() {
-            List<T> current= List.this;
+            SList<T> current= SList.this;
             @Override
             public boolean hasNext() {
                 return current.match(c->true,n->false);
@@ -88,7 +85,7 @@ public interface List<T> extends Sealed2<List.Cons<T>,List.Nil> {
         }
         return acc;
     }
-    default List<T> filter(Predicate<? super T> pred){
+    default SList<T> filter(Predicate<? super T> pred){
         return foldRight(empty(),(a,l)->{
             if(pred.test(a)){
                 return l.prepend(a);
@@ -96,10 +93,10 @@ public interface List<T> extends Sealed2<List.Cons<T>,List.Nil> {
             return l;
         });
     }
-    default <R> List<R> map(Function<? super T, ? extends R> fn) {
+    default <R> SList<R> map(Function<? super T, ? extends R> fn) {
         return foldRight(empty(), (a, l) -> l.prepend(fn.apply(a)));
     }
-    default <R> List<R> flatMap(Function<? super T, ? extends List<R>> fn) {
+    default <R> SList<R> flatMap(Function<? super T, ? extends SList<R>> fn) {
         return foldRight(empty(), (a, l) -> fn.apply(a).prependAll(l));
     }
 
@@ -112,23 +109,24 @@ public interface List<T> extends Sealed2<List.Cons<T>,List.Nil> {
         return match(c->Optional.of(NonEmptyList.cons(c.head,c.tail)),n->Optional.empty());
     }
 
-    static <T> List<T> cons(T head, List<T> tail) {
+    static <T> SList<T> cons(T head, SList<T> tail) {
         return Cons.cons(head,tail);
     }
 
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Cons<T> implements CaseClass2<T,List<T>>, List<T>{
+    @EqualsAndHashCode(of={"head,tail"})
+    public static class Cons<T> implements CaseClass2<T,SList<T>>, SList<T> {
 
         public final T head;
-        public final List<T> tail;
+        public final SList<T> tail;
 
-        public static <T> Cons<T> cons(T value,List<T> tail){
+        public static <T> Cons<T> cons(T value,SList<T> tail){
             return new Cons<>(value,tail);
         }
 
         @Override
-        public Tuple2<T, List<T>> unapply() {
+        public Tuple2<T, SList<T>> unapply() {
             return Tuple.tuple(head,tail);
         }
         public boolean isEmpty(){
@@ -137,7 +135,7 @@ public interface List<T> extends Sealed2<List.Cons<T>,List.Nil> {
 
         public <R> R foldRight(R zero,BiFunction<? super T, ? super R, ? extends R> f) {
             class Step{
-                public Trampoline<R> loop(List<T> s, Function<? super R, ? extends Trampoline<R>> fn){
+                public Trampoline<R> loop(SList<T> s, Function<? super R, ? extends Trampoline<R>> fn){
 
                     return s.match(c->Trampoline.more(()->loop(c.tail, rem -> Trampoline.more(() -> fn.apply(f.apply(c.head, rem))))),n->fn.apply(zero));
 
@@ -149,7 +147,7 @@ public interface List<T> extends Sealed2<List.Cons<T>,List.Nil> {
 
         public int size(){
             int result =1;
-            List<T> current[] = new List[0];
+            SList<T> current[] = new SList[0];
             current[0]=tail;
             while(true){
                int toAdd =current[0].match(c->{
@@ -162,9 +160,15 @@ public interface List<T> extends Sealed2<List.Cons<T>,List.Nil> {
             }
             return result;
         }
+
+        @Override
+        public <R> R match(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2) {
+            return fn1.apply(this);
+        }
     }
 
-    public class Nil<T> implements List<T>{
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public class Nil<T> implements SList<T> {
         static Nil Instance = new Nil();
         @Override
         public <R> R foldRight(R zero, BiFunction<? super T, ? super R, ? extends R> f) {
@@ -179,6 +183,11 @@ public interface List<T> extends Sealed2<List.Cons<T>,List.Nil> {
         @Override
         public boolean isEmpty() {
             return true;
+        }
+
+        @Override
+        public <R> R match(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2) {
+            return fn2.apply(this);
         }
     }
 
