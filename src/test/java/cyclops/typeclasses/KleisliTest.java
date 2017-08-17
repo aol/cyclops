@@ -34,7 +34,7 @@ public class KleisliTest {
         return Kleisli.of(monad,dao->Future.ofResult(true));
     }
     public Boolean logIfFail(long id, String name, boolean success){
-        return true;
+        return "hello".equals(name);
     }
     @Test
     public void forTest(){
