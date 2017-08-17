@@ -12,11 +12,14 @@ import lombok.EqualsAndHashCode;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static cyclops.collections.adt.SList.Cons.cons;
 
@@ -35,6 +38,21 @@ public interface SList<T> extends Sealed2<SList.Cons<T>,SList.Nil> {
             result = result.prepend(value[i-1]);
         }
         return result;
+    }
+    static <T> SList<T> fromIterator(Iterator<T> it){
+        List<T> values = new ArrayList<>();
+        while(it.hasNext()){
+          values.add(it.next());
+        }
+        SList<T> result = empty();
+        for(int i=values.size();i>0;i--){
+            result = result.prepend(values.get(i-1));
+        }
+        return result;
+    }
+    static <T> SList<T> fromStream(Stream<T> stream){
+        Iterator<T> t = stream.iterator();
+       return t.hasNext() ? cons(t.next(),fromIterator(t)) : empty();
     }
     static <T> SList<T> empty(){
         return Nil.Instance;

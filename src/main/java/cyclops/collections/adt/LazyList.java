@@ -36,12 +36,13 @@ public interface LazyList<T> extends Sealed2<LazyList.Cons<T>,LazyList.Nil>{
         return LinkedListX.fromIterable(iterable());
     }
 
+
     static <T> LazyList<T> fromIterator(Iterator<T> it){
         return it.hasNext() ? cons(it.next(), () -> fromIterator(it)) : empty();
     }
     static <T> LazyList<T> fromStream(Stream<T> stream){
         Iterator<T> t = stream.iterator();
-        return cons(t.next(),()->fromIterator(t));
+        return t.hasNext() ? cons(t.next(),()->fromIterator(t)) : empty();
     }
     static <T> LazyList<T> of(T... value){
         LazyList<T> result = empty();
