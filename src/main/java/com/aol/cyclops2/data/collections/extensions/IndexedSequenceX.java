@@ -111,14 +111,14 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
      * @return List with current IndexedSequenceX inserted between each List.
      */
     default List intercalate(List<List> listOfLists) {
-        List[] intercalated = new List[listOfLists.size() * 2 - 1];
-        for (int i = 0; i < intercalated.length; ++i) {
-            if (i % 2 == 0) {
-                intercalated[i] = listOfLists.get(i / 2);
+       List intercalated = null;
+        for (List list : listOfLists) {
+            if (intercalated == null) {
+                intercalated = list;
             } else {
-                intercalated[i] = this.subList(0, this.size()).toList();
+                intercalated = Stream.of(intercalated, this.toList(), list).flatMap(List::stream).collect(Collectors.toList());
             }
         }
-        return Stream.of(intercalated).flatMap(List::stream).collect(Collectors.toList());
+        return intercalated;
     }
 }
