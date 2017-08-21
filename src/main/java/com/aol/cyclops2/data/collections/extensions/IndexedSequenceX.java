@@ -1,8 +1,11 @@
 package com.aol.cyclops2.data.collections.extensions;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Interface that represents a FluentSequence of data
@@ -101,8 +104,21 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
     @Override
     <R> IndexedSequenceX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
 
-    
-    
-    
-    
+    /**
+     * Intercalate
+     *
+     * @param listOfLists Index of our sub sequence (inclusive)
+     * @return List with current IndexedSequenceX inserted between each List.
+     */
+    default List intercalate(List<List> listOfLists) {
+        List[] intercalated = new List[listOfLists.size() * 2 - 1];
+        for (int i = 0; i < intercalated.length; ++i) {
+            if (i % 2 == 0) {
+                intercalated[i] = listOfLists.get(i / 2);
+            } else {
+                intercalated[i] = this.subList(0, this.size()).toList();
+            }
+        }
+        return Stream.of(intercalated).flatMap(List::stream).collect(Collectors.toList());
+    }
 }
