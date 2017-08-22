@@ -1,6 +1,13 @@
 package com.aol.cyclops2.data.collections.extensions;
 
+import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
+import com.aol.cyclops2.internal.stream.ReactiveStreamX;
+import cyclops.collections.mutable.ListX;
+import cyclops.stream.FutureStream;
+
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -9,12 +16,11 @@ import java.util.stream.Stream;
 
 /**
  * Interface that represents a FluentSequence of data
- * 
+ * <p>
  * Supports operations such as adding / removing elements via a Fluent API
- * 
- * @author johnmcclean
  *
  * @param <T> the type of elements held in this toX
+ * @author johnmcclean
  */
 public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
 
@@ -32,7 +38,7 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
 
     /**
      * Replace the value at the specifed index with the supplied value
-     * 
+     *
      * @param i Index to one value at
      * @param e Value to use
      * @return FluentSequence with value replaced
@@ -40,8 +46,8 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
     public IndexedSequenceX<T> with(int i, T e);
 
     /**
-     * Add the supplied element at the supplied index 
-     * 
+     * Add the supplied element at the supplied index
+     *
      * @param i Index to add element at
      * @param e Element to add
      * @return FluentSequence with element added
@@ -50,10 +56,10 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
 
     /**
      * Add all of the supplied elements at the supplied index
-     * 
-     * @param i Index to add element at
+     *
+     * @param i    Index to add element at
      * @param list Collection of elements to add
-     * @return  FluentSequence with elements added
+     * @return FluentSequence with elements added
      */
     public IndexedSequenceX<T> plusAll(int i, Collection<? extends T> list);
 
@@ -71,7 +77,7 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
 
     /**
      * Remove the element at the supplied index
-     * 
+     *
      * @param i Index at which to remvoe element
      * @return FluentSequence with element removed
      */
@@ -79,9 +85,9 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
 
     /**
      * Create a sub sequence between the two supplied index
-     * 
+     *
      * @param start Index of our sub sequence (inclusive)
-     * @param end Index of our sub sequence (exclusive)
+     * @param end   Index of our sub sequence (exclusive)
      * @return
      */
     public IndexedSequenceX<T> subList(int start, int end);
@@ -110,15 +116,7 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
      * @param listOfLists Index of our sub sequence (inclusive)
      * @return List with current IndexedSequenceX inserted between each List.
      */
-    default List intercalate(List<List> listOfLists) {
-       List intercalated = null;
-        for (List list : listOfLists) {
-            if (intercalated == null) {
-                intercalated = list;
-            } else {
-                intercalated = Stream.of(intercalated, this.toList(), list).flatMap(List::stream).collect(Collectors.toList());
-            }
-        }
-        return intercalated;
+    default ListX<T> intercalate(List<List<T>> listOfLists) {
+        return ListX.fromIterable(listOfLists).intersperse(this.toListX()).flatMap(x -> x);
     }
 }
