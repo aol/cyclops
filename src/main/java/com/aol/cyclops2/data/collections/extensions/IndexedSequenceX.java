@@ -116,7 +116,9 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
      * @param listOfLists Index of our sub sequence (inclusive)
      * @return List with current IndexedSequenceX inserted between each List.
      */
-    default ListX<T> intercalate(List<List<T>> listOfLists) {
-        return ListX.fromIterable(listOfLists).intersperse(this.toListX()).flatMap(x -> x);
+    default ListX<T> intercalate(List<? extends List<? extends T>> listOfLists) {
+        ListX thisListX = this.toListX();
+        ListX listOfListsX = ListX.fromIterable(listOfLists);
+        return listOfListsX.intersperse(thisListX).flatMap(x -> x);
     }
 }
