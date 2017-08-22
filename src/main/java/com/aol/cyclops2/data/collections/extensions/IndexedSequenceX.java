@@ -113,12 +113,16 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
     /**
      * Intercalate
      *
-     * @param listOfLists Index of our sub sequence (inclusive)
+     * @param listOfLists List of lists which this IndexedSequenceX instance will be intercalated into.
      * @return List with current IndexedSequenceX inserted between each List.
      */
     default ListX<T> intercalate(List<? extends List<? extends T>> listOfLists) {
         ListX thisListX = this.toListX();
-        ListX listOfListsX = ListX.fromIterable(listOfLists);
-        return listOfListsX.intersperse(thisListX).flatMap(x -> x);
+        if (listOfLists == null || listOfLists.isEmpty()) {
+            return thisListX;
+        } else {
+            ListX listOfListsX = ListX.fromIterable(listOfLists);
+            return listOfListsX.intersperse(thisListX).flatMap(x -> x);
+        }
     }
 }

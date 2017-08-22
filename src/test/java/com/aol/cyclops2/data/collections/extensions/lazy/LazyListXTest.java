@@ -119,4 +119,25 @@ public class LazyListXTest {
         assertThat(intercalated.get(13), equalTo(8l));
         assertThat(intercalated.get(14), equalTo(9l));
     }
+
+    @Test
+    public void testIntercalate4() {
+        ListX<Number> listOfNumber = ListX.of(-1, -1, -1);
+        ListX<Number> intercalated = listOfNumber.intercalate(null);
+        assertThat(intercalated.size(), equalTo(3));
+        assertThat(intercalated.get(0), equalTo(-1));
+        assertThat(intercalated.get(1), equalTo(-1));
+        assertThat(intercalated.get(2), equalTo(-1));
+    }
+
+    @Test
+    public void testIntercalate5() {
+        ListX<Number> listOfNumber = ListX.of(-1, -1, -1);
+        ListX<List<Long>> listOfLongList = ListX.empty();
+        ListX<Number> intercalated = listOfNumber.intercalate(listOfLongList);
+        assertThat(intercalated.size(), equalTo(3));
+        assertThat(intercalated.get(0), equalTo(-1));
+        assertThat(intercalated.get(1), equalTo(-1));
+        assertThat(intercalated.get(2), equalTo(-1));
+    }
 }
