@@ -19,6 +19,8 @@ public interface Unfoldable<W> {
 
     <R, T> Higher<W, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn);
 
+    <R, T> Higher<W, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn);
+
     default <T> Higher<W, T> replicate(long n, T value) {
         return unfold(n,i -> i>0? Optional.of(tuple(value, i<Long.MAX_VALUE? i-1 : i)) : Optional.empty());
     }
@@ -41,6 +43,13 @@ public interface Unfoldable<W> {
             Optional<Tuple2<R, T>> x = fn.apply(b);
             R r = x.map(t -> t.v1).orElse(null);
            return pure.<R>unit(r);
+        }
+
+        @Override
+        public <R, T> Higher<W, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+            Optional<Tuple2<T, R>> x = fn.apply(b);
+            R r = x.map(t -> t.v2).orElse(null);
+            return pure.<R>unit(r);
         }
     }
 }

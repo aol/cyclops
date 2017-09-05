@@ -219,6 +219,11 @@ public interface VectorX<T> extends To<VectorX<T>>,
                           .vectorX(LAZY);
     }
 
+    static <U, T> VectorX<T> unfoldRight(final U seed, final Function<? super U, Optional<Tuple2<U, T>>> unfolder) {
+        return ReactiveSeq.unfoldRight(seed, unfolder).to()
+                .vectorX(LAZY);
+    }
+
     /**
      * Generate a VectorX from the provided Supplier up to the provided limit number of times
      * 
@@ -1356,6 +1361,11 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 @Override
                 public <R, T> Higher<vectorX, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
                     return VectorX.unfold(b,fn);
+                }
+
+                @Override
+                public <R, T> Higher<vectorX, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+                    return VectorX.unfoldRight(b,fn);
                 }
             };
         }

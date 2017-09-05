@@ -206,6 +206,11 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 .persistentQueueX(Evaluation.LAZY);
     }
 
+    static <U, T> PersistentQueueX<T> unfoldRight(final U seed, final Function<? super U, Optional<Tuple2<U, T>>> unfolder) {
+        return ReactiveSeq.unfoldRight(seed, unfolder).to()
+                .persistentQueueX(Evaluation.LAZY);
+    }
+
     /**
      * Generate a PersistentQueueX from the provided Supplier up to the provided limit number of times
      * 
@@ -1434,6 +1439,11 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 @Override
                 public <R, T> Higher<persistentQueueX, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
                     return PersistentQueueX.unfold(b,fn);
+                }
+
+                @Override
+                public <R, T> Higher<persistentQueueX, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+                    return PersistentQueueX.unfoldRight(b,fn);
                 }
             };
         }

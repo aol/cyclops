@@ -449,7 +449,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
         private final Unfoldable<W2> unfold2;
 
-        public <R> Nested<W1,W2, R> unfold(Function<? super T, Optional<Tuple2<R, T>>> fn){
+        public <R> Nested<W1,W2, R>  unfold(Function<? super T, Optional<Tuple2<R, T>>> fn){
             Unfoldable<W2> unf = unfold2;
             Higher<W1, Higher<W2, R>> x = def1.functor().map(a -> def2.monad().flatMap(c -> unf.unfold(c, fn), a), nested);
             return Nested.of(x,def1,def2);
@@ -855,6 +855,11 @@ public class Nested<W1,W2,T> implements Transformable<T>,
                 @Override
                 public <R, T> Higher<Higher<Higher<nested, W1>, W2>, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
                     return narrowK(unit(def1,def2).unit(b)).unfoldsUnsafe().unfold(fn);
+                }
+
+                @Override
+                public <R, T> Higher<Higher<Higher<Witness.nested, W1>, W2>, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+                    return null;
                 }
             };
         }

@@ -2,6 +2,7 @@ package cyclops.stream;
 
 import com.aol.cyclops2.hkt.Higher;
 
+import com.aol.cyclops2.internal.stream.spliterators.UnfoldRightSpliterator;
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.types.reactive.BufferOverflowPolicy;
 import com.aol.cyclops2.types.reactive.PushSubscriber;
@@ -549,6 +550,10 @@ public interface Spouts {
     static <U, T> ReactiveSeq<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return reactiveStream(new SpliteratorToOperator<T>(new UnfoldSpliterator<>(seed, unfolder)));
     }
+    static <U, T> ReactiveSeq<T> unfoldRight(final U seed, final Function<? super U, Optional<Tuple2<U, T>>> unfolder) {
+        return reactiveStream(new SpliteratorToOperator<T>(new UnfoldRightSpliterator<>(seed, unfolder)));
+    }
+
     public static  <T> ReactiveSeq<T> concat(Publisher<Publisher<T>> pubs){
 
         return new ReactiveStreamX<>(new ArrayConcatonatingOperator<T>(ListX.fromPublisher(pubs)
@@ -652,6 +657,10 @@ public interface Spouts {
                 @Override
                 public <R, T> Higher<reactiveSeq, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
                     return Spouts.reactive(Spouts.unfold(b,fn),ex);
+                }
+                @Override
+                public <R, T> Higher<reactiveSeq, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+                    return Spouts.reactive(Spouts.unfoldRight(b,fn),ex);
                 }
             };
         }

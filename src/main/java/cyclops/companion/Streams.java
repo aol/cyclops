@@ -2939,6 +2939,11 @@ public class Streams {
                 public <R, T> Higher<Witness.stream, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
                     return StreamKind.widen(ReactiveSeq.unfold(b,fn));
                 }
+
+                @Override
+                public <R, T> Higher<Witness.stream, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+                    return StreamKind.widen(ReactiveSeq.unfoldRight(b,fn));
+                }
             };
         }
         /*

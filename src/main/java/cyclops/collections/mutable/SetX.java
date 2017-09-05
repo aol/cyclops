@@ -164,6 +164,11 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                           .setX(LAZY);
     }
 
+    static <U, T> SetX<T> unfoldRight(final U seed, final Function<? super U, Optional<Tuple2<U, T>>> unfolder) {
+        ReactiveSeq reactiveSeq = ReactiveSeq.unfoldRight(seed, unfolder);
+        return reactiveSeq.to().setX(LAZY);
+    }
+
     /**
      * Generate a SetX from the provided Supplier up to the provided limit number of times
      * 
@@ -1268,6 +1273,11 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                 @Override
                 public <R, T> Higher<set, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
                     return SetX.unfold(b,fn);
+                }
+
+                @Override
+                public <R, T> Higher<set, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+                    return SetX.unfoldRight(b,fn);
                 }
             };
         }

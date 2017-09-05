@@ -312,6 +312,12 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
             return cop;
         }
 
+        public <R, T> Coproduct<W1,W2, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn){
+            Xor<Higher<W1,R>,Higher<W2,R>> res = xor.visit(left -> Xor.secondary(unf1.unfoldRight(b, fn)), r -> Xor.primary(unf2.unfoldRight(b, fn)));
+            Coproduct<W1, W2, R> cop = Coproduct.of(res, def1, def2);
+            return cop;
+        }
+
         public <T> Coproduct<W1,W2,T> replicate(int n, T value) {
             return unfold(n,i -> Optional.of(tuple(value, i-1)));
         }
@@ -464,6 +470,11 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
                 @Override
                 public <R, T> Higher<Higher<Higher<coproduct, W1>, W2>, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
                     return cop.unfolds().get().unfold(b,fn);
+                }
+
+                @Override
+                public <R, T> Higher<Higher<Higher<coproduct, W1>, W2>, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+                    return cop.unfolds().get().unfoldRight(b,fn);
                 }
             };
         }

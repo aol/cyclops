@@ -16,12 +16,16 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.AbstractCollectionXTest;
+import cyclops.collections.mutable.ListX;
+import cyclops.control.Maybe;
 import cyclops.stream.Spouts;
+import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
@@ -138,4 +142,20 @@ public class SetXTest extends AbstractCollectionXTest {
         return SetX.unfold(seed, unfolder);
     }
 
+    @Test
+    public void testUnfoldRight2() {
+        SetX set = SetX.unfoldRight(10, x -> x == 0 ? Optional.ofNullable(null) : Optional.of(Tuple.tuple(x - 1, x)));
+        assertEquals(10, set.size());
+        for (int i = 0; i < 10; ++i) {
+            assertEquals(10 - i, set.get(i).get());
+        }
+    }
+
+    @Test
+    public void testUnfoldRight() {
+        SetX set = SetX.unfoldRight(10, x -> x == 0 ? Optional.ofNullable(null) : Optional.of(Tuple.tuple(x - 1, x)));
+        for (int i = 0; i < 10; ++i) {
+            assertEquals(10 - i, set.get(i).get());
+        }
+    }
 }

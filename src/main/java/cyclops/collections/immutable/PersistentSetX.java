@@ -180,6 +180,11 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
                 .to().persistentSetX(LAZY);
     }
 
+    static <U, T> PersistentSetX<T> unfoldRight(final U seed, final Function<? super U, Optional<Tuple2<U, T>>> unfolder) {
+        return ReactiveSeq.unfoldRight(seed, unfolder)
+                .to().persistentSetX(LAZY);
+    }
+
     /**
      * Generate a PersistentSetX from the provided Supplier up to the provided limit number of times
      * 
@@ -1252,6 +1257,11 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
                 @Override
                 public <R, T> Higher<persistentSetX, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
                     return PersistentSetX.unfold(b,fn);
+                }
+
+                @Override
+                public <R, T> Higher<persistentSetX, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+                    return PersistentSetX.unfoldRight(b,fn);
                 }
             };
         }

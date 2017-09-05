@@ -727,6 +727,14 @@ public class Product<W1,W2,T> implements  Filters<T>,
                     return Product.of(Tuple.tuple(a1,a2),def1,def2);
 
                 }
+
+                @Override
+                public <R, T> Higher<Higher<Higher<product, W1>, W2>, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+                    Higher<W1, R> a1 = def1.unfoldable().get().unfoldRight(b, fn);
+                    Higher<W2, R> a2 = def2.unfoldable().get().unfoldRight(b, fn);
+                    return Product.of(Tuple.tuple(a1,a2),def1,def2);
+
+                }
             });
         }
     }

@@ -187,6 +187,11 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                           .queueX(Evaluation.LAZY);
     }
 
+    static <U, T> QueueX<T> unfoldRight(final U seed, final Function<? super U, Optional<Tuple2<U, T>>> unfolder) {
+        return ReactiveSeq.unfoldRight(seed, unfolder).to()
+                .queueX(Evaluation.LAZY);
+    }
+
     /**
      * Generate a QueueX from the provided Supplier up to the provided limit number of times
      * 
@@ -1298,6 +1303,11 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                 @Override
                 public <R, T> Higher<queue, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
                     return QueueX.unfold(b,fn);
+                }
+
+                @Override
+                public <R, T> Higher<queue, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+                    return QueueX.unfoldRight(b,fn);
                 }
             };
         }

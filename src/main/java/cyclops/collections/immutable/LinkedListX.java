@@ -224,6 +224,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 .linkedListX(Evaluation.LAZY);
     }
 
+    static <U, T> LinkedListX<T> unfoldRight(final U seed, final Function<? super U, Optional<Tuple2<U, T>>> unfolder) {
+        return ReactiveSeq.unfoldRight(seed, unfolder).to()
+                .linkedListX(Evaluation.LAZY);
+    }
+
     /**
      * Generate a LinkedListX from the provided Supplier up to the provided limit number of times
      * 
@@ -1414,6 +1419,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 @Override
                 public <R, T> Higher<linkedListX, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
                     return LinkedListX.unfold(b,fn);
+                }
+
+                @Override
+                public <R, T> Higher<linkedListX, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+                    return LinkedListX.unfoldRight(b,fn);
                 }
             };
         }

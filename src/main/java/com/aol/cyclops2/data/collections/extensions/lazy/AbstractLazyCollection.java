@@ -11,15 +11,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Wither;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -61,6 +60,7 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
     }
     @Override
     public C get() {
+        Object o = seq.get().collect(Collectors.toList());
         if (seq.get() != null) {
             if(updating.compareAndSet(false, true)) { //check if can materialize
 

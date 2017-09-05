@@ -195,6 +195,12 @@ public interface DequeX<T> extends To<DequeX<T>>,
                           .to()
                           .dequeX(LAZY);
     }
+
+    static <U, T> DequeX<T> unfoldRight(final U seed, final Function<? super U, Optional<Tuple2<U, T>>> unfolder) {
+        return ReactiveSeq.unfoldRight(seed, unfolder)
+                .to()
+                .dequeX(LAZY);
+    }
     /**
      * Generate a DequeX from the provided value up to the provided limit number of times
      * 
@@ -1452,6 +1458,11 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 @Override
                 public <R, T> Higher<deque, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
                     return DequeX.unfold(b,fn);
+                }
+
+                @Override
+                public <R, T> Higher<deque, R> unfoldRight(T b, Function<? super T, Optional<Tuple2<T, R>>> fn) {
+                    return DequeX.unfoldRight(b,fn);
                 }
             };
         }
