@@ -147,7 +147,7 @@ public interface Folds<T> {
     default <U> U foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator) {
        return reduce(identity,accumulator);
     }
-    default <U> U foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
+    default <U> U foldLeft(final U identity, final BiFunction<? super U, ? super T, ? extends U> accumulator, final BinaryOperator<U> combiner) {
         return reduce(identity,accumulator,combiner);
     }
     default T foldLeft(final T identity, final BinaryOperator<T> accumulator) {

@@ -1,10 +1,9 @@
 package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.patterns.Sealed1Or;
-import cyclops.patterns.Sealed2;
+import patterns.Sealed1Or;
+import patterns.Sealed2;
 import cyclops.typeclasses.*;
-import cyclops.collections.immutable.LinkedListX;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.types.*;
@@ -54,8 +53,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * Totally lazy, reactiveBuffer  more powerful general Option type. Maybe is maybe like a Java
@@ -119,14 +116,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
                                   Recoverable<T>,
                                   Higher<maybe,T> {
 
-    default Sealed1Or<T> adt(){
-        return new Sealed1Or<T>() {
-            @Override
-            public <R> R match(Function<? super T, ? extends R> fn1, Supplier<? extends R> s) {
-                return Maybe.this.visit(fn1,s);
-            }
-        };
-    }
+
     public static  <T,R> Maybe<R> tailRec(T initial, Function<? super T, ? extends Maybe<? extends Xor<T, R>>> fn){
         return narrowK(fn.apply(initial)).flatMap( eval -> eval.visit(s->tailRec(s,fn),p->Maybe.just(p)));
     }

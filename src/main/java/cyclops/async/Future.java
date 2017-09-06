@@ -821,9 +821,9 @@ public class Future<T> implements To<Future<T>>,
      * @param failure Function to execute if this Future fails
      * @return Future with the eventual result of the executed Function
      */
-    public <R> Future<R> visitAsync(Function<T,R> success, Function<Throwable,R> failure){
-        return map(success).recover(failure);
-
+    public <R> Future<R> visitAsync(Function<? super T,? extends R> success, Function<? super Throwable,? extends R> failure){
+        Future<R> f = map(success);
+        return f.recover(failure);
     }
     /**
      * Blocking analogue to visitAsync. Visit the state of this Future, block until ready.
@@ -844,7 +844,7 @@ public class Future<T> implements To<Future<T>>,
      * @param failure  Function to execute if this Future fails
      * @return Result of the executed Function
      */
-    public <R> R visit(Function<T,R> success, Function<Throwable,R> failure){
+    public <R> R visit(Function<? super T,? extends R> success, Function<? super Throwable,? extends R> failure){
         return visitAsync(success,failure).get();
 
     }
