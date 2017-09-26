@@ -1,4 +1,4 @@
-package com.aol.cyclops2.matching.types;
+package com.aol.cyclops2.matching;
 
 import org.jooq.lambda.tuple.Tuple1;
 import org.jooq.lambda.tuple.Tuple2;

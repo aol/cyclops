@@ -9,17 +9,17 @@ import org.junit.Test;
 
 import java.util.Random;
 
-public class SumMatchingTest {
+public class PatternMatchingTest {
 
   private static final Random random = new Random();
 
   private Long value;
-  private Matching.SumMatching<Long> sumMatching;
+  private Matching.PatternMatching<Long> sumMatching;
 
   @Before
   public void before() {
     value = random.nextLong();
-    sumMatching = new Matching.SumMatching<>(value);
+    sumMatching = new Matching.PatternMatching<>(value);
   }
 
   @Test

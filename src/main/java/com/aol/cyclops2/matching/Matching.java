@@ -5,7 +5,6 @@ import static java.util.Arrays.stream;
 import com.aol.cyclops2.matching.Case.Any;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.util.Optional;
 
@@ -13,14 +12,13 @@ import java.util.Optional;
 public interface Matching {
 
   @AllArgsConstructor
-  final class SumMatching<T> implements Matching {
+  final class PatternMatching<T> implements Matching {
 
-    @Getter
     private final T value;
 
     @SafeVarargs
     public final <R> Optional<R> of(Case<T, R>... cases) {
-      return stream(cases).reduce(Case::or).flatMap(c -> c.test(getValue()));
+      return stream(cases).reduce(Case::or).flatMap(c -> c.test(value));
     }
 
     public <R> R of(Case<T, R> case1, Any<R> any) {

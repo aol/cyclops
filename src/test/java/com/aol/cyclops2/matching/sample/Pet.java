@@ -1,6 +1,6 @@
 package com.aol.cyclops2.matching.sample;
 
-import com.aol.cyclops2.matching.types.Deconstruct.Deconstruct3;
+import com.aol.cyclops2.matching.Deconstruct.Deconstruct3;
 
 import org.jooq.lambda.tuple.Tuple3;
 import lombok.AllArgsConstructor;
