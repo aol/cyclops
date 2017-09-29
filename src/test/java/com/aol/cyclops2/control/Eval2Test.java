@@ -360,8 +360,8 @@ public class Eval2Test {
 	public void testFilter() {
 		assertFalse(just.filter(i->i<5).isPresent());
 		assertTrue(just.filter(i->i>5).isPresent());
-		assertFalse(none.filter(i->i<5).isPresent());
-		assertFalse(none.filter(i->i>5).isPresent());
+		assertFalse(none.filter(i->i!=null).isPresent());
+		assertFalse(none.filter(i->i!=null).isPresent());
 		
 	}
 
@@ -377,8 +377,8 @@ public class Eval2Test {
 	public void testFilterNot() {
 		assertTrue(just.filterNot(i->i<5).isPresent());
 		assertFalse(just.filterNot(i->i>5).isPresent());
-		assertFalse(none.filterNot(i->i<5).isPresent());
-		assertFalse(none.filterNot(i->i>5).isPresent());
+		assertFalse(none.filterNot(i->i==null).isPresent());
+		assertFalse(none.filterNot(i->i==null).isPresent());
 	}
 
 	@Test
