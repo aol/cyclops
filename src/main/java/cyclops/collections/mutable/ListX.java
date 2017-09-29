@@ -1168,7 +1168,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> with(final int i, final T element) {
         return from(stream().deleteBetween(i, i + 1)
-                            .insertAt(i, element)
+                            .insertAtOrAppend(i, element)
                             .collect(getCollector()));
     }
 

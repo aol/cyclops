@@ -8,6 +8,7 @@ import cyclops.collections.mutable.ListX;
 import cyclops.companion.Semigroups;
 import cyclops.collections.immutable.*;
 import cyclops.monads.Witness;
+import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Before;
@@ -24,11 +25,18 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class ListXTest extends CollectionXTestsWithNulls {
+    @Test
+    public void withTest(){
 
+        assertEquals(of("x", "b", "c"), ListX.of("a", "b", "c").with(0, "x"));
+        assertEquals(of("a", "x", "c"), ListX.of("a", "b", "c").with(1, "x"));
+        assertEquals(of("a", "b", "x"), ListX.of("a", "b", "c").with(2, "x"));
+    }
 
     int times =0;
     AtomicLong counter = new AtomicLong(0);

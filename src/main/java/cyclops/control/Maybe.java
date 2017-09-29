@@ -117,6 +117,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
                                   Recoverable<T>,
                                   Higher<maybe,T> {
 
+    public static  <T,R> Maybe<R> tailRec(T initial, Function<? super T, ? extends Maybe<? extends Xor<T, R>>> fn){
+        return narrowK(fn.apply(initial)).flatMap( eval -> eval.visit(s->tailRec(s,fn),p->Maybe.just(p)));
+    }
     public static  <T> Kleisli<maybe,Maybe<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), Maybe::widen);
     }
@@ -1714,8 +1717,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
                 @Override
                 public <T, R> Higher<maybe, R> tailRec(T initial, Function<? super T, ? extends Higher<maybe, ? extends Xor<T, R>>> fn) {
-                    return narrowK(fn.apply(initial)).flatMap( eval ->
-                            eval.visit(s->narrowK(tailRec(s,fn)),p->Maybe.just(p)));
+                    return Maybe.tailRec(initial,fn.andThen(Maybe::narrowK));
                 }
             };
         }

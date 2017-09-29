@@ -6,6 +6,7 @@ import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
+import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Reader;
 import cyclops.control.Xor;
@@ -26,6 +27,7 @@ public class MonadRecTest {
 
     @Test
     public void listTest(){
+
         MonadRec<list> mr = ListX.Instances.monadRec();
         ListX<Integer> l = mr.tailRec(0, i -> i < 100_000 ? ListX.of(Xor.secondary(i + 1)) : ListX.of(Xor.primary(i + 1)))
                 .convert(ListX::narrowK);
@@ -54,6 +56,8 @@ public class MonadRecTest {
                 .convert(Maybe::narrowK);
         assertThat(l,equalTo(Maybe.just(100_001)));
     }
+
+
     @Test
     public void futureTest(){
         MonadRec<future> mr = Future.Instances.monadRec();

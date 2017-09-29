@@ -166,6 +166,18 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return xor;
     }
 
+    public static  <X extends Throwable,T,R> Try<R,X> tailRec(T initial, Function<? super T, ? extends Try<? extends Xor<T, R>,X>> fn){
+        Try<? extends Xor<T, R>,X> next[] = new Try[1];
+        next[0] = Try.success(Xor.secondary(initial));
+        boolean cont = true;
+        do {
+            cont = next[0].visit(p -> p.visit(s -> {
+                next[0] = fn.apply(s);
+                return true;
+            }, pr -> false), () -> false);
+        } while (cont);
+        return next[0].map(Xor::get);
+    }
     public static  <X extends Throwable,T> Kleisli<Higher<tryType,X>,Try<T,X>,T> kindKleisli(){
         return Kleisli.of(Try.Instances.monad(), Try::widen);
     }

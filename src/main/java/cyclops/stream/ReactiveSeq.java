@@ -2857,7 +2857,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> prepend(T... values);
 
     /**
-     * Insert data into a reactiveStream at given position
+     * Insert data into a ReactiveSeq at a given position
      *
      * <pre>
      * {@code
@@ -2880,7 +2880,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         long check =  new Long(pos);
         boolean added[] = {false};
 
-        return  zipWithIndex().flatMap(t-> {
+
+        return zipWithIndex().flatMap(t-> {
                     if (t.v2 < check && !added[0])
                         return ReactiveSeq.of(t.v1);
                     if (!added[0]) {
@@ -2893,6 +2894,28 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     }
+    default ReactiveSeq<T> insertAtOrAppend(int pos, T... values){
+        if(pos==0){
+            return prepend(values);
+        }
+        long check =  new Long(pos);
+        boolean added[] = {false};
+
+        ReactiveSeq<T> vals = ReactiveSeq.of(values);
+        return  ReactiveSeq.concat(zipWithIndex().flatMap(t-> {
+                    if (t.v2 < check && !added[0])
+                        return ReactiveSeq.of(t.v1);
+                    if (!added[0]) {
+                        added[0] = true;
+                        return ReactiveSeq.concat(vals,ReactiveSeq.of(t.v1));
+                    }
+                    return Stream.of(t.v1);
+                }
+        ),vals.filter(i->!added[0]));
+
+
+    }
+
 
     /**
      * Delete elements between given indexes in a Stream
