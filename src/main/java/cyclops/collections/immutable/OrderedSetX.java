@@ -193,7 +193,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
      * }
      * </pre>
      * @param stream To create OrderedSetX from
-     * @param <T> OrderedSetX generated from Stream
+     * @param <T> OrderedSetX generated from LazyList
      * @return
      */
     public static <T> OrderedSetX<T> orderedSetX(ReactiveSeq<T> stream) {
@@ -203,12 +203,12 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
 
     /**
-     * Reduce a Stream to a OrderedSetX,
+     * Reduce a LazyList to a OrderedSetX,
      * 
      * 
      * <pre>
      * {@code 
-     *    OrderedSetX<Integer> set = OrderedSetX.fromStream(Stream.of(1,2,3));
+     *    OrderedSetX<Integer> set = OrderedSetX.fromStream(LazyList.of(1,2,3));
      * 
      *  //set = [1,2,3]
      * }</pre>
@@ -724,7 +724,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zipStream(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zipStream(java.util.reactiveStream.LazyList)
      */
     @Override
     default <U> OrderedSetX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -734,7 +734,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip3(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
      */
     @Override
     default <S, U> OrderedSetX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -743,7 +743,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip4(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
      */
     @Override
     default <T2, T3, T4> OrderedSetX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -934,7 +934,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.reactiveStream.LazyList)
      */
     @Override
     default OrderedSetX<T> removeAllS(final Stream<? extends T> stream) {
@@ -970,7 +970,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.reactiveStream.LazyList)
      */
     @Override
     default OrderedSetX<T> retainAllS(final Stream<? extends T> seq) {

@@ -276,7 +276,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * }
      * </pre>
      * @param stream To create QueueX from
-     * @param <T> QueueX generated from Stream
+     * @param <T> QueueX generated from LazyList
      * @return
      */
     public static <T> QueueX<T> queueX(ReactiveSeq<T> stream){
@@ -431,7 +431,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#fromStream(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#fromStream(java.util.reactiveStream.LazyList)
      */
     @Override
     default <X> QueueX<X> fromStream(final ReactiveSeq<X> stream) {
@@ -765,7 +765,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     default <U> QueueX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -776,7 +776,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip3(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
      */
     @Override
     default <S, U> QueueX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -785,7 +785,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip4(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
      */
     @Override
     default <T2, T3, T4> QueueX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -976,7 +976,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.reactiveStream.LazyList)
      */
     @Override
     default QueueX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1012,7 +1012,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.reactiveStream.LazyList)
      */
     @Override
     default QueueX<T> retainAllS(final Stream<? extends T> seq) {

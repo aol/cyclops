@@ -26,6 +26,7 @@ public class Constant<T,P> implements Higher2<constant,T,P> , Supplier<T> {
 
     private final T value;
 
+
     public <R> Constant<T,R> map(Function<? super P, ? extends R> fn){
         return of(value);
     }

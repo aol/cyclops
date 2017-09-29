@@ -75,7 +75,6 @@ public interface Foldable<CRE> {
         return foldLeft(monoid, ds);
     }
 
-
     default <T> long size(Higher<CRE, T> ds) {
         return foldMap(Monoids.longSum, __ -> 1l, ds);
     }

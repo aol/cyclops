@@ -720,7 +720,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList,
      * java.util.function.BiFunction)
      */
     @Override
@@ -733,7 +733,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     default <U> Either3<LT1, LT2, Tuple2<RT, U>> zipS(final Stream<? extends U> other) {

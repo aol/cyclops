@@ -126,6 +126,40 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                                      BiTransformable<ST,PT>,
                                      Higher2<xor,ST,PT> {
 
+
+    default Xor<ST,PT> accumulate(Xor<ST,PT> next,Semigroup<PT> sg){
+        return flatMap(s1->next.map(s2->sg.apply(s1,s2)));
+    }
+    default Xor<ST,PT> accumulatePrimary(Semigroup<PT> sg, Xor<ST,PT>... values){
+        Xor<ST,PT> acc= this;
+        for(Xor<ST,PT> next : values){
+            acc = acc.accumulatePrimary(sg,next);
+        }
+        return acc;
+    }
+    default Xor<ST,PT> accumulate(Semigroup<ST> sg, Xor<ST,PT> next){
+        return secondaryFlatMap(s1->next.secondaryMap(s2->sg.apply(s1,s2)));
+    }
+    default Xor<ST,PT> accumulate(Semigroup<ST> sg, Xor<ST,PT>... values){
+        Xor<ST,PT> acc= this;
+        for(Xor<ST,PT> next : values){
+            acc = acc.accumulate(sg,next);
+        }
+        return acc;
+    }
+
+    public static  <L,T,R> Xor<L,R> tailRec(T initial, Function<? super T, ? extends Xor<L,? extends Xor<T, R>>> fn){
+        Xor<L,? extends Xor<T, R>> next[] = new Xor[1];
+        next[0] = Xor.primary(Xor.secondary(initial));
+        boolean cont = true;
+        do {
+            cont = next[0].visit(p -> p.visit(s -> {
+                next[0] = narrowK(fn.apply(s));
+                return true;
+            }, pr -> false), () -> false);
+        } while (cont);
+        return next[0].map(Xor::get);
+    }
     public static  <L,T> Kleisli<Higher<xor,L>,Xor<L,T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), Xor::widen);
     }
@@ -872,7 +906,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      */
     Optional<ST> secondaryToOptional();
     /**
-     * @return A Stream containing the secondary value if present, otherwise an zero Stream
+     * @return A LazyList containing the secondary value if present, otherwise an zero LazyList
      */
     ReactiveSeq<ST> secondaryToStream();
 
@@ -979,7 +1013,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Xor<ST, R> zipS(final Stream<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
@@ -988,7 +1022,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     default <U> Xor<ST, Tuple2<PT, U>> zipS(final Stream<? extends U> other) {
@@ -1533,16 +1567,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
             return new MonadRec<Higher<xor, X>>(){
                 @Override
                 public <T, R> Higher<Higher<xor, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<xor, X>, ? extends Xor<T, R>>> fn) {
-                    Xor<X,? extends Xor<T, R>> next[] = new Xor[1];
-                    next[0] = Xor.primary(Xor.secondary(initial));
-                    boolean cont = true;
-                    do {
-                        cont = next[0].visit(p -> p.visit(s -> {
-                            next[0] = narrowK(fn.apply(s));
-                            return true;
-                        }, pr -> false), () -> false);
-                    } while (cont);
-                    return next[0].map(Xor::get);
+                    return Xor.tailRec(initial,fn.andThen(Xor::narrowK));
                 }
 
 

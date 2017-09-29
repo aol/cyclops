@@ -271,7 +271,7 @@ public class CollectionXImpl<T> implements LazyCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#fromStream(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#fromStream(java.util.reactiveStream.LazyList)
      */
     @Override
     public <X> LazyCollectionX<X> fromStream(final ReactiveSeq<X> stream) {

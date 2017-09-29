@@ -173,7 +173,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
         Function<Integer,Integer> add2 = i -> i+2;
     	Function<MaybeWT<Integer>, MaybeWT<Integer>> optTAdd2 = MaybeWT.lift(add2);
     	
-    	Stream<Integer> withNulls = Stream.of(1,2,3);
+    	LazyList<Integer> withNulls = LazyList.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<Maybe<Integer>> streamOpt = reactiveStream.map(Maybe::completedMaybe);
     	List<Integer> results = optTAdd2.applyHKT(MaybeWT.of(streamOpt))
@@ -208,7 +208,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     	BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
     	BiFunction<MaybeWT<Integer>,MaybeWT<Integer>,MaybeWT<Integer>> optTAdd2 = MaybeWT.lift2(add);
     	
-    	Stream<Integer> withNulls = Stream.of(1,2,3);
+    	LazyList<Integer> withNulls = LazyList.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
     	AnyMSeq<Maybe<Integer>> streamOpt = reactiveStream.map(Maybe::completedMaybe);
     	

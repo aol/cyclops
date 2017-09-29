@@ -74,7 +74,25 @@ public class Future<T> implements To<Future<T>>,
                                   Completable<T>,
                                   Higher<future,T>,
                                   RecoverableFrom<Throwable,T> {
-
+    public static  <T,R> Future<R> tailRec(T initial, Function<? super T, ? extends Future<? extends Xor<T, R>>> fn){
+        SimpleReact sr = SequentialElasticPools.simpleReact.nextReactor();
+        return Future.of(()->{
+            Future<? extends Xor<T, R>> next[] = new Future[1];
+            next[0]=Future.ofResult(Xor.secondary(initial));
+            boolean cont = true;
+            do {
+                cont = next[0].visit(p ->  p.visit(s -> {
+                    next[0] = narrowK(fn.apply(s));
+                    return true;
+                }, pr -> false), () -> false);
+            }while(cont);
+            return next[0].map(Xor::get);
+        }, sr.getExecutor()).flatMap(i->i)
+                .peek(e->SequentialElasticPools.simpleReact.populate(sr)).recover(t->{
+                    SequentialElasticPools.simpleReact.populate(sr);
+                    throw ExceptionSoftener.throwSoftenedException(t);
+                });
+    }
     public static  <T> Kleisli<future,Future<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), Future::widen);
     }
@@ -544,19 +562,19 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Sequence operation that convert a Stream of Futures to a Future with a Stream
+     * Sequence operation that convert a LazyList of Futures to a Future with a LazyList
      *
      * <pre>
      * {@code
      *   Future<Integer> just = Future.ofResult(10);
-     *   Future<ReactiveSeq<Integer>> futures =Future.sequence(Stream.of(just,Future.ofResult(1)));
+     *   Future<ReactiveSeq<Integer>> futures =Future.sequence(LazyList.of(just,Future.ofResult(1)));
          //ListX.of(10,1)
      *
      * }
      * </pre>
      *
-     * @param fts Strean of Futures to Sequence into a Future with a Stream
-     * @return Future with a Stream
+     * @param fts Strean of Futures to Sequence into a Future with a LazyList
+     * @return Future with a LazyList
      */
     public static <T> Future<ReactiveSeq<T>> sequence(final Stream<? extends Future<T>> fts) {
         return AnyM.sequence(fts.map(AnyM::fromFuture), Witness.future.INSTANCE)
@@ -803,9 +821,9 @@ public class Future<T> implements To<Future<T>>,
      * @param failure Function to execute if this Future fails
      * @return Future with the eventual result of the executed Function
      */
-    public <R> Future<R> visitAsync(Function<T,R> success, Function<Throwable,R> failure){
-        return map(success).recover(failure);
-
+    public <R> Future<R> visitAsync(Function<? super T,? extends R> success, Function<? super Throwable,? extends R> failure){
+        Future<R> f = map(success);
+        return f.recover(failure);
     }
     /**
      * Blocking analogue to visitAsync. Visit the state of this Future, block until ready.
@@ -826,7 +844,7 @@ public class Future<T> implements To<Future<T>>,
      * @param failure  Function to execute if this Future fails
      * @return Result of the executed Function
      */
-    public <R> R visit(Function<T,R> success, Function<Throwable,R> failure){
+    public <R> R visit(Function<? super T,? extends R> success, Function<? super Throwable,? extends R> failure){
         return visitAsync(success,failure).get();
 
     }
@@ -1377,7 +1395,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList,
      * java.util.function.BiFunction)
      */
     @Override
@@ -1388,7 +1406,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     public <U> Future<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -1651,27 +1669,12 @@ public class Future<T> implements To<Future<T>>,
 
         public static <T,R> MonadRec<future> monadRec(){
 
-            SimpleReact sr = SequentialElasticPools.simpleReact.nextReactor();
+
             return new MonadRec<future>(){
 
                 @Override
                 public <T, R> Higher<future, R> tailRec(T initial, Function<? super T, ? extends Higher<future, ? extends Xor<T, R>>> fn) {
-                   return Future.of(()->{
-                            Future<? extends Xor<T, R>> next[] = new Future[1];
-                            next[0]=Future.ofResult(Xor.secondary(initial));
-                            boolean cont = true;
-                            do {
-                                cont = next[0].visit(p ->  p.visit(s -> {
-                                    next[0] = narrowK(fn.apply(s));
-                                    return true;
-                                }, pr -> false), () -> false);
-                            }while(cont);
-                        return next[0].map(Xor::get);
-                        }, sr.getExecutor()).flatMap(i->i)
-                                .peek(e->SequentialElasticPools.simpleReact.populate(sr)).recover(t->{
-                               SequentialElasticPools.simpleReact.populate(sr);
-                               throw ExceptionSoftener.throwSoftenedException(t);
-                           });
+                    return Future.tailRec(initial,fn.andThen(Future::narrowK));
                 }
             };
         }

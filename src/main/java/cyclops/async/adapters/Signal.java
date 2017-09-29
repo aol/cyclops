@@ -8,11 +8,11 @@ import java.util.stream.Stream;
 import lombok.Getter;
 
 /**
- * Datastructure that accepts a Stream of data and outputs a Stream of changes
+ * Datastructure that accepts a LazyList of data and outputs a LazyList of changes
  * 
  * <pre>
- * E.g. Stream.of(5,5,5,5,5,5,5,6,1,2,3,5,5,5,5) 
- * Results in Stream.of(5,6,1,2,3,5)
+ * E.g. LazyList.of(5,5,5,5,5,5,5,6,1,2,3,5,5,5,5)
+ * Results in LazyList.of(5,6,1,2,3,5)
  * </pre>
  * @author johnmcclean
  *
@@ -61,7 +61,7 @@ public class Signal<T> {
     }
 
     /**
-     * @param stream Populate this Signal from a Stream
+     * @param stream Populate this Signal from a LazyList
      */
     public void fromStream(final Stream<T> stream) {
         stream.forEach(next -> set(next));

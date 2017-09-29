@@ -31,7 +31,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * A reactiveBuffer-streams reactiveSubscriber, backed by a cyclops2-react async.Queue, for merging data from multiple publishers into a singleUnsafe Stream
+ * A reactiveBuffer-streams reactiveSubscriber, backed by a cyclops2-react async.Queue, for merging data from multiple publishers into a singleUnsafe LazyList
  *
  * @author johnmcclean
  *
@@ -156,7 +156,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     }
 
     /**
-     * @return JDK Stream generated from this QueueBasedSubscriber
+     * @return JDK LazyList generated from this QueueBasedSubscriber
      */
     public Stream<T> jdkStream() {
         return jdkStream.get();

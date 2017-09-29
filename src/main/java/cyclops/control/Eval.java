@@ -75,6 +75,10 @@ public interface Eval<T> extends To<Eval<T>>,
                                     MonadicValue<T>,
                                     Higher<eval ,T>{
 
+    public static  <T,R> Eval<R> tailRec(T initial, Function<? super T, ? extends Eval<? extends Xor<T, R>>> fn){
+        return narrowK(fn.apply(initial)).flatMap( eval ->
+                eval.visit(s->tailRec(s,fn),p->Eval.now(p)));
+    }
     public static  <T> Kleisli<eval,Eval<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), Eval::widen);
     }
@@ -314,11 +318,11 @@ public interface Eval<T> extends To<Eval<T>>,
     }
 
     /**
-     * Turn a Stream of Evals into a singleUnsafe Eval with a Stream of values.
+     * Turn a LazyList of Evals into a singleUnsafe Eval with a LazyList of values.
      *
      * <pre>
      * {@code
-     *  Eval<ReactiveSeq<Integer>> maybes =Eval.sequence(Stream.of(Eval.now(10),Eval.now(1)));
+     *  Eval<ReactiveSeq<Integer>> maybes =Eval.sequence(LazyList.of(Eval.now(10),Eval.now(1)));
         //Eval.now(ReactiveSeq.of(10,1)));
      *
      * }
@@ -596,7 +600,7 @@ public interface Eval<T> extends To<Eval<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Eval<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -605,7 +609,7 @@ public interface Eval<T> extends To<Eval<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     default <U> Eval<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -1381,8 +1385,7 @@ public interface Eval<T> extends To<Eval<T>>,
 
                 @Override
                 public <T, R> Higher<eval, R> tailRec(T initial, Function<? super T, ? extends Higher<eval, ? extends Xor<T, R>>> fn) {
-                    return narrowK(fn.apply(initial)).flatMap( eval ->
-                            eval.visit(s->narrowK(tailRec(s,fn)),p->Eval.now(p)));
+                    return Eval.tailRec(initial,fn.andThen(Eval::narrowK));
                 }
             };
         }

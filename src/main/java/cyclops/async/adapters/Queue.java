@@ -173,7 +173,7 @@ public class Queue<T> implements Adapter<T> {
     }
 
     /**
-     * @return Sequential Infinite (until Queue is closed) Stream of data from
+     * @return Sequential Infinite (until Queue is closed) LazyList of data from
      *         this Queue
      * 
      */
@@ -183,19 +183,19 @@ public class Queue<T> implements Adapter<T> {
         return ReactiveSeq.fromStream(closingStream(this::get, new AlwaysContinue()));
     }
     /**
-     * Return a standard (unextended) JDK Stream connected to this Queue
+     * Return a standard (unextended) JDK LazyList connected to this Queue
      * To disconnect cleanly close the queue
      * 
      * <pre>
      * {@code 
-     *        use queue.reactiveStream().parallel() to convert to a parallel Stream
+     *        use queue.reactiveStream().parallel() to convert to a parallel LazyList
      *  }
      * </pre>
      * 
      * @param closeScalingFactor Scaling factor for Queue closed messages to propagate to connected parallel Streams.
      *              Scaling Factor may need to be high to reach all connect parallel threads.
      * 
-     * @return Java 8 Stream connnected to this Queue
+     * @return Java 8 LazyList connnected to this Queue
      */
     public Stream<T> jdkStream(int closeScalingFactor){
         int cores = Runtime.getRuntime().availableProcessors();
@@ -210,17 +210,17 @@ public class Queue<T> implements Adapter<T> {
     }
     
     /**
-     * Return a standard (unextended) JDK Stream connected to this Queue
+     * Return a standard (unextended) JDK LazyList connected to this Queue
      * To disconnect cleanly close the queue
      * 
      * <pre>
      * {@code 
-     *        use queue.reactiveStream().parallel() to convert to a parallel Stream
+     *        use queue.reactiveStream().parallel() to convert to a parallel LazyList
      *  }
      * </pre>
      * @see Queue#jdkStream(int) for an alternative that sends more poision pills for use with parallel Streams.
      * 
-     * @return Java 8 Stream connnected to this Queue
+     * @return Java 8 LazyList connnected to this Queue
      */
     public Stream<T> jdkStream() {
        return jdkStream(2);
@@ -334,10 +334,10 @@ public class Queue<T> implements Adapter<T> {
     }
 
     /**
-     * @return Infinite (until Queue is closed) Stream of CompletableFutures
+     * @return Infinite (until Queue is closed) LazyList of CompletableFutures
      *         that can be used as input into a SimpleReact concurrent dataflow
      * 
-     *         This Stream itself is Sequential, SimpleReact will applyHKT
+     *         This LazyList itself is Sequential, SimpleReact will applyHKT
      *         concurrency / parralellism via the constituent CompletableFutures
      * 
      */
@@ -348,7 +348,7 @@ public class Queue<T> implements Adapter<T> {
 
     /**
      * @param stream
-     *            Input data from provided Stream
+     *            Input data from provided LazyList
      */
     @Override
     public boolean fromStream(final Stream<T> stream) {
@@ -587,7 +587,7 @@ public class Queue<T> implements Adapter<T> {
     /**
      * Close this Queue
      * Poison Pills are used to communicate closure to connected Streams
-     * A Poison Pill is added per connected Stream to the Queue
+     * A Poison Pill is added per connected LazyList to the Queue
      * If a BlockingQueue is backing this async.Queue it will block until
      * able to add to the Queue.
      * 

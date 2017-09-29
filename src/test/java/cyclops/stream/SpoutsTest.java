@@ -50,12 +50,13 @@ public class SpoutsTest {
     @Test
     public void reactiveBuffer() throws InterruptedException {
 
-        Subscription sub = Spouts.reactiveBuffer(10, s -> {
+        Subscription sub = Spouts.reactiveBuffer(16, s -> {
 
             s.onSubscribe(new Subscription() {
                 @Override
                 public void request(long n) {
                     if(i==0) {
+
                         Effect e = () -> {
 
 
@@ -73,7 +74,9 @@ public class SpoutsTest {
 
         }).forEach(2, in->count++);
 
+        //count will be 2, buffer will be 16
         Thread.sleep(500);
+
         sub.request(30);
 
         assertThat(i,equalTo(30));
@@ -376,7 +379,7 @@ public class SpoutsTest {
 
         //    assertThat(Monoids.<Integer>amb()
        //         .applyHKT(nextAsync(),Spouts.of(100,200,300)).listX(),equalTo(ListX.of(100,200,300)));
-     //   assertThat(Monoids.<Integer>amb().reduce(Stream.of((nextAsync()),Spouts.of(100,200,300))).listX(),equalTo(ListX.of(100,200,300)));
+     //   assertThat(Monoids.<Integer>amb().reduce(LazyList.of((nextAsync()),Spouts.of(100,200,300))).listX(),equalTo(ListX.of(100,200,300)));
        // assertThat(Spouts.amb(ListX.of(nextAsync(),Spouts.of(100,200,300))).listX(),equalTo(ListX.of(100,200,300)));
     }
 
@@ -520,7 +523,7 @@ public class SpoutsTest {
                     .map(i->i+2)
                     .collect(list);
         System.out.println("res " + res);
-     //   Stream.of(1,2,3).collect((Supplier)list.supplier(),list.accumulator(),list.combiner());
+     //   LazyList.of(1,2,3).collect((Supplier)list.supplier(),list.accumulator(),list.combiner());
     }
     @Test
     public void ambSemigroupTest(){

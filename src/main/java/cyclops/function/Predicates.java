@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -27,10 +28,10 @@ import java.util.stream.Stream;
  * {@code 
  *  import static cyclops2.function.Predicates.greaterThan;
  *  
- *  Stream.of(1,2,3,100,200,300)
+ *  LazyList.of(1,2,3,100,200,300)
  *        .filter(greaterThan(10));
  * 
- * //Stream[100,200,300]
+ * //LazyList[100,200,300]
  * }
  * </pre>
  * 
@@ -39,6 +40,34 @@ import java.util.stream.Stream;
  *
  */
 public class Predicates {
+    public static <T1,T2> BiPredicate<T1,T2> when(BiPredicate<T1,T2> pred){
+        return pred;
+    }
+    public static <T1,T2> BiPredicate<T1,T2> true2(){
+        return (a,b)->true;
+    }
+    public static <T1,T2> BiPredicate<T1,T2> and(Predicate<? super T1> p1, Predicate<? super T2> p2){
+        return (a,b)->p1.test(a) && p2.test(b);
+    }
+    public static <T1,T2> BiPredicate<T1,T2> _1(Predicate<? super T1> p1){
+        return (a,b)->p1.test(a);
+    }
+
+    public static <T1,T2> BiPredicate<T1,T2> first(Predicate<? super T1> p1, Predicate<? super T2> p2){
+        return (a,b)->p1.test(a) && !p2.test(b);
+    }
+    public static <T1,T2> BiPredicate<T1,T2> second(Predicate<? super T1> p1, Predicate<? super T2> p2){
+        return (a,b)->!p1.test(a) && p2.test(b);
+    }
+    public static <T1,T2> BiPredicate<T1,T2> _2(Predicate<? super T2> p2){
+        return (a,b)->p2.test(b);
+    }
+    public static <T1,T2> BiPredicate<T1,T2> or(Predicate<? super T1> p1, Predicate<? super T2> p2){
+        return (a,b)->p1.test(a) || p2.test(b);
+    }
+    public static <T1,T2> BiPredicate<T1,T2> xor(Predicate<? super T1> p1, Predicate<? super T2> p2){
+        return (a,b)->p1.test(a) ^ p2.test(b);
+    }
 
     /**
      * Method for point-free Predicate definition (helps with lambda type inferencing) 
@@ -273,13 +302,13 @@ public class Predicates {
      * <pre>
      * {@code 
      * 
-     *   Stream.of(Maybe.of(2))
+     *   LazyList.of(Maybe.of(2))
      *         .filter(eqv(Maybe.of(2)))
      *         .forEach(System.out::println);
      *   
      *   //Maybe[2]       
      *          
-     *   Stream.of(2)
+     *   LazyList.of(2)
      *         .filter(eqv(Maybe.of(2)))
      *         .forEach(System.out::println);
      *         
@@ -440,8 +469,8 @@ public static <T1> Predicate<? super T1> instanceOf(final Class<?> clazz) {
     /**
      * Samples a dataset by only returning true when the modulus of the event count divided by the rate is 0
      * e.g.
-     * To select every second member of a Stream, filter with Predicates.sample(2) - for every thid member filter with Predicates.sample(3) and so on.
-     * To take 1% of a Stream use Predicates.sample(100)
+     * To select every second member of a LazyList, filter with Predicates.sample(2) - for every thid member filter with Predicates.sample(3) and so on.
+     * To take 1% of a LazyList use Predicates.sample(100)
      *
      * @param rate Every x element to include in your sample
      * @param <T> Data type to sample

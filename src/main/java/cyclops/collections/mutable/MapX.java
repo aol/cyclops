@@ -115,7 +115,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /**
-     * Construct a new MapX with the same collector from the supplied Stream
+     * Construct a new MapX with the same collector from the supplied LazyList
      * 
      * @param stream ot Tuples to convert into a MapX
      * @return MapX
@@ -301,7 +301,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.util.reactiveStream.LazyList)
      */
     @Override
     default MapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -337,7 +337,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.util.reactiveStream.LazyList)
      */
     @Override
     default MapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {

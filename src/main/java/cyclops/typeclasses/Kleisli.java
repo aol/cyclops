@@ -29,7 +29,7 @@ import cyclops.monads.Witness.kleisli;
  * @param <W> Monad kind
  * @param <T> Function input type
  * @param <R> Function return type
- *              (inside monad e.g. Kleisli[stream,String,Integer] represents a function that takes a String and returns a Stream of Integers)
+ *              (inside monad e.g. Kleisli[stream,String,Integer] represents a function that takes a String and returns a LazyList of Integers)
  */
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -44,7 +44,9 @@ public class Kleisli<W,T,R> implements Fn1<T,Higher<W,R>>,
     public static <W,T,R> Kleisli<W,T,R> of(Monad<W> monad, Function<? super T, ? extends Higher<W,? extends R>> fn){
         return new Kleisli<W,T,R>(monad,fn);
     }
-    
+    public static <W,T,R> Kleisli<W,T,R> arrow(Monad<W> monad, Function<? super T, ? extends R> fn){
+       return of(monad,a -> monad.unit(fn.apply(a)));
+    }
     public Kleisli<W,T,R> local(Function<? super R, ? extends R> local){
         return kleisliK(monad, t->monad.map(r->local.apply(r),apply(t)));
     }
@@ -166,6 +168,74 @@ public class Kleisli<W,T,R> implements Fn1<T,Higher<W,R>>,
 
 
 
+
+        });
+
+
+    }
+    public <R1, R2, R3, R4> Kleisli<W,T,R4> forEachK4(Function<? super R, ? extends Kleisli<W,T,? extends R1>> value2,
+                                                     BiFunction<? super R, ? super R1, ? extends Kleisli<W,T,? extends R2>> value3,
+                                                     Fn3<? super R, ? super R1, ? super R2, ? extends Kleisli<W,T,? extends R3>> value4,
+                                                     Fn4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
+
+
+
+
+        return this.flatMapK(in -> {
+
+            Kleisli<W,T,? extends R1> a = value2.apply(in);
+            return a.flatMapK(ina -> {
+                Kleisli<W,T,? extends R2> b = value3.apply(in,ina);
+                return b.flatMapK(inb -> {
+
+                    Kleisli<W,T,? extends R3> c = value4.apply(in,ina,inb);
+                    return c.map(inc->yieldingFunction.apply(in, ina, inb, inc));
+
+                });
+
+
+            });
+
+
+        });
+
+    }
+
+
+
+
+    public <R1, R2, R4> Kleisli<W,T,R4> forEachK3(Function<? super R, ? extends Kleisli<W,T,? extends R1>> value2,
+                                                 BiFunction<? super R, ? super R1, ? extends Kleisli<W,T,? extends R2>> value3,
+                                                 Fn3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
+
+        return this.flatMapK(in -> {
+
+            Kleisli<W,T,? extends R1> a = value2.apply(in);
+            return a.flatMapK(ina -> {
+                Kleisli<W,T,? extends R2> b = value3.apply(in,ina);
+                return b.map(in2 -> {
+                    return yieldingFunction.apply(in, ina, in2);
+
+                });
+
+
+
+            });
+
+        });
+
+    }
+
+    public <R1, R4> Kleisli<W,T,R4> forEachK2(Function<? super R, ? extends Kleisli<W,T,? extends R1>> value2,
+                                             BiFunction<? super R, ? super R1, ? extends R4> yieldingFunction) {
+
+        return this.flatMapK(in -> {
+
+            Kleisli<W,T,? extends R1> a = value2.apply(in);
+            return a.map(in2 -> {
+                return yieldingFunction.apply(in, in2);
+
+            });
 
         });
 

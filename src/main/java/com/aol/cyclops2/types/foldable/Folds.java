@@ -147,7 +147,7 @@ public interface Folds<T> {
     default <U> U foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator) {
        return reduce(identity,accumulator);
     }
-    default <U> U foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
+    default <U> U foldLeft(final U identity, final BiFunction<U, ? super T,U> accumulator, final BinaryOperator<U> combiner) {
         return reduce(identity,accumulator,combiner);
     }
     default T foldLeft(final T identity, final BinaryOperator<T> accumulator) {
@@ -292,7 +292,7 @@ public interface Folds<T> {
      * }
      * </pre>
      * 
-     * @return Stream as concatenated String
+     * @return LazyList as concatenated String
      */
     default String join() {
 
@@ -306,7 +306,7 @@ public interface Folds<T> {
      * }
      * </pre>
      * 
-     * @return Stream as concatenated String
+     * @return LazyList as concatenated String
      */
     default String join(final String sep) {
         return stream().join(sep);
@@ -319,7 +319,7 @@ public interface Folds<T> {
      * }
      * </pre>
      * 
-     * @return Stream as concatenated String
+     * @return LazyList as concatenated String
      */
     default String join(final String sep, final String start, final String end) {
         return stream().join(sep, start, end);
@@ -429,10 +429,10 @@ public interface Folds<T> {
 
     /**
      * <pre>
-     * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
+     * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(LazyList.of(1,2,3))) }
      * </pre>
      * 
-     * @param stream Stream to check if this Folds has the same elements in the same order, at the skip
+     * @param stream LazyList to check if this Folds has the same elements in the same order, at the skip
      * @return True if Monad starts with Iterators sequence of data
      */
     default boolean startsWith(final Stream<T> stream) {
@@ -459,13 +459,13 @@ public interface Folds<T> {
      * <pre>
      * {@code
      * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .endsWith(Stream.of(5,6))); 
+     *              .endsWith(LazyList.of(5,6)));
      * }
      * </pre>
      * 
      * @param stream
      *            Values to check
-     * @return true if SequenceM endswith values in the supplied Stream
+     * @return true if SequenceM endswith values in the supplied LazyList
      */
     default boolean endsWith(final Stream<T> stream) {
         return stream().endsWith(stream);
@@ -484,7 +484,7 @@ public interface Folds<T> {
      * }
      * </pre>
      * 
-     * @return first value in this Stream
+     * @return first value in this LazyList
      */
     default T firstValue() {
         return stream().firstValue();
@@ -506,7 +506,7 @@ public interface Folds<T> {
      * </pre>
      * 
      * @return a singleUnsafe value or an UnsupportedOperationException if 0/1 values
-     *         in this Stream
+     *         in this LazyList
      */
     default T singleUnsafe() {
         return stream().singleUnsafe();
@@ -532,7 +532,7 @@ public interface Folds<T> {
      * }
      * </pre>
      * 
-     * @return An Optional with singleUnsafe value if this Stream has exactly one
+     * @return An Optional with singleUnsafe value if this LazyList has exactly one
      *         element, otherwise Optional Empty
      */
     default Maybe<T> single() {
@@ -560,7 +560,7 @@ public interface Folds<T> {
     }
 
     /**
-     * Execute this Stream on a schedule
+     * Execute this LazyList on a schedule
      * 
      * <pre>
      * {@code
@@ -571,7 +571,7 @@ public interface Folds<T> {
      * }
      * </pre>
      * 
-     * Connect to the Scheduled Stream
+     * Connect to the Scheduled LazyList
      * 
      * <pre>
      * {@code
@@ -589,14 +589,14 @@ public interface Folds<T> {
      *            Expression that determines when each job will run
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled LazyList
      */
     default HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
         return stream().schedule(cron, ex);
     }
 
     /**
-     * Execute this Stream on a schedule
+     * Execute this LazyList on a schedule
      * 
      * <pre>
      * {@code
@@ -607,7 +607,7 @@ public interface Folds<T> {
      * }
      * </pre>
      * 
-     * Connect to the Scheduled Stream
+     * Connect to the Scheduled LazyList
      * 
      * <pre>
      * {@code 
@@ -620,18 +620,18 @@ public interface Folds<T> {
      * 
      * 
      * @param delay
-     *            Between last element completes passing through the Stream
+     *            Between last element completes passing through the LazyList
      *            until the next one starts
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled LazyList
      */
     default HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
         return stream().scheduleFixedDelay(delay, ex);
     }
 
     /**
-     * Execute this Stream on a schedule
+     * Execute this LazyList on a schedule
      * 
      * <pre>
      * {@code
@@ -642,7 +642,7 @@ public interface Folds<T> {
      * }
      * </pre>
      * 
-     * Connect to the Scheduled Stream
+     * Connect to the Scheduled LazyList
      * 
      * <pre>
      * {@code
@@ -658,7 +658,7 @@ public interface Folds<T> {
      *            Time in millis between job runs
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable HotStream of emitted from scheduled LazyList
      */
     default HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
         return stream().scheduleFixedRate(rate, ex);
@@ -668,7 +668,7 @@ public interface Folds<T> {
 
     /**
      * Check that there are specified number of matches of predicate in the
-     * Stream
+     * LazyList
      * 
      * <pre>
      * {@code 

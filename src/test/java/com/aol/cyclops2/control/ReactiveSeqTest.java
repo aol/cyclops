@@ -239,7 +239,7 @@ public class ReactiveSeqTest {
             count += ReactiveSeq.of(1,2,3)
                                  .findFirst().get();
         long rs = System.currentTimeMillis()-time2;
-        System.out.println("Stream " + stream + " rs " + rs + " count " + count);
+        System.out.println("LazyList " + stream + " rs " + rs + " count " + count);
     }
 
     int count =0;
@@ -267,7 +267,7 @@ public class ReactiveSeqTest {
         for(int k=0;k<5000;k++)
             count += ReactiveSeq.concat(oneThousand.stream(),oneThousand.stream()).count();
         long rs = System.currentTimeMillis()-time2;
-        System.out.println("Stream " + stream + " rs with construction " + rs + " count " + count);
+        System.out.println("LazyList " + stream + " rs with construction " + rs + " count " + count);
 
 
     }
@@ -285,7 +285,7 @@ public class ReactiveSeqTest {
         for(int k=0;k<1000;k++)
             count += ReactiveSeq.generate(()->1).limit(100).flatMap(i->Stream.iterate(1,x->x+i).limit(500)).count();
         long rs = System.currentTimeMillis()-time2;
-        System.out.println("Stream " + stream + " rs with construction " + rs + " count " + count);
+        System.out.println("LazyList " + stream + " rs with construction " + rs + " count " + count);
     }
     @Test
     public void compareMap(){
@@ -309,7 +309,7 @@ public class ReactiveSeqTest {
             count += s.count();
         long rsWithout = System.currentTimeMillis()-time3;
 
-        System.out.println("Stream " + stream + " rs with construction " + rs +  " rs without " + rsWithout + " count " + count);
+        System.out.println("LazyList " + stream + " rs with construction " + rs +  " rs without " + rsWithout + " count " + count);
     }
     @Test
     public void mapFuseTest(){

@@ -4,6 +4,7 @@ buildscript {
 	repositories {
 		jcenter()
 
+
 	}
 
 	dependencies {
@@ -40,6 +41,7 @@ apply from: custom('jacoco-excludes')
 repositories {
 	mavenCentral()
 	jcenter()
+    maven { url 'https://jitpack.io' }
 
 }
 
@@ -58,6 +60,7 @@ configurations {
 dependencies {
 
 	//compile group: 'org.derive4j.hkt', name: 'hkt', version: derive4jHKTVersion
+	compile 'com.github.KindedJ:KindedJ:5bee1acf6f'
 	compile 'org.pcollections:pcollections:'+pCollectionsVersion
 	compile "org.jooq:jool:${joolVersion}"
 	compile 'org.agrona:Agrona:'+agronaVersion

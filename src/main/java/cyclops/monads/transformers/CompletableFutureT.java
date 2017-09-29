@@ -120,7 +120,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      *             .map(t->t=t+1);
      *  
      *  
-     *  //FutureT<AnyMSeq<Stream<Future[11]>>>
+     *  //FutureT<AnyMSeq<LazyList<Future[11]>>>
      * }
      * </pre>
      * 
@@ -145,7 +145,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      *             .flatMap(t->Future.completedFuture(20));
      *  
      *  
-     *  //FutureT<AnyMSeq<Stream<Future[20]>>>
+     *  //FutureT<AnyMSeq<LazyList<Future[20]>>>
      * }
      * </pre>
      * @param f FlatMap function
@@ -174,18 +174,18 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      * Lift a function into one that accepts and returns an FutureT
      * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. to add list handling  / iteration (via Future) and iteration (via Stream) to an existing function
+     * e.g. to add list handling  / iteration (via Future) and iteration (via LazyList) to an existing function
      * <pre>
      * {@code 
         Function<Integer,Integer> add2 = i -> i+2;
     	Function<FutureT<Integer>, FutureT<Integer>> optTAdd2 = FutureT.lift(add2);
     	
-    	Stream<Integer> withNulls = Stream.of(1,2,3);
+    	LazyList<Integer> withNulls = LazyList.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<CompletableFuture<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
     	List<Integer> results = optTAdd2.applyHKT(FutureT.of(streamOpt))
     									.unwrap()
-    									.<Stream<CompletableFuture<Integer>>>unwrap()
+    									.<LazyList<CompletableFuture<Integer>>>unwrap()
     									.map(Future::join)
     									.collect(CyclopsCollectors.toList());
     	
@@ -207,7 +207,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      * Lift a BiFunction into one that accepts and returns  FutureTs
      * This allows multiple monad types to add functionality to existing function and methods
      * 
-     * e.g. to add list handling / iteration (via Future), iteration (via Stream)  and asynchronous execution (Future)
+     * e.g. to add list handling / iteration (via Future), iteration (via LazyList)  and asynchronous execution (Future)
      * to an existing function
      * 
      * <pre>
@@ -215,7 +215,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     	BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
     	BiFunction<FutureT<Integer>,FutureT<Integer>,FutureT<Integer>> optTAdd2 = FutureT.lift2(add);
     	
-    	Stream<Integer> withNulls = Stream.of(1,2,3);
+    	LazyList<Integer> withNulls = LazyList.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
     	AnyMSeq<CompletableFuture<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
     	
@@ -223,7 +223,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     	AnyMSeq<CompletableFuture<Integer>> future=  AnyM.fromFuture(two);
     	List<Integer> results = optTAdd2.applyHKT(FutureT.of(streamOpt),FutureT.of(future))
     									.unwrap()
-    									.<Stream<CompletableFuture<Integer>>>unwrap()
+    									.<LazyList<CompletableFuture<Integer>>>unwrap()
     									.map(Future::join)
     									.collect(CyclopsCollectors.toList());
     									
@@ -372,7 +372,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.reactiveStream.Stream)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.reactiveStream.LazyList)
      */
     @Override
     public <U> CompletableFutureT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {
