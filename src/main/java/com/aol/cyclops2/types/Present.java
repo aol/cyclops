@@ -1,5 +1,5 @@
 package com.aol.cyclops2.types;
 
 
-public interface Some {
+public interface Present {
 }

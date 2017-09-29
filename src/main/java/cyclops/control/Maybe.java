@@ -1,8 +1,7 @@
 package cyclops.control;
 
+
 import com.aol.cyclops2.hkt.Higher;
-import patterns.Sealed1Or;
-import patterns.Sealed2;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -129,7 +128,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     public static  <T> Cokleisli<maybe,T,Maybe<T>> kindCokleisli(){
         return Cokleisli.of(Maybe::narrowK);
     }
-    public static <W1,T> Nested<maybe,W1,T> nested(Maybe<Higher<W1,T>> nested,InstanceDefinitions<W1> def2){
+    public static <W1,T> Nested<maybe,W1,T> nested(Maybe<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
 
         return Nested.of(nested,Instances.definitions(),def2);
     }
@@ -510,7 +509,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
     static <T> Maybe<T> eager(final T value) {
         Objects.requireNonNull(value);
-        return new JustEager<>( value);
+        return new Some<>( value);
     }
     static <T> Maybe<T> eagerNone() {
         return NothingEager.NOTHING_EAGER;
@@ -1089,7 +1088,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class JustEager<T> implements Maybe<T>, Some {
+    public static final class Some<T> implements Maybe<T>, Present {
         private final T value;
 
         @Override
@@ -1119,7 +1118,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
         @Override
         public <R> Maybe<R> map(Function<? super T, ? extends R> mapper) {
-            return new JustEager(mapper.apply(value));
+            return new Some(mapper.apply(value));
         }
 
         @Override
@@ -1154,7 +1153,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          */
         @Override
         public boolean equals(final Object obj) {
-            if (obj instanceof Some)
+            if (obj instanceof Present)
                 return Objects.equals(value, ((Maybe) obj).get());
             else if (obj instanceof Lazy) {
                 return Objects.equals(get(), ((Maybe) obj).get());
@@ -1164,7 +1163,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class Just<T> implements Maybe<T>, Some {
+    public static final class Just<T> implements Maybe<T>, Present {
 
 
         private final Eval<T> lazy;
@@ -1242,7 +1241,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
          */
         @Override
         public boolean equals(final Object obj) {
-            if (obj instanceof Some)
+            if (obj instanceof Present)
                 return Objects.equals(lazy.get(), ((Maybe) obj).get());
             else if (obj instanceof Lazy) {
                 return Objects.equals(get(), ((Maybe) obj).get());
@@ -1478,7 +1477,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
         @Override
         public boolean equals(final Object obj) {
 
-            if (obj instanceof Some)
+            if (obj instanceof Present)
                 return Objects.equals(get(), ((Maybe) obj).get());
             else if (obj instanceof Nothing) {
                 return !isPresent();
@@ -1604,102 +1603,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
         }
     }
-    public static class NothingEager<T> extends Nothing<T> {
-        static NothingEager NOTHING_EAGER = new NothingEager();
 
-        @Override
-        public <R> Maybe<R> map(final Function<? super T, ? extends R> mapper) {
-            return NOTHING_EAGER;
-        }
-
-        @Override
-        public <R> Maybe<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-            return NOTHING_EAGER;
-
-        }
-
-        @Override
-        public Maybe<T> filter(final Predicate<? super T> test) {
-            return NOTHING_EAGER;
-        }
-
-        @Override
-        public T get() {
-            throw new NoSuchElementException("No value present");
-        }
-
-        @Override
-        public Maybe<T> recover(final T value) {
-            return Maybe.eager(value);
-        }
-
-        @Override
-        public Maybe<T> recover(final Supplier<? extends T> value) {
-            return Maybe.eager(value.get());
-        }
-        @Override
-        public Maybe<T> recoverWith(Supplier<? extends Maybe<T>> fn) {
-
-            return fn.get();
-
-        }
-
-
-        @Override
-        public <R> R visit(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
-            return none.get();
-        }
-
-        @Override
-        public Optional<T> toOptional() {
-            return Optional.ofNullable(null);
-        }
-
-        @Override
-        public String toString() {
-            return mkString();
-        }
-
-        @Override
-        public boolean isPresent() {
-            return false;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-
-            if (obj instanceof Nothing)
-                return true;
-            if (obj instanceof Lazy) {
-                return !((Lazy) obj).isPresent();
-            }
-            return false;
-        }
-
-        @Override
-        public T orElse(final T value) {
-            return value;
-        }
-
-        @Override
-        public T orElseGet(final Supplier<? extends T> value) {
-            return value.get();
-        }
-
-        @Override
-        public <R> Nothing<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-            return  NOTHING_EAGER;
-        }
-
-        @Override
-        public <R> Nothing<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-            return NOTHING_EAGER;
-        }
-        @Override
-        public void forEach(Consumer<? super T> action) {
-
-        }
-    }
     /**
      * Companion class for creating Type Class instances for working with Maybes
      * @author johnmcclean
