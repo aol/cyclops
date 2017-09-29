@@ -637,7 +637,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     this.singleActiveRequest(n, x -> {
                         while (super.requested.get() > 0) {
                             long sent = 0;
-                            //System.out.println("Requesting " + x);
+
                             boolean completeSent = false;
                             active = true;
                             Object res = data.poll();
