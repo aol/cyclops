@@ -6,7 +6,6 @@ import com.aol.cyclops2.types.reactive.Completable;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
-import cyclops.collections.adt.NonEmptyList;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
@@ -119,9 +118,7 @@ import java.util.stream.Stream;
  */
 public interface Either<LT, RT> extends Xor<LT, RT>{
 
-    default Either<NonEmptyList<LT>, RT> nel() {
-        return Either.fromLazy(Eval.always(()->visit(s->Either.left(NonEmptyList.of(s)),p->Either.right(p))));
-    }
+
     default Either<LT,RT> accumulate(Xor<LT,RT> next,Semigroup<RT> sg){
         return flatMap(s1->next.map(s2->sg.apply(s1,s2)));
     }

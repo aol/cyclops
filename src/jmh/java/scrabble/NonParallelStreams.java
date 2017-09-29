@@ -1,5 +1,5 @@
 package scrabble;
-
+//JMH Benchmarking code, not distributed with the release
 /*
  * Copyright (C) 2015 José Paumard
  *
