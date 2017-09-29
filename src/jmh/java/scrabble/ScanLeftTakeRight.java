@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 
-
+//JMH Benchmarking test file : not part of distribution
 /**
  * Shakespeare plays Scrabble with Ix optimized.
  * @author José
