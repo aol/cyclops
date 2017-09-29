@@ -844,6 +844,11 @@ public interface Eval<T> extends To<Eval<T>>,
 
             }
 
+
+            public Maybe<T> filter(Predicate<? super T> predicate ){
+                return Maybe.fromEval(this).filter(predicate);
+            }
+
             @Override
             public <R> Eval<R> map(final Function<? super T, ? extends R> mapper) {
 

@@ -56,7 +56,6 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
      */
     @Override
     default <R> R visit(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {
-
         if (isPresent()) {
             try {
                 final T value = get();
@@ -159,6 +158,7 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
      * @throws X Exception type returned by provided Supplier
      */
     default <X extends Throwable> T orElseThrow(final Supplier<? extends X> ex) throws X {
+
         return toOptional().orElseThrow(ex);
     }
 

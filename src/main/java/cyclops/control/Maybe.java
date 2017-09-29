@@ -463,7 +463,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
 
     static <T> Maybe<T> fromEvalNullable(final Eval<T> eval) {
         return new Lazy<T>(
-                eval.map(u->Maybe.ofNullable(u)));
+                eval.map(u-> u==null ? Maybe.none()  : Maybe.fromEval(eval)));
     }
 
     static <T> Maybe<T> fromEvalOptional(final Eval<Optional<T>> value){
@@ -1234,7 +1234,9 @@ public interface Maybe<T> extends To<Maybe<T>>,
         @Override
         public <R> R visit(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
             final Maybe<R> mapped = map(some);
+            System.out.println("VISIT!");
             if (isPresent()) {
+
                 return mapped.get();
             }
             return none.get();
@@ -1344,6 +1346,7 @@ public interface Maybe<T> extends To<Maybe<T>>,
         public boolean isPresent() {
             Maybe<T> maybe = lazy.get();
             while (maybe instanceof Lazy) {
+
                 maybe = ((Lazy<T>) maybe).lazy.get();
             }
             return maybe.isPresent();
