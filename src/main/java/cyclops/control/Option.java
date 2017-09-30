@@ -2,6 +2,7 @@ package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.internal.stream.spliterators.push.PublisherToOperator;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Present;
 import com.aol.cyclops2.types.Value;
@@ -33,6 +34,10 @@ import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/*
+ Eager / strict Option type. Base type for the lazy / reactive Maybe type.
+ Less powerful, but may perform better than Maybe (simpler Object structure)
+ */
 public interface Option<T> extends To<Option<T>>,
                                    MonadicValue<T>,
                                    Recoverable<T>,
@@ -67,6 +72,11 @@ public interface Option<T> extends To<Option<T>>,
         return (Option<R>) MonadicValue.super.flatMapI(mapper);
     }
 
+    default Option<T> recoverWith(Option<T> opt){
+        if(isPresent())
+            return this;
+        return opt;
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#flatMapP(java.util.function.Function)
@@ -123,6 +133,7 @@ public interface Option<T> extends To<Option<T>>,
 
     }
 
+
     static <R> Option<R> fromStream(Stream<R> apply) {
         return fromIterable(ReactiveSeq.fromStream(apply));
     }
@@ -147,13 +158,11 @@ public interface Option<T> extends To<Option<T>>,
         return none();
     }
 
-    static <T> Option<T> fromOptionalKind(final Optionals.OptionalKind<T> opt){
-        return fromOptional(Optionals.OptionalKind.narrow(opt));
-    }
 
 
-    default Trampoline<Option<T>> toTrampoline() {
-        return Trampoline.more(()->Trampoline.done(this));
+
+    default Trampoline<Maybe<T>> toTrampoline() {
+        return Trampoline.more(()->Trampoline.done(this.toMaybe()));
     }
 
 
@@ -255,8 +264,11 @@ public interface Option<T> extends To<Option<T>>,
      * @return Maybe with a List of values
      */
     public static <T> Option<ListX<T>> sequenceJust(final CollectionX<Option<T>> maybes) {
-        return AnyM.sequence(maybes.stream().filter(Option::isPresent).map(AnyM::fromMaybe).toListX(), Witness.maybe.INSTANCE)
-                .to(Witness::maybe).eager();
+        return AnyM.sequence(maybes.stream()
+                                    .filter(Option::isPresent)
+                                    .map(Option::toMaybe)
+                            .map(AnyM::fromMaybe).toListX(), Witness.maybe.INSTANCE)
+                .to(Witness::maybe).toOption();
     }
 
     /**
@@ -308,9 +320,9 @@ public interface Option<T> extends To<Option<T>>,
      * @return  Maybe with a LazyList of values
      */
     public static <T> Option<ReactiveSeq<T>> sequence(final Stream<Option<T>> maybes) {
-        return AnyM.sequence(maybes.map(AnyM::fromMaybe), Witness.maybe.INSTANCE)
+        return AnyM.sequence(maybes.map(Option::toMaybe).map(AnyM::fromMaybe), Witness.maybe.INSTANCE)
                 .map(ReactiveSeq::fromStream)
-                .to(Witness::maybe);
+                .to(Witness::maybe).toOption();
 
 
     }
