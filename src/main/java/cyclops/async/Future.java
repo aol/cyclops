@@ -1304,6 +1304,17 @@ public class Future<T> implements To<Future<T>>,
         }
 
     }
+    public Option<T> toOption() {
+        if (future.isDone() && future.isCompletedExceptionally())
+            return Option.none();
+
+        try {
+            return Option.some(get());
+        } catch (final Throwable t) {
+            return Option.none();
+        }
+
+    }
 
 
     /*

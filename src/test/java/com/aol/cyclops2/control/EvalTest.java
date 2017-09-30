@@ -5,6 +5,7 @@ import cyclops.control.Eval;
 import cyclops.control.Eval.CompletableEval;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
+import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
@@ -13,6 +14,45 @@ import java.util.stream.Stream;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 public class EvalTest {
+
+    int times = 0;
+    @Before
+    public void setup(){
+        times = 0;
+    }
+	@Test
+    public void lazyBugNow(){
+        Eval.now("50")
+                .filter(it -> {
+                    times++;
+                    System.out.println("filter");
+                    return true;
+                })
+                .orElseThrow(() -> new RuntimeException("bad"));
+        assertThat(times,equalTo(1));
+    }
+    @Test
+    public void lazyBugAlways(){
+        Eval.always(()->"50")
+                .filter(it -> {
+                    times++;
+                    System.out.println("filter");
+                    return true;
+                })
+                .orElseThrow(() -> new RuntimeException("bad"));
+        assertThat(times,equalTo(1));
+    }
+    @Test
+    public void lazyBugLater(){
+        Eval.later(()->"50")
+                .filter(it -> {
+                    times++;
+                    System.out.println("filter");
+                    return true;
+                })
+                .orElseThrow(() -> new RuntimeException("bad"));
+        assertThat(times,equalTo(1));
+    }
     
     @Test
     public void laterExample(){

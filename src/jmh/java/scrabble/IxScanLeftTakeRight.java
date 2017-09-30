@@ -26,7 +26,7 @@ import org.openjdk.jmh.annotations.*;
 
 
 import ix.*;
-
+//JMH Benchmarking test file : not part of distribution
 /**
  * Shakespeare plays Scrabble with Ix.
  * @author José

@@ -504,7 +504,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
     @Override
     default FutureStream<U> combine(final Monoid<U> op, final BiPredicate<? super U, ? super U> predicate) {
-        return (FutureStream<U>)ReactiveSeq.super.combine(op,predicate);
+        return this.fromStream(ReactiveSeq.oneShotStream(stream())
+                .combine(op,predicate));
     }
     /**
      * If this LazyList is empty one it with a another LazyList

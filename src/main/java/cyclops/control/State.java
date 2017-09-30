@@ -206,6 +206,10 @@ public final class State<S, T> implements Higher2<state,S,T> {
         });
 
     }
+    public static <S,T,R> State<S, R> tailRec(T initial, Function<? super T, ? extends  State<S,  ? extends Xor<T, R>>> fn) {
+        return narrowK( State.Instances.<S> monadRec().tailRec(initial, fn));
+
+    }
 
 
     public static <S, T> State<S, T> state(Function<? super S,? extends Tuple2<S, T>> runF) {

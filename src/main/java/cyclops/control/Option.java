@@ -23,6 +23,8 @@ import org.jooq.lambda.tuple.Tuple3;
 import org.jooq.lambda.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
+import java.io.Serializable;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,7 +36,7 @@ import java.util.stream.Stream;
 public interface Option<T> extends To<Option<T>>,
                                    MonadicValue<T>,
                                    Recoverable<T>,
-                                    Higher<Witness.maybe,T> {
+                                   Iterable<T>{
 
 
 
@@ -49,8 +51,13 @@ public interface Option<T> extends To<Option<T>>,
         return EMPTY;
     }
 
+    static <T> Option<T> some(T value){
+        return new Option.Some<>(value);
+    }
 
-
+    static <T> Option<T> fromFuture(Future<T> future){
+        return future.toOption();
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#flatMapI(java.util.function.Function)
@@ -108,12 +115,16 @@ public interface Option<T> extends To<Option<T>>,
      * @return Maybe populated with first value from Iterable (Option.zero if Publisher zero)
      */
     static <T> Option<T> fromIterable(final Iterable<T> iterable) {
-        return Option.fromEvalNullable(Eval.fromIterable(iterable));
+        Iterator<T> it = iterable.iterator();
+        if(it.hasNext()){
+            return Option.some(it.next());
+        }
+        return Option.none();
+
     }
 
-    static <R> Option<R> fromStream(Stream<? extends R> apply) {
-        return Option.fromEval(Eval.later(()->apply.collect(Collectors.toList())))
-                .flatMap(l->Option.fromIterable(l));
+    static <R> Option<R> fromStream(Stream<R> apply) {
+        return fromIterable(ReactiveSeq.fromStream(apply));
     }
     /**
      * Construct an equivalent Maybe from the Supplied Optional
@@ -140,43 +151,11 @@ public interface Option<T> extends To<Option<T>>,
         return fromOptional(Optionals.OptionalKind.narrow(opt));
     }
 
-    @Deprecated
-    static <T> Option<T> fromEvalOf(final Eval<T> eval) {
-        return new Option.Just<T>(
-                eval);
-    }
 
     default Trampoline<Option<T>> toTrampoline() {
         return Trampoline.more(()->Trampoline.done(this));
     }
 
-    /**
-     * Construct a Maybe from the supplied Eval
-     *
-     * <pre>
-     * {@code
-     *     Option<Integer> maybe =  Option.fromEval(Eval.now(10));
-     *     //Maybe[10]
-     *
-     * }
-     * </pre>
-     *
-     * @param eval Eval to construct Maybe from
-     * @return Maybe created from Eval
-     */
-    static <T> Option<T> fromEval(final Eval<T> eval) {
-        return new Option.Just<T>(
-                eval);
-    }
-
-    static <T> Option<T> fromEvalNullable(final Eval<T> eval) {
-        return new Option.Lazy<T>(
-                eval.map(u->Option.ofNullable(u)));
-    }
-
-    static <T> Option<T> fromEvalOptional(final Eval<Optional<T>> value){
-        return new Option.Lazy<T>(value.map(in->Option.<T>fromOptional(in)));
-    }
 
     /**
      * Construct an Maybe which contains the provided (non-null) value.
@@ -213,22 +192,17 @@ public interface Option<T> extends To<Option<T>>,
      */
     static <T> Option<T> of(final T value) {
         Objects.requireNonNull(value);
-        return new Option.Just<T>(
-                Eval.later(() -> value));
-    }
-    static <T> Option<T> eager(final T value) {
-        Objects.requireNonNull(value);
-        return new Option.Some<>( value);
-    }
-    static <T> Option<T> eagerNone() {
-        return None.NOTHING_EAGER;
+        return new Option.Some(value);
+
     }
 
-    default Option<T> lazy(){
-        return Option.fromIterable(this);
+
+
+    default Maybe<T> lazy(){
+        return Maybe.fromIterable(this);
     }
     default Option<T> eager(){
-        return visit(s->eager(s),eagerNone());
+        return this;
     }
     /**
      * <pre>
@@ -282,7 +256,7 @@ public interface Option<T> extends To<Option<T>>,
      */
     public static <T> Option<ListX<T>> sequenceJust(final CollectionX<Option<T>> maybes) {
         return AnyM.sequence(maybes.stream().filter(Option::isPresent).map(AnyM::fromMaybe).toListX(), Witness.maybe.INSTANCE)
-                .to(Witness::maybe);
+                .to(Witness::maybe).eager();
     }
 
     /**
@@ -680,7 +654,9 @@ public interface Option<T> extends To<Option<T>>,
      * @see com.aol.cyclops2.value.Value#toMaybe()
      */
     @Override
-    Maybe<T> toMaybe();
+    default Maybe<T> toMaybe(){
+        return lazy();
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
      */
@@ -780,6 +756,7 @@ public interface Option<T> extends To<Option<T>>,
         return (Option<T>) MonadicValue.super.peek(c);
     }
 
+
     /*
      * (non-Javadoc)
      *
@@ -863,13 +840,16 @@ public interface Option<T> extends To<Option<T>>,
             }
             if (obj instanceof Present)
                 return Objects.equals(value, ((Maybe) obj).get());
-            else if (obj instanceof Lazy) {
-                return Objects.equals(get(), ((Maybe) obj).get());
+            else if (obj instanceof Option) {
+                Option<T> opt = (Option<T>)obj;
+                if(opt.isPresent())
+                    return Objects.equals(value,opt.get());
+
             }
             return false;
         }
     }
-    public static class None<T> extends Option<T> {
+    public static class None<T> implements Option<T> {
         static None NOTHING_EAGER = new None();
 
         @Override
@@ -935,8 +915,9 @@ public interface Option<T> extends To<Option<T>>,
 
             if (obj instanceof None)
                 return true;
-            if (obj instanceof Lazy) {
-                return !((Lazy) obj).isPresent();
+            else if (obj instanceof Option) {
+                Option<T> opt = (Option<T>)obj;
+               return !opt.isPresent();
             }
             return false;
         }

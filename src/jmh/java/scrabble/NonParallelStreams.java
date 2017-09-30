@@ -23,7 +23,7 @@ package scrabble;
         import java.util.ArrayList;
         import java.util.List;
         import java.util.stream.Stream;
-
+//JMH Benchmarking test file : not part of distribution
 /**
  * Shakespeare plays Scrabble with Java Streams.
  * @author José

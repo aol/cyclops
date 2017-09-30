@@ -1,3 +1,4 @@
+//JMH Benchmarking test file : not part of distribution
 /*
  * Copyright (C) 2015 José Paumard
  *

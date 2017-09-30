@@ -2,6 +2,7 @@ package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher4;
+import cyclops.async.Future;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.rws;
@@ -35,6 +36,11 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
 
     public Tuple3<W,S,T> run(R r,S s) {
         return Fn0.run(runState.apply(r,s));
+    }
+
+    public static <T,R1, W, S, R> ReaderWriterState<R1, W, S, R> tailRec(Monoid<W> monoid,T initial, Function<? super T, ? extends  ReaderWriterState<R1, W, S,  ? extends Xor<T, R>>> fn) {
+        Higher<Higher<Higher<Higher<rws, R1>, W>, S>, R> x = Instances.<R1,W,S> monadRec(monoid).tailRec(initial, fn);
+        return narrowK(x);
     }
 
     public  ReaderWriterState<R,W,S,T> tell(W value) {
