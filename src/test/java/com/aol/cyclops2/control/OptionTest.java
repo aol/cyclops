@@ -34,20 +34,20 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static cyclops.control.Maybe.eager;
+import static cyclops.control.Option.some;
 import static org.hamcrest.Matchers.equalTo;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
 
-public class MaybeEagerTest implements Printable {
+public class OptionTest implements Printable {
 
-    Maybe<Integer> eager;
-    Maybe<Integer> none;
+    Option<Integer> eager;
+    Option<Integer> none;
 
     @Before
     public void setUp() throws Exception {
-        eager = Maybe.eager(10);
-        none = Maybe.eagerNone();
+        eager = Option.some(10);
+        none = Option.none();
 
     }
 
@@ -55,19 +55,19 @@ public class MaybeEagerTest implements Printable {
     
     @Test
     public void recoverWith(){
-        assertThat(none.recoverWith(()->Maybe.eager(10)).get(),equalTo(10));
-        assertThat(none.recoverWith(()->Maybe.eagerNone()).isPresent(),equalTo(false));
-        assertThat(eager.recoverWith(()->Maybe.eager(5)).get(),equalTo(10));
+        assertThat(none.recoverWith(()->Option.some(10)).get(),equalTo(10));
+        assertThat(none.recoverWith(()->Option.none()).isPresent(),equalTo(false));
+        assertThat(eager.recoverWith(()->Option.some(5)).get(),equalTo(10));
     }
     
     boolean lazy = true;
 
     @Test
     public void lazyTest() {
-        Maybe.eager(10)
-             .flatMap(i -> { lazy=false; return Maybe.eager(15);})
-             .map(i -> { lazy=false; return   Maybe.eager(15);})
-             .map(i -> Maybe.eager(20));
+        Option.some(10)
+             .flatMap(i -> { lazy=false; return Option.some(15);})
+             .map(i -> { lazy=false; return   Option.some(15);})
+             .map(i -> Option.some(20));
              
         
         assertFalse(lazy);
@@ -76,7 +76,7 @@ public class MaybeEagerTest implements Printable {
     @Test
     public void testZipMonoid(){
         BinaryOperator<Zippable<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
-        assertThat(Maybe.eager(1).zip(sumMaybes, Maybe.eager(5)),equalTo(Maybe.eager(6)));
+        assertThat(Option.some(1).zip(sumMaybes, Option.some(5)),equalTo(Option.some(6)));
         
     }
 
@@ -84,24 +84,16 @@ public class MaybeEagerTest implements Printable {
 
     @Test
     public void testZip() {
-        assertThat(Maybe.eager(10).zip(Eval.now(20), (a, b) -> a + b).get(), equalTo(30));
-        assertThat(Maybe.eager(10).zipP(Eval.now(20),(a, b) -> a + b).get(), equalTo(30));
-        assertThat(Maybe.eager(10).zipS(Stream.of(20), (a, b) -> a + b).get(), equalTo(30));
-        assertThat(Maybe.eager(10).zip(Seq.of(20), (a, b) -> a + b).get(), equalTo(30));
-        assertThat(Maybe.eager(10).zip(Seq.of(20)).get(), equalTo(Tuple.tuple(10, 20)));
-        assertThat(Maybe.eager(10).zipS(Stream.of(20)).get(), equalTo(Tuple.tuple(10, 20)));
-        assertThat(Maybe.eager(10).zip(Eval.now(20)).get(), equalTo(Tuple.tuple(10, 20)));
+        assertThat(Option.some(10).zip(Eval.now(20), (a, b) -> a + b).get(), equalTo(30));
+        assertThat(Option.some(10).zipP(Eval.now(20),(a, b) -> a + b).get(), equalTo(30));
+        assertThat(Option.some(10).zipS(Stream.of(20), (a, b) -> a + b).get(), equalTo(30));
+        assertThat(Option.some(10).zip(Seq.of(20), (a, b) -> a + b).get(), equalTo(30));
+        assertThat(Option.some(10).zip(Seq.of(20)).get(), equalTo(Tuple.tuple(10, 20)));
+        assertThat(Option.some(10).zipS(Stream.of(20)).get(), equalTo(Tuple.tuple(10, 20)));
+        assertThat(Option.some(10).zip(Eval.now(20)).get(), equalTo(Tuple.tuple(10, 20)));
     }
 
 
-    @Test
-    public void fib() {
-        System.out.println(fibonacci(eager(tuple(100_000, 1l, 0l))));
-    }
-
-    public Maybe<Long> fibonacci(Maybe<Tuple3<Integer, Long, Long>> fib) {
-        return fib.flatMap(t -> t.v1 == 0 ? eager(t.v3) : fibonacci(eager(tuple(t.v1 - 1, t.v2 + t.v3, t.v2))));
-    }
 
     @Test
     public void fib2() {
@@ -121,21 +113,21 @@ public class MaybeEagerTest implements Printable {
     @Test
     public void coFlatMap() {
 
-        Maybe.eagerNone().coflatMap(m -> m.isPresent() ? m.get() : 10);
+        Option.none().coflatMap(m -> m.isPresent() ? m.get() : 10);
 
         // Maybe[10]
 
         assertThat(eager.coflatMap(m -> m.isPresent() ? m.get() : 50), equalTo(eager));
-        assertThat(none.coflatMap(m -> m.isPresent() ? m.get() : 50), equalTo(Maybe.eager(50)));
+        assertThat(none.coflatMap(m -> m.isPresent() ? m.get() : 50), equalTo(Option.some(50)));
     }
 
     @Test
     public void combine() {
         Monoid<Integer> add = Monoid.of(0, Semigroups.intSum);
         assertThat(eager.combineEager(add, none), equalTo(eager));
-        assertThat(none.combineEager(add, eager), equalTo(Maybe.eager(0)));
-        assertThat(none.combineEager(add, none), equalTo(Maybe.eager(0)));
-        assertThat(eager.combineEager(add, Maybe.eager(10)), equalTo(Maybe.eager(20)));
+        assertThat(none.combineEager(add, eager), equalTo(Option.some(0)));
+        assertThat(none.combineEager(add, none), equalTo(Option.some(0)));
+        assertThat(eager.combineEager(add, Option.some(10)), equalTo(Option.some(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null, Semigroups.firstNonNull());
         assertThat(eager.combineEager(firstNonNull, none), equalTo(eager));
 
@@ -146,41 +138,33 @@ public class MaybeEagerTest implements Printable {
 
         Optional.of(10).map(i -> print("optional " + (i + 10)));
 
-        Maybe.eager(10).map(i -> print("maybe " + (i + 10)));
+        Option.some(10).map(i -> print("maybe " + (i + 10)));
 
     }
 
-    @Test
-    public void odd() {
-        System.out.println(even(Maybe.eager(200000)).get());
-    }
-
-    public Maybe<String> odd(Maybe<Integer> n) {
-
-        return n.flatMap(x -> even(Maybe.eager(x - 1)));
-    }
-
-    public Maybe<String> even(Maybe<Integer> n) {
-        return n.flatMap(x -> {
-            return x <= 0 ? Maybe.eager("done") : odd(Maybe.eager(x - 1));
-        });
-    }
 
     @Test
     public void testFiltering() {
-        assertThat(ReactiveSeq.of(Maybe.eager(1), Try.success(1)).filter(Xor.primary(1)).toListX(),
-                equalTo(ListX.of(Maybe.eager(1), Try.success(1))));
+        assertThat(ReactiveSeq.of(Option.some(1), Try.success(1)).filter(Xor.primary(1)).toListX(),
+                equalTo(ListX.of(Option.some(1), Try.success(1))));
     }
 
     @Test
     public void testFilteringNoValue() {
         assertThat(ReactiveSeq.of(1, 1).filter(Xor.primary(1)).toListX(), equalTo(ListX.of(1, 1)));
     }
+    @Test
+    public void noneEquals(){
+        assertThat(none.toMaybe(), equalTo(none));
+    }
 
     @Test
     public void testToMaybe() {
         assertThat(eager.toMaybe(), equalTo(eager));
         assertThat(none.toMaybe(), equalTo(none));
+        assertThat(eager, equalTo(eager.toMaybe()));
+        assertThat(none, equalTo(none.toMaybe()));
+        assertThat(eager, equalTo(eager.toMaybe().map(i->i)));
     }
 
     private int add1(int i) {
@@ -201,63 +185,63 @@ public class MaybeEagerTest implements Printable {
 
     @Test
     public void testOfT() {
-        assertThat(Maybe.eager(1), equalTo(Maybe.eager(1)));
+        assertThat(Option.some(1), equalTo(Option.some(1)));
     }
 
     @Test
     public void testOfNullable() {
-        assertFalse(Maybe.ofNullable(null).isPresent());
-        assertThat(Maybe.ofNullable(1), equalTo(Maybe.eager(1)));
+        assertFalse(Option.ofNullable(null).isPresent());
+        assertThat(Option.ofNullable(1), equalTo(Option.some(1)));
 
     }
 
     @Test
     public void testNarrow() {
-        assertThat(Maybe.ofNullable(1), equalTo(Maybe.narrow(Maybe.eager(1))));
+        assertThat(Option.ofNullable(1), equalTo(Option.narrow(Option.some(1))));
     }
 
     @Test
     public void testSequenceLazy() {
-        Maybe<ListX<Integer>> maybes = Maybe.sequence(ListX.of(eager, none, Maybe.eager(1)));
+        Option<ListX<Integer>> maybes = Option.sequence(ListX.of(eager, none, Option.some(1)));
 
-        assertThat(maybes, equalTo(Maybe.eager(1).flatMap(i -> Maybe.eagerNone())));
+        assertThat(maybes, equalTo(Option.some(1).flatMap(i -> Option.none())));
     }
 
     @Test
     public void testSequence() {
-        Maybe<ListX<Integer>> maybes = Maybe.sequence(ListX.of(eager, none, Maybe.eager(1)));
+        Option<ListX<Integer>> maybes = Option.sequence(ListX.of(eager, none, Option.some(1)));
 
-        assertThat(maybes, equalTo(Maybe.eagerNone()));
+        assertThat(maybes, equalTo(Option.none()));
     }
 
     @Test
     public void testSequenceJust() {
-        Maybe<ListX<Integer>> maybes = Maybe.sequenceJust(ListX.of(eager, none, Maybe.eager(1)));
-        assertThat(maybes, equalTo(Maybe.eager(ListX.of(10, 1))));
+        Option<ListX<Integer>> maybes = Option.sequenceJust(ListX.of(eager, none, Option.some(1)));
+        assertThat(maybes, equalTo(Option.some(ListX.of(10, 1))));
     }
 
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-        Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(eager, none, Maybe.eager(1)), Reducers.toPersistentSetX());
-        assertThat(maybes, equalTo(Maybe.eager(PersistentSetX.of(10, 1))));
+        Option<PersistentSetX<Integer>> maybes = Option.accumulateJust(ListX.of(eager, none, Option.some(1)), Reducers.toPersistentSetX());
+        assertThat(maybes, equalTo(Option.some(PersistentSetX.of(10, 1))));
     }
 
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-        Maybe<String> maybes = Maybe.accumulateJust(ListX.of(eager, none, Maybe.eager(1)), i -> "" + i,
+        Option<String> maybes = Option.accumulateJust(ListX.of(eager, none, Option.some(1)), i -> "" + i,
                 Monoids.stringConcat);
-        assertThat(maybes, equalTo(Maybe.eager("101")));
+        assertThat(maybes, equalTo(Option.some("101")));
     }
 
     @Test
     public void testAccumulateJust() {
-        Maybe<Integer> maybes = Maybe.accumulateJust(Monoids.intSum,ListX.of(eager, none, Maybe.eager(1)));
-        assertThat(maybes, equalTo(Maybe.eager(11)));
+        Option<Integer> maybes = Option.accumulateJust(Monoids.intSum,ListX.of(eager, none, Option.some(1)));
+        assertThat(maybes, equalTo(Option.some(11)));
     }
 
     @Test
     public void testUnitT() {
-        assertThat(eager.unit(20), equalTo(Maybe.eager(20)));
+        assertThat(eager.unit(20), equalTo(Option.some(20)));
     }
 
     @Test
@@ -268,35 +252,35 @@ public class MaybeEagerTest implements Printable {
 
     @Test
     public void testRecoverSupplierOfT() {
-        assertThat(eager.recover(20), equalTo(Maybe.eager(10)));
-        assertThat(none.recover(10), equalTo(Maybe.eager(10)));
+        assertThat(eager.recover(20), equalTo(Option.some(10)));
+        assertThat(none.recover(10), equalTo(Option.some(10)));
     }
 
     @Test
     public void testRecoverT() {
-        assertThat(eager.recover(() -> 20), equalTo(Maybe.eager(10)));
-        assertThat(none.recover(() -> 10), equalTo(Maybe.eager(10)));
+        assertThat(eager.recover(() -> 20), equalTo(Option.some(10)));
+        assertThat(none.recover(() -> 10), equalTo(Option.some(10)));
     }
 
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
-        assertThat(eager.map(i -> i + 5), equalTo(Maybe.eager(15)));
-        assertThat(none.map(i -> i + 5), equalTo(Maybe.eagerNone()));
+        assertThat(eager.map(i -> i + 5), equalTo(Option.some(15)));
+        assertThat(none.map(i -> i + 5), equalTo(Option.none()));
     }
 
     @Test
     public void testFlatMap() {
 
-        assertThat(eager.flatMap(i -> Maybe.eager(i + 5)), equalTo(Maybe.eager(15)));
-        assertThat(none.flatMap(i -> Maybe.eager(i + 5)), equalTo(Maybe.eagerNone()));
+        assertThat(eager.flatMap(i -> Option.some(i + 5)), equalTo(Option.some(15)));
+        assertThat(none.flatMap(i -> Option.some(i + 5)), equalTo(Option.none()));
     }
 
     @Test
     public void testFlatMapAndRecover() {
-        assertThat(eager.flatMap(i -> Maybe.eagerNone()).recover(15), equalTo(Maybe.eager(15)));
-        assertThat(eager.flatMap(i -> Maybe.eagerNone()).recover(() -> 15), equalTo(Maybe.eager(15)));
-        assertThat(none.flatMap(i -> Maybe.eager(i + 5)).recover(15), equalTo(Maybe.eager(15)));
+        assertThat(eager.flatMap(i -> Option.none()).recover(15), equalTo(Option.some(15)));
+        assertThat(eager.flatMap(i -> Option.none()).recover(() -> 15), equalTo(Option.some(15)));
+        assertThat(none.flatMap(i -> Option.some(i + 5)).recover(15), equalTo(Option.some(15)));
     }
 
     @Test
@@ -451,8 +435,8 @@ public class MaybeEagerTest implements Printable {
 
     @Test
     public void testMkString() {
-        assertThat(eager.mkString(), equalTo("JustEager[10]"));
-        assertThat(none.mkString(), equalTo("NothingEager[]"));
+        assertThat(eager.mkString(), equalTo("Some[10]"));
+        assertThat(none.mkString(), equalTo("None[]"));
     }
 
     LazyReact react = new LazyReact();
@@ -575,7 +559,7 @@ public class MaybeEagerTest implements Printable {
     @Test
     public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
 
-        String match = Maybe.eager("data is present").visit(present -> "hello", () -> "missing");
+        String match = Option.some("data is present").visit(present -> "hello", () -> "missing");
 
         assertThat(eager.visit(s -> "hello", () -> "world"), equalTo("hello"));
         assertThat(none.visit(s -> "hello", () -> "world"), equalTo("world"));
@@ -665,19 +649,18 @@ public class MaybeEagerTest implements Printable {
 
     @Test
     public void testCast() {
-        Maybe<Number> num = eager.cast(Number.class);
+        Option<Number> num = eager.cast(Number.class);
     }
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {
-        assertThat(eager.map(i -> i + 5), equalTo(Maybe.eager(15)));
+        assertThat(eager.map(i -> i + 5), equalTo(Option.some(15)));
     }
 
     @Test
     public void testPeek() {
         Mutable<Integer> capture = Mutable.of(null);
         eager = eager.peek(c -> capture.set(c));
-        assertNull(capture.get());
 
         eager.get();
         assertThat(capture.get(), equalTo(10));
@@ -689,7 +672,7 @@ public class MaybeEagerTest implements Printable {
 
     @Test
     public void testTrampoline() {
-        assertThat(eager.trampoline(n -> sum(10, n)), equalTo(Maybe.eager(65)));
+        assertThat(eager.trampoline(n -> sum(10, n)), equalTo(Option.some(65)));
     }
 
     @Test
@@ -699,13 +682,13 @@ public class MaybeEagerTest implements Printable {
 
 	@Test
 	public void testFlatMapIterable() {
-		Maybe<Integer> maybe = eager.flatMapI(i -> Arrays.asList(i, 20, 30));
+        Option<Integer> maybe = eager.flatMapI(i -> Arrays.asList(i, 20, 30));
 		assertThat(maybe.get(), equalTo(10));
 	}
 
 	@Test
 	public void testFlatMapPublisher() {
-		Maybe<Integer> maybe = Maybe.eager(100).flatMapP(i -> Flux.just(10, i));
+        Option<Integer> maybe = Option.some(100).flatMapP(i -> Flux.just(10, i));
 		assertThat(maybe.get(), equalTo(10));
 	}
 }

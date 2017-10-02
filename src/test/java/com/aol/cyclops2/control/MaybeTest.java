@@ -56,15 +56,7 @@ public class MaybeTest implements Printable {
 
     int cap =0;
 
-    @Test
-    public void eager(){
 
-        Maybe.eager(10)
-                .peek(i->cap=i);
-
-        assertThat(cap,equalTo(10));
-
-    }
     @Test
     public void lazy(){
 

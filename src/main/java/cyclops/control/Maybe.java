@@ -984,6 +984,10 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     Maybe<T> recover(T value);
 
     Maybe<T> recoverWith(Supplier<? extends Option<T>> fn);
+    @Override
+    default Maybe<T> recoverWith(Option<T> opt){
+        return recoverWith(()->opt);
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#map(java.util.function.Function)
@@ -1084,7 +1088,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class Some<T> implements Maybe<T>, Present {
+    public static final class Some<T> implements Maybe<T>, Present<T> {
         private final T value;
 
         @Override
@@ -1238,7 +1242,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         @Override
         public boolean equals(final Object obj) {
             if (obj instanceof Present)
-                return Objects.equals(lazy.get(), ((Maybe) obj).get());
+                return Objects.equals(lazy.get(), ((Present) obj).get());
             else if (obj instanceof Lazy) {
                 return Objects.equals(get(), ((Maybe) obj).get());
             }
@@ -1474,10 +1478,13 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         public boolean equals(final Object obj) {
 
             if (obj instanceof Present)
-                return Objects.equals(get(), ((Maybe) obj).get());
+                return Objects.equals(get(), ((Present) obj).get());
             else if (obj instanceof Nothing) {
                 return !isPresent();
-            } else if (obj instanceof Lazy) {
+            }
+            else if (obj instanceof None) {
+                return !isPresent();
+            }else if (obj instanceof Lazy) {
                 if (isPresent())
                     return Objects.equals(get(), ((Maybe) obj).get());
                 else {
@@ -1569,8 +1576,9 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
             if (obj instanceof Nothing)
                 return true;
-            if (obj instanceof Lazy) {
-                return !((Lazy) obj).isPresent();
+
+            if (obj instanceof Option) {
+                return !((Option) obj).isPresent();
             }
             return false;
         }
