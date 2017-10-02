@@ -244,4 +244,20 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
     public LinkedListX<T> plusLoop(Supplier<Optional<T>> supplier) {
         return (LinkedListX<T>)super.plusLoop(supplier);
     }
+
+    @Override
+    public T getOrElse(int index, T value) {
+        List<T> x = get();
+        if(index>x.size())
+            return value;
+        return x.get(index);
+    }
+
+    @Override
+    public T getOrElseGet(int index, Supplier<? extends T> supplier) {
+        List<T> x = get();
+        if(index>x.size())
+            return supplier.get();
+        return x.get(index);
+    }
 }

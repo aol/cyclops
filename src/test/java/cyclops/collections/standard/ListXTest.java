@@ -33,6 +33,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
     @Test
     public void withTest(){
 
+
         assertEquals(of("x", "b", "c"), ListX.of("a", "b", "c").with(0, "x"));
         assertEquals(of("a", "x", "c"), ListX.of("a", "b", "c").with(1, "x"));
         assertEquals(of("a", "b", "x"), ListX.of("a", "b", "c").with(2, "x"));
