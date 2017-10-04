@@ -3,6 +3,8 @@ package cyclops.collections.tuple;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Filters;
+import com.aol.cyclops2.types.foldable.EqualTo;
+import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Identity;
@@ -10,11 +12,9 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.tuple1;
-import cyclops.typeclasses.Cokleisli;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Kleisli;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
@@ -40,6 +40,8 @@ public class Tuple1<T> implements To<Tuple1<T>>,
                                   Serializable,
                                   Transformable<T>,
                                   Filters<T>,
+                                  EqualTo<tuple1,T,Tuple1<T>>,
+                                  OrderedBy<tuple1,T,Tuple1<T>>,
                                   Higher<tuple1,T>{
 
     private static final long serialVersionUID = 1L;
@@ -55,6 +57,9 @@ public class Tuple1<T> implements To<Tuple1<T>>,
             }
         };
     }
+
+
+
     private final T _1;
 
     public T _1(){

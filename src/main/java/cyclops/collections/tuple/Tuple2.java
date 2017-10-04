@@ -4,6 +4,8 @@ package cyclops.collections.tuple;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.types.Filters;
+import com.aol.cyclops2.types.foldable.EqualTo;
+import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
 import com.aol.cyclops2.types.functor.Transformable;
@@ -40,6 +42,8 @@ import java.util.function.*;
 @EqualsAndHashCode
 public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
                                         Serializable,
+                                        EqualTo<Higher<tuple2,T1>,T2,Tuple2<T1,T2>>,
+                                        OrderedBy<Higher<tuple2,T1>,T2,Tuple2<T1,T2>>,
                                         Higher2<tuple2,T1,T2> {
 
     private static final long serialVersionUID = 1L;
@@ -123,6 +127,8 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         return String.format("[%s,%s]", _1(),_2());
     }
 
+
+
     public static <T1,T2> Tuple2<T1,T2> narrowK2(Higher2<tuple2,T1,T2> ds){
         return (Tuple2<T1,T2>)ds;
     }
@@ -143,7 +149,7 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         } while (cont);
         return next[0].map2(Xor::get);
     }
-    public Active<Higher<Witness.tuple2,T1>,T2> allTypeclasses(Monoid<T1> m){
+    public Active<Higher<tuple2,T1>,T2> allTypeclasses(Monoid<T1> m){
         return Active.of(this,Instances.definitions(m));
     }
 
@@ -361,13 +367,13 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
             };
         }
     }
-    public static  <T1,T2> Kleisli<Higher<Witness.tuple2,T1>,Tuple2<T1,T2>,T2> kindKleisli(Monoid<T1> m){
+    public static  <T1,T2> Kleisli<Higher<tuple2,T1>,Tuple2<T1,T2>,T2> kindKleisli(Monoid<T1> m){
         return Kleisli.of(Instances.monad(m), Tuple2::widen);
     }
     public static <T1,T2> Higher2<tuple2,T1, T2> widen(Tuple2<T1,T2> narrow) {
         return narrow;
     }
-    public static  <T1,T2> Cokleisli<Higher<Witness.tuple2,T1>,T2,Tuple2<T1,T2>> kindCokleisli(){
+    public static  <T1,T2> Cokleisli<Higher<tuple2,T1>,T2,Tuple2<T1,T2>> kindCokleisli(){
         return Cokleisli.of(Tuple2::narrowK);
     }
 }
