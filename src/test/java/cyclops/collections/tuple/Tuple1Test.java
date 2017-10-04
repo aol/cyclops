@@ -1,9 +1,28 @@
 package cyclops.collections.tuple;
 
+import cyclops.async.Future;
+import cyclops.async.LazyReact;
+import cyclops.collections.box.Mutable;
+import cyclops.collections.mutable.ListX;
+import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
+import cyclops.companion.Streams;
+import cyclops.control.*;
+import cyclops.function.Monoid;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
 
 /**
@@ -15,6 +34,7 @@ public class Tuple1Test {
     public void setUp() throws Exception {
         t1 = Tuple.tuple(10);
         called=  0;
+        value = 0;
     }
 
     @Test
@@ -36,34 +56,64 @@ public class Tuple1Test {
 
     @Test
     public void _1() throws Exception {
+
+        assertThat(t1._1(),equalTo(10));
     }
 
     @Test
     public void toIdentity() throws Exception {
+        assertThat(t1.toIdentity().get(),equalTo(10));
     }
 
     @Test
     public void cast() throws Exception {
+        Tuple1<Number> local  = t1.cast(Number.class);
+        assertThat(local._1(),equalTo(10));
     }
 
     @Test
     public void map() throws Exception {
+        assertThat(t1.map(i->i+1),equalTo(Tuple.tuple(11)));
     }
 
+    int value =0;
     @Test
     public void peek() throws Exception {
+        t1.peek(i->value=i);
+        assertThat(value,equalTo(10));
     }
 
-    @Test
-    public void trampoline() throws Exception {
-    }
+
 
     @Test
     public void retry() throws Exception {
+        assertThat(t1.retry(i->i+1),equalTo(Tuple.tuple(11)));
+        assertThat(t1.retry(i->{
+            if(called++==0)
+                throw new RuntimeException("boo!");
+        return i+1;
+        }),equalTo(Tuple.tuple(11)));
     }
 
     @Test
     public void eager() throws Exception {
+        assertThat(Tuple.lazy(()->"hello").eager(),equalTo(Tuple.tuple("hello")));
+    }
+
+    @Test
+    public void memo(){
+        Tuple1<String> lazy = Tuple.lazy(()->{
+            called++;
+            return "lazy";
+        });
+        lazy._1();
+        lazy._1();
+        assertThat(called,equalTo(2));
+        called= 0;
+        Tuple1<String> memo = lazy.memo();
+        memo._1();
+        memo._1();
+        assertThat(called,equalTo(1));
     }
 
     @Test
@@ -114,5 +164,28 @@ public class Tuple1Test {
     @Test
     public void notNull() throws Exception {
     }
+
+
+
+    @Test
+    public void testFilter() {
+        assertFalse(t1.filter(i->i<5).isPresent());
+        assertTrue(t1.filter(i->i>5).isPresent());
+
+
+    }
+
+
+    private Trampoline<Integer> sum(int times,int sum){
+        return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
+    }
+    @Test
+    public void testTrampoline() {
+        assertThat(t1.trampoline(n ->sum(10,n)),equalTo(Tuple1.of(65)));
+    }
+
+
+
+
 
 }
