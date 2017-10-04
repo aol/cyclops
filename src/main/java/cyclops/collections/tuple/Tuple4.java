@@ -30,8 +30,8 @@ import java.util.function.Supplier;
 public class Tuple4<T1,T2,T3,T4> implements To<Tuple4<T1,T2,T3,T4>>,
                                         Serializable,
                                         Higher4<tuple4,T1,T2,T3,T4>,
-                                        EqualTo<Higher<Higher<Higher<tuple3,T1>,T2>,T3>,T4,Tuple4<T1,T2,T3,T4>>,
-                                        OrderedBy<Higher<Higher<Higher<tuple3,T1>,T2>,T3>,T4,Tuple4<T1,T2,T3,T4>>{
+                                        EqualTo<Higher<Higher<Higher<tuple4,T1>,T2>,T3>,T4,Tuple4<T1,T2,T3,T4>>,
+                                        OrderedBy<Higher<Higher<Higher<tuple4,T1>,T2>,T3>,T4,Tuple4<T1,T2,T3,T4>>{
 
     private static final long serialVersionUID = 1L;
 
@@ -102,8 +102,11 @@ public class Tuple4<T1,T2,T3,T4> implements To<Tuple4<T1,T2,T3,T4>>,
         return of(_1(),_2(),_3(),_4());
     }
 
-    public <R> Tuple4<T1,T2,T3,R> flatMap(Monoid<T1> m1, Monoid<T2> m2,Monoid<T4> m3, Function<? super T4, ? extends Tuple4<T1,T2,T3,R>> fn){
-        return fn.apply(_4()).map1(t1->m1.apply(t1,_1())).map2(t2->m2.apply(t2,_2()));
+    public <R> Tuple4<T1,T2,T3,R> flatMap(Monoid<T1> m1, Monoid<T2> m2,Monoid<T3> m3, Function<? super T4, ? extends Tuple4<T1,T2,T3,R>> fn){
+        return fn.apply(_4())
+                .map1(t1->m1.apply(t1,_1()))
+                .map2(t2->m2.apply(t2,_2()))
+                .map3(t3->m3.apply(t3,_3()));
     }
     public <R1,R2,R3,R4> Tuple4<R1,R2,R3,R4> quadmap(Function<? super T1, ? extends R1> fn1, Function<? super T2,? extends R2> fn2,
                                               Function<? super T3,? extends R3> fn3,
