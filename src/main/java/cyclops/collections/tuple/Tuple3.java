@@ -10,6 +10,7 @@ import com.aol.cyclops2.types.foldable.To;
 import cyclops.control.Maybe;
 import cyclops.control.Xor;
 import cyclops.function.Fn3;
+import cyclops.function.Memoize;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.tuple2;
@@ -94,6 +95,28 @@ public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
 
     public Tuple3<T1,T2,T3> eager(){
         return of(_1(),_2(),_3());
+    }
+    public Tuple3<T1,T2,T3> memo(){
+        Tuple3<T1,T2,T3> host = this;
+        return new Tuple3<T1,T2,T3>(null,null, null){
+            final Supplier<T1> memo1 = Memoize.memoizeSupplier(host::_1);
+            final Supplier<T2> memo2 = Memoize.memoizeSupplier(host::_2);
+            final Supplier<T3> memo3 = Memoize.memoizeSupplier(host::_3);
+            @Override
+            public T1 _1() {
+
+                return memo1.get();
+            }
+
+            @Override
+            public T2 _2() {
+                return memo2.get();
+            }
+            @Override
+            public T3 _3() {
+                return memo3.get();
+            }
+        };
     }
 
     public <R> Tuple3<T1,T2,R> flatMap(Monoid<T1> m1, Monoid<T2> m2,Function<? super T3, ? extends Tuple3<T1,T2,R>> fn){

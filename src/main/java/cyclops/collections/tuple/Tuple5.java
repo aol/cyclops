@@ -6,10 +6,7 @@ import com.aol.cyclops2.hkt.Higher4;
 import com.aol.cyclops2.types.foldable.EqualTo;
 import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
-import cyclops.function.Fn5;
-import cyclops.function.Monoid;
+import cyclops.function.*;
 import cyclops.monads.Witness.tuple4;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -112,6 +109,38 @@ public class Tuple5<T1,T2,T3,T4,T5> implements To<Tuple5<T1,T2,T3,T4,T5>>,
         return of(_1(),_2(),_3(),_4(),_5());
     }
 
+    public Tuple5<T1,T2,T3,T4,T5> memo(){
+        Tuple5<T1,T2,T3,T4,T5> host = this;
+        return new Tuple5<T1,T2,T3,T4,T5>(null,null, null,null, null){
+            final Supplier<T1> memo1 = Memoize.memoizeSupplier(host::_1);
+            final Supplier<T2> memo2 = Memoize.memoizeSupplier(host::_2);
+            final Supplier<T3> memo3 = Memoize.memoizeSupplier(host::_3);
+            final Supplier<T4> memo4 = Memoize.memoizeSupplier(host::_4);
+            final Supplier<T5> memo5 = Memoize.memoizeSupplier(host::_5);
+            @Override
+            public T1 _1() {
+
+                return memo1.get();
+            }
+
+            @Override
+            public T2 _2() {
+                return memo2.get();
+            }
+            @Override
+            public T3 _3() {
+                return memo3.get();
+            }
+            @Override
+            public T4 _4() {
+                return memo4.get();
+            }
+            @Override
+            public T5 _5() {
+                return memo5.get();
+            }
+        };
+    }
 
     public <R1,R2,R3,R4,R5> Tuple5<R1,R2,R3,R4,R5> mapAll(Function<? super T1, ? extends R1> fn1, Function<? super T2,? extends R2> fn2,
                                                             Function<? super T3,? extends R3> fn3,

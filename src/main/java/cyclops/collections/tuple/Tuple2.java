@@ -15,6 +15,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
 import cyclops.function.Fn3;
+import cyclops.function.Memoize;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.tuple2;
@@ -84,6 +85,24 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
 
     public Tuple2<T1,T2> eager(){
         return of(_1(),_2());
+    }
+
+    public Tuple2<T1,T2> memo(){
+        Tuple2<T1,T2> host = this;
+        return new Tuple2<T1,T2>(null,null){
+            final Supplier<T1> memo1 = Memoize.memoizeSupplier(host::_1);
+            final Supplier<T2> memo2 = Memoize.memoizeSupplier(host::_2);
+            @Override
+            public T1 _1() {
+
+                return memo1.get();
+            }
+
+            @Override
+            public T2 _2() {
+                return memo2.get();
+            }
+        };
     }
 
     public <R> Tuple2<T1,R> flatMap(Monoid<T1> m,Function<? super T2, ? extends Tuple2<T1,R>> fn){

@@ -4,6 +4,7 @@ package cyclops.collections.tuple;
 import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Fn7;
 import cyclops.function.Fn8;
+import cyclops.function.Memoize;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -144,7 +145,53 @@ public class Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> implements To<Tuple8<T1,T2,T3,T4,T5
         return of(_1(),_2(),_3(),_4(),_5(),_6(),_7(),_8());
     }
 
+    public Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> memo(){
+        Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> host = this;
+        return new Tuple8<T1,T2,T3,T4,T5,T6,T7,T8>(null,null, null,null, null,null,null,null){
+            final Supplier<T1> memo1 = Memoize.memoizeSupplier(host::_1);
+            final Supplier<T2> memo2 = Memoize.memoizeSupplier(host::_2);
+            final Supplier<T3> memo3 = Memoize.memoizeSupplier(host::_3);
+            final Supplier<T4> memo4 = Memoize.memoizeSupplier(host::_4);
+            final Supplier<T5> memo5 = Memoize.memoizeSupplier(host::_5);
+            final Supplier<T6> memo6 = Memoize.memoizeSupplier(host::_6);
+            final Supplier<T7> memo7 = Memoize.memoizeSupplier(host::_7);
+            final Supplier<T8> memo8 = Memoize.memoizeSupplier(host::_8);
+            @Override
+            public T1 _1() {
 
+                return memo1.get();
+            }
+
+            @Override
+            public T2 _2() {
+                return memo2.get();
+            }
+            @Override
+            public T3 _3() {
+                return memo3.get();
+            }
+            @Override
+            public T4 _4() {
+                return memo4.get();
+            }
+            @Override
+            public T5 _5() {
+                return memo5.get();
+            }
+            @Override
+            public T6 _6() {
+                return memo6.get();
+            }
+            @Override
+            public T7 _7() {
+                return memo7.get();
+            }
+            @Override
+            public T8 _8() {
+                return memo8.get();
+            }
+        };
+    }
     public <R1,R2,R3,R4,R5,R6,R7,R8> Tuple8<R1,R2,R3,R4,R5,R6,R7,R8> mapAll(Function<? super T1, ? extends R1> fn1, Function<? super T2,? extends R2> fn2,
                                                                       Function<? super T3,? extends R3> fn3,
                                                                       Function<? super T4,? extends R4> fn4,

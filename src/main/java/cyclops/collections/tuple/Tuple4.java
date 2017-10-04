@@ -9,6 +9,7 @@ import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
+import cyclops.function.Memoize;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.tuple3;
@@ -101,6 +102,34 @@ public class Tuple4<T1,T2,T3,T4> implements To<Tuple4<T1,T2,T3,T4>>,
 
     public Tuple4<T1,T2,T3,T4> eager(){
         return of(_1(),_2(),_3(),_4());
+    }
+
+    public Tuple4<T1,T2,T3,T4> memo(){
+        Tuple4<T1,T2,T3,T4> host = this;
+        return new Tuple4<T1,T2,T3,T4>(null,null, null,null){
+            final Supplier<T1> memo1 = Memoize.memoizeSupplier(host::_1);
+            final Supplier<T2> memo2 = Memoize.memoizeSupplier(host::_2);
+            final Supplier<T3> memo3 = Memoize.memoizeSupplier(host::_3);
+            final Supplier<T4> memo4 = Memoize.memoizeSupplier(host::_4);
+            @Override
+            public T1 _1() {
+
+                return memo1.get();
+            }
+
+            @Override
+            public T2 _2() {
+                return memo2.get();
+            }
+            @Override
+            public T3 _3() {
+                return memo3.get();
+            }
+            @Override
+            public T4 _4() {
+                return memo4.get();
+            }
+        };
     }
 
     public <R> Tuple4<T1,T2,T3,R> flatMap(Monoid<T1> m1, Monoid<T2> m2,Monoid<T3> m3, Function<? super T4, ? extends Tuple4<T1,T2,T3,R>> fn){

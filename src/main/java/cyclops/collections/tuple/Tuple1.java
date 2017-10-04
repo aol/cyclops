@@ -11,6 +11,7 @@ import cyclops.control.Identity;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
+import cyclops.function.Memoize;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.tuple1;
@@ -59,6 +60,17 @@ public class Tuple1<T> implements To<Tuple1<T>>,
     }
 
 
+    public Tuple1<T> memo(){
+        Tuple1<T> host = this;
+        return new Tuple1<T>(null){
+            final Supplier<T> memo = Memoize.memoizeSupplier(host::_1);
+            @Override
+            public T _1() {
+
+                return memo.get();
+            }
+        };
+    }
 
     private final T _1;
 
