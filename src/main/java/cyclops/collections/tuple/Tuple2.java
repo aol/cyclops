@@ -31,6 +31,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
@@ -40,7 +41,6 @@ import java.util.function.*;
 
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
 public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
                                         Serializable,
                                         EqualTo<Higher<tuple2,T1>,T2,Tuple2<T1,T2>>,
@@ -108,6 +108,7 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
     public <R> Tuple2<T1,R> flatMap(Monoid<T1> m,Function<? super T2, ? extends Tuple2<T1,R>> fn){
         return fn.apply(_2()).map1(t1->m.apply(t1,_1()));
     }
+
     public <R1,R2> Tuple2<R1,R2> bimap(Function<? super T1, ? extends R1> fn1,Function<? super T2,? extends R2> fn2){
         return of((fn1.apply(_1())),fn2.apply(_2()));
     }
@@ -132,6 +133,7 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
     public Tuple2<T2,T1> swap(){
         return of(_2(),_1());
     }
+
 
     public Tuple2<T2,T1> lazySwap(){
         return lazy(()->_2(),()->_1());
@@ -170,6 +172,20 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
     }
     public Active<Higher<tuple2,T1>,T2> allTypeclasses(Monoid<T1> m){
         return Active.of(this,Instances.definitions(m));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof Tuple2)) return false;
+        Tuple2<?, ?> tuple2 = (Tuple2<?, ?>) o;
+        return Objects.equals(_1(), tuple2._1()) &&
+                Objects.equals(_2(), tuple2._2());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_1(), _2());
     }
 
     public static class Instances {

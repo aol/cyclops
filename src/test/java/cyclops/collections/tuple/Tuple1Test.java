@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -118,30 +119,58 @@ public class Tuple1Test {
 
     @Test
     public void retry1() throws Exception {
+        assertThat(t1.retry(i->i+1,5,10, TimeUnit.MILLISECONDS),equalTo(Tuple.tuple(11)));
+        assertThat(t1.retry(i->{
+            if(called++==0)
+                throw new RuntimeException("boo!");
+            return i+1;
+        },5,10, TimeUnit.MILLISECONDS),equalTo(Tuple.tuple(11)));
     }
 
     @Test
     public void lazyMap() throws Exception {
+        assertThat(t1.lazyMap(i->i+1),equalTo(Tuple.tuple(11)));
+        t1.lazyMap(i->{
+            called++;
+            return i+1;
+        });
+        assertThat(called,equalTo(0));
     }
 
     @Test
     public void zip() throws Exception {
+        assertThat(t1.zip(Tuple.tuple(2),(a,b)->a+b),equalTo(Tuple.tuple(12)));
     }
 
     @Test
     public void lazyZip() throws Exception {
+        assertThat(t1.lazyZip(Tuple.tuple(2),(a,b)->a+b),equalTo(Tuple.tuple(12)));
+        t1.lazyZip(Tuple.tuple(2),(a,b)->{
+            called++;
+            return a+b;
+        });
+        assertThat(called,equalTo(0));
     }
+
 
     @Test
     public void flatMap() throws Exception {
+        assertThat( t1.flatMap(i->Tuple.tuple(i+1)),equalTo(Tuple.tuple(11)));
     }
 
     @Test
     public void lazyFlatMap() throws Exception {
+        assertThat( t1.lazyFlatMap(i->Tuple.tuple(i+1)),equalTo(Tuple.tuple(11)));
+        t1.lazyFlatMap(i->{
+            called++;
+            return Tuple.tuple(i+1);
+        });
+        assertThat(called,equalTo(0));
     }
 
     @Test
     public void visit() throws Exception {
+        assertThat(t1.visit(i->i+1),equalTo(11));
     }
 
     @Test
@@ -149,21 +178,25 @@ public class Tuple1Test {
         assertThat(t1.toString(),equalTo("[10]"));
     }
 
-    @Test
-    public void filter() throws Exception {
-    }
+
 
     @Test
     public void ofType() throws Exception {
+        assertThat(t1.ofType(String.class).isPresent(),equalTo(false));
+        assertThat(t1.ofType(Number.class).isPresent(),equalTo(true));
     }
 
     @Test
     public void filterNot() throws Exception {
+        assertTrue(t1.filterNot(i->i<5).isPresent());
+        assertFalse(t1.filterNot(i->i>5).isPresent());
     }
 
     @Test
     public void notNull() throws Exception {
+        assertTrue(t1.notNull().isPresent());
     }
+
 
 
 

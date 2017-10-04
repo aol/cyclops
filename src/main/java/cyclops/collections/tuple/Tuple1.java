@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
@@ -36,7 +37,6 @@ import java.util.function.*;
 
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
 public class Tuple1<T> implements To<Tuple1<T>>,
                                   Serializable,
                                   Transformable<T>,
@@ -112,6 +112,19 @@ public class Tuple1<T> implements To<Tuple1<T>>,
     @Override
     public <R> Tuple1<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
         return (Tuple1<R>)Transformable.super.retry(fn,retries,delay,timeUnit);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof Tuple1)) return false;
+        Tuple1<?> tuple1 = (Tuple1<?>) o;
+        return Objects.equals(_1(), tuple1._1());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), _1());
     }
 
     public <R> Tuple1<R> lazyMap(Function<? super T, ? extends R> fn){
