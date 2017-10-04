@@ -7,6 +7,7 @@ import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
 import com.aol.cyclops2.types.functor.Transformable;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Identity;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
@@ -15,10 +16,7 @@ import cyclops.function.Fn3;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.tuple2;
-import cyclops.typeclasses.Cokleisli;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Kleisli;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
@@ -84,6 +82,9 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         return of(_1(),_2());
     }
 
+    public <R> Tuple2<T1,R> flatMap(Monoid<T1> m,Function<? super T2, ? extends Tuple2<T1,R>> fn){
+        return fn.apply(_2()).map1(t1->m.apply(t1,_1()));
+    }
     public <R1,R2> Tuple2<R1,R2> bimap(Function<? super T1, ? extends R1> fn1,Function<? super T2,? extends R2> fn2){
         return of((fn1.apply(_1())),fn2.apply(_2()));
     }
@@ -104,6 +105,7 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         return lazy(() -> _1(), () -> fn.apply(_2()));
     }
 
+
     public Tuple2<T2,T1> swap(){
         return of(_2(),_1());
     }
@@ -121,7 +123,10 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         return String.format("[%s,%s]", _1(),_2());
     }
 
-    public static <T1,T2> Tuple2<T1,T2> narrowK(Higher2<tuple2,T1,T2> ds){
+    public static <T1,T2> Tuple2<T1,T2> narrowK2(Higher2<tuple2,T1,T2> ds){
+        return (Tuple2<T1,T2>)ds;
+    }
+    public static <T1,T2> Tuple2<T1,T2> narrowK(Higher<Higher<tuple2, T1>, T2> ds){
         return (Tuple2<T1,T2>)ds;
     }
 
@@ -138,230 +143,231 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         } while (cont);
         return next[0].map2(Xor::get);
     }
-
+    public Active<Higher<Witness.tuple2,T1>,T2> allTypeclasses(Monoid<T1> m){
+        return Active.of(this,Instances.definitions(m));
+    }
 
     public static class Instances {
 
 
-        public static InstanceDefinitions<T1> definitions(){
-            return new InstanceDefinitions<T1>() {
+        public static <T1> InstanceDefinitions<Higher<tuple2, T1>> definitions(Monoid<T1> m){
+            return new InstanceDefinitions<Higher<tuple2, T1>>() {
                 @Override
-                public <T, R> Functor<T1> functor() {
+                public <T, R> Functor<Higher<tuple2, T1>> functor() {
                     return Tuple2.Instances.functor();
                 }
 
                 @Override
-                public <T> Pure<T1> unit() {
-                    return Tuple2.Instances.unit();
+                public <T> Pure<Higher<tuple2, T1>> unit() {
+                    return Tuple2.Instances.unit(m);
                 }
 
                 @Override
-                public <T, R> Applicative<T1> applicative() {
-                    return Tuple2.Instances.applicative();
+                public <T, R> Applicative<Higher<tuple2, T1>> applicative() {
+                    return Tuple2.Instances.applicative(m);
                 }
 
                 @Override
-                public <T, R> Monad<T1> monad() {
-                    return Tuple2.Instances.monad();
+                public <T, R> Monad<Higher<tuple2, T1>> monad() {
+                    return Tuple2.Instances.monad(m);
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<T1>> monadZero() {
+                public <T, R> Maybe<MonadZero<Higher<tuple2, T1>>> monadZero() {
                     return Maybe.none();
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<T1>> monadPlus() {
+                public <T> Maybe<MonadPlus<Higher<tuple2, T1>>> monadPlus() {
                     return Maybe.none();
                 }
 
                 @Override
-                public <T> MonadRec<T1> monadRec() {
-                    return Tuple2.Instances.monadRec();
+                public <T> MonadRec<Higher<tuple2, T1>> monadRec() {
+                    return Tuple2.Instances.monadRec(m);
+                }
+
+
+                @Override
+                public <C2, T> Traverse<Higher<tuple2, T1>> traverse() {
+                    return Tuple2.Instances.traverse(m);
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<T1>> monadPlus(Monoid<Higher<T1, T>> m) {
+                public <T> Maybe<MonadPlus<Higher<tuple2, T1>>> monadPlus(Monoid<Higher<Higher<tuple2, T1>, T>> m) {
                     return Maybe.none();
                 }
 
                 @Override
-                public <C2, T> Traverse<T1> traverse() {
-                    return Tuple2.Instances.traverse();
-                }
-
-                @Override
-                public <T> Foldable<T1> foldable() {
+                public <T> Foldable<Higher<tuple2, T1>> foldable() {
                     return Tuple2.Instances.foldable();
                 }
 
                 @Override
-                public <T> Maybe<Comonad<T1>> comonad() {
-                    return Maybe.just(Tuple2.Instances.comonad());
+                public <T> Maybe<Comonad<Higher<tuple2, T1>>> comonad() {
+                    return Maybe.just(Tuple2.Instances.comonad(m));
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<T1>> unfoldable() {
+                public <T> Maybe<Unfoldable<Higher<tuple2, T1>>> unfoldable() {
                     return Maybe.none();
                 }
             };
         }
 
-        public static Functor<T1> functor(){
-            return new Functor<T1>(){
+        public static <T1> Functor<Higher<tuple2, T1>> functor(){
+            return new Functor<Higher<tuple2, T1>>(){
+
                 @Override
-                public <T, R> Higher<T1, R> map(Function<? super T, ? extends R> fn, Higher<T1, T> ds) {
-                    return narrowK(ds).map(fn);
+                public <T, R> Higher<Higher<tuple2, T1>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<tuple2, T1>, T> ds) {
+                    return narrowK(ds).map2(fn);
                 }
+
+
             };
         }
 
-        public static Pure<T1> unit(){
-            return new Pure<T1>(){
+        public static <T1> Pure<Higher<tuple2, T1>> unit(Monoid<T1> m){
+            return new Pure<Higher<tuple2, T1>>(){
                 @Override
-                public <T> Higher<T1, T> unit(T value) {
-                    return of(value);
+                public <T> Higher<Higher<tuple2, T1>, T> unit(T value) {
+                    return of(m.zero(),value);
                 }
             };
         }
-        public static Applicative<T1> applicative(){
-            return new Applicative<T1>(){
+        public static <T1> Applicative<Higher<tuple2, T1>> applicative(Monoid<T1> m){
+            return new Applicative<Higher<tuple2, T1>>(){
 
 
                 @Override
-                public <T, R> Higher<T1, R> ap(Higher<T1, ? extends Function<T, R>> fn, Higher<T1, T> apply) {
-                    Tuple2<? extends Function<T, R>> f = narrowK(fn);
-                    Tuple2<T> ap = narrowK(apply);
-                    return f.flatMap(x -> ap.map(x));
+                public <T, R> Higher<Higher<tuple2, T1>, R> ap(Higher<Higher<tuple2, T1>, ? extends Function<T, R>> fn, Higher<Higher<tuple2, T1>, T> apply) {
+                    Tuple2<T1,? extends Function<T, R>> f = narrowK(fn);
+                    Tuple2<T1,T> ap = narrowK(apply);
+                    return f.flatMap(m,x -> ap.map2(x));
                 }
 
                 @Override
-                public <T, R> Higher<T1, R> map(Function<? super T, ? extends R> fn, Higher<T1, T> ds) {
-                    return functor().map(fn,ds);
+                public <T, R> Higher<Higher<tuple2, T1>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<tuple2, T1>, T> ds) {
+                    return Instances.<T1>functor().map(fn,ds);
                 }
 
                 @Override
-                public <T> Higher<T1, T> unit(T value) {
-                    return Tuple2.Instances.unit().unit(value);
-                }
-            };
-        }
-        public static Monad<T1> monad(){
-            return new Monad<T1>(){
-
-
-                @Override
-                public <T, R> Higher<T1, R> ap(Higher<T1, ? extends Function<T, R>> fn, Higher<T1, T> apply) {
-                    return applicative().ap(fn,apply);
-                }
-
-                @Override
-                public <T, R> Higher<T1, R> map(Function<? super T, ? extends R> fn, Higher<T1, T> ds) {
-                    return functor().map(fn,ds);
-                }
-
-                @Override
-                public <T> Higher<T1, T> unit(T value) {
-                    return Tuple2.Instances.unit().unit(value);
-                }
-
-                @Override
-                public <T, R> Higher<T1, R> flatMap(Function<? super T, ? extends Higher<T1, R>> fn, Higher<T1, T> ds) {
-                    return narrowK(ds).flatMap(fn.andThen(i->narrowK(i)));
+                public <T> Higher<Higher<tuple2, T1>, T> unit(T value) {
+                    return Tuple2.Instances.<T1>unit(m).unit(value);
                 }
             };
         }
-        public static MonadRec<T1> monadRec() {
-
-            return new MonadRec<T1>(){
+        public static <T1> Monad<Higher<tuple2, T1>> monad(Monoid<T1> m){
+            return new Monad<Higher<tuple2, T1>>(){
                 @Override
-                public <T, R> Higher<T1, R> tailRec(T initial, Function<? super T, ? extends Higher<T1, ? extends Xor<T, R>>> fn) {
-                    return Tuple2.tailRec(initial,fn.andThen(Tuple2::narrowK));
+                public <T, R> Higher<Higher<tuple2, T1>, R> ap(Higher<Higher<tuple2, T1>, ? extends Function<T, R>> fn, Higher<Higher<tuple2, T1>, T> apply) {
+                    return Instances.<T1>applicative(m).ap(fn,apply);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<tuple2, T1>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<tuple2, T1>, T> ds) {
+                    return Instances.<T1>functor().map(fn,ds);
+                }
+
+                @Override
+                public <T> Higher<Higher<tuple2, T1>, T> unit(T value) {
+                    return Tuple2.Instances.<T1>unit(m).unit(value);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<tuple2, T1>, R> flatMap(Function<? super T, ? extends Higher<Higher<tuple2, T1>, R>> fn, Higher<Higher<tuple2, T1>, T> ds) {
+                    return narrowK(ds).flatMap(m,fn.andThen(Tuple2::narrowK));
+                }
+
+            };
+        }
+        public static <T1> MonadRec<Higher<tuple2, T1>> monadRec(Monoid<T1> m) {
+            return new MonadRec<Higher<tuple2, T1>>(){
+                @Override
+                public <T, R> Higher<Higher<tuple2, T1>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<tuple2, T1>, ? extends Xor<T, R>>> fn) {
+                    return Tuple2.tailRec(m,initial,fn.andThen(Tuple2::narrowK));
                 }
 
             };
 
 
         }
-        public static Traverse<T1> traverse(){
-            return new Traverse<T1>(){
-
+        public static <T1> Traverse<Higher<tuple2, T1>> traverse(Monoid<T1> m){
+            return new Traverse<Higher<tuple2, T1>>(){
                 @Override
-                public <T, R> Higher<T1, R> ap(Higher<T1, ? extends Function<T, R>> fn, Higher<T1, T> apply) {
-                    return applicative().ap(fn,apply);
+                public <T, R> Higher<Higher<tuple2, T1>, R> ap(Higher<Higher<tuple2, T1>, ? extends Function<T, R>> fn, Higher<Higher<tuple2, T1>, T> apply) {
+                    return Instances.<T1>applicative(m).ap(fn,apply);
                 }
 
                 @Override
-                public <T, R> Higher<T1, R> map(Function<? super T, ? extends R> fn, Higher<T1, T> ds) {
-                    return functor().map(fn,ds);
+                public <C2, T, R> Higher<C2, Higher<Higher<tuple2, T1>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<tuple2, T1>, T> ds) {
+                    Tuple2<T1, T> id = narrowK(ds);
+                    Function<R, Tuple2<T1,R>> rightFn = r -> of(id._1(),r);
+                    return applicative.map(rightFn, fn.apply(id._2()));
                 }
 
                 @Override
-                public <T> Higher<T1, T> unit(T value) {
-                    return Tuple2.Instances.unit().unit(value);
-                }
-
-                @Override
-                public <C2, T, R> Higher<C2, Higher<T1, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<T1, T> ds) {
-                    Tuple2<T> id = narrowK(ds);
-                    Function<R, Tuple2<R>> rightFn = r -> of(r);
-                    return applicative.map(rightFn, fn.apply(id._1()));
-                }
-
-                @Override
-                public <C2, T> Higher<C2, Higher<T1, T>> sequenceA(Applicative<C2> applicative, Higher<T1, Higher<C2, T>> ds) {
+                public <C2, T> Higher<C2, Higher<Higher<tuple2, T1>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<tuple2, T1>, Higher<C2, T>> ds) {
                     return traverseA(applicative,Function.identity(),ds);
                 }
-            };
-        }
-        public static Foldable<T1> foldable(){
-            return new Foldable<T1>(){
-
 
                 @Override
-                public <T> T foldRight(Monoid<T> monoid, Higher<T1, T> ds) {
-                    return monoid.apply(narrowK(ds)._1(),monoid.zero());
+                public <T, R> Higher<Higher<tuple2, T1>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<tuple2, T1>, T> ds) {
+                    return Instances.<T1>functor().map(fn,ds);
                 }
 
                 @Override
-                public <T> T foldLeft(Monoid<T> monoid, Higher<T1, T> ds) {
-                    return monoid.apply(monoid.zero(),narrowK(ds)._1());
-                }
-
-                @Override
-                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<T1, T> nestedA) {
-                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                public <T> Higher<Higher<tuple2, T1>, T> unit(T value) {
+                    return Instances.unit(m).unit(value);
                 }
             };
         }
-        public static Comonad<T1> comonad(){
-            return new ComonadByPure<T1>(){
-
-
+        public static <T1> Foldable<Higher<tuple2, T1>> foldable(){
+            return new Foldable<Higher<tuple2, T1>>(){
                 @Override
-                public <T> T extract(Higher<T1, T> ds) {
-                    return narrowK(ds)._1();
+                public <T> T foldRight(Monoid<T> monoid, Higher<Higher<tuple2, T1>, T> ds) {
+                    return monoid.apply(narrowK(ds)._2(),monoid.zero());
                 }
 
                 @Override
-                public <T, R> Higher<T1, R> map(Function<? super T, ? extends R> fn, Higher<T1, T> ds) {
-                    return functor().map(fn,ds);
+                public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<tuple2, T1>, T> ds) {
+                    return monoid.apply(monoid.zero(),narrowK(ds)._2());
                 }
 
                 @Override
-                public <T> Higher<T1, T> unit(T value) {
-                    return Tuple2.Instances.unit().unit(value);
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<tuple2, T1>, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map2(fn));
                 }
+
+            };
+        }
+        public static <T1> Comonad<Higher<tuple2, T1>> comonad(Monoid<T1> m){
+            return new ComonadByPure<Higher<tuple2, T1>>(){
+                @Override
+                public <T> T extract(Higher<Higher<tuple2, T1>, T> ds) {
+                    return narrowK(ds)._2();
+                }
+
+                @Override
+                public <T, R> Higher<Higher<tuple2, T1>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<tuple2, T1>, T> ds) {
+                    return Instances.<T1>functor().map(fn,ds);
+                }
+
+                @Override
+                public <T> Higher<Higher<tuple2, T1>, T> unit(T value) {
+                    return Instances.unit(m).unit(value);
+                }
+
             };
         }
     }
-    public static  <T> Kleisli<T1,Tuple2<T>,T> kindKleisli(){
-        return Kleisli.of(Tuple2.Instances.monad(), Tuple2::widen);
+    public static  <T1,T2> Kleisli<Higher<Witness.tuple2,T1>,Tuple2<T1,T2>,T2> kindKleisli(Monoid<T1> m){
+        return Kleisli.of(Instances.monad(m), Tuple2::widen);
     }
-    public static <T> Higher<T1, T> widen(Tuple2<T> narrow) {
+    public static <T1,T2> Higher2<tuple2,T1, T2> widen(Tuple2<T1,T2> narrow) {
         return narrow;
     }
-    public static  <T> Cokleisli<T1,T,Tuple2<T>> kindCokleisli(){
+    public static  <T1,T2> Cokleisli<Higher<Witness.tuple2,T1>,T2,Tuple2<T1,T2>> kindCokleisli(){
         return Cokleisli.of(Tuple2::narrowK);
     }
 }
