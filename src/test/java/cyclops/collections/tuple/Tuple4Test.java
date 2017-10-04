@@ -10,27 +10,27 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by johnmcclean on 04/10/2017.
  */
-public class Tuple3Test {
-    Tuple3<Integer,Integer,Integer> tuple;
+public class Tuple4Test {
+    Tuple4<Integer,Integer,Integer,Integer> tuple;
     @Before
     public void setUp() throws Exception {
-        tuple = Tuple.tuple(2,5,10);
+        tuple = Tuple.tuple(2,5,10,10);
         called=  0;
 
     }
 
     @Test
     public void of() throws Exception {
-        assertThat(Tuple3.of(2,5,10),equalTo(tuple));
+        assertThat(Tuple4.of(2,5,10,10),equalTo(tuple));
     }
 
     int called;
     @Test
     public void lazy() throws Exception {
-        Tuple3<String,Integer,Integer> lazyT1 = Tuple.lazy(()->{
+        Tuple4<String,Integer,Integer,Integer> lazyT1 = Tuple.lazy(()->{
             called++;
             return "hello";
-        },()->1,()->2);
+        },()->1,()->2,()->3);
         assertThat(called,equalTo(0));
         assertThat(lazyT1._1(),equalTo("hello"));
         assertThat(called++,equalTo(1));
@@ -53,6 +53,11 @@ public class Tuple3Test {
 
         assertThat(tuple._3(),equalTo(10));
     }
+    @Test
+    public void _4() throws Exception {
+
+        assertThat(tuple._4(),equalTo(10));
+    }
 
 
 
@@ -61,7 +66,7 @@ public class Tuple3Test {
 
     @Test
     public void map() throws Exception {
-        assertThat(tuple.mapAll(i->i+1, i->i+1,i->i+1),equalTo(Tuple.tuple(3,6,11)));
+        assertThat(tuple.mapAll(i->i+1, i->i+1,i->i+1,i->i+1),equalTo(Tuple.tuple(3,6,11,11)));
     }
 
 
@@ -69,20 +74,21 @@ public class Tuple3Test {
 
     @Test
     public void eager() throws Exception {
-        assertThat(Tuple.lazy(()->"new",()->"boo!",()->"hello").eager(),equalTo(Tuple.tuple("new","boo!","hello")));
+        assertThat(Tuple.lazy(()->"w1",()->"new",()->"boo!",()->"hello").eager(),
+                equalTo(Tuple.tuple("w1","new","boo!","hello")));
     }
 
     @Test
     public void memo(){
-        Tuple3<String,Integer,Integer> lazy = Tuple.lazy(()->{
+        Tuple4<String,Integer,Integer,Integer> lazy = Tuple.lazy(()->{
             called++;
             return "lazy";
-        },()->10,()->5);
+        },()->10,()->5,()->0);
         lazy._1();
         lazy._1();
         assertThat(called,equalTo(2));
         called= 0;
-        Tuple3<String,Integer,Integer> memo = lazy.memo();
+        Tuple4<String,Integer,Integer,Integer> memo = lazy.memo();
         memo._1();
         memo._1();
         assertThat(called,equalTo(1));
@@ -91,30 +97,31 @@ public class Tuple3Test {
 
     @Test
     public void lazyMap() throws Exception {
-        assertThat(tuple.lazyMapAll(i->i+1, i->i+1,i->i+1),equalTo(Tuple.tuple(3,6,11)));
+        assertThat(tuple.lazyMapAll(i->i+1, i->i+1,i->i+1,i->i+1),equalTo(Tuple.tuple(3,6,11,11)));
         tuple.lazyMapAll(i->{
             called++;
             return i+1;
-        },i->i,i->i+1);
+        },i->i,i->i+1,i->i);
         assertThat(called,equalTo(0));
     }
 
 
     @Test
     public void flatMap() throws Exception {
-        assertThat( tuple.flatMap(Monoids.intSum,Monoids.intSum, i->Tuple.tuple(5,2,i+1)),equalTo(Tuple.tuple(7,7,11)));
+        assertThat( tuple.flatMap(Monoids.intSum,Monoids.intSum,Monoids.intSum,
+                i->Tuple.tuple(5,2,1,i+1)),equalTo(Tuple.tuple(7,7,11,11)));
     }
 
 
 
     @Test
     public void visit() throws Exception {
-        assertThat(tuple.visit((a, b,c)->a+b+c),equalTo(17));
+        assertThat(tuple.visit((a, b,c,d)->a+b+c+d),equalTo(27));
     }
 
     @Test
     public void testToString() throws Exception {
-        assertThat(tuple.toString(),equalTo("[2,5,10]"));
+        assertThat(tuple.toString(),equalTo("[2,5,10,10]"));
     }
 
 
