@@ -255,6 +255,18 @@ public class Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> implements To<Tuple8<T1,T2,T3,T4,T5
     public <R> Tuple8<T1, T2, T3, T4, T5,R,T7,T8> lazyMap6(Function<? super T6, ? extends R> fn) {
         return lazy(() -> _1(), () -> _2(),()->_3(),()->_4(),()->_5(),()->fn.apply(_6()),()->_7(),()->_8());
     }
+    public <R> Tuple8<T1, T2, T3, T4 , T5,T6, R,T8> map7(Function<? super T7, ? extends R> fn) {
+        return of(_1(), _2(),_3(),_4(),_5(),_6(),fn.apply(_7()),_8());
+    }
+    public <R> Tuple8<T1, T2, T3, T4, T5,T6,R,T8> lazyMap7(Function<? super T7, ? extends R> fn) {
+        return lazy(() -> _1(), () -> _2(),()->_3(),()->_4(),()->_5(),()->_6(),()->fn.apply(_7()),()->_8());
+    }
+    public <R> Tuple8<T1, T2, T3, T4 , T5,T6, T7,R> map8(Function<? super T8, ? extends R> fn) {
+        return of(_1(), _2(),_3(),_4(),_5(),_6(),_7(),fn.apply(_8()));
+    }
+    public <R> Tuple8<T1, T2, T3, T4, T5,T6,T7,R> lazyMap8(Function<? super T8, ? extends R> fn) {
+        return lazy(() -> _1(), () -> _2(),()->_3(),()->_4(),()->_5(),()->_6(),()->_7(),()->fn.apply(_8()));
+    }
 
     public <R> R visit(Fn8<? super T1, ? super T2, ? super T3,? super T4, ? super T5,? super T6,? super T7,? super T8,? extends R> fn){
         return fn.apply(_1(),_2(),_3(),_4(),_5(),_6(),_7(),_8());

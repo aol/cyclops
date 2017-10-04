@@ -236,6 +236,12 @@ public class Tuple7<T1,T2,T3,T4,T5,T6,T7> implements To<Tuple7<T1,T2,T3,T4,T5,T6
     public <R> Tuple7<T1, T2, T3, T4, T5,R,T7> lazyMap6(Function<? super T6, ? extends R> fn) {
         return lazy(() -> _1(), () -> _2(),()->_3(),()->_4(),()->_5(),()->fn.apply(_6()),()->_7());
     }
+    public <R> Tuple7<T1, T2, T3, T4 , T5,T6, R> map7(Function<? super T7, ? extends R> fn) {
+        return of(_1(), _2(),_3(),_4(),_5(),_6(),fn.apply(_7()));
+    }
+    public <R> Tuple7<T1, T2, T3, T4, T5,T6,R> lazyMap7(Function<? super T7, ? extends R> fn) {
+        return lazy(() -> _1(), () -> _2(),()->_3(),()->_4(),()->_5(),()->_6(),()->fn.apply(_7()));
+    }
 
     public <R> R visit(Fn7<? super T1, ? super T2, ? super T3,? super T4, ? super T5,? super T6,? super T7,? extends R> fn){
         return fn.apply(_1(),_2(),_3(),_4(),_5(),_6(),_7());
