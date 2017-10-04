@@ -34,8 +34,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 /*
-  A Tuple1 implementation that can be either eager / strict or lazy
-  Roughly analogous to the Identity monad
+  A Tuple implementation that can be either eager / strict or lazy
+
 
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)

@@ -31,8 +31,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /*
-  A Tuple1 implementation that can be either eager / strict or lazy
-  Roughly analogous to the Identity monad
+  A Tuple implementation that can be either eager / strict or lazy
+
 
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)

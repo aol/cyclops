@@ -600,4 +600,13 @@ public interface Witness {
         }
 
     }
+    public static enum tuple4 implements WitnessType<tuple4>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<tuple4> adapter() {
+            return null;
+        }
+
+    }
 }
