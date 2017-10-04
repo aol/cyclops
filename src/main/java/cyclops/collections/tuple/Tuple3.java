@@ -99,14 +99,14 @@ public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
     public <R> Tuple3<T1,T2,R> flatMap(Monoid<T1> m1, Monoid<T2> m2,Function<? super T3, ? extends Tuple3<T1,T2,R>> fn){
         return fn.apply(_3()).map1(t1->m1.apply(t1,_1())).map2(t2->m2.apply(t2,_2()));
     }
-    public <R1,R2,R3> Tuple3<R1,R2,R3> trimap(Function<? super T1, ? extends R1> fn1, Function<? super T2,? extends R2> fn2,
+    public <R1,R2,R3> Tuple3<R1,R2,R3> mapAll(Function<? super T1, ? extends R1> fn1, Function<? super T2,? extends R2> fn2,
                                                 Function<? super T3,? extends R3> fn3){
         return of( fn1.apply(_1()),
                     fn2.apply(_2()),
                     fn3.apply(_3()));
     }
 
-    public <R1,R2,R3> Tuple3<R1,R2,R3> lazyTrimap(Function<? super T1, ? extends R1> fn1, Function<? super T2,? extends R2> fn2,
+    public <R1,R2,R3> Tuple3<R1,R2,R3> lazyMapAll(Function<? super T1, ? extends R1> fn1, Function<? super T2,? extends R2> fn2,
                                                   Function<? super T3,? extends R3> fn3){
         return lazy(()->(fn1.apply(_1())),()->fn2.apply(_2()),()->fn3.apply(_3()));
     }

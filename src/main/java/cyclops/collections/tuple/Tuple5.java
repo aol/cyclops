@@ -7,6 +7,8 @@ import com.aol.cyclops2.types.foldable.EqualTo;
 import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Fn3;
+import cyclops.function.Fn4;
+import cyclops.function.Fn5;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.tuple4;
 import lombok.AccessLevel;
@@ -111,7 +113,7 @@ public class Tuple5<T1,T2,T3,T4,T5> implements To<Tuple5<T1,T2,T3,T4,T5>>,
     }
 
 
-    public <R1,R2,R3,R4,R5> Tuple5<R1,R2,R3,R4,R5> quintmap(Function<? super T1, ? extends R1> fn1, Function<? super T2,? extends R2> fn2,
+    public <R1,R2,R3,R4,R5> Tuple5<R1,R2,R3,R4,R5> mapAll(Function<? super T1, ? extends R1> fn1, Function<? super T2,? extends R2> fn2,
                                                             Function<? super T3,? extends R3> fn3,
                                                             Function<? super T4,? extends R4> fn4,
                                                             Function<? super T5,? extends R5> fn5){
@@ -122,7 +124,7 @@ public class Tuple5<T1,T2,T3,T4,T5> implements To<Tuple5<T1,T2,T3,T4,T5>>,
                     fn5.apply(_5()));
     }
 
-    public <R1,R2,R3,R4,R5> Tuple5<R1,R2,R3,R4,R5> lazyTrimap(Function<? super T1, ? extends R1> fn1, Function<? super T2,? extends R2> fn2,
+    public <R1,R2,R3,R4,R5> Tuple5<R1,R2,R3,R4,R5> lazyMapAll(Function<? super T1, ? extends R1> fn1, Function<? super T2,? extends R2> fn2,
                                                         Function<? super T3,? extends R3> fn3,
                                                         Function<? super T4,? extends R4> fn4,
                                                               Function<? super T5,? extends R5> fn5){
@@ -160,13 +162,13 @@ public class Tuple5<T1,T2,T3,T4,T5> implements To<Tuple5<T1,T2,T3,T4,T5>>,
         return lazy(() -> _1(), () -> _2(),()->_3(),()->_4(),()->fn.apply(_5()));
     }
 
-    public <R> R visit(Fn3<? super T1, ? super T2, ? super T3, ? extends R> fn){
-        return fn.apply(_1(),_2(),_3());
+    public <R> R visit(Fn5<? super T1, ? super T2, ? super T3,? super T4, ? super T5,? extends R> fn){
+        return fn.apply(_1(),_2(),_3(),_4(),_5());
     }
 
     @Override
     public String toString() {
-        return String.format("[%s,%s,%s,%s]", _1(),_2(),_3(),_4());
+        return String.format("[%s,%s,%s,%s,%s]", _1(),_2(),_3(),_4(),_5());
     }
 
 
