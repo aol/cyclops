@@ -60,4 +60,13 @@ public class Tuple {
                                                                      Supplier<? extends T6> value6){
         return Tuple6.lazy(value1,value2,value3,value4,value5,value6);
     }
+    public static <T1,T2,T3,T4,T5,T6,T7> Tuple7<T1,T2,T3,T4,T5,T6,T7> lazy(Supplier<? extends T1> value1,
+                                                                     Supplier<? extends T2> value2,
+                                                                     Supplier<? extends T3> value3,
+                                                                     Supplier<? extends T4> value4,
+                                                                     Supplier<? extends T5> value5,
+                                                                     Supplier<? extends T6> value6,
+                                                                           Supplier<? extends T7> value7){
+        return Tuple7.lazy(value1,value2,value3,value4,value5,value6,value7);
+    }
 }
