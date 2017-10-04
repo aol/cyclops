@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -37,7 +38,6 @@ import java.util.function.Supplier;
 
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
 public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
                                         Serializable,
                                         Higher3<tuple3,T1,T2,T3> ,
@@ -171,4 +171,18 @@ public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof Tuple3)) return false;
+        Tuple3<?, ?, ?> tuple3 = (Tuple3<?, ?, ?>) o;
+        return Objects.equals(_1(), tuple3._1()) &&
+                Objects.equals(_2(), tuple3._2()) &&
+                Objects.equals(_3(), tuple3._3());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_1(), _2(), _3());
+    }
 }

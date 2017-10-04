@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -19,7 +20,6 @@ import java.util.function.Supplier;
 
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
 public class Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> implements To<Tuple8<T1,T2,T3,T4,T5,T6,T7,T8>>,
                                                 Serializable{
 
@@ -266,6 +266,23 @@ public class Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> implements To<Tuple8<T1,T2,T3,T4,T5
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof Tuple8)) return false;
+        Tuple8<?, ?, ?, ?, ?, ?, ?, ?> tuple8 = (Tuple8<?, ?, ?, ?, ?, ?, ?, ?>) o;
+        return Objects.equals(_1(), tuple8._1()) &&
+                Objects.equals(_2(), tuple8._2()) &&
+                Objects.equals(_3(), tuple8._3()) &&
+                Objects.equals(_4(), tuple8._4()) &&
+                Objects.equals(_5(), tuple8._5()) &&
+                Objects.equals(_6(), tuple8._6()) &&
+                Objects.equals(_7(), tuple8._7()) &&
+                Objects.equals(_8(), tuple8._8());
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(_1(), _2(), _3(), _4(), _5(), _6(), _7(), _8());
+    }
 }

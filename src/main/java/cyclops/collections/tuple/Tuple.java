@@ -7,6 +7,10 @@ import java.util.function.Supplier;
 @UtilityClass
 public class Tuple {
 
+    public static Tuple0 empty(){
+        return Tuple0.empty();
+    }
+
     public static <T> Tuple1<T> tuple(T value){
         return Tuple1.of(value);
     }

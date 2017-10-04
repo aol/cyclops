@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -19,7 +20,6 @@ import java.util.function.Supplier;
 
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
 public class Tuple7<T1,T2,T3,T4,T5,T6,T7> implements To<Tuple7<T1,T2,T3,T4,T5,T6,T7>>,
                                                 Serializable{
 
@@ -247,6 +247,22 @@ public class Tuple7<T1,T2,T3,T4,T5,T6,T7> implements To<Tuple7<T1,T2,T3,T4,T5,T6
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof Tuple7)) return false;
+        Tuple7<?, ?, ?, ?, ?, ?, ?> tuple7 = (Tuple7<?, ?, ?, ?, ?, ?, ?>) o;
+        return Objects.equals(_1(), tuple7._1()) &&
+                Objects.equals(_2(), tuple7._2()) &&
+                Objects.equals(_3(), tuple7._3()) &&
+                Objects.equals(_4(), tuple7._4()) &&
+                Objects.equals(_5(), tuple7._5()) &&
+                Objects.equals(_6(), tuple7._6()) &&
+                Objects.equals(_7(), tuple7._7());
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(_1(), _2(), _3(), _4(), _5(), _6(), _7());
+    }
 }
