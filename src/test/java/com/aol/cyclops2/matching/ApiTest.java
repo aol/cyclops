@@ -1,8 +1,8 @@
 package com.aol.cyclops2.matching;
 
-import static com.aol.cyclops2.matching.Api.Any;
-import static com.aol.cyclops2.matching.Api.Case;
-import static com.aol.cyclops2.matching.Api.Match;
+import static cyclops.matching.Api.Any;
+import static cyclops.matching.Api.Case;
+import static cyclops.matching.Api.Match;
 import static com.aol.cyclops2.matching.sample.Book.BookPatterns.Author;
 import static com.aol.cyclops2.matching.sample.Book.BookPatterns.Name;
 

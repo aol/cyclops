@@ -2059,7 +2059,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param c
-     *            Predicate to check if all match
+     *            Predicate to check if all fold
      */
     @Override
     boolean allMatch(Predicate<? super T> c);
@@ -2074,7 +2074,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param c
-     *            Predicate to check if any match
+     *            Predicate to check if any fold
      */
     @Override
     boolean anyMatch(Predicate<? super T> c);

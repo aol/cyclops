@@ -264,7 +264,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     }
 
     /**
-     * Removes elements that do not match the supplied predicate from the
+     * Removes elements that do not fold the supplied predicate from the
      * dataflow
      * 
      * @param p
@@ -292,7 +292,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     /**
      * Synchronous filtering operation
      * 
-     * Removes elements that do not match the supplied predicate from the
+     * Removes elements that do not fold the supplied predicate from the
      * dataflow
      * 
      * @param p

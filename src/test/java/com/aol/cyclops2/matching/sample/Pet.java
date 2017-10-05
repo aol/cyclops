@@ -15,7 +15,7 @@ public interface Pet extends Deconstruct3<String, Integer, String> {
   String getGender();
 
   @Override
-  default Tuple3<String, Integer, String> deconstruct() {
+  default Tuple3<String, Integer, String> unapply() {
     return new Tuple3<>(getName(), getAge(), getGender());
   }
 

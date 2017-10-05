@@ -1361,7 +1361,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * assertThat(Streamable.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
      * }
      * </pre>
-     * @param c Predicate to check if all match
+     * @param c Predicate to check if all fold
      */
     @Override
     default boolean allMatch(final Predicate<? super T> c) {
@@ -1375,7 +1375,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * assertThat(Streamable.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
      * }
      * </pre>
-     * @param c Predicate to check if any match
+     * @param c Predicate to check if any fold
      */
     @Override
     default boolean anyMatch(final Predicate<? super T> c) {

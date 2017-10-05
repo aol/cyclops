@@ -217,7 +217,7 @@ public class Predicates {
      * </pre>
      * 
      * 
-     * @param c Class type to match against
+     * @param c Class type to fold against
      * @return Predicate that mathes against type
      */
     public static final <Y> Predicate<Y> any(final Class<Y> c) {

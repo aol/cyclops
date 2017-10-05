@@ -922,8 +922,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * @param t Class type of match Exception against
-     * @param consumer Accept Exception if present (Failure) and if class types match
+     * @param t Class type of fold Exception against
+     * @param consumer Accept Exception if present (Failure) and if class types fold
      * @return this
      */
     public Try<T, X> onFail(Class<? extends X> t, Consumer<X> consumer){
@@ -960,9 +960,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
     /**
      * Recover if exception is of specified type
-     * @param t Type of exception to match against
+     * @param t Type of exception to fold against
      * @param fn Recovery function
-     * @return New Success if failure and types match / otherwise this
+     * @return New Success if failure and types fold / otherwise this
      */
     public Try<T, X> recoverFor(Class<? extends X> t, Function<? super X, ? extends T> fn){
         return new Try<T,X>(xor.secondaryToPrimayFlatMap(x->{

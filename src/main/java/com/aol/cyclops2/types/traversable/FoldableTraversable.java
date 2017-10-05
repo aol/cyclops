@@ -84,7 +84,7 @@ public interface FoldableTraversable<T> extends Traversable<T>,
     }
 
     /**
-     * Try a fold, capturing any unhandling execution exceptions (that match the provided classes)
+     * Try a fold, capturing any unhandling execution exceptions (that fold the provided classes)
      *  <pre>
      *  {@code
      *    Try<Integer,Throwable> sum =  ListX.of(1,2,3)

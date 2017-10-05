@@ -73,7 +73,7 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
      * </pre>
      * 
      * @param c
-     *            Predicate to check if all match
+     *            Predicate to check if all fold
      */
     default AnyM<W,Boolean> allMatch(final Predicate<? super T> c) {
         return nestedCollectables().map(s -> s.allMatch(c));
@@ -89,16 +89,16 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
      * </pre>
      * 
      * @param c
-     *            Predicate to check if any match
+     *            Predicate to check if any fold
      */
     default AnyM<W,Boolean> anyMatch(final Predicate<? super T> c) {
         return nestedCollectables().map(s -> s.anyMatch(c));
     }
 
     /**
-     * Reduce each nested monad to a boolean value - true if the predicates match none of it's elements, otherwise false
+     * Reduce each nested monad to a boolean value - true if the predicates fold none of it's elements, otherwise false
      * 
-     * @param c  Predicate to check if no match
+     * @param c  Predicate to check if no fold
      * @return Monad of booleans wrapped inside an AnyM
      */
     default AnyM<W,Boolean> noneMatch(final Predicate<? super T> c) {

@@ -23,7 +23,7 @@ public class Xors {
 
 
     /**
-     * Create a Pattern Matcher on cyclops2-react adapter type (note this will only match
+     * Create a Pattern Matcher on cyclops2-react adapter type (note this will only fold
      * on known types within the cyclops2-react library)
      * 
      * <pre>
@@ -38,7 +38,7 @@ public class Xors {
      * } 
      * </pre>
      * 
-     * @param adapter Adapter to match on
+     * @param adapter Adapter to fold on
      * @return Structural pattern matcher for Adapter types.
      */
     public static <T> Xor<Queue<T>, Topic<T>> adapter(final Adapter<T> adapter) {
@@ -56,7 +56,7 @@ public class Xors {
                                                       
                                                      c->c.is(when(instanceOf(RuntimeException.class)), transform(2)), //failure
                                                       
-                                                     otherwise(3) //no match
+                                                     otherwise(3) //no fold
                                                  );
         
         //Eval[20]
@@ -64,7 +64,7 @@ public class Xors {
      * }</pre>
      * 
      * 
-     * @param future Future to match on
+     * @param future Future to fold on
      * @return Pattern Matcher for CompletableFutures
       USE EITHER HERE
     public static <T1> Xor<T1, Throwable> future(final CompletableFuture<T1> future) {
@@ -98,7 +98,7 @@ public class Xors {
      * 
      * 
      * 
-     * @param future Future to match on
+     * @param future Future to fold on
      * @return Pattern Matcher for Futures
 
     public static <T1> MXor<T1, Throwable> future(final Future<T1> future) {
@@ -106,8 +106,8 @@ public class Xors {
                            .swap();
     }
 USE EITHER
-    public static <T1, X extends Throwable> MXor<T1, X> tryMatch(final Try<T1, X> match) {
-        return () -> match.toXor()
+    public static <T1, X extends Throwable> MXor<T1, X> tryMatch(final Try<T1, X> fold) {
+        return () -> fold.toXor()
                           .swap();
     }
 */
@@ -138,7 +138,7 @@ USE EITHER
      * }
      * </pre>
      * 
-     * @param queue Queue to pattern match on
+     * @param queue Queue to pattern fold on
      * @return Pattern matchier on the blocking / non-blocking nature of the supplied Queue
      */
     public static <T> Xor<BlockingQueue<T>, java.util.Queue<T>> blocking(final java.util.Queue<T> queue) {

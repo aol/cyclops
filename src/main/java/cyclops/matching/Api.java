@@ -1,26 +1,13 @@
-package com.aol.cyclops2.matching;
+package cyclops.matching;
 
-import com.aol.cyclops2.matching.Case.Any;
-import com.aol.cyclops2.matching.Case.Case2;
-import com.aol.cyclops2.matching.Case.Case3;
-import com.aol.cyclops2.matching.Case.Case4;
-import com.aol.cyclops2.matching.Case.Case5;
-import com.aol.cyclops2.matching.Case.CaseOptional;
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct1;
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct3;
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct4;
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct5;
-import com.aol.cyclops2.matching.Matching.OptionalMatching;
-import com.aol.cyclops2.matching.Matching.PatternMatching;
-
-import org.jooq.lambda.tuple.Tuple1;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
-import org.jooq.lambda.tuple.Tuple5;
+import com.aol.cyclops2.matching.*;
+import com.aol.cyclops2.matching.Case.*;
+import com.aol.cyclops2.matching.Deconstruct.*;
+import com.aol.cyclops2.matching.Matching.*;
+import org.jooq.lambda.tuple.*;
 
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -36,29 +23,46 @@ public final class Api {
   public static <T> PatternMatching<T> Match(T value) {
     return new PatternMatching<>(value);
   }
+  public static <T1,T2> PatternMatching2<T1,T2> Match(Sealed2<T1,T2> value) {
+    return new PatternMatching2<>(value);
+  }
+
+  public static <T1,T2,T3> PatternMatching3<T1,T2,T3> Match(Sealed3<T1,T2,T3> value) {
+    return new PatternMatching3<>(value);
+  }
+  public static <T1,T2,T3,T4> PatternMatching4<T1,T2,T3,T4> Match(Sealed4<T1,T2,T3,T4> value) {
+    return new PatternMatching4<>(value);
+  }
+  public static <T1,T2,T3,T4,T5> PatternMatching5<T1,T2,T3,T4,T5> Match(Sealed5<T1,T2,T3,T4,T5> value) {
+    return new PatternMatching5<>(value);
+  }
+
+  public static <T1> PatternMatchingOrNone<T1> Match(Sealed1Or<T1> value) {
+    return new PatternMatchingOrNone<>(value);
+  }
 
   public static <T extends Deconstruct<T1>, T1> PatternMatching<T1> Match(T value) {
-    return new PatternMatching<>(value.deconstruct());
+    return new PatternMatching<>(value.unapply());
   }
 
   public static <T extends Deconstruct1<T1>, T1> PatternMatching<Tuple1<T1>> Match(T value) {
-    return new PatternMatching<>(value.deconstruct());
+    return new PatternMatching<>(value.unapply());
   }
 
   public static <T extends Deconstruct2<T1, T2>, T1, T2> PatternMatching<Tuple2<T1, T2>> Match(T value) {
-    return new PatternMatching<>(value.deconstruct());
+    return new PatternMatching<>(value.unapply());
   }
 
   public static <T extends Deconstruct3<T1, T2, T3>, T1, T2, T3> PatternMatching<Tuple3<T1, T2, T3>> Match(T value) {
-    return new PatternMatching<>(value.deconstruct());
+    return new PatternMatching<>(value.unapply());
   }
 
   public static <T extends Deconstruct4<T1, T2, T3, T4>, T1, T2, T3, T4> PatternMatching<Tuple4<T1, T2, T3, T4>> Match(T value) {
-    return new PatternMatching<>(value.deconstruct());
+    return new PatternMatching<>(value.unapply());
   }
 
   public static <T extends Deconstruct5<T1, T2, T3, T4, T5>, T1, T2, T3, T4, T5> PatternMatching<Tuple5<T1, T2, T3, T4, T5>> Match(T value) {
-    return new PatternMatching<>(value.deconstruct());
+    return new PatternMatching<>(value.unapply());
   }
 
   public static <T, R> Case<Optional<T>, R> Case(Supplier<R> supplier0, Supplier<R> supplier1) {
@@ -85,6 +89,9 @@ public final class Api {
     return new Case.Case0<>(pattern1.and(pattern2).and(pattern3).and(pattern4).and(pattern5), supplier);
   }
 
+  public static <T,R> Case<T,R> Case(Function<? super T, ? extends R> fn){
+      return new Case.CaseFn(fn);
+  }
   public static <T, R> Case<T, R> Case(Predicate<T> predicate, Supplier<R> supplier) {
     return new Case.Case0<>(predicate, supplier);
   }

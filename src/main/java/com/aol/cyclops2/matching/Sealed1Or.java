@@ -1,0 +1,11 @@
+package com.aol.cyclops2.matching;
+
+
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+public interface Sealed1Or<T1> {
+
+    public <R> R fold(Function<? super T1, ? extends R> fn1, Supplier<? extends R> s);
+
+}

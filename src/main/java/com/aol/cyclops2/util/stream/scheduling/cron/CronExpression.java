@@ -1619,7 +1619,7 @@ public final class CronExpression implements Serializable, Cloneable {
 
     /**
      * NOT YET IMPLEMENTED: Returns the final time that the 
-     * <code>CronExpression</code> will match.
+     * <code>CronExpression</code> will fold.
      */
     public Date getFinalFireTime() {
         // FUTURE_TODO: implement QUARTZ-423

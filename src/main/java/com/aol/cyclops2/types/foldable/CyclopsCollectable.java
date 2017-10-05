@@ -210,7 +210,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      * </pre>
      * 
      * @param c
-     *            Predicate to check if all match
+     *            Predicate to check if all fold
      */
     
     default boolean allMatch(final Predicate<? super T> c) {
@@ -228,7 +228,7 @@ public interface CyclopsCollectable<T> extends  Iterable<T>, Folds<T>,ReactiveSt
      * </pre>
      * 
      * @param c
-     *            Predicate to check if any match
+     *            Predicate to check if any fold
      */
     
     default boolean anyMatch(final Predicate<? super T> c) {

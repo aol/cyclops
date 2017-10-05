@@ -69,6 +69,6 @@ public class DITest {
 }
 
 /** NOTES : See UserInfo class where current main compromise occurs.
-UserRepository match info temporarily lost & locally restored. This could be solved
+UserRepository fold info temporarily lost & locally restored. This could be solved
 by a custom For Comprehension builder for FJ. Would also make construction of For Comphrensions
 a little less clunky**/

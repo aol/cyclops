@@ -27,14 +27,14 @@ import org.junit.Assert;
 public class Utils {
 
     /**
-     * Assert a Throwable match
+     * Assert a Throwable fold
      */
     public static void assertThrows(Class<?> throwable, CheckedRunnable runnable) {
         assertThrows(throwable, runnable, t -> {});
     }
 
     /**
-     * Assert a Throwable match and implement more assertions in a consumer
+     * Assert a Throwable fold and implement more assertions in a consumer
      */
     public static void assertThrows(Class<?> throwable, CheckedRunnable runnable, Consumer<Throwable> exceptionConsumer) {
         boolean fail = false;
@@ -44,7 +44,7 @@ public class Utils {
         }
         catch (Throwable t) {
             if (!throwable.isInstance(t))
-                throw new AssertionError("Bad exception match", t);
+                throw new AssertionError("Bad exception fold", t);
 
             exceptionConsumer.accept(t);
         }

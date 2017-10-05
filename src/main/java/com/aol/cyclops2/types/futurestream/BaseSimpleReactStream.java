@@ -246,7 +246,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     <R> BaseSimpleReactStream<R> flatMap(Function<? super U, ? extends Stream<? extends R>> flatFn);
 
     /**
-     * Removes elements that do not match the supplied predicate from the
+     * Removes elements that do not fold the supplied predicate from the
      * dataflow
      * 
      * @param p
@@ -261,7 +261,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     /**
      * Synchronous filtering operation
      * 
-     * Removes elements that do not match the supplied predicate from the
+     * Removes elements that do not fold the supplied predicate from the
      * dataflow
      * 
      * @param p

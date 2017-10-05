@@ -676,7 +676,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Removes elements that do not match the supplied predicate from the
+     * Removes elements that do not fold the supplied predicate from the
      * dataflow
      *
      * @param p
@@ -703,7 +703,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     /**
      * Synchronous filtering operation
      *
-     * Removes elements that do not match the supplied predicate from the
+     * Removes elements that do not fold the supplied predicate from the
      * dataflow
      *
      * @param p

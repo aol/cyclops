@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -44,7 +45,18 @@ public interface Case<T, R> {
       return val.isPresent() ? val : orCase.test(t);
     };
   }
+  @AllArgsConstructor
+  final class CaseFn<T, R> implements Case<T, R>{
 
+
+    final Function<? super T,? extends R> fn;
+
+    @Override
+    public Optional<R> test(T value) {
+      return Optional.of(fn.apply(value));
+    }
+
+  }
   @AllArgsConstructor
   final class Case0<T, R> implements Case<T, R> {
 
