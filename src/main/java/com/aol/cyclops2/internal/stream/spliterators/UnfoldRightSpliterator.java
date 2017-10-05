@@ -39,9 +39,6 @@ public class UnfoldRightSpliterator<T1,T> implements Spliterator<T>, CopyableSpl
 
        return fn.apply(current.v1)
                 .map(result->{
-                    System.out.println(current.v1);
-                    System.out.println(current.v2);
-                    System.out.println(result);
                     current = result;
                     action.accept(result.v2);
                     return result;
