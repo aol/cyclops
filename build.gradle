@@ -1,12 +1,10 @@
 buildscript {
   repositories {
     jcenter()
-
   }
 
   dependencies {
     classpath 'com.bmuschko:gradle-nexus-plugin:2.2'
-
   }
 }
 
@@ -55,20 +53,20 @@ configurations {
 dependencies {
 
   compile 'org.pcollections:pcollections:' + pCollectionsVersion
-  compile "org.jooq:jool:${joolVersion}"
+  compile 'org.jooq:jool:${joolVersion}'
   compile 'org.agrona:Agrona:' + agronaVersion
   compile 'org.reactivestreams:reactive-streams:' + reactiveStreamsVersion
-  provided group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
+  provided 'org.projectlombok:lombok:' + lombokVersion
   testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
   testCompile 'io.projectreactor:reactor-core:3.0.7.RELEASE'
   testCompile 'com.google.guava:guava:19.0'
   testCompile 'com.google.guava:guava-testlib:19.0'
   testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
-  testCompile group: 'junit', name: 'junit', version: '4.12'
-  testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: hamcrestVersion
-  testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
+  testCompile 'junit:junit:4.12'
+  testCompile 'org.hamcrest:hamcrest-all:' + hamcrestVersion
+  testCompile 'org.mockito:mockito-all:1.9.5'
   testCompile 'io.vertx:vertx-core:3.0.0'
-  testCompile group: 'org.testng', name: 'testng', version: '5.14.10'
+  testCompile 'org.testng:testng:5.14.10'
   testCompile 'io.javaslang:javaslang:2.0.2'
   jmh 'com.github.akarnokd:ixjava:1.0.0-RC5'
 
@@ -79,6 +77,7 @@ sourceSets {
   test.compileClasspath += [configurations.provided]
   test.runtimeClasspath += [configurations.provided]
 }
+
 jacocoTestReport {
   afterEvaluate {
     classDirectories = files(classDirectories.files.collect {
