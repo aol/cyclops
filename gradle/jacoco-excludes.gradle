@@ -1,8 +1,8 @@
 test {
-	
-	jacoco {
-		
-		excludes = ["test.*","*.*Test","*.acceptance.*","*.integration.*", "*.*Main"]
-	}
-	
+
+  jacoco {
+
+    excludes = ["test.*", "*.*Test", "*.acceptance.*", "*.integration.*", "*.*Main"]
+  }
+
 }

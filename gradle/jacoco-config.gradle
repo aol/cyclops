@@ -1,7 +1,7 @@
 jacocoTestReport {
-		reports {
-			html.enabled = true
-			xml.enabled = true
-			csv.enabled = false
-		}
+  reports {
+    html.enabled = true
+    xml.enabled = true
+    csv.enabled = false
+  }
 }
