@@ -1,7 +1,8 @@
 package com.aol.cyclops2.streams;
 
 import cyclops.monads.AnyM;
-import org.jooq.lambda.Seq;
+
+import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -31,12 +32,12 @@ public class FlatMapSequenceMTest {
 	@Test
 	public void flatMapToSeq(){
 		
-		assertThat(AnyM.fromStream(Stream.of(1,2,3)).stream().flatMapStream(i-> Seq.of(i+2)).toList(),equalTo(Arrays.asList(3,4,5)));
+		assertThat(AnyM.fromStream(Stream.of(1,2,3)).stream().flatMapStream(i-> ReactiveSeq.of(i+2)).toList(),equalTo(Arrays.asList(3,4,5)));
 	}
 	@Test
 	public void flatMapSeqToStream(){
 		
-		assertThat(AnyM.fromStream(Seq.of(1,2,3)).stream().flatMapStream(i-> Stream.of(i+2)).toList(),equalTo(Arrays.asList(3,4,5)));
+		assertThat(AnyM.fromStream(ReactiveSeq.of(1,2,3)).stream().flatMapStream(i-> Stream.of(i+2)).toList(),equalTo(Arrays.asList(3,4,5)));
 	}
 
 

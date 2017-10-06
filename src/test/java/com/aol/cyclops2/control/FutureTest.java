@@ -14,7 +14,6 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import lombok.val;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -136,8 +135,8 @@ public class FutureTest {
         assertThat(Future.ofResult(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
         assertThat(Future.ofResult(10).zipP(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
         assertThat(Future.ofResult(10).zipS(Stream.of(20),(a, b)->a+b).get(),equalTo(30));
-        assertThat(Future.ofResult(10).zip(Seq.of(20),(a, b)->a+b).get(),equalTo(30));
-        assertThat(Future.ofResult(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Future.ofResult(10).zip(ReactiveSeq.of(20),(a, b)->a+b).get(),equalTo(30));
+        assertThat(Future.ofResult(10).zip(ReactiveSeq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
         assertThat(Future.ofResult(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
         assertThat(Future.ofResult(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
     }

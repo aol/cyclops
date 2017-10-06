@@ -3,8 +3,8 @@ package com.aol.cyclops2.control;
 import cyclops.async.Future;
 import cyclops.control.Eval;
 import cyclops.control.Eval.CompletableEval;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -112,8 +112,8 @@ public class EvalTest {
         assertThat(Eval.now(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
         assertThat(Eval.now(10).zipP(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
         assertThat(Eval.now(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Eval.now(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Eval.now(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Eval.now(10).zip(ReactiveSeq.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Eval.now(10).zip(ReactiveSeq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
         assertThat(Eval.now(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
         assertThat(Eval.now(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
     }

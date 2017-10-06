@@ -14,7 +14,8 @@ import cyclops.control.lazy.Either4;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
-import org.jooq.lambda.Seq;
+import cyclops.stream.ReactiveSeq;
+
 import cyclops.collections.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
@@ -108,8 +109,8 @@ public class Either4Test {
  //pending https://github.com/aol/cyclops-react/issues/380
         //       assertThat(Either.right(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
         assertThat(Either.right(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Either.right(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Either.right(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Either.right(10).zip(ReactiveSeq.of(20),(a, b)->a+b).get(),equalTo(30));
+        assertThat(Either.right(10).zip(ReactiveSeq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
         assertThat(Either.right(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
         assertThat(Either.right(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
     }

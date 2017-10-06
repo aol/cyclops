@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -21,12 +21,12 @@ public class FlatMapTest {
 	@Test
 	public void flatMapToSeq(){
 		
-		assertThat(AnyM.fromStream(Stream.of(1,2,3)).flatMap(i-> AnyM.fromStream(Seq.of(i+2))).stream().toList(),equalTo(Arrays.asList(3,4,5)));
+		assertThat(AnyM.fromStream(Stream.of(1,2,3)).flatMap(i-> AnyM.fromStream(Stream.of(i+2))).stream().toList(),equalTo(Arrays.asList(3,4,5)));
 	}
 	@Test
 	public void flatMapSeqToStream(){
 		
-		assertThat(AnyM.fromStream(Seq.of(1,2,3)).flatMap(i-> AnyM.fromStream(Stream.of(i+2))).stream().toList(),equalTo(Arrays.asList(3,4,5)));
+		assertThat(AnyM.fromStream(Stream.of(1,2,3)).flatMap(i-> AnyM.fromStream(Stream.of(i+2))).stream().toList(),equalTo(Arrays.asList(3,4,5)));
 	}
 
 

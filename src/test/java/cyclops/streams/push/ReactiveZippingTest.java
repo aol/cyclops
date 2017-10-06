@@ -2,7 +2,6 @@ package cyclops.streams.push;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;

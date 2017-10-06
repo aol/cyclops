@@ -24,7 +24,7 @@ import cyclops.companion.Semigroups;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.maybe;
 import cyclops.typeclasses.functions.SemigroupK;
-import org.jooq.lambda.Seq;
+
 import org.junit.Test;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
@@ -313,10 +313,7 @@ public class SemigroupsTest {
         assertThat(Semigroups.combineReactiveSeq().apply(ReactiveSeq.of(1,2,3),ReactiveSeq.of(4,5,6)).toList(),equalTo(ListX.of(1,2,3,4,5,6)));
     }
 
-    @Test
-    public void testCombineSeq() {
-        assertThat(Semigroups.combineSeq().apply(Seq.of(1,2,3),Seq.of(4,5,6)).toList(),equalTo(ListX.of(1,2,3,4,5,6)));
-    }
+
 
     @Test
     public void testCombineStream() {

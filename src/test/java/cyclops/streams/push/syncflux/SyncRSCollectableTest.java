@@ -1,15 +1,15 @@
 package cyclops.streams.push.syncflux;
 
 import com.aol.cyclops2.react.lazy.sequence.CollectableTest;
+import com.aol.cyclops2.types.foldable.Folds;
 import cyclops.stream.Spouts;
-import org.jooq.lambda.Collectable;
 import reactor.core.publisher.Flux;
 
 public class SyncRSCollectableTest extends CollectableTest {
 
 
-    public <T> Collectable<T> of(T... values){
-        return Spouts.from(Flux.just(values)).collectors();
+    public <T> Folds<T> of(T... values){
+        return Spouts.from(Flux.just(values));
     }
 
 }

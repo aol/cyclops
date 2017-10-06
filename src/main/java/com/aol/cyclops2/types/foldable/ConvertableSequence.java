@@ -203,9 +203,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     public <K, V> MapX<K, V> mapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
         return MapX.fromMap(stream().collect(Collectors.toMap(keyMapper, valueMapper)));
     }
-    public <K, V> Map<K, V> map(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
-        return  stream().collect(Collectors.toMap(keyMapper, valueMapper));
-    }
+
     public Maybe<ListX<T>> maybe() {
         return value().toMaybe();
 

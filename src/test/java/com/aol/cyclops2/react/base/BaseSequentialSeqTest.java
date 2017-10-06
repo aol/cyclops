@@ -10,7 +10,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.jooq.lambda.tuple.Tuple.collectors;
 import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -653,11 +652,11 @@ public abstract class BaseSequentialSeqTest {
 	    public void testMinByMaxBy() {
 	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
-	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
-	        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
+	        assertEquals(1, (int) s.get().stats().maxBy(t -> Math.abs(t - 5)).get());
+	        assertEquals(5, (int) s.get().stats().minBy(t -> Math.abs(t - 5)).get());
 
-	        assertEquals(6, (int) s.get().maxBy(t -> "" + t).get());
-	        assertEquals(1, (int) s.get().minBy(t -> "" + t).get());
+	        assertEquals(6, (int) s.get().stats().maxBy(t -> "" + t).get());
+	        assertEquals(1, (int) s.get().stats().minBy(t -> "" + t).get());
 	    }
 
 	  

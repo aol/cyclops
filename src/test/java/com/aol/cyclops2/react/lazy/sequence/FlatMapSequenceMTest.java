@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
-import org.jooq.lambda.Seq;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -38,7 +38,7 @@ public class FlatMapSequenceMTest {
 	@Test
 	public void flatMapToSeq(){
 		
-		assertThat(LazyReact.sequentialBuilder().of(1,2,3).flatMapStream(i-> Seq.of(i+2)).toList(),equalTo(Arrays.asList(3,4,5)));
+		assertThat(LazyReact.sequentialBuilder().of(1,2,3).flatMapStream(i-> ReactiveSeq.of(i+2)).toList(),equalTo(Arrays.asList(3,4,5)));
 	}
 	@Test
 	public void flatMapSeqToStream(){

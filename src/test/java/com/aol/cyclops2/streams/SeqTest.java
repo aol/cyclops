@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;

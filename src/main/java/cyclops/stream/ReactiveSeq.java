@@ -4,7 +4,7 @@ package cyclops.stream;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.react.ThreadPools;
-import com.aol.cyclops2.types.foldable.StatCollectors;
+
 import cyclops.collections.mutable.QueueX;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.foldable.Evaluation;
@@ -130,9 +130,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Higher<reactiveSeq,T> {
 
 
-    default StatCollectors<T> stats(){
-        return ()->this;
-    }
+
     /**
      *
      * Stream over the values of an enum

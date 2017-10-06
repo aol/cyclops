@@ -16,7 +16,6 @@ import cyclops.control.Maybe.CompletableMaybe;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple3;
 import org.junit.Before;
@@ -87,8 +86,8 @@ public class OptionTest implements Printable {
         assertThat(Option.some(10).zip(Eval.now(20), (a, b) -> a + b).get(), equalTo(30));
         assertThat(Option.some(10).zipP(Eval.now(20),(a, b) -> a + b).get(), equalTo(30));
         assertThat(Option.some(10).zipS(Stream.of(20), (a, b) -> a + b).get(), equalTo(30));
-        assertThat(Option.some(10).zip(Seq.of(20), (a, b) -> a + b).get(), equalTo(30));
-        assertThat(Option.some(10).zip(Seq.of(20)).get(), equalTo(Tuple.tuple(10, 20)));
+        assertThat(Option.some(10).zip(ReactiveSeq.of(20), (a, b) -> a + b).get(), equalTo(30));
+        assertThat(Option.some(10).zip(ReactiveSeq.of(20)).get(), equalTo(Tuple.tuple(10, 20)));
         assertThat(Option.some(10).zipS(Stream.of(20)).get(), equalTo(Tuple.tuple(10, 20)));
         assertThat(Option.some(10).zip(Eval.now(20)).get(), equalTo(Tuple.tuple(10, 20)));
     }

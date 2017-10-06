@@ -1,12 +1,13 @@
 package com.aol.cyclops2.react.lazy.sequence;
 
+import com.aol.cyclops2.types.foldable.Folds;
 import cyclops.async.LazyReact;
-import org.jooq.lambda.Collectable;
+
 
 public class FutureStreamCollectableTest extends CollectableTest {
     @Override
-    public <T> Collectable<T> of(T... values) {
-       return LazyReact.sequentialBuilder().of(values).collectors();
+    public <T> Folds<T> of(T... values) {
+       return LazyReact.sequentialBuilder().of(values);
     }
 
 }

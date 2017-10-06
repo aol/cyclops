@@ -11,8 +11,8 @@ import cyclops.companion.Semigroups;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,8 +61,8 @@ public class TryTest {
 	        assertThat(Try.success(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
 	        assertThat(Try.success(10).zipP(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
 	        assertThat(Try.success(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
-	        assertThat(Try.success(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
-	        assertThat(Try.success(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+	        assertThat(Try.success(10).zip(ReactiveSeq.of(20),(a, b)->a+b).get(),equalTo(30));
+	        assertThat(Try.success(10).zip(ReactiveSeq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
 	        assertThat(Try.success(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
 	        assertThat(Try.success(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
 	    }  

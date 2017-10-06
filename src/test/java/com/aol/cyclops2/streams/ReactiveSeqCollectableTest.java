@@ -1,6 +1,7 @@
 package com.aol.cyclops2.streams;
 
-import org.jooq.lambda.Collectable;
+import com.aol.cyclops2.types.foldable.Folds;
+
 
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.react.lazy.sequence.CollectableTest;
@@ -8,8 +9,8 @@ import com.aol.cyclops2.react.lazy.sequence.CollectableTest;
 public class ReactiveSeqCollectableTest extends CollectableTest {
 
     @Override
-    public <T> Collectable<T> of(T... values) {
-       return ReactiveSeq.of(values).collectors();
+    public <T> Folds<T> of(T... values) {
+       return ReactiveSeq.of(values);
     }
 
 }
