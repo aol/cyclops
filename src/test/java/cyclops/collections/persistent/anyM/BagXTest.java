@@ -6,14 +6,14 @@ import cyclops.collections.immutable.BagX;
 import cyclops.collections.immutable.OrderedSetX;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
 
 import static java.util.Comparator.comparing;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 
 public class BagXTest extends AbstractAnyMSeqTest<Witness.bagX> {

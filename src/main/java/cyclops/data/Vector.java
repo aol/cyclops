@@ -7,8 +7,8 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.function.Function;
 import java.util.function.Predicate;

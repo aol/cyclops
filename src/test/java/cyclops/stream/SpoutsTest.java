@@ -11,7 +11,7 @@ import cyclops.collections.mutable.ListX;
 import cyclops.function.Effect;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
@@ -50,12 +50,13 @@ public class SpoutsTest {
     @Test
     public void reactiveBuffer() throws InterruptedException {
 
-        Subscription sub = Spouts.reactiveBuffer(10, s -> {
+        Subscription sub = Spouts.reactiveBuffer(16, s -> {
 
             s.onSubscribe(new Subscription() {
                 @Override
                 public void request(long n) {
                     if(i==0) {
+
                         Effect e = () -> {
 
 
@@ -73,7 +74,9 @@ public class SpoutsTest {
 
         }).forEach(2, in->count++);
 
+        //count will be 2, buffer will be 16
         Thread.sleep(500);
+
         sub.request(30);
 
         assertThat(i,equalTo(30));
@@ -415,10 +418,10 @@ public class SpoutsTest {
     public void duplicateTest(){
         Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> tp = Spouts.of(1, 2, 3, 4).duplicate();
 
-     //   tp.v1.printOut();
-     //  tp.v2.printOut();
+     //   tp._1.printOut();
+     //  tp._2.printOut();
         System.out.println("Merge!");
-     //   tp.v1.mergeP(tp.v2).printOut();
+     //   tp._1.mergeP(tp._2).printOut();
 
         Spouts.of("a","b","c").mergeP(ReactiveSeq.of("bb","cc")).printOut();
     }

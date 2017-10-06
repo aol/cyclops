@@ -7,12 +7,12 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Enumeration;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Comparator;
 import java.util.function.Function;
 
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Range<T> {

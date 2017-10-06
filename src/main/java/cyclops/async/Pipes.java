@@ -58,7 +58,7 @@ import java.util.concurrent.Executor;
        
        
        //read data and print it out the console.
-       futureStream.map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+       futureStream.transform(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
                    .forEach(System.out::println);
  * 
  * }
@@ -86,7 +86,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * @return Persistent map of all registered adapters
+     * @return Persistent transform of all registered adapters
      */
     public PersistentMapX<K, Adapter<V>> registered() {
         return PersistentMapX.fromMap(registered);
@@ -147,7 +147,7 @@ public class Pipes<K, V> {
      * {@code 
      *    //close an adapter
      *   pipes.get("adapter-key")
-     *        .map(a->a.close())
+     *        .transform(a->a.close())
      *        .orElse(false); //Maybe is lazy - trigger action
      *   
      * }
@@ -182,7 +182,7 @@ public class Pipes<K, V> {
         //on another thread
        List<String> res =  bus.futureStream("reactor")
                               .get()
-                              .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+                              .transform(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
                                .toList();
        System.out.println(res);
        
@@ -220,7 +220,7 @@ public class Pipes<K, V> {
         //on another thread
        List<String> res =  bus.futureStream("reactor", new LazyReact(10,10))
                               .get()
-                              .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+                              .transform(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
                                .toList();
        System.out.println(res);
        

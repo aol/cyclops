@@ -17,8 +17,8 @@ import com.aol.cyclops2.react.async.subscription.Continueable;
 import com.aol.cyclops2.react.collectors.lazy.Blocker;
 import com.aol.cyclops2.util.ThrowsSoftened;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -98,14 +98,14 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      *
      */
-    default Tuple2<SimpleReactStream<U>, SimpleReactStream<U>> splitAt(final long position) {
+    default Tuple2<SimpleReactStream<U>, SimpleReactStream<U>> splitAt(final int position) {
         final Stream stream = getLastActive().stream();
-        final Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> split = Seq.seq((Stream<CompletableFuture<U>>) stream)
+        final Tuple2<ReactiveSeq<CompletableFuture<U>>, ReactiveSeq<CompletableFuture<U>>> split = ReactiveSeq.fromStream((Stream<CompletableFuture<U>>) stream)
                                                                                       .splitAt(position);
 
         return new Tuple2(
-                          fromListCompletableFuture(split.v1.collect(Collectors.toList())),
-                          fromListCompletableFuture(split.v2.collect(Collectors.toList())));
+                          fromListCompletableFuture(split._1().collect(Collectors.toList())),
+                          fromListCompletableFuture(split._2().collect(Collectors.toList())));
     }
 
     /**
@@ -129,10 +129,10 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     default Tuple2<SimpleReactStream<U>, SimpleReactStream<U>> duplicate() {
         // unblocking impl
         final Stream stream = getLastActive().stream();
-        final Tuple2<Seq<CompletableFuture<U>>, Seq<CompletableFuture<U>>> duplicated = Seq.seq((Stream<CompletableFuture<U>>) stream)
+        final Tuple2<ReactiveSeq<CompletableFuture<U>>, ReactiveSeq<CompletableFuture<U>>> duplicated = ReactiveSeq.fromStream((Stream<CompletableFuture<U>>) stream)
                                                                                            .duplicate();
         final Tuple2 dup = new Tuple2(
-                                      fromStreamOfFutures(duplicated.v1), fromStreamOfFutures(duplicated.v2));
+                                      fromStreamOfFutures(duplicated._1()), fromStreamOfFutures(duplicated._2()));
 
         return dup;
     }
@@ -148,7 +148,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
         final Seq seq = Seq.seq(getLastActive().stream())
                            .zip(Seq.seq(other));
         final Seq<Tuple2<CompletableFuture<U>, R>> withType = seq;
-        final SimpleReactStream futureStream = fromStreamOfFutures((Stream) withType.map(t -> t.v1.thenApply(v -> Tuple.tuple(t.v1.join(), t.v2))));
+        final SimpleReactStream futureStream = fromStreamOfFutures((Stream) withType.map(t -> t._1().thenApply(v -> Tuple.tuple(t._1().join(), t._2()))));
 
         return futureStream;
 
@@ -167,9 +167,9 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
                            .zip(Seq.seq(other.getLastActive()
                                              .stream()));
         final Seq<Tuple2<CompletableFuture<U>, CompletableFuture<R>>> withType = seq;
-        final SimpleReactStream futureStream = fromStreamOfFutures((Stream) withType.map(t -> CompletableFuture.allOf(t.v1, t.v2)
-                                                                                                               .thenApply(v -> Tuple.tuple(t.v1.join(),
-                                                                                                                                           t.v2.join()))));
+        final SimpleReactStream futureStream = fromStreamOfFutures((Stream) withType.map(t -> CompletableFuture.allOf(t._1(), t._2())
+                                                                                                               .thenApply(v -> Tuple.tuple(t._1().join(),
+                                                                                                                                           t._2().join()))));
 
         return futureStream;
 
@@ -198,7 +198,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
                                                .iterator())
                            .zipWithIndex();
         final Seq<Tuple2<CompletableFuture<U>, Long>> withType = seq;
-        final SimpleReactStream futureStream = fromStreamOfFutures((Stream) withType.map(t -> t.v1.thenApply(v -> Tuple.tuple(t.v1.join(), t.v2))));
+        final SimpleReactStream futureStream = fromStreamOfFutures((Stream) withType.map(t -> t._1().thenApply(v -> Tuple.tuple(t._1().join(), t._2()))));
         return futureStream;
 
     }
@@ -746,7 +746,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * {@code
      * List<String> result = 	SimpleReactStream.of(1,2,3)
      * 											 .zip(FutureStream.of(100,200,300))
-                                                  .map(it ->it+"!!")
+                                                  .transform(it ->it+"!!")
                                                   .toList();
         assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
      *

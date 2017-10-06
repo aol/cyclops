@@ -36,9 +36,9 @@ import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.pcollections.HashTreePSet;
 import org.pcollections.PQueue;
 import org.pcollections.PSet;
@@ -373,7 +373,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
      * {@code 
      *   
      *     PersistentSetX.of(1,2,3)
-     *          .map(i->i*2)
+     *          .transform(i->i*2)
      *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *     //PersistentSetX[12]
@@ -498,7 +498,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#map(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#transform(java.util.function.Function)
      */
     @Override
     default <R> PersistentSetX<R> map(final Function<? super T, ? extends R> mapper) {
@@ -600,15 +600,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
         return (PersistentSetX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
-    @Override
-    default <K, A, D> PersistentSetX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
-        return (PersistentSetX) LazyCollectionX.super.grouped(classifier, downstream);
-    }
 
-    @Override
-    default <K> PersistentSetX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return (PersistentSetX) LazyCollectionX.super.grouped(classifier);
-    }
 
     @Override
     default <U> PersistentSetX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -742,7 +734,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip(java.util.stream.Stream)
      */
     @Override
     default <U> PersistentSetX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -751,7 +743,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> PersistentSetX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -760,7 +752,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> PersistentSetX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -951,7 +943,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
     default PersistentSetX<T> removeAllS(final Stream<? extends T> stream) {
@@ -987,7 +979,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
     default PersistentSetX<T> retainAllS(final Stream<? extends T> seq) {
@@ -1261,7 +1253,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
          *
          * <pre>
          * {@code
-         *  PersistentSetX<Integer> persistentSetX = Sets.functor().map(i->i*2, PersistentSetX.widen(Arrays.asSet(1,2,3));
+         *  PersistentSetX<Integer> persistentSetX = Sets.functor().transform(i->i*2, PersistentSetX.widen(Arrays.asSet(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -1274,7 +1266,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
          * {@code
          *   PersistentSetX<Integer> persistentSetX = Sets.unit()
         .unit("hello")
-        .applyHKT(h->Sets.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Sets.functor().transform((String v) ->v.length(), h))
         .convert(PersistentSetX::narrowK3);
          *
          * }
@@ -1330,7 +1322,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
 
         PersistentSetX<Integer> persistentSetX = Sets.unit()
         .unit("hello")
-        .applyHKT(h->Sets.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Sets.functor().transform((String v) ->v.length(), h))
         .applyHKT(h->Sets.zippingApplicative().ap(persistentSetXFn, h))
         .convert(PersistentSetX::narrowK3);
 

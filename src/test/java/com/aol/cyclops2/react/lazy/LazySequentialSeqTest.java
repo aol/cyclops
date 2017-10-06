@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops2.react.base.BaseSequentialSeqTest;
@@ -77,7 +77,7 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 	}
 	@Test
 	public void duplicateMap(){
-		assertThat(of(1,2,3).map(i->i*2).duplicate().v1.toList(),equalTo(Arrays.asList(2,4,6)));
+		assertThat(of(1,2,3).map(i->i*2).duplicate()._1().toList(),equalTo(Arrays.asList(2,4,6)));
 	}
 	@Test
 	public void concatStreamsJDK(){
@@ -194,12 +194,12 @@ public class LazySequentialSeqTest extends BaseSequentialSeqTest {
 	}
 	@Test
 	public void duplicateFutures(){
-		List<String> list = of("a","b").actOnFutures().duplicate().v1.block();
+		List<String> list = of("a","b").actOnFutures().duplicate()._1().block();
 		assertThat(list,is(asList("a","b")));
 	}
 	@Test
 	public void duplicateFutures2(){
-		List<String> list = of("a","b").actOnFutures().duplicate().v2.block();
+		List<String> list = of("a","b").actOnFutures().duplicate()._2().block();
 		assertThat(list,is(asList("a","b")));
 	}
 }

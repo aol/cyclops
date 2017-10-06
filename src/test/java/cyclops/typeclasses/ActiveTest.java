@@ -12,8 +12,8 @@ import cyclops.monads.Witness.maybe;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 
 import static cyclops.collections.mutable.ListX.kindKleisli;

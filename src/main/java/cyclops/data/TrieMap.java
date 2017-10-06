@@ -6,8 +6,8 @@ import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -21,7 +21,7 @@ public class TrieMap<K,V> implements  ImmutableMap<K,V>{
     HashedPatriciaTrie.Node<K,V> map;
 
     public static <K,V> TrieMap<K,V> fromStream(ReactiveSeq<Tuple2<K,V>> stream){
-        return stream.foldLeft(empty(),(m,t2)->m.put(t2.v1,t2.v2));
+        return stream.foldLeft(empty(),(m,t2)->m.put(t2._1(),t2._2()));
     }
 
     public static <K,V> TrieMap<K,V> empty(){
@@ -34,19 +34,19 @@ public class TrieMap<K,V> implements  ImmutableMap<K,V>{
 
     @Override
     public PersistentMapX<K, V> persistentMapX() {
-        return stream().to().persistentMapX(t->t.v1,t->t.v2);
+        return stream().to().persistentMapX(t->t._1(),t->t._2());
     }
 
 
 
     @Override
     public TrieMap<K, V> put(Tuple2<K, V> keyAndValue) {
-        return put(keyAndValue.v1,keyAndValue.v2);
+        return put(keyAndValue._1(),keyAndValue._2());
     }
 
     @Override
     public TrieMap<K, V> putAll(ImmutableMap<K, V> map) {
-        return map.stream().foldLeft(this,(m,next)->m.put(next.v1,next.v2));
+        return map.stream().foldLeft(this,(m,next)->m.put(next._1(),next._2()));
     }
 
     @Override
@@ -70,7 +70,7 @@ public class TrieMap<K,V> implements  ImmutableMap<K,V>{
 
     @Override
     public boolean contains(Tuple2<K, V> t) {
-        return get(t.v1).filter(v-> Objects.equals(v,t.v2)).isPresent();
+        return get(t._1()).filter(v-> Objects.equals(v,t._2())).isPresent();
     }
 
     public Maybe<V> get(K key){
@@ -119,17 +119,17 @@ public class TrieMap<K,V> implements  ImmutableMap<K,V>{
 
     @Override
     public <R1, R2> TrieMap<R1, R2> bimap(BiFunction<? super K, ? super V, ? extends Tuple2<R1, R2>> map) {
-        return fromStream(stream().map(t->t.map(map)));
+        return fromStream(stream().map(t->t.transform(map)));
     }
 
     @Override
     public <K2, V2> TrieMap<K2, V2> flatMap(BiFunction<? super K, ? super V, ? extends ImmutableMap<K2, V2>> mapper) {
-        return fromStream(stream().flatMapI(t->t.map(mapper)));
+        return fromStream(stream().flatMapI(t->t.transform(mapper)));
     }
 
     @Override
     public <K2, V2> TrieMap<K2, V2> flatMapI(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper) {
-        return fromStream(stream().flatMapI(t->t.map(mapper)));
+        return fromStream(stream().flatMapI(t->t.transform(mapper)));
     }
 
     @Override
@@ -139,17 +139,17 @@ public class TrieMap<K,V> implements  ImmutableMap<K,V>{
 
     @Override
     public TrieMap<K, V> filterKeys(Predicate<? super K> predicate) {
-        return fromStream(stream().filter(t->predicate.test(t.v1)));
+        return fromStream(stream().filter(t->predicate.test(t._1())));
     }
 
     @Override
     public TrieMap<K, V> filterValues(Predicate<? super V> predicate) {
-        return fromStream(stream().filter(t->predicate.test(t.v2)));
+        return fromStream(stream().filter(t->predicate.test(t._2())));
     }
 
     @Override
     public <R> TrieMap<K, R> map(Function<? super V, ? extends R> fn) {
-        return fromStream(stream().map(t-> Tuple.tuple(t.v1,fn.apply(t.v2))));
+        return fromStream(stream().map(t-> Tuple.tuple(t._1(),fn.apply(t._2()))));
     }
 
     @Override

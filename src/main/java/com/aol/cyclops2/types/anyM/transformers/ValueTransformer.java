@@ -8,7 +8,7 @@ import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.Folds;
 import cyclops.function.Fn0;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -83,7 +83,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
      */
    //Return StreamT
   /**  public AnyM<W,? extends ReactiveSeq<T>> reactiveStream() {
-        return this.transformerStream().map(v->v.reactiveStream());
+        return this.transformerStream().transform(v->v.reactiveStream());
     }**/
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Value#unapply()
@@ -125,7 +125,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return unitAnyM(this.transformerStream().map(v->v.zipP(publisher,f)));
     }
      /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
    
     public <U> ValueTransformer<W,Tuple2<T,U>> zipS(Stream<? extends U> other) {

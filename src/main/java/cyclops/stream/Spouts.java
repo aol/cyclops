@@ -31,7 +31,7 @@ import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -661,7 +661,7 @@ public interface Spouts {
          *
          * <pre>
          * {@code
-         *  ReactiveSeq<Integer> list = Lists.functor().map(i->i*2, ReactiveSeq.widen(Arrays.asList(1,2,3));
+         *  ReactiveSeq<Integer> list = Lists.functor().transform(i->i*2, ReactiveSeq.widen(Arrays.asList(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -674,7 +674,7 @@ public interface Spouts {
          * {@code
          *   ReactiveSeq<Integer> list = ReactiveSeq.Instances.unit()
         .unit("hello")
-        .transform(h->Lists.functor().map((String v) ->v.length(), h))
+        .transform(h->Lists.functor().transform((String v) ->v.length(), h))
         .convert(ReactiveSeq::narrowK3);
          *
          * }
@@ -730,7 +730,7 @@ public interface Spouts {
 
         ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
-        .transform(h->Lists.functor().map((String v) ->v.length(), h))
+        .transform(h->Lists.functor().transform((String v) ->v.length(), h))
         .transform(h->Lists.zippingApplicative().ap(listFn, h))
         .convert(ReactiveSeq::narrowK3);
 

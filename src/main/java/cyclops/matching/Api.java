@@ -4,7 +4,7 @@ import com.aol.cyclops2.matching.*;
 import com.aol.cyclops2.matching.Case.*;
 import com.aol.cyclops2.matching.Deconstruct.*;
 import com.aol.cyclops2.matching.Matching.*;
-import org.jooq.lambda.tuple.*;
+import cyclops.collections.tuple.*;
 
 import java.util.Optional;
 import java.util.function.Function;

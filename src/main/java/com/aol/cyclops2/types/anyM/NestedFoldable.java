@@ -40,7 +40,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
 
     /**
-     * Attempt to map this Sequence to the same type as the supplied Monoid
+     * Attempt to transform this Sequence to the same type as the supplied Monoid
      * (Reducer) Then use Monoid to reduce values
      * 
      * <pre>
@@ -60,7 +60,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid, using
+     * Attempt to transform this Monad to the same type as the supplied Monoid, using
      * supplied function Then use Monoid to reduce values
      * 
      * <pre>
@@ -85,7 +85,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @param mapper
-     *            Function to map Monad type
+     *            Function to transform Monad type
      * @param reducer
      *            Monoid to reduce values
      * @return Reduce result
@@ -112,7 +112,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /*
-     * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
+     * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).transform(it -> it*100).reduce(
      * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
      */
     default AnyM<W,Optional<T>> reduce(final BinaryOperator<T> accumulator) {
@@ -124,7 +124,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /*
      * (non-Javadoc)
      * 
-     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
+     * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
     default AnyM<W,T> reduce(final T identity, final BinaryOperator<T> accumulator) {
@@ -134,7 +134,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /*
      * (non-Javadoc)
      * 
-     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
+     * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
     default <U> AnyM<W,U> reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
@@ -194,7 +194,18 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     default ListT<W,T> reduce(final Iterable<? extends Monoid<T>> reducers) {
         return ListT.of(nestedFoldables().map(s -> s.reduce(reducers)));
     }
-
+    default AnyM<W,T> foldLeft(final Monoid<T> reducer) {
+        return nestedFoldables().map(s -> s.foldLeft(reducer));
+    }
+    default AnyM<W,T> foldLeft(final T identity, final BinaryOperator<T> accumulator) {
+        return nestedFoldables().map(s -> s.foldLeft(identity, accumulator));
+    }
+    default <U> AnyM<W,U> foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator) {
+        return nestedFoldables().map(s -> s.foldLeft(identity, accumulator));
+    }
+    default <T> AnyM<W,T> foldLeftMapToType(final Reducer<T> reducer) {
+        return nestedFoldables().map(s -> s.mapReduce(reducer));
+    }
     /**
      * 
      * <pre>
@@ -248,7 +259,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid (using
+     * Attempt to transform this Monad to the same type as the supplied Monoid (using
      * mapToType on the monoid interface) Then use Monoid to reduce values
      * 
      * <pre>
@@ -419,7 +430,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * <pre>
      * {@code
      * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .endsWith(Stream.of(5,6))); 
+     *              .endsWith(Stream.of(5,6)));
      * }
      * </pre>
      * 
@@ -438,7 +449,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * <pre>
      * {@code 
      *  assertThat(ReactiveSeq.of(1,2,3,4)
-     *                  .map(u->{throw new RuntimeException();})
+     *                  .transform(u->{throw new RuntimeException();})
      *                  .recover(e->"hello")
      *                  .firstValue(),equalTo("hello"));
      * }
@@ -524,7 +535,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * {@code
      *  //run at 8PM every night
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *             .map(this::processJob)
+     *             .transform(this::processJob)
      *             .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -534,7 +545,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * <pre>
      * {@code
      * 
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
      *                                          .schedule("0 20 * * *", Executors.newScheduledThreadPool(1));
      * 
      *  data.connect()
@@ -561,7 +572,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * {@code
      *  //run every 60 seconds after last job completes
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *             .map(this::processJob)
+     *             .transform(this::processJob)
      *             .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -570,7 +581,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * 
      * <pre>
      * {@code
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
      *                                          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
      * 
      *  data.connect().forEach(this::logToDB);
@@ -596,7 +607,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * {@code
      *  //run every 60 seconds
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *            .map(this::processJob)
+     *            .transform(this::processJob)
      *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -606,7 +617,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * <pre>
      * {@code
      * 
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
      *                                          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
      * 
      *  data.connect()

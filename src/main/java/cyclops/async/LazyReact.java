@@ -51,8 +51,8 @@ import lombok.experimental.Wither;
  *<pre>
  *{@code 
  * new LazyReact(Executors.newFixedThreadPool(4)).of(6,5,2,1)
-                                                      .map(this::loadData)
-                                                      .map(e->e*100)
+                                                      .transform(this::loadData)
+                                                      .transform(e->e*100)
                                                       .filter(e->e<551)
                                                       .peek(e->{
                                                           System.out.println("e is " + e 
@@ -106,7 +106,7 @@ public class LazyReact implements ReactBuilder {
         LazyReact builder = new LazyReact().autoMemoizeOn((key,fn)-> cache.computeIfAbsent(key,fn));
         Set<Integer> result = builder.of(1,1,1,1)
                                      .capture(e->e.printStackTrace())
-                                     .map(i->calc(i))
+                                     .transform(i->calc(i))
                                      .peek(System.out::println)
                                      .toSet();
      * 
@@ -255,7 +255,7 @@ public class LazyReact implements ReactBuilder {
      *	@param s Stream to copy
      *	@param org ignored for LazyFutureStreams
      *	@return
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#construct(java.util.reactiveStream.Stream, java.util.List)
+     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
      */
     public <U> FutureStream<U> construct(final Stream<U> s) {
 
@@ -284,7 +284,7 @@ public class LazyReact implements ReactBuilder {
      *  return new LazyReact()
     					.objectPoolingOn()
     					.range(0,5_000_000_000)
-    					.map(this::process)
+    					.transform(this::process)
     					.forEach(System.out::println);
        }
        </pre>
@@ -303,7 +303,7 @@ public class LazyReact implements ReactBuilder {
      *  
      *    react.objectPoolingOff()
     					.range(0,5_000)
-    					.map(this::process)
+    					.transform(this::process)
     					.forEach(System.out::println);
      * }
      * </pre>
@@ -327,8 +327,8 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      * new LazyReact().autoOptimizeOn()
      *                  .range(0, 1_000_000)
-    					.map(i->i+2)
-    					.map(i->Thread.currentThread().getId())
+    					.transform(i->i+2)
+    					.transform(i->Thread.currentThread().getId())
     					.peek(System.out::println)
     					.runOnCurrent();
      * }
@@ -349,8 +349,8 @@ public class LazyReact implements ReactBuilder {
      *  
      *    react.autoOptimizeOff()
     				    .range(0, 1_000_000)
-    					.map(i->i+2)
-    					.map(i->Thread.currentThread().getId())
+    					.transform(i->i+2)
+    					.transform(i->Thread.currentThread().getId())
     					.peek(System.out::println)
     					.runOnCurrent();
      * }
@@ -467,7 +467,7 @@ public class LazyReact implements ReactBuilder {
      * 
      *	@param reactiveStream Stream that serves as input to FutureStream
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStream(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStream(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStreamFutures(final Stream<CompletableFuture<U>> stream) {
 
@@ -483,9 +483,9 @@ public class LazyReact implements ReactBuilder {
      *  LazyReact.parallelCommonBuilder()
      *           .ofAsync(() -> loadFromDb(),() -> loadFromService1(),
                                                         () -> loadFromService2())
-                 .map(this::convertToStandardFormat)
+                 .transform(this::convertToStandardFormat)
                  .peek(System.out::println)
-                 .map(this::saveData)
+                 .transform(this::saveData)
                  .block();
      * 
      * }
@@ -509,8 +509,8 @@ public class LazyReact implements ReactBuilder {
      * <pre>
      * {@code 
      * new LazyReact(100,110).fromStream(Files.walk(Paths.get(".")))
-                             .map(d->{ throw new RuntimeException("hello");})
-                             .map(Object::toString)
+                             .transform(d->{ throw new RuntimeException("hello");})
+                             .transform(Object::toString)
                              .recover(e->"hello world")
                              .forEach(System.out::println);
      * 
@@ -520,7 +520,7 @@ public class LazyReact implements ReactBuilder {
      * 
      *	@param reactiveStream Stream that serves as input to FutureStream
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStreamWithoutFutures(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStream(final Stream<U> stream) {
 
@@ -538,7 +538,7 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      *   LazyReact.parallelBuilder()
      *            .react(asList(this::load)
-                  .map(list -> 1 + 2)
+                  .transform(list -> 1 + 2)
                   .block();
      * 
      * }
@@ -630,14 +630,14 @@ public class LazyReact implements ReactBuilder {
      * Stream<Supplier<Data>> reactiveStream = Stream.of(this::load1,this::looad2,this::load3);
      * 
      * LazyReact().fromStreamAsync(reactiveStream)
-     *            .map(this::process)
+     *            .transform(this::process)
      *            .forEach(this::save)
      * }
      * </pre>
      * 
      *	@param actions Stream to react to
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStreamAsync(final Stream<? extends Supplier<U>> actions) {
 
@@ -653,7 +653,7 @@ public class LazyReact implements ReactBuilder {
      *  List<Supplier<Data>> list = Arrays.asList(this::load1,this::looad2,this::load3);
      * 
      * LazyReact().fromIteratorAsync(list.iterator())
-     *            .map(this::process)
+     *            .transform(this::process)
      *            .forEach(this::save)
      *
      * 
@@ -683,7 +683,7 @@ public class LazyReact implements ReactBuilder {
      *  List<Supplier<Data>> list = Arrays.asList(this::load1,this::looad2,this::load3);
      * 
      * LazyReact().fromIterableAsync(list)
-     *            .map(this::process)
+     *            .transform(this::process)
      *            .forEach(this::save)
      *
      * 
@@ -791,7 +791,7 @@ public class LazyReact implements ReactBuilder {
      *  new LazyReact().objectPoolingOn()
                        .iterate(1,i->i+1)
                        .limit(1_000_000)
-                       .map(this::process)
+                       .transform(this::process)
                        .forEach(this::save);
      * 
      * }
@@ -904,7 +904,7 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      *  Iterator<Integer> iterator;
      *  new LazyReact(10,10).from(iterator)
-     *                       .map(this::process);
+     *                       .transform(this::process);
      * 
      * }
      * </pre>
@@ -925,7 +925,7 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      * 
      *  new LazyReact(10,10).from(myList)
-     *                       .map(this::process);
+     *                       .transform(this::process);
      * 
      * }
      * </pre>
@@ -978,7 +978,7 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      * 
      *  new LazyReact(10,10).of(1,2,3,4)
-     *                      .map(this::process);
+     *                      .transform(this::process);
      * 
      * }
      * </pre>

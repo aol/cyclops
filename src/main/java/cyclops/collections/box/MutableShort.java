@@ -99,7 +99,7 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
@@ -128,7 +128,7 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);

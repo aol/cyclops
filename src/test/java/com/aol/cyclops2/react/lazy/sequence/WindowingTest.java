@@ -159,7 +159,7 @@ public class WindowingTest {
 	@Test
 	public void groupedShorter() throws Exception {
 		
-		assertThat(of(5, 7, 9).grouped(4).elementAt(0).v1,equalTo(Arrays.asList(5,7,9)));
+		assertThat(of(5, 7, 9).grouped(4).elementAt(0)._1(),equalTo(Arrays.asList(5,7,9)));
 		assertThat(of(5, 7, 9).grouped(4).count(),equalTo(1l));
 
 		
@@ -168,14 +168,14 @@ public class WindowingTest {
 	@Test
 	public void groupedEqualSize() throws Exception {
 		
-		assertThat(of(5, 7, 9).grouped(3).elementAt(0).v1,equalTo(Arrays.asList(5,7,9)));
+		assertThat(of(5, 7, 9).grouped(3).elementAt(0)._1(),equalTo(Arrays.asList(5,7,9)));
 		assertThat(of(5, 7, 9).grouped(3).count(),equalTo(1l));
 	}
 
 	@Test
 	public void multipleGrouped() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9,10));
-		assertThat(of(5, 7, 9,10).grouped(3).elementAt(0).v1,equalTo(Arrays.asList(5,7,9)));
+		assertThat(of(5, 7, 9,10).grouped(3).elementAt(0)._1(),equalTo(Arrays.asList(5,7,9)));
 		assertThat(of(5, 7, 9,10).grouped(3).count(),equalTo(2l));
 		
 	}

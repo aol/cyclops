@@ -24,9 +24,9 @@ import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 /**
- * A right biased Lazy Either3 type. map / flatMap operators are tail-call optimized
+ * A right biased Lazy Either3 type. transform / flatMap operators are tail-call optimized
  * 
  * Can be one of 3 types
  * 
@@ -79,7 +79,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
      *      ___Example 1___
      *
      *      CompletableEither<Integer,Integer> completable = Either3.either3();
-            Either3<Throwable,String,Integer> mapped = completable.map(i->i*2)
+            Either3<Throwable,String,Integer> mapped = completable.transform(i->i*2)
                                                                   .flatMap(i->Eval.later(()->i+1));
 
             completable.complete(5);
@@ -90,7 +90,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
             ___Example 2___
 
             CompletableEither<Integer,Integer> completable = Either3.either3();
-            Either3<Throwable,String,Integer> mapped = completable.map(i->i*2)
+            Either3<Throwable,String,Integer> mapped = completable.transform(i->i*2)
                                                                   .flatMap(i->Eval.later(()->i+1));
 
 
@@ -101,7 +101,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
             ___Example 3___
 
             CompletableEither<Integer,Integer> completable = Either3.either3();
-            Either3<Throwable,String,Integer> mapped = completable.map(i->i*2)
+            Either3<Throwable,String,Integer> mapped = completable.transform(i->i*2)
                                                                  .flatMap(i->Eval.later(()->i+1));
 
             completable.complete(new IllegalStateException());
@@ -684,7 +684,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Functor#map(java.util.function.Function)
+     * @see com.aol.cyclops2.types.Functor#transform(java.util.function.Function)
      */
     @Override
     <R> Either3<LT1, LT2, R> map(Function<? super RT, ? extends R> fn);
@@ -720,7 +720,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -733,7 +733,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Either3<LT1, LT2, Tuple2<RT, U>> zipS(final Stream<? extends U> other) {

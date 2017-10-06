@@ -7,12 +7,12 @@ import cyclops.monads.Witness;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.Traverse;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Optional;
 import java.util.function.Function;
 
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 
 
 public interface Unfoldable<W> {
@@ -39,7 +39,7 @@ public interface Unfoldable<W> {
         @Override
         public <R, T> Higher<W, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
             Optional<Tuple2<R, T>> x = fn.apply(b);
-            R r = x.map(t -> t.v1).orElse(null);
+            R r = x.map(t -> t._1()).orElse(null);
            return pure.<R>unit(r);
         }
     }

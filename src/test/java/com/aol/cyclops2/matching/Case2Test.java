@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 
 import com.aol.cyclops2.matching.Case.Case2;
 
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 
 public class Case2Test {

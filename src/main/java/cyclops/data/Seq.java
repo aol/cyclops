@@ -19,8 +19,8 @@ import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -105,7 +105,7 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     static <T, U> Tuple2<Seq<T>, Seq<U>> unzip(final LazySeq<Tuple2<T, U>> sequence) {
-        return ReactiveSeq.unzip(sequence.stream()).map((a, b)->Tuple.tuple(fromStream(a),fromStream(b)));
+        return ReactiveSeq.unzip(sequence.stream()).transform((a, b)->Tuple.tuple(fromStream(a),fromStream(b)));
     }
     static <T> Seq<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s));

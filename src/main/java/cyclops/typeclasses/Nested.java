@@ -36,8 +36,8 @@ import cyclops.typeclasses.transformers.TransformerFactory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +49,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 
 /**
  * Class for working with Nested Data Structures.
@@ -70,7 +70,7 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
  * <pre>
  *     {@code
  *     Nested<list,optional,Integer> listOfOptionalInt;  //Nested[List[Optional[2]]]
- *     Nested<list,optional,Integer> doubled = listOfOptionalInt.map(i->i*2);
+ *     Nested<list,optional,Integer> doubled = listOfOptionalInt.transform(i->i*2);
  *      //Nested[List[Optional[4]]]
  *     }
  *

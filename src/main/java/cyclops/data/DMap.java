@@ -8,7 +8,7 @@ import cyclops.control.lazy.Either4;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -128,12 +128,12 @@ public interface DMap{
 
         @Override
         public Two<K1, V1, K2, V2> put1(Tuple2<K1, V1> keyAndValue) {
-            return put1(keyAndValue.v1,keyAndValue.v2);
+            return put1(keyAndValue._1(),keyAndValue._2());
         }
 
         @Override
         public Two<K1, V1, K2, V2> put2(Tuple2<K2, V2> keyAndValue) {
-            return put2(keyAndValue.v1,keyAndValue.v2);
+            return put2(keyAndValue._1(),keyAndValue._2());
         }
 
         @Override
@@ -180,8 +180,8 @@ public interface DMap{
         }
         @Override
         public ReactiveSeq<Either<K1, K2>> streamKeys() {
-            ReactiveSeq<Either<K1, K2>> x = map1.stream().map(t->t.v1).map(Either::left);
-            return x.mergeP(map2.stream().map(t->t.v1).map(Either::right));
+            ReactiveSeq<Either<K1, K2>> x = map1.stream().map(t->t._1()).map(Either::left);
+            return x.mergeP(map2.stream().map(t->t._1()).map(Either::right));
         }
 
         @Override
@@ -201,8 +201,8 @@ public interface DMap{
 
         @Override
         public ReactiveSeq<Either<V1, V2>> streamValues() {
-            ReactiveSeq<Either<V1, V2>> x = map1.stream().map(t->t.v2).map(Either::left);
-            return x.mergeP(map2.stream().map(t->t.v2).map(Either::right));
+            ReactiveSeq<Either<V1, V2>> x = map1.stream().map(t->t._2()).map(Either::left);
+            return x.mergeP(map2.stream().map(t->t._2()).map(Either::right));
         }
 
     }
@@ -256,17 +256,17 @@ public interface DMap{
 
         @Override
         public Three<K1, V1, K2, V2, K3, V3> put1(Tuple2<K1, V1> keyAndValue) {
-            return put1(keyAndValue.v1,keyAndValue.v2);
+            return put1(keyAndValue._1(),keyAndValue._2());
         }
 
         @Override
         public Three<K1, V1, K2, V2, K3, V3> put2(Tuple2<K2, V2> keyAndValue) {
-            return put2(keyAndValue.v1,keyAndValue.v2);
+            return put2(keyAndValue._1(),keyAndValue._2());
         }
 
         @Override
         public Three<K1, V1, K2, V2, K3, V3> put3(Tuple2<K3, V3> keyAndValue) {
-            return put3(keyAndValue.v1,keyAndValue.v2);
+            return put3(keyAndValue._1(),keyAndValue._2());
         }
 
         @Override
@@ -325,13 +325,13 @@ public interface DMap{
         }
         @Override
         public ReactiveSeq<Either3<K1, K2, K3>> streamKeys() {
-            ReactiveSeq<Either3<K1, K2, K3>> x = map1.stream().map(t->t.v1).map(Either3::left1);
-            return x.mergeP(map2.stream().map(t->t.v1).map(Either3::left2), map3.stream().map(t->t.v1).map(Either3::right));
+            ReactiveSeq<Either3<K1, K2, K3>> x = map1.stream().map(t->t._1()).map(Either3::left1);
+            return x.mergeP(map2.stream().map(t->t._1()).map(Either3::left2), map3.stream().map(t->t._1()).map(Either3::right));
         }
         @Override
         public ReactiveSeq<Either3<V1, V2, V3>> streamValues() {
-            ReactiveSeq<Either3<V1, V2, V3>> x = map1.stream().map(t->t.v2).map(Either3::left1);
-            return x.mergeP(map2.stream().map(t->t.v2).map(Either3::left2), map3.stream().map(t->t.v2).map(Either3::right));
+            ReactiveSeq<Either3<V1, V2, V3>> x = map1.stream().map(t->t._2()).map(Either3::left1);
+            return x.mergeP(map2.stream().map(t->t._2()).map(Either3::left2), map3.stream().map(t->t._2()).map(Either3::right));
         }
 
         @Override

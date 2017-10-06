@@ -37,9 +37,9 @@ import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import lombok.experimental.UtilityClass;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
@@ -504,7 +504,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * {@code 
      *   
      *     LinkedListX.of(1,2,3)
-     *          .map(i->i*2)
+     *          .transform(i->i*2)
      *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *     //LinkedListX[12]
@@ -618,7 +618,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#map(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#transform(java.util.function.Function)
      */
     @Override
     default <R> LinkedListX<R> map(final Function<? super T, ? extends R> mapper) {
@@ -777,15 +777,6 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         return (LinkedListX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
-    @Override
-    default <K, A, D> LinkedListX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
-        return (LinkedListX) LazyCollectionX.super.grouped(classifier, downstream);
-    }
-
-    @Override
-    default <K> LinkedListX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return (LinkedListX) LazyCollectionX.super.grouped(classifier);
-    }
 
     @Override
     default <U> LinkedListX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -905,7 +896,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zipStream(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zipStream(java.util.stream.Stream)
      */
     @Override
     default <U> LinkedListX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -916,7 +907,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> LinkedListX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -925,7 +916,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> LinkedListX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -1116,7 +1107,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
     default LinkedListX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1152,7 +1143,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
     default LinkedListX<T> retainAllS(final Stream<? extends T> seq) {
@@ -1423,7 +1414,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *
          * <pre>
          * {@code
-         *  LinkedListX<Integer> list = PStacks.functor().map(i->i*2, LinkedListX.widen(Arrays.asPStack(1,2,3));
+         *  LinkedListX<Integer> list = PStacks.functor().transform(i->i*2, LinkedListX.widen(Arrays.asPStack(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -1436,7 +1427,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * {@code
          *   LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
-        .applyHKT(h->PStacks.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->PStacks.functor().transform((String v) ->v.length(), h))
         .convert(LinkedListX::narrowK3);
          *
          * }
@@ -1492,7 +1483,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
         LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
-        .applyHKT(h->PStacks.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->PStacks.functor().transform((String v) ->v.length(), h))
         .applyHKT(h->PStacks.zippingApplicative().ap(listFn, h))
         .convert(LinkedListX::narrowK3);
 

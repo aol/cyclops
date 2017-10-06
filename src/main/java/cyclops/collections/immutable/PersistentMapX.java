@@ -17,8 +17,8 @@ import com.aol.cyclops2.types.functor.BiTransformable;
 import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableFilterable;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
 import org.reactivestreams.Publisher;
@@ -54,7 +54,7 @@ public interface PersistentMapX<K, V>
     }
 
     default PersistentMapX<K, V> fromStream(final ReactiveSeq<Tuple2<K, V>> stream) {
-        return stream.to().persistentMapX(k -> k.v1, v -> v.v2);
+        return stream.to().persistentMapX(k -> k._1(), v -> v._2());
     }
 
     @Override
@@ -102,12 +102,12 @@ public interface PersistentMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#map(java.util.function.Function)
+     * @see com.aol.cyclops2.lambda.monads.Transformable#transform(java.util.function.Function)
      */
     @Override
     default <R> PersistentMapX<K, R> map(final Function<? super V, ? extends R> fn) {
         return stream().map(t -> t.map2(v -> fn.apply(v))).to()
-                       .persistentMapX(t -> t.v1, t -> t.v2);
+                       .persistentMapX(t -> t._1(), t -> t._2());
     }
 
     /* (non-Javadoc)
@@ -118,7 +118,7 @@ public interface PersistentMapX<K, V>
 
         return stream().map(t -> t.map2(v -> fn2.apply(v))
                                   .map1(k -> fn1.apply(k))).to()
-                .persistentMapX(t -> t.v1, t -> t.v2);
+                .persistentMapX(t -> t._1(), t -> t._2());
     }
 
     /* (non-Javadoc)
@@ -182,7 +182,7 @@ public interface PersistentMapX<K, V>
     @Override
     default PersistentMapX<K, V> filter(final Predicate<? super Tuple2<K, V>> fn) {
         return stream().filter(fn).to()
-                .persistentMapX(t -> t.v1, t -> t.v2);
+                .persistentMapX(t -> t._1(), t -> t._2());
     }
 
     /* (non-Javadoc)
@@ -204,7 +204,7 @@ public interface PersistentMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.util.stream.Stream)
      */
     @Override
     default PersistentMapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -240,7 +240,7 @@ public interface PersistentMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.util.stream.Stream)
      */
     @Override
     default PersistentMapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {

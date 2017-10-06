@@ -21,7 +21,7 @@ import cyclops.collections.mutable.ListX;
 import cyclops.function.FluentFunctions;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,10 +52,10 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     @Test
     public void combinations2NoOrder2() {
 
-        //ListX.of(1, 2, 3).combinations(2).map(t->t.toListX()).printOut();
+        //ListX.of(1, 2, 3).combinations(2).transform(t->t.toListX()).printOut();
         CollectionX<ListX<Integer>> st = of(1, 2, 3).combinations(2).map(s -> s.toListX());
         st.toListX().printOut();
-       // assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX().get(0).size(),
+       // assertThat(of(1, 2, 3).combinations(2).transform(s->s.toListX()).toListX().get(0).size(),
         //        equalTo(2));
     }
     @Test
@@ -92,7 +92,7 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     }
 
     private Integer logAndUnwrap(Tuple2<Integer, Long> t) {
-        return t.v1;
+        return t._1();
     }
 
 

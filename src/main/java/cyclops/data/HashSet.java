@@ -95,7 +95,7 @@ public class HashSet<T> implements  ImmutableSet<T>{
 
     @Override
     public ReactiveSeq<T> stream() {
-        return map.stream().map(t->t.v1);
+        return map.stream().map(t->t._1());
     }
 
     @Override

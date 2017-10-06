@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import cyclops.async.Future;
 
+import cyclops.control.Option;
 import cyclops.function.Fn0;
 import cyclops.stream.ReactiveSeq;
 import lombok.Value;
@@ -56,7 +57,6 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
      */
     @Override
     default <R> R visit(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {
-
         if (isPresent()) {
             try {
                 final T value = get();
@@ -131,6 +131,10 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
 
         return visit(p -> Optional.ofNullable(p), () -> Optional.empty());
     }
+    default Option<T> toOption() {
+        return visit(p -> Option.ofNullable(p), () -> Option.none());
+
+    }
 
     /**
      * @return Stream containing value returned by get(), Empty Stream if null
@@ -159,6 +163,7 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
      * @throws X Exception type returned by provided Supplier
      */
     default <X extends Throwable> T orElseThrow(final Supplier<? extends X> ex) throws X {
+
         return toOptional().orElseThrow(ex);
     }
 

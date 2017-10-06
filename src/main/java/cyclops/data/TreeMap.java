@@ -5,8 +5,8 @@ import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -33,7 +33,7 @@ public class TreeMap<K,V> implements ImmutableMap<K,V> {
     }
 
     public static <K,V> TreeMap<K,V> fromStream(ReactiveSeq<Tuple2<K,V>> stream, Comparator<K> comp){
-        return stream.foldLeft(empty(comp),(m,t2)->m.put(t2.v1,t2.v2));
+        return stream.foldLeft(empty(comp),(m,t2)->m.put(t2._1(),t2._2()));
     }
     @Override
     public <R> TreeMap<K, R> mapValues(Function<? super V, ? extends R> map) {
@@ -56,17 +56,17 @@ public class TreeMap<K,V> implements ImmutableMap<K,V> {
 
     @Override
     public <R1, R2> TreeMap<R1, R2> bimap(BiFunction<? super K, ? super V, ? extends Tuple2<R1, R2>> map) {
-        return fromStream(stream().map(t->t.map(map)), cyclops.data.Comparators.naturalOrderIdentityComparator());
+        return fromStream(stream().map(t->t.transform(map)), cyclops.data.Comparators.naturalOrderIdentityComparator());
     }
 
     @Override
     public <K2, V2> TreeMap<K2, V2> flatMap(BiFunction<? super K, ? super V, ? extends ImmutableMap<K2, V2>> mapper) {
-        return fromStream(stream().flatMapI(t->t.map(mapper)), cyclops.data.Comparators.naturalOrderIdentityComparator());
+        return fromStream(stream().flatMapI(t->t.transform(mapper)), cyclops.data.Comparators.naturalOrderIdentityComparator());
     }
 
     @Override
     public <K2, V2> TreeMap<K2, V2> flatMapI(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper) {
-        return fromStream(stream().flatMapI(t->t.map(mapper)), cyclops.data.Comparators.naturalOrderIdentityComparator());
+        return fromStream(stream().flatMapI(t->t.transform(mapper)), cyclops.data.Comparators.naturalOrderIdentityComparator());
     }
 
 
@@ -85,17 +85,17 @@ public class TreeMap<K,V> implements ImmutableMap<K,V> {
 
 
     public <R1, R2> TreeMap<R1, R2> bimap(BiFunction<? super K, ? super V, ? extends Tuple2<R1, R2>> map, Comparator<R1> comp) {
-        return fromStream(stream().map(t->t.map(map)),comp);
+        return fromStream(stream().map(t->t.transform(map)),comp);
     }
 
 
     public <K2, V2> TreeMap<K2, V2> flatMap(BiFunction<? super K, ? super V, ? extends ImmutableMap<K2, V2>> mapper,Comparator<K2> comp) {
-        return fromStream(stream().flatMapI(t->t.map(mapper)),comp);
+        return fromStream(stream().flatMapI(t->t.transform(mapper)),comp);
     }
 
 
     public <K2, V2> TreeMap<K2, V2> flatMapI(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper,Comparator<K2> comp) {
-        return fromStream(stream().flatMapI(t->t.map(mapper)),comp);
+        return fromStream(stream().flatMapI(t->t.transform(mapper)),comp);
     }
     @Override
     public TreeMap<K, V> filter(Predicate<? super Tuple2<K, V>> predicate) {
@@ -104,27 +104,27 @@ public class TreeMap<K,V> implements ImmutableMap<K,V> {
 
     @Override
     public TreeMap<K, V> filterKeys(Predicate<? super K> predicate) {
-        return fromStream(stream().filter(t->predicate.test(t.v1)),comp);
+        return fromStream(stream().filter(t->predicate.test(t._1())),comp);
     }
 
     @Override
     public TreeMap<K, V> filterValues(Predicate<? super V> predicate) {
-        return fromStream(stream().filter(t->predicate.test(t.v2)),comp);
+        return fromStream(stream().filter(t->predicate.test(t._2())),comp);
     }
 
 
     @Override
     public <R> TreeMap<K, R> map(Function<? super V, ? extends R> fn) {
-        return fromStream(stream().map(t-> Tuple.tuple(t.v1,fn.apply(t.v2))),comp);
+        return fromStream(stream().map(t-> Tuple.tuple(t._1(),fn.apply(t._2()))),comp);
     }
 
     @Override
     public <R1, R2> TreeMap<R1, R2> bimap(Function<? super K, ? extends R1> fn1, Function<? super V, ? extends R2> fn2) {
-        return fromStream(stream().map(t-> Tuple.tuple(fn1.apply(t.v1),fn2.apply(t.v2))), cyclops.data.Comparators.naturalOrderIdentityComparator());
+        return fromStream(stream().map(t-> Tuple.tuple(fn1.apply(t._1()),fn2.apply(t._2()))), cyclops.data.Comparators.naturalOrderIdentityComparator());
     }
 
     public <R1, R2> TreeMap<R1, R2> bimap(Function<? super K, ? extends R1> fn1, Function<? super V, ? extends R2> fn2,Comparator<K> comp) {
-        return fromStream(stream().map(t-> Tuple.tuple(fn1.apply(t.v1),fn2.apply(t.v2))), cyclops.data.Comparators.naturalOrderIdentityComparator());
+        return fromStream(stream().map(t-> Tuple.tuple(fn1.apply(t._1()),fn2.apply(t._2()))), cyclops.data.Comparators.naturalOrderIdentityComparator());
     }
 
     public static <K,V> TreeMap<K,V> fromMap(Comparator<K> comp, Map<K,V> map){
@@ -133,14 +133,14 @@ public class TreeMap<K,V> implements ImmutableMap<K,V> {
     }
 
     public <KR,VR> TreeMap<KR,VR> bimap(Comparator<KR> comp, Function<? super K, ? extends KR> keyMapper, Function<? super V, ? extends VR> valueMapper){
-        ReactiveSeq<? extends Tuple2<? extends KR, ? extends VR>> s = map.stream().map(t -> t.map((k, v) -> Tuple.tuple(keyMapper.apply(k), valueMapper.apply(v))));
+        ReactiveSeq<? extends Tuple2<? extends KR, ? extends VR>> s = map.stream().map(t -> t.transform((k, v) -> Tuple.tuple(keyMapper.apply(k), valueMapper.apply(v))));
         return new TreeMap<>(RedBlackTree.fromStream(comp,s),comp);
     }
 
 
     @Override
     public PersistentMapX<K, V> persistentMapX() {
-        return stream().to().persistentMapX(t->t.v1,t->t.v2);
+        return stream().to().persistentMapX(t->t._1(),t->t._2());
     }
 
     @Override
@@ -150,12 +150,12 @@ public class TreeMap<K,V> implements ImmutableMap<K,V> {
 
     @Override
     public TreeMap<K, V> put(Tuple2<K, V> keyAndValue) {
-        return new TreeMap<K, V>(map.plus(keyAndValue.v1, keyAndValue.v2), comp);
+        return new TreeMap<K, V>(map.plus(keyAndValue._1(), keyAndValue._2()), comp);
     }
 
     @Override
     public TreeMap<K, V> putAll(ImmutableMap<K, V> map) {
-        return map.stream().foldLeft(this,(m,next)->m.put(next.v1,next.v2));
+        return map.stream().foldLeft(this,(m,next)->m.put(next._1(),next._2()));
     }
 
     @Override
@@ -179,7 +179,7 @@ public class TreeMap<K,V> implements ImmutableMap<K,V> {
 
     @Override
     public boolean contains(Tuple2<K, V> t) {
-        return get(t.v1).filter(v-> Objects.equals(v,t.v2)).isPresent();
+        return get(t._1()).filter(v-> Objects.equals(v,t._2())).isPresent();
     }
 
     public Maybe<V> get(K key){

@@ -30,10 +30,10 @@ import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
@@ -79,7 +79,7 @@ import java.util.stream.Stream;
  *  Instantiating an Xor - Primary
  *  <pre>
  *  {@code
- *      Xor.primary("hello").map(v->v+" world")
+ *      Xor.primary("hello").transform(v->v+" world")
  *    //Xor.primary["hello world"]
  *  }
  *  </pre>
@@ -87,12 +87,12 @@ import java.util.stream.Stream;
  *  Instantiating an Xor - Secondary
  *  <pre>
  *  {@code
- *      Xor.secondary("hello").map(v->v+" world")
+ *      Xor.secondary("hello").transform(v->v+" world")
  *    //Xor.seconary["hello"]
  *  }
  *  </pre>
  *
- *  Xor can operate (via map/flatMap) as a Functor / Monad and via combine as an ApplicativeFunctor
+ *  Xor can operate (via transform/flatMap) as a Functor / Monad and via combine as an ApplicativeFunctor
  *
  *   Values can be accumulated via
  *  <pre>
@@ -126,6 +126,44 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                                      BiTransformable<ST,PT>,
                                      Higher2<xor,ST,PT> {
 
+    /**
+    default Xor<NonEmptyList<ST>, PT> nel() {
+        return visit(s->Xor.secondary(NonEmptyList.of(s)),p->Xor.primary(p));
+    }
+     **/
+    default Xor<ST,PT> accumulate(Xor<ST,PT> next,Semigroup<PT> sg){
+        return flatMap(s1->next.map(s2->sg.apply(s1,s2)));
+    }
+    default Xor<ST,PT> accumulatePrimary(Semigroup<PT> sg, Xor<ST,PT>... values){
+        Xor<ST,PT> acc= this;
+        for(Xor<ST,PT> next : values){
+            acc = acc.accumulatePrimary(sg,next);
+        }
+        return acc;
+    }
+    default Xor<ST,PT> accumulate(Semigroup<ST> sg, Xor<ST,PT> next){
+        return secondaryFlatMap(s1->next.secondaryMap(s2->sg.apply(s1,s2)));
+    }
+    default Xor<ST,PT> accumulate(Semigroup<ST> sg, Xor<ST,PT>... values){
+        Xor<ST,PT> acc= this;
+        for(Xor<ST,PT> next : values){
+            acc = acc.accumulate(sg,next);
+        }
+        return acc;
+    }
+
+    public static  <L,T,R> Xor<L,R> tailRec(T initial, Function<? super T, ? extends Xor<L,? extends Xor<T, R>>> fn){
+        Xor<L,? extends Xor<T, R>> next[] = new Xor[1];
+        next[0] = Xor.primary(Xor.secondary(initial));
+        boolean cont = true;
+        do {
+            cont = next[0].visit(p -> p.visit(s -> {
+                next[0] = narrowK(fn.apply(s));
+                return true;
+            }, pr -> false), () -> false);
+        } while (cont);
+        return next[0].map(Xor::get);
+    }
     public static  <L,T> Kleisli<Higher<xor,L>,Xor<L,T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), Xor::widen);
     }
@@ -247,10 +285,10 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      *
      * <pre>
      * {@code
-     *   Xor.<Integer,Integer>secondary(10).map(i->i+1);
+     *   Xor.<Integer,Integer>secondary(10).transform(i->i+1);
      *   //Xor.secondary[10]
      *
-     *    Xor.<Integer,Integer>secondary(10).swap().map(i->i+1);
+     *    Xor.<Integer,Integer>secondary(10).swap().transform(i->i+1);
      *    //Xor.primary[11]
      * }
      * </pre>
@@ -266,11 +304,11 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
     /**
      * Create an instance of the primary type. Most methods are biased to the primary type,
-     * which means, for example, that the map method operates on the primary type but does nothing on secondary Xors
+     * which means, for example, that the transform method operates on the primary type but does nothing on secondary Xors
      *
      * <pre>
      * {@code
-     *   Xor.<Integer,Integer>primary(10).map(i->i+1);
+     *   Xor.<Integer,Integer>primary(10).transform(i->i+1);
      *   //Xor.primary[11]
      *
      *
@@ -494,16 +532,16 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     Xor<ST, PT> filter(Predicate<? super PT> test);
 
     /**
-     * If this Xor contains the Secondary type, map it's value so that it contains the Primary type
+     * If this Xor contains the Secondary type, transform it's value so that it contains the Primary type
      *
      *
-     * @param fn Function to map secondary type to primary
+     * @param fn Function to transform secondary type to primary
      * @return Xor with secondary type mapped to primary
      */
     Xor<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn);
 
     /**
-     * Always map the Secondary type of this Xor if it is present using the provided transformation function
+     * Always transform the Secondary type of this Xor if it is present using the provided transformation function
      *
      * @param fn Transformation function for Secondary types
      * @return Xor with Secondary type transformed
@@ -511,7 +549,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     <R> Xor<R, PT> secondaryMap(Function<? super ST, ? extends R> fn);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#map(java.util.function.Function)
+     * @see com.aol.cyclops2.types.MonadicValue#transform(java.util.function.Function)
      */
     @Override
     <R> Xor<ST, R> map(Function<? super PT, ? extends R> fn);
@@ -536,12 +574,12 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
      *  {@code
      *
      *    Xor.secondary("hello")
-     *       .map(v->v+" world")
+     *       .transform(v->v+" world")
      *    //Xor.seconary["hello"]
      *
      *    Xor.secondary("hello")
      *       .swap()
-     *       .map(v->v+" world")
+     *       .transform(v->v+" world")
      *       .swap()
      *    //Xor.seconary["hello world"]
      *  }
@@ -964,7 +1002,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     default <T2, R> Xor<ST, R> zip(final Iterable<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                             .apply(v))).flatMap(tuple -> Xor.fromIterable(app)
-                                                                            .visit(i -> Xor.primary(tuple.v2.apply(i)), () -> Xor.secondary(null)));
+                                                                            .visit(i -> Xor.primary(tuple._2().apply(i)), () -> Xor.secondary(null)));
     }
 
     /* (non-Javadoc)
@@ -974,12 +1012,12 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     default <T2, R> Xor<ST, R> zipP( final Publisher<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                             .apply(v))).flatMap(tuple -> Xor.fromPublisher(app)
-                                                                            .visit(i -> Xor.primary(tuple.v2.apply(i)), () -> Xor.secondary(null)));
+                                                                            .visit(i -> Xor.primary(tuple._2().apply(i)), () -> Xor.secondary(null)));
     }
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Xor<ST, R> zipS(final Stream<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
@@ -988,7 +1026,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Xor<ST, Tuple2<PT, U>> zipS(final Stream<? extends U> other) {
@@ -1533,16 +1571,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
             return new MonadRec<Higher<xor, X>>(){
                 @Override
                 public <T, R> Higher<Higher<xor, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<xor, X>, ? extends Xor<T, R>>> fn) {
-                    Xor<X,? extends Xor<T, R>> next[] = new Xor[1];
-                    next[0] = Xor.primary(Xor.secondary(initial));
-                    boolean cont = true;
-                    do {
-                        cont = next[0].visit(p -> p.visit(s -> {
-                            next[0] = narrowK(fn.apply(s));
-                            return true;
-                        }, pr -> false), () -> false);
-                    } while (cont);
-                    return next[0].map(Xor::get);
+                    return Xor.tailRec(initial,fn.andThen(Xor::narrowK));
                 }
 
 

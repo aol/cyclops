@@ -41,9 +41,9 @@ import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.*;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
@@ -94,7 +94,7 @@ import org.reactivestreams.Subscription;
  * {@code
  *
  * Try.withCatch(()-> exceptional2())
-.map(i->i+" woo!")
+.transform(i->i+" woo!")
 .onFail(System.out::println)
 .orElse("public");
 
@@ -130,17 +130,17 @@ throw new IOException();
  *   Try.catchExceptions(FileNotFoundException.class,IOException.class)
 .init(()->new BufferedReader(new FileReader("file.txt")))
 .tryWithResources(this::read)
-.map(this::processData)
+.transform(this::processData)
 .recover(e->"public);
  *
  * }
  * </pre>
  *
- * By public Try does not catch exception within it's operators such as map / flatMap, to catch Exceptions in ongoing operations use @see {@link Try#of(Object, Class...)}
+ * By public Try does not catch exception within it's operators such as transform / flatMap, to catch Exceptions in ongoing operations use @see {@link Try#of(Object, Class...)}
  * <pre>
  * {@code
  *  Try.of(2, RuntimeException.class)
-.map(i->{throw new RuntimeException();});
+.transform(i->{throw new RuntimeException();});
 
 //Failure[RuntimeException]
  *
@@ -166,6 +166,18 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return xor;
     }
 
+    public static  <X extends Throwable,T,R> Try<R,X> tailRec(T initial, Function<? super T, ? extends Try<? extends Xor<T, R>,X>> fn){
+        Try<? extends Xor<T, R>,X> next[] = new Try[1];
+        next[0] = Try.success(Xor.secondary(initial));
+        boolean cont = true;
+        do {
+            cont = next[0].visit(p -> p.visit(s -> {
+                next[0] = fn.apply(s);
+                return true;
+            }, pr -> false), () -> false);
+        } while (cont);
+        return next[0].map(Xor::get);
+    }
     public static  <X extends Throwable,T> Kleisli<Higher<tryType,X>,Try<T,X>,T> kindKleisli(){
         return Kleisli.of(Try.Instances.monad(), Try::widen);
     }
@@ -934,7 +946,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * @param fn Recovery function - map from a failure to a Success.
+     * @param fn Recovery function - transform from a failure to a Success.
      * @return new Try
      */
     public Try<T, X> recover(Function<? super X, ? extends T> fn){
@@ -1280,7 +1292,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
          *		   .tryWithResources(this::read2);
          *
          * private String read2(Tuple2&lt;BufferedReader,FileReader&gt; res) throws IOException{
-         * String line = res.v1.readLine();
+         * String line = res._1.readLine();
          *
          * </pre>
          *
@@ -1415,7 +1427,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     public <U, R> Try<R, X> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -1424,7 +1436,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     public <U> Try<Tuple2<T, U>, X> zipS(final Stream<? extends U> other) {

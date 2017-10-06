@@ -19,9 +19,9 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Collection;
@@ -409,15 +409,6 @@ public interface ImmutableSet<T> extends Folds<T>,
         return unitStream(stream().grouped(groupSize));
     }
 
-    @Override
-    default <K, A, D> ImmutableSet<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
-        return unitStream(stream().grouped(classifier,downstream));
-    }
-
-    @Override
-    default <K> ImmutableSet<Tuple2<K, ReactiveSeq<T>>> grouped(Function<? super T, ? extends K> classifier) {
-        return unitStream(stream().grouped(classifier));
-    }
 
     @Override
     default ImmutableSet<T> distinct() {

@@ -12,9 +12,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 import org.jooq.lambda.fi.util.function.*;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -709,7 +709,7 @@ public class FluentFunctions {
         }
 
         /* (non-Javadoc)
-         * @see cyclops2.function.Reader#map(java.util.function.Function)
+         * @see cyclops2.function.Reader#transform(java.util.function.Function)
          */
         @Override
         public <R1> FluentFunction<T, R1> map(final Function<? super R, ? extends R1> f2) {
@@ -958,7 +958,7 @@ public class FluentFunctions {
 
         public FluentFunction<Optional<T>, Optional<R>> lift() {
             return new FluentFunction<>(
-                                        opt -> opt.map(t -> fn.applyHKT(t)));
+                                        opt -> opt.transform(t -> fn.applyHKT(t)));
         }*/
 
         /**
@@ -1312,7 +1312,7 @@ public class FluentFunctions {
         public ReactiveSeq<R> iterate(final T1 seed1, final T2 seed2, final Function<R, Tuple2<T1, T2>> mapToTypeAndSplit) {
             return ReactiveSeq.iterate(fn.apply(seed1, seed2), t -> {
                 final Tuple2<T1, T2> tuple = mapToTypeAndSplit.apply(t);
-                return fn.apply(tuple.v1, tuple.v2);
+                return fn.apply(tuple._1(), tuple._2());
             });
         }
 
@@ -1702,7 +1702,7 @@ public class FluentFunctions {
         public ReactiveSeq<R> iterate(final T1 seed1, final T2 seed2, final T3 seed3, final Function<R, Tuple3<T1, T2, T3>> mapToType) {
             return ReactiveSeq.iterate(fn.apply(seed1, seed2, seed3), t -> {
                 final Tuple3<T1, T2, T3> tuple = mapToType.apply(t);
-                return fn.apply(tuple.v1, tuple.v2, tuple.v3);
+                return fn.apply(tuple._1(), tuple._2(), tuple._3());
             });
         }
         /**

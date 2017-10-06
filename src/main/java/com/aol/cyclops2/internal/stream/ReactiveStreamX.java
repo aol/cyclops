@@ -26,10 +26,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -413,7 +413,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
-        /**  ReactiveSeq<Publisher<R>> local = map((Function)fn);
+        /**  ReactiveSeq<Publisher<R>> local = transform((Function)fn);
          return Spouts.lazyConcat(local);
          **/
         return flatMapP(1, fn);
@@ -637,7 +637,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     this.singleActiveRequest(n, x -> {
                         while (super.requested.get() > 0) {
                             long sent = 0;
-                            //System.out.println("Requesting " + x);
+
                             boolean completeSent = false;
                             active = true;
                             Object res = data.poll();
@@ -1230,18 +1230,18 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return new Tuple2(
-                Tuple2.v1.to().optional()
+                Tuple2._1().to().optional()
                         .flatMap(l -> {
                             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
                         }),
-                Tuple2.v2);
+                Tuple2._2());
     }
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitAt(final int where) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
         return new Tuple2(
-                Tuple2.v1.limit(where), Tuple2.v2.skip(where));
+                Tuple2._1().limit(where), Tuple2._2().skip(where));
 
 
     }
@@ -1250,14 +1250,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitBy(final Predicate<T> splitter) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
         return new Tuple2(
-                Tuple2.v1.limitWhile(splitter), Tuple2.v2.skipWhile(splitter));
+                Tuple2._1().limitWhile(splitter), Tuple2._2().skipWhile(splitter));
     }
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partition(final Predicate<? super T> splitter) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
         return new Tuple2(
-                Tuple2.v1.filter(splitter), Tuple2.v2.filter(splitter.negate()));
+                Tuple2._1().filter(splitter), Tuple2._2().filter(splitter.negate()));
 
     }
 
@@ -1283,13 +1283,13 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public <S, U> ReactiveSeq<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
-        return zip(second, Tuple::tuple).zip(third, (a, b) -> Tuple.tuple(a.v1, a.v2, b));
+        return zip(second, Tuple::tuple).zip(third, (a, b) -> Tuple.tuple(a._1(), a._2(), b));
     }
 
     @Override
     public <T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth) {
-        return zip(second, Tuple::tuple).zip(third, (a, b) -> Tuple.tuple(a.v1, a.v2, b))
-                .zip(fourth, (a, b) -> (Tuple4<T, T2, T3, T4>) Tuple.tuple(a.v1, a.v2, a.v3, b));
+        return zip(second, Tuple::tuple).zip(third, (a, b) -> Tuple.tuple(a._1(), a._2(), b))
+                .zip(fourth, (a, b) -> (Tuple4<T, T2, T3, T4>) Tuple.tuple(a._1(), a._2(), a._3(), b));
     }
 
     @Override

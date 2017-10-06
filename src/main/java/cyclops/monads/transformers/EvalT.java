@@ -11,10 +11,10 @@ import cyclops.function.Fn4;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
@@ -82,8 +82,8 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     @Override
     public EvalT<W,T> filter(final Predicate<? super T> test) {
         return of(run.map(f->f.map(in->Tuple.tuple(in,test.test(in))))
-                     .filter( f->f.get().v2 )
-                     .map( f->f.map(in->in.v1)));
+                     .filter( f->f.get()._2() )
+                     .map( f->f.map(in->in._1())));
     }
 
     /**
@@ -114,7 +114,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      * <pre>
      * {@code 
      *  EvalWT.of(AnyM.fromStream(Arrays.asEvalW(10))
-     *             .map(t->t=t+1);
+     *             .transform(t->t=t+1);
      *  
      *  
      *  //EvalWT<AnyMSeq<Stream<Eval[11]>>>
@@ -122,7 +122,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      * </pre>
      * 
      * @param f Mapping function for the wrapped Eval
-     * @return EvalWT that applies the map function to the wrapped Eval
+     * @return EvalWT that applies the transform function to the wrapped Eval
      */
     @Override
     public <B> EvalT<W,B> map(final Function<? super T, ? extends B> f) {
@@ -175,11 +175,11 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
-    	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.map(Eval::completedEval);
+    	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.transform(Eval::completedEval);
     	List<Integer> results = optTAdd2.applyHKT(EvalWT.of(streamOpt))
     									.unwrap()
     									.<Stream<Eval<Integer>>>unwrap()
-    									.map(Eval::join)
+    									.transform(Eval::join)
     									.collect(CyclopsCollectors.toList());
     	
     	
@@ -210,14 +210,14 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
-    	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.map(Eval::completedEval);
+    	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.transform(Eval::completedEval);
     	
     	Eval<Eval<Integer>> two = Eval.completedEval(Eval.completedEval(2));
     	AnyMSeq<Eval<Integer>> Eval=  AnyM.fromEvalW(two);
     	List<Integer> results = optTAdd2.applyHKT(EvalWT.of(streamOpt),EvalWT.of(Eval))
     									.unwrap()
     									.<Stream<Eval<Integer>>>unwrap()
-    									.map(Eval::join)
+    									.transform(Eval::join)
     									.collect(CyclopsCollectors.toList());
     									
     		//Eval.completedEval(List[3,4,5]);
@@ -355,7 +355,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.reactiveStream.Stream)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
      */
     @Override
     public <U> EvalT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {

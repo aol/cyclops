@@ -98,7 +98,7 @@ public class MutableFloat implements To<MutableFloat>,Supplier<Float>, Consumer<
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableFloat mutable = MutableFlaot.fromExternal(()->!this.value,val->!this.value);
@@ -127,7 +127,7 @@ public class MutableFloat implements To<MutableFloat>,Supplier<Float>, Consumer<
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableFloat mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);

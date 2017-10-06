@@ -5,8 +5,8 @@ import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -45,7 +45,7 @@ public class Tree<T> implements Deconstruct2<T,LazySeq<Tree<T>>> {
     }
     public static <T,R> Tree<T> unfold(Function<? super R,Tuple2<T,LazySeq<R>>> fn, R b) {
         Tuple2<T,LazySeq<R>> t2 = fn.apply(b);
-        return of(t2.v1, unfoldForest(fn, t2.v2));
+        return of(t2._1(), unfoldForest(fn, t2._2()));
     }
 
     private static <T,R> LazySeq<Tree<T>> unfoldForest(Function<? super R,Tuple2<T,LazySeq<R>>> fn, LazySeq<R> list) {

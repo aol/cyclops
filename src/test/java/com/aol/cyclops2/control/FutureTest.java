@@ -15,7 +15,7 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import lombok.val;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
+import cyclops.collections.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

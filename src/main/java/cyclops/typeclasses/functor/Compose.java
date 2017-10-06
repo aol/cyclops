@@ -12,8 +12,8 @@ import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.monad.Monad;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 /**
  * Compose two functors so operations are applied to the inner functor
@@ -26,7 +26,7 @@ import org.jooq.lambda.tuple.Tuple2;
  *    OptionalType<ListX<Integer>> nest;
  *    
  *    Compose.compose(Optionals.functor(),Lists.functor())
- *           .map(i->i*2,nest);
+ *           .transform(i->i*2,nest);
  *   
  * }
  * </pre>
@@ -46,7 +46,7 @@ public class Compose<CRE,C2>{
 
         return map(a -> {
 
-            R r = State.state((Long s) -> Tuple.tuple(s + 1, f.apply(a, s))).run(0l).v2;
+            R r = State.state((Long s) -> Tuple.tuple(s + 1, f.apply(a, s))).run(0l)._2();
             return r;
         } ,ds);
 

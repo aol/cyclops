@@ -3,7 +3,7 @@ package com.aol.cyclops2.streams;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.*;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -25,8 +25,8 @@ import cyclops.collections.mutable.SetX;
 import cyclops.control.Maybe;
 import cyclops.control.lazy.Either;
 import org.hamcrest.Matchers;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -174,7 +174,7 @@ public class BaseSequentialTest {
     public void duplicateDuplicate() {
         for (int k = 0; k < ITERATIONS; k++) {
             assertThat(of(1, 2, 3).duplicate()
-                    .v1.duplicate().v1.duplicate().v1.toListX(), equalTo(ListX.of(1, 2, 3)));
+                    ._1().duplicate()._1().duplicate()._1().toListX(), equalTo(ListX.of(1, 2, 3)));
         }
 
     }
@@ -183,39 +183,39 @@ public class BaseSequentialTest {
     public void duplicateDuplicateDuplicate() {
         for (int k = 0; k < ITERATIONS; k++) {
             assertThat(of(1, 2, 3).duplicate()
-                    .v1.duplicate().v1.duplicate().v1.duplicate().v1.toListX(), equalTo(ListX.of(1, 2, 3)));
+                    ._1().duplicate()._1().duplicate()._1().duplicate()._1().toListX(), equalTo(ListX.of(1, 2, 3)));
         }
 
     }
 
     @Test
     public void skipDuplicateSkip() {
-        assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
-        assertThat(of(1, 2, 3).duplicate().v2.skip(1).duplicate().v2.skip(1).toListX(), equalTo(ListX.of(3)));
+        assertThat(of(1, 2, 3).duplicate()._1().skip(1).duplicate()._1().skip(1).toListX(), equalTo(ListX.of(3)));
+        assertThat(of(1, 2, 3).duplicate()._2().skip(1).duplicate()._2().skip(1).toListX(), equalTo(ListX.of(3)));
     }
 
     @Test
     public void skipLimitDuplicateLimitSkip() {
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = of(1, 2, 3).triplicate();
-        Optional<Integer> head1 = dup.v1.limit(1).to().optional().flatMap(l -> {
+        Optional<Integer> head1 = dup._1().limit(1).to().optional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
-        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup2 = dup.v2.skip(1).triplicate();
-        Optional<Integer> head2 = dup2.v1.limit(1).to().optional().flatMap(l -> {
+        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup2 = dup._2().skip(1).triplicate();
+        Optional<Integer> head2 = dup2._1().limit(1).to().optional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
-        assertThat(dup2.v2.skip(1).toListX(), equalTo(ListX.of(3)));
+        assertThat(dup2._2().skip(1).toListX(), equalTo(ListX.of(3)));
 
-        assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
+        assertThat(of(1, 2, 3).duplicate()._1().skip(1).duplicate()._1().skip(1).toListX(), equalTo(ListX.of(3)));
     }
 
 
     @Test
     public void splitThenSplit() {
         assertThat(of(1, 2, 3).to().optional(), equalTo(Optional.of(ListX.of(1, 2, 3))));
-        // System.out.println(of(1, 2, 3).splitAtHead().v2.listX());
-        System.out.println("split " + of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toListX());
-        assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
+        // System.out.println(of(1, 2, 3).splitAtHead()._2.listX());
+        System.out.println("split " + of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toListX());
+        assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
     }
 
     @Test
@@ -718,21 +718,7 @@ public class BaseSequentialTest {
         return a + b + c + d + e;
     }
 
-    @Test
-    public void groupedFunction() {
-        assertThat(of(1, 2, 3).grouped(f -> f < 3 ? "a" : "b").count(), equalTo((2L)));
-        assertThat(of(1, 2, 3).grouped(f -> f < 3 ? "a" : "b").filter(t -> t.v1.equals("a"))
-                        .map(t -> t.v2).map(s -> s.toList()).singleUnsafe(),
-                equalTo((Arrays.asList(1, 2))));
-    }
 
-    @Test
-    public void groupedFunctionCollector() {
-        assertThat(of(1, 2, 3).grouped(f -> f < 3 ? "a" : "b", Collectors.toList()).count(), equalTo((2L)));
-        assertThat(of(1, 2, 3).grouped(f -> f < 3 ? "a" : "b", Collectors.toList()).filter(t -> t.v1.equals("a"))
-                        .map(t -> t.v2).singleUnsafe(),
-                equalTo((Arrays.asList(1, 2))));
-    }
 
     @Test
     public void batchBySize() {
@@ -854,13 +840,13 @@ public class BaseSequentialTest {
                 of(1, 2, 3, 4, 5, 6).zip(of(100, 200, 300, 400))
                         .peek(it -> System.out.println(it)).collect(Collectors.toList());
 
-        List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+        List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
         assertThat(right, hasItem(100));
         assertThat(right, hasItem(200));
         assertThat(right, hasItem(300));
         assertThat(right, hasItem(400));
 
-        List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+        List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
         assertThat(asList(1, 2, 3, 4), equalTo(left));
 
 
@@ -870,13 +856,13 @@ public class BaseSequentialTest {
     public void zip2of() {
         List<Tuple2<Integer, Integer>> list = of(1, 2, 3, 4, 5, 6).zip(of(100, 200, 300, 400)).peek(it -> System.out.println(it)).collect(Collectors.toList());
 
-        List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+        List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
         assertThat(right, hasItem(100));
         assertThat(right, hasItem(200));
         assertThat(right, hasItem(300));
         assertThat(right, hasItem(400));
 
-        List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+        List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
         assertThat(Arrays.asList(1, 2, 3, 4, 5, 6), hasItem(left.get(0)));
 
     }
@@ -889,14 +875,14 @@ public class BaseSequentialTest {
                     .zip(of(100, 200, 300, 400).limit(4))
                     .collect(Collectors.toList());
 
-            assertThat(list.get(0).v1, is(1));
-            assertThat(list.get(0).v2, is(100));
-            assertThat(list.get(1).v1, is(2));
-            assertThat(list.get(1).v2, is(200));
-            assertThat(list.get(2).v1, is(3));
-            assertThat(list.get(2).v2, is(300));
-            assertThat(list.get(3).v1, is(4));
-            assertThat(list.get(3).v2, is(400));
+            assertThat(list.get(0)._1(), is(1));
+            assertThat(list.get(0)._2(), is(100));
+            assertThat(list.get(1)._1(), is(2));
+            assertThat(list.get(1)._2(), is(200));
+            assertThat(list.get(2)._1(), is(3));
+            assertThat(list.get(2)._2(), is(300));
+            assertThat(list.get(3)._1(), is(4));
+            assertThat(list.get(3)._2(), is(400));
 
         }
 
@@ -1012,8 +998,8 @@ public class BaseSequentialTest {
     public void testDuplicate() {
         Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies = of(1, 2, 3, 4, 5, 6).duplicate();
 
-        assertTrue(copies.v1.anyMatch(i -> i == 2));
-        assertTrue(copies.v2.anyMatch(i -> i == 2));
+        assertTrue(copies._1().anyMatch(i -> i == 2));
+        assertTrue(copies._2().anyMatch(i -> i == 2));
     }
 
 
@@ -1048,10 +1034,10 @@ public class BaseSequentialTest {
         List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
 
         assertEquals(2, list.size());
-        assertTrue(asList(1, 2).contains(list.get(0).v1));
-        assertTrue("" + list.get(1).v2, asList(1, 2).contains(list.get(1).v1));
-        assertTrue(asList("a", "b", "c", "d").contains(list.get(0).v2));
-        assertTrue(asList("a", "b", "c", "d").contains(list.get(1).v2));
+        assertTrue(asList(1, 2).contains(list.get(0)._1()));
+        assertTrue("" + list.get(1)._2(), asList(1, 2).contains(list.get(1)._1()));
+        assertTrue(asList("a", "b", "c", "d").contains(list.get(0)._2()));
+        assertTrue(asList("a", "b", "c", "d").contains(list.get(1)._2()));
 
 
     }
@@ -1147,20 +1133,20 @@ public class BaseSequentialTest {
     public void testPartition() {
         Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
-        assertEquals(asList(1, 3, 5), s.get().partition(i -> i % 2 != 0).v1.toList());
-        assertEquals(asList(2, 4, 6), s.get().partition(i -> i % 2 != 0).v2.toList());
+        assertEquals(asList(1, 3, 5), s.get().partition(i -> i % 2 != 0)._1().toList());
+        assertEquals(asList(2, 4, 6), s.get().partition(i -> i % 2 != 0)._2().toList());
 
-        assertEquals(asList(2, 4, 6), s.get().partition(i -> i % 2 == 0).v1.toList());
-        assertEquals(asList(1, 3, 5), s.get().partition(i -> i % 2 == 0).v2.toList());
+        assertEquals(asList(2, 4, 6), s.get().partition(i -> i % 2 == 0)._1().toList());
+        assertEquals(asList(1, 3, 5), s.get().partition(i -> i % 2 == 0)._2().toList());
 
-        assertEquals(asList(1, 2, 3), s.get().partition(i -> i <= 3).v1.toList());
-        assertEquals(asList(4, 5, 6), s.get().partition(i -> i <= 3).v2.toList());
+        assertEquals(asList(1, 2, 3), s.get().partition(i -> i <= 3)._1().toList());
+        assertEquals(asList(4, 5, 6), s.get().partition(i -> i <= 3)._2().toList());
 
-        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().partition(i -> true).v1.toList());
-        assertEquals(asList(), s.get().partition(i -> true).v2.toList());
+        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().partition(i -> true)._1().toList());
+        assertEquals(asList(), s.get().partition(i -> true)._2().toList());
 
-        assertEquals(asList(), s.get().partition(i -> false).v1.toList());
-        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitBy(i -> false).v2.toList());
+        assertEquals(asList(), s.get().partition(i -> false)._1().toList());
+        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitBy(i -> false)._2().toList());
     }
 
     @Test
@@ -1169,7 +1155,7 @@ public class BaseSequentialTest {
             Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 
-            assertEquals(asList(4, 5, 6), s.get().splitAt(3).v2.toList());
+            assertEquals(asList(4, 5, 6), s.get().splitAt(3)._2().toList());
 
 
         }
@@ -1177,20 +1163,20 @@ public class BaseSequentialTest {
             Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 
-            assertEquals(asList(1, 2, 3), s.get().splitAt(3).v1.toList());
+            assertEquals(asList(1, 2, 3), s.get().splitAt(3)._1().toList());
 
         }
         for (int i = 0; i < ITERATIONS; i++) {
             Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 
-            assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(6).v1.toList());
+            assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(6)._1().toList());
         }
         for (int i = 0; i < ITERATIONS; i++) {
             Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 
-            assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(7).v1.toList());
+            assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(7)._1().toList());
         }
     }
 
@@ -1205,27 +1191,27 @@ public class BaseSequentialTest {
     public void splitAtInvestigate() {
 
 
-        System.out.println("0" + of(1, 2, 3).splitAt(0).v2.toListX());
+        System.out.println("0" + of(1, 2, 3).splitAt(0)._2().toListX());
 
-        assertThat(of(1, 2, 3).splitAt(0).v2.toListX(), equalTo(ListX.of(1, 2, 3)));
+        assertThat(of(1, 2, 3).splitAt(0)._2().toListX(), equalTo(ListX.of(1, 2, 3)));
     }
 
     @Test
     public void splitAtHeadInvestigate() {
-        System.out.println("0" + of(1, 2, 3).splitAt(0).v2.toListX());
-        System.out.println(of(1, 2, 3).splitAtHead().v1);
-        System.out.println(of(1, 2, 3).splitAtHead().v2.toListX());
-        System.out.println(of(1, 2, 3).splitAtHead().v2.splitAtHead().v1);
-        System.out.println(of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toListX());
-        assertThat(of(1, 2, 3).splitAtHead().v2.toListX(), equalTo(ListX.of(2, 3)));
+        System.out.println("0" + of(1, 2, 3).splitAt(0)._2().toListX());
+        System.out.println(of(1, 2, 3).splitAtHead()._1());
+        System.out.println(of(1, 2, 3).splitAtHead()._2().toListX());
+        System.out.println(of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+        System.out.println(of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toListX());
+        assertThat(of(1, 2, 3).splitAtHead()._2().toListX(), equalTo(ListX.of(2, 3)));
     }
 
     @Test
     public void splitAtHeadImpl2() {
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
 
-        assertThat(t.v1.limit(1).toList(), equalTo(ListX.of(1)));
-        assertThat(t.v2.skip(1).toList(), equalTo(ListX.of()));
+        assertThat(t._1().limit(1).toList(), equalTo(ListX.of(1)));
+        assertThat(t._2().skip(1).toList(), equalTo(ListX.of()));
 
     }
 
@@ -1239,8 +1225,8 @@ public class BaseSequentialTest {
     @Test
     public void duplicateReplay() {
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
-        assertThat(t.v1.limit(1).toList(), equalTo(ListX.of(1)));
-        assertThat(t.v1.limit(1).toList(), equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(), equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(), equalTo(ListX.of(1)));
     }
 
     @Test
@@ -1248,8 +1234,8 @@ public class BaseSequentialTest {
         ReactiveSeq<Integer> stream = of(1);
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = stream.duplicate();
         assertThat(stream.limit(1).toList(), equalTo(ListX.of(1)));
-        assertThat(t.v1.limit(1).toList(), equalTo(ListX.of(1)));
-        assertThat(t.v1.limit(1).toList(), equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(), equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(), equalTo(ListX.of(1)));
     }
 
 
@@ -1270,8 +1256,8 @@ public class BaseSequentialTest {
         Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
 
         Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
-        assertThat(u1.v1.toList(), equalTo(asList(1, 2, 3)));
-        assertThat(u1.v2.toList(), equalTo(asList("a", "b", "c")));
+        assertThat(u1._1().toList(), equalTo(asList(1, 2, 3)));
+        assertThat(u1._2().toList(), equalTo(asList("a", "b", "c")));
 
 
     }

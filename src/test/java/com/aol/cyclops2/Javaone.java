@@ -48,12 +48,12 @@ public class Javaone {
         
         Stream.iterate(0,i->i+1)   
               .limit(100)
-              .map(i->"prefix"+i)
-              .map(this::loadStr)
+              .transform(i->"prefix"+i)
+              .transform(this::loadStr)
               .collect(CyclopsCollectors.toList());
         
         new LazyReact().of(1,2,3,4)
-                       .map(this::load)
+                       .transform(this::load)
                        .forEach(this::save);
         
         
@@ -83,13 +83,13 @@ public class Javaone {
         
         SeqSubscriber<Integer> sub = SeqSubscriber.reactiveSubscriber();
         Flux.just(1,2,3,4)
-            .map(i->i*2)
+            .transform(i->i*2)
             .forEachAsync(sub);
         
         ReactiveSeq<Integer> connected = sub.reactiveStream();
         
         ReactiveSeq.of(1,2,3)
-                   .map(this::load)
+                   .transform(this::load)
                    .recover(e->"default value")
                    .retry(this::unreliableMethod);
         
@@ -98,27 +98,27 @@ public class Javaone {
         
         
         Seq.of("a","b","c","d")
-            .map(String::toUpperCase)
+            .transform(String::toUpperCase)
            .zipWithIndex()
            .filter(t->t.v2%2==0)
            .sliding(3)
            .duplicate();
        
         Optional<Integer> input;
-        Optional<Integer> times2 = input.map(i->i*2);
+        Optional<Integer> times2 = input.transform(i->i*2);
                 
         
         QueueFactories.<Data>boundedQueue(100)
                       .build()
                       .futureStream()
-                      .map(this::process)
+                      .transform(this::process)
                       .run();
         
     }
     public void reactiveStream(){
         
         Stream<Integer> input;
-        Stream<Integer> times2 = input.map(i->i*2);
+        Stream<Integer> times2 = input.transform(i->i*2);
                 
         
     }
@@ -138,7 +138,7 @@ public class Javaone {
      Seq.of(1, 2, 4)
         .rightOuterJoin(Seq.of(1, 2, 3), (a, b) -> a == b);
     ReactiveSeq.of(6,5,2,1)
-                    .map(e->e*100)
+                    .transform(e->e*100)
                     .filter(e->e<551)
                     .futureOperations(Executors.newFixedThreadPool(1))
                     .forEach(e-> {
@@ -155,12 +155,12 @@ public class Javaone {
     
     /**
      * new LazyReact(Executors.newFixedThreadPool(4)).of(6,5,2,1)
-                                                      .map(this::loadData)
-                                                      .map(List::size)
+                                                      .transform(this::loadData)
+                                                      .transform(List::size)
                                                       .peek(e->{
                                                           System.out.println("data size is " + e + " on thread "  + Thread.currentThread().getId());
                                                       })
-                                                      .map(e->e*100)
+                                                      .transform(e->e*100)
                                                       .filter(e->e<551)
                                                       .forEach(System.out::println);
      */

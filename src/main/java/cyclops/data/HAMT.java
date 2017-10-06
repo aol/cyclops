@@ -6,8 +6,8 @@ import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -163,7 +163,7 @@ public class HAMT<K, V>  {
        private final LazySeq<Tuple2<K,V>> bucket;
        @Override
        public Node<K, V> plus(int bitShiftDepth, int hash, K key, V value) {
-           LazySeq<Tuple2<K, V>> filtered = bucket.filter(t -> !Objects.equals(key, t.v1));
+           LazySeq<Tuple2<K, V>> filtered = bucket.filter(t -> !Objects.equals(key, t._1()));
            Node<K,V> newNode = filtered.size()==0 ?  new ValueNode<>(hash,key,value) : new CollisionNode<>(hash,filtered.prepend(Tuple.tuple(key,value)));
            if(this.hash==hash){
                return newNode;
@@ -190,7 +190,7 @@ public class HAMT<K, V>  {
         @Override
        public Maybe<V> get(int bitShiftDepth, int hash, K key) {
            if(this.hash==hash){
-               return bucket.stream().filter(t->Objects.equals(key,t.v1)).findOne().map(Tuple2::v2);
+               return bucket.stream().filter(t->Objects.equals(key,t._1())).findOne().map(Tuple2::_2);
            }
            return Maybe.none();
        }
@@ -208,7 +208,7 @@ public class HAMT<K, V>  {
         @Override
        public Node<K, V> minus(int bitShiftDepth,int hash, K key) {
            if(this.hash==hash){
-               return new CollisionNode<>(hash,bucket.filter(t->!Objects.equals(key,t.v1)));
+               return new CollisionNode<>(hash,bucket.filter(t->!Objects.equals(key,t._1())));
            }
            return this;
        }

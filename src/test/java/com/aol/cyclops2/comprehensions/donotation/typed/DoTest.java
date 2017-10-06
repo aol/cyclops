@@ -4,7 +4,7 @@ import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import static cyclops.stream.ReactiveSeq.range;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 public class DoTest {
 	
     @Test

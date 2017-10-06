@@ -43,7 +43,7 @@ import static cyclops.stream.ReactiveSeq.mapInts;
 import static cyclops.stream.ReactiveSeq.mapLongs;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -299,7 +299,7 @@ public class ReactiveSeqTest {
         for(int k=0;k<10;k++)
             count +=ReactiveSeq.generate(()->1).limit(1_000).map(i->i*2).map(i->i*10).map(i->i*100).count();
         long time2 = System.currentTimeMillis();
-       // ReactiveSeq<Integer> s = ReactiveSeq.generate(()->1).limit(1_0000).map(i->i*2).map(i->i*10).map(i->i*100);
+       // ReactiveSeq<Integer> s = ReactiveSeq.generate(()->1).limit(1_0000).transform(i->i*2).transform(i->i*10).transform(i->i*100);
         for(int k=0;k<1000;k++)
             count += ReactiveSeq.generate(()->1).limit(1_0000).map(i->i*2).map(i->i*10).map(i->i*100).count();
         long rs = System.currentTimeMillis()-time2;
@@ -638,7 +638,7 @@ public class ReactiveSeqTest {
     public void limitPushTest(){
         ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
         ReactiveSeq<String> reactiveStream = pushable.reactiveStream();
-        ReactiveSeq<List<String>> res = reactiveStream.map(i->i+"-hello").limit(2)
+        ReactiveSeq<List<String>> res = reactiveStream.transform(i->i+"-hello").limit(2)
                                                .collectSeq(CyclopsCollectors.toList());
         pushable.onNext("hello1");
         pushable.onNext("hello2");

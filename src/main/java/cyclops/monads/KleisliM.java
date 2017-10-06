@@ -4,8 +4,8 @@ package cyclops.monads;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Xor;
 import cyclops.function.*;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -95,10 +95,10 @@ public interface KleisliM<W extends WitnessType<W>,T,R> extends Fn1<T,AnyM<W,R>>
         return kleisli(xr -> xr.visit(l -> type.adapter().unit(l).map(Xor::secondary), r -> apply(r).map(Xor::primary)));
     }
     default <__> KleisliM<W,Tuple2<T, __>, Tuple2<R, __>> firstK() {
-        return kleisli(xr -> xr.map((v1,v2) -> apply(v1).map(r1-> Tuple.tuple(r1,v2))));
+        return kleisli(xr -> xr.transform((v1, v2) -> apply(v1).map(r1-> Tuple.tuple(r1,v2))));
     }
     default <__> KleisliM<W,Tuple2<__,T>, Tuple2<__,R>> secondK() {
-        return kleisli(xr -> xr.map((v1,v2) -> apply(v2).map(r2-> Tuple.tuple(v1,r2))));
+        return kleisli(xr -> xr.transform((v1, v2) -> apply(v2).map(r2-> Tuple.tuple(v1,r2))));
     }
 
 

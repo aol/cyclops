@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
 import java.io.Serializable;
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -69,7 +69,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 	}
 	@Test
 	public void duplicateFutures(){
-		List<String> list = of("a","b").actOnFutures().duplicate().v1.block();
+		List<String> list = of("a","b").actOnFutures().duplicate()._1().block();
 		System.out.println(list);
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
@@ -79,7 +79,7 @@ public class LazySeqAgronaTest extends BaseSeqTest {
 
 	@Test
 	public void duplicateFutures2(){
-		List<String> list = of("a","b").actOnFutures().duplicate().v2.block();
+		List<String> list = of("a","b").actOnFutures().duplicate()._2().block();
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 	

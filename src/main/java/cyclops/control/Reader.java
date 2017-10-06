@@ -18,8 +18,8 @@ import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.functor.ProFunctor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 /**
  * An interface that represents the Reader monad
@@ -77,7 +77,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
         return flatMap(a -> o.map(b -> fn.apply(a,b)));
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#map(java.util.function.Function)
+     * @see com.aol.cyclops2.types.functor.Transformable#transform(java.util.function.Function)
      */
     @Override
     default <R1> Reader<T, R1> map(final Function<? super R, ? extends R1> f2) {
@@ -319,7 +319,6 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
                 Reader<IN,R> res = a->i;
                 return res;
             }, fn.apply(r.apply(t)));
-
         }
         public static <IN> Traverse<Higher<reader, IN>> traversable(IN t) {
 

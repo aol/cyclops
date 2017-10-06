@@ -9,8 +9,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import com.aol.cyclops2.internal.react.stream.CloseableIterator;
 

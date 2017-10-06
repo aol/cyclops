@@ -10,15 +10,15 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Enumeration;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
 
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Function;
 
 import static cyclops.control.Trampoline.done;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 
 //Discrete Interval Encoded Tree
 public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>, Folds<T> {
@@ -87,7 +87,7 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
             return right.containsRec(range);
         }
         private Tuple2<Range<T>,DIET<T>> max(){
-           return right.fold(s->s.max().map((r, d)->tuple(r,cons(left,focus,d))), n->tuple(focus,left));
+           return right.fold(s->s.max().transform((r, d)->tuple(r,cons(left,focus,d))), n->tuple(focus,left));
         }
         private Trampoline<Tuple2<DIET<T>,T>> findRightAndEndingPoint(T value){
             //            value
@@ -129,13 +129,13 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         @Override
         public DIET<T> add(Range<T> range) {
             Tuple2<Range<T>, Maybe<Range<T>>> t = focus.plusAll(range);
-            return t.v2.visit(s-> t.v1==focus? cons(left,focus,right.add(s)) : cons(left.add(s),focus,right),()->{
+            return t._2().visit(s-> t._1()==focus? cons(left,focus,right.add(s)) : cons(left.add(s),focus,right),()->{
 
                 //create new expanded range and rebalance the trees
-                Tuple2<DIET<T>,T> leftAndStart = left.fold(l->l.findLeftAndStartingPoint(t.v1.start).get(), n->tuple(n,t.v1.start));
-                Tuple2<DIET<T>,T> rightAndEnd = right.fold(l->l.findRightAndEndingPoint(t.v1.end).get(), n->tuple(n,t.v1.start));
+                Tuple2<DIET<T>,T> leftAndStart = left.fold(l->l.findLeftAndStartingPoint(t._1().start).get(), n->tuple(n,t._1().start));
+                Tuple2<DIET<T>,T> rightAndEnd = right.fold(l->l.findRightAndEndingPoint(t._1().end).get(), n->tuple(n,t._1().start));
 
-                return cons(leftAndStart.v1, Range.range(leftAndStart.v2, rightAndEnd.v2, focus.enumeration(), focus.ordering()), rightAndEnd.v1);
+                return cons(leftAndStart._1(), Range.range(leftAndStart._2(), rightAndEnd._2(), focus.enumeration(), focus.ordering()), rightAndEnd._1());
 
             });
         }
@@ -143,7 +143,7 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         @Override
         public DIET<T> merge(DIET<T> merge) {
             return merge.fold(s-> {
-                        DIET<T> x = max().map((r, d) -> cons(d, r, right));
+                        DIET<T> x = max().transform((r, d) -> cons(d, r, right));
                         return x;
                     }
             ,n->this);
@@ -152,7 +152,7 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         @Override
         public DIET<T> remove(Range<T> range) {
 
-            focus.minusAll(range).visit(s->s.map((r, mr) ->  mr.visit(sr -> cons(left, r, empty()).merge(cons(empty(), sr, right)), () ->
+            focus.minusAll(range).visit(s->s.transform((r, mr) ->  mr.visit(sr -> cons(left, r, empty()).merge(cons(empty(), sr, right)), () ->
                     cons(focus.startsBefore(range) ? left.remove(range) : left, r, focus.endsAfter(range) ? right.remove(range) : right))),()->left.merge(right));
             return null;
         }

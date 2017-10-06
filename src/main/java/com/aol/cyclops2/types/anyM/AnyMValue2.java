@@ -18,9 +18,9 @@ import cyclops.monads.WitnessType;
 import cyclops.monads.function.AnyMFn1;
 import cyclops.monads.function.AnyMFn2;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Collection;
@@ -236,7 +236,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.monad.AnyM#map(java.util.function.Function)
+     * @see com.aol.cyclops2.monad.AnyM#transform(java.util.function.Function)
      */
     @Override
     default <R> AnyMValue2<W,T2,R> map(Function<? super T, ? extends R> fn){

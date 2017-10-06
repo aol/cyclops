@@ -48,7 +48,7 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * <pre>{@code
      *   MutableInt num = MutableInt.of(20);
      *   
-     *   Stream.of(1,2,3,4).map(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);
+     *   Stream.of(1,2,3,4).transform(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);
      *   
      *   System.out.println(num.get());
      *   //prints 120
@@ -98,7 +98,7 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
@@ -127,7 +127,7 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
@@ -157,7 +157,7 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
@@ -186,7 +186,7 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);

@@ -16,9 +16,9 @@ import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -28,7 +28,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
- * A right biased Lazy Either4 type. map / flatMap operators are tail-call optimized
+ * A right biased Lazy Either4 type. transform / flatMap operators are tail-call optimized
  * 
  * 
  * Can be one of 4 types
@@ -63,7 +63,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      *      ___Example 1___
      *
      *      CompletableEither<Integer,Integer> completable = Either4.either4();
-    Either4<Throwable,String,Integer> mapped = completable.map(i->i*2)
+    Either4<Throwable,String,Integer> mapped = completable.transform(i->i*2)
     .flatMap(i->Eval.later(()->i+1));
 
     completable.complete(5);
@@ -74,7 +74,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     ___Example 2___
 
     CompletableEither<Integer,Integer> completable = Either4.either4();
-    Either4<Throwable,String,Integer> mapped = completable.map(i->i*2)
+    Either4<Throwable,String,Integer> mapped = completable.transform(i->i*2)
     .flatMap(i->Eval.later(()->i+1));
 
 
@@ -85,7 +85,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     ___Example 3___
 
     CompletableEither<Integer,Integer> completable = Either4.either4();
-    Either4<Throwable,String,Integer> mapped = completable.map(i->i*2)
+    Either4<Throwable,String,Integer> mapped = completable.transform(i->i*2)
     .flatMap(i->Eval.later(()->i+1));
 
     completable.complete(new IllegalStateException());
@@ -675,7 +675,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.functor.Transformable#map(java.util.function.Function)
+     * @see com.aol.cyclops2.types.functor.Transformable#transform(java.util.function.Function)
      */
     @Override
     <R> Either5<LT1,LT2,LT3, LT4, R> map(Function<? super RT, ? extends R> fn);
@@ -820,7 +820,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -833,7 +833,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Either5<LT1, LT2, LT3, LT4, Tuple2<RT, U>> zipS(final Stream<? extends U> other) {

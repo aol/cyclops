@@ -6,8 +6,8 @@ import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.State;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 /**
  * Functor type class, performs a transformation operation over the supplied data structure
@@ -24,7 +24,7 @@ public interface Functor<CRE> {
      * <pre>
      * {@code 
      *  ListX<Integer> listx = ListX.of(1,2,3);
-        ListType<Integer> mapped1 =Lists.functor().map(a->a+1, ListType.widen(listx));
+        ListType<Integer> mapped1 =Lists.functor().transform(a->a+1, ListType.widen(listx));
         mapped1.add(1);
         ListX<Integer> listxMapped = mapped1.list();
      * }

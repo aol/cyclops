@@ -86,7 +86,7 @@ public class SequenceMTest {
 	public void elapsedIsPositive(){
 		
 		
-		assertTrue(Streamable.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
+		assertTrue(Streamable.of(1,2,3,4,5).elapsed().noneMatch(t->t._2()<0));
 	}
 	@Test
 	public void timeStamp(){
@@ -94,7 +94,7 @@ public class SequenceMTest {
 		
 		assertTrue(Streamable.of(1,2,3,4,5)
 							.timestamp()
-							.allMatch(t-> t.v2 <= System.currentTimeMillis()));
+							.allMatch(t-> t._2() <= System.currentTimeMillis()));
 		
 
 	}
@@ -285,8 +285,8 @@ public class SequenceMTest {
 	
 	@Test
 	public void splitBy(){
-		assertThat( Streamable.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
-		assertThat( Streamable.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v2.toList(),equalTo(Arrays.asList(4,5,6)));
+		assertThat( Streamable.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._1().toList(),equalTo(Arrays.asList(1,2,3)));
+		assertThat( Streamable.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._2().toList(),equalTo(Arrays.asList(4,5,6)));
 	}
 	@Test
 	public void testLazy(){

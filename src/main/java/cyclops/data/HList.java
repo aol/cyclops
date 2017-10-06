@@ -4,15 +4,15 @@ package cyclops.data;
 import com.aol.cyclops2.matching.Deconstruct;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import com.aol.cyclops2.matching.Sealed1Or;
+import cyclops.collections.tuple.Tuple;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static org.jooq.lambda.tuple.Tuple.tuple;
 
 //https://apocalisp.wordpress.com/2008/10/23/heterogeneous-lists-and-the-limits-of-the-java-type-system/
 //inspired / influenced by Functional Java's HList
@@ -41,7 +41,7 @@ public interface HList<T1 extends HList<T1>> extends Sealed1Or<HList<T1>> {
 
         @Override
         public Tuple2<T1, HList<T2>> unapply() {
-            return tuple(head,tail);
+            return Tuple.tuple(head,tail);
         }
 
         @Override

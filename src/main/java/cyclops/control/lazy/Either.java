@@ -20,10 +20,10 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -38,7 +38,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
- * A totally Lazy Either implementation with tail call optimization for map and flatMap operators. Either can operate reactively (i.e. suppports data arriving asynchronsouly
+ * A totally Lazy Either implementation with tail call optimization for transform and flatMap operators. Either can operate reactively (i.e. suppports data arriving asynchronsouly
  the monadic chain of computations will only be executed once data arrives).
  * 
  * 'Right' (or primary type) biased disjunct union. 
@@ -74,7 +74,7 @@ import java.util.stream.Stream;
  *  Instantiating an Either - Right
  *  <pre>
  *  {@code
- *      Either.right("hello").map(v->v+" world")
+ *      Either.right("hello").transform(v->v+" world")
  *    //Either.right["hello world"]
  *  }
  *  </pre>
@@ -82,12 +82,12 @@ import java.util.stream.Stream;
  *  Instantiating an Either - Left
  *  <pre>
  *  {@code
- *      Either.left("hello").map(v->v+" world")
+ *      Either.left("hello").transform(v->v+" world")
  *    //Either.seconary["hello"]
  *  }
  *  </pre>
  *
- *  Either can operate (via map/flatMap) as a Functor / Monad and via combine as an ApplicativeFunctor
+ *  Either can operate (via transform/flatMap) as a Functor / Monad and via combine as an ApplicativeFunctor
  *
  *   Values can be accumulated via
  *  <pre>
@@ -118,6 +118,35 @@ import java.util.stream.Stream;
  */
 public interface Either<LT, RT> extends Xor<LT, RT>{
 
+    /**
+    default Either<NonEmptyList<LT>, RT> nel() {
+        return Either.fromLazy(Eval.always(()->visit(s->Either.left(NonEmptyList.of(s)),p->Either.right(p))));
+    }
+    **/
+    default Either<LT,RT> accumulate(Xor<LT,RT> next,Semigroup<RT> sg){
+        return flatMap(s1->next.map(s2->sg.apply(s1,s2)));
+    }
+    default Either<LT,RT> accumulatePrimary(Semigroup<RT> sg, Xor<LT,RT>... values){
+        return (Either<LT,RT>)Xor.super.accumulatePrimary(sg,values);
+    }
+    default Either<LT,RT> accumulate(Semigroup<LT> sg, Xor<LT,RT> next){
+        return secondaryFlatMap(s1->next.secondaryMap(s2->sg.apply(s1,s2)));
+    }
+    default Either<LT,RT> accumulate(Semigroup<LT> sg, Xor<LT,RT>... values){
+        return (Either<LT,RT>)Xor.super.accumulate(sg,values);
+    }
+    public static  <L,T,R> Either<L,R> tailRec(T initial, Function<? super T, ? extends Either<L,? extends Xor<T, R>>> fn){
+        Either<L,? extends Xor<T, R>> next[] = new Either[1];
+        next[0] = Either.right(Xor.secondary(initial));
+        boolean cont = true;
+        do {
+            cont = next[0].visit(p -> p.visit(s -> {
+                next[0] = fn.apply(s);
+                return true;
+            }, pr -> false), () -> false);
+        } while (cont);
+        return next[0].map(Xor::get);
+    }
 
     static <LT1,RT> Either<LT1,RT> fromMonadicValue(MonadicValue<RT> mv2){
         if(mv2 instanceof Either){
@@ -138,7 +167,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      *      ___Example 1___
      *
      *      CompletableEither<Integer,Integer> completable = Either.lazy();
-            Either<Throwable,Integer> mapped = completable.map(i->i*2)
+            Either<Throwable,Integer> mapped = completable.transform(i->i*2)
                                                           .flatMap(i->Eval.later(()->i+1));
 
             completable.complete(5);
@@ -149,7 +178,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
             ___Example 2___
 
             CompletableEither<Integer,Integer> completable = Either.lazy();
-            Either<Throwable,Integer> mapped = completable.map(i->i*2)
+            Either<Throwable,Integer> mapped = completable.transform(i->i*2)
                                                           .flatMap(i->Eval.later(()->i+1));
 
 
@@ -160,7 +189,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
             ___Example 3___
 
             CompletableEither<Integer,Integer> completable = Either.lazy();
-            Either<Throwable,Integer> mapped = completable.map(i->i*2)
+            Either<Throwable,Integer> mapped = completable.transform(i->i*2)
                                                           .flatMap(i->Eval.later(()->i+1));
 
             completable.complete(new IllegalStateException());
@@ -588,10 +617,10 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      *
      * <pre>
      * {@code
-     *   Either.<Integer,Integer>left(10).map(i->i+1);
+     *   Either.<Integer,Integer>left(10).transform(i->i+1);
      *   //Either.left[10]
      *
-     *    Either.<Integer,Integer>left(10).swap().map(i->i+1);
+     *    Either.<Integer,Integer>left(10).swap().transform(i->i+1);
      *    //Either.right[11]
      * }
      * </pre>
@@ -606,11 +635,11 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /**
      * Create an instance of the primary type. Most methods are biased to the primary type,
-     * which means, for example, that the map method operates on the primary type but does nothing on secondary Eithers
+     * which means, for example, that the transform method operates on the primary type but does nothing on secondary Eithers
      *
      * <pre>
      * {@code
-     *   Either.<Integer,Integer>right(10).map(i->i+1);
+     *   Either.<Integer,Integer>right(10).transform(i->i+1);
      *   //Either.right[11]
      *
      *
@@ -742,16 +771,16 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     Either<LT, RT> filter(Predicate<? super RT> test);
 
     /**
-     * If this Either contains the Left type, map it's value so that it contains the Right type
+     * If this Either contains the Left type, transform it's value so that it contains the Right type
      *
      *
-     * @param fn Function to map secondary type to primary
+     * @param fn Function to transform secondary type to primary
      * @return Either with secondary type mapped to primary
      */
     Either<LT, RT> secondaryToPrimayMap(Function<? super LT, ? extends RT> fn);
 
     /**
-     * Always map the Left type of this Either if it is present using the provided transformation function
+     * Always transform the Left type of this Either if it is present using the provided transformation function
      *
      * @param fn Transformation function for Left types
      * @return Either with Left type transformed
@@ -761,7 +790,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue#map(java.util.function.Function)
+     * @see com.aol.cyclops2.types.MonadicValue#transform(java.util.function.Function)
      */
     @Override
     <R> Either<LT, R> map(Function<? super RT, ? extends R> fn);
@@ -843,12 +872,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      *  {@code
      *
      *    Either.left("hello")
-     *       .map(v->v+" world")
+     *       .transform(v->v+" world")
      *    //Either.seconary["hello"]
      *
      *    Either.left("hello")
      *       .swap()
-     *       .map(v->v+" world")
+     *       .transform(v->v+" world")
      *       .swap()
      *    //Either.seconary["hello world"]
      *  }
@@ -1140,7 +1169,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                                       final BiFunction<? super RT, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                             .apply(v))).flatMap(tuple -> Either.fromIterable(app)
-                                                                               .visit(i -> Either.right(tuple.v2.apply(i)),
+                                                                               .visit(i -> Either.right(tuple._2().apply(i)),
                                                                                       () -> Either.left(null)));
     }
 
@@ -1154,7 +1183,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     default <T2, R> Either<LT, R> zipP(final Publisher<? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                             .apply(v))).flatMap(tuple -> Either.fromPublisher(app)
-                                                                               .visit(i -> Either.right(tuple.v2.apply(i)),
+                                                                               .visit(i -> Either.right(tuple._2().apply(i)),
                                                                                       () -> Either.left(null)));
     }
 
@@ -1163,7 +1192,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -1176,7 +1205,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Either<LT, Tuple2<RT, U>> zipS(final Stream<? extends U> other) {

@@ -4,8 +4,8 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Queue.QueueReader;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Iterator;
 import java.util.List;
@@ -65,15 +65,15 @@ public class EagerFutureStreamFunctions {
                                                                              .collect(Collectors.toList());
         while (true) {
             for (final Tuple2<SimpleReactStream<U>, Queue.QueueReader> q : racers) {
-                if (q.v2.notEmpty()) {
-                    EagerFutureStreamFunctions.closeOthers(q.v2.getQueue(), racers.stream()
-                                                                                  .map(t -> t.v2.getQueue())
+                if (q._2().notEmpty()) {
+                    EagerFutureStreamFunctions.closeOthers(q._2().getQueue(), racers.stream()
+                                                                                  .map(t -> t._2().getQueue())
                                                                                   .collect(Collectors.toList()));
-                    EagerFutureStreamFunctions.closeOthers(q.v1, racers.stream()
-                                                                       .map(t -> t.v1)
+                    EagerFutureStreamFunctions.closeOthers(q._1(), racers.stream()
+                                                                       .map(t -> t._1())
                                                                        .collect(Collectors.toList()));
-                    return q.v1.fromStream(q.v2.getQueue()
-                                               .stream(q.v1.getSubscription()));
+                    return q._1().fromStream(q._2().getQueue()
+                                               .stream(q._1().getSubscription()));
                 }
 
             }

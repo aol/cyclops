@@ -42,7 +42,7 @@ public class Bag<T> implements Iterable<T>{
     }
 
     public ReactiveSeq<T> stream(){
-        return ReactiveSeq.fromIterable(()->map.iterator()).flatMap(t-> ReactiveSeq.of(t.v1).cycle(t.v2));
+        return ReactiveSeq.fromIterable(()->map.iterator()).flatMap(t-> ReactiveSeq.of(t._1()).cycle(t._2()));
     }
 
 

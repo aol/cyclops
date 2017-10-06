@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 
 import cyclops.async.adapters.Adapter;
 
@@ -15,23 +15,23 @@ public abstract class AbstractPushableStream<T, X extends Adapter<T>, R extends 
     }
 
     public X getInput() {
-        return v1;
+        return _1();
     }
 
     public R getStream() {
-        return v2;
+        return _2();
     }
 
     public <U> U visit(final BiFunction<? super X, ? super R, ? extends U> visitor) {
-        return visitor.apply(v1, v2);
+        return visitor.apply(_1(), _2());
     }
 
     public void peekStream(final Consumer<? super R> consumer) {
-        consumer.accept(v2);
+        consumer.accept(_2());
     }
 
     public void peekInput(final Consumer<? super X> consumer) {
-        consumer.accept(v1);
+        consumer.accept(_1());
     }
 
     private static final long serialVersionUID = 1L;

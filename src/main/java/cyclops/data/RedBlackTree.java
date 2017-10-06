@@ -8,10 +8,10 @@ import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple5;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple5;
 
 import java.util.Comparator;
 import java.util.function.Function;
@@ -25,7 +25,7 @@ public interface RedBlackTree {
         Tree<K,V> tree[] = new Tree[1];
         tree[0]= new Leaf(comp);
         stream.forEach(t->{
-            tree[0] = tree[0].plus(t.v1,t.v2);
+            tree[0] = tree[0].plus(t._1(),t._2());
         });
         return tree[0];
     }
@@ -178,7 +178,7 @@ public interface RedBlackTree {
                return left.fold(leftNode->{
                     return right.fold(rightNode->{
                         Tuple3<Tree<K, V>, K, V> t3 = rightNode.removeMin();
-                        return balance(isBlack,left,t3.v1,t3.v2,t3.v3);
+                        return balance(isBlack,left,t3._1(),t3._2(),t3._3());
                     },leftLeaf->left);
 
                 },leftLeaf->{
@@ -193,7 +193,7 @@ public interface RedBlackTree {
         public Tuple3<Tree<K, V>,K,V> removeMin() {
             return left.fold(node->{
                 Tuple3<Tree<K, V>, K, V> t3 = node.removeMin();
-                return Tuple.tuple(balance(isBlack, t3.v1, right, key, value),t3.v2,t3.v3);
+                return Tuple.tuple(balance(isBlack, t3._1(), right, key, value),t3._2(),t3._3());
             },leaf->Tuple.tuple(right,key,value));
         }
 

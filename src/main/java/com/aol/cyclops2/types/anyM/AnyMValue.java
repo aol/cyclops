@@ -13,9 +13,9 @@ import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
 import cyclops.function.Predicates;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
@@ -230,7 +230,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.monad.AnyM#map(java.util.function.Function)
+     * @see com.aol.cyclops2.monad.AnyM#transform(java.util.function.Function)
      */
     @Override
     default <R> AnyMValue<W,R> map(Function<? super T, ? extends R> fn){

@@ -6,8 +6,8 @@ import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Assert;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -34,14 +34,14 @@ public class ZipAsyncTest {
     @Test
     public void exactElements1(){
         assertThat(Spouts.iterate(0l, i->i+1l).zip(Spouts.iterate(0l,i->i+1l))
-                .limit(1l).map(t->t.v1).count(),equalTo(1l));
+                .limit(1l).map(t->t._1()).count(),equalTo(1l));
         assertThat(Spouts.of(1).zip(Spouts.of(1))
-                        .map(t->t.v1).count(),equalTo(1l));
+                        .map(t->t._1()).count(),equalTo(1l));
     }
     @Test
     public void exactElements500(){
         assertThat(Spouts.iterate(0l, i->i+1l).zip(Spouts.iterate(0l,i->i+1l))
-                .limit(500l).map(t->t.v1).count(),equalTo(500l));
+                .limit(500l).map(t->t._1()).count(),equalTo(500l));
 
     }
     @Test
@@ -50,7 +50,7 @@ public class ZipAsyncTest {
         Future future = Future.future();
         Spouts.iterate(0l, i->i+1l).zip(Spouts.iterate(0l,i->i+1l))
                                                     .limit(500l)
-                                                    .map(t->t.v1)
+                                                    .map(t->t._1())
                                                     .forEach(1000,n->count.incrementAndGet(),
                 e->{},()->future.complete(1));
         future.get();
@@ -80,13 +80,13 @@ public class ZipAsyncTest {
 
             System.out.println(list);
 
-            List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+            List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
             Assert.assertThat(right, hasItem(100));
             Assert.assertThat(right, hasItem(200));
             Assert.assertThat(right, hasItem(300));
             Assert.assertThat(right, hasItem(400));
 
-            List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+            List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
             System.out.println(left);
             Assert.assertThat(Arrays.asList(1, 2, 3, 4, 5, 6), hasItem(left.get(0)));
         }
@@ -108,20 +108,20 @@ public class ZipAsyncTest {
 
             System.out.println(list);
 
-            List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+            List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
             Assert.assertThat(right, hasItem(1));
             Assert.assertThat(right, hasItem(2));
             Assert.assertThat(right, hasItem(3));
             Assert.assertThat(right, hasItem(4));
 
-            List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+            List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
             System.out.println(left);
             Assert.assertThat(Arrays.asList(100, 200, 300, 400), hasItem(left.get(0)));
         }
 
     }
     @Test
-    public void zip2ofLazyListX(){
+    public void zip2ofStreamX(){
 
         for(int i=0;i<500;i++) {
             System.out.println("*************Iteration " + i);
@@ -135,13 +135,13 @@ public class ZipAsyncTest {
 
             System.out.println(list);
 
-            List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+            List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
             Assert.assertThat(right, hasItem(100));
             Assert.assertThat(right, hasItem(200));
             Assert.assertThat(right, hasItem(300));
             Assert.assertThat(right, hasItem(400));
 
-            List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+            List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
             System.out.println(left);
             Assert.assertThat(Arrays.asList(1, 2, 3, 4, 5, 6), hasItem(left.get(0)));
         }
@@ -166,13 +166,13 @@ public class ZipAsyncTest {
 
             System.out.println(list);
 
-            List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+            List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
             Assert.assertThat(right, hasItem(100));
             Assert.assertThat(right, hasItem(200));
             Assert.assertThat(right, hasItem(300));
             Assert.assertThat(right, hasItem(400));
 
-            List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+            List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
             System.out.println(left);
             Assert.assertThat(Arrays.asList(1, 2, 3, 4, 5, 6), hasItem(left.get(0)));
         }

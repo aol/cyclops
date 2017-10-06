@@ -27,16 +27,16 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 import static cyclops.collections.mutable.ListX.kindKleisli;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 
 /**
  * Provide easy access to all typeclasses for a type
@@ -45,7 +45,7 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
  * <pre>
  *     {@code
  *       Active<list,Integer> active = Active.of(ListX.of(1,2,3),ListX.Instances.definitions());
- *       Active<list,Integer> doubled = active.map(i->i*2);
+ *       Active<list,Integer> doubled = active.transform(i->i*2);
  *       Active<list,Integer> doubledPlusOne = doubled.flatMap(i->ListX.of(i+1));
  *     }
  *

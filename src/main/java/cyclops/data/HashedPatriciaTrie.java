@@ -8,9 +8,9 @@ import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple1;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple1;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -127,8 +127,8 @@ public interface HashedPatriciaTrie<K, V>  {
 
 
         private SingleNode(Tuple2<K,V> keyAndValue) {
-            key = keyAndValue.v1;
-            value = keyAndValue.v2;
+            key = keyAndValue._1();
+            value = keyAndValue._2();
         }
         @Override
         public boolean isEmpty() {
@@ -232,7 +232,7 @@ public interface HashedPatriciaTrie<K, V>  {
         @Override
         public Node<K, V> put(int hash, K key, V value) {
             if (hash == 0) {
-                return new CollisionNode<>(bucket.filter(p -> !p.v1.equals(key)).prepend(Tuple.tuple(key, value)));
+                return new CollisionNode<>(bucket.filter(p -> !p._1().equals(key)).prepend(Tuple.tuple(key, value)));
             } else {
                 int newHash = hash >>> BITS;
                 int index = hash & MASK;
@@ -245,7 +245,7 @@ public interface HashedPatriciaTrie<K, V>  {
                     if (index != 0) {
                         nodes[0] = this;
                     } else {
-                        bucket.forEach(t2 -> nodes[0] = nodes[0].put(0, t2.v1(), t2.v2()));
+                        bucket.forEach(t2 -> nodes[0] = nodes[0].put(0, t2._1(), t2._2()));
                     }
                 }
                 return new ArrayNode<>(nodes);
@@ -255,21 +255,21 @@ public interface HashedPatriciaTrie<K, V>  {
         @Override
         public Maybe<V> get(int hash, K key) {
             return (hash == 0)
-                    ? bucket.filter(t2 -> t2.v1.equals(key)).get(0).map(Tuple2::v2)
+                    ? bucket.filter(t2 -> t2._1().equals(key)).get(0).map(Tuple2::_2)
                     : Maybe.none();
         }
 
         @Override
         public V getOrElse(int hash, K key, V alt) {
             return (hash == 0)
-                    ? bucket.filter(t2 -> t2.v1.equals(key)).map(t->t.v2).getOrElse(0,alt)
+                    ? bucket.filter(t2 -> t2._1().equals(key)).map(t->t._2()).getOrElse(0,alt)
                     : alt;
         }
 
         @Override
         public V getOrElseGet(int hash, K key, Supplier<V> alt) {
             return (hash == 0)
-                    ? bucket.filter(t2 -> t2.v1.equals(key)).map(t->t.v2).getOrElseGet(0,alt)
+                    ? bucket.filter(t2 -> t2._1().equals(key)).map(t->t._2()).getOrElseGet(0,alt)
                     : alt.get();
         }
 
@@ -279,7 +279,7 @@ public interface HashedPatriciaTrie<K, V>  {
             if (hash != 0)
                 return this;
 
-            LazySeq<Tuple2<K, V>> newBucket = bucket.filter(t2 -> !t2.v1.equals(key));
+            LazySeq<Tuple2<K, V>> newBucket = bucket.filter(t2 -> !t2._1().equals(key));
             return newBucket.fold(c->c.size()>1? new CollisionNode<K,V>(newBucket) : new SingleNode<>(newBucket.get(0).get()), nil->  HashedPatriciaTrie.empty());
         }
 

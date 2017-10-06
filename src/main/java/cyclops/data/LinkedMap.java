@@ -6,8 +6,8 @@ import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -26,7 +26,7 @@ public class LinkedMap<K,V> implements ImmutableMap<K,V>{
     }
 
     public static <K,V> LinkedMap<K,V> fromStream(ReactiveSeq<Tuple2<K,V>> stream){
-        return stream.foldLeft(empty(),(m,t2)->m.put(t2.v1,t2.v2));
+        return stream.foldLeft(empty(),(m,t2)->m.put(t2._1(),t2._2()));
     }
     public Maybe<V> get(K key){
         return map.get(key);
@@ -74,17 +74,17 @@ public class LinkedMap<K,V> implements ImmutableMap<K,V>{
 
     @Override
     public <R1, R2> ImmutableMap<R1, R2> bimap(BiFunction<? super K, ? super V, ? extends Tuple2<R1, R2>> map) {
-        return fromStream(stream().map(t->t.map(map)));
+        return fromStream(stream().map(t->t.transform(map)));
     }
 
     @Override
     public <K2, V2> ImmutableMap<K2, V2> flatMap(BiFunction<? super K, ? super V, ? extends ImmutableMap<K2, V2>> mapper) {
-        return fromStream(stream().flatMapI(t->t.map(mapper)));
+        return fromStream(stream().flatMapI(t->t.transform(mapper)));
     }
 
     @Override
     public <K2, V2> ImmutableMap<K2, V2> flatMapI(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper) {
-        return fromStream(stream().flatMapI(t->t.map(mapper)));
+        return fromStream(stream().flatMapI(t->t.transform(mapper)));
     }
 
     @Override
@@ -94,22 +94,22 @@ public class LinkedMap<K,V> implements ImmutableMap<K,V>{
 
     @Override
     public ImmutableMap<K, V> filterKeys(Predicate<? super K> predicate) {
-        return fromStream(stream().filter(t->predicate.test(t.v1)));
+        return fromStream(stream().filter(t->predicate.test(t._1())));
     }
 
     @Override
     public ImmutableMap<K, V> filterValues(Predicate<? super V> predicate) {
-        return fromStream(stream().filter(t->predicate.test(t.v2)));
+        return fromStream(stream().filter(t->predicate.test(t._2())));
     }
 
     @Override
     public <R> ImmutableMap<K, R> map(Function<? super V, ? extends R> fn) {
-        return fromStream(stream().map(t-> Tuple.tuple(t.v1,fn.apply(t.v2))));
+        return fromStream(stream().map(t-> Tuple.tuple(t._1(),fn.apply(t._2()))));
     }
 
     @Override
     public <R1, R2> ImmutableMap<R1, R2> bimap(Function<? super K, ? extends R1> fn1, Function<? super V, ? extends R2> fn2) {
-        return fromStream(stream().map(t-> Tuple.tuple(fn1.apply(t.v1),fn2.apply(t.v2))));
+        return fromStream(stream().map(t-> Tuple.tuple(fn1.apply(t._1()),fn2.apply(t._2()))));
     }
 
     public boolean containsKey(K key){
@@ -123,7 +123,7 @@ public class LinkedMap<K,V> implements ImmutableMap<K,V>{
 
     @Override
     public PersistentMapX<K, V> persistentMapX() {
-        return stream().to().persistentMapX(k -> k.v1, v -> v.v2);
+        return stream().to().persistentMapX(k -> k._1(), v -> v._2());
     }
 
     public LinkedMap<K, V> put(K key, V value) {
@@ -135,7 +135,7 @@ public class LinkedMap<K,V> implements ImmutableMap<K,V>{
 
     @Override
     public ImmutableMap<K, V> put(Tuple2<K, V> keyAndValue) {
-        return put(keyAndValue.v1,keyAndValue.v2);
+        return put(keyAndValue._1(),keyAndValue._2());
     }
 
     @Override
@@ -149,7 +149,7 @@ public class LinkedMap<K,V> implements ImmutableMap<K,V>{
     }
 
     public LinkedMap<K, V> remove(K key) {
-       return containsKey(key) ? new LinkedMap<>(map.remove(key),BankersQueue.ofAll(order.lazySeq().removeFirst(t-> Objects.equals(key,t.v1)))) : this;
+       return containsKey(key) ? new LinkedMap<>(map.remove(key),BankersQueue.ofAll(order.lazySeq().removeFirst(t-> Objects.equals(key,t._1())))) : this;
     }
 
     @Override

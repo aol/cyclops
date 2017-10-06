@@ -2,6 +2,7 @@ package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher4;
+import cyclops.async.Future;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.rws;
@@ -17,14 +18,14 @@ import cyclops.typeclasses.monad.*;
 import cyclops.typeclasses.transformers.Transformer;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple3;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -37,15 +38,20 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
         return Fn0.run(runState.apply(r,s));
     }
 
+    public static <T,R1, W, S, R> ReaderWriterState<R1, W, S, R> tailRec(Monoid<W> monoid,T initial, Function<? super T, ? extends  ReaderWriterState<R1, W, S,  ? extends Xor<T, R>>> fn) {
+        Higher<Higher<Higher<Higher<rws, R1>, W>, S>, R> x = Instances.<R1,W,S> monadRec(monoid).tailRec(initial, fn);
+        return narrowK(x);
+    }
+
     public  ReaderWriterState<R,W,S,T> tell(W value) {
         BiFunction<? super R, ? super S, Free<supplier,Tuple3<W,S, T>>> fn =
-                (r,s)->runState.apply(r,s).map(t3-> tuple(monoid.apply(t3.v1,value),t3.v2,t3.v3));
+                (r,s)->runState.apply(r,s).map(t3-> tuple(monoid.apply(t3._1(),value),t3._2(),t3._3()));
 
         return suspended(fn,monoid);
     }
 
     public ReaderWriterState<R,W,S,T> ask() {
-         return suspended((r,s) -> runState.apply(r,s).map(t3 -> Tuple.<W,S,T>tuple(monoid.zero(),s,t3.v3)),monoid);
+         return suspended((r,s) -> runState.apply(r,s).map(t3 -> Tuple.<W,S,T>tuple(monoid.zero(),s,t3._3())),monoid);
     }
 
 
@@ -56,7 +62,7 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
 
     public <R2> ReaderWriterState<R,W,S,R2> map(Function<? super T,? extends R2> mapper) {
 
-        return mapState(t -> tuple(t.v1, t.v2, mapper.apply(t.v3)));
+        return mapState(t -> tuple(t._1(), t._2(), mapper.apply(t._3())));
     }
     public <R2> ReaderWriterState<R,W,S,R2> mapState(Function<Tuple3<W,S,T>, Tuple3<W,S, R2>> fn) {
         return suspended((r,s) -> runState.apply(r,s).map(t3 -> fn.apply(t3)),monoid);
@@ -71,9 +77,9 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
     public <R2> ReaderWriterState<R,W,S,R2> flatMap(Function<? super T,? extends  ReaderWriterState<R,W,S,R2>> f) {
 
         return suspended((r,s) -> runState.apply(r, s)
-                .flatMap(result -> Free.done(f.apply(result.v3)
-                                              .run(r, result.v2)
-                                              .map((w2,s2,r2)-> tuple(monoid.apply(w2,result.v1),s2,r2)
+                .flatMap(result -> Free.done(f.apply(result._3())
+                                              .run(r, result._2())
+                                              .transform((w2,s2,r2)-> tuple(monoid.apply(w2,result._1()),s2,r2)
 
                 ))),monoid);
     }
@@ -321,13 +327,13 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
                 @Override
                 public <T> T foldRight(Monoid<T> monoid, Higher<Higher<Higher<Higher<rws, R1>, W>, S>, T> ds) {
                     ReaderWriterState<R1, W, S, T> rws =narrowK(ds);
-                    return rws.run(val1, val2).map((a, b, t) -> monoid.foldRight(t));
+                    return rws.run(val1, val2).transform((a, b, t) -> monoid.foldRight(t));
                 }
 
                 @Override
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<Higher<Higher<rws, R1>, W>, S>, T> ds) {
                     ReaderWriterState<R1, W, S, T> rws =narrowK(ds);
-                    return rws.run(val1, val2).map((a, b, t) -> monoid.foldLeft(t));
+                    return rws.run(val1, val2).transform((a, b, t) -> monoid.foldLeft(t));
                 }
 
                 @Override
@@ -341,7 +347,7 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
                 @Override
                 public <C2, T, R> Higher<C2, Higher<Higher<Higher<Higher<rws, R1>, W>, S>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<Higher<Higher<rws, R1>, W>, S>, T> ds) {
                     ReaderWriterState<R1,W,S,T> rws = narrowK(ds);
-                    Higher<C2, R> x = rws.run(val1, val2).map((a, b, t) -> fn.apply(t));
+                    Higher<C2, R> x = rws.run(val1, val2).transform((a, b, t) -> fn.apply(t));
                     return applicative.map_(x,i-> rws((ra, rb) -> tuple(monoid.zero(), rb, i), monoid));
                 }
                 @Override

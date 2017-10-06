@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.control.Try;
@@ -102,7 +102,7 @@ public class TryTest {
 	}
 	
 	private String read2(Tuple2<BufferedReader,FileReader> res) throws IOException{
-		String line = res.v1().readLine();
+		String line = res._1().readLine();
 		return null;
 	}
 	private String read(BufferedReader br) throws IOException{

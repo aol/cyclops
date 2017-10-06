@@ -10,10 +10,10 @@ import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -548,27 +548,7 @@ public interface Traversable<T> extends Publisher<T>,
         return traversable().grouped(groupSize);
     }
 
-    /**
-     * Group this Traversable by the provided classifying function and collected by the provided Collector
-     * 
-     * @param classifier Grouping function
-     * @param downstream Collector to create the grouping toX
-     * @return Traversable of grouped data
-     */
-    default <K, A, D> Traversable<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
-            final Collector<? super T, A, D> downstream) {
-        return traversable().grouped(classifier, downstream);
-    }
 
-    /**
-     * Group this Traversable by the provided classifying function and collected by the provided Collector
-     * 
-     * @param classifier Grouping function
-     * @return Traversable of grouped data
-     */
-    default <K> Traversable<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return traversable().grouped(classifier);
-    }
 
     /*
      * Return the distinct Stream of elements
@@ -632,7 +612,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * <pre>
      * {@code 
-     * assertThat(of("a", "ab", "abc").map(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
+     * assertThat(of("a", "ab", "abc").transform(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
      *             is(asList(0, 3, 5, 6).size()));
      * 
      * }
@@ -1024,7 +1004,7 @@ public interface Traversable<T> extends Publisher<T>,
      * {@code
      *  List<String> result = ReactiveSeq.of(1, 2, 3)
      *                                   .prependS(of(100, 200, 300))
-     *                                   .map(it -> it + "!!")
+     *                                   .transform(it -> it + "!!")
      *                                   .collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!", "1!!", "2!!", "3!!")));
@@ -1044,7 +1024,7 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).map(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
      * </pre>
@@ -1074,7 +1054,7 @@ public interface Traversable<T> extends Publisher<T>,
      * {@code
      * List<String> result = 	ReactiveSeq.of(1,2,3)
      * 									 .prepend(100,200,300)
-     * 										 .map(it ->it+"!!")
+     * 										 .transform(it ->it+"!!")
      * 										 .collect(CyclopsCollectors.toList());
      *
      * 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -1091,7 +1071,7 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).map(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));     *
      * }
@@ -1112,7 +1092,7 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).map(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "5!!", "6!!")));     * }
      * </pre>
@@ -1132,7 +1112,7 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).map(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
      * }
@@ -1154,8 +1134,8 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4)
-     * 						   .map(i->i+2)
-     * 						   .map(u->{throw new RuntimeException();})
+     * 						   .transform(i->i+2)
+     * 						   .transform(u->{throw new RuntimeException();})
      * 						   .recover(e->"hello")
      * 						   .firstValue(),equalTo("hello"));
      * }
@@ -1176,8 +1156,8 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4)
-     * 					.map(i->i+2)
-     * 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
+     * 					.transform(i->i+2)
+     * 					.transform(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
      * 					.recover(IOException.class,e->"hello")
      * 					.firstValue(),equalTo("hello"));
      *

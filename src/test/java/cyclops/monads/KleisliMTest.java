@@ -5,8 +5,8 @@ import cyclops.control.Xor;
 import cyclops.monads.Witness.stream;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 
 import java.util.stream.Collectors;
@@ -23,14 +23,14 @@ public class KleisliMTest {
     public void firstK(){
         KleisliM<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
         assertThat(ListX.of(10),
-                equalTo(k1.firstK().apply(Tuple.tuple(10,-1)).reactiveSeq().map(Tuple2::v1).toList()));
+                equalTo(k1.firstK().apply(Tuple.tuple(10,-1)).reactiveSeq().map(Tuple2::_1).toList()));
     }
 
     @Test
     public void secondK(){
         KleisliM<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
         assertThat(ListX.of(-1),
-                equalTo(k1.secondK().apply(Tuple.tuple(10,-1)).reactiveSeq().map(Tuple2::v2).toList()));
+                equalTo(k1.secondK().apply(Tuple.tuple(10,-1)).reactiveSeq().map(Tuple2::_2).toList()));
     }
     @Test
     public void leftK(){

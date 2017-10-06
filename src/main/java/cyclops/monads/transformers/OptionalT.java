@@ -12,10 +12,10 @@ import cyclops.function.Fn4;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
@@ -86,8 +86,8 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     @Override
     public OptionalT<W,T> filter(final Predicate<? super T> test) {
         return of(run.map(f->f.map(in->Tuple.tuple(in,test.test(in))))
-                     .filter( f->f.get().v2 )
-                     .map( f->f.map(in->in.v1)));
+                     .filter( f->f.get()._2() )
+                     .map( f->f.map(in->in._1())));
     }
 
     /**
@@ -118,7 +118,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      * <pre>
      * {@code 
      *  OptionalWT.of(AnyM.fromStream(Arrays.asOptionalW(10))
-     *             .map(t->t=t+1);
+     *             .transform(t->t=t+1);
      *  
      *  
      *  //OptionalWT<AnyMSeq<Stream<Optional[11]>>>
@@ -126,7 +126,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      * </pre>
      * 
      * @param f Mapping function for the wrapped Optional
-     * @return OptionalWT that applies the map function to the wrapped Optional
+     * @return OptionalWT that applies the transform function to the wrapped Optional
      */
     @Override
     public <B> OptionalT<W,B> map(final Function<? super T, ? extends B> f) {
@@ -179,11 +179,11 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
-    	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.map(Optional::completedOptional);
+    	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.transform(Optional::completedOptional);
     	List<Integer> results = optTAdd2.applyHKT(OptionalWT.of(streamOpt))
     									.unwrap()
     									.<Stream<Optional<Integer>>>unwrap()
-    									.map(Optional::join)
+    									.transform(Optional::join)
     									.collect(CyclopsCollectors.toList());
     	
     	
@@ -214,14 +214,14 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
-    	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.map(Optional::completedOptional);
+    	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.transform(Optional::completedOptional);
     	
     	Optional<Optional<Integer>> two = Optional.completedOptional(Optional.completedOptional(2));
     	AnyMSeq<Optional<Integer>> Optional=  AnyM.fromOptionalW(two);
     	List<Integer> results = optTAdd2.applyHKT(OptionalWT.of(streamOpt),OptionalWT.of(Optional))
     									.unwrap()
     									.<Stream<Optional<Integer>>>unwrap()
-    									.map(Optional::join)
+    									.transform(Optional::join)
     									.collect(CyclopsCollectors.toList());
     									
     		//Optional.completedOptional(List[3,4,5]);
@@ -359,7 +359,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.reactiveStream.Stream)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
      */
     @Override
     public <U> OptionalT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {

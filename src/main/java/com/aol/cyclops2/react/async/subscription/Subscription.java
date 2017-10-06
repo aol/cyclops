@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.Seq;
 
 import cyclops.async.adapters.Queue;
@@ -137,16 +138,16 @@ public class Subscription implements Continueable {
     }
 
     private List<Long> valuesToRight(final Queue queue) {
-        return Seq.seq(queues.stream())
-                  .splitAt(findQueue(queue)).v2.map(limits::get)
+        return ReactiveSeq.fromStream(queues.stream())
+                  .splitAt(findQueue(queue))._2().map(limits::get)
                                                .map(AtomicLong::get)
                                                .collect(Collectors.toList());
 
     }
 
-    private Seq<Queue> queuesToLeft(final Queue queue) {
-        return Seq.seq(queues.stream())
-                  .splitAt(findQueue(queue)).v1;
+    private ReactiveSeq<Queue> queuesToLeft(final Queue queue) {
+        return ReactiveSeq.fromStream(queues.stream())
+                  .splitAt(findQueue(queue))._1();
 
     }
 
@@ -194,7 +195,7 @@ public class Subscription implements Continueable {
     }
 }
 /**
-reactiveStream.map().iterator().limit(4).flatMap(..).limit(2).map(..).limit(8)
+reactiveStream.transform().iterator().limit(4).flatMap(..).limit(2).transform(..).limit(8)
 subscription
 
 reactiveStream no limit

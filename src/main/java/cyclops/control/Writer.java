@@ -17,8 +17,8 @@ import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -34,23 +34,23 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
     private final Monoid<W> monoid;
 
     public <R> Writer<W, R> map(Function<? super T,? extends  R> mapper) {
-        return writer(mapper.apply(value.v1), value.v2, monoid);
+        return writer(mapper.apply(value._1()), value._2(), monoid);
     }
 
     public <R> R visit(BiFunction<? super Tuple2<T,W>,? super Monoid<W>,? extends R> fn){
         return fn.apply(value,monoid);
     }
     public <R> Writer<W, R> flatMap(Function<? super T,? extends  Writer<W, ? extends R>> fn) {
-        Writer<W, ? extends R> writer = fn.apply(value.v1);
-        return writer(writer.value.v1, writer.monoid.apply(value.v2, writer.value.v2), writer.monoid);
+        Writer<W, ? extends R> writer = fn.apply(value._1());
+        return writer(writer.value._1(), writer.monoid.apply(value._2(), writer.value._2()), writer.monoid);
     }
 
     public Writer<W,T> tell(W write){
-        return writer(value.v1,monoid.apply(write,value.v2),monoid);
+        return writer(value._1(),monoid.apply(write,value._2()),monoid);
     }
 
     public <R> Writer<W,R> set(R value){
-            return writer(value,this.value.v2,monoid);
+            return writer(value,this.value._2(),monoid);
     }
 
     /*
@@ -205,7 +205,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
 
     @Override
     public Iterator<T> iterator() {
-        return Arrays.asList(value.v1).iterator();
+        return Arrays.asList(value._1()).iterator();
     }
 
     public static <W,W1,T> Nested<Higher<writer,W>,W1,T> nested(Writer<W,Higher<W1,T>> nested,Monoid<W> monoid, InstanceDefinitions<W1> def2){
@@ -373,7 +373,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 @Override
                 public <C2, T, R> Higher<C2, Higher<Higher<writer, W>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<writer, W>, T> ds) {
                     Writer<W, T> w = narrowK(ds);
-                    Higher<C2, R> r = w.visit((t, m) -> fn.apply(t.v1));
+                    Higher<C2, R> r = w.visit((t, m) -> fn.apply(t._1()));
                     Higher<C2, Higher<Higher<writer, W>, R>> x = applicative.map_(r, t -> widen(Writer.writer(t, monoid)));
                     return x;
 
@@ -407,13 +407,13 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
 
                 @Override
                 public <T> T foldRight(Monoid<T> monoid, Higher<Higher<writer, W>, T> ds) {
-                    return monoid.foldRight(narrowK(ds).getValue().v1);
+                    return monoid.foldRight(narrowK(ds).getValue()._1());
 
                 }
 
                 @Override
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<writer, W>, T> ds) {
-                    return monoid.foldLeft(narrowK(ds).getValue().v1);
+                    return monoid.foldLeft(narrowK(ds).getValue()._1());
                 }
 
                 @Override
@@ -431,7 +431,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
 
                     boolean cont = true;
                     do {
-                        cont = next[0].visit((p,__) -> p.v1.visit(s -> {
+                        cont = next[0].visit((p,__) -> p._1().visit(s -> {
                             next[0] = narrowK(fn.apply(s));
                             return true;
                         }, pr -> false));

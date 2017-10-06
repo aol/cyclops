@@ -23,10 +23,10 @@ import cyclops.function.Monoid;
 
 import cyclops.matching.Api;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
@@ -64,9 +64,9 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
                 return Tuple.tuple(ref.prepend(c.head()), c.tail(), false);
             }, nil -> Tuple.tuple(ref, tailRef, true));
 
-            preceding = t3.v1;
-            tail = t3.v2;
-            if(t3.v3)
+            preceding = t3._1();
+            tail = t3._2();
+            if(t3._3())
                 break;
 
         }
@@ -87,7 +87,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
                     }
                     return true;
-                }, tail -> true, t -> t.v2())).get();
+                }, tail -> true, t -> t._2())).get();
             }),Case(nil->nil));
 
         }while(!rem.isEmpty() && !found[0]);
@@ -126,16 +126,16 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     default Zipper<T> focusAt(int pos, T alt){
         Tuple2<ImmutableList<T>, ImmutableList<T>> t2 = splitAt(pos);
-        T value = t2.v2.fold(c -> c.head(), n -> alt);
-        ImmutableList<T> right= t2.v2.fold(c->c.tail(), n->null);
-        return Zipper.of(t2.v1,value, right);
+        T value = t2._2().fold(c -> c.head(), n -> alt);
+        ImmutableList<T> right= t2._2().fold(c->c.tail(), n->null);
+        return Zipper.of(t2._1(),value, right);
     }
     default Maybe<Zipper<T>> focusAt(int pos){
         Tuple2<ImmutableList<T>, ImmutableList<T>> t2 = splitAt(pos);
-        Maybe<T> value = t2.v2.fold(c -> Maybe.just(c.head()), n -> Maybe.none());
+        Maybe<T> value = t2._2().fold(c -> Maybe.just(c.head()), n -> Maybe.none());
         return value.map(l-> {
-            ImmutableList<T> right = t2.v2.fold(c -> c.tail(), n -> null);
-            return Zipper.of(t2.v1, l, right);
+            ImmutableList<T> right = t2._2().fold(c -> c.tail(), n -> null);
+            return Zipper.of(t2._1(), l, right);
         });
     }
 
@@ -574,15 +574,6 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return unitStream(stream().grouped(groupSize));
     }
 
-    @Override
-    default <K, A, D> ImmutableList<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
-        return unitStream(stream().grouped(classifier, downstream));
-    }
-
-    @Override
-    default <K> ImmutableList<Tuple2<K, ReactiveSeq<T>>> grouped(Function<? super T, ? extends K> classifier) {
-        return unitStream(stream().grouped(classifier));
-    }
 
     @Override
     default ImmutableList<T> distinct() {

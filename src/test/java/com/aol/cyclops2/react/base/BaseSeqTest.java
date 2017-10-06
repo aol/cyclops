@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -33,8 +33,8 @@ import java.util.stream.Stream;
 
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -235,12 +235,12 @@ public abstract class BaseSeqTest {
         assertEquals(tuple(2, "two"), s1.get(1));
 
         FutureStream<Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "replaceWith"));
-        List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t.v1())).toList();
+        List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t._1())).toList();
         assertEquals(tuple(1, "replaceWith"), s2.get(0));
         assertEquals(tuple(2, "two"), s2.get(1));
 
         FutureStream<Tuple2<Integer, String>> t3 = of(tuple(2, "two"), tuple(1, "replaceWith"));
-        List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toList();
+        List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t._1()).toList();
         assertEquals(tuple(1, "replaceWith"), s3.get(0));
         assertEquals(tuple(2, "two"), s3.get(1));
     }
@@ -253,13 +253,13 @@ public abstract class BaseSeqTest {
 												
 												.collect(Collectors.toList());
 		
-		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,hasItem(400));
 		
-		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 		
 		
@@ -272,13 +272,13 @@ public abstract class BaseSeqTest {
 						.peek(it -> System.out.println(it)).collect(Collectors.toList());
 				//		.collect(CyclopsCollectors.toList());
 	
-		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,hasItem(400));
 		
-		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
 	}
@@ -289,8 +289,8 @@ public abstract class BaseSeqTest {
 													.zip( of(100,200,300,400))
 													.collect(Collectors.toList());
 		
-		assertThat(asList(1,2,3,4,5,6),hasItem(list.get(0).v1));
-		assertThat(asList(100,200,300,400),hasItem(list.get(0).v2));
+		assertThat(asList(1,2,3,4,5,6),hasItem(list.get(0)._1()));
+		assertThat(asList(100,200,300,400),hasItem(list.get(0)._2()));
 		
 		
 		
@@ -444,8 +444,8 @@ public abstract class BaseSeqTest {
 	@Test
 	public void testDuplicate(){
 		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
-		 assertTrue(copies.v1.anyMatch(i->i==2));
-		 assertTrue(copies.v2.anyMatch(i->i==2));
+		 assertTrue(copies._1().anyMatch(i->i==2));
+		 assertTrue(copies._2().anyMatch(i->i==2));
 	}
 	
 	
@@ -513,10 +513,10 @@ public abstract class BaseSeqTest {
 	        List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
 
 	        assertEquals(2, list.size());
-	        assertTrue(asList(1,2).contains( list.get(0).v1));
-	        assertTrue(""+list.get(1).v2,asList(1,2).contains( list.get(1).v1)); 
-	        assertTrue(asList("a", "b", "c", "d").contains( list.get(0).v2));
-	        assertTrue(asList("a", "b", "c", "d").contains( list.get(1).v2));
+	        assertTrue(asList(1,2).contains( list.get(0)._1()));
+	        assertTrue(""+list.get(1)._2(),asList(1,2).contains( list.get(1)._1()));
+	        assertTrue(asList("a", "b", "c", "d").contains( list.get(0)._2()));
+	        assertTrue(asList("a", "b", "c", "d").contains( list.get(1)._2()));
 	       
 	        
 	    }
@@ -526,7 +526,7 @@ public abstract class BaseSeqTest {
 	        assertEquals(asList(),of().zipWithIndex().toList());
 	     //   System.out.println( of("a").zipWithIndex().toList().get(0));
 	       
-	      assertThat( of("a").zipWithIndex().map(t->t.v2).findFirst().get(),is(0l));
+	      assertThat( of("a").zipWithIndex().map(t->t._2()).findFirst().get(),is(0l));
 	      assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
 	     //   assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), of("a", "b").zipWithIndex().toList());
 	       //assertThat(asList(tuple("a", 0L), tuple("b", 1L), tuple("c", 2L)), is(of("a", "b", "c").zipWithIndex().toList()));
@@ -587,13 +587,13 @@ public abstract class BaseSeqTest {
 	    public void testPartition() {
 	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
-	        assertEquals(6, s.get().partition(i -> i % 2 != 0).v1.toList().size() + s.get().partition(i -> i % 2 != 0).v2.toList().size());
+	        assertEquals(6, s.get().partition(i -> i % 2 != 0)._1().toList().size() + s.get().partition(i -> i % 2 != 0)._2().toList().size());
 	        
-	        assertTrue(s.get().partition(i -> true).v1.toList().containsAll(asList(1, 2, 3, 4, 5, 6)));
-	        assertEquals(asList(), s.get().partition(i -> true).v2.toList());
+	        assertTrue(s.get().partition(i -> true)._1().toList().containsAll(asList(1, 2, 3, 4, 5, 6)));
+	        assertEquals(asList(), s.get().partition(i -> true)._2().toList());
 
-	        assertEquals(asList(), s.get().partition(i -> false).v1.toList());
-	        assertTrue(s.get().partition(i -> false).v2.toList().containsAll(asList(1, 2, 3, 4, 5, 6)));
+	        assertEquals(asList(), s.get().partition(i -> false)._1().toList());
+	        assertTrue(s.get().partition(i -> false)._2().toList().containsAll(asList(1, 2, 3, 4, 5, 6)));
 	    }
 
 	    @Test
@@ -602,16 +602,16 @@ public abstract class BaseSeqTest {
 	    	for(int i=0;i<0;i++){
 		    	Supplier<ReactiveSeq<Tuple2<Integer,Integer>>> s = ()-> of(tuple(1, 0),tuple(2, 1), tuple(3, 2), tuple(4, 3), tuple(5, 4), tuple(6, 5));
 		    	
-		    	Tuple2<ReactiveSeq<Tuple2<Integer, Integer>>, ReactiveSeq<Tuple2<Integer, Integer>>> tuple = s.get().partition(t -> t.v2 < 3);
+		    	Tuple2<ReactiveSeq<Tuple2<Integer, Integer>>, ReactiveSeq<Tuple2<Integer, Integer>>> tuple = s.get().partition(t -> t._2() < 3);
 		    	
-		    	Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t2 = tuple.map((v1, v2) -> Tuple.<ReactiveSeq<Integer>, ReactiveSeq<Integer>>tuple(
-		                v1.map(t -> t.v1),
-		                v2.map(t -> t.v1)
+		    	Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t2 = tuple.transform((v1, v2) -> Tuple.<ReactiveSeq<Integer>, ReactiveSeq<Integer>>tuple(
+		                v1.map(t -> t._1()),
+		                v2.map(t -> t._1())
 		            ));
 		            
-		    	List l1 = t2.v1.toList();
+		    	List l1 = t2._1().toList();
 		    	System.out.println("l1:" +l1);
-		    	List l2 = t2.v2.toList();
+		    	List l2 = t2._2().toList();
 		    	 System.out.println("l2:"+l2);
 		    	assertThat(l1.size(),is(3));
 		    	assertThat(l2.size(),is(3));
@@ -624,40 +624,40 @@ public abstract class BaseSeqTest {
 		for (int i = 0; i < 1000; i++) {
 			Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
-			assertEquals(asList(), s.get().splitAt(0).v1.toList());
-			assertTrue(s.get().splitAt(0).v2.toList().containsAll(
+			assertEquals(asList(), s.get().splitAt(0)._1().toList());
+			assertTrue(s.get().splitAt(0)._2().toList().containsAll(
 					asList(1, 2, 3, 4, 5, 6)));
 
-			assertEquals(1, s.get().splitAt(1).v1.toList().size());
-			assertEquals(s.get().splitAt(1).v2.toList().size(), 5);
+			assertEquals(1, s.get().splitAt(1)._1().toList().size());
+			assertEquals(s.get().splitAt(1)._2().toList().size(), 5);
 
-			assertEquals(3, s.get().splitAt(3).v1.toList().size());
+			assertEquals(3, s.get().splitAt(3)._1().toList().size());
 
-			assertEquals(3, s.get().splitAt(3).v2.count());
+			assertEquals(3, s.get().splitAt(3)._2().count());
 
-			assertEquals(6, s.get().splitAt(6).v1.toList().size());
-			assertEquals(asList(), s.get().splitAt(6).v2.toList());
+			assertEquals(6, s.get().splitAt(6)._1().toList().size());
+			assertEquals(asList(), s.get().splitAt(6)._2().toList());
 
-			assertThat(s.get().splitAt(7).v1.toList().size(), is(6));
-			assertEquals(asList(), s.get().splitAt(7).v2.toList());
+			assertThat(s.get().splitAt(7)._1().toList().size(), is(6));
+			assertEquals(asList(), s.get().splitAt(7)._2().toList());
 
 		}
 	}
 
 	    @Test
 	    public void testSplitAtHead() {
-	        assertEquals(Optional.empty(), of().splitAtHead().v1);
-	        assertEquals(asList(), of().splitAtHead().v2.toList());
+	        assertEquals(Optional.empty(), of().splitAtHead()._1());
+	        assertEquals(asList(), of().splitAtHead()._2().toList());
 
-	        assertEquals(Optional.of(1), of(1).splitAtHead().v1);
-	        assertEquals(asList(), of(1).splitAtHead().v2.toList());
+	        assertEquals(Optional.of(1), of(1).splitAtHead()._1());
+	        assertEquals(asList(), of(1).splitAtHead()._2().toList());
 
-	        assertEquals(1, of(1, 2).splitAtHead().v2.count());
+	        assertEquals(1, of(1, 2).splitAtHead()._2().count());
 
 
-			assertEquals(asList(2, 3).size(), of(1, 2, 3).splitAtHead().v2.toList().size());
-	        assertEquals(1, of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toList().size());
-	        assertEquals(0, of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v2.toList().size());
+			assertEquals(asList(2, 3).size(), of(1, 2, 3).splitAtHead()._2().toList().size());
+	        assertEquals(1, of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList().size());
+	        assertEquals(0, of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList().size());
 	    }
 
 	    @Test

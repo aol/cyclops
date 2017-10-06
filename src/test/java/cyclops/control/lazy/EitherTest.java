@@ -17,7 +17,7 @@ import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
+import cyclops.collections.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -225,8 +225,8 @@ public class EitherTest {
         Either<String,Integer> ten = Either.right(10);
         //pending https://github.com/aol/cyclops-react/issues/380
       //  assertThat(just.combineEager(firstNonNull,nil),equalTo(just));
-     //   assertThat(just.combineEager(firstNonNull,nil.map(i->null)),equalTo(just));
-      //  assertThat(just.combineEager(firstNonNull,ten.map(i->null)),equalTo(just));
+     //   assertThat(just.combineEager(firstNonNull,nil.transform(i->null)),equalTo(just));
+      //  assertThat(just.combineEager(firstNonNull,ten.transform(i->null)),equalTo(just));
          
     }
     @Test

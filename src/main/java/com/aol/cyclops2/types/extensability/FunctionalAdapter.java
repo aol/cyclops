@@ -14,18 +14,18 @@ import lombok.AllArgsConstructor;
 /**
  * Interface for defining how Comprehensions should work for a type
  * Cyclops For Comprehensions will supply lazy a JDK 8 Predicate or Function
- * for filter / map / flatMap
+ * for filter / transform / flatMap
  * The comprehender should wrap these in a suitable type and make the call to the
  * underlying Monadic Type (T) the Comprehender implementation supports.
  * 
  * E.g. To support mapping for the Functional Java Option type wrap the supplied JDK 8 Function in a Functional Java
- * fj.F type, call the make call to option.map( ) and retun the result.
+ * fj.F type, call the make call to option.transform( ) and retun the result.
  * 
  * <pre>{@code
  *  OptionComprehender<Option> {
  *    
- *     public Object map(Option o, Function fn){
- *        return o.map( a-> fn.applyHKT(a));
+ *     public Object transform(Option o, Function fn){
+ *        return o.transform( a-> fn.applyHKT(a));
  *     }
  *     
  * }

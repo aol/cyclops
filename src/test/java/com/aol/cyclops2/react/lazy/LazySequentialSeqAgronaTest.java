@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.stream.FutureStream;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.async.LazyReact;
@@ -121,12 +121,12 @@ public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 	}
 	@Test
 	public void duplicateFutures(){
-		List<String> list = of("a","b").actOnFutures().duplicate().v1.block();
+		List<String> list = of("a","b").actOnFutures().duplicate()._1().block();
 		assertThat(list,is(asList("a","b")));
 	}
 	@Test
 	public void duplicateFutures2(){
-		List<String> list = of("a","b").actOnFutures().duplicate().v2.block();
+		List<String> list = of("a","b").actOnFutures().duplicate()._2().block();
 		assertThat(list,is(asList("a","b")));
 	}
 }

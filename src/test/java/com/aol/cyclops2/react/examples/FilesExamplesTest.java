@@ -15,7 +15,7 @@ public class FilesExamplesTest {
 		
 		LazyReact react = new LazyReact(100,110);
 		react.fromStream(Files.walk(Paths.get(".")))
-		//	 .map(Unchecked.function(Files::readAllBytes))
+		//	 .transform(Unchecked.function(Files::readAllBytes))
 			.map(d->{ throw new RuntimeException("hello");})
 			.map(Object::toString)
 			 .recover(e->"hello world")

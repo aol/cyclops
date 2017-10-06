@@ -41,9 +41,9 @@ import com.aol.cyclops2.types.*;
 import cyclops.async.Future;
 import cyclops.function.*;
 import cyclops.stream.*;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
@@ -1139,7 +1139,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      
     public static <T> ListX<AnyMSeq<T>> listFromIterable(final Iterable<Iterable<T>> fromEither5) {
         return StreamSupport.reactiveStream(fromEither5.spliterator(), false)
-                            .map(i -> AnyM.fromIterable(i))
+                            .transform(i -> AnyM.fromIterable(i))
                             .collect(ListX.listXCollector());
     }
 */
@@ -1247,7 +1247,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      
     public static <T> ListX<AnyMSeq<T>> listFromIterator(final Iterable<Iterator<T>> fromEither5) {
         return StreamSupport.reactiveStream(fromEither5.spliterator(), false)
-                            .map(i -> AnyM.fromIterable(() -> i))
+                            .transform(i -> AnyM.fromIterable(() -> i))
                             .collect(ListX.listXCollector());
     }*/
 

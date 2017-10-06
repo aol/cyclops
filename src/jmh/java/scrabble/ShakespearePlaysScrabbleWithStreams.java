@@ -40,7 +40,7 @@ import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Warmup;
-
+//JMH Benchmarking test file : not part of distribution
 /**
  * Shakespeare plays Scrabble with Streams.
  * @author José

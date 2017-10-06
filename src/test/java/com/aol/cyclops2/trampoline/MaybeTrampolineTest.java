@@ -4,13 +4,13 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import lombok.ToString;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
 import org.junit.Test;
 
 import static cyclops.control.Eval.now;
 import static cyclops.control.Maybe.just;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 
 
 public class MaybeTrampolineTest {
@@ -26,7 +26,7 @@ public class MaybeTrampolineTest {
     }
 
     public Maybe<Long> fibonacci(Maybe<Tuple3<Integer, Long, Long>> fib) {
-        return fib.flatMap(t -> t.v1 == 0 ? just(t.v3) : fibonacci(just(tuple(t.v1 - 1, t.v2 + t.v3, t.v2))));
+        return fib.flatMap(t -> t._1() == 0 ? just(t._3()) : fibonacci(just(tuple(t._1() - 1, t._2() + t._3(), t._2()))));
     }
 
     @Test

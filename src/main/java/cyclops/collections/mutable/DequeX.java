@@ -33,9 +33,9 @@ import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import lombok.experimental.UtilityClass;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -469,7 +469,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#fromStream(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#fromStream(java.util.stream.Stream)
      */
     @Override
     default <X> DequeX<X> fromStream(final ReactiveSeq<X> stream) {
@@ -511,7 +511,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * {@code 
      *   
      *     DequeX.of(1,2,3)
-     *           .map(i->i*2)
+     *           .transform(i->i*2)
      *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *      //DequeX[12]
@@ -579,7 +579,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#map(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#transform(java.util.function.Function)
      */
     @Override
     default <R> DequeX<R> map(final Function<? super T, ? extends R> mapper) {
@@ -700,21 +700,6 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return (DequeX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#grouped(java.util.function.Function, java.util.reactiveStream.Collector)
-     */
-    @Override
-    default <K, A, D> DequeX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
-        return (DequeX) LazyCollectionX.super.grouped(classifier, downstream);
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#grouped(java.util.function.Function)
-     */
-    @Override
-    default <K> DequeX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return (DequeX) LazyCollectionX.super.grouped(classifier);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#zip(java.lang.Iterable)
@@ -736,7 +721,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> DequeX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -883,7 +868,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> DequeX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -894,7 +879,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> DequeX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -903,7 +888,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> DequeX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -1120,7 +1105,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
     default DequeX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1156,7 +1141,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
     default DequeX<T> retainAllS(final Stream<? extends T> seq) {
@@ -1461,7 +1446,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          *
          * <pre>
          * {@code
-         *  DequeX<Integer> list = Deques.functor().map(i->i*2, DequeX.of(1,2,3));
+         *  DequeX<Integer> list = Deques.functor().transform(i->i*2, DequeX.of(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -1474,7 +1459,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * {@code
          *   DequeX<Integer> list = Deques.unit()
         .unit("hello")
-        .applyHKT(h->Deques.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Deques.functor().transform((String v) ->v.length(), h))
         .convert(DequeX::narrowK3);
          *
          * }
@@ -1530,7 +1515,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
         DequeX<Integer> list = Deques.unit()
         .unit("hello")
-        .applyHKT(h->Deques.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Deques.functor().transform((String v) ->v.length(), h))
         .applyHKT(h->Deques.zippingApplicative().ap(listFn, h))
         .convert(DequeX::narrowK3);
 

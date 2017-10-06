@@ -110,7 +110,7 @@ public class AsyncRSExtensionOperatorsTest {
     public void elapsedIsPositive(){
 
 
-        assertTrue(of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
+        assertTrue(of(1,2,3,4,5).elapsed().noneMatch(t->t._2()<0));
     }
     @Test
     public void timeStamp(){
@@ -118,21 +118,21 @@ public class AsyncRSExtensionOperatorsTest {
 
         assertTrue(of(1,2,3,4,5)
                 .timestamp()
-                .allMatch(t-> t.v2 <= System.currentTimeMillis()));
+                .allMatch(t-> t._2() <= System.currentTimeMillis()));
 
 
     }
     @Test
     public void elementAt0(){
-        assertThat(of(1).elementAt(0).v1,equalTo(1));
+        assertThat(of(1).elementAt(0)._1(),equalTo(1));
     }
     @Test
     public void getMultple(){
-        assertThat(of(1,2,3,4,5).elementAt(2).v1,equalTo(3));
+        assertThat(of(1,2,3,4,5).elementAt(2)._1(),equalTo(3));
     }
     @Test
     public void getMultpleStream(){
-        assertThat(of(1,2,3,4,5).elementAt(2).v2.toList(),equalTo(Arrays.asList(1,2,3,4,5)));
+        assertThat(of(1,2,3,4,5).elementAt(2)._2().toList(),equalTo(Arrays.asList(1,2,3,4,5)));
     }
     @Test(expected=NoSuchElementException.class)
     public void getMultiple1(){
@@ -351,8 +351,8 @@ public class AsyncRSExtensionOperatorsTest {
     }
     @Test
     public void splitBy(){
-        assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
-        assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v2.toList(),equalTo(Arrays.asList(4,5,6)));
+        assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._1().toList(),equalTo(Arrays.asList(1,2,3)));
+        assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._2().toList(),equalTo(Arrays.asList(4,5,6)));
     }
     @Test
     public void testLazy(){

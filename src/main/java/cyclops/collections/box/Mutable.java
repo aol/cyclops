@@ -56,7 +56,7 @@ public class Mutable<T> implements To<Mutable<T>>,Supplier<T>, Consumer<T>,Itera
      * <pre>{@code
      *   Mutable<Integer> num = Mutable.of(20);
      *   
-     *   Stream.of(1,2,3,4).map(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);
+     *   Stream.of(1,2,3,4).transform(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);
      *   
      *   System.out.println(num.get());
      *   //prints 120

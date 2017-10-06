@@ -3,7 +3,7 @@ package cyclops.collections.standard.anyM;
 import cyclops.collections.AbstractAnyMSeqTest;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.set;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -14,7 +14,7 @@ import java.util.List;
 
 import static java.util.Comparator.comparing;
 import static org.hamcrest.Matchers.equalTo;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -36,12 +36,12 @@ public class SetXTest extends AbstractAnyMSeqTest<set> {
         assertEquals(tuple(2, 2), s1.get(1));
 
         AnyMSeq<set,Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "replaceWith"));
-        List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t.v1())).toListX().sorted();
+        List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t._1())).toListX().sorted();
         assertEquals(tuple(1, "replaceWith"), s2.get(0));
         assertEquals(tuple(2, "two"), s2.get(1));
 
         AnyMSeq<set,Tuple2<Integer, String>> t3 = of(tuple(2, "two"), tuple(1, "replaceWith"));
-        List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toListX().sorted();
+        List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t._1()).toListX().sorted();
         assertEquals(tuple(1, "replaceWith"), s3.get(0));
         assertEquals(tuple(2, "two"), s3.get(1));
     }

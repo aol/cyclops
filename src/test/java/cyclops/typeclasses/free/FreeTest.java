@@ -10,7 +10,7 @@ import cyclops.control.Xor;
 import cyclops.function.Fn0;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.supplier;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.typeclasses.free.CharToy.*;
@@ -88,8 +88,8 @@ public final class FreeTest {
     static <R> String interleaveProgram(Free<CharToy.µ,R> program1,Free<CharToy.µ,R> program2){
 
         Tuple2<Xor<CharToy<Free<µ, R>>, R>, Xor<CharToy<Free<µ, R>>, R>> tuple = Free.product(CharToy.functor, program1, CharToy::narrowK, program2, CharToy::narrowK);
-        Xor<CharToy<Free<µ, R>>, R> a = tuple.v1;
-        Xor<CharToy<Free<µ, R>>, R> b = tuple.v2;
+        Xor<CharToy<Free<µ, R>>, R> a = tuple._1();
+        Xor<CharToy<Free<µ, R>>, R> b = tuple._2();
 
 
 

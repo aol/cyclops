@@ -124,7 +124,7 @@ public class LazyTest implements Printable {
 	public void elapsedIsPositive(){
 		
 		
-		assertTrue(LazyReact.sequentialBuilder().of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
+		assertTrue(LazyReact.sequentialBuilder().of(1,2,3,4,5).elapsed().noneMatch(t->t._2()<0));
 	}
 
 
@@ -180,11 +180,11 @@ public class LazyTest implements Printable {
 		.zipWithIndex()
 		.peek(System.out::println)
 		.map(it -> {
-			if (it.v1 == 1) {
+			if (it._1() == 1) {
 				sleep(1000);
 				return -1;
 			}
-			return it.v1 + 100;
+			return it._1() + 100;
 		})
 		.peek(System.out::println)
 		.forEach(System.out::println);

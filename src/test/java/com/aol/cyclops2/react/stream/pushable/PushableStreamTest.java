@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.stream.FutureStream;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
@@ -95,9 +95,9 @@ public class PushableStreamTest {
 
 		Tuple2<Queue<Integer>, Stream<Integer>> pushable = StreamSource.ofUnbounded()
 				                                                        .stream();
-		pushable.v1.add(10);
-		pushable.v1.close();
-		assertThat(pushable.v2.collect(Collectors.toList()), hasItem(10));
+		pushable._1().add(10);
+		pushable._1().close();
+		assertThat(pushable._2().collect(Collectors.toList()), hasItem(10));
 	}
 
 	@Test
@@ -141,9 +141,9 @@ public class PushableStreamTest {
 	public void testSeqTuple() {
 		Tuple2<Queue<Integer>, ReactiveSeq<Integer>> pushable = StreamSource.ofUnbounded()
 				                                                            .reactiveSeq();
-		pushable.v1.add(10);
-		pushable.v1.close();
-		assertThat(pushable.v2.collect(Collectors.toList()), hasItem(10));
+		pushable._1().add(10);
+		pushable._1().close();
+		assertThat(pushable._2().collect(Collectors.toList()), hasItem(10));
 	}
 
 	@Test

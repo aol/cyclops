@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -30,8 +30,8 @@ import com.aol.cyclops2.react.collectors.lazy.MaxActive;
 import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -297,13 +297,13 @@ public class OperationsOnFuturesTest {
 					of(1,2,3,4,5,6).actOnFutures().zipLfs(of(100,200,300,400))
 													.peek(it -> System.out.println(it)).collect(Collectors.toList());
 			
-			List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+			List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 			assertThat(right,hasItem(100));
 			assertThat(right,hasItem(200));
 			assertThat(right,hasItem(300));
 			assertThat(right,hasItem(400));
 			
-			List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+			List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 			assertThat(asList(1,2,3,4),equalTo(left));
 			
 			
@@ -316,13 +316,13 @@ public class OperationsOnFuturesTest {
 					of(1,2,3,4,5,6).actOnFutures().zipLfs(of(100,200,300,400), combiner)
 													.peek(it -> System.out.println(it)).collect(Collectors.toList());
 			
-			List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+			List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 			assertThat(right,hasItem(100));
 			assertThat(right,hasItem(200));
 			assertThat(right,hasItem(300));
 			assertThat(right,hasItem(400));
 			
-			List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+			List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 			assertThat(asList(1,2,3,4),equalTo(left));
 			
 			
@@ -334,13 +334,13 @@ public class OperationsOnFuturesTest {
 					of(1,2,3,4,5,6).actOnFutures().zip(of(100,200,300,400))
 													.peek(it -> System.out.println(it)).collect(Collectors.toList());
 			
-			List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+			List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 			assertThat(right,hasItem(100));
 			assertThat(right,hasItem(200));
 			assertThat(right,hasItem(300));
 			assertThat(right,hasItem(400));
 			
-			List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+			List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 			assertThat(asList(1,2,3,4),equalTo(left));
 			
 			
@@ -350,13 +350,13 @@ public class OperationsOnFuturesTest {
 		public void zip2of(){
 			List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6).actOnFutures().zip(of(100,200,300,400)).peek(it -> System.out.println(it)).collect(Collectors.toList());
 		
-			List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+			List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 			assertThat(right,hasItem(100));
 			assertThat(right,hasItem(200));
 			assertThat(right,hasItem(300));
 			assertThat(right,hasItem(400));
 			
-			List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+			List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 			assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
 		}
@@ -368,14 +368,14 @@ public class OperationsOnFuturesTest {
 															.actOnFutures().zip( of(100,200,300,400).limit(4))
 															.collect(Collectors.toList());
 				
-				assertThat(list.get(0).v1,is(1));
-				assertThat(list.get(0).v2,is(100));
-				assertThat(list.get(1).v1,is(2));
-				assertThat(list.get(1).v2,is(200));
-				assertThat(list.get(2).v1,is(3));
-				assertThat(list.get(2).v2,is(300));
-				assertThat(list.get(3).v1,is(4));
-				assertThat(list.get(3).v2,is(400));
+				assertThat(list.get(0)._1(),is(1));
+				assertThat(list.get(0)._2(),is(100));
+				assertThat(list.get(1)._1(),is(2));
+				assertThat(list.get(1)._2(),is(200));
+				assertThat(list.get(2)._1(),is(3));
+				assertThat(list.get(2)._2(),is(300));
+				assertThat(list.get(3)._1(),is(4));
+				assertThat(list.get(3)._2(),is(400));
 			
 			
 			
@@ -523,8 +523,8 @@ public class OperationsOnFuturesTest {
 		@Test
 		public void testDuplicate(){
 			 Tuple2<FutureStream<Integer>, FutureStream<Integer>> copies =of(1,2,3,4,5,6).actOnFutures().duplicate();
-			 assertTrue(copies.v1.anyMatch(i->i==2));
-			 assertTrue(copies.v2.anyMatch(i->i==2));
+			 assertTrue(copies._1().anyMatch(i->i==2));
+			 assertTrue(copies._2().anyMatch(i->i==2));
 		}
 		
 	Throwable ex;
@@ -562,10 +562,10 @@ public class OperationsOnFuturesTest {
 				of("a", "b", "c", "d")).toList();
 
 		assertEquals(2, list.size());
-		assertTrue(asList(1, 2).contains(list.get(0).v1));
-		assertTrue("" + list.get(1).v2, asList(1, 2).contains(list.get(1).v1));
-		assertTrue(asList("a", "b", "c", "d").contains(list.get(0).v2));
-		assertTrue(asList("a", "b", "c", "d").contains(list.get(1).v2));
+		assertTrue(asList(1, 2).contains(list.get(0)._1()));
+		assertTrue("" + list.get(1)._2(), asList(1, 2).contains(list.get(1)._1()));
+		assertTrue(asList("a", "b", "c", "d").contains(list.get(0)._2()));
+		assertTrue(asList("a", "b", "c", "d").contains(list.get(1)._2()));
 
 	}
 

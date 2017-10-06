@@ -36,7 +36,7 @@ public interface Transformable<T> {
      * {@code
      *
      *
-     *    of(1,2,3).map(i->i*2)
+     *    of(1,2,3).transform(i->i*2)
      *
      *    //[2,4,6]
      *
@@ -55,7 +55,7 @@ public interface Transformable<T> {
      * {@code
      *
      *
-     *    of(1,2,3).map(System.out::println)
+     *    of(1,2,3).transform(System.out::println)
      *
      *    1
      *    2
@@ -74,7 +74,7 @@ public interface Transformable<T> {
     }
 
     /**
-      * Performs a map operation that can call a recursive method without running out of stack space
+      * Performs a transform operation that can call a recursive method without running out of stack space
       * <pre>
       * {@code
       * ReactiveSeq.of(10,20,30,40)

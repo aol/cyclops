@@ -1,13 +1,13 @@
 package com.aol.cyclops2.internal.stream;
 
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple3;
 import org.reactivestreams.Subscription;
 
 import cyclops.companion.Streams;
@@ -56,7 +56,7 @@ public class FutureStreamUtils {
      * <pre>
      * {@code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
-     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
+     *                                  .transform(Supplier::get),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -96,7 +96,7 @@ public class FutureStreamUtils {
      * <pre>
      * {@code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
-     *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *                                  .transform(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -175,7 +175,7 @@ public class FutureStreamUtils {
      * <pre>
      * {@code
      *     Subscription next = StreanUtils.forEach(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
-     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
+     *                                  .transform(Supplier::get),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("processed!");
      *     
@@ -209,7 +209,7 @@ public class FutureStreamUtils {
      * <pre>
      * {@code
      *     Subscription next = Streams.forEachEvents(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
-     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *                                  .transform(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");
      *     

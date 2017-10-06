@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
 import cyclops.monads.Witness;
-import org.jooq.lambda.tuple.Tuple;
+import cyclops.collections.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 

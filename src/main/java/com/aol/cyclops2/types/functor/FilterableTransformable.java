@@ -21,7 +21,7 @@ public interface FilterableTransformable<T> extends Filters<T>, Transformable<T>
     FilterableTransformable<T> filter(Predicate<? super T> fn);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#map(java.util.function.Function)
+     * @see com.aol.cyclops2.types.functor.Transformable#transform(java.util.function.Function)
      */
     @Override
     <R> FilterableTransformable<R> map(Function<? super T, ? extends R> fn);

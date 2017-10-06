@@ -8,8 +8,8 @@ import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -185,7 +185,7 @@ public class IntMap<T> implements ImmutableList<T>{
     @Override
     public <X extends Throwable> ImmutableList<T> onEmptyThrow(Supplier<? extends X> supplier) {
         if(isEmpty()){
-            throw supplier.get();
+            throw ExceptionSoftener.throwSoftenedException(supplier.get());
         }
         return this;
     }

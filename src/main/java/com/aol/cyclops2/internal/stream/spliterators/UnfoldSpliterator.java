@@ -1,14 +1,14 @@
 package com.aol.cyclops2.internal.stream.spliterators;
 
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 
 
 public class UnfoldSpliterator<T1,T> implements Spliterator<T>, CopyableSpliterator<T> {
@@ -39,10 +39,10 @@ public class UnfoldSpliterator<T1,T> implements Spliterator<T>, CopyableSplitera
     @Override
     public boolean tryAdvance(final Consumer<? super T> action) {
 
-       return fn.apply(current.v2)
+       return fn.apply(current._2())
                 .map(result->{
                     current = result;
-                    action.accept(result.v1);
+                    action.accept(result._1());
                     return result;
                 }).isPresent();
 

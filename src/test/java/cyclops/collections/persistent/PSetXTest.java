@@ -7,7 +7,7 @@ import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.AbstractCollectionXTest;
 import cyclops.stream.Spouts;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
 import static org.hamcrest.Matchers.equalTo;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -64,12 +64,12 @@ public class PSetXTest extends AbstractCollectionXTest {
         assertEquals(tuple(2, "two"), s1.get(1));
 
         CollectionX<Tuple2<Integer, String>> t2 = of(tuple(2, "two"), tuple(1, "replaceWith"));
-        List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t.v1())).toListX().sorted();
+        List<Tuple2<Integer, String>> s2 = t2.sorted(comparing(t -> t._1())).toListX().sorted();
         assertEquals(tuple(1, "replaceWith"), s2.get(0));
         assertEquals(tuple(2, "two"), s2.get(1));
 
         CollectionX<Tuple2<Integer, String>> t3 = of(tuple(2, "two"), tuple(1, "replaceWith"));
-        List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t.v1()).toListX().sorted();
+        List<Tuple2<Integer, String>> s3 = t3.sorted(t -> t._1()).toListX().sorted();
         assertEquals(tuple(1, "replaceWith"), s3.get(0));
         assertEquals(tuple(2, "two"), s3.get(1));
 

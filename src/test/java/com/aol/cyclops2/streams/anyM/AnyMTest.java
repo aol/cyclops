@@ -40,7 +40,7 @@ public class AnyMTest {
 		AnyMValue<Integer> reactiveStream = AnyM.fromOptional(Optional.of(1))
 									.flatMap(i->ReactiveSeq.of(1,2,i).anyM());
 		
-		reactiveStream.map(i->i+2);
+		reactiveStream.transform(i->i+2);
 	}
 	**/
     @Test

@@ -21,10 +21,10 @@ import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
@@ -60,9 +60,9 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
                 return Tuple.tuple(ref.prepend(c.head()), c.tail(), false);
             }, nil -> Tuple.tuple(ref, tailRef, true));
 
-            preceding = t3.v1;
-            tail = t3.v2;
-            if(t3.v3)
+            preceding = t3._1();
+            tail = t3._2();
+            if(t3._3())
                 break;
 
         }
@@ -99,15 +99,11 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return drop(start).take(end-start);
     }
     default LazySeq<T> lazySeq(){
-        if(this instanceof LazySeq){
-            return (LazySeq<T>)this;
-        }
+
         return fold(c->LazySeq.lazy(c.head(),()->c.tail().lazySeq()), nil->LazySeq.empty());
     }
     default Seq<T> imSeq(){
-        if(this instanceof Seq){
-            return (Seq<T>)this;
-        }
+
         return fold(c->Seq.cons(c.head(),c.tail().imSeq()), nil->Seq.empty());
     }
 
@@ -119,16 +115,16 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
 
     default Zipper<T> focusAt(int pos, T alt){
         Tuple2<ImmutableQueue<T>, ImmutableQueue<T>> t2 = splitAt(pos);
-        T value = t2.v2.fold(c -> c.head(), n -> alt);
-        ImmutableQueue<T> right= t2.v2.fold(c->c.tail(), n->null);
-        return Zipper.of(t2.v1.lazySeq(),value, right.lazySeq());
+        T value = t2._2().fold(c -> c.head(), n -> alt);
+        ImmutableQueue<T> right= t2._2().fold(c->c.tail(), n->null);
+        return Zipper.of(t2._1().lazySeq(),value, right.lazySeq());
     }
     default Maybe<Zipper<T>> focusAt(int pos){
         Tuple2<ImmutableQueue<T>, ImmutableQueue<T>> t2 = splitAt(pos);
-        Maybe<T> value = t2.v2.fold(c -> Maybe.just(c.head()), n -> Maybe.none());
+        Maybe<T> value = t2._2().fold(c -> Maybe.just(c.head()), n -> Maybe.none());
         return value.map(l-> {
-            ImmutableQueue<T> right = t2.v2.fold(c -> c.tail(), n -> null);
-            return Zipper.of(t2.v1.lazySeq(), l, right.lazySeq());
+            ImmutableQueue<T> right = t2._2().fold(c -> c.tail(), n -> null);
+            return Zipper.of(t2._1().lazySeq(), l, right.lazySeq());
         });
     }
 
@@ -564,15 +560,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return unitStream(stream().grouped(groupSize));
     }
 
-    @Override
-    default <K, A, D> ImmutableQueue<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
-        return unitStream(stream().grouped(classifier, downstream));
-    }
 
-    @Override
-    default <K> ImmutableQueue<Tuple2<K, ReactiveSeq<T>>> grouped(Function<? super T, ? extends K> classifier) {
-        return unitStream(stream().grouped(classifier));
-    }
 
     @Override
     default ImmutableQueue<T> distinct() {

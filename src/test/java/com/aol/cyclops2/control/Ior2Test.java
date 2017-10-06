@@ -14,7 +14,7 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
+import cyclops.collections.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 

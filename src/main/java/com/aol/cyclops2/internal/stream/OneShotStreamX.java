@@ -5,9 +5,9 @@ import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 
 import java.util.*;
 import java.util.function.Function;
@@ -103,10 +103,10 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public final Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
-        return new Tuple2(
-                Tuple2.v1.to().optional()
+        return Tuple2.of(
+                Tuple2._1().to().optional()
                         .flatMap(l -> l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty()),
-                Tuple2.v2);
+                Tuple2._2());
     }
 
     @Override

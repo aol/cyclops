@@ -8,7 +8,7 @@ import java.util.Map;
 
 import cyclops.collections.immutable.*;
 import cyclops.companion.PersistentMapXs;
-import org.jooq.lambda.tuple.Tuple;
+import cyclops.collections.tuple.Tuple;
 import org.junit.Test;
 
 import cyclops.collections.immutable.OrderedSetX;
@@ -22,37 +22,37 @@ public class PMapXsTest {
     @Test
     public void toPStackX(){
         PersistentMapX<String,Integer> maps = PersistentMapXs.of("a",1,"b",2);
-        LinkedListX<String> strs = maps.toLinkedListX(t->""+t.v1+t.v2);
+        LinkedListX<String> strs = maps.toLinkedListX(t->""+t._1()+t._2());
         assertThat(strs,equalTo(ListX.of("a1","b2")));
     }
     @Test
     public void toPSetX(){
         PersistentMapX<String,Integer> maps = PersistentMapXs.of("a",1,"b",2);
-        PersistentSetX<String> strs = maps.toPersistentSetX(t->""+t.v1+t.v2);
+        PersistentSetX<String> strs = maps.toPersistentSetX(t->""+t._1()+t._2());
         assertThat(strs,equalTo(PersistentSetX.of("a1","b2")));
     }
     @Test
     public void toPOrderedSetX(){
         PersistentMapX<String,Integer> maps = PersistentMapXs.of("a",1,"b",2);
-        OrderedSetX<String> strs = maps.toOrderedSetX(t->""+t.v1+t.v2);
+        OrderedSetX<String> strs = maps.toOrderedSetX(t->""+t._1()+t._2());
         assertThat(strs,equalTo(OrderedSetX.of("a1","b2")));
     }
     @Test
     public void toPBagX(){
         PersistentMapX<String,Integer> maps = PersistentMapXs.of("a",1,"b",2);
-        BagX<String> strs = maps.toBagX(t->""+t.v1+t.v2);
+        BagX<String> strs = maps.toBagX(t->""+t._1()+t._2());
         assertThat(strs,equalTo(BagX.of("a1","b2")));
     }
     @Test
     public void toPQueueX(){
         PersistentMapX<String,Integer> maps = PersistentMapXs.of("a",1,"b",2);
-        PersistentQueueX<String> strs = maps.toPersistentQueueX(t->""+t.v1+t.v2);
+        PersistentQueueX<String> strs = maps.toPersistentQueueX(t->""+t._1()+t._2());
         assertThat(strs.toList(),equalTo(PersistentQueueX.of("a1","b2").toList()));
     }
     @Test
     public void toPVectorX(){
         PersistentMapX<String,Integer> maps = PersistentMapXs.of("a",1,"b",2);
-        VectorX<String> strs = maps.toVectorX(t->""+t.v1+t.v2);
+        VectorX<String> strs = maps.toVectorX(t->""+t._1()+t._2());
         assertThat(strs,equalTo(ListX.of("a1","b2")));
     }
     

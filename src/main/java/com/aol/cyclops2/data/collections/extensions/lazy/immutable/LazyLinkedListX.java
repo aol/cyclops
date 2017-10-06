@@ -18,17 +18,17 @@ import java.util.function.Supplier;
  * Extended List operations execute lazily e.g.
  * <pre>
  * {@code
- *    LazyListX<Integer> q = LazyListX.of(1,2,3)
- *                                      .map(i->i*2);
+ *    StreamX<Integer> q = StreamX.of(1,2,3)
+ *                                      .transform(i->i*2);
  * }
  * </pre>
- * The map operation above is not executed immediately. It will only be executed when (if) the data inside the
+ * The transform operation above is not executed immediately. It will only be executed when (if) the data inside the
  * queue is accessed. This allows lazy operations to be chained and executed more efficiently e.g.
  *
  * <pre>
  * {@code
  *    DequeX<Integer> q = DequeX.of(1,2,3)
- *                              .map(i->i*2);
+ *                              .transform(i->i*2);
  *                              .filter(i->i<5);
  * }
  * </pre>
@@ -243,5 +243,21 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
     @Override
     public LinkedListX<T> plusLoop(Supplier<Optional<T>> supplier) {
         return (LinkedListX<T>)super.plusLoop(supplier);
+    }
+
+    @Override
+    public T getOrElse(int index, T value) {
+        List<T> x = get();
+        if(index>x.size())
+            return value;
+        return x.get(index);
+    }
+
+    @Override
+    public T getOrElseGet(int index, Supplier<? extends T> supplier) {
+        List<T> x = get();
+        if(index>x.size())
+            return supplier.get();
+        return x.get(index);
     }
 }

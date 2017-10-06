@@ -30,9 +30,9 @@ import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import lombok.experimental.UtilityClass;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -407,7 +407,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * {@code 
      *   
      *     QueueX.of(1,2,3)
-     *           .map(i->i*2)
+     *           .transform(i->i*2)
      *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *      //QueueX[12]
@@ -431,7 +431,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#fromStream(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#fromStream(java.util.stream.Stream)
      */
     @Override
     default <X> QueueX<X> fromStream(final ReactiveSeq<X> stream) {
@@ -509,7 +509,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#map(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#transform(java.util.function.Function)
      */
     @Override
     default <R> QueueX<R> map(final Function<? super T, ? extends R> mapper) {
@@ -622,15 +622,6 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         return (QueueX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
-    @Override
-    default <K, A, D> QueueX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
-        return (QueueX) LazyCollectionX.super.grouped(classifier, downstream);
-    }
-
-    @Override
-    default <K> QueueX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return (QueueX) LazyCollectionX.super.grouped(classifier);
-    }
 
     @Override
     default <U> QueueX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -765,7 +756,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip(java.util.stream.Stream)
      */
     @Override
     default <U> QueueX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -776,7 +767,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> QueueX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -785,7 +776,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> QueueX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -976,7 +967,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
     default QueueX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1012,7 +1003,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
     default QueueX<T> retainAllS(final Stream<? extends T> seq) {
@@ -1307,7 +1298,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          *
          * <pre>
          * {@code
-         *  QueueX<Integer> queue = Queues.functor().map(i->i*2, QueueX.of(1,2,3));
+         *  QueueX<Integer> queue = Queues.functor().transform(i->i*2, QueueX.of(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -1320,7 +1311,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          * {@code
          *   QueueX<Integer> queue = Queues.unit()
         .unit("hello")
-        .applyHKT(h->Queues.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Queues.functor().transform((String v) ->v.length(), h))
         .convert(QueueX::narrowK3);
          *
          * }
@@ -1376,7 +1367,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         QueueX<Integer> queue = Queues.unit()
         .unit("hello")
-        .applyHKT(h->Queues.functor().map((String v) ->v.length(), h))
+        .applyHKT(h->Queues.functor().transform((String v) ->v.length(), h))
         .applyHKT(h->Queues.zippingApplicative().ap(queueFn, h))
         .convert(QueueX::narrowK3);
 

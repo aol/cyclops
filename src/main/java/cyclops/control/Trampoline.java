@@ -11,12 +11,12 @@ import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.Value;
 import cyclops.control.lazy.Either;
 import cyclops.function.Fn3;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
 
 import static javafx.scene.input.KeyCode.R;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 
 /**
  * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl 

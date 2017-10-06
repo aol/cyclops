@@ -99,7 +99,7 @@ public class MutableByte implements To<MutableByte>,Supplier<Byte>, Consumer<Byt
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableByte mutable = MutableByte.fromExternal(()->!this.value,val->!this.value);
@@ -128,7 +128,7 @@ public class MutableByte implements To<MutableByte>,Supplier<Byte>, Consumer<Byt
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableByte mutable = MutablByte.fromExternal(()->!this.value,val->!this.value);

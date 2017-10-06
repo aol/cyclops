@@ -5,8 +5,8 @@ import static java.util.Arrays.stream;
 import com.aol.cyclops2.matching.Case.Any;
 
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple0;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple0;
 
 import java.util.Optional;
 
@@ -102,7 +102,7 @@ public interface Matching {
     private final Sealed1Or<T1> value;
 
     public <R> R of(Case<T1, R> case1, Case<Tuple0, R> case2) {
-      return value.fold(a->case1.test(a),()->case2.test(Tuple.tuple())).get();
+      return value.fold(a->case1.test(a),()->case2.test(Tuple.empty())).get();
     }
 
   }

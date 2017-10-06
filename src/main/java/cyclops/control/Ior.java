@@ -27,10 +27,10 @@ import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
@@ -167,11 +167,11 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
 
     /**
      * Create an instance of the primary type. Most methods are biased to the primary type,
-     * which means, for example, that the map method operates on the primary type but does nothing on secondary Iors
+     * which means, for example, that the transform method operates on the primary type but does nothing on secondary Iors
      *
      * <pre>
      * {@code
-     *   Ior.<Integer,Integer>primary(10).map(i->i+1);
+     *   Ior.<Integer,Integer>primary(10).transform(i->i+1);
      * //Ior.primary[11]
      *
      *
@@ -192,10 +192,10 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
      *
      * <pre>
      * {@code
-     *   Ior.<Integer,Integer>secondary(10).map(i->i+1);
+     *   Ior.<Integer,Integer>secondary(10).transform(i->i+1);
      *   //Ior.secondary[10]
      *
-     *    Ior.<Integer,Integer>secondary(10).swap().map(i->i+1);
+     *    Ior.<Integer,Integer>secondary(10).swap().transform(i->i+1);
      *    //Ior.primary[11]
      * }
      * </pre>
@@ -424,16 +424,16 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     }
 
     /**
-     * If this Ior contains the Secondary type only, map it's value so that it contains the Primary type only
+     * If this Ior contains the Secondary type only, transform it's value so that it contains the Primary type only
      * If this Ior contains both types, this method has no effect in the default implementations
      *
-     * @param fn Function to map secondary type to primary
+     * @param fn Function to transform secondary type to primary
      * @return Ior with secondary type mapped to primary
      */
     Ior<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn);
 
     /**
-     * Always map the Secondary type of this Ior if it is present using the provided transformation function
+     * Always transform the Secondary type of this Ior if it is present using the provided transformation function
      *
      * @param fn Transformation function for Secondary types
      * @return Ior with Secondary type transformed
@@ -441,7 +441,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     <R> Ior<R, PT> secondaryMap(Function<? super ST, ? extends R> fn);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#map(java.util.function.Function)
+     * @see com.aol.cyclops2.types.MonadicValue#transform(java.util.function.Function)
      */
     @Override
     <R> Ior<ST, R> map(Function<? super PT, ? extends R> fn);
@@ -562,7 +562,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
             return visit(primary, () -> null);
 
         return both().get()
-                         .map((a, b) -> both.apply(a, b));
+                         .transform((a, b) -> both.apply(a, b));
     }
 
 
@@ -929,7 +929,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     default <T2, R> Ior<ST, R> zip(final Iterable<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                             .apply(v))).flatMap(tuple -> Ior.fromIterable(app)
-                                                                            .visit(i -> Ior.primary(tuple.v2.apply(i)), () -> Ior.secondary(null)));
+                                                                            .visit(i -> Ior.primary(tuple._2().apply(i)), () -> Ior.secondary(null)));
     }
 
     /* (non-Javadoc)
@@ -939,13 +939,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     default <T2, R> Ior<ST, R> zipP(final Publisher<? extends T2> app,final BiFunction<? super PT, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                                             .apply(v))).flatMap(tuple -> Xor.fromPublisher(app)
-                                                                            .visit(i -> Xor.primary(tuple.v2.apply(i)), () -> Xor.secondary(null)));
+                                                                            .visit(i -> Xor.primary(tuple._2().apply(i)), () -> Xor.secondary(null)));
     }
 
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Ior<ST, R> zipS(final Stream<? extends U> other, final BiFunction<? super PT, ? super U, ? extends R> zipper) {
@@ -954,7 +954,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Ior<ST, Tuple2<PT, U>> zipS(final Stream<? extends U> other) {
@@ -1361,7 +1361,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
             public <R> R visit(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
                                final BiFunction<? super ST, ? super PT, ? extends R> both) {
                 return both().get()
-                        .map((a, b) -> both.apply(a, b));
+                        .transform((a, b) -> both.apply(a, b));
             }
 
             @Override

@@ -1,7 +1,7 @@
 package com.aol.cyclops2.react.async.vertx;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.CompletableFuture;
@@ -68,8 +68,8 @@ public class VertxTest {
 	         .grouped(2)
 	         .map(list-> tuple(list.get(0).response(),list.get(1).response(),getParam(list.get(0)),getParam(list.get(1))))
 	         .peek(i->System.out.println("peeking + "+i))
-	         .peek(t->t.v1.end("adding "+(t.v3+t.v4)))
-	         .peek(t->t.v2.end("multiplying "+t.v3*t.v4))
+	         .peek(t->t._1().end("adding "+(t._3()+t._4())))
+	         .peek(t->t._2().end("multiplying "+t._3()*t._4()))
 	         .run();
 	      
 	    

@@ -12,11 +12,11 @@ import org.junit.Test;
 public class AccessTest {
 	@Test
 	public void get0(){
-		assertThat(LazyReact.sequentialBuilder().of(1).actOnFutures().get(0).v1,equalTo(1));
+		assertThat(LazyReact.sequentialBuilder().of(1).actOnFutures().get(0)._1(),equalTo(1));
 	}
 	@Test
 	public void getMultple(){
-		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5).actOnFutures().get(2).v1,equalTo(3));
+		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5).actOnFutures().get(2)._1(),equalTo(3));
 	}
 	@Test
 	public void elementAt0(){

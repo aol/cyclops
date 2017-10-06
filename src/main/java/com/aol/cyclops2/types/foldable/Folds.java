@@ -33,7 +33,7 @@ public interface Folds<T> {
     
 
     /**
-     * Attempt toNePsted map this Sequence to the same type as the supplied Monoid
+     * Attempt toNePsted transform this Sequence to the same type as the supplied Monoid
      * (Reducer) Then use Monoid to reduce values
      * 
      * <pre>
@@ -53,7 +53,7 @@ public interface Folds<T> {
     }
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid, using
+     * Attempt to transform this Monad to the same type as the supplied Monoid, using
      * supplied function Then use Monoid to reduce values
      * 
      * <pre>
@@ -78,7 +78,7 @@ public interface Folds<T> {
      * </pre>
      * 
      * @param mapper
-     *            Function to map Monad type
+     *            Function to transform Monad type
      * @param reducer
      *            Monoid to reduce values
      * @return Reduce result
@@ -110,7 +110,7 @@ public interface Folds<T> {
      *  
      *  <pre> {@code
      *  
-     *       ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
+     *       ReactiveSeq.of(1,2,3,4,5).transform(it -> it*100).reduce(
      * (acc,next) -> acc+next)
      *        //Optional[1500]
      *  }
@@ -265,7 +265,7 @@ public interface Folds<T> {
     }
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid (using
+     * Attempt to transform this Monad to the same type as the supplied Monoid (using
      * mapToType on the monoid interface) Then use Monoid to reduce values
      * 
      * <pre>
@@ -459,7 +459,7 @@ public interface Folds<T> {
      * <pre>
      * {@code
      * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .endsWith(Stream.of(5,6))); 
+     *              .endsWith(Stream.of(5,6)));
      * }
      * </pre>
      * 
@@ -478,7 +478,7 @@ public interface Folds<T> {
      * <pre>
      * {@code 
      *  assertThat(ReactiveSeq.of(1,2,3,4)
-     *                  .map(u->throw new RuntimeException())
+     *                  .transform(u->throw new RuntimeException())
      *                  .recover(e->"hello")
      *                  .firstValue(),equalTo("hello"));
      * }
@@ -566,7 +566,7 @@ public interface Folds<T> {
      * {@code
      *  //run at 8PM every night
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *             .map(this::processJob)
+     *             .transform(this::processJob)
      *             .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -576,7 +576,7 @@ public interface Folds<T> {
      * <pre>
      * {@code
      *  
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
      *          .schedule("0 20 * * *", Executors.newScheduledThreadPool(1));
      * 
      *  data.connect().forEach(this::logToDB);
@@ -602,7 +602,7 @@ public interface Folds<T> {
      * {@code
      *  //run every 60 seconds after last job completes
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *             .map(this::processJob)
+     *             .transform(this::processJob)
      *             .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -611,7 +611,7 @@ public interface Folds<T> {
      * 
      * <pre>
      * {@code 
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
      *                                          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
      * 
      *  data.connect().forEach(this::logToDB);
@@ -637,7 +637,7 @@ public interface Folds<T> {
      * {@code
      *  //run every 60 seconds
      *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
-     *            .map(this::processJob)
+     *            .transform(this::processJob)
      *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -647,7 +647,7 @@ public interface Folds<T> {
      * <pre>
      * {@code
      *  
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -&gt; "next job:" + formatDate(new Date())).map(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -&gt; "next job:" + formatDate(new Date())).transform(this::processJob)
      *                                          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
      * 
      *  data.connect().forEach(this::logToDB);

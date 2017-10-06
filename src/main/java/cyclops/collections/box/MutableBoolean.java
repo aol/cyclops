@@ -100,7 +100,7 @@ public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consu
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);
@@ -129,7 +129,7 @@ public class MutableBoolean implements To<MutableBoolean>,BooleanSupplier, Consu
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableBoolean mutable = MutableBoolean.fromExternal(()->!this.value,val->!this.value);

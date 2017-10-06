@@ -2,8 +2,8 @@ package com.aol.cyclops2.comprehensions;
 
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.reactiveSeq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;

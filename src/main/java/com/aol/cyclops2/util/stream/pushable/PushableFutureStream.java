@@ -5,8 +5,8 @@ import cyclops.stream.FutureStream;
 
 /**
  * A more concrete Tuple2 impl
- * v1 is Queue&lt;T&gt;
- * v2 is LazyFutureStream&lt;T&gt;
+ * _1 is Queue&lt;T&gt;
+ * _2 is LazyFutureStream&lt;T&gt;
  * 
  * @author johnmcclean
  *

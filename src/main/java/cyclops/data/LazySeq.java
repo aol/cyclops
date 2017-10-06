@@ -17,9 +17,9 @@ import cyclops.stream.Generator;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -83,7 +83,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return fromStream(ReactiveSeq.of(1).flatMapI(i->lazy.get()));
     }
     static <T, U> Tuple2<LazySeq<T>, LazySeq<U>> unzip(final LazySeq<Tuple2<T, U>> sequence) {
-       return ReactiveSeq.unzip(sequence.stream()).map((a, b)->Tuple.tuple(fromStream(a),fromStream(b)));
+       return ReactiveSeq.unzip(sequence.stream()).transform((a, b)->Tuple.tuple(fromStream(a),fromStream(b)));
     }
     static <T> LazySeq<T> generate(Supplier<T> s){
         return fromStream(ReactiveSeq.generate(s));
@@ -235,7 +235,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     default LazySeq<LazySeq<T>> split(Predicate<? super T> test) {
         LazySeq<T> next = dropWhile(test);
         Tuple2<LazySeq<T>, LazySeq<T>> split = next.splitBy(test);
-        return next.visit(c->cons(split.v1,()->split.v2.split(test)),n->n);
+        return next.visit(c->cons(split._1(),()->split._2().split(test)),n->n);
     }
     default LazySeq<T> take(final long n) {
         if( n <= 0)
@@ -286,8 +286,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return Tuple.tuple(this,this);
     }
     default <R1, R2> Tuple2<LazySeq<R1>, LazySeq<R2>> unzip(Function<? super T, Tuple2<? extends R1, ? extends R2>> fn) {
-        Tuple2<LazySeq<R1>, LazySeq<Tuple2<? extends R1, ? extends R2>>> x = map(fn).duplicate().map1(s -> s.map(Tuple2::v1));
-        return x.map2(s -> s.map(Tuple2::v2));
+        Tuple2<LazySeq<R1>, LazySeq<Tuple2<? extends R1, ? extends R2>>> x = map(fn).duplicate().map1(s -> s.map(Tuple2::_1));
+        return x.map2(s -> s.map(Tuple2::_2));
     }
 
     @Override
@@ -307,9 +307,9 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                 return Tuple.tuple(ref.prepend(c.head), c.tail.get(), false);
             }, nil -> Tuple.tuple(ref, tailRef, true));
 
-            preceding = t3.v1;
-            tail = t3.v2;
-            if(t3.v3)
+            preceding = t3._1();
+            tail = t3._2();
+            if(t3._3())
                 break;
 
         }

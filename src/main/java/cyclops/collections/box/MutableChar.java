@@ -99,7 +99,7 @@ public class MutableChar implements To<MutableChar>,Supplier<Character>, Consume
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);
@@ -128,7 +128,7 @@ public class MutableChar implements To<MutableChar>,Supplier<Character>, Consume
     }
 
     /**
-     * Use the supplied function to perform a lazy map operation when get is called
+     * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
      *  MutableChar mutable = MutableChar.fromExternal(()->!this.value,val->!this.value);

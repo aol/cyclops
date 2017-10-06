@@ -10,7 +10,7 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 
 import cyclops.collections.mutable.MapX;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -19,8 +19,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import cyclops.collections.immutable.VectorX;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.junit.Test;
 
 import cyclops.companion.Semigroups;
@@ -31,6 +31,7 @@ import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 
 public abstract class AbstractOrderDependentCollectionXTest extends AbstractCollectionXTest {
+
 
 
     @Test
@@ -147,20 +148,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
                    .toListX(),equalTo(ListX.of(4,3))); 
                    
     }
-    @Test
-    public void groupedFunction(){
-        assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").count(),equalTo((2L)));
-        assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").filter(t->t.v1.equals("a"))
-                        .map(t->t.v2).map(s->s.toListX()).singleUnsafe(),
-                            equalTo((Arrays.asList(1,2))));
-    }
-    @Test
-    public void groupedFunctionCollector(){
-        assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b",Collectors.toList()).count(),equalTo((2L)));
-        assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b",Collectors.toList()).filter(t->t.v1.equals("a"))
-                .map(t->t.v2).singleUnsafe(),
-                    equalTo((Arrays.asList(1,2))));
-    }
+
 	@Test
 	public void zip3(){
 		List<Tuple3<Integer,Integer,Character>> list =
@@ -168,16 +156,16 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 												.toListX();
 		
 		System.out.println(list);
-		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,not(hasItem(400)));
 		
-		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 		
-		List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+		List<Character> three = list.stream().map(t -> t._3()).collect(Collectors.toList());
 		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
 		
 		
@@ -188,19 +176,19 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 				of(1,2,3,4,5,6).zip4(of(100,200,300,400).stream(),of('a','b','c').stream(),of("hello","world").stream())
 												.toListX();
 		System.out.println(list);
-		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,not(hasItem(300)));
 		assertThat(right,not(hasItem(400)));
 		
-		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 		
-		List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+		List<Character> three = list.stream().map(t -> t._3()).collect(Collectors.toList());
 		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
 	
-		List<String> four = list.stream().map(t -> t.v4).collect(Collectors.toList());
+		List<String> four = list.stream().map(t -> t._4()).collect(Collectors.toList());
 		assertThat(Arrays.asList("hello","world"),hasItem(four.get(0)));
 		
 		

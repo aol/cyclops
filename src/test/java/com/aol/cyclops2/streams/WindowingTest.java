@@ -182,7 +182,7 @@ public class WindowingTest {
 	@Test
 	public void groupedShorter() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9));
-		assertThat(fixed.reactiveSeq().grouped(4).elementAt(0).v1,equalTo(Arrays.asList(5,7,9)));
+		assertThat(fixed.reactiveSeq().grouped(4).elementAt(0)._1(),equalTo(Arrays.asList(5,7,9)));
 		assertThat(fixed.reactiveSeq().grouped(4).count(),equalTo(1l));
 
 		

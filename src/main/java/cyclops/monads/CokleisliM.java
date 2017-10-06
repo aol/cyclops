@@ -5,7 +5,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.Fn1;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.function.Function;
 

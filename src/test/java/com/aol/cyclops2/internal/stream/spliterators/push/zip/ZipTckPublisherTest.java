@@ -18,7 +18,7 @@ public class ZipTckPublisherTest extends PublisherVerification<Long>{
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
 		return Spouts.iterate(0l, i->i+1l).zip(Spouts.iterate(0l,i->i+1l))
-				.limit(elements).map(t->t.v1);
+				.limit(elements).map(t->t._1());
 		
 	}
 

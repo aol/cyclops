@@ -1,13 +1,13 @@
 package com.aol.cyclops2.internal.react.stream.traits.future.operators;
 
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import cyclops.stream.FutureStream;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple3;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -79,8 +79,8 @@ public class LazyFutureStreamUtils {
     }
 
     /**
-     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
-     * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
+     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming
+     * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
      * <pre>
      * @{code
      *     Subscription next = StreamUtils.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
@@ -148,7 +148,7 @@ public class LazyFutureStreamUtils {
     }
 
     /**
-     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
+     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming
      * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription,
      * when the entire Stream has been processed an onComplete event will be recieved.
      * 
@@ -175,7 +175,7 @@ public class LazyFutureStreamUtils {
      *     The take!
      * }
      * </pre>
-     * @param stream - the Stream to consume data from	 
+     * @param stream - the Stream to consume data from
      * @param x To consume from the Stream at this time
      * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
@@ -220,7 +220,7 @@ public class LazyFutureStreamUtils {
     }
 
     /**
-     *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
+     *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,
      * <pre>
      * @{code
      *     Subscription next = StreanUtils.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
@@ -239,7 +239,7 @@ public class LazyFutureStreamUtils {
      *     
      * }
      * </pre>
-     * @param stream - the Stream to consume data from	 
+     * @param stream - the Stream to consume data from
      * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      */
@@ -303,7 +303,7 @@ public class LazyFutureStreamUtils {
      *     
      * }
      * </pre>
-     * @param stream - the Stream to consume data from	
+     * @param stream - the Stream to consume data from
      * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      * @param onComplete To run after an onComplete event

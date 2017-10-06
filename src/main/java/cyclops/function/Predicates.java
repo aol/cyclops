@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -39,6 +40,34 @@ import java.util.stream.Stream;
  *
  */
 public class Predicates {
+    public static <T1,T2> BiPredicate<T1,T2> when(BiPredicate<T1,T2> pred){
+        return pred;
+    }
+    public static <T1,T2> BiPredicate<T1,T2> true2(){
+        return (a,b)->true;
+    }
+    public static <T1,T2> BiPredicate<T1,T2> and(Predicate<? super T1> p1, Predicate<? super T2> p2){
+        return (a,b)->p1.test(a) && p2.test(b);
+    }
+    public static <T1,T2> BiPredicate<T1,T2> _1(Predicate<? super T1> p1){
+        return (a,b)->p1.test(a);
+    }
+
+    public static <T1,T2> BiPredicate<T1,T2> first(Predicate<? super T1> p1, Predicate<? super T2> p2){
+        return (a,b)->p1.test(a) && !p2.test(b);
+    }
+    public static <T1,T2> BiPredicate<T1,T2> second(Predicate<? super T1> p1, Predicate<? super T2> p2){
+        return (a,b)->!p1.test(a) && p2.test(b);
+    }
+    public static <T1,T2> BiPredicate<T1,T2> _2(Predicate<? super T2> p2){
+        return (a,b)->p2.test(b);
+    }
+    public static <T1,T2> BiPredicate<T1,T2> or(Predicate<? super T1> p1, Predicate<? super T2> p2){
+        return (a,b)->p1.test(a) || p2.test(b);
+    }
+    public static <T1,T2> BiPredicate<T1,T2> xor(Predicate<? super T1> p1, Predicate<? super T2> p2){
+        return (a,b)->p1.test(a) ^ p2.test(b);
+    }
 
     /**
      * Method for point-free Predicate definition (helps with lambda type inferencing) 

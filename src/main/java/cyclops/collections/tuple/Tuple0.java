@@ -1,0 +1,17 @@
+package cyclops.collections.tuple;
+
+import cyclops.control.Identity;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+
+/**
+ * Empty tuple type
+ */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public final class Tuple0 {
+    static Tuple0 INSTANCE = new Tuple0();
+
+    public static Tuple0 empty(){
+        return INSTANCE;
+    }
+}

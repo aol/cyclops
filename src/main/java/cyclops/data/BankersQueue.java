@@ -1,11 +1,12 @@
 package cyclops.data;
 
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Iterator;
 import java.util.function.BiFunction;
@@ -361,17 +362,17 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
 
         @Override
         public ImmutableQueue<T> onEmpty(T value) {
-            return of(value);
+            return BankersQueue.of(value);
         }
 
         @Override
         public ImmutableQueue<T> onEmptyGet(Supplier<? extends T> supplier) {
-            return of(supplier.get());
+            return BankersQueue.of(supplier.get());
         }
 
         @Override
         public <X extends Throwable> ImmutableQueue<T> onEmptyThrow(Supplier<? extends X> supplier) {
-            throw supplier.get();
+            throw ExceptionSoftener.throwSoftenedException(supplier.get());
         }
 
         @Override

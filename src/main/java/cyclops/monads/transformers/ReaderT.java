@@ -77,7 +77,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
      * <pre>
      * {@code 
      *  FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
-     *             .map(t->t=t+1);
+     *             .transform(t->t=t+1);
      *  
      *  
      *  //FutureT<AnyMSeq<Stream<Future[11]>>>
@@ -85,7 +85,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
      * </pre>
      * 
      * @param f Mapping function for the wrapped Future
-     * @return FutureT that applies the map function to the wrapped Future
+     * @return FutureT that applies the transform function to the wrapped Future
      */
 
     public <B> ReaderT<W,T,B> map(final Function<? super R, ? extends B> f) {

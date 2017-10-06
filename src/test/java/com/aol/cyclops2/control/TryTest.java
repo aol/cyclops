@@ -12,7 +12,7 @@ import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
+import cyclops.collections.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 

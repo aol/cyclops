@@ -21,9 +21,9 @@ import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.Collectable;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -270,7 +270,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      * {@code 
      *   
      *     SortedSetX.of(1,2,3)
-     *               .map(i->i*2)
+     *               .transform(i->i*2)
      *               .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *      //SortedSetX[12]
@@ -445,7 +445,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#map(java.util.function.Function)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#transform(java.util.function.Function)
      */
     @Override
     default <R> SortedSetX<R> map(final Function<? super T, ? extends R> mapper) {
@@ -557,18 +557,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         return (SortedSetX<ListX<T>>) (SortedSetX<T>) LazyCollectionX.super.grouped(groupSize);
     }
 
-    @Override
-    default <K, A, D> SortedSetX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
-            final Collector<? super T, A, D> downstream) {
-        return (SortedSetX) LazyCollectionX.super.grouped(classifier, downstream);
-    }
 
-    @Override
-    default <K> SortedSetX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-
-        return (SortedSetX) fromStream(stream().grouped(classifier)
-                                               .map(t -> t.map2(Comparables::comparable)));
-    }
 
     @Override
     default <U> SortedSetX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -688,7 +677,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip(java.util.stream.Stream)
      */
     @Override
     default <U> SortedSetX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -699,7 +688,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> SortedSetX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -708,7 +697,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> SortedSetX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -899,7 +888,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
     default SortedSetX<T> removeAllS(final Stream<? extends T> stream) {
@@ -935,7 +924,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
     default SortedSetX<T> retainAllS(final Stream<? extends T> seq) {
@@ -1004,8 +993,11 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      */
     @Override
     default SortedSetX<ReactiveSeq<T>> permutations() {
-        return fromStream(stream().permutations()
-                                  .map(Comparables::comparable));
+        ReactiveSeq<ReactiveSeq<T>> x = stream().permutations()
+                .map(c->{
+                    return Comparables.comparable(c);
+                });
+        return fromStream(x);
 
     }
 
@@ -1014,8 +1006,11 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      */
     @Override
     default SortedSetX<ReactiveSeq<T>> combinations(final int size) {
-        return fromStream(stream().combinations(size)
-                                  .map(Comparables::comparable));
+        ReactiveSeq<ReactiveSeq<T>> x = stream().combinations(size)
+                .map(c->{
+                    return Comparables.comparable(c);
+                });
+        return fromStream(x);
     }
 
     /* (non-Javadoc)
@@ -1023,8 +1018,12 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      */
     @Override
     default SortedSetX<ReactiveSeq<T>> combinations() {
-        return fromStream(stream().combinations()
-                                  .map(Comparables::comparable));
+
+        ReactiveSeq<ReactiveSeq<T>> x = stream().combinations()
+                                            .map(c->{
+                                                return Comparables.comparable(c);
+                                            });
+        return fromStream(x);
     }
 
 
@@ -1169,9 +1168,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
 
     static class Comparables {
 
-        static <T, R extends ReactiveSeq<T> & Comparable<T>> R comparable(final Seq<T> seq) {
-            return comparable(ReactiveSeq.fromStream(seq));
-        }
+
 
         @SuppressWarnings("unchecked")
 

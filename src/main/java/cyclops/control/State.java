@@ -16,8 +16,8 @@ import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -33,7 +33,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
         return Fn0.run(runState.apply(s));
     }
     public T eval(S s) {
-        return Fn0.run(runState.apply(s)).v2;
+        return Fn0.run(runState.apply(s))._2();
     }
     public static <S> State<S, S> get() {
         return state(s -> Tuple.tuple(s, s));
@@ -51,7 +51,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
     }
 
     public <R> State<S, R> map(Function<? super T,? extends R> mapper) {
-        return mapState(t -> Tuple.tuple(t.v1, mapper.apply(t.v2)));
+        return mapState(t -> Tuple.tuple(t._1(), mapper.apply(t._2())));
     }
     public <R> State<S, R> mapState(Function<Tuple2<S,T>, Tuple2<S, R>> fn) {
         return suspended(s -> runState.apply(s).map(t -> fn.apply(t)));
@@ -61,7 +61,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
     }
 
     public <R> State<S, R> flatMap(Function<? super T,? extends  State<S, R>> f) {
-        return suspended(s -> runState.apply(s).flatMap(t -> Free.done(f.apply(t.v2).run(t.v1))));
+        return suspended(s -> runState.apply(s).flatMap(t -> Free.done(f.apply(t._2()).run(t._1()))));
     }
     public static <S, T> State<S, T> constant(T constant) {
         return state(s -> Tuple.tuple(s, constant));
@@ -204,6 +204,10 @@ public final class State<S, T> implements Higher2<state,S,T> {
             });
 
         });
+
+    }
+    public static <S,T,R> State<S, R> tailRec(T initial, Function<? super T, ? extends  State<S,  ? extends Xor<T, R>>> fn) {
+        return narrowK( State.Instances.<S> monadRec().tailRec(initial, fn));
 
     }
 

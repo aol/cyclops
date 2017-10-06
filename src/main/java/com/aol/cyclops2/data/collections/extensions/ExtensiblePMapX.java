@@ -6,7 +6,7 @@ import cyclops.collections.immutable.PersistentMapX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import lombok.NonNull;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.pcollections.PMap;
 
 import java.util.function.Supplier;

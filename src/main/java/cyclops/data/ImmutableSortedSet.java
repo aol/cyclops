@@ -13,9 +13,9 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Collection;
@@ -337,16 +337,6 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T> {
     @Override
     default ImmutableSortedSet<ListX<T>> grouped(int groupSize) {
         return unitStream(stream().grouped(groupSize));
-    }
-
-    @Override
-    default <K, A, D> ImmutableSortedSet<Tuple2<K, D>> grouped(Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
-        return unitStream(stream().grouped(classifier,downstream));
-    }
-
-    @Override
-    default <K> ImmutableSortedSet<Tuple2<K, ReactiveSeq<T>>> grouped(Function<? super T, ? extends K> classifier) {
-        return unitStream(stream().grouped(classifier));
     }
 
     @Override

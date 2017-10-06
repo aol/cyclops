@@ -6,8 +6,8 @@ import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -33,7 +33,7 @@ public class TreeSet<T> implements ImmutableSortedSet<T>{
     }
 
     public ReactiveSeq<T> stream(){
-        return map.stream().map(t->t.v1);
+        return map.stream().map(t->t._1());
     }
 
     public static <T> TreeSet<T> of(Comparator<? super T> comp, T... values){

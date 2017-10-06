@@ -17,7 +17,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.AbstractCollectionXTest;
 import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.stream.Spouts;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 

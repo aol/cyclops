@@ -4,8 +4,8 @@ import cyclops.async.adapters.Queue;
 import lombok.AllArgsConstructor;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,7 +144,7 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
                     Tuple2<T1,T2> updated = local.map1(__->(T1)e);
                     set = nextValue.compareAndSet(local,updated);
                     if(set){
-                        if(updated.v2!=UNSET){
+                        if(updated._2()!=UNSET){
 
                                 while(!data.offer((R)nilsafeIn(applyFn(updated)))){
 
@@ -181,7 +181,7 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
                     Tuple2<T1,T2> updated = local.map2(__->(T2)e);
                     set = nextValue.compareAndSet(local,updated);
                     if(set){
-                        if(updated.v1!=UNSET){
+                        if(updated._1()!=UNSET){
                             while(!data.offer((R)nilsafeIn(applyFn(updated)))){
 
                             }
@@ -227,7 +227,7 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
     }
 
     private R applyFn(Tuple2<T1, T2> updated) {
-        R res = fn.apply(updated.v1,updated.v2);
+        R res = fn.apply(updated._1(),updated._2());
         return res;
     }
 
@@ -261,7 +261,7 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
                     Tuple2<T1,T2> updated = local.map1(__->(T1)e);
                     set = nextValue.compareAndSet(local,updated);
                     if(set){
-                        if(updated.v2!=UNSET){
+                        if(updated._2()!=UNSET){
                             if(active.compareAndSet(false,true)){
                                 data.drain(onNext::accept);
                                 onNext.accept(applyFn(updated));
@@ -311,7 +311,7 @@ public class ZippingLatestOperator<T1,T2,R> implements Operator<R>{
                     Tuple2<T1,T2> updated = local.map2(__->(T2)e);
                     set = nextValue.compareAndSet(local,updated);
                     if(set){
-                        if(updated.v1!=UNSET){
+                        if(updated._1()!=UNSET){
                             if(active.compareAndSet(false,true)){
                                 data.drain(onNext::accept);
                                 onNext.accept(applyFn(updated));

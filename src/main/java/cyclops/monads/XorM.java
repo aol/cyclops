@@ -27,9 +27,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -50,7 +50,7 @@ import java.util.stream.Stream;
  *     {@code
  *          XorM<stream,optional,Integer> nums = XorM.stream(1,2,3)
                                                      .swap();
- *          int result = nums.map(i->i*2)
+ *          int result = nums.transform(i->i*2)
  *                           .foldLeft(Monoids.intSum);
  *          //12
  *     }

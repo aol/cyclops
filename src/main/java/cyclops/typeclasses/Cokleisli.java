@@ -8,7 +8,7 @@ import cyclops.function.Fn1;
 import cyclops.monads.WitnessType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 
 import java.util.function.Function;
 

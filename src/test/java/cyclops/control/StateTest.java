@@ -1,6 +1,6 @@
 package cyclops.control;
 
-import org.jooq.lambda.tuple.Tuple;
+import cyclops.collections.tuple.Tuple;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;

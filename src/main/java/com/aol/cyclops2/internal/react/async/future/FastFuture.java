@@ -18,7 +18,7 @@ import lombok.Getter;
  * @author John McClean
  * assumptions
  * 1. join is read once
- * 2. only map / mapAsync/ exceptionally/ allOf and anyOf are neccessary
+ * 2. only transform / mapAsync/ exceptionally/ allOf and anyOf are neccessary
  * 3. For results / errors : singleUnsafe writer (one thread executing a task at a time, one thread sets the result or error)
  * 						/ singleUnsafe reader (simple-react Stream)
  * 4. For post-hoc event listeners : singleUnsafe writer (simple-react Stream adds event listeners) : singleUnsafe reader (only one thread can read event listeners -

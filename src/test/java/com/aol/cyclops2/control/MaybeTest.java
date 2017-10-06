@@ -19,8 +19,8 @@ import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple3;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -38,7 +38,7 @@ import java.util.stream.StreamSupport;
 
 import static cyclops.control.Maybe.just;
 import static org.hamcrest.Matchers.equalTo;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
 
 public class MaybeTest implements Printable {
@@ -50,6 +50,20 @@ public class MaybeTest implements Printable {
     public void setUp() throws Exception {
         just = Maybe.just(10);
         none = Maybe.none();
+        cap =0;
+
+    }
+
+    int cap =0;
+
+
+    @Test
+    public void lazy(){
+
+        Maybe.just(10)
+                .peek(i->cap=i);
+
+        assertThat(cap,equalTo(0));
 
     }
     @Test
@@ -167,7 +181,7 @@ public class MaybeTest implements Printable {
     }
 
     public Maybe<Long> fibonacci(Maybe<Tuple3<Integer, Long, Long>> fib) {
-        return fib.flatMap(t -> t.v1 == 0 ? just(t.v3) : fibonacci(just(tuple(t.v1 - 1, t.v2 + t.v3, t.v2))));
+        return fib.flatMap(t -> t._1() == 0 ? just(t._3()) : fibonacci(just(tuple(t._1() - 1, t._2() + t._3(), t._2()))));
     }
 
     @Test

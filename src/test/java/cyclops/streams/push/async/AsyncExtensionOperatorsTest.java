@@ -11,8 +11,8 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
 import org.hamcrest.Matchers;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 
 import java.io.Serializable;
@@ -131,7 +131,7 @@ public class AsyncExtensionOperatorsTest {
 	public void elapsedIsPositive(){
 		
 		
-		assertTrue(of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
+		assertTrue(of(1,2,3,4,5).elapsed().noneMatch(t->t._2()<0));
 	}
 	@Test
 	public void timeStamp(){
@@ -139,14 +139,14 @@ public class AsyncExtensionOperatorsTest {
 		
 		assertTrue(of(1,2,3,4,5)
 							.timestamp()
-							.allMatch(t-> t.v2 <= System.currentTimeMillis()));
+							.allMatch(t-> t._2() <= System.currentTimeMillis()));
 		
 
 	}
 
 	@Test
     public void duplicateFindOne(){
-        Tuple2<Integer, Long> v2 = of(1).duplicate().v1.zipWithIndex().findOne().get();
+        Tuple2<Integer, Long> v2 = of(1).duplicate()._1().zipWithIndex().findOne().get();
         assertThat(v2,equalTo(Tuple.tuple(1,0l)));
     }
 	@Test
@@ -154,15 +154,15 @@ public class AsyncExtensionOperatorsTest {
 
 
 
-		assertThat(of(1).elementAt(0).v1,equalTo(1));
+		assertThat(of(1).elementAt(0)._1(),equalTo(1));
 	}
 	@Test
 	public void getMultple(){
-		assertThat(of(1,2,3,4,5).elementAt(2).v1,equalTo(3));
+		assertThat(of(1,2,3,4,5).elementAt(2)._1(),equalTo(3));
 	}
 	@Test
 	public void getMultpleStream(){
-		assertThat(of(1,2,3,4,5).elementAt(2).v2.toList(),equalTo(Arrays.asList(1,2,3,4,5)));
+		assertThat(of(1,2,3,4,5).elementAt(2)._2().toList(),equalTo(Arrays.asList(1,2,3,4,5)));
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getMultiple1(){
@@ -391,8 +391,8 @@ public class AsyncExtensionOperatorsTest {
 	@Test
 	public void splitBy(){
 
-		assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
-		assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v2.toList(),equalTo(Arrays.asList(4,5,6)));
+		assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._1().toList(),equalTo(Arrays.asList(1,2,3)));
+		assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._2().toList(),equalTo(Arrays.asList(4,5,6)));
 	}
 	@Test
 	public void testLazy(){

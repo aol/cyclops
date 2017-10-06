@@ -27,10 +27,10 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import cyclops.typeclasses.functor.Functor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 
 @FunctionalInterface
 public interface Fn1<T,  R> extends Function<T,R>{
@@ -144,11 +144,11 @@ public interface Fn1<T,  R> extends Function<T,R>{
 
     default <__> Fn1<Tuple2<T, __>, Tuple2<R, __>> firstFn() {
 
-        return t-> Tuple.tuple(apply(t.v1),t.v2);
+        return t-> Tuple.tuple(apply(t._1()),t._2());
     }
     default <__> Fn1<Tuple2<__, T>, Tuple2<__, R>> secondFn() {
 
-        return t-> Tuple.tuple(t.v1,apply(t.v2));
+        return t-> Tuple.tuple(t._1(),apply(t._2()));
     }
 
 

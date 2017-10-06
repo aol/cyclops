@@ -23,10 +23,10 @@ import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Topic;
 import cyclops.collections.mutable.ListX;
 import org.hamcrest.CoreMatchers;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -132,12 +132,12 @@ public  class CoreReactiveSeqTest {
                 .map2(s -> s.iterator());
 
         List<Integer> result = new ArrayList<>();
-        while(its.v1.hasNext() || its.v2.hasNext() ){
-            if(its.v1.hasNext()){
-                result.add(its.v1.next());
+        while(its._1().hasNext() || its._2().hasNext() ){
+            if(its._1().hasNext()){
+                result.add(its._1().next());
             }
-            if(its.v2.hasNext()){
-                result.add(its.v2.next());
+            if(its._2().hasNext()){
+                result.add(its._2().next());
             }
 
         }
@@ -156,12 +156,12 @@ public  class CoreReactiveSeqTest {
                     .map2(s -> s.iterator());
 
             List<Integer> result = new ArrayList<>();
-            while (its.v1.hasNext() || its.v2.hasNext()) {
-                if (its.v1.hasNext()) {
-                    result.add(its.v1.next());
+            while (its._1().hasNext() || its._2().hasNext()) {
+                if (its._1().hasNext()) {
+                    result.add(its._1().next());
                 }
-                if (its.v2.hasNext()) {
-                    result.add(its.v2.next());
+                if (its._2().hasNext()) {
+                    result.add(its._2().next());
                 }
 
             }
@@ -202,15 +202,15 @@ public  class CoreReactiveSeqTest {
                 list.get(2).iterator());
 
         List<Integer> result = new ArrayList<>();
-        while (its.v1.hasNext() || its.v2.hasNext() || its.v3.hasNext()) {
-            if (its.v1.hasNext()) {
-                result.add(its.v1.next() +100);
+        while (its._1().hasNext() || its._2().hasNext() || its._3().hasNext()) {
+            if (its._1().hasNext()) {
+                result.add(its._1().next() +100);
             }
-            if (its.v2.hasNext()) {
-                result.add(its.v2.next()+200);
+            if (its._2().hasNext()) {
+                result.add(its._2().next()+200);
             }
-            if (its.v3.hasNext()) {
-                result.add(its.v3.next()+300);
+            if (its._3().hasNext()) {
+                result.add(its._3().next()+300);
             }
         }
 
@@ -230,15 +230,15 @@ public  class CoreReactiveSeqTest {
                 .map3(s -> s.iterator());
 
         List<Integer> result = new ArrayList<>();
-        while(its.v1.hasNext() || its.v2.hasNext() || its.v3.hasNext()){
-            if(its.v1.hasNext()){
-                result.add(its.v1.next());
+        while(its._1().hasNext() || its._2().hasNext() || its._3().hasNext()){
+            if(its._1().hasNext()){
+                result.add(its._1().next());
             }
-            if(its.v2.hasNext()){
-                result.add(its.v2.next());
+            if(its._2().hasNext()){
+                result.add(its._2().next());
             }
-            if(its.v3.hasNext()){
-                result.add(its.v3.next());
+            if(its._3().hasNext()){
+                result.add(its._3().next());
             }
         }
 
@@ -259,15 +259,15 @@ public  class CoreReactiveSeqTest {
                     .map3(s -> s.iterator());
 
             List<Integer> result = new ArrayList<>();
-            while(its.v1.hasNext() || its.v2.hasNext() || its.v3.hasNext()){
-                if(its.v1.hasNext()){
-                    result.add(its.v1.next());
+            while(its._1().hasNext() || its._2().hasNext() || its._3().hasNext()){
+                if(its._1().hasNext()){
+                    result.add(its._1().next());
                 }
-                if(its.v2.hasNext()){
-                    result.add(its.v2.next());
+                if(its._2().hasNext()){
+                    result.add(its._2().next());
                 }
-                if(its.v3.hasNext()){
-                    result.add(its.v3.next());
+                if(its._3().hasNext()){
+                    result.add(its._3().next());
                 }
             }
 
@@ -288,15 +288,15 @@ public  class CoreReactiveSeqTest {
                 .map3(s -> s.iterator());
 
         List<Integer> result = new ArrayList<>();
-        while(its.v1.hasNext() || its.v2.hasNext() || its.v3.hasNext()){
-            if(its.v1.hasNext()){
-                result.add(its.v1.next());
+        while(its._1().hasNext() || its._2().hasNext() || its._3().hasNext()){
+            if(its._1().hasNext()){
+                result.add(its._1().next());
             }
-            if(its.v2.hasNext()){
-                result.add(its.v2.next());
+            if(its._2().hasNext()){
+                result.add(its._2().next());
             }
-            if(its.v3.hasNext()){
-                result.add(its.v3.next());
+            if(its._3().hasNext()){
+                result.add(its._3().next());
             }
         }
 
@@ -586,13 +586,13 @@ public  class CoreReactiveSeqTest {
 				.toListX();
 
 
-		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,hasItem(400));
 
-		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 		System.out.println(left);
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
@@ -646,67 +646,67 @@ public  class CoreReactiveSeqTest {
 	@Test
 	public void testDuplicate(){
 		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
-		 assertTrue(copies.v1.anyMatch(i->i==2));
-		 assertTrue(copies.v2.anyMatch(i->i==2));
+		 assertTrue(copies._1().anyMatch(i->i==2));
+		 assertTrue(copies._2().anyMatch(i->i==2));
 	}
 	@Test
 	public void testTriplicate(){
 		 Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
-		 assertTrue(copies.v1.anyMatch(i->i==2));
-		 assertTrue(copies.v2.anyMatch(i->i==2));
-		 assertTrue(copies.v3.anyMatch(i->i==2));
+		 assertTrue(copies._1().anyMatch(i->i==2));
+		 assertTrue(copies._2().anyMatch(i->i==2));
+		 assertTrue(copies._3().anyMatch(i->i==2));
 	}
 	
 	@Test
 	public void testQuadriplicate(){
 		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
-		 assertTrue(copies.v1.anyMatch(i->i==2));
-		 assertTrue(copies.v2.anyMatch(i->i==2));
-		 assertTrue(copies.v3.anyMatch(i->i==2));
-		 assertTrue(copies.v4.anyMatch(i->i==2));
+		 assertTrue(copies._1().anyMatch(i->i==2));
+		 assertTrue(copies._2().anyMatch(i->i==2));
+		 assertTrue(copies._3().anyMatch(i->i==2));
+		 assertTrue(copies._4().anyMatch(i->i==2));
 	}
 
 	@Test
 	public void testDuplicateFilter(){
 		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
-		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._1().filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._2().filter(i->i%2==0).toList().size()==3);
 	} 
 	@Test
 	public void testTriplicateFilter(){
 		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
-		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v3.filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._1().filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._2().filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._3().filter(i->i%2==0).toList().size()==3);
 	} 
 	@Test
 	public void testQuadriplicateFilter(){
 		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
-		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v3.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v4.filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._1().filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._2().filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._3().filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._4().filter(i->i%2==0).toList().size()==3);
 	}
 	@Test
 	public void testDuplicateLimit(){
 		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
-		 assertTrue(copies.v1.limit(3).toList().size()==3);
-		 assertTrue(copies.v2.limit(3).toList().size()==3);
+		 assertTrue(copies._1().limit(3).toList().size()==3);
+		 assertTrue(copies._2().limit(3).toList().size()==3);
 	} 
 	@Test
 	public void testTriplicateLimit(){
 		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
-		 assertTrue(copies.v1.limit(3).toList().size()==3);
-		 assertTrue(copies.v2.limit(3).toList().size()==3);
-		 assertTrue(copies.v3.limit(3).toList().size()==3);
+		 assertTrue(copies._1().limit(3).toList().size()==3);
+		 assertTrue(copies._2().limit(3).toList().size()==3);
+		 assertTrue(copies._3().limit(3).toList().size()==3);
 	} 
 	@Test
 	public void testQuadriplicateLimit(){
 		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
-		 assertTrue(copies.v1.limit(3).toList().size()==3);
-		 assertTrue(copies.v2.limit(3).toList().size()==3);
-		 assertTrue(copies.v3.limit(3).toList().size()==3);
-		 assertTrue(copies.v4.limit(3).toList().size()==3);
+		 assertTrue(copies._1().limit(3).toList().size()==3);
+		 assertTrue(copies._2().limit(3).toList().size()==3);
+		 assertTrue(copies._3().limit(3).toList().size()==3);
+		 assertTrue(copies._4().limit(3).toList().size()==3);
 	}
 	    @Test(expected=ClassCastException.class)
 	    public void testCastException() {

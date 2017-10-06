@@ -6,7 +6,7 @@ import cyclops.function.Fn3;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.jooq.lambda.tuple.*;
+import cyclops.collections.tuple.*;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

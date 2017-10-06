@@ -2,12 +2,11 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 
@@ -18,7 +17,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  * Extended List operations execute lazily e.g.
  * <pre>
  * {@code
- *    LazyListX<Integer> q = LazyListX.of(1,2,3)
+ *    StreamX<Integer> q = StreamX.of(1,2,3)
  *                                      .map(i->i*2);
  * }
  * </pre>
@@ -27,7 +26,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  *
  * <pre>
  * {@code
- *    LazyListX<Integer> q = LazyListX.of(1,2,3)
+ *    StreamX<Integer> q = StreamX.of(1,2,3)
  *                                      .map(i->i*2);
  *                                      .filter(i->i<5);
  * }
@@ -42,7 +41,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements ListX<T> {
 
 
-    public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector,Evaluation strict) {
+    public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector, Evaluation strict) {
 
         super(list, seq, collector,strict,r->{
             CompletableListX<T> res = new CompletableListX<>();
@@ -66,6 +65,23 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
         get();
         return this;
     }
+
+    @Override
+    public T getOrElse(int index, T value) {
+        List<T> x = get();
+        if(index>x.size())
+            return value;
+        return x.get(index);
+    }
+
+    @Override
+    public T getOrElseGet(int index, Supplier<? extends T> supplier) {
+        List<T> x = get();
+        if(index>x.size())
+            return supplier.get();
+        return x.get(index);
+    }
+
     @Override
     public ListX<T> lazy() {
         return new LazyListX<T>(getList(),getSeq().get(),getCollectorInternal(), LAZY) ;

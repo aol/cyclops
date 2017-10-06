@@ -1,7 +1,7 @@
 package cyclops.companion;
 
 import java.util.List;
-import java.util.stream.Stream;
+
 
 import cyclops.collections.immutable.*;
 import cyclops.function.Monoid;
@@ -47,6 +47,9 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class Reducers {
+
+
+
     private static <T> PQueue<T> queueOf(final T... values) {
         PQueue<T> result = AmortizedPQueue.empty();
         for (final T value : values) {

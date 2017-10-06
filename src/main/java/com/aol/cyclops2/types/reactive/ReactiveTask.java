@@ -3,7 +3,7 @@ package com.aol.cyclops2.types.reactive;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple3;
 import org.reactivestreams.Subscription;
 
 import lombok.Value;
@@ -27,7 +27,7 @@ public class ReactiveTask implements Subscription {
      */
     @Override
     public void cancel() {
-        subscriptionAndTask.v1.join()
+        subscriptionAndTask._1().join()
                               .cancel();
     }
 
@@ -36,7 +36,7 @@ public class ReactiveTask implements Subscription {
      */
     @Override
     public void request(final long n) {
-        subscriptionAndTask.v1.join()
+        subscriptionAndTask._1().join()
                               .request(n);
     }
 
@@ -44,14 +44,14 @@ public class ReactiveTask implements Subscription {
      * @return true if current task is complete
      */
     public boolean isCurrentTaskComplete() {
-        return subscriptionAndTask.v2.isDone();
+        return subscriptionAndTask._2().isDone();
     }
 
     /**
      * @return true if the entire Stream has been processed
      */
     public boolean isStreamComplete() {
-        return subscriptionAndTask.v3.isDone();
+        return subscriptionAndTask._3().isDone();
     }
 
     /**
@@ -61,7 +61,7 @@ public class ReactiveTask implements Subscription {
      * @return New ReactiveTask that references the execution of the new async task
      */
     public ReactiveTask requestAsync(final long n) {
-        return withSubscriptionAndTask(subscriptionAndTask.map2(c -> CompletableFuture.runAsync(() -> subscriptionAndTask.v1.join()
+        return withSubscriptionAndTask(subscriptionAndTask.map2(c -> CompletableFuture.runAsync(() -> subscriptionAndTask._1().join()
                                                                                                                             .request(n),
                                                                                                 exec)));
     }
@@ -86,6 +86,6 @@ public class ReactiveTask implements Subscription {
      * Block until the currently active reactiveBuffer task completes
      */
     public void block() {
-        subscriptionAndTask.v2.join();
+        subscriptionAndTask._2().join();
     }
 }

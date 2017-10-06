@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import cyclops.collections.immutable.PersistentMapX;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.pcollections.PMap;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;

@@ -5,8 +5,8 @@ import static org.hamcrest.Matchers.is;
 import static org.jooq.lambda.Agg.count;
 import static org.jooq.lambda.Agg.max;
 import static org.jooq.lambda.Agg.min;
-import static org.jooq.lambda.tuple.Tuple.tuple;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 

@@ -1,7 +1,7 @@
 package com.aol.cyclops2.react.base;
 
 import static java.util.Arrays.asList;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 
 import java.util.function.BiPredicate;
@@ -77,103 +77,7 @@ public abstract class BaseSequentialSQLTest {
 	       
 	    }
 
-	    @Test
-	    public void testInnerJoin() {
-	      
 
-	        assertEquals(asList(),
-	            of().innerJoin(of(), TRUE).toList());
-	        assertEquals(asList(),
-	            of().innerJoin(of(1), TRUE).toList());
-	        assertEquals(asList(),
-	            of().innerJoin(of(1, 2), TRUE).toList());
-
-	        assertEquals(asList(),
-	        		of(1).innerJoin(of(), TRUE).toList());
-	        assertEquals(asList(),
-	            of(1).innerJoin(of(2), (t, u) -> t == u).toList());
-	        assertEquals(asList(
-	            tuple(1, 2)),
-	            of(1).innerJoin(of(2), (t, u) -> t * 2 == u).toList());
-	        assertEquals(asList(
-	            tuple(1, 1)),
-	            of(1).innerJoin(of(1, 2), (t, u) -> t == u).toList());
-	        assertEquals(asList(
-	            tuple(1, 2)),
-	            of(1).innerJoin(of(1, 2), (t, u) -> t * 2 == u).toList());
-	        assertEquals(asList(
-	            tuple(1, 1),
-	            tuple(1, 2)),
-	            of(1).innerJoin(of(1, 2), TRUE).toList());
-	    }
-
-	    @Test
-	    public void testLeftOuterJoin() {
-	       
-
-	        assertEquals(asList(),
-	            of().leftOuterJoin(of(), TRUE).toList());
-	        assertEquals(asList(),
-	            of().leftOuterJoin(of(1), TRUE).toList());
-	        assertEquals(asList(),
-	            of().leftOuterJoin(of(1, 2), TRUE).toList());
-
-	        assertEquals(asList(
-	            tuple(1, null)),
-	            of(1).leftOuterJoin(of(), TRUE).toList());
-	        assertEquals(asList(
-	            tuple(1, null)),
-	            of(1).leftOuterJoin(of(2), (t, u) -> t == u).toList());
-	        assertEquals(asList(
-	            tuple(1, 2)),
-	            of(1).leftOuterJoin(of(2), (t, u) -> t * 2 == u).toList());
-	        assertEquals(asList(
-	            tuple(1, 1)),
-	            of(1).leftOuterJoin(of(1, 2), (t, u) -> t == u).toList());
-	        assertEquals(asList(
-	            tuple(1, 2)),
-	            of(1).leftOuterJoin(of(1, 2), (t, u) -> t * 2 == u).toList());
-	        assertEquals(asList(
-	            tuple(1, 1),
-	            tuple(1, 2)),
-	            of(1).leftOuterJoin(of(1, 2), TRUE).toList());
-	    }
-
-	    @Test
-	    public void testRightOuterJoin() {
-	       
-
-	        assertEquals(asList(),
-	            of().rightOuterJoin(of(), TRUE).toList());
-	        assertEquals(asList(
-	            tuple(null, 1)),
-	            of().rightOuterJoin(of(1), TRUE).toList());
-	        assertEquals(asList(
-	            tuple(null, 1),
-	            tuple(null, 2)),
-	            of().rightOuterJoin(of(1, 2), TRUE).toList());
-
-	        assertEquals(asList(),
-	        	of(1).rightOuterJoin(of(), TRUE).toList());
-	        assertEquals(asList(
-	            tuple(null, 2)),
-	            of(1).rightOuterJoin(of(2), (t, u) -> t == u).toList());
-	        assertEquals(asList(
-	            tuple(1, 2)),
-	            of(1).rightOuterJoin(of(2), (t, u) -> t * 2 == u).toList());
-	        assertEquals(asList(
-	            tuple(1, 1),
-	            tuple(null, 2)),
-	            of(1).rightOuterJoin(of(1, 2), (t, u) -> t == u).toList());
-	        assertEquals(asList(
-	            tuple(null, 1),
-	            tuple(1, 2)),
-	            of(1).rightOuterJoin(of(1, 2), (t, u) -> t * 2 == u).toList());
-	        assertEquals(asList(
-	            tuple(1, 1),
-	            tuple(1, 2)),
-	            of(1).rightOuterJoin(of(1, 2), TRUE).toList());
-	    }
 
 	    @Test
 	    public void testOnEmpty() throws X {

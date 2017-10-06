@@ -2,7 +2,7 @@ package com.aol.cyclops2.react.simple;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.collections.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.async.SimpleReact;
@@ -71,18 +71,18 @@ public class TakeSkipSliceTest {
 	}
 	@Test
 	public void testSplitFuturesAt(){
-		assertThat(of(1,2,3,4,5).splitAt(2).v1.block().size(),is(asList(1,2).size()));
+		assertThat(of(1,2,3,4,5).splitAt(2)._1().block().size(),is(asList(1,2).size()));
 	}
 	@Test
 	public void testSplitFuturesAt2(){
 		assertThat(sortedList(of(1,2,3,4,5).splitAt(2)
-											.v2
+											._2()
 											.block()).size(),
 											is(asList(3,4,5).size()));
 	}
 	@Test
 	public void duplicateFuturesa(){
-		List<String> list = of("a","b").duplicate().v1.block();
+		List<String> list = of("a","b").duplicate()._1().block();
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 	private <T> List<T> sortedList(List<T> list) {
@@ -91,7 +91,7 @@ public class TakeSkipSliceTest {
 
 	@Test
 	public void duplicateFutures2(){
-		List<String> list = of("a","b").duplicate().v2.block();
+		List<String> list = of("a","b").duplicate()._2().block();
 		assertThat(sortedList(list),is(asList("a","b")));
 
 	}
@@ -120,7 +120,7 @@ public class TakeSkipSliceTest {
 	}
 	@Test
 	public void duplicateFutures(){
-		List<String> list = of("a","b").duplicate().v1.block();
+		List<String> list = of("a","b").duplicate()._1().block();
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 	private boolean sleep(int i) {

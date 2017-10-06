@@ -15,10 +15,10 @@ import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.async.Future;
 import cyclops.control.Trampoline;
 import com.aol.cyclops2.types.*;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import cyclops.monads.AnyM;
@@ -89,8 +89,8 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     @Override
     public FutureT<W,T> filter(final Predicate<? super T> test) {
         return of(run.map(f->f.map(in->Tuple.tuple(in,test.test(in))))
-                     .filter( f->f.get().v2 )
-                     .map( f->f.map(in->in.v1)));
+                     .filter( f->f.get()._2() )
+                     .map( f->f.map(in->in._1())));
     }
 
     /**
@@ -121,7 +121,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
      * <pre>
      * {@code 
      *  FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
-     *             .map(t->t=t+1);
+     *             .transform(t->t=t+1);
      *  
      *  
      *  //FutureT<AnyMSeq<Stream<Future[11]>>>
@@ -129,7 +129,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
      * </pre>
      * 
      * @param f Mapping function for the wrapped Future
-     * @return FutureT that applies the map function to the wrapped Future
+     * @return FutureT that applies the transform function to the wrapped Future
      */
     @Override
     public <B> FutureT<W,B> map(final Function<? super T, ? extends B> f) {
@@ -186,11 +186,11 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
-    	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
+    	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.transform(Future::completedFuture);
     	List<Integer> results = optTAdd2.applyHKT(FutureT.of(streamOpt))
     									.unwrap()
     									.<Stream<Future<Integer>>>unwrap()
-    									.map(Future::join)
+    									.transform(Future::join)
     									.collect(CyclopsCollectors.toList());
     	
     	
@@ -221,14 +221,14 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
-    	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
+    	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.transform(Future::completedFuture);
     	
     	Future<Future<Integer>> two = Future.completedFuture(Future.completedFuture(2));
     	AnyMSeq<Future<Integer>> future=  AnyM.fromFuture(two);
     	List<Integer> results = optTAdd2.applyHKT(FutureT.of(streamOpt),FutureT.of(future))
     									.unwrap()
     									.<Stream<Future<Integer>>>unwrap()
-    									.map(Future::join)
+    									.transform(Future::join)
     									.collect(CyclopsCollectors.toList());
     									
     		//Future.completedFuture(List[3,4,5]);
@@ -366,7 +366,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.reactiveStream.Stream)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
      */
     @Override
     public <U> FutureT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {

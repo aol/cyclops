@@ -6,10 +6,10 @@ import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
 import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple2;
+import cyclops.collections.tuple.Tuple3;
+import cyclops.collections.tuple.Tuple4;
 
 import java.util.*;
 import java.util.function.*;
@@ -133,16 +133,16 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     public Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return new Tuple2(
-                Tuple2.v1.to().optional()
+                Tuple2._1().to().optional()
                         .flatMap(l -> l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty()),
-                Tuple2.v2);
+                Tuple2._2());
     }
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitAt(final int where) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
         return new Tuple2(
-                Tuple2.v1.limit(where), Tuple2.v2.skip(where));
+                Tuple2._1().limit(where), Tuple2._2().skip(where));
 
 
     }
@@ -151,14 +151,14 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitBy(final Predicate<T> splitter) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
         return new Tuple2(
-                Tuple2.v1.limitWhile(splitter), Tuple2.v2.skipWhile(splitter));
+                Tuple2._1().limitWhile(splitter), Tuple2._2().skipWhile(splitter));
     }
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partition(final Predicate<? super T> splitter) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
         return new Tuple2(
-                Tuple2.v1.filter(splitter), Tuple2.v2.filter(splitter.negate()));
+                Tuple2._1().filter(splitter), Tuple2._2().filter(splitter.negate()));
 
     }
     @Override

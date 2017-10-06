@@ -40,7 +40,7 @@ public interface FoldableTraversable<T> extends Traversable<T>,
      *  <pre>
      *  {@code
      *    Future<Integer> sum =  ListX.of(1,2,3)
-     *                                 .map(this::load)
+     *                                 .transform(this::load)
      *                                 .foldFuture(exec,list->list.reduce(0,(a,b)->a+b))
      *
      *  }
@@ -65,7 +65,7 @@ public interface FoldableTraversable<T> extends Traversable<T>,
      *  <pre>
      *  {@code
      *    Eval<Integer> sum =  ListX.of(1,2,3)
-     *                                 .map(this::load)
+     *                                 .transform(this::load)
      *                                 .foldLazy(list->list.reduce(0,(a,b)->a+b))
      *
      *  }
@@ -88,7 +88,7 @@ public interface FoldableTraversable<T> extends Traversable<T>,
      *  <pre>
      *  {@code
      *    Try<Integer,Throwable> sum =  ListX.of(1,2,3)
-     *                                       .map(this::load)
+     *                                       .transform(this::load)
      *                                       .foldLazy(list->list.reduce(0,(a,b)->a+b),IOException.class)
      *
      *  }
@@ -111,8 +111,9 @@ public interface FoldableTraversable<T> extends Traversable<T>,
     @Override
     ReactiveSeq<T> stream();
 
-    default Seq<T> seq(){
-        return Seq.seq(this);
+    @Deprecated //remove
+    default ReactiveSeq<T> seq(){
+        return stream();
     }
     /**
      * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
