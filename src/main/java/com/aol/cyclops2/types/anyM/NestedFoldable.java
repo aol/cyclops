@@ -194,7 +194,18 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     default ListT<W,T> reduce(final Iterable<? extends Monoid<T>> reducers) {
         return ListT.of(nestedFoldables().map(s -> s.reduce(reducers)));
     }
-
+    default AnyM<W,T> foldLeft(final Monoid<T> reducer) {
+        return nestedFoldables().map(s -> s.foldLeft(reducer));
+    }
+    default AnyM<W,T> foldLeft(final T identity, final BinaryOperator<T> accumulator) {
+        return nestedFoldables().map(s -> s.foldLeft(identity, accumulator));
+    }
+    default <U> AnyM<W,U> foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator) {
+        return nestedFoldables().map(s -> s.foldLeft(identity, accumulator));
+    }
+    default <T> AnyM<W,T> foldLeftMapToType(final Reducer<T> reducer) {
+        return nestedFoldables().map(s -> s.mapReduce(reducer));
+    }
     /**
      * 
      * <pre>
