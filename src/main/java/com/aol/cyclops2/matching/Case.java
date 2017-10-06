@@ -88,11 +88,11 @@ public interface Case<T, R> {
 
     final Predicate<T1> predicate1;
     final Predicate<T2> predicate2;
-    final Supplier<R> supplier;
+    final Function<? super Tuple2<T1,T2>,? extends R> supplier;
 
     @Override
     public Optional<R> test(Tuple2<T1, T2> value) {
-      return predicate1.test(value.v1) && predicate2.test(value.v2) ? Optional.of(supplier.get()) : empty();
+      return predicate1.test(value.v1) && predicate2.test(value.v2) ? Optional.of(supplier.apply(value)) : empty();
     }
 
   }

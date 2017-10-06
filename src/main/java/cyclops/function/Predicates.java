@@ -200,7 +200,7 @@ public class Predicates {
     };
 
     /**
-     * Match against any object that is an instance of supplied type
+     * MatchType against any object that is an instance of supplied type
      * 
      * <pre>
      * {@code 

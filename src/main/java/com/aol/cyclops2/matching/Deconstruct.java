@@ -11,11 +11,13 @@ import org.jooq.lambda.tuple.Tuple5;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 @FunctionalInterface
 public interface Deconstruct<T> {
 
   T unapply();
+
 
   interface Deconstruct1<T1> extends Deconstruct<Tuple1<T1>> {
     default <R> R fold(Function<? super T1, ? extends R> match){

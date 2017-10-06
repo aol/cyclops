@@ -23,21 +23,21 @@ public final class Api {
   public static <T> PatternMatching<T> Match(T value) {
     return new PatternMatching<>(value);
   }
-  public static <T1,T2> PatternMatching2<T1,T2> Match(Sealed2<T1,T2> value) {
+  public static <T1,T2> PatternMatching2<T1,T2> MatchType(Sealed2<T1,T2> value) {
     return new PatternMatching2<>(value);
   }
 
-  public static <T1,T2,T3> PatternMatching3<T1,T2,T3> Match(Sealed3<T1,T2,T3> value) {
+  public static <T1,T2,T3> PatternMatching3<T1,T2,T3> MatchType(Sealed3<T1,T2,T3> value) {
     return new PatternMatching3<>(value);
   }
-  public static <T1,T2,T3,T4> PatternMatching4<T1,T2,T3,T4> Match(Sealed4<T1,T2,T3,T4> value) {
+  public static <T1,T2,T3,T4> PatternMatching4<T1,T2,T3,T4> MatchType(Sealed4<T1,T2,T3,T4> value) {
     return new PatternMatching4<>(value);
   }
-  public static <T1,T2,T3,T4,T5> PatternMatching5<T1,T2,T3,T4,T5> Match(Sealed5<T1,T2,T3,T4,T5> value) {
+  public static <T1,T2,T3,T4,T5> PatternMatching5<T1,T2,T3,T4,T5> MatchType(Sealed5<T1,T2,T3,T4,T5> value) {
     return new PatternMatching5<>(value);
   }
 
-  public static <T1> PatternMatchingOrNone<T1> Match(Sealed1Or<T1> value) {
+  public static <T1> PatternMatchingOrNone<T1> MatchType(Sealed1Or<T1> value) {
     return new PatternMatchingOrNone<>(value);
   }
 
@@ -96,8 +96,8 @@ public final class Api {
     return new Case.Case0<>(predicate, supplier);
   }
 
-  public static <T1, T2, R> Case<Tuple2<T1, T2>, R> Case(Predicate<T1> predicate1, Predicate<T2> predicate2, Supplier<R> supplier) {
-    return new Case2<>(predicate1, predicate2, supplier);
+  public static <T1, T2, R> Case<Tuple2<T1, T2>, R> Case(Predicate<T1> predicate1, Predicate<T2> predicate2, Function<? super Tuple2<T1,T2>,? extends R> fn) {
+    return new Case2<>(predicate1, predicate2, fn);
   }
 
   public static <T1, T2, T3, R> Case<Tuple3<T1, T2, T3>, R> Case(Predicate<T1> predicate1, Predicate<T2> predicate2, Predicate<T3> predicate3, Supplier<R> supplier) {

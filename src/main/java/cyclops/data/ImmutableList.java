@@ -1,6 +1,7 @@
 package cyclops.data;
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
+import com.aol.cyclops2.matching.Matching;
 import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.Zippable;
@@ -20,6 +21,7 @@ import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 
+import cyclops.matching.Api;
 import cyclops.stream.ReactiveSeq;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
@@ -33,9 +35,7 @@ import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-
-import static cyclops.matching.Api.Case;
-import static cyclops.matching.Api.Match;
+import static cyclops.matching.Api.*;
 
 
 public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,ImmutableList.None<T>>,
@@ -79,15 +79,15 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         ImmutableList<T> rem = this;
         boolean[] found = {false};
         do {
-            rem = Match(rem).of(Case(s->{
-                return s.fold((head, tail2) -> {
+            rem = MatchType(rem).of(Case(some->{
+                return Match(some).of(Case(head -> {
                     found[0] = pred.test(head);
                     if (!found[0]) {
                         res[0] = res[0].prepend(head);
-                        return tail2;
+
                     }
-                    return tail2;
-                });
+                    return true;
+                }, tail -> true, t -> t.v2())).get();
             }),Case(nil->nil));
 
         }while(!rem.isEmpty() && !found[0]);
@@ -226,7 +226,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
             @Override
             public T next() {
-               return Match(current).of(Case(list->{
+               return MatchType(current).of(Case(list->{
                                                         current = list.tail();
                                                         return list.head();
                                                     }),

@@ -74,7 +74,7 @@ public class Xors {
     }*/
 
     /**
-     * Pattern Match on a Future handling success and failure cases differently
+     * Pattern MatchType on a Future handling success and failure cases differently
      * <pre>
      * {@code 
      *  Eval<Integer> result = Xors.future(Future.ofResult(1))

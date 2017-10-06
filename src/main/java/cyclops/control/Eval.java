@@ -2,6 +2,8 @@ package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.matching.Deconstruct;
+import com.aol.cyclops2.matching.Deconstruct.Deconstruct1;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
@@ -25,9 +27,7 @@ import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import org.jooq.lambda.tuple.*;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 import org.reactivestreams.Publisher;
@@ -72,8 +72,13 @@ import java.util.stream.Stream;
  * @param <T> Type of value storable in this Eval
  */
 public interface Eval<T> extends To<Eval<T>>,
+                                 Deconstruct1<T>,
                                     MonadicValue<T>,
                                     Higher<eval ,T>{
+
+    default Tuple1<T> unapply(){
+        return Tuple.tuple(get());
+    }
 
     public static  <T> Kleisli<eval,Eval<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), Eval::widen);
