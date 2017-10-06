@@ -131,13 +131,13 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     CollectionX<T> shuffle(Random random);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     <S, U> CollectionX<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     <T2, T3, T4> CollectionX<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth);
@@ -473,13 +473,13 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     <U, R> CollectionX<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.stream.Stream)
      */
     @Override
     <U> CollectionX<Tuple2<T, U>> zipS(Stream<? extends U> other);
@@ -539,7 +539,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     CollectionX<T> sorted();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.IterableFilterable#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.traversable.IterableFilterable#removeAll(java.util.stream.Stream)
      */
     @Override
     CollectionX<T> removeAllS(Stream<? extends T> stream);
@@ -563,7 +563,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.IterableFilterable#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.traversable.IterableFilterable#retainAllI(java.util.stream.Stream)
      */
     @Override
     CollectionX<T> retainAllS(Stream<? extends T> seq);

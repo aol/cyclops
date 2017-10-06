@@ -358,7 +358,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.reactiveStream.Stream)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
      */
     @Override
     public <U> XorT<W,ST,Tuple2<T, U>> zipS(Stream<? extends U> other) {

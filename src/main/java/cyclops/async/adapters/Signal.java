@@ -11,7 +11,7 @@ import lombok.Getter;
  * Datastructure that accepts a Stream of data and outputs a Stream of changes
  * 
  * <pre>
- * E.g. Stream.of(5,5,5,5,5,5,5,6,1,2,3,5,5,5,5) 
+ * E.g. Stream.of(5,5,5,5,5,5,5,6,1,2,3,5,5,5,5)
  * Results in Stream.of(5,6,1,2,3,5)
  * </pre>
  * @author johnmcclean

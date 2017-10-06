@@ -342,7 +342,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#append(java.util.reactiveStream.Stream)
+     * @see org.jooq.lambda.Seq#append(java.util.stream.Stream)
      */
     @Override
     default FutureStream<U> appendS(Stream<? extends U> other) {
@@ -358,7 +358,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#prepend(java.util.reactiveStream.Stream)
+     * @see org.jooq.lambda.Seq#prepend(java.util.stream.Stream)
      */
     @Override
     default FutureStream<U> prependS(Stream<? extends U> other) {
@@ -844,7 +844,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#count()
+     * @see java.util.stream.Stream#count()
      */
     @Override
     default long count() {
@@ -966,7 +966,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
+     * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
     @Override
@@ -1834,7 +1834,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
          * Convert the specified Stream to a FutureStream, using the configuration
          * of this FutureStream (task executors, current config settings)
          *
-         * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#fromStream(java.util.reactiveStream.Stream)
+         * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#fromStream(java.util.stream.Stream)
          */
     @Override
     default <R> FutureStream<R> fromStream(final Stream<R> stream) {
@@ -1849,7 +1849,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @see
      * com.aol.simple.react.reactiveStream.FutureStreamImpl#fromStreamCompletableFuture
-     * (java.util.reactiveStream.Stream)
+     * (java.util.stream.Stream)
      */
 
     default <R> FutureStream<R> fromStreamOfFutures(final Stream<FastFuture<R>> stream) {
@@ -2732,7 +2732,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#mapToInt(java.util.function.ToIntFunction)
+     * @see java.util.stream.Stream#mapToInt(java.util.function.ToIntFunction)
      */
     @Override
     default IntStream mapToInt(final ToIntFunction<? super U> mapper) {
@@ -2740,7 +2740,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#mapToLong(java.util.function.ToLongFunction)
+     * @see java.util.stream.Stream#mapToLong(java.util.function.ToLongFunction)
      */
     @Override
     default LongStream mapToLong(final ToLongFunction<? super U> mapper) {
@@ -2748,7 +2748,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#mapToDouble(java.util.function.ToDoubleFunction)
+     * @see java.util.stream.Stream#mapToDouble(java.util.function.ToDoubleFunction)
      */
     @Override
     default DoubleStream mapToDouble(final ToDoubleFunction<? super U> mapper) {
@@ -2756,7 +2756,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#flatMapToInt(java.util.function.Function)
+     * @see java.util.stream.Stream#flatMapToInt(java.util.function.Function)
      */
     @Override
     default IntStream flatMapToInt(final Function<? super U, ? extends IntStream> mapper) {
@@ -2764,7 +2764,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#flatMapToLong(java.util.function.Function)
+     * @see java.util.stream.Stream#flatMapToLong(java.util.function.Function)
      */
     @Override
     default LongStream flatMapToLong(final Function<? super U, ? extends LongStream> mapper) {
@@ -2772,7 +2772,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#flatMapToDouble(java.util.function.Function)
+     * @see java.util.stream.Stream#flatMapToDouble(java.util.function.Function)
      */
     @Override
     default DoubleStream flatMapToDouble(final Function<? super U, ? extends DoubleStream> mapper) {
@@ -2780,7 +2780,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#forEachOrdered(java.util.function.Consumer)
+     * @see java.util.stream.Stream#forEachOrdered(java.util.function.Consumer)
      */
     @Override
     default void forEachOrdered(final Consumer<? super U> action) {
@@ -2789,7 +2789,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#toArray()
+     * @see java.util.stream.Stream#toArray()
      */
     @Override
     default Object[] toArray() {
@@ -2797,7 +2797,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see java.util.reactiveStream.Stream#toArray(java.util.function.IntFunction)
+     * @see java.util.stream.Stream#toArray(java.util.function.IntFunction)
      */
     @Override
     default <A> A[] toArray(final IntFunction<A[]> generator) {
@@ -2988,7 +2988,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see cyclops2.reactiveStream.ReactiveSeq#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, R> FutureStream<Tuple3<U, S, R>> zip3(final Iterable<? extends S> second, final Iterable<? extends R> third) {
@@ -2998,7 +2998,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see cyclops2.reactiveStream.ReactiveSeq#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> FutureStream<Tuple4<U, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -3059,7 +3059,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#endsWith(java.util.reactiveStream.Stream)
+     * @see cyclops2.reactiveStream.ReactiveSeq#endsWith(java.util.stream.Stream)
      */
     @Override
     default boolean endsWith(final Stream<U> stream) {
@@ -3151,7 +3151,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#insertAtS(int, java.util.reactiveStream.Stream)
+     * @see cyclops2.reactiveStream.ReactiveSeq#insertAtS(int, java.util.stream.Stream)
      */
     @Override
     default FutureStream<U> insertAtS(final int pos, final Stream<U> stream) {
@@ -3355,8 +3355,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
-     * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
+     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming
+     * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
      * <pre>
      * {@code
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
@@ -3396,7 +3396,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
+     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming
      * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription,
      * when the entire Stream has been processed an onComplete event will be recieved.
      * 
@@ -3439,7 +3439,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
+     *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,
      * <pre>
      * {@code
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)

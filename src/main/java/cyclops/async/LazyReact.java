@@ -255,7 +255,7 @@ public class LazyReact implements ReactBuilder {
      *	@param s Stream to copy
      *	@param org ignored for LazyFutureStreams
      *	@return
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#construct(java.util.reactiveStream.Stream, java.util.List)
+     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
      */
     public <U> FutureStream<U> construct(final Stream<U> s) {
 
@@ -467,7 +467,7 @@ public class LazyReact implements ReactBuilder {
      * 
      *	@param reactiveStream Stream that serves as input to FutureStream
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStream(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStream(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStreamFutures(final Stream<CompletableFuture<U>> stream) {
 
@@ -520,7 +520,7 @@ public class LazyReact implements ReactBuilder {
      * 
      *	@param reactiveStream Stream that serves as input to FutureStream
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStreamWithoutFutures(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStream(final Stream<U> stream) {
 
@@ -637,7 +637,7 @@ public class LazyReact implements ReactBuilder {
      * 
      *	@param actions Stream to react to
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStreamAsync(final Stream<? extends Supplier<U>> actions) {
 

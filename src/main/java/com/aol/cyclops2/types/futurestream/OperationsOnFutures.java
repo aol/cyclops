@@ -1090,7 +1090,7 @@ public interface OperationsOnFutures<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jooq.lambda.Seq#concat(java.util.reactiveStream.Stream)
+     * @see org.jooq.lambda.Seq#concat(java.util.stream.Stream)
      */
     default FutureStream<T> concat(final Stream<T> other) {
         return fromStreamOfFutures(this.getLastActive()
@@ -1321,14 +1321,14 @@ public interface OperationsOnFutures<T> {
      * 
      * 
      * (non-Javadoc)
-    * @see java.util.reactiveStream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
+    * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
     */
     default CompletableFuture<T> reduce(final CompletableFuture<T> identity, final BinaryOperator<CompletableFuture<T>> accumulator) {
         return toStream().reduce(identity, accumulator);
     }
 
     /* (non-Javadoc)
-    * @see java.util.reactiveStream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
+    * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
     */
     default <U> CompletableFuture<U> reduce(final CompletableFuture<U> identity,
             final BiFunction<CompletableFuture<U>, ? super CompletableFuture<T>, CompletableFuture<U>> accumulator,

@@ -10,7 +10,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class LazyListXTest {
+public class StreamXTest {
 
     public class Animal {
         protected String name;
@@ -41,7 +41,7 @@ public class LazyListXTest {
 
     @Test
     public void testIntercalate() {
-        LazyListX<Animal> lazyListX = (LazyListX<Animal>) ListX.of(new Animal("A"), new Animal("B"), new Animal("C"));
+        StreamX<Animal> lazyListX = (StreamX<Animal>) ListX.of(new Animal("A"), new Animal("B"), new Animal("C"));
         List<List<Cat>> listOfLists = Arrays.asList(new List[]{
                 Arrays.asList(new Cat[]{new Cat("1"), new Cat("2"), new Cat("3")}),
                 Arrays.asList(new Cat[]{new Cat("4"), new Cat("5"), new Cat("6")}),

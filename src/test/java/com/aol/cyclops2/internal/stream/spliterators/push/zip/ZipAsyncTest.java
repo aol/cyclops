@@ -121,7 +121,7 @@ public class ZipAsyncTest {
 
     }
     @Test
-    public void zip2ofLazyListX(){
+    public void zip2ofStreamX(){
 
         for(int i=0;i<500;i++) {
             System.out.println("*************Iteration " + i);

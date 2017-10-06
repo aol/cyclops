@@ -512,8 +512,8 @@ public class Streams {
     }
 
     /**
-     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
-     * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
+     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming
+     * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
@@ -552,7 +552,7 @@ public class Streams {
     }
 
     /**
-     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
+     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming
      * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription,
      * when the entire Stream has been processed an onComplete event will be recieved.
      * 
@@ -594,7 +594,7 @@ public class Streams {
     }
 
     /**
-     *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
+     *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
@@ -1638,7 +1638,7 @@ public class Streams {
        <pre>
        {@code 
        Stream<List<Integer>> zipped = Streams.zipStream(Stream.of(1,2,3)
-    											,Stream.of(2,3,4), 
+    											,Stream.of(2,3,4),
     												(a,b) -> Arrays.asList(a,b));
     	
     	
@@ -1689,7 +1689,7 @@ public class Streams {
      * </pre>
      * @param windowSize
      *            Size of sliding window
-     * @return Stream with sliding view 
+     * @return Stream with sliding view
      */
     public final static <T> Stream<VectorX<T>> sliding(final Stream<T> stream, final int windowSize, final int increment) {
         return StreamSupport.stream(new SlidingSpliterator<>(stream.spliterator(),Function.identity(),

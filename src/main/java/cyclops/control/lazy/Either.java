@@ -117,6 +117,24 @@ import java.util.stream.Stream;
  * @param <RT> Right type
  */
 public interface Either<LT, RT> extends Xor<LT, RT>{
+
+    /**
+    default Either<NonEmptyList<LT>, RT> nel() {
+        return Either.fromLazy(Eval.always(()->visit(s->Either.left(NonEmptyList.of(s)),p->Either.right(p))));
+    }
+    **/
+    default Either<LT,RT> accumulate(Xor<LT,RT> next,Semigroup<RT> sg){
+        return flatMap(s1->next.map(s2->sg.apply(s1,s2)));
+    }
+    default Either<LT,RT> accumulatePrimary(Semigroup<RT> sg, Xor<LT,RT>... values){
+        return (Either<LT,RT>)Xor.super.accumulatePrimary(sg,values);
+    }
+    default Either<LT,RT> accumulate(Semigroup<LT> sg, Xor<LT,RT> next){
+        return secondaryFlatMap(s1->next.secondaryMap(s2->sg.apply(s1,s2)));
+    }
+    default Either<LT,RT> accumulate(Semigroup<LT> sg, Xor<LT,RT>... values){
+        return (Either<LT,RT>)Xor.super.accumulate(sg,values);
+    }
     public static  <L,T,R> Either<L,R> tailRec(T initial, Function<? super T, ? extends Either<L,? extends Xor<T, R>>> fn){
         Either<L,? extends Xor<T, R>> next[] = new Either[1];
         next[0] = Either.right(Xor.secondary(initial));
@@ -1174,7 +1192,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -1187,7 +1205,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Either<LT, Tuple2<RT, U>> zipS(final Stream<? extends U> other) {

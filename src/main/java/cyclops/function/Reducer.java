@@ -37,7 +37,7 @@ public interface Reducer<T> extends Monoid<T> {
      *  Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
      *	Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
      *	<PTuple2<Integer,Integer>> result = PowerTuples.tuple(sum,mult).<PTuple2<Integer,Integer>>asReducer()
-     *										.mapReduce(Stream.of(1,2,3,4)); 
+     *										.mapReduce(Stream.of(1,2,3,4));
      *	 
      *	assertThat(result,equalTo(tuple(10,24)));
      *  }</pre>
