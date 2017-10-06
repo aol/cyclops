@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface Enumeration<E> {
 
@@ -20,6 +21,27 @@ public interface Enumeration<E> {
 
     int fromEnum(E a);
 
+    default E toEnumOrElse(int e, E value){
+        return toEnum(e).orElse(value);
+    }
+    default E toEnumOrElseGet(int e, Supplier<? extends E> value){
+        return toEnum(e).orElse(value.get());
+    }
+
+
+
+    default E succOrElse(E e,E value){
+        return toEnumOrElse(fromEnum(e)+1,value);
+    }
+    default E predOrElse(E e, E value){
+        return toEnumOrElse(fromEnum(e)-1,value);
+    }
+    default E succOrElseGet(E e,Supplier<? extends E> value){
+        return toEnumOrElseGet(fromEnum(e)+1,value);
+    }
+    default E predOrElseGet(E e, Supplier<? extends E> value){
+        return toEnumOrElseGet(fromEnum(e)-1,value);
+    }
 
     default Maybe<E> succ(E e){
         return toEnum(fromEnum(e)+1);
@@ -49,6 +71,14 @@ public interface Enumeration<E> {
         public Maybe<E> toEnum(int a){
 
             return a>-1 && a< values.length ? Maybe.just(values[a]) :  Maybe.none();
+        }
+        public E toEnumOrElse(int a,E e){
+
+            return a>-1 && a< values.length ? values[a] :  e;
+        }
+        public E toEnumOrElseGet(int a,Supplier<? extends E> e){
+
+            return a>-1 && a< values.length ? values[a] :  e.get();
         }
 
 
@@ -80,6 +110,16 @@ public interface Enumeration<E> {
         public Maybe<E> toEnum(int e) {
             return seq.get(e);
         }
+
+        @Override
+        public E toEnumOrElse(int e, E value) {
+            return seq.getOrElse(e,value);
+        }
+        @Override
+        public E toEnumOrElseGet(int e, Supplier<? extends E> value) {
+            return seq.getOrElseGet(e,value);
+        }
+
 
         @Override
         public int fromEnum(E a) {

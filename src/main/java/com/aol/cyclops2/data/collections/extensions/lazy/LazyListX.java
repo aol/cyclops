@@ -8,6 +8,7 @@ import cyclops.stream.ReactiveSeq;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 
@@ -66,6 +67,23 @@ public class StreamX<T> extends AbstractLazyCollection<T,List<T>> implements Lis
         get();
         return this;
     }
+
+    @Override
+    public T getOrElse(int index, T value) {
+        List<T> x = get();
+        if(index>x.size())
+            return value;
+        return x.get(index);
+    }
+
+    @Override
+    public T getOrElseGet(int index, Supplier<? extends T> supplier) {
+        List<T> x = get();
+        if(index>x.size())
+            return supplier.get();
+        return x.get(index);
+    }
+
     @Override
     public ListX<T> lazy() {
         return new StreamX<T>(getList(),getSeq().get(),getCollectorInternal(), LAZY) ;

@@ -253,6 +253,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
         return stream().get(index);
     }
 
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.foldable.Folds#headAndTail()
      */

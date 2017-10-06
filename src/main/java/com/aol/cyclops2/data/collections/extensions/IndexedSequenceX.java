@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,7 +24,8 @@ import java.util.stream.Stream;
  * @author johnmcclean
  */
 public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
-
+    T getOrElse(int index, T value);
+    T getOrElseGet(int index,Supplier<? extends T> supplier);
     /* (non-Javadoc)
      * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#plus(java.lang.Object)
      */
