@@ -8,7 +8,7 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
+import cyclops.stream.ReactiveSeq;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 
@@ -24,7 +24,7 @@ public class LazyFutureStreamFunctions {
      * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"))
      * </code>
      */
-    public static <T1, T2> Seq<Tuple2<T1, T2>> zip(final Stream<T1> left, final Stream<? extends T2> right) {
+    public static <T1, T2> ReactiveSeq<Tuple2<T1, T2>> zip(final Stream<T1> left, final Stream<? extends T2> right) {
         return zip(left, right, Tuple::tuple);
     }
 
@@ -37,7 +37,7 @@ public class LazyFutureStreamFunctions {
      * Seq.of(1, 2, 3).zip(Seq.of("a", "b", "c"), (i, s) -&gt; i + ":" + s)
      * </code>
      */
-    public static <T1, T2, R> Seq<R> zip(final Stream<T1> left, final Stream<T2> right, final BiFunction<? super T1, ? super T2, ? extends R> zipper) {
+    public static <T1, T2, R> ReactiveSeq<R> zip(final Stream<T1> left, final Stream<T2> right, final BiFunction<? super T1, ? super T2, ? extends R> zipper) {
         final Iterator<T1> it1 = left.iterator();
         final Iterator<T2> it2 = right.iterator();
 
@@ -59,7 +59,7 @@ public class LazyFutureStreamFunctions {
             }
         }
 
-        return Seq.seq(new Zip())
+        return ReactiveSeq.fromIterator(new Zip())
                   .onClose(() -> {
                       left.close();
                       right.close();
@@ -82,7 +82,7 @@ public class LazyFutureStreamFunctions {
      * Seq.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
      * </code>
      */
-    public static <T> Seq<T> limitWhile(final Stream<T> stream, final Predicate<? super T> predicate) {
+    public static <T> ReactiveSeq<T> limitWhile(final Stream<T> stream, final Predicate<? super T> predicate) {
         return limitUntil(stream, predicate.negate());
     }
 
@@ -96,7 +96,7 @@ public class LazyFutureStreamFunctions {
      * </code>
      */
     @SuppressWarnings("unchecked")
-    public static <T> Seq<T> limitUntil(final Stream<T> stream, final Predicate<? super T> predicate) {
+    public static <T> ReactiveSeq<T> limitUntil(final Stream<T> stream, final Predicate<? super T> predicate) {
         final Iterator<T> it = stream.iterator();
 
         class LimitUntil implements Iterator<T> {
@@ -133,7 +133,7 @@ public class LazyFutureStreamFunctions {
             }
         }
 
-        return Seq.seq(new LimitUntil())
+        return ReactiveSeq.fromIterator(new LimitUntil())
                   .onClose(() -> {
                       stream.close();
                   });

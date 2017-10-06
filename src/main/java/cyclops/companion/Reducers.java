@@ -4,6 +4,7 @@ import java.util.List;
 
 
 import cyclops.collections.immutable.*;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import org.pcollections.AmortizedPQueue;
@@ -22,7 +23,7 @@ import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
 import cyclops.collections.immutable.BagX;
-import com.aol.cyclops2.types.mixins.TupleWrapper;
+
 
 import lombok.experimental.UtilityClass;
 
@@ -247,35 +248,42 @@ public class Reducers {
     }
     /**
      * <pre>
-     * {@code 
+     * {@code
      * PMap<Integer,String> q = Reducers.<Integer,String>toPMap()
                                 .mapReduce(Stream.of(Arrays.asList("hello",1),Arrays.asList("world",2)));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer for PMap
      */
     public static <K, V> Reducer<PMap<K, V>> toPMap() {
-        return Reducer.<PMap<K, V>> of(HashTreePMap.empty(), (final PMap<K, V> a) -> b -> a.plusAll(b), (in) -> {  
+        /**
+        return Reducer.<PMap<K, V>> of(HashTreePMap.empty(), (final PMap<K, V> a) -> b -> a.plusAll(b), (in) -> {
+
             final List w = ((TupleWrapper) () -> in).values();
             return HashTreePMap.singleton((K) w.get(0), (V) w.get(1));
         });
+         **/
+        return null;
     }
     /**
      * <pre>
-     * {@code 
+     * {@code
      * PersistentMapX<Integer,String> q = Reducers.<Integer,String>toPMapX()
                                         .mapReduce(Stream.of(Arrays.asList("hello",1),Arrays.asList("world",2)));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer for PersistentMapX
      */
     public static <K, V> Reducer<PersistentMapX<K, V>> toPMapX() {
+        /**
         return Reducer.<PersistentMapX<K, V>> of(PersistentMapX.empty(), (final PersistentMapX<K, V> a) -> b -> a.plusAll(b), (in) -> {
             final List w = ((TupleWrapper) () -> in).values();
             return PersistentMapX.singleton((K) w.get(0), (V) w.get(1));
         });
+         **/
+        return null;
     }
 
     /**

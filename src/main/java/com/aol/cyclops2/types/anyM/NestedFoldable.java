@@ -8,6 +8,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
+import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -17,13 +18,12 @@ import cyclops.stream.Streamable;
 import cyclops.monads.transformers.ListT;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.MapX;
-import com.aol.cyclops2.types.foldable.CyclopsCollectable;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.ToStream;
 import org.reactivestreams.Subscription;
 
 public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> {
-    public AnyM<W,? extends CyclopsCollectable<T>> nestedFoldables();
+    public AnyM<W,? extends FoldableTraversable<T>> nestedFoldables();
 
 
 

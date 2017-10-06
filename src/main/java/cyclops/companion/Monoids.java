@@ -17,7 +17,6 @@ import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.typeclasses.NaturalTransformation;
-import org.jooq.lambda.Seq;
 import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;
@@ -270,12 +269,6 @@ public interface Monoids {
         return Monoid.of(Spouts.empty(), Semigroups.ambReactiveSeq());
     }
 
-    /**
-     * @return Combination of two Seq's : b is appended to a
-     */
-    static <T> Monoid<Seq<T>> combineSeq() {
-        return Monoid.of(Seq.empty(), Semigroups.combineSeq());
-    }
 
     /**
      * @return Combination of two Stream's : b is appended to a

@@ -6,7 +6,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
 import cyclops.async.Future;
-import org.jooq.lambda.function.Function3;
 
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
@@ -24,9 +23,7 @@ public interface Fn3<S1, S2, S3, R> extends Fn1<S1,Fn1<S2,Fn1<S3,R>>> {
     
     public R apply(S1 a, S2 b, S3 c);
 
-    default Function3<S1, S2, S3, R> function3() {
-        return (a,b,c)-> apply(a,b,c);
-    }
+
     
     
     

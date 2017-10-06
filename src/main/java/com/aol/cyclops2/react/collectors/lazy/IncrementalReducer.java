@@ -8,12 +8,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.jooq.lambda.Seq;
 
 import com.aol.cyclops2.internal.react.async.future.FastFuture;
 import com.aol.cyclops2.internal.react.stream.MissingValue;
 import com.aol.cyclops2.types.futurestream.BlockingStream;
 
+import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -110,7 +110,7 @@ public class IncrementalReducer<T> {
             final BiFunction<U, ? super T, U> accumulator) {
         final Stream<FastFuture<T>> streamToUse = results.stream();
 
-        final U result = Seq.seq(streamToUse)
+        final U result = ReactiveSeq.fromStream(streamToUse)
                             .map(safeJoin)
                             .filter(v -> v != MissingValue.MISSING_VALUE)
                             .foldLeft(identity, accumulator);

@@ -2,6 +2,7 @@ package com.aol.cyclops2.types.foldable;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -18,7 +19,6 @@ import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 
@@ -58,12 +58,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return ReactiveSeq.fromIterable(iterable);
     }
 
-    public Seq<T> seq() {
-        if(iterable instanceof Seq){
-            return (Seq<T>)iterable;
-        }
-        return Seq.seq(iterable);
-    }
+
 
     public FutureStream<T> futureStream(final LazyReact reactor) {
         return reactor.fromIterable(iterable);
@@ -206,7 +201,10 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
 
     public <K, V> MapX<K, V> mapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
-        return MapX.fromMap(stream().toMap(keyMapper, valueMapper));
+        return MapX.fromMap(stream().collect(Collectors.toMap(keyMapper, valueMapper)));
+    }
+    public <K, V> Map<K, V> map(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
+        return  stream().collect(Collectors.toMap(keyMapper, valueMapper));
     }
     public Maybe<ListX<T>> maybe() {
         return value().toMaybe();

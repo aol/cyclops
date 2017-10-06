@@ -3,7 +3,7 @@ package cyclops.function;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.jooq.lambda.function.Consumer4;
+
 
 /**
  * A FunctionalInterface for side-effecting statements that accept 4 inputs (with no result).
@@ -19,14 +19,6 @@ import org.jooq.lambda.function.Consumer4;
 @FunctionalInterface
 public interface C4<T1, T2, T3, T4> {
 
-    /**
-     * Create a cyclops2-react C4 from a jOOλ Consumer4
-     * @param c4 jOOλ Consumer4
-     * @return cyclops2-react C4
-     */
-    static <S1, S2, S3, S4> C4<S1, S2, S3, S4> fromConsumer3(final Consumer4<S1, S2, S3, S4> c4) {
-        return (a, b, c, d) -> c4.accept(a, b, c, d);
-    }
 
     /**
      * Performs operation with input parameters
@@ -38,12 +30,7 @@ public interface C4<T1, T2, T3, T4> {
      */
     void accept(T1 a, T2 b, T3 c, T4 d);
 
-    /**
-     * @return A jOOλ Consumer4
-     */
-    default Consumer4<T1, T2, T3, T4> consumer4() {
-        return (a, b, c, d) -> accept(a, b, c, d);
-    }
+
 
     /**
      * Partially applyHKT the first input parameter to this C4

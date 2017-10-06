@@ -378,10 +378,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return createSeq(new LimitWhileClosedOperator<>(source, predicate));
     }
 
-    @Override
-    public String format() {
-        return null;
-    }
+
 
 
     @Override

@@ -4,9 +4,10 @@ import com.aol.cyclops2.internal.stream.SeqUtils;
 import com.aol.cyclops2.internal.stream.StreamableImpl;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.factory.Unit;
+import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.foldable.CyclopsCollectable;
+import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.ToStream;
 import com.aol.cyclops2.types.traversable.FoldableTraversable;
@@ -22,8 +23,6 @@ import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import lombok.AllArgsConstructor;
 import lombok.val;
-import org.jooq.lambda.Collectable;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
@@ -45,8 +44,10 @@ import java.util.stream.*;
  */
 public interface Streamable<T> extends To<Streamable<T>>,
                                         ToStream<T>,
+                                        Iterable<T>,
+                                        Folds<T>,
+                                        ReactiveStreamsTerminalOperations<T>,
                                         FoldableTraversable<T>,
-                                        CyclopsCollectable<T>,
                                         Transformable<T>,
                                         Filters<T>,
                                         Traversable<T>,
@@ -60,6 +61,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     @Override
     default ReactiveSeq<T> reactiveSeq() {
+
         return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
     }
 
@@ -151,14 +153,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
         }
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectors()
-     */
-    @Override
-    default Collectable<T> collectors() {
 
-        return Seq.seq((Stream<T>)stream());
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.traversable.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
@@ -1433,39 +1428,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return reactiveSeq().join(sep, start, end);
     }
 
-    /**
-     * Extract the minimum as determined by supplied function
-     * 
-     */
-    @Override
-    default <C extends Comparable<? super C>> Optional<T> minBy(final Function<? super T, ? extends C> f) {
-        return reactiveSeq().minBy(f);
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.stream.Stream#min(java.util.Comparator)
-     */
-    @Override
-    default Optional<T> min(final Comparator<? super T> comparator) {
-        return reactiveSeq().min(comparator);
-    }
-
-    /**
-     * Extract the maximum as determined by the supplied function
-     * 
-     */
-    @Override
-    default <C extends Comparable<? super C>> Optional<T> maxBy(final Function<? super T, ? extends C> f) {
-        return reactiveSeq().maxBy(f);
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.stream.Stream#max(java.util.Comparator)
-     */
-    @Override
-    default Optional<T> max(final Comparator<? super T> comparator) {
-        return reactiveSeq().max(comparator);
-    }
 
     /**
      * @return First matching element in sequential order

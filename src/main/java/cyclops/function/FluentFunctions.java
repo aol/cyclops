@@ -1,17 +1,17 @@
 package cyclops.function;
 
 import cyclops.control.Reader;
+import cyclops.function.checked.*;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;
 import cyclops.collections.box.MutableInt;
-import com.aol.cyclops2.internal.invokedynamic.CheckedTriFunction;
+import cyclops.function.checked.CheckedTriFunction;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
-import org.jooq.lambda.fi.util.function.*;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;

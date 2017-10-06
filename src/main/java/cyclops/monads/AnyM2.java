@@ -24,9 +24,7 @@ import cyclops.monads.transformers.ListT;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import org.jooq.lambda.function.Function3;
-import org.jooq.lambda.function.Function4;
-import org.jooq.lambda.function.Function5;
+
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;
@@ -561,7 +559,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
    * @return Lifted function
    */
   public static <W extends WitnessType<W>,U1, U2, U3, T2,R> Fn3<AnyM2<W,T2,U1>, AnyM2<W,T2,U2>, AnyM2<W,T2,U3>, AnyM2<W,T2,R>> liftF3(
-          final Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
+          final Fn3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
       return (u1, u2, u3) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))));
   }
 
@@ -573,7 +571,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
    * @return Lifted Quad function
    */
   public static <W extends WitnessType<W>,U1, U2, U3, U4, T2,R> Fn4<AnyM2<W,T2,U1>, AnyM2<W,T2,U2>, AnyM2<W,T2,U3>, AnyM2<W,T2,U4>, AnyM2<W,T2,R>> liftF4(
-          final Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
+          final Fn4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
       return (u1, u2, u3, u4) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4)))));
   }
@@ -585,7 +583,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
    * @return Lifted Function
    */
   public static <W extends WitnessType<W>,U1, U2, U3, U4, U5, R, T2> Fn5<AnyM2<W,T2,U1>, AnyM2<W,T2,U2>, AnyM2<W,T2,U3>, AnyM2<W,T2,U4>, AnyM2<W,T2,U5>, AnyM2<W,T2,R>> liftF5(
-          final Function5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
+          final Fn5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
       return (u1, u2, u3, u4,
               u5) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.flatMapA(input4 -> u5.map(input5 -> fn.apply(input1, input2, input3,

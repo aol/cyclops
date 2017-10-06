@@ -19,7 +19,6 @@ import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.typeclasses.NaturalTransformation;
-import org.jooq.lambda.Seq;
 import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;

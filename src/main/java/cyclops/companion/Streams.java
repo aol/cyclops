@@ -37,7 +37,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
@@ -1836,7 +1835,7 @@ public class Streams {
 
     public final static <U, T> Stream<U> scanRight(final Stream<T> stream, final U identity,
             final BiFunction<? super T, ? super U, ? extends U> combiner) {
-        return Seq.seq(stream)
+        return ReactiveSeq.fromStream(stream)
                   .scanRight(identity, combiner);
     }
 
@@ -2128,9 +2127,7 @@ public class Streams {
     public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<T> stream){
         return ReactiveSeq.fromStream(stream);
     }
-    public final static <T> ReactiveSeq<T> reactiveSeq(final Seq<T> stream){
-        return ReactiveSeq.fromStream(stream);
-    }
+
     public final static <T> ReactiveSeq<T> reactiveSeq(final Spliterator<? super T> stream, final Optional<ReversableSpliterator> rev) {
 
         return new StreamX<T>((Spliterator<T>)

@@ -1,4 +1,4 @@
-package com.aol.cyclops2.internal.invokedynamic;
+package cyclops.function.checked;
 
 public interface CheckedTriFunction<T1, T2, T3, R> {
 

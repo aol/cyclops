@@ -39,7 +39,6 @@ import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import lombok.val;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;
@@ -942,10 +941,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(ReactiveSeq.super.parallel(fn));
 
     }
-    @Override
-    default <R> FutureStream<R> jool(Function<? super Seq<U>, ? extends Seq<R>> mapper){
-        return fromStream(ReactiveSeq.super.jool(mapper));
-    }
+
 
     @Override
     default <T> T reduce(final T identity, final BiFunction<T, ? super U, T> accumulator) {
@@ -1657,7 +1653,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default <R> FutureStream<R> mergeLatest(final FutureStream<?>... streams) {
         final Queue queue = Queue.createMergeQueue();
         addToQueue(queue);
-        Seq.of(streams)
+        ReactiveSeq.of(streams)
            .forEach(s -> s.addToQueue(queue));
 
         return fromStream(queue.stream(this.getSubscription()));

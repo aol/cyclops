@@ -2,15 +2,15 @@ package com.aol.cyclops2.types.foldable;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
@@ -30,7 +30,80 @@ public interface Folds<T> {
 
     ReactiveSeq<T> stream();
 
-    
+    default Optional<T> max(Comparator<? super T> comparator){
+        return stream().sorted(comparator)
+                       .get(0l)
+                       .toOptional();
+    }
+    default Optional<T> min(Comparator<? super T> comparator){
+        return stream().sorted(comparator.reversed())
+                .get(0l)
+                .toOptional();
+    }
+    default int sumInt(ToIntFunction<T> fn){
+        return stream().mapToInt(fn).sum();
+    }
+    default double sumDouble(ToDoubleFunction<T> fn){
+        return stream().mapToDouble(fn).sum();
+    }
+    default double sumLong(ToLongFunction<T> fn){
+        return stream().mapToLong(fn).sum();
+    }
+
+    /**
+     * True if predicate matches all elements when Monad converted to a Stream
+     *
+     * <pre>
+     * {@code
+     * assertThat(ReactiveSeq.of(1,2,3,4,5).allMatch(it-> it>0 && it <6),equalTo(true));
+     * }
+     * </pre>
+     *
+     * @param c
+     *            Predicate to check if all match
+     */
+
+    default boolean allMatch(final Predicate<? super T> c) {
+        return !stream().filterNot(c)
+                        .findFirst()
+                        .isPresent();
+    }
+
+    /**
+     * True if a singleUnsafe element matches when Monad converted to a Stream
+     *
+     * <pre>
+     * {@code
+     *     ReactiveSeq.of(1,2,3,4,5).anyMatch(it-> it.equals(3))
+     *     //true
+     * }
+     * </pre>
+     *
+     * @param c
+     *            Predicate to check if any match
+     */
+
+    default boolean anyMatch(final Predicate<? super T> c) {
+        return stream().filter(c).findFirst().isPresent();
+    }
+
+    /* (non-Javadoc)
+     * @see org.jooq.lambda.Collectable#noneMatch(java.util.function.Predicate)
+     */
+
+    default boolean noneMatch(final Predicate<? super T> c) {
+        return !stream().filter(c)
+                        .findFirst()
+                         .isPresent();
+    }
+
+    default <R, A> R collect(final Collector<? super T, A, R> collector) {
+
+        return stream().collect(collector);
+    }
+    default long count() {
+        return stream().count();
+    }
 
     /**
      * Attempt toNePsted transform this Sequence to the same type as the supplied Monoid

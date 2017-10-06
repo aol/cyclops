@@ -20,7 +20,7 @@ import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.functor.Functor;
-import org.jooq.lambda.function.Function0;
+
 
 import cyclops.control.Eval;
 import cyclops.async.Future;

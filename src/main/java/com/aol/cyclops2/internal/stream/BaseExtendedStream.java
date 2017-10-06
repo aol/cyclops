@@ -72,7 +72,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return Streams.join(this, sep, start, end);
     }
 
-    @Override
+
     public final <U extends Comparable<? super U>> Optional<T> minBy(final Function<? super T, ? extends U> function) {
 
         return Streams.minBy(this, function);
@@ -83,7 +83,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return Streams.min(this, comparator);
     }
 
-    @Override
+
     public final <C extends Comparable<? super C>> Optional<T> maxBy(final Function<? super T, ? extends C> f) {
         return Streams.maxBy(this, f);
     }

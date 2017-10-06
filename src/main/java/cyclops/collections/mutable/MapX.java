@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
 import com.aol.cyclops2.types.functor.Transformable;
+import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableFilterable;
@@ -13,7 +14,6 @@ import cyclops.companion.Streams;
 import cyclops.control.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.FluentMapX;
 import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.foldable.CyclopsCollectable;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import org.reactivestreams.Publisher;
@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  * @param <V> Value type
  */
 public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMapX<K, V>, BiTransformable<K, V>, Transformable<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
-        OnEmptySwitch<Tuple2<K, V>, Map<K, V>>, Publisher<Tuple2<K, V>>, Folds<Tuple2<K, V>>, CyclopsCollectable<Tuple2<K, V>> {
+        OnEmptySwitch<Tuple2<K, V>, Map<K, V>>, Publisher<Tuple2<K, V>>, Folds<Tuple2<K, V>>,ReactiveStreamsTerminalOperations<Tuple2<K,V>> {
 
 
     /**
@@ -122,7 +122,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     default MapX<K, V> fromStream(final ReactiveSeq<Tuple2<K, V>> stream) {
         return new MapXImpl<K,V>(
-                              stream.toMap(t -> t._1(), t -> t._2()), getCollector());
+                              stream.to().map(t -> t._1(), t -> t._2()), getCollector());
     }
 
     /* (non-Javadoc)
@@ -143,7 +143,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
         final ReactiveSeq<Tuple2<KR, VR>> s = stream().flatMap(t -> fn.apply(t._1(), t._2())
                                                                       .stream());
         return new MapXImpl<>(
-                              s.<KR, VR> toMap(t -> t._1(), t -> t._2()), getCollector());
+                              s.<KR, VR> to().map(t -> t._1(), t -> t._2()), getCollector());
     }
 
     /* (non-Javadoc)
@@ -154,7 +154,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
         final ReactiveSeq<Tuple2<K, R>> s = stream().map(t -> t.map2(v -> fn.apply(v)));
         return new MapXImpl<>(
-                              s.<K, R> toMap(t -> t._1(), t -> t._2()), getCollector());
+                              s.<K, R> to().map(t -> t._1(), t -> t._2()), getCollector());
     }
 
     /* (non-Javadoc)
@@ -165,7 +165,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
         final ReactiveSeq<Tuple2<R1, V>> s1 = stream().map(t -> t.map1(v -> fn1.apply(v)));
         final ReactiveSeq<Tuple2<R1, R2>> s2 = s1.map(t -> t.map2(v -> fn2.apply(v)));
         return new MapXImpl<>(
-                              s2.<R1, R2> toMap(t -> t._1(), t -> t._2()), getCollector());
+                              s2.<R1, R2> to().map(t -> t._1(), t -> t._2()), getCollector());
     }
 
     @Override
@@ -179,7 +179,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     @Override
     default boolean allMatch(final Predicate<? super Tuple2<K, V>> c) {
-        return CyclopsCollectable.super.allMatch(c);
+        return Folds.super.allMatch(c);
     }
 
     /* (non-Javadoc)
@@ -187,7 +187,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     @Override
     default boolean anyMatch(final Predicate<? super Tuple2<K, V>> c) {
-        return CyclopsCollectable.super.anyMatch(c);
+        return Folds.super.anyMatch(c);
     }
 
     /* (non-Javadoc)
@@ -195,7 +195,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     @Override
     default boolean noneMatch(final Predicate<? super Tuple2<K, V>> c) {
-        return CyclopsCollectable.super.noneMatch(c);
+        return Folds.super.noneMatch(c);
     }
 
     /* (non-Javadoc)
@@ -203,7 +203,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     @Override
     default Optional<Tuple2<K, V>> max(final Comparator<? super Tuple2<K, V>> comparator) {
-        return CyclopsCollectable.super.max(comparator);
+        return Folds.super.max(comparator);
     }
 
     /* (non-Javadoc)
@@ -211,7 +211,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     @Override
     default Optional<Tuple2<K, V>> min(final Comparator<? super Tuple2<K, V>> comparator) {
-        return CyclopsCollectable.super.min(comparator);
+        return Folds.super.min(comparator);
     }
 
     /* (non-Javadoc)

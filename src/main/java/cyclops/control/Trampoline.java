@@ -15,7 +15,6 @@ import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
 
-import static javafx.scene.input.KeyCode.R;
 import static cyclops.collections.tuple.Tuple.tuple;
 
 /**

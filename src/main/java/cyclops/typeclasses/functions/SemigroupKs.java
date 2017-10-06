@@ -25,7 +25,6 @@ import cyclops.monads.Witness.optional;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
-import org.jooq.lambda.Seq;
 import org.pcollections.PCollection;
 import org.reactivestreams.Publisher;
 

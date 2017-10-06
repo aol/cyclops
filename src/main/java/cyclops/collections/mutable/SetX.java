@@ -30,8 +30,6 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
-import org.jooq.lambda.Collectable;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;

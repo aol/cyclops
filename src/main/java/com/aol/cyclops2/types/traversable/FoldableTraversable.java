@@ -1,15 +1,16 @@
 package com.aol.cyclops2.types.traversable;
 
+import com.aol.cyclops2.types.foldable.ConvertableSequence;
+import com.aol.cyclops2.types.foldable.Folds;
+import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalOperations;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
 import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;
-import com.aol.cyclops2.types.foldable.CyclopsCollectable;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 import cyclops.function.Fn1;
-import org.jooq.lambda.Seq;
 import org.reactivestreams.Subscription;
 
 import java.util.concurrent.Executor;
@@ -22,11 +23,15 @@ import java.util.function.Supplier;
  * Created by johnmcclean on 17/12/2016.
  */
 public interface FoldableTraversable<T> extends Traversable<T>,
-                                                CyclopsCollectable<T>,
+                                                Folds<T>,
+                                                Iterable<T>,
+                                                ReactiveStreamsTerminalOperations<T>,
                                                 ExtendedTraversable<T>{
 
 
-
+    default ConvertableSequence<T> to(){
+        return new ConvertableSequence<>(this);
+    }
 
     default ListX<T> toListX(){
         return to().listX();
@@ -171,19 +176,19 @@ public interface FoldableTraversable<T> extends Traversable<T>,
     }
     @Override
     default <X extends Throwable> Subscription forEachSubscribe(Consumer<? super T> consumer){
-        Subscription result = CyclopsCollectable.super.forEachSubscribe(consumer, e->e.printStackTrace(),()->{});
+        Subscription result = ReactiveStreamsTerminalOperations.super.forEachSubscribe(consumer, e->e.printStackTrace(),()->{});
         return result;
     }
 
     @Override
     default <X extends Throwable> Subscription forEachSubscribe(Consumer<? super T> consumer, Consumer<? super Throwable> consumerError){
-        Subscription result = CyclopsCollectable.super.forEachSubscribe(consumer,consumerError,()->{});
+        Subscription result = ReactiveStreamsTerminalOperations.super.forEachSubscribe(consumer,consumerError,()->{});
         return result;
     }
 
     @Override
     default <X extends Throwable> Subscription forEachSubscribe(Consumer<? super T> consumer, Consumer<? super Throwable> consumerError, Runnable onComplete){
-        Subscription result = CyclopsCollectable.super.forEachSubscribe(consumer,consumerError,onComplete);
+        Subscription result = ReactiveStreamsTerminalOperations.super.forEachSubscribe(consumer,consumerError,onComplete);
         return result;
     }
     @Override

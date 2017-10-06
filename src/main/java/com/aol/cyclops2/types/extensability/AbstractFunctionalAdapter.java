@@ -4,8 +4,7 @@ import java.util.function.Function;
 
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
-import org.jooq.lambda.Collectable;
-import org.jooq.lambda.Seq;
+
 
 public abstract class  AbstractFunctionalAdapter<W extends WitnessType<W>>  implements FunctionalAdapter<W>{
 
@@ -14,7 +13,7 @@ public abstract class  AbstractFunctionalAdapter<W extends WitnessType<W>>  impl
 
     @Override
     public <T, R> AnyM<W, R> map(AnyM<W, T> t, Function<? super T, ? extends R> fn) {
-        return flatMap(t,fn.andThen(this::unit));
+        return flatMap(t,fn.andThen(a->this.unit(a)));
     }
 
     @Override

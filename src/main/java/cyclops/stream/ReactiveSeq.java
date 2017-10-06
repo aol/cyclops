@@ -60,7 +60,6 @@ import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import lombok.experimental.var;
 import lombok.val;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
@@ -746,13 +745,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<Integer> ints(ToIntFunction<? super T> fn,Function<? super IntStream, ? extends IntStream> mapper){
         return ReactiveSeq.fromSpliterator(mapper.apply(mapToInt(fn)).spliterator());
     }
-    default <R> ReactiveSeq<R> jool(Function<? super Seq<T>, ? extends Seq<R>> mapper){
-        return ReactiveSeq.fromSpliterator(foldJool(mapper).spliterator());
-    }
-    default <R> R foldJool(Function<? super Seq<T>, ? extends R> mapper){
-        Spliterator<T> split = this.spliterator();
-        return mapper.apply(Seq.seq(split));
-    }
 
 
     @Override
@@ -984,7 +976,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     */
     @Override
     default void printOut() {
-        Seq.seq((Stream)this).printOut();
+        forEach(System.out::println,System.err::println,()->{});
     }
 
 
@@ -4612,9 +4604,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate);
 
     ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate);
-
-
-    String format();
 
     @Override
     default ReactiveSeq<T> removeAllS(final Stream<? extends T> stream) {

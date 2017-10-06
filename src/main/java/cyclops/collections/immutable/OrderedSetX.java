@@ -24,8 +24,6 @@ import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 import cyclops.stream.Spouts;
-import org.jooq.lambda.Collectable;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;

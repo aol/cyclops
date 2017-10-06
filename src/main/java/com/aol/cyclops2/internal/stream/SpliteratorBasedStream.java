@@ -23,8 +23,7 @@ import cyclops.monads.Witness;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.Collectable;
-import org.jooq.lambda.Seq;
+
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
@@ -781,16 +780,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
 
-    @Override
-    public String format() {
-        return Seq.seq(this.copy())
-                  .format();
-    }
 
-    @Override
-    public Collectable<T> collectors() {
-        return Seq.seq(copy());
-    }
 
     @Override
     public <T> ReactiveSeq<T> unitIterator(final Iterator<T> it) {

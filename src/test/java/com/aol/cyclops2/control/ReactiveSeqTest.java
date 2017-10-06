@@ -55,6 +55,7 @@ public class ReactiveSeqTest {
 
     @Test
     public void testEnums(){
+
         ReactiveSeq.enums(Days.class)
                    .printOut();
     }

@@ -14,6 +14,7 @@ import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
+import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableFilterable;
@@ -29,13 +30,13 @@ import cyclops.control.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.FluentMapX;
 import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.foldable.CyclopsCollectable;
+
 
 public interface PersistentMapX<K, V>
         extends To<PersistentMapX<K,V>>,
                 PMap<K, V>, Unwrapable,
                 FluentMapX<K, V>, BiTransformable<K, V>, Transformable<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
-        OnEmptySwitch<Tuple2<K, V>, PMap<K, V>>, Publisher<Tuple2<K, V>>, Folds<Tuple2<K, V>>, CyclopsCollectable<Tuple2<K, V>> {
+        OnEmptySwitch<Tuple2<K, V>, PMap<K, V>>, Publisher<Tuple2<K, V>>, Folds<Tuple2<K, V>>,ReactiveStreamsTerminalOperations<Tuple2<K,V>> {
 
 
     public static <K, V> PersistentMapX<K, V> empty() {

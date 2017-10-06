@@ -6,7 +6,6 @@ import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.traversable.Traversable;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
-import com.aol.cyclops2.types.foldable.CyclopsCollectable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
@@ -252,7 +251,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     @Override
-    public AnyM<W,? extends CyclopsCollectable<T>> nestedCollectables() {
+    public AnyM<W,? extends FoldableTraversable<T>> nestedCollectables() {
         return run.map(ReactiveSeq::fromStream);
 
     }

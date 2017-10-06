@@ -16,7 +16,6 @@ import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.typeclasses.NaturalTransformation;
-import org.jooq.lambda.Seq;
 import org.pcollections.PCollection;
 import org.reactivestreams.Publisher;
 
@@ -314,12 +313,7 @@ public interface Semigroups {
 
     }
 
-    /**
-     * @return Combination of two Seq's : b is appended to a
-     */
-    static <T> Semigroup<Seq<T>> combineSeq() {
-        return (a, b) -> Seq.concat(a, b);
-    }
+
 
     /**
      * @return Combination of two Stream's : b is appended to a

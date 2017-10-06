@@ -9,6 +9,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
+import com.aol.cyclops2.types.foldable.Folds;
+import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import cyclops.monads.AnyM;
 import cyclops.async.Future;
 import cyclops.monads.WitnessType;
@@ -17,7 +19,7 @@ import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
-import com.aol.cyclops2.types.foldable.CyclopsCollectable;
+
 
 /**
  * Interface for manipulating monads nested inside monad transformers
@@ -27,7 +29,7 @@ import com.aol.cyclops2.types.foldable.CyclopsCollectable;
  * @param <T> Data type of the elements in the nested Monad
  */
 public interface NestedCollectable<W extends WitnessType<W>,T> {
-    public AnyM<W,? extends CyclopsCollectable<T>> nestedCollectables();
+    public AnyM<W,? extends FoldableTraversable<T>> nestedCollectables();
 
     
     /**

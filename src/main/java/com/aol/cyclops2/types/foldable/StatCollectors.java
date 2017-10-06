@@ -4,7 +4,6 @@ import cyclops.collections.mutable.ListX;
 
 import cyclops.function.Semigroup;
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
@@ -116,23 +115,19 @@ public interface StatCollectors<T> {
     default double variance(ToDoubleFunction<T> fn){
         ListX<T> list = stream().toListX();
         double avg = list.collect(Collectors.<T>averagingDouble(fn));
-        return list.map(t -> fn.applyAsDouble(t))
+        return (list.map(t -> fn.applyAsDouble(t))
                 .map(t -> t - avg)
                 .map(t -> t * t)
-                .sum(i -> i)
-                .map(total -> total/(list.size()-1))
-                .get();
+                .sumDouble(i -> i))/(list.size()-1);
 
     }
     default double populationVariance(ToDoubleFunction<T> fn){
         ListX<T> list = stream().toListX();
         double avg = list.collect(Collectors.<T>averagingDouble(fn));
-        return list.map(t -> fn.applyAsDouble(t))
+        return (list.map(t -> fn.applyAsDouble(t))
                 .map(t -> t - avg)
                 .map(t -> t * t)
-                .sum(i -> i)
-                .map(total -> total/(list.size()))
-                .get();
+                .sumDouble(i -> i)/(list.size()));
 
     }
 

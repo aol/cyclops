@@ -13,8 +13,8 @@ import cyclops.control.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple;
+import cyclops.stream.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,8 +61,8 @@ public class Ior2Test {
         assertThat(Ior.primary(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
         assertThat(Ior.primary(10).zipP(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
         assertThat(Ior.primary(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Ior.primary(10).zip(Seq.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Ior.primary(10).zip(Seq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Ior.primary(10).zip(ReactiveSeq.of(20),(a, b)->a+b).get(),equalTo(30));
+        assertThat(Ior.primary(10).zip(ReactiveSeq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
         assertThat(Ior.primary(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
         assertThat(Ior.primary(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
     }

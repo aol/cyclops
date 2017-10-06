@@ -34,7 +34,6 @@ import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
-import com.aol.cyclops2.types.foldable.CyclopsCollectable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -274,7 +273,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     @Override
-    public AnyM<W,? extends CyclopsCollectable<T>> nestedCollectables() {
+    public AnyM<W,? extends FoldableTraversable<T>> nestedCollectables() {
         return run;
 
     }

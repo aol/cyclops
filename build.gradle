@@ -63,7 +63,7 @@ dependencies {
 	compile 'org.pcollections:pcollections:'+pCollectionsVersion
 	compile 'org.agrona:Agrona:'+agronaVersion
 	compile 'org.reactivestreams:reactive-streams:'+reactiveStreamsVersion
-	
+
 	provided group: 'org.projectlombok', name: 'lombok', version:"${lombokVersion}"
 	testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
 	testCompile 'io.projectreactor:reactor-core:3.0.7.RELEASE'

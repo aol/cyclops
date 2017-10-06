@@ -3,7 +3,6 @@ package com.aol.cyclops2.types.futurestream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Queue.QueueReader;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 
@@ -47,7 +46,7 @@ public class EagerFutureStreamFunctions {
      * Zip two streams into one. Uses the latest values from each rather than waiting for both
      * 
      */
-    static <T1, T2> Seq<Tuple2<T1, T2>> combineLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right) {
+    static <T1, T2> ReactiveSeq<Tuple2<T1, T2>> combineLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right) {
         return combineLatest(left, right, Tuple::tuple);
     }
 
@@ -87,7 +86,7 @@ public class EagerFutureStreamFunctions {
      * values. Uses the latest values from each rather than waiting for both.
      * 
      */
-    static <T1, T2, R> Seq<R> combineLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right, final BiFunction<T1, T2, R> zipper) {
+    static <T1, T2, R> ReactiveSeq<R> combineLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right, final BiFunction<T1, T2, R> zipper) {
 
         final Queue q = left.then(it -> new Val(
                                                 Val.Pos.left, it))
@@ -120,14 +119,14 @@ public class EagerFutureStreamFunctions {
             }
         }
 
-        return Seq.seq(new Zip());
+        return ReactiveSeq.fromIterator(new Zip());
     }
 
     /**
      * Zip two streams into one. Uses the latest values from each rather than waiting for both
      * 
      */
-    static <T1, T2> Seq<Tuple2<T1, T2>> withLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right) {
+    static <T1, T2> ReactiveSeq<Tuple2<T1, T2>> withLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right) {
         return withLatest(left, right, Tuple::tuple);
     }
 
@@ -136,7 +135,7 @@ public class EagerFutureStreamFunctions {
      * values. Uses the latest values from each rather than waiting for both.
      * 
      */
-    static <T1, T2, R> Seq<R> withLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right, final BiFunction<T1, T2, R> zipper) {
+    static <T1, T2, R> ReactiveSeq<R> withLatest(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right, final BiFunction<T1, T2, R> zipper) {
 
         final Queue q = left.then(it -> new Val(
                                                 Val.Pos.left, it))
@@ -170,7 +169,7 @@ public class EagerFutureStreamFunctions {
             }
         }
 
-        return Seq.seq(new Zip())
+        return ReactiveSeq.fromIterator(new Zip())
                   .filter(next -> !(next instanceof Optional));
     }
 

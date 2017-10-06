@@ -7,7 +7,6 @@ import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.Folds;
 import cyclops.function.Fn0;
-import org.jooq.lambda.Seq;
 import cyclops.collections.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -20,10 +19,10 @@ import cyclops.function.Fn3;
 
 public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
                                                                             Unwrapable,
-        Unit<T>,
-        Folds<T>,
+                                                                            Unit<T>,
+                                                                            Folds<T>,
                                                                             Zippable<T>,
-        Fn0<T> {
+                                                                            Fn0<T> {
     public abstract <R> ValueTransformer<W,R> empty();
     public abstract <R> ValueTransformer<W,R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> f);
     public abstract AnyM<W,? extends MonadicValue<T>> transformerStream();
@@ -132,14 +131,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         
         return this.unitAnyM(this.transformerStream().map(v->v.zipS(other)));
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(org.jooq.lambda.Seq)
-     */
-   
-    public <U> ValueTransformer<W,Tuple2<T,U>> zip(Seq<? extends U> other) {
-        
-        return unitAnyM(this.transformerStream().map(v->v.zip(other)));
-    }
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
      */

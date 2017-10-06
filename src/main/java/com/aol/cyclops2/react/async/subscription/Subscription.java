@@ -10,7 +10,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.Seq;
+
 
 import cyclops.async.adapters.Queue;
 
