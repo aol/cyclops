@@ -46,7 +46,7 @@ public interface Adapter<T> {
     public boolean offer(T data);
 
     /**
-     * @param stream Input data from provided LazyList
+     * @param stream Input data from provided Stream
      */
     public boolean fromStream(Stream<T> stream);
 
@@ -68,17 +68,17 @@ public interface Adapter<T> {
     }
 
     /**
-     * @return LazyList of data
+     * @return Stream of data
      */
     public ReactiveSeq<T> stream();
 
     /**
-     * @return LazyList of data
+     * @return Stream of data
      */
     public ReactiveSeq<T> stream(Continueable s);
 
     /**
-     * @return LazyList of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
+     * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
      */
     public ReactiveSeq<CompletableFuture<T>> streamCompletableFutures();
 

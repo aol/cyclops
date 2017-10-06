@@ -230,7 +230,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
     /**
      * Lazily converts this ReactiveSeq into a Collection. This does not trigger
-     * the LazyList. E.g. Collection is not thread safe on the first iteration.
+     * the Stream. E.g. Collection is not thread safe on the first iteration.
      *
      * <pre>
      * {@code
@@ -252,7 +252,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
 
     /**
      * Lazily converts this ReactiveSeq into a Collection. This does not trigger
-     * the LazyList. E.g.
+     * the Stream. E.g.
      *
      * <pre>
      * {@code

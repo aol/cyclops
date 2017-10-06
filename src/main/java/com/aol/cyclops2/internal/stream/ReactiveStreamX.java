@@ -65,7 +65,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public Type getType() {
         return async;
     }
-    //zip can check the provided LazyList settings for async usage
+    //zip can check the provided Stream settings for async usage
     //flatMapP should assume async
 
     public static enum Type {SYNC, BACKPRESSURE, NO_BACKPRESSURE}
@@ -605,7 +605,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public void subscribe(final Subscriber<? super T> sub) {
 
         if (async == Type.NO_BACKPRESSURE) {
-            //if this LazyList is not backpressure-aware demand requests / cancel requests are ignored.
+            //if this Stream is not backpressure-aware demand requests / cancel requests are ignored.
             sub.onSubscribe(new StreamSubscription() {
                 boolean requested = false;
                 volatile boolean active = false;
@@ -680,7 +680,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
         }
 
-        //should we force all LazyList types on reactiveBuffer-streams path?
+        //should we force all Stream types on reactiveBuffer-streams path?
         sub.onSubscribe(source.subscribe(sub::onNext, sub::onError, sub::onComplete));
     }
 
@@ -1038,7 +1038,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     if (wip.compareAndSet(false, true)) {
                         try {
 
-                            //use the first consuming thread to tell this LazyList onto the Queue
+                            //use the first consuming thread to tell this Stream onto the Queue
                             s.request(1000-queue.size());
                         }finally {
                             wip.set(false);
@@ -1274,7 +1274,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
         ReactiveStreamX<Tuple2<T, U>> res = createSeq(new ZippingOperator<>(source, right, Tuple::tuple));
         if (this.async == SYNC) {
-            //zip could recieve an asyncrhonous LazyList so we force onto the async path
+            //zip could recieve an asyncrhonous Stream so we force onto the async path
             return res.withAsync(BACKPRESSURE);
         }
         return res;

@@ -1055,7 +1055,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     Optional<LT> secondaryToOptional();
 
     /**
-     * @return A LazyList containing the secondary value if present, otherwise an zero LazyList
+     * @return A Stream containing the secondary value if present, otherwise an zero Stream
      */
     ReactiveSeq<LT> secondaryToStream();
 
@@ -1192,7 +1192,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -1205,7 +1205,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Either<LT, Tuple2<RT, U>> zipS(final Stream<? extends U> other) {

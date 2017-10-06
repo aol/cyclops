@@ -78,7 +78,7 @@ public class HeadAndTail<T> {
     }
 
     /**
-     * @return A LazyList containing the Head if present
+     * @return A Stream containing the Head if present
      */
     public ReactiveSeq<T> headStream() {
         return isHeadPresent() ? ReactiveSeq.of(head)

@@ -44,7 +44,7 @@ public interface FoldableTransformerSeq<W extends WitnessType<W>,T> extends Tran
         return transformerStream().map(s -> s.headAndTail());
     }
     /**
-     * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or LazyList type,
+     * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
      * whenStream may be more efficient (as it is guaranteed to be lazy).
      *
      * <pre>

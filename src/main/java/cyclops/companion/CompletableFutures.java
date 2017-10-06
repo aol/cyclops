@@ -245,7 +245,7 @@ public class CompletableFutures {
         return sequence(fts.stream()).thenApply(s -> s.toListX());
     }
     /**
-     * Asynchronous sequence operation that convert a LazyList of Futures to a Future with a LazyList
+     * Asynchronous sequence operation that convert a Stream of Futures to a Future with a Stream
      * 
      * <pre>
      * {@code 
@@ -258,8 +258,8 @@ public class CompletableFutures {
      * </pre>
      * 
      * 
-     * @param fts LazyList of Futures to Sequence into a Future with a LazyList
-     * @return Future with a LazyList
+     * @param fts Stream of Futures to Sequence into a Future with a Stream
+     * @return Future with a Stream
      */
     public static <T> CompletableFuture<ReactiveSeq<T>> sequence(final Stream<CompletableFuture<T>> fts) {
         return AnyM.sequence(fts.map(AnyM::fromCompletableFuture), completableFuture.INSTANCE)

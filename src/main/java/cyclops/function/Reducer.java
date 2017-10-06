@@ -21,15 +21,15 @@ public interface Reducer<T> extends Monoid<T> {
      * 
      * Default implementation is a simple cast.
      * 
-     * @param stream LazyList to convert
-     * @return Converted LazyList
+     * @param stream Stream to convert
+     * @return Converted Stream
      */
     default Stream<T> mapToType(final Stream<?> stream) {
         return (Stream<T>)stream;
     }
 
     /**
-     * Map a given LazyList to required type (via mapToType method), transform
+     * Map a given Stream to required type (via mapToType method), transform
      * reduce using this monoid
      * 
      * Example of multiple reduction using multiple Monoids and PowerTuples
@@ -37,12 +37,12 @@ public interface Reducer<T> extends Monoid<T> {
      *  Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
      *	Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
      *	<PTuple2<Integer,Integer>> result = PowerTuples.tuple(sum,mult).<PTuple2<Integer,Integer>>asReducer()
-     *										.mapReduce(LazyList.of(1,2,3,4));
+     *										.mapReduce(Stream.of(1,2,3,4));
      *	 
      *	assertThat(result,equalTo(tuple(10,24)));
      *  }</pre>
      * 
-     * @param toReduce LazyList to reduce
+     * @param toReduce Stream to reduce
      * @return reduced value
      */
     default T mapReduce(final Stream<?> toReduce) {

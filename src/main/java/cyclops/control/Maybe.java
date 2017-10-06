@@ -55,7 +55,7 @@ import java.util.stream.Stream;
 
 /**
  * Totally lazy, reactiveBuffer  more powerful general Option type. Maybe is maybe like a Java
- * 8 LazyList that represents 0 or 1 values rather than eager like a Java 8
+ * 8 Stream that represents 0 or 1 values rather than eager like a Java 8
  * Optional. map / peek/ filter and flatMap build the execution chaing, but are
  * not executed until the value inside the Maybe is required.
  *
@@ -594,7 +594,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     }
 
     /**
-     * Sequence operation, take a LazyList of Maybes and turn it into a Maybe with a LazyList
+     * Sequence operation, take a Stream of Maybes and turn it into a Maybe with a Stream
      * By constrast with {@link Maybe#sequenceJust(CollectionX)} Maybe#zero/ None types are
      * result in the returned Maybe being Maybe.zero / None
      *
@@ -606,7 +606,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     Maybe<Integer> none = Maybe.none();
 
 <<<<<<< HEAD
-     *  Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(LazyList.of(just, none, Maybe.of(1)));
+     *  Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(Stream.of(just, none, Maybe.of(1)));
         //Maybe.none();
 =======
      *  Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(Stream.of(just, none, Maybe.of(1)));
@@ -618,7 +618,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      *
      *
      * @param maybes Maybes to Sequence
-     * @return  Maybe with a LazyList of values
+     * @return  Maybe with a Stream of values
      */
     public static <T> Maybe<ReactiveSeq<T>> sequence(final Stream<Maybe<T>> maybes) {
         return AnyM.sequence(maybes.map(AnyM::fromMaybe), maybe.INSTANCE)
@@ -889,7 +889,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -901,7 +901,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Maybe<Tuple2<T, U>> zipS(final Stream<? extends U> other) {

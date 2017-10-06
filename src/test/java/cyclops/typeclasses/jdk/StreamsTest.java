@@ -113,9 +113,9 @@ public class StreamsTest {
     @Test
     public void monadPlusNonEmpty(){
         
-        Monoid<StreamKind<Integer>> m = Monoid.of(StreamKind.widen(LazyList.of()), (a,b)->a.isEmpty() ? b : a);
+        Monoid<StreamKind<Integer>> m = Monoid.of(StreamKind.widen(Stream.of()), (a,b)->a.isEmpty() ? b : a);
         StreamKind<Integer> list = Streams.<Integer>monadPlus(m)
-                                      .plus(StreamKind.widen(LazyList.of(5)), StreamKind.widen(LazyList.of(10)))
+                                      .plus(StreamKind.widen(Stream.of(5)), StreamKind.widen(Stream.of(10)))
                                       .convert(StreamKind::narrowK3);
         assertThat(list,equalTo(Arrays.asList(5)));
     }

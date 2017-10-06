@@ -98,9 +98,9 @@ public interface Converters {
                 ()-> Reducers.<T>toList().mapReduce(vec.stream()));
     }
 
-    public static <T> LazyList<T> LazyList(CollectionX<T> vec){
-        return vec.unwrapIfInstance(cyclops.collections.adt.LazyList.class,
-                ()-> Reducers.<T>toLazyList().mapReduce(vec.stream()));
+    public static <T> Stream<T> Stream(CollectionX<T> vec){
+        return vec.unwrapIfInstance(cyclops.collections.adt.Stream.class,
+                ()-> Reducers.<T>toStream().mapReduce(vec.stream()));
     }
      **/
     public static <T> ArrayList<T> ArrayList(CollectionX<T> vec){

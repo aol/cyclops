@@ -98,7 +98,7 @@ public class LazyReact implements ReactBuilder {
 
     /**
      * Turn automatic caching of values on for the FutureStream to be generated
-     * by this LazyList builder
+     * by this Stream builder
      * 
      * <pre>
      * {@code 
@@ -115,7 +115,7 @@ public class LazyReact implements ReactBuilder {
      * 
      * 
      * @param memoizeCache Cacheable instance that controls memoization (Caching)
-     * @return LazyReact LazyList builder
+     * @return LazyReact Stream builder
      */
     public LazyReact autoMemoizeOn(final Cacheable<?> memoizeCache) {
         return withAutoMemoize(true).withMemoizeCache(memoizeCache);
@@ -215,7 +215,7 @@ public class LazyReact implements ReactBuilder {
     /**
      * Construct a FutureStream containing a singleUnsafe Future
      * 
-     * @param cf CompletableFuture to create LazyList from
+     * @param cf CompletableFuture to create Stream from
      * @return FutureStream of a singleUnsafe value
      */
     public <U> FutureStream<U> from(final CompletableFuture<U> cf) {
@@ -241,7 +241,7 @@ public class LazyReact implements ReactBuilder {
      * }
      * </pre>
      * 
-     * @param cf Array of Futures to construct LazyList from
+     * @param cf Array of Futures to construct Stream from
      * @return FutureStream from array of Futures
      */
     public <U> FutureStream<U> from(final CompletableFuture<U>... cf) {
@@ -250,12 +250,12 @@ public class LazyReact implements ReactBuilder {
     }
 
     /* 
-     * Construct a new LazyList from another LazyList
+     * Construct a new Stream from another Stream
      * 
-     *	@param s LazyList to copy
+     *	@param s Stream to copy
      *	@param org ignored for LazyFutureStreams
      *	@return
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#construct(java.util.reactiveStream.LazyList, java.util.List)
+     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
      */
     public <U> FutureStream<U> construct(final Stream<U> s) {
 
@@ -265,9 +265,9 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Construct a FutureStream from a LazyList of CompletableFutures
+     * Construct a FutureStream from a Stream of CompletableFutures
      * 
-     * @param s LazyList of CompletableFutures
+     * @param s Stream of CompletableFutures
      * @return FutureStream
      */
     public <U> FutureStream<U> constructFutures(final Stream<CompletableFuture<U>> s) {
@@ -320,7 +320,7 @@ public class LazyReact implements ReactBuilder {
      * operations require working on the results of multiple tasks, data will be forwarded to a Queue, data
      * read from the queue will transform also be 'fanned' out for processing across threads (with subsequent events
      *  again occuring on the same thread). This is equivalent to optimal use of the async() and sync() operators
-     * on a LazyList. autoOptimize overrides direct calls to sync() and async() on the LazyList.
+     * on a Stream. autoOptimize overrides direct calls to sync() and async() on the Stream.
      * By default autoOptimize is On.
      * 
      * <pre>
@@ -443,14 +443,14 @@ public class LazyReact implements ReactBuilder {
     }
 
     /* 
-     * Construct a FutureStream from the provided LazyList of completableFutures
+     * Construct a FutureStream from the provided Stream of completableFutures
      * 
      * <pre>
      * {@code 
      * 
      * CompletableFuture<List<String>> query(String string);
      * 
-     * List<String> titles = new LazyReact().fromStreamFutures(LazyList.of(query("Hello, world!")))
+     * List<String> titles = new LazyReact().fromStreamFutures(Stream.of(query("Hello, world!")))
                                             .flatMap(Collection::reactiveStream)
                                             .peek(System.out::println)
                                             .<String>transform(url -> getTitle(url))
@@ -465,9 +465,9 @@ public class LazyReact implements ReactBuilder {
      * </pre>
      * 
      * 
-     *	@param reactiveStream LazyList that serves as input to FutureStream
+     *	@param reactiveStream Stream that serves as input to FutureStream
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStream(java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStream(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStreamFutures(final Stream<CompletableFuture<U>> stream) {
 
@@ -504,7 +504,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /* 
-     *  Construct a FutureStream from the provided LazyList, LazyList will be mapped to a LazyList of CompeltableFutures internally
+     *  Construct a FutureStream from the provided Stream, Stream will be mapped to a Stream of CompeltableFutures internally
      * 
      * <pre>
      * {@code 
@@ -518,9 +518,9 @@ public class LazyReact implements ReactBuilder {
      * </pre>
      * 
      * 
-     *	@param reactiveStream LazyList that serves as input to FutureStream
+     *	@param reactiveStream Stream that serves as input to FutureStream
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStreamWithoutFutures(java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStream(final Stream<U> stream) {
 
@@ -532,7 +532,7 @@ public class LazyReact implements ReactBuilder {
     /* 
      * 
      * Construct a FutureStream from specified Suppliers. Each Supplier is executed asyncrhonously,
-     * and it's results provided to next phase of the LazyList
+     * and it's results provided to next phase of the Stream
      * 
      * <pre>
      * {@code 
@@ -623,11 +623,11 @@ public class LazyReact implements ReactBuilder {
 
     /* 
      * Build an FutureStream that reacts Asynchronously to the Suppliers within the
-     * specified LazyList
+     * specified Stream
      * 
      * <pre>
      * {@code 
-     * LazyList<Supplier<Data>> reactiveStream = LazyList.of(this::load1,this::looad2,this::load3);
+     * Stream<Supplier<Data>> reactiveStream = Stream.of(this::load1,this::looad2,this::load3);
      * 
      * LazyReact().fromStreamAsync(reactiveStream)
      *            .map(this::process)
@@ -635,9 +635,9 @@ public class LazyReact implements ReactBuilder {
      * }
      * </pre>
      * 
-     *	@param actions LazyList to react to
+     *	@param actions Stream to react to
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStreamAsync(final Stream<? extends Supplier<U>> actions) {
 
@@ -855,7 +855,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Generate an infinite LazyList
+     * Generate an infinite Stream
      * 
      * <pre>
      * {@code 
@@ -889,7 +889,7 @@ public class LazyReact implements ReactBuilder {
         //Optional["data1data2data3data4data5"]         
      * 
      * }</pre>
-     * @param s Supplier to execute asynchronously to create an infinite LazyList
+     * @param s Supplier to execute asynchronously to create an infinite Stream
      * @return Infinite FutureStream
      */
     public <U> FutureStream<U> generateAsync(final Supplier<U> s) {

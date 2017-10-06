@@ -27,9 +27,9 @@ public class MultipleStreamSource<T> {
     /**
      * Create a pushable LazyFutureStream using the supplied ReactPool
      * 
-     * @param s React builder to use to create the LazyList
+     * @param s React builder to use to create the Stream
      * @return a Tuple2 with a Topic&lt;T&gt; and LazyFutureStream&lt;T&gt; - add data to the Queue
-     * to push it to the LazyList
+     * to push it to the Stream
      */
     public FutureStream<T> futureStream(final LazyReact s) {
 
@@ -38,9 +38,9 @@ public class MultipleStreamSource<T> {
     }
 
     /**
-     * Create a pushable JDK 8 LazyList
-     * @return a Tuple2 with a Topic&lt;T&gt; and LazyList&lt;T&gt; - add data to the Queue
-     * to push it to the LazyList
+     * Create a pushable JDK 8 Stream
+     * @return a Tuple2 with a Topic&lt;T&gt; and Stream&lt;T&gt; - add data to the Queue
+     * to push it to the Stream
      */
     public Stream<T> stream() {
 
@@ -52,7 +52,7 @@ public class MultipleStreamSource<T> {
      * Create a pushable {@link ReactiveSeq}
      * 
      * @return a Tuple2 with a Topic&lt;T&gt; and Seq&lt;T&gt; - add data to the Queue
-     * to push it to the LazyList
+     * to push it to the Stream
      */
     public ReactiveSeq<T> reactiveSeq() {
 

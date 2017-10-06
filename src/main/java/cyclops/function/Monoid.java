@@ -55,9 +55,9 @@ public interface Monoid<T> extends Semigroup<T> {
     }
 
     /**
-     * Perform a reduction operation on the supplied LazyList
+     * Perform a reduction operation on the supplied Stream
      * 
-     * @param toReduce LazyList to reduce
+     * @param toReduce Stream to reduce
      * @return Reduced value
      */
     default T reduce(final Stream<T> toReduce) {

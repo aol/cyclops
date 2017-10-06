@@ -171,17 +171,17 @@ public interface Value<T> extends   Folds<T>,
 
 
     /**
-     * Use the value stored in this Value to seed a LazyList generated from the provided function
+     * Use the value stored in this Value to seed a Stream generated from the provided function
      *
-     * @param fn Function to generate a LazyList
-     * @return LazyList generated from a seed value (the Value stored in this Value) and the provided function
+     * @param fn Function to generate a Stream
+     * @return Stream generated from a seed value (the Value stored in this Value) and the provided function
      */
     default ReactiveSeq<T> iterate(final UnaryOperator<T> fn) {
         return ReactiveSeq.iterate(get(), fn);
     }
 
     /**
-     * @return A LazyList that repeats the value stored in this Value over and over
+     * @return A Stream that repeats the value stored in this Value over and over
      */
     default ReactiveSeq<T> generate() {
         return ReactiveSeq.generate(this);

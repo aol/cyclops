@@ -1,7 +1,7 @@
 package cyclops.collections.mutable;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
+import com.aol.cyclops2.data.collections.extensions.lazy.StreamX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
@@ -754,7 +754,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @SafeVarargs
     public static <T> ListX<T> of(final T... values) {
 
-        return new LazyListX<T>(null,
+        return new StreamX<T>(null,
                 ReactiveSeq.of(values),
                 defaultCollector());
     }
@@ -788,11 +788,11 @@ public interface ListX<T> extends To<ListX<T>>,
      * }
      * </pre>
      * @param stream To create ListX from
-     * @param <T> ListX generated from LazyList
+     * @param <T> ListX generated from Stream
      * @return
      */
     public static <T> ListX<T> listX(ReactiveSeq<T> stream){
-        return new LazyListX<T>(null,
+        return new StreamX<T>(null,
                 stream,
                 defaultCollector());
     }
@@ -802,10 +802,10 @@ public interface ListX<T> extends To<ListX<T>>,
         if (it instanceof ListX)
             return (ListX<T>) it;
         if (it instanceof List)
-            return new LazyListX<T>(
+            return new StreamX<T>(
                                     (List<T>) it, null,defaultCollector());
 
-        return new LazyListX<T>(null,
+        return new StreamX<T>(null,
                                 ReactiveSeq.fromIterable(it),
                                            defaultCollector());
     }
@@ -814,9 +814,9 @@ public interface ListX<T> extends To<ListX<T>>,
         if (it instanceof ListX)
             return ((ListX<T>) it).withCollector(collector);
         if (it instanceof List)
-            return new LazyListX<T>(
+            return new StreamX<T>(
                                     (List<T>) it,null,collector);
-        return new LazyListX<T>(null,
+        return new StreamX<T>(null,
                                 ReactiveSeq.fromIterable(it),
                                 collector);
     }
@@ -904,7 +904,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
     @Override
     default <X> ListX<X> fromStream(final ReactiveSeq<X> stream) {
-        return new LazyListX<>(null,ReactiveSeq.fromStream(stream), getCollector());
+        return new StreamX<>(null,ReactiveSeq.fromStream(stream), getCollector());
     }
 
     /* (non-Javadoc)
@@ -1298,7 +1298,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> ListX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -1308,7 +1308,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> ListX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -1317,7 +1317,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.lambda.monads.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> ListX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -1534,7 +1534,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
     default ListX<T> removeAllS(final Stream<? extends T> stream) {
@@ -1570,7 +1570,7 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
     default ListX<T> retainAllS(final Stream<? extends T> seq) {

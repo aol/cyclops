@@ -298,7 +298,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /**
-     * Sequence operation, take a LazyList of Maybes and turn it into a Maybe with a LazyList
+     * Sequence operation, take a Stream of Maybes and turn it into a Maybe with a Stream
      * By constrast with {@link Maybe#sequenceJust(CollectionX)} Maybe#zero/ None types are
      * result in the returned Maybe being Option.zero / None
      *
@@ -309,7 +309,7 @@ public interface Option<T> extends To<Option<T>>,
      *  Option<Integer> just = Option.of(10);
     Option<Integer> none = Option.none();
 
-     *  Option<ReactiveSeq<Integer>> maybes = Option.sequence(LazyList.of(just, none, Option.of(1)));
+     *  Option<ReactiveSeq<Integer>> maybes = Option.sequence(Stream.of(just, none, Option.of(1)));
     //Option.none();
      *
      * }
@@ -317,7 +317,7 @@ public interface Option<T> extends To<Option<T>>,
      *
      *
      * @param maybes Maybes to Sequence
-     * @return  Maybe with a LazyList of values
+     * @return  Maybe with a Stream of values
      */
     public static <T> Option<ReactiveSeq<T>> sequence(final Stream<Option<T>> maybes) {
         return AnyM.sequence(maybes.map(Option::toMaybe).map(AnyM::fromMaybe), Witness.maybe.INSTANCE)
@@ -588,7 +588,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -600,7 +600,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Option<Tuple2<T, U>> zipS(final Stream<? extends U> other) {

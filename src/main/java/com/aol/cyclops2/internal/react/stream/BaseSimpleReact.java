@@ -170,7 +170,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
      * Start a reactiveBuffer dataflow with a list of one-off-suppliers
      * 
      * @param actions
-     *           LazyList of Suppliers to provide data (and thus events) that
+     *           Stream of Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
      * @return Next stage in the reactiveBuffer flow
      */
@@ -203,7 +203,7 @@ public abstract class BaseSimpleReact implements ReactBuilder {
      * Start a reactiveBuffer dataflow with a list of one-off-suppliers
      * 
      * @param actions
-     *           LazyList of Suppliers to provide data (and thus events) that
+     *           Stream of Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
      * @return Next stage in the reactiveBuffer flow
      */

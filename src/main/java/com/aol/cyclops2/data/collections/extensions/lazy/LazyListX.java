@@ -18,7 +18,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  * Extended List operations execute lazily e.g.
  * <pre>
  * {@code
- *    LazyListX<Integer> q = LazyListX.of(1,2,3)
+ *    StreamX<Integer> q = StreamX.of(1,2,3)
  *                                      .map(i->i*2);
  * }
  * </pre>
@@ -27,7 +27,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  *
  * <pre>
  * {@code
- *    LazyListX<Integer> q = LazyListX.of(1,2,3)
+ *    StreamX<Integer> q = StreamX.of(1,2,3)
  *                                      .map(i->i*2);
  *                                      .filter(i->i<5);
  * }
@@ -39,10 +39,10 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  *
  * @param <T> the type of elements held in this toX
  */
-public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements ListX<T> {
+public class StreamX<T> extends AbstractLazyCollection<T,List<T>> implements ListX<T> {
 
 
-    public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector,Evaluation strict) {
+    public StreamX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector,Evaluation strict) {
 
         super(list, seq, collector,strict,r->{
             CompletableListX<T> res = new CompletableListX<>();
@@ -52,14 +52,14 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
 
 
     }
-    public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector) {
+    public StreamX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector) {
        this(list, seq, collector, LAZY);
 
     }
 
     @Override
-    public LazyListX<T> withCollector(Collector<T, ?, List<T>> collector){
-        return (LazyListX)new LazyListX<T>(this.getList(),this.getSeq().get(),collector, evaluation());
+    public StreamX<T> withCollector(Collector<T, ?, List<T>> collector){
+        return (StreamX)new StreamX<T>(this.getList(),this.getSeq().get(),collector, evaluation());
     }
     //@Override
     public ListX<T> materialize() {
@@ -68,12 +68,12 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
     }
     @Override
     public ListX<T> lazy() {
-        return new LazyListX<T>(getList(),getSeq().get(),getCollectorInternal(), LAZY) ;
+        return new StreamX<T>(getList(),getSeq().get(),getCollectorInternal(), LAZY) ;
     }
 
     @Override
     public ListX<T> eager() {
-        return new LazyListX<T>(getList(),getSeq().get(),getCollectorInternal(),Evaluation.EAGER) ;
+        return new StreamX<T>(getList(),getSeq().get(),getCollectorInternal(),Evaluation.EAGER) ;
     }
 
     @Override
@@ -161,19 +161,19 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
     }
 
     @Override
-    public <X> LazyListX<X> fromStream(ReactiveSeq<X> stream) {
-        return new LazyListX<X>((List) getList(), ReactiveSeq.fromStream(stream), (Collector) this.getCollectorInternal(),this.evaluation());
+    public <X> StreamX<X> fromStream(ReactiveSeq<X> stream) {
+        return new StreamX<X>((List) getList(), ReactiveSeq.fromStream(stream), (Collector) this.getCollectorInternal(),this.evaluation());
     }
 
     @Override
-    public <T1> LazyListX<T1> from(Collection<T1> c) {
+    public <T1> StreamX<T1> from(Collection<T1> c) {
         if(c instanceof List)
-            return new LazyListX<T1>((List)c,null,(Collector)this.getCollectorInternal(),this.evaluation());
+            return new StreamX<T1>((List)c,null,(Collector)this.getCollectorInternal(),this.evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 
     @Override
-    public <U> LazyListX<U> unitIterator(Iterator<U> it) {
+    public <U> StreamX<U> unitIterator(Iterator<U> it) {
         return fromStream(ReactiveSeq.fromIterator(it));
     }
 
@@ -181,7 +181,7 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
 
 
     @Override
-    public <R> LazyListX<R> unit(Collection<R> col) {
+    public <R> StreamX<R> unit(Collection<R> col) {
         return from(col);
     }
 }

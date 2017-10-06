@@ -64,16 +64,16 @@ public interface Spouts {
      * where backpressue is not needed they may perform better).
      * For backpressure aware Streams see {@link Spouts#reactiveSubscriber}
      *
-     * @param <T> LazyList data type
-     * @return Async LazyList Subscriber
+     * @param <T> Stream data type
+     * @return Async Stream Subscriber
      */
     static <T> AsyncSubscriber<T> asyncSubscriber(){
         return new AsyncSubscriber<T>();
     }
 
     /**
-     * Create a LazyList that accepts data via the Subsriber passed into the supplied Consumer.
-     * reactiveBuffer-streams susbscription is ignored (i.e. this LazyList is backpressure free)
+     * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
+     * reactiveBuffer-streams susbscription is ignored (i.e. this Stream is backpressure free)
      *
      * <pre>
      *     {@code
@@ -100,10 +100,10 @@ public interface Spouts {
     }
 
     /**
-     * Create a push based LazyList with <b>no backpressure</b> fromm the provided LazyList.
-     * The provided LazyList will be executed on the provided executor and pushed to the returned LazyList
+     * Create a push based Stream with <b>no backpressure</b> fromm the provided Stream.
+     * The provided Stream will be executed on the provided executor and pushed to the returned Stream
      *
-     * @param seq LazyList to execute and push to a new non-backpressure aware LazyList
+     * @param seq Stream to execute and push to a new non-backpressure aware Stream
      * @param exec
      * @param <T>
      * @return
@@ -245,8 +245,8 @@ public interface Spouts {
      *   Subscribers signal demand via their subscription and publishers push data to subscribers
      *   synchronously or asynchronously, never exceeding signalled demand
      *
-     * @param <T> LazyList data type
-     * @return An async LazyList Subscriber that supports efficient backpressure via reactiveBuffer-streams
+     * @param <T> Stream data type
+     * @return An async Stream Subscriber that supports efficient backpressure via reactiveBuffer-streams
      */
     static <T> ReactiveSubscriber<T> reactiveSubscriber(){
         return new ReactiveSubscriber<T>();

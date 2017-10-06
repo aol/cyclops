@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * Extended List operations execute lazily e.g.
  * <pre>
  * {@code
- *    LazyListX<Integer> q = LazyListX.of(1,2,3)
+ *    StreamX<Integer> q = StreamX.of(1,2,3)
  *                                      .map(i->i*2);
  * }
  * </pre>

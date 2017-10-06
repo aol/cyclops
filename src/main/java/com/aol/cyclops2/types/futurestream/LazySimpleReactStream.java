@@ -59,7 +59,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * 
      *	@param fn Apply to incoming events
      *	@param service Service to execute function on
-     *	@return next stage in the LazyList
+     *	@return next stage in the Stream
      */
     @Override
     default <R> LazySimpleReactStream<R> then(final Function<? super U, ? extends R> fn, final Executor service) {
@@ -72,7 +72,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * 
      *	@param fn Apply to incoming events
      *	@param service Service to execute function on
-     *	@return next stage in the LazyList
+     *	@return next stage in the Stream
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -181,7 +181,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     }
 
     /**
-     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting LazyList
+     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
      * If in async mode this operation is performed asyncrhonously
      * If in sync mode this operation is performed synchronously
      * 
@@ -198,7 +198,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * 
      * 
      * @param flatFn flatMap function
-     * @return Flatten LazyList with flatFn applied
+     * @return Flatten Stream with flatFn applied
      */
     @Override
     default <R> LazySimpleReactStream<R> flatMapToCompletableFuture(final Function<? super U, CompletableFuture<? extends R>> flatFn) {
@@ -210,7 +210,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     }
 
     /**
-     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting LazyList
+     * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
      * This operation is performed synchronously
      * 
      * <pre>
@@ -225,7 +225,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
      * 
      * 
      * @param flatFn flatMap function
-     * @return Flatten LazyList with flatFn applied
+     * @return Flatten Stream with flatFn applied
      */
     @Override
     default <R> LazySimpleReactStream<R> flatMapToCompletableFutureSync(final Function<? super U, CompletableFuture<? extends R>> flatFn) {
@@ -235,11 +235,11 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     }
 
     /**
-     * Allows aggregate values in a LazyList to be flatten into a singleUnsafe LazyList.
-     * flatMap function turn each aggregate value into it's own LazyList, and SimpleReact aggregates those Streams
+     * Allows aggregate values in a Stream to be flatten into a singleUnsafe Stream.
+     * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
      * into a singleUnsafe flattened reactiveStream
      * 
-     * @param flatFn Function that coverts a value (e.g. a Collection) into a LazyList
+     * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
      * @return SimpleReactStream
      */
     @Override
@@ -314,7 +314,7 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
     }
 
     /**
-     * @return A LazyList of CompletableFutures that represent this stage in the
+     * @return A Stream of CompletableFutures that represent this stage in the
      *         dataflow
      */
     @Override

@@ -18,7 +18,7 @@ import cyclops.control.Eval;
 public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
 
     /**
-     * Remove all elements in the supplied LazyList from this filterable
+     * Remove all elements in the supplied Stream from this filterable
      * 
      * @param stream of elements to remove
      * @return Filters with all supplied elements removed

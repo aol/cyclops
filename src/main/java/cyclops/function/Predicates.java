@@ -28,10 +28,10 @@ import java.util.stream.Stream;
  * {@code 
  *  import static cyclops2.function.Predicates.greaterThan;
  *  
- *  LazyList.of(1,2,3,100,200,300)
+ *  Stream.of(1,2,3,100,200,300)
  *        .filter(greaterThan(10));
  * 
- * //LazyList[100,200,300]
+ * //Stream[100,200,300]
  * }
  * </pre>
  * 
@@ -302,13 +302,13 @@ public class Predicates {
      * <pre>
      * {@code 
      * 
-     *   LazyList.of(Maybe.of(2))
+     *   Stream.of(Maybe.of(2))
      *         .filter(eqv(Maybe.of(2)))
      *         .forEach(System.out::println);
      *   
      *   //Maybe[2]       
      *          
-     *   LazyList.of(2)
+     *   Stream.of(2)
      *         .filter(eqv(Maybe.of(2)))
      *         .forEach(System.out::println);
      *         
@@ -469,8 +469,8 @@ public static <T1> Predicate<? super T1> instanceOf(final Class<?> clazz) {
     /**
      * Samples a dataset by only returning true when the modulus of the event count divided by the rate is 0
      * e.g.
-     * To select every second member of a LazyList, filter with Predicates.sample(2) - for every thid member filter with Predicates.sample(3) and so on.
-     * To take 1% of a LazyList use Predicates.sample(100)
+     * To select every second member of a Stream, filter with Predicates.sample(2) - for every thid member filter with Predicates.sample(3) and so on.
+     * To take 1% of a Stream use Predicates.sample(100)
      *
      * @param rate Every x element to include in your sample
      * @param <T> Data type to sample

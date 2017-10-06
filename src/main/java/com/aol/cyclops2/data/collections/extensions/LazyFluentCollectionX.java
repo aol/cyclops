@@ -29,14 +29,14 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
     /**
      * Create a LazyFluentCollection from a Flux.
      * The created LazyFluentCollection will be of the same type as the object this method is called on.
-     * i.e. Calling reactiveStream(Flux) on a LazyListX results in a LazyListX
+     * i.e. Calling reactiveStream(Flux) on a StreamX results in a StreamX
      *
      *
      * <pre>
      * {@code
      *
-     *     LazyListX<Integer> lazyInts = LazyListX.of(1,2,3);
-     *     LazyListX<String> lazyStrs = lazyInts.reactiveStream(Flux.just("hello","world"));
+     *     StreamX<Integer> lazyInts = StreamX.of(1,2,3);
+     *     StreamX<String> lazyStrs = lazyInts.reactiveStream(Flux.just("hello","world"));
      *
      * }
      * </pre>
@@ -57,7 +57,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * The Collection will not be materialized (unlike via @see {@link LazyFluentCollectionX#plus(Object)}
      * <pre>
      * {@code
-     *    LazyListX<Integer> lazy = LazyListX.of(1,2,3)
+     *    StreamX<Integer> lazy = StreamX.of(1,2,3)
      *                                       .map(i->i*2)
      *                                       .plusLazy(5);
      *
@@ -78,7 +78,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * The Collection will not be materialized (unlike via @see {@link LazyFluentCollectionX#plusAll(Object)}
      * <pre>
      * {@code
-     *    LazyListX<Integer> lazy = LazyListX.of(1,2,3)
+     *    StreamX<Integer> lazy = StreamX.of(1,2,3)
      *                                       .map(i->i*2)
      *                                       .plusAllLazy(ListX.of(5,10));
      *
@@ -98,7 +98,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * The Collection will not be materialized (unlike via @see {@link LazyFluentCollectionX#minus(Object)}
      * <pre>
      * {@code
-     *    LazyListX<Integer> lazy = LazyListX.of(1,2,3)
+     *    StreamX<Integer> lazy = StreamX.of(1,2,3)
      *                                       .map(i->i*2)
      *                                       .minusLazy(4);
      *
@@ -109,7 +109,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * This is an equivalent operation to filtering by equality e.g.
      * <pre>
      * {@code
-     *    LazyListX<Integer> lazy = LazyListX.of(1,2,3)
+     *    StreamX<Integer> lazy = StreamX.of(1,2,3)
      *                                       .map(i->i*2)
      *                                       .filter(i->i==4);
      *
@@ -130,7 +130,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * The Collection will not be materialized (unlike via @see {@link LazyFluentCollectionX#minusAll(Collection)}
      * <pre>
      * {@code
-     *    LazyListX<Integer> lazy = LazyListX.of(1,2,3)
+     *    StreamX<Integer> lazy = StreamX.of(1,2,3)
      *                                       .map(i->i*2)
      *                                       .minusAllLazy(ListX.of(4));
      *
@@ -141,7 +141,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * This is an equivalent operation to filtering by equality e.g.
      * <pre>
      * {@code
-     *    LazyListX<Integer> lazy = LazyListX.of(1,2,3)
+     *    StreamX<Integer> lazy = StreamX.of(1,2,3)
      *                                       .map(i->i*2)
      *                                       .filter(i->ListX.of(4).contains(i));
      *

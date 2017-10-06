@@ -290,7 +290,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Zip two Streams. Futures from this LazyList will be paired with data from provided LazyList (if the other LazyList is also a FutureStream this operator will pair based on
+     * Zip two Streams. Futures from this Stream will be paired with data from provided Stream (if the other Stream is also a FutureStream this operator will pair based on
      * Futures from this Stream with results from the other].
      * 
      * <pre>
@@ -676,7 +676,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Append LazyList to this LazyList
+     * Append Stream to this Stream
      * 
      * <pre>
      * {@code 
@@ -700,7 +700,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Append a LazyList of Futures to this LazyList
+     * Append a Stream of Futures to this Stream
      * 
      * <pre>
      * {@code 
@@ -752,7 +752,7 @@ public interface OperationsOnFutures<T> {
     /**
      * <pre>
      * {@code 
-     *  	LazyList<CompletableFuture<Integer>> streamOfFutures = LazyList.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
+     *  	Stream<CompletableFuture<Integer>> streamOfFutures = Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
     		List<String> result = 	of(1,2,3).actOnFutures()
     										.prependStreamFutures(streamOfFutures)
     										.map(it ->it+"!!")
@@ -952,7 +952,7 @@ public interface OperationsOnFutures<T> {
      * 
      * <pre>
      * {@code 
-     		LazyList<CompletableFuture<Integer>> streamOfFutures = LazyList.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
+     		Stream<CompletableFuture<Integer>> streamOfFutures = Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
     
     		List<String> result = 	of(1,2,3).actOnFutures()
     								.insertStreamFuturesAt(1,streamOfFutures)
@@ -1090,7 +1090,7 @@ public interface OperationsOnFutures<T> {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jooq.lambda.Seq#concat(java.util.reactiveStream.Stream)
+     * @see org.jooq.lambda.Seq#concat(java.util.stream.Stream)
      */
     default FutureStream<T> concat(final Stream<T> other) {
         return fromStreamOfFutures(this.getLastActive()
@@ -1321,14 +1321,14 @@ public interface OperationsOnFutures<T> {
      * 
      * 
      * (non-Javadoc)
-    * @see java.util.reactiveStream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
+    * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
     */
     default CompletableFuture<T> reduce(final CompletableFuture<T> identity, final BinaryOperator<CompletableFuture<T>> accumulator) {
         return toStream().reduce(identity, accumulator);
     }
 
     /* (non-Javadoc)
-    * @see java.util.reactiveStream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
+    * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
     */
     default <U> CompletableFuture<U> reduce(final CompletableFuture<U> identity,
             final BiFunction<CompletableFuture<U>, ? super CompletableFuture<T>, CompletableFuture<U>> accumulator,

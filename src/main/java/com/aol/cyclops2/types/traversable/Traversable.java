@@ -100,7 +100,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * @return This Traversable converted to a LazyList
+     * @return This Traversable converted to a Stream
      */
     default ReactiveSeq<T> stream() {
         return ReactiveSeq.fromIterable(this);
@@ -190,7 +190,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Convert to a LazyList with the values repeated specified times
+     * Convert to a Stream with the values repeated specified times
      * 
      * <pre>
      * {@code 
@@ -204,15 +204,15 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      * 
      * @param times
-     *            Times values should be repeated within a LazyList
-     * @return LazyList with values repeated
+     *            Times values should be repeated within a Stream
+     * @return Stream with values repeated
      */
     default Traversable<T> cycle(final long times) {
         return traversable().cycle(times);
     }
 
     /**
-     * Convert to a LazyList with the result of a reduction operation repeated
+     * Convert to a Stream with the result of a reduction operation repeated
      * specified times
      * 
      * <pre>
@@ -228,14 +228,14 @@ public interface Traversable<T> extends Publisher<T>,
      *            Monoid to be used in reduction
      * @param times
      *            Number of times value should be repeated
-     * @return LazyList with reduced values repeated
+     * @return Stream with reduced values repeated
      */
     default Traversable<T> cycle(final Monoid<T> m, final long times) {
         return traversable().cycle(m, times);
     }
 
     /**
-     * Repeat in a LazyList while specified predicate holds
+     * Repeat in a Stream while specified predicate holds
      * 
      * <pre>
      * {@code
@@ -248,14 +248,14 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * @param predicate
      *            repeat while true
-     * @return Repeating LazyList
+     * @return Repeating Stream
      */
     default Traversable<T> cycleWhile(final Predicate<? super T> predicate) {
         return traversable().cycleWhile(predicate);
     }
 
     /**
-     * Repeat in a LazyList until specified predicate holds
+     * Repeat in a Stream until specified predicate holds
      * 
      * <pre>
      * {@code 
@@ -271,7 +271,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * @param predicate
      *            repeat while true
-     * @return Repeating LazyList
+     * @return Repeating Stream
      */
     default Traversable<T> cycleUntil(final Predicate<? super T> predicate) {
         return traversable().cycleUntil(predicate);
@@ -321,7 +321,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Add an index to the current LazyList
+     * Add an index to the current Stream
      * 
      * <pre>
      * {@code 
@@ -381,7 +381,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Batch elements in a LazyList by size into a toX created by the
+     * Batch elements in a Stream by size into a toX created by the
      * supplied factory
      * 
      * <pre>
@@ -446,9 +446,9 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Zip (combine) this Zippable with the supplied LazyList combining both into a Tuple2
+     * Zip (combine) this Zippable with the supplied Stream combining both into a Tuple2
      *
-     * @param other LazyList to combine with
+     * @param other Stream to combine with
      * @return Combined Zippable
      */
     @Override
@@ -528,7 +528,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Group elements in a LazyList
+     * Group elements in a Stream
      * 
      * <pre>
      * {@code
@@ -542,7 +542,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * @param groupSize
      *            Size of each Group
-     * @return LazyList with elements grouped by size
+     * @return Stream with elements grouped by size
      */
     default Traversable<ListX<T>> grouped(final int groupSize) {
         return traversable().grouped(groupSize);
@@ -571,7 +571,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /*
-     * Return the distinct LazyList of elements
+     * Return the distinct Stream of elements
      * 
      * <pre> {@code List<Integer> list = ReactiveSeq.of(1,2,2,2,5,6) .distinct()
      * .collect(CyclopsCollectors.toList()); }</pre>
@@ -661,7 +661,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * @param c
      *            Compartor to sort with
-     * @return Sorted LazyList
+     * @return Sorted Stream
      */
     default Traversable<T> sorted(final Comparator<? super T> c) {
         return traversable().sorted(c);
@@ -782,7 +782,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * @param num
      *            Number of elemenets to skip
-     * @return LazyList with specified number of elements skipped
+     * @return Stream with specified number of elements skipped
      */
     default Traversable<T> skip(final long num) {
         return traversable().skip(num);
@@ -790,7 +790,7 @@ public interface Traversable<T> extends Publisher<T>,
 
     /**
      * 
-     * SkipWhile drops elements from the LazyList while the predicate holds, once
+     * SkipWhile drops elements from the Stream while the predicate holds, once
      * the predicte returns true all subsequent elements are included *
      * 
      * <pre>
@@ -801,14 +801,14 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * @param p
      *            Predicate to skip while true
-     * @return LazyList with elements skipped while predicate holds
+     * @return Stream with elements skipped while predicate holds
      */
     default Traversable<T> skipWhile(final Predicate<? super T> p) {
         return traversable().skipWhile(p);
     }
 
     /**
-     * Drop elements from the LazyList until the predicate returns true, after
+     * Drop elements from the Stream until the predicate returns true, after
      * which all elements are included
      * 
      * <pre>
@@ -818,7 +818,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * @param p
      *            Predicate to skip until true
-     * @return LazyList with elements skipped until predicate holds
+     * @return Stream with elements skipped until predicate holds
      */
     default Traversable<T> skipUntil(final Predicate<? super T> p) {
         return traversable().skipUntil(p);
@@ -832,7 +832,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * @param num
      *            Limit element size to num
-     * @return Monad converted to LazyList with elements up to num
+     * @return Monad converted to Stream with elements up to num
      */
     default Traversable<T> take(final long num) {
         return traversable().limit(num);
@@ -847,14 +847,14 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * @param num
      *            Limit element size to num
-     * @return Monad converted to LazyList with elements up to num
+     * @return Monad converted to Stream with elements up to num
      */
     default Traversable<T> limit(final long num) {
         return traversable().limit(num);
     }
 
     /**
-     * Take elements from the LazyList while the predicate holds, once the
+     * Take elements from the Stream while the predicate holds, once the
      * predicate returns false all subsequent elements are excluded
      * 
      * <pre>
@@ -863,14 +863,14 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * @param p
      *            Limit while predicate is true
-     * @return LazyList with limited elements
+     * @return Stream with limited elements
      */
     default Traversable<T> limitWhile(final Predicate<? super T> p) {
         return traversable().limitWhile(p);
     }
 
     /**
-     * Take elements from the LazyList until the predicate returns true, after
+     * Take elements from the Stream until the predicate returns true, after
      * which all elements are excluded.
      * 
      * <pre>
@@ -879,7 +879,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * @param p
      *            Limit until predicate is true
-     * @return LazyList with limited elements
+     * @return Stream with limited elements
      */
     default Traversable<T> limitUntil(final Predicate<? super T> p) {
         return traversable().limitUntil(p);
@@ -898,7 +898,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Potentially efficient LazyList reversal. Is efficient if
+     * Potentially efficient Stream reversal. Is efficient if
      * 
      * - Sequence created via a range - Sequence created via a List - Sequence
      * created via an Array / var args
@@ -1011,14 +1011,14 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * @return This Traversable converted to a LazyList and type narrowed to Traversable
+     * @return This Traversable converted to a Stream and type narrowed to Traversable
      */
     default Traversable<T> traversable() {
         return stream();
     }
 
     /**
-     * Prepend LazyList to this ReactiveSeq
+     * Prepend Stream to this ReactiveSeq
      *
      * <pre>
      * {@code
@@ -1033,7 +1033,7 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * @param stream
      *            to Prepend
-     * @return ReactiveSeq with LazyList prepended
+     * @return ReactiveSeq with Stream prepended
      */
     default Traversable<T> prependS(Stream<? extends T> stream){
         return traversable().prependS(stream);
@@ -1068,7 +1068,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Prepend given values to the skip of the LazyList
+     * Prepend given values to the skip of the Stream
      *
      * <pre>
      * {@code
@@ -1101,14 +1101,14 @@ public interface Traversable<T> extends Publisher<T>,
      *            to insert data at
      * @param values
      *            to insert
-     * @return LazyList with new data inserted
+     * @return Stream with new data inserted
      */
     default Traversable<T> insertAt(int pos, T... values){
         return traversable().insertAt(pos,values);
     }
 
     /**
-     * Delete elements between given indexes in a LazyList
+     * Delete elements between given indexes in a Stream
      *
      * <pre>
      * {@code
@@ -1121,14 +1121,14 @@ public interface Traversable<T> extends Publisher<T>,
      *            index
      * @param end
      *            index
-     * @return LazyList with elements removed
+     * @return Stream with elements removed
      */
     default Traversable<T> deleteBetween(int start, int end){
         return traversable().deleteBetween(start,end);
     }
 
     /**
-     * Insert a LazyList into the middle of this reactiveStream at the specified position
+     * Insert a Stream into the middle of this reactiveStream at the specified position
      *
      * <pre>
      * {@code
@@ -1139,7 +1139,7 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      *
      * @param pos
-     *            to insert LazyList at
+     *            to insert Stream at
      * @param stream
      *            to insert
      * @return newly conjoined Traversable

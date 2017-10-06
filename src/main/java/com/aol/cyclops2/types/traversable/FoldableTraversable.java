@@ -115,7 +115,7 @@ public interface FoldableTraversable<T> extends Traversable<T>,
         return Seq.seq(this);
     }
     /**
-     * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or LazyList type,
+     * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
      * whenStream may be more efficient (as it is guaranteed to be maybe).
      *
      * <pre>

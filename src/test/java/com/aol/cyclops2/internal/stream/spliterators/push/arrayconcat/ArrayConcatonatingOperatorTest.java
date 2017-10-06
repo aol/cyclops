@@ -26,7 +26,7 @@ public class ArrayConcatonatingOperatorTest extends AbstractOperatorTest {
                 new ArrayOfValuesOperator<>(),
                 new SpliteratorToOperator<>(Stream.of(2,3).spliterator()));
         /**
-        return new ArrayConcatonatingOperator<>(new SpliteratorToOperator<>(LazyList.of(1).spliterator()),
+        return new ArrayConcatonatingOperator<>(new SpliteratorToOperator<>(Stream.of(1).spliterator()),
                 new ArrayOfValuesOperator<>(),
                 new ArrayOfValuesOperator<>(2,3));**/
     }

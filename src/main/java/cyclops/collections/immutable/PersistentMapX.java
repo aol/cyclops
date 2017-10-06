@@ -204,7 +204,7 @@ public interface PersistentMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.util.stream.Stream)
      */
     @Override
     default PersistentMapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -240,7 +240,7 @@ public interface PersistentMapX<K, V>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.util.stream.Stream)
      */
     @Override
     default PersistentMapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {

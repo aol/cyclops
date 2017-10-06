@@ -40,7 +40,7 @@ public interface CyclopsCollectors {
      * @return Collector for ListX
      */
     static <T> Collector<T, ?, ListX<T>> toListX() {
-        return java.util.stream.Collectors.collectingAndThen(ListX.defaultCollector(), (final List<T> d) -> new LazyListX<T>(
+        return java.util.stream.Collectors.collectingAndThen(ListX.defaultCollector(), (final List<T> d) -> new StreamX<T>(
                                                                                                            d, null,ListX.defaultCollector(),Evaluation.LAZY));
 
     }

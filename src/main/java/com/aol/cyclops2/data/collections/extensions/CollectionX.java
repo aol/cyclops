@@ -131,13 +131,13 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     CollectionX<T> shuffle(Random random);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip3(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     <S, U> CollectionX<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip4(java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList, java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     <T2, T3, T4> CollectionX<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth);
@@ -473,13 +473,13 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.reactiveStream.LazyList, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     <U, R> CollectionX<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.stream.Stream)
      */
     @Override
     <U> CollectionX<Tuple2<T, U>> zipS(Stream<? extends U> other);
@@ -539,7 +539,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     CollectionX<T> sorted();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.IterableFilterable#removeAll(java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.types.traversable.IterableFilterable#removeAll(java.util.stream.Stream)
      */
     @Override
     CollectionX<T> removeAllS(Stream<? extends T> stream);
@@ -563,7 +563,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.IterableFilterable#retainAllI(java.util.reactiveStream.LazyList)
+     * @see com.aol.cyclops2.types.traversable.IterableFilterable#retainAllI(java.util.stream.Stream)
      */
     @Override
     CollectionX<T> retainAllS(Stream<? extends T> seq);
@@ -591,7 +591,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     @Override
     <R> CollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper);
     /**
-     * Perform a three level nested internal iteration over this LazyList and the
+     * Perform a three level nested internal iteration over this Stream and the
      * supplied streams
      *
      * <pre>
@@ -608,11 +608,11 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * </pre>
      * 
      * @param iterable1
-     *            Nested LazyList to iterate over
+     *            Nested Stream to iterate over
      * @param iterable2
-     *            Nested LazyList to iterate over
+     *            Nested Stream to iterate over
      * @param iterable3
-     *            Nested LazyList to iterate over
+     *            Nested Stream to iterate over
      * @param yieldingFunction
      *            Function with pointers to the current element from both
      *            Streams that generates the new elements
@@ -639,7 +639,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
 
 
     /**
-     * Perform a three level nested internal iteration over this LazyList and the
+     * Perform a three level nested internal iteration over this Stream and the
      * supplied streams
      * 
      * <pre>
@@ -659,11 +659,11 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * 
      * 
      * @param iterable1
-     *            Nested LazyList to iterate over
+     *            Nested Stream to iterate over
      * @param iterable2
-     *            Nested LazyList to iterate over
+     *            Nested Stream to iterate over
      * @param iterable3
-     *            Nested LazyList to iterate over
+     *            Nested Stream to iterate over
      * @param filterFunction
      *            Filter to applyHKT over elements before passing non-filtered
      *            values to the yielding function
@@ -694,7 +694,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     }
 
     /**
-     * Perform a three level nested internal iteration over this LazyList and the
+     * Perform a three level nested internal iteration over this Stream and the
      * supplied streams
      *
      * <pre>
@@ -703,7 +703,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      *   //collectionX [1,2]
      *   
      *   collectionX.forEach3(a->IntStream.range(10,13),
-     *                        (a,b)->LazyList.of(""+(a+b),"hello world"),
+     *                        (a,b)->Stream.of(""+(a+b),"hello world"),
      *                        (a,b,c)->c+":"a+":"+b);
      *                                  
      * 
@@ -712,9 +712,9 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * </pre>
      * 
      * @param iterable1
-     *            Nested LazyList to iterate over
+     *            Nested Stream to iterate over
      * @param iterable2
-     *            Nested LazyList to iterate over
+     *            Nested Stream to iterate over
      * @param yieldingFunction
      *            Function with pointers to the current element from both
      *            Streams that generates the new elements
@@ -737,7 +737,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
 
 
     /**
-     * Perform a three level nested internal iteration over this LazyList and the
+     * Perform a three level nested internal iteration over this Stream and the
      * supplied streams
      * 
      * <pre>
@@ -745,7 +745,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      *  //collectionX [1,2,3]
      *  
      * collectionX.forEach3(a->ListX.range(10,13),
-     *                     (a,b)->LazyList.of(""+(a+b),"hello world"),
+     *                     (a,b)->Stream.of(""+(a+b),"hello world"),
      *                     (a,b,c)-> c!=3,
      *                      (a,b,c)->c+":"a+":"+b);
      *                                  
@@ -756,9 +756,9 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * 
      * 
      * @param iterable1
-     *            Nested LazyList to iterate over
+     *            Nested Stream to iterate over
      * @param iterable2
-     *            Nested LazyList to iterate over
+     *            Nested Stream to iterate over
      * @param filterFunction
      *            Filter to applyHKT over elements before passing non-filtered
      *            values to the yielding function
@@ -785,7 +785,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     }
 
     /**
-     * Perform a two level nested internal iteration over this LazyList and the
+     * Perform a two level nested internal iteration over this Stream and the
      * supplied reactiveStream
      * 
      * <pre>
@@ -820,7 +820,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     }
 
     /**
-     * Perform a two level nested internal iteration over this LazyList and the
+     * Perform a two level nested internal iteration over this Stream and the
      * supplied reactiveStream
      * 
      * <pre>
@@ -838,7 +838,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      * </pre>
      * 
      * @param iterable1
-     *            Nested LazyList to iterate over
+     *            Nested Stream to iterate over
      * @param filterFunction
      *            Filter to applyHKT over elements before passing non-filtered
      *            values to the yielding function

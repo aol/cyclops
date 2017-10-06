@@ -55,7 +55,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  * {@code 
  *    AnyMValue<optional,String> monad1 = AnyM.fromOptional(Optional.of("hello"));
  *    
- *    AnyMSeq<stream,String> monad2 = AnyM.fromStream(LazyList.of("hello","world"));
+ *    AnyMSeq<stream,String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
  *  
  * }
  * </pre>
@@ -84,11 +84,11 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
-     * A mutable reduction operation equivalent to LazyList#collect
+     * A mutable reduction operation equivalent to Stream#collect
      *
      * <pre>
      * {@code
-     *      AnyM<Integer> monad1 = AnyM.fromStream(LazyList.of(1,2,3));
+     *      AnyM<Integer> monad1 = AnyM.fromStream(Stream.of(1,2,3));
      *      AnyM<Integer> monad2 = AnyM.fromOptional(Optional.of(1));
      *
      *      List<Integer> list1 = monad1.collect(CyclopsCollectors.toList());
@@ -245,9 +245,9 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * 
      *   //AnyM[Optional.zero()]
      *   
-     *   AnyM.fromStream(LazyList.of(5,10)).filter(i->i<10);
+     *   AnyM.fromStream(Stream.of(5,10)).filter(i->i<10);
      *   
-     *   //AnyM[LazyList[5]]
+     *   //AnyM[Stream[5]]
      * }
      * 
      * 
@@ -283,9 +283,9 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * 
      * <pre>
      * {@code
-     *    boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(LazyList.of(1)));
+     *    boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(Stream.of(1)));
      *    //true
-     *     boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(LazyList.of(1,2)));
+     *     boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(Stream.of(1,2)));
      *    //false
      * }
      * </pre>
@@ -320,13 +320,13 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
 
     /* 
-     * Convert this AnyM to an extended LazyList (ReactiveSeq)
+     * Convert this AnyM to an extended Stream (ReactiveSeq)
      * 
      * <pre>
      * {@code 
      *    AnyM<Integer> monad =  AnyM.fromOptional(Optional.of(10));
      *    
-     *    LazyList<Integer> reactiveStream = monad.reactiveStream();
+     *    Stream<Integer> reactiveStream = monad.reactiveStream();
      *    //ReactiveSeq[10]
      * }
      * </pre>
@@ -377,12 +377,12 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * 
      * <pre>{@code 
      * 
-     * AnyM.fromStream(LazyList.of(1,2,3,4))
+     * AnyM.fromStream(Stream.of(1,2,3,4))
      * 							.aggregate(fromEither5(Optional.of(5)))
      * 
-     * AnyM[LazyList[List[1,2,3,4,5]]
+     * AnyM[Stream[List[1,2,3,4,5]]
      * 
-     * List<Integer> result = AnyM.fromStream(LazyList.of(1,2,3,4))
+     * List<Integer> result = AnyM.fromStream(Stream.of(1,2,3,4))
      * 							.aggregate(fromEither5(Optional.of(5)))
      * 							.toSequence()
      *                          .flatten()
@@ -410,7 +410,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * e.g.
      * <pre>
      * {@code 
-     * Any<Integer> ints = AnyM.fromStream(LazyList.of(1,2,3));
+     * Any<Integer> ints = AnyM.fromStream(Stream.of(1,2,3));
      * AnyM<Integer> zero=ints.zero();
      * }
      * </pre>
@@ -435,7 +435,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * {@code 
      *     List<AnyM<Integer>> anyMs = AnyM.listFromStreamable(Arrays.asList(Arrays.asList(1,2,3).iterator(),Arrays.asList(10,20,30)).iterator();
      *     
-     *     //List[AnyM[LazyList[1,2,3],LazyList[10,20,30]]]
+     *     //List[AnyM[Stream[1,2,3],Stream[10,20,30]]]
      * }
      * 
      * @param fromEither5 Iterable containing Iterators

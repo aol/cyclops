@@ -124,7 +124,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /*
      * (non-Javadoc)
      * 
-     * @see java.util.reactiveStream.LazyList#reduce(java.lang.Object,
+     * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
     default AnyM<W,T> reduce(final T identity, final BinaryOperator<T> accumulator) {
@@ -134,7 +134,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /*
      * (non-Javadoc)
      * 
-     * @see java.util.reactiveStream.LazyList#reduce(java.lang.Object,
+     * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
     default <U> AnyM<W,U> reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
@@ -275,7 +275,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * @return LazyList as concatenated String
+     * @return Stream as concatenated String
      */
     default AnyM<W,String> join() {
 
@@ -289,7 +289,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * @return LazyList as concatenated String
+     * @return Stream as concatenated String
      */
     default AnyM<W,String> join(final String sep) {
         return nestedFoldables().map(s -> s.join(sep));
@@ -302,7 +302,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * @return LazyList as concatenated String
+     * @return Stream as concatenated String
      */
     default AnyM<W,String> join(final String sep, final String start, final String end) {
         return nestedFoldables().map(s -> s.join(sep, start, end));
@@ -419,13 +419,13 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * <pre>
      * {@code
      * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .endsWith(LazyList.of(5,6)));
+     *              .endsWith(Stream.of(5,6)));
      * }
      * </pre>
      * 
      * @param stream
      *            Values to check
-     * @return true if SequenceM endswith values in the supplied LazyList
+     * @return true if SequenceM endswith values in the supplied Stream
      */
     default AnyM<W,Boolean> endsWith(final Stream<T> stream) {
         return nestedFoldables().map(s -> s.endsWith(stream));
@@ -444,7 +444,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * @return first value in this LazyList
+     * @return first value in this Stream
      */
     default AnyM<W,T> firstValue() {
         return nestedFoldables().map(s -> s.firstValue());
@@ -466,7 +466,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * </pre>
      * 
      * @return a singleUnsafe value or an UnsupportedOperationException if 0/1 values
-     *         in this LazyList
+     *         in this Stream
      */
     default AnyM<W,T> singleUnsafe() {
         return nestedFoldables().map(s -> s.singleUnsafe());
@@ -492,7 +492,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * @return An Optional with singleUnsafe value if this LazyList has exactly one
+     * @return An Optional with singleUnsafe value if this Stream has exactly one
      *         element, otherwise Optional Empty
      */
     default AnyM<W,Maybe<T>> single() {
@@ -518,7 +518,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Execute this LazyList on a schedule
+     * Execute this Stream on a schedule
      * 
      * <pre>
      * {@code
@@ -529,7 +529,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * Connect to the Scheduled LazyList
+     * Connect to the Scheduled Stream
      * 
      * <pre>
      * {@code
@@ -548,14 +548,14 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Expression that determines when each job will run
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled LazyList
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     default HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
         return stream().schedule(cron, ex);
     }
 
     /**
-     * Execute this LazyList on a schedule
+     * Execute this Stream on a schedule
      * 
      * <pre>
      * {@code
@@ -566,7 +566,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * Connect to the Scheduled LazyList
+     * Connect to the Scheduled Stream
      * 
      * <pre>
      * {@code
@@ -579,18 +579,18 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * 
      * 
      * @param delay
-     *            Between last element completes passing through the LazyList
+     *            Between last element completes passing through the Stream
      *            until the next one starts
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled LazyList
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     default HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
         return stream().scheduleFixedDelay(delay, ex);
     }
 
     /**
-     * Execute this LazyList on a schedule
+     * Execute this Stream on a schedule
      * 
      * <pre>
      * {@code
@@ -601,7 +601,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * }
      * </pre>
      * 
-     * Connect to the Scheduled LazyList
+     * Connect to the Scheduled Stream
      * 
      * <pre>
      * {@code
@@ -618,7 +618,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Time in millis between job runs
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled LazyList
+     * @return Connectable HotStream of emitted from scheduled Stream
      */
     default HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
         return stream().scheduleFixedRate(rate, ex);
