@@ -1,8 +1,7 @@
 package cyclops.function;
 
-import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
 
-public interface UnaryFn<T> extends UnaryOperator<T>, Fn1<T,T> {
+public interface UnaryFn<T> extends UnaryOperator<T>, Function1<T,T> {
 }

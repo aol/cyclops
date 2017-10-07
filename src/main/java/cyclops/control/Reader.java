@@ -1,19 +1,16 @@
 package cyclops.control;
 
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.*;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.reader;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functor.ContravariantFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.functor.ProFunctor;
 import cyclops.typeclasses.instances.General;
@@ -37,7 +34,7 @@ import cyclops.collections.tuple.Tuple2;
  * @param <R> Current return type of Function
  */
 @FunctionalInterface
-public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<reader,T>,R> {
+public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<Higher<reader,T>,R> {
 
     public static <T,R> Reader<T,R> of(Reader<T,R> i){
         return i;
@@ -346,7 +343,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
                 @Override
                 public <T, R> Higher<Higher<reader, IN>, R> flatMap(Function<? super T, ? extends Higher<Higher<reader, IN>, R>> fn, Higher<Higher<reader, IN>, T> ds) {
                     Reader<IN, T> mapper = Reader.narrowK(ds);
-                    Fn1<IN, R> res = mapper.flatMap(fn.andThen(Reader::narrowK));
+                    Function1<IN, R> res = mapper.flatMap(fn.andThen(Reader::narrowK));
                     return res.reader();
                 }
             };
@@ -398,7 +395,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
     }
 
     default R foldLeft(T t, Monoid<R> monoid){
-        Fn1<T, R> x = this.andThen(v -> monoid.apply(monoid.zero(), v));
+        Function1<T, R> x = this.andThen(v -> monoid.apply(monoid.zero(), v));
         return x.apply(t);
     }
 }

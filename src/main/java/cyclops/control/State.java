@@ -26,14 +26,14 @@ import java.util.function.Function;
 public final class State<S, T> implements Higher2<state,S,T> {
 
 
-    private final Fn1<S, Free<supplier,Tuple2<S, T>>> runState;
+    private final Function1<S, Free<supplier,Tuple2<S, T>>> runState;
 
 
     public Tuple2<S, T> run(S s) {
-        return Fn0.run(runState.apply(s));
+        return Function0.run(runState.apply(s));
     }
     public T eval(S s) {
-        return Fn0.run(runState.apply(s))._2();
+        return Function0.run(runState.apply(s))._2();
     }
     public static <S> State<S, S> get() {
         return state(s -> Tuple.tuple(s, s));
@@ -56,8 +56,8 @@ public final class State<S, T> implements Higher2<state,S,T> {
     public <R> State<S, R> mapState(Function<Tuple2<S,T>, Tuple2<S, R>> fn) {
         return suspended(s -> runState.apply(s).map(t -> fn.apply(t)));
     }
-    private static <S, T> State<S, T> suspended(Fn1<? super S, Free<supplier,Tuple2<S, T>>> runF) {
-        return new State<>(s -> Fn0.suspend(Lambda.λK(()->runF.apply(s))));
+    private static <S, T> State<S, T> suspended(Function1<? super S, Free<supplier,Tuple2<S, T>>> runF) {
+        return new State<>(s -> Function0.suspend(Lambda.λK(()->runF.apply(s))));
     }
 
     public <R> State<S, R> flatMap(Function<? super T,? extends  State<S, R>> f) {

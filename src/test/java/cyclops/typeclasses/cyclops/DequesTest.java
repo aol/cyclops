@@ -7,10 +7,9 @@ import static org.junit.Assert.assertThat;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.mutable.DequeX;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.deque;
 import org.junit.Test;
 
@@ -48,7 +47,7 @@ public class DequesTest {
     @Test
     public void applicative(){
         
-        DequeX<Fn1<Integer,Integer>> listFn =DequeX.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(DequeX::narrowK);
+        DequeX<Function1<Integer,Integer>> listFn =DequeX.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(DequeX::narrowK);
         
         DequeX<Integer> list = DequeX.Instances.unit()
                                      .unit("hello")

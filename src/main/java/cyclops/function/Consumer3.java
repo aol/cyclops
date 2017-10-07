@@ -16,7 +16,7 @@ import java.util.function.Function;
  * @param <S3> Type of third input parameter
  */
 @FunctionalInterface
-public interface C3<S1, S2, S3> {
+public interface Consumer3<S1, S2, S3> {
 
 
 

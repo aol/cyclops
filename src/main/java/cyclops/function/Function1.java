@@ -33,16 +33,16 @@ import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;
 
 @FunctionalInterface
-public interface Fn1<T,  R> extends Function<T,R>{
+public interface Function1<T,  R> extends Function<T,R>{
 
-    public static <T1,  T3,R> Fn1<T1, R> λ(final Fn1<T1, R> triFunc){
+    public static <T1,  T3,R> Function1<T1, R> λ(final Function1<T1, R> triFunc){
         return triFunc;
     }
-    public static <T1,  T3,R> Fn1<? super T1,? extends R> λv(final Fn1<? super T1,? extends R> triFunc){
+    public static <T1,  T3,R> Function1<? super T1,? extends R> λv(final Function1<? super T1,? extends R> triFunc){
         return triFunc;
     }
 
-    default Fn0<R> applyLazy(T t){
+    default Function0<R> applyLazy(T t){
         return ()->apply(t);
     }
 
@@ -66,7 +66,7 @@ public interface Fn1<T,  R> extends Function<T,R>{
      * @param action LESS advice
      * @return Function with LESS advice attached
      */
-    default Fn1<T, R> before(final Consumer<? super T> action){
+    default Function1<T, R> before(final Consumer<? super T> action){
         return FluentFunctions.of(this).before(action);
     }
     /**
@@ -75,28 +75,28 @@ public interface Fn1<T,  R> extends Function<T,R>{
      * @param action MORE advice
      * @return  Function with MORE advice attached
      */
-    default Fn1<T, R> after(final BiConsumer<? super T,? super R> action) {
+    default Function1<T, R> after(final BiConsumer<? super T,? super R> action) {
         return FluentFunctions.of(this).after(action);
     }
 
 
-    default <W1,W2> Fn1<Higher<W1,T>,Higher<W2,R>> liftNT(Function<Higher<W1,T>,Higher<W2,T>> hktTransform, Functor<W2> functor){
+    default <W1,W2> Function1<Higher<W1,T>,Higher<W2,R>> liftNT(Function<Higher<W1,T>,Higher<W2,T>> hktTransform, Functor<W2> functor){
         return (T1)-> functor.map(this,hktTransform.apply(T1));
     }
-    default <W1 extends WitnessType<W1>,W2 extends WitnessType<W2>> Fn1<AnyM<W1,T>,AnyM<W2,R>> liftAnyM(Function<AnyM<W1,T>,AnyM<W2,T>> hktTransform){
+    default <W1 extends WitnessType<W1>,W2 extends WitnessType<W2>> Function1<AnyM<W1,T>,AnyM<W2,R>> liftAnyM(Function<AnyM<W1,T>,AnyM<W2,T>> hktTransform){
         return (T1)-> hktTransform.apply(T1).map(this);
     }
 
-    default Fn1<T,Maybe<R>> lift(){
+    default Function1<T,Maybe<R>> lift(){
        return (T1)-> Maybe.fromLazy(Eval.later(()-> Maybe.ofNullable(apply(T1))));
     }
-    default Fn1<T, Future<R>> lift(Executor ex){
+    default Function1<T, Future<R>> lift(Executor ex){
        return (T1)-> Future.of(()->apply(T1),ex);
     }
-    default Fn1<T, Try<R,Throwable>> liftTry(){
+    default Function1<T, Try<R,Throwable>> liftTry(){
        return (T1)->  Try.withCatch(()->apply(T1),Throwable.class);
     }
-    default Fn1<T,   Optional<R>> liftOpt(){
+    default Function1<T,   Optional<R>> liftOpt(){
        return (T1)-> Optional.ofNullable(apply(T1));
     }
 
@@ -105,48 +105,48 @@ public interface Fn1<T,  R> extends Function<T,R>{
     }
 
     
-    default Fn1<T,R> memoize(){
+    default Function1<T,R> memoize(){
         return Memoize.memoizeFunction(this);
     }
-    default Fn1<T,R> memoize(Cacheable<R> c){
+    default Function1<T,R> memoize(Cacheable<R> c){
         return Memoize.memoizeFunction(this,c);
     }
-    default Fn1<T, R> memoizeAsync(ScheduledExecutorService ex, String cron){
+    default Function1<T, R> memoizeAsync(ScheduledExecutorService ex, String cron){
         return Memoize.memoizeFunctionAsync(this,ex,cron);
     }
-    default Fn1<T, R> memoizeAsync(ScheduledExecutorService ex, long timeToLiveMillis){
+    default Function1<T, R> memoizeAsync(ScheduledExecutorService ex, long timeToLiveMillis){
         return Memoize.memoizeFunctionAsync(this,ex,timeToLiveMillis);
     }
 
-    default <T2,R2> Fn1<Xor<T, T2>, Xor<R, R2>> merge(Function<? super T2, ? extends R2> fn) {
-        Fn1<T, Xor<R, R2>> first = andThen(Xor::secondary);
+    default <T2,R2> Function1<Xor<T, T2>, Xor<R, R2>> merge(Function<? super T2, ? extends R2> fn) {
+        Function1<T, Xor<R, R2>> first = andThen(Xor::secondary);
         Function<? super T2, ? extends Xor<R,R2>> second = fn.andThen(Xor::primary);
         return first.fanIn(second);
 
     }
 
-    default <T2> Fn1<Xor<T, T2>, R> fanIn(Function<? super T2, ? extends R> fanIn) {
+    default <T2> Function1<Xor<T, T2>, R> fanIn(Function<? super T2, ? extends R> fanIn) {
         return e ->   e.visit(this, fanIn);
     }
-    default <__> Fn1<Xor<T, __>, Xor<R, __>> leftFn() {
+    default <__> Function1<Xor<T, __>, Xor<R, __>> leftFn() {
 
         return either->  either.bimap(this,Function.identity());
     }
-    default <__> Fn1<Xor<__, T>, Xor<__,R>> rightFn() {
+    default <__> Function1<Xor<__, T>, Xor<__,R>> rightFn() {
 
         return either->  either.bimap(Function.identity(),this);
     }
 
 
-    default <R1> Fn1<T,Tuple2<R,R1>> product(Fn1<? super T, ? extends R1> fn){
+    default <R1> Function1<T,Tuple2<R,R1>> product(Function1<? super T, ? extends R1> fn){
         return in -> Tuple.tuple(apply(in),fn.apply(in));
     }
 
-    default <__> Fn1<Tuple2<T, __>, Tuple2<R, __>> firstFn() {
+    default <__> Function1<Tuple2<T, __>, Tuple2<R, __>> firstFn() {
 
         return t-> Tuple.tuple(apply(t._1()),t._2());
     }
-    default <__> Fn1<Tuple2<__, T>, Tuple2<__, R>> secondFn() {
+    default <__> Function1<Tuple2<__, T>, Tuple2<__, R>> secondFn() {
 
         return t-> Tuple.tuple(t._1(),apply(t._2()));
     }
@@ -154,40 +154,40 @@ public interface Fn1<T,  R> extends Function<T,R>{
 
 
 
-    default <R2,R3> Fn1<T, Tuple3<R, R2, R3>> product(Function<? super T, ? extends R2> fn2, Function<? super T, ? extends R3> fn3) {
+    default <R2,R3> Function1<T, Tuple3<R, R2, R3>> product(Function<? super T, ? extends R2> fn2, Function<? super T, ? extends R3> fn3) {
         return a -> Tuple.tuple(apply(a), fn2.apply(a),fn3.apply(a));
     }
-    default <R2,R3,R4> Fn1<T, Tuple4<R, R2,R3,R4>> product(Function<? super T, ? extends R2> fn2,
-                                                           Function<? super T, ? extends R3> fn3,
-                                                           Function<? super T, ? extends R4> fn4) {
+    default <R2,R3,R4> Function1<T, Tuple4<R, R2,R3,R4>> product(Function<? super T, ? extends R2> fn2,
+                                                                 Function<? super T, ? extends R3> fn3,
+                                                                 Function<? super T, ? extends R4> fn4) {
         return a -> Tuple.tuple(apply(a), fn2.apply(a),fn3.apply(a),fn4.apply(a));
     }
 
 
-    default Fn0<R> bind(final T s) {
+    default Function0<R> bind(final T s) {
         return Curry.curry(this)
                     .apply(s);
     }
 
     @Override
-    default <V> Fn1<V, R> compose(Function<? super V, ? extends T> before) {
+    default <V> Function1<V, R> compose(Function<? super V, ? extends T> before) {
         return v -> apply(before.apply(v));
     }
 
     @Override
-    default <V> Fn1<T, V> andThen(Function<? super R, ? extends V> after) {
+    default <V> Function1<T, V> andThen(Function<? super R, ? extends V> after) {
         return t -> after.apply(apply(t));
     }
 
-    default <V> Fn1<Function<? super R, ? extends V>,Fn1<T, V>> andThen() {
+    default <V> Function1<Function<? super R, ? extends V>,Function1<T, V>> andThen() {
         return this::andThen;
     }
 
 
 
-    static <T,R> Fn1<T,R> narrow(Function<? super T, ? extends R> fn){
-        if(fn instanceof Fn1){
-            return (Fn1<T,R>)fn;
+    static <T,R> Function1<T,R> narrow(Function<? super T, ? extends R> fn){
+        if(fn instanceof Function1){
+            return (Function1<T,R>)fn;
         }
         return t->fn.apply(t);
     }
@@ -195,21 +195,21 @@ public interface Fn1<T,  R> extends Function<T,R>{
         return in->apply(in);
     }
 
-    interface FunctionalOperations<T1,R> extends Fn1<T1,R>{
+    interface FunctionalOperations<T1,R> extends Function1<T1,R> {
 
 
-        default <V> Fn1<T1, V> apply(final Function<? super T1,? extends Function<? super R,? extends V>> applicative) {
+        default <V> Function1<T1, V> apply(final Function<? super T1,? extends Function<? super R,? extends V>> applicative) {
             return a -> applicative.apply(a).apply(this.apply(a));
         }
 
-        default <R1> Fn1<T1, R1> map(final Function<? super R, ? extends R1> f2) {
+        default <R1> Function1<T1, R1> map(final Function<? super R, ? extends R1> f2) {
             return andThen(f2);
         }
 
-        default <R1> Fn1<T1, R1> flatMap(final Function<? super R, ? extends Function<? super T1, ? extends R1>> f) {
+        default <R1> Function1<T1, R1> flatMap(final Function<? super R, ? extends Function<? super T1, ? extends R1>> f) {
             return a -> f.apply(apply(a)).apply(a);
         }
-        default <R1> Fn1<T1,R1> coflatMap(final Function<? super Fn1<? super T1,? extends R>, ? extends  R1> f) {
+        default <R1> Function1<T1,R1> coflatMap(final Function<? super Function1<? super T1,? extends R>, ? extends  R1> f) {
             return in-> f.apply(this);
         }
 
@@ -271,29 +271,29 @@ public interface Fn1<T,  R> extends Function<T,R>{
             return future.map(this);
         }
 
-        default Fn1<T1, ReactiveSeq<R>> liftStream() {
+        default Function1<T1, ReactiveSeq<R>> liftStream() {
             return in -> ReactiveSeq.of(apply(in));
         }
 
-        default Fn1<T1, Future<R>> liftFuture() {
+        default Function1<T1, Future<R>> liftFuture() {
             return in -> Future.ofResult(apply(in));
         }
-        default <W extends WitnessType<W>> Fn1<T1, FutureT<W,R>> liftFutureT(W witness) {
+        default <W extends WitnessType<W>> Function1<T1, FutureT<W,R>> liftFutureT(W witness) {
             return liftFuture().andThen(f->f.liftM(witness));
         }
 
-        default Fn1<T1, ListX<R>> liftList() {
+        default Function1<T1, ListX<R>> liftList() {
             return in -> ListX.of(apply(in));
         }
-        default <W extends WitnessType<W>> Fn1<T1, ListT<W,R>> liftListT(W witness) {
+        default <W extends WitnessType<W>> Function1<T1, ListT<W,R>> liftListT(W witness) {
             return liftList().andThen(l->l.liftM(witness));
         }
 
-        default Fn1<T1, LinkedListX<R>> liftLinkedListX() {
+        default Function1<T1, LinkedListX<R>> liftLinkedListX() {
             return in -> LinkedListX.of(apply(in));
         }
 
-        default Fn1<T1, VectorX<R>> liftVectorX() {
+        default Function1<T1, VectorX<R>> liftVectorX() {
             return in -> VectorX.of(apply(in));
         }
     }

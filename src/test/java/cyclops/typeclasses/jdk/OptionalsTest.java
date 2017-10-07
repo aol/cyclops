@@ -12,11 +12,10 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.optional;
 import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;
@@ -55,7 +54,7 @@ public class OptionalsTest {
     @Test
     public void applicative(){
         
-        OptionalKind<Fn1<Integer,Integer>> optFn =Optionals.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(OptionalKind::narrow);
+        OptionalKind<Function1<Integer,Integer>> optFn =Optionals.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(OptionalKind::narrow);
         
         OptionalKind<Integer> opt = Optionals.Instances.unit()
                                      .unit("hello")

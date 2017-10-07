@@ -26,22 +26,22 @@ import java.util.function.Function;
  *          {@link cyclops.function.PartialApplicator}
  *          {@link cyclops.function.Memoize}
  *          {@link cyclops.function.FluentFunctions}
- *          {@link Fn1}
+ *          {@link Function1}
  *          {@link Fn2}
  *          {@link Fn3}
  *          {@link Fn4}
  */
 public class Functions {
 
-    public static final  <T,R> Fn1<? super T,? extends R> constant(R r){
+    public static final  <T,R> Function1<? super T,? extends R> constant(R r){
         return t->r;
     }
 
-    public static final  <T> Fn1<? super T,? extends T> identity(){
+    public static final  <T> Function1<? super T,? extends T> identity(){
         return t->t;
     }
 
-    public static final  <T> Fn1<? super T,? extends Maybe<? extends T>> lifted(){
+    public static final  <T> Function1<? super T,? extends Maybe<? extends T>> lifted(){
         return t-> Maybe.ofNullable(t);
     }
 
@@ -56,7 +56,7 @@ public class Functions {
      * @param <W> The type of the WitnessType (Witness.stream, Witness.Future, Witness.list and so on)
      * @return A function that can embed a value inisde a Monad
      */
-    public static final  <T,W extends WitnessType<W>> Fn1<? super T,? extends AnyM<W,T>> arrowM(W w){
+    public static final  <T,W extends WitnessType<W>> Function1<? super T,? extends AnyM<W,T>> arrowM(W w){
         return t-> w.adapter().unit(t);
     }
 
@@ -78,36 +78,36 @@ public class Functions {
      * @param <W>
      * @return
      */
-    public static final  <T,W extends Unit<T>> Fn1<? super T,? extends W> arrowUnit(Unit<?> w){
+    public static final  <T,W extends Unit<T>> Function1<? super T,? extends W> arrowUnit(Unit<?> w){
 
         return t-> (W)w.unit(t);
     }
 
-    public static final  <T,CRE> Fn1<? super T,? extends Higher<CRE,T>> arrow(Monad<CRE> monad){
+    public static final  <T,CRE> Function1<? super T,? extends Higher<CRE,T>> arrow(Monad<CRE> monad){
         return t-> monad.unit(t);
     }
 
-    public static final  <T> Fn1<? super Iterable<T>,? extends T> head(){
+    public static final  <T> Function1<? super Iterable<T>,? extends T> head(){
         return it -> ReactiveSeq.fromIterable(it).firstValue();
     }
 
-    public static final  <T> Fn1<? super Iterable<T>,? extends T> tail(){
+    public static final  <T> Function1<? super Iterable<T>,? extends T> tail(){
         return it -> ReactiveSeq.fromIterable(it)
                                 .limitLast(1)
                                 .firstValue();
     }
-    public static final  <T> Fn1<? super Iterable<T>,? extends T> reduce(Monoid<T> monoid){
+    public static final  <T> Function1<? super Iterable<T>,? extends T> reduce(Monoid<T> monoid){
         return it -> ReactiveSeq.fromIterable(it)
                                 .reduce(monoid.zero(),monoid);
     }
 
-    static <K,V> Fn1<K,V> map(Map<K,V> map) {
+    static <K,V> Function1<K,V> map(Map<K,V> map) {
         return map::get;
     }
-    static <K,V> Fn1<K,Maybe<V>> maybeMap(Map<K,V> map) {
+    static <K,V> Function1<K,Maybe<V>> maybeMap(Map<K,V> map) {
         return k->Maybe.ofNullable(map.get(k));
     }
-    static <K,V> Fn1<K,Optional<V>> optionalMap(Map<K,V> map) {
+    static <K,V> Function1<K,Optional<V>> optionalMap(Map<K,V> map) {
         return k-> Optional.ofNullable(map.get(k));
     }
 

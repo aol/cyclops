@@ -2,12 +2,9 @@ package cyclops.stream;
 
 import com.aol.cyclops2.hkt.Higher;
 
-import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.types.reactive.BufferOverflowPolicy;
 import com.aol.cyclops2.types.reactive.PushSubscriber;
-import cyclops.async.SimpleReact;
 import cyclops.control.Xor;
-import cyclops.function.C4;
 import cyclops.function.Fn3;
 import cyclops.monads.Witness;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -30,7 +27,6 @@ import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
-import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import cyclops.collections.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -47,8 +43,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Stream;
-
-import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * reactiveBuffer : is used to denote creational methods for reactiveBuffer-streams that support non-blocking backpressure

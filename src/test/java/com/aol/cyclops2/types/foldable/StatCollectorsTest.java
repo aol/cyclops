@@ -18,10 +18,10 @@ import static org.junit.Assert.*;
 
 public class StatCollectorsTest {
 
-    ReactiveSeq<Integer> stream = ReactiveSeq.range(0,100);
-    StatCollectors<Integer> stats = ()->stream;
-    ReactiveSeq<Integer> stream1000 = ReactiveSeq.range(0,1000);
-    StatCollectors<Integer> stats1000 = ()->stream1000;
+    ReactiveSeq<Integer> stats = ReactiveSeq.range(0,100);
+
+    ReactiveSeq<Integer> stats1000 = ReactiveSeq.range(0,1000);
+
 
     @Test
     public void atPercentile(){
@@ -34,20 +34,20 @@ public class StatCollectorsTest {
 
     @Test
     public void variance(){
-        StatCollectors<Integer> stats = ()->stream.take(10);
-        assertThat(stats.variance(i->i),equalTo(9.166666666666666));
+
+        assertThat(stats.take(10).variance(i->i),equalTo(9.166666666666666));
     }
 
     @Test
     public void populationVariance(){
-        StatCollectors<Integer> stats = ()->stream.take(10);
-        assertThat(stats.populationVariance(i->i),equalTo(8.25));
+
+        assertThat(stats.take(10).populationVariance(i->i),equalTo(8.25));
     }
 
     @Test
     public void stdDeviation(){
-        StatCollectors<Integer> stats = ()->stream.take(10);
-        assertThat(stats.stdDeviation(i->i),equalTo(2.8722813232690143));
+
+        assertThat(stats.take(10).stdDeviation(i->i),equalTo(2.8722813232690143));
     }
 
     @Test
@@ -60,26 +60,26 @@ public class StatCollectorsTest {
     @Test
     public void mode(){
         ReactiveSeq<Integer> s = ReactiveSeq.of(1,2,2,2,3,3,3,3,3,4,4,4);
-        assertThat(s.stats().mode().get(),equalTo(3));
+        assertThat(s.mode().get(),equalTo(3));
     }
     @Test
     public void maxBy(){
         ReactiveSeq<Integer> s = ReactiveSeq.of(1,2,2,2,3,3,3,3,3,4,4,4);
-        assertThat(s.stats().maxBy(i->i).get(),equalTo(4));
+        assertThat(s.maxBy(i->i).get(),equalTo(4));
     }
 
     @Test
     public void doubleCollect(){
         Tuple2<List<Integer>, Set<Integer>> t2 = stats.collect(Collectors.toList(), Collectors.toSet());
-        assertThat(t2._1(),equalTo(stream.toList()));
-        assertThat(t2._2(),equalTo(stream.toSet()));
+        assertThat(t2._1(),equalTo(stats.toList()));
+        assertThat(t2._2(),equalTo(stats.toSet()));
     }
     @Test
     public void tripleCollect(){
         Tuple3<List<Integer>, Set<Integer>,List<Integer>> t3 = stats.collect(Collectors.toList(), Collectors.toSet(),Collectors.toList());
-        assertThat(t3._1(),equalTo(stream.toList()));
-        assertThat(t3._2(),equalTo(stream.toSet()));
-        assertThat(t3._3(),equalTo(stream.toList()));
+        assertThat(t3._1(),equalTo(stats.toList()));
+        assertThat(t3._2(),equalTo(stats.toSet()));
+        assertThat(t3._3(),equalTo(stats.toList()));
     }
 
 }

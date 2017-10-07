@@ -4,7 +4,7 @@ package cyclops.data;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Trampoline;
-import cyclops.function.Fn0;
+import cyclops.function.Function0;
 import cyclops.monads.Witness.supplier;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.free.Free;
@@ -53,7 +53,7 @@ public class DifferenceList<T> implements Folds<T>, Transformable<T> {
         return new DifferenceList<>(l-> Free.done(run().flatMap(fn.andThen(DifferenceList::run))));
     }
     public LazySeq<T> run(){
-        return Fn0.run(appending.apply(LazySeq.empty()));
+        return Function0.run(appending.apply(LazySeq.empty()));
     }
     public static <T> DifferenceList<T> of(LazySeq<T> list){
         return new DifferenceList<>(l-> Free.done(list.appendAll(l)));
@@ -71,8 +71,8 @@ public class DifferenceList<T> implements Folds<T>, Transformable<T> {
         Function<LazySeq<T>, Free<supplier, LazySeq<T>>> appending2 = append.appending;
 
         return new DifferenceList<T>(l-> appending2.apply(l).flatMap(l2->{
-                                    Fn0.SupplierKind<Free<supplier, LazySeq<T>>> s = ()->appending.apply(l2);
-                                    Free<supplier, LazySeq<T>> x = Fn0.suspend(s);
+                                    Function0.SupplierKind<Free<supplier, LazySeq<T>>> s = ()->appending.apply(l2);
+                                    Free<supplier, LazySeq<T>> x = Function0.suspend(s);
                                     return x;
                                      }));
     }

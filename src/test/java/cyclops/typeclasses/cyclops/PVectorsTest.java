@@ -7,10 +7,9 @@ import static org.junit.Assert.assertThat;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.vectorX;
 import org.junit.Test;
 
@@ -48,7 +47,7 @@ public class PVectorsTest {
     @Test
     public void applicative(){
         
-        VectorX<Fn1<Integer,Integer>> listFn = VectorX.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(VectorX::narrowK);
+        VectorX<Function1<Integer,Integer>> listFn = VectorX.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(VectorX::narrowK);
         
         VectorX<Integer> list = VectorX.Instances.unit()
                                      .unit("hello")

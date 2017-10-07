@@ -484,7 +484,7 @@ public class FluentFunctions {
     }
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentSupplier<R> implements Fn0<R> {
+    public static class FluentSupplier<R> implements Function0<R> {
         private final Supplier<R> fn;
         private final String name;
 
@@ -691,7 +691,7 @@ public class FluentFunctions {
 
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentFunction<T, R> implements Fn1<T, R>, Reader<T, R> {
+    public static class FluentFunction<T, R> implements Function1<T, R>, Reader<T, R> {
         private final Function<T, R> fn;
         private final String name;
 
@@ -1052,7 +1052,7 @@ public class FluentFunctions {
          * @param action C3 to recieve input parameters and return value from BiFunction after it has executed
          * @return BiFunction with after advice attached
          */
-        public FluentBiFunction<T1, T2, R> after(final C3<T1, T2, R> action) {
+        public FluentBiFunction<T1, T2, R> after(final Consumer3<T1, T2, R> action) {
             return withFn((t1, t2) -> {
 
                 final R result = fn.apply(t1, t2);
@@ -1408,7 +1408,7 @@ public class FluentFunctions {
          * @param action C3 to recieve the input parameters to TriFunction
          * @return TriFunction with before advice attached
          */
-        public FluentTriFunction<T1, T2, T3, R> before(final C3<T1, T2, T3> action) {
+        public FluentTriFunction<T1, T2, T3, R> before(final Consumer3<T1, T2, T3> action) {
             return withFn((t1, t2, t3) -> {
                 action.accept(t1, t2, t3);
                 return fn.apply(t1, t2, t3);
@@ -1421,7 +1421,7 @@ public class FluentFunctions {
          * @param action C4 to recieve  the input parameters and result from this TriFunction
          * @return TriFunction with after advice attached
          */
-        public FluentTriFunction<T1, T2, T3, R> after(final C4<T1, T2, T3, R> action) {
+        public FluentTriFunction<T1, T2, T3, R> after(final Consumer4<T1, T2, T3, R> action) {
             return withFn((t1, t2, t3) -> {
 
                 final R result = fn.apply(t1, t2, t3);
@@ -1510,7 +1510,7 @@ public class FluentFunctions {
          * 
          * @return Curried function 
          */
-        public FluentFunction<? super T1, Fn1<? super T2, Fn1<? super T3,? extends R>>> curry() {
+        public FluentFunction<? super T1, Function1<? super T2, Function1<? super T3,? extends R>>> curry() {
             return new FluentFunction(
                                         Curry.curry3(fn));
         }

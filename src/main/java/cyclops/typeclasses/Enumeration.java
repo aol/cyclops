@@ -6,13 +6,11 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
-import cyclops.function.Predicates;
+import cyclops.function.Function1;
 import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface Enumeration<E> {
@@ -67,7 +65,7 @@ public interface Enumeration<E> {
     @AllArgsConstructor
     static class EnumerationByEnum<E extends Enum<E>> implements  Enumeration<E>{
         private final E[] values;
-        final Fn1<E,Integer> memo = this::calcFromEnum;
+        final Function1<E,Integer> memo = this::calcFromEnum;
         public Maybe<E> toEnum(int a){
 
             return a>-1 && a< values.length ? Maybe.just(values[a]) :  Maybe.none();
@@ -82,8 +80,8 @@ public interface Enumeration<E> {
         }
 
 
-        public Fn1<E,Integer> fromEnumMemoized(){
-            Fn1<E,Integer> fn = this::fromEnum;
+        public Function1<E,Integer> fromEnumMemoized(){
+            Function1<E,Integer> fn = this::fromEnum;
             return fn.memoize();
         }
 
@@ -105,7 +103,7 @@ public interface Enumeration<E> {
     static class EnumerationByIndexed<E> implements Enumeration<E>{
 
         private final IndexedSequenceX<E> seq;
-        final Fn1<E,Integer> memo = this::calcFromEnum;
+        final Function1<E,Integer> memo = this::calcFromEnum;
         @Override
         public Maybe<E> toEnum(int e) {
             return seq.get(e);

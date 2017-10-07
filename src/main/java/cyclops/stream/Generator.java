@@ -5,8 +5,8 @@ import cyclops.control.Maybe;
 import cyclops.function.BooleanFn0;
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ToStream;
-import cyclops.function.Fn0;
-import cyclops.function.Fn1;
+import cyclops.function.Function0;
+import cyclops.function.Function1;
 import lombok.experimental.Wither;
 
 import java.util.Arrays;
@@ -378,11 +378,11 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
         return times(1);
     }
 
-    public static interface GeneratorSupplier<T> extends Fn0<Generator<T>>
+    public static interface GeneratorSupplier<T> extends Function0<Generator<T>>
     {
 
     }
-    public static interface GeneratorFunction<T> extends Fn1<Suspended<T>,Generator<T>>
+    public static interface GeneratorFunction<T> extends Function1<Suspended<T>,Generator<T>>
     {
 
     }

@@ -19,11 +19,11 @@ public class RangeTest {
 
 	@Test
     public void evenOnly(){
-	   assertThat(ReactiveSeq.range(0,2,10).collectors().sum().get(),equalTo(20));
+	   assertThat(ReactiveSeq.range(0,2,10).sumInt(i->i),equalTo(20));
     }
     @Test
     public void evenOnlyLong(){
-        assertThat(ReactiveSeq.rangeLong(0,2,10).collectors().sum().get(),equalTo(20L));
+        assertThat(ReactiveSeq.rangeLong(0,2,10).sumLong(i->i),equalTo(20L));
     }
 
 	@Test

@@ -4,7 +4,7 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Xor;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Fn3;
 import cyclops.function.Fn4;
 
@@ -33,7 +33,7 @@ import cyclops.monads.Witness.kleisli;
  */
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Kleisli<W,T,R> implements Fn1<T,Higher<W,R>>,
+public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
                                         Transformable<R>,
                                         Higher3<kleisli,W,T,R> {
     
@@ -250,9 +250,9 @@ public class Kleisli<W,T,R> implements Fn1<T,Higher<W,R>>,
         return  kleisliK(monad,fn.andThen(r->monad.unit(r)));
     }
 
-    static <T, W, R> Fn1<T,Higher<W,R>> narrow(Function<? super T, ? extends Higher<W, ? extends R>> fn) {
-        if(fn instanceof Fn1){
-            return (Fn1)fn;
+    static <T, W, R> Function1<T,Higher<W,R>> narrow(Function<? super T, ? extends Higher<W, ? extends R>> fn) {
+        if(fn instanceof Function1){
+            return (Function1)fn;
         }
         return in -> (Higher<W,R>)fn.apply(in);
     }

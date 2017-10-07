@@ -20,7 +20,7 @@ import java.util.function.Function;
  *              (inside monad e.g. KleisliM[stream,String,Integer] represents a function that takes a String and returns a Stream of Integers)
  */
 @FunctionalInterface
-public interface KleisliM<W extends WitnessType<W>,T,R> extends Fn1<T,AnyM<W,R>>,
+public interface KleisliM<W extends WitnessType<W>,T,R> extends Function1<T,AnyM<W,R>>,
                                                                 Transformable<R>{
 
     default KleisliM<W,T,R> local(Function<? super R, ? extends R> local){
@@ -190,7 +190,7 @@ public interface KleisliM<W extends WitnessType<W>,T,R> extends Fn1<T,AnyM<W,R>>
 
     public static <T,R,W extends WitnessType<W>> KleisliM<W,T,R> kleisli(Function<? super T,? extends AnyM<W,? extends R>> fn){
         return in-> {
-            Fn1<T,AnyM<W,R>> fn1 = narrow(fn);
+            Function1<T,AnyM<W,R>> fn1 = narrow(fn);
             return fn1.apply(in);
         };
     }
@@ -198,9 +198,9 @@ public interface KleisliM<W extends WitnessType<W>,T,R> extends Fn1<T,AnyM<W,R>>
         return  kleisli(fn.andThen(r->type.adapter().unit(r)));
     }
 
-    static <T, W extends WitnessType<W>, R> Fn1<T,AnyM<W,R>> narrow(Function<? super T, ? extends AnyM<W, ? extends R>> fn) {
-        if(fn instanceof Fn1){
-            return (Fn1)fn;
+    static <T, W extends WitnessType<W>, R> Function1<T,AnyM<W,R>> narrow(Function<? super T, ? extends AnyM<W, ? extends R>> fn) {
+        if(fn instanceof Function1){
+            return (Function1)fn;
         }
         return in -> (AnyM<W,R>)fn.apply(in);
     }

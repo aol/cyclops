@@ -9,13 +9,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 import cyclops.async.Future;
 
 import cyclops.control.Option;
-import cyclops.function.Fn0;
+import cyclops.function.Function0;
 import cyclops.stream.ReactiveSeq;
 import lombok.Value;
 
@@ -26,7 +24,7 @@ import lombok.Value;
  *
  * @param <T> Type of this convertable
  */
-public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
+public interface Convertable<T> extends Iterable<T>, Function0<T>, Visitable<T> {
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector

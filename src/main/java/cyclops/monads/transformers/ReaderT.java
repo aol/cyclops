@@ -21,7 +21,7 @@ import java.util.function.*;
  * @param <T> Type of data stored inside the nested Future(s)
  */
 public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<W,T,R>>,
-        Transformable<R>, Fn1<T,R> {
+        Transformable<R>, Function1<T,R> {
 
     private final AnyM<W,Reader<T,R>> run;
 

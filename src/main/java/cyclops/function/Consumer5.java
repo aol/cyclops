@@ -17,7 +17,7 @@ import java.util.function.Function;
  * @param <T5> Type of fifth input parameter
  */
 @FunctionalInterface
-public interface C5<T1, T2, T3, T4, T5> {
+public interface Consumer5<T1, T2, T3, T4, T5> {
 
 
 

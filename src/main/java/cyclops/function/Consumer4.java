@@ -17,7 +17,7 @@ import java.util.function.Function;
  * @param <T4> Type of fourth input parameter
  */
 @FunctionalInterface
-public interface C4<T1, T2, T3, T4> {
+public interface Consumer4<T1, T2, T3, T4> {
 
 
     /**

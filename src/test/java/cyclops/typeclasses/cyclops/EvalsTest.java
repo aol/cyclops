@@ -10,9 +10,7 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Xor;
 import cyclops.control.lazy.Either;
-import cyclops.function.Fn1;
-import cyclops.function.Monoid;
-import cyclops.monads.Witness;
+import cyclops.function.Function1;
 import cyclops.monads.Witness.eval;
 import org.junit.Test;
 
@@ -57,7 +55,7 @@ public class EvalsTest {
     public void applicative(){
 
 
-        Eval<Fn1<Integer,Integer>> optFn =Eval.Instances.unit()
+        Eval<Function1<Integer,Integer>> optFn =Eval.Instances.unit()
                                                              .unit(l1((Integer i) ->i*2))
                                                               .convert(Eval::narrowK);
         

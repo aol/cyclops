@@ -12,7 +12,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Try;
 
 @FunctionalInterface
-public interface Fn3<S1, S2, S3, R> extends Fn1<S1,Fn1<S2,Fn1<S3,R>>> {
+public interface Fn3<S1, S2, S3, R> extends Function1<S1,Function1<S2,Function1<S3,R>>> {
 
     public static <T1, T2, T3,R> Fn3<T1,T2,T3, R> λ(final Fn3<T1,T2,T3, R> triFunc){
         return triFunc;
@@ -92,17 +92,17 @@ public interface Fn3<S1, S2, S3, R> extends Fn1<S1,Fn1<S2,Fn1<S3,R>>> {
     }
 
 
-    default Fn1<? super S1,Fn1<? super S2,Fn1<? super S3,? extends  R>>> curry(){
+    default Function1<? super S1,Function1<? super S2,Function1<? super S3,? extends  R>>> curry(){
         return CurryVariance.curry3(this);
     }
     
     
-    default Fn1<S2, Fn1<S3, R>> apply(final S1 s) {
+    default Function1<S2, Function1<S3, R>> apply(final S1 s) {
         return Curry.curry3(this)
                     .apply(s);
     }
 
-    default Fn1<S3, R> apply(final S1 s, final S2 s2) {
+    default Function1<S3, R> apply(final S1 s, final S2 s2) {
         return Curry.curry3(this)
                     .apply(s)
                     .apply(s2);

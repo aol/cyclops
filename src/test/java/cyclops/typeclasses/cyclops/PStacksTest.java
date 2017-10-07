@@ -7,10 +7,9 @@ import static org.junit.Assert.assertThat;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.linkedListX;
 import org.junit.Test;
 
@@ -47,7 +46,7 @@ public class PStacksTest {
     @Test
     public void applicative(){
         
-        LinkedListX<Fn1<Integer,Integer>> listFn = LinkedListX.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(LinkedListX::narrowK);
+        LinkedListX<Function1<Integer,Integer>> listFn = LinkedListX.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(LinkedListX::narrowK);
         
         LinkedListX<Integer> list = LinkedListX.Instances.unit()
                                      .unit("hello")

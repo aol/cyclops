@@ -6,10 +6,9 @@ import static org.junit.Assert.assertThat;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.maybe;
 import org.junit.Test;
 
@@ -47,7 +46,7 @@ public class MaybesTest {
     @Test
     public void applicative(){
         
-        Maybe<Fn1<Integer,Integer>> optFn =Maybe.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(Maybe::narrowK);
+        Maybe<Function1<Integer,Integer>> optFn =Maybe.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(Maybe::narrowK);
         
         Maybe<Integer> opt = Maybe.Instances.unit()
                                      .unit("hello")

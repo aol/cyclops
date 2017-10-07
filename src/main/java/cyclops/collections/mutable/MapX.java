@@ -122,7 +122,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      */
     default MapX<K, V> fromStream(final ReactiveSeq<Tuple2<K, V>> stream) {
         return new MapXImpl<K,V>(
-                              stream.to().map(t -> t._1(), t -> t._2()), getCollector());
+                              stream.toMap(t -> t._1(), t -> t._2()), getCollector());
     }
 
     /* (non-Javadoc)
@@ -143,7 +143,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
         final ReactiveSeq<Tuple2<KR, VR>> s = stream().flatMap(t -> fn.apply(t._1(), t._2())
                                                                       .stream());
         return new MapXImpl<>(
-                              s.<KR, VR> to().map(t -> t._1(), t -> t._2()), getCollector());
+                              s.<KR, VR> toMap(t -> t._1(), t -> t._2()), getCollector());
     }
 
     /* (non-Javadoc)
@@ -154,7 +154,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
         final ReactiveSeq<Tuple2<K, R>> s = stream().map(t -> t.map2(v -> fn.apply(v)));
         return new MapXImpl<>(
-                              s.<K, R> to().map(t -> t._1(), t -> t._2()), getCollector());
+                              s.<K, R> toMap(t -> t._1(), t -> t._2()), getCollector());
     }
 
     /* (non-Javadoc)
@@ -165,7 +165,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
         final ReactiveSeq<Tuple2<R1, V>> s1 = stream().map(t -> t.map1(v -> fn1.apply(v)));
         final ReactiveSeq<Tuple2<R1, R2>> s2 = s1.map(t -> t.map2(v -> fn2.apply(v)));
         return new MapXImpl<>(
-                              s2.<R1, R2> to().map(t -> t._1(), t -> t._2()), getCollector());
+                              s2.<R1, R2> toMap(t -> t._1(), t -> t._2()), getCollector());
     }
 
     @Override

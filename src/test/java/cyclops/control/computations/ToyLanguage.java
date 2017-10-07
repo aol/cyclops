@@ -3,7 +3,7 @@ package cyclops.control.computations;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Unrestricted;
 import cyclops.control.lazy.Either3;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Fn2;
 
 import java.util.function.Function;
@@ -76,7 +76,7 @@ abstract class ToyLanguage<A> implements Transformable<A> {
         }
 
 
-        public <Z> Z visit(final Fn1<A, Z> bell) {
+        public <Z> Z visit(final Function1<A, Z> bell) {
             return bell.apply(next);
         }
 

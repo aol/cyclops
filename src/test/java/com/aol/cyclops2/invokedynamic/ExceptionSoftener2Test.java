@@ -101,34 +101,7 @@ public class ExceptionSoftener2Test {
 		ExceptionSoftener.softenDoubleFunction(this::loadIdDouble).apply(2);
 	}
 
-	public void testSoftenLongToDoubleFunction() {
-		assertThat(ExceptionSoftener.softenLongToDoubleFunction(a->a+1).applyAsDouble(1l),equalTo(2));
-	}
 
-	
-	public void testSoftenLongToIntFunction() {
-		assertThat(ExceptionSoftener.softenLongToIntFunction(a->(int)(a+1)).applyAsInt(1l),equalTo(2));
-	}
-
-	
-	public void testSoftenIntToDoubleFunction() {
-		assertThat(ExceptionSoftener.softenIntToDoubleFunction(a->a+1).applyAsDouble(1),equalTo(2d));
-	}
-
-	
-	public void testSoftenIntToLongFunction() {
-		assertThat(ExceptionSoftener.softenIntToLongFunction(a->a+1).applyAsLong(1),equalTo(2l));
-	}
-
-	
-	public void testSoftenDoubleToIntFunction() {
-		assertThat(ExceptionSoftener.softenDoubleToIntFunction(a->1).applyAsInt(1),equalTo(1));
-	}
-
-	
-	public void testSoftenDoubleToLongFunction() {
-		assertThat(ExceptionSoftener.softenDoubleToLongFunction(a->3l).applyAsLong(1),equalTo(3l));
-	}
 	public String loadDir(String file,String dir) throws IOException{
 		throw new IOException();
 	}

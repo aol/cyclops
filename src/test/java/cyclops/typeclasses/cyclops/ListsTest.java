@@ -8,10 +8,9 @@ import java.util.Arrays;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
 import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;
@@ -50,7 +49,7 @@ public class ListsTest {
     @Test
     public void applicative(){
         
-        ListX<Fn1<Integer,Integer>> listFn =ListX.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(ListX::narrowK);
+        ListX<Function1<Integer,Integer>> listFn =ListX.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(ListX::narrowK);
         
         ListX<Integer> list = ListX.Instances.unit()
                                      .unit("hello")

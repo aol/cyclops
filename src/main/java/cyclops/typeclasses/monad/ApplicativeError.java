@@ -3,10 +3,9 @@ package cyclops.typeclasses.monad;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Eval;
-import cyclops.control.Try;
 import cyclops.control.Xor;
 import cyclops.control.lazy.Either;
-import cyclops.function.Fn0;
+import cyclops.function.Function0;
 
 import java.util.function.Function;
 
@@ -17,7 +16,7 @@ public interface ApplicativeError<W,E> extends Applicative<W>{
     default <T> Higher<W,T> handleError(Function<? super E,? extends T> fn, Higher<W,T> ds){
         return handleErrorWith(fn.andThen(t->unit(t)),ds);
     }
-    default <T> Higher<W,T> tryCatch(Fn0<T> eval, Function<? super Throwable,? extends E> mapper){
+    default <T> Higher<W,T> tryCatch(Function0<T> eval, Function<? super Throwable,? extends E> mapper){
        return tryCatchEval(eval.toEval(),mapper);
     }
     default <T> Higher<W,T> tryCatchEval(Eval<T> eval, Function<? super Throwable,? extends E> mapper){

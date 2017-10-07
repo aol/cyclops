@@ -30,7 +30,7 @@ public class Memoize {
      * @param s Supplier to memoise
      * @return Memoised Supplier
      */
-    public static <T> Fn0<T> memoizeSupplier(final Supplier<T> s) {
+    public static <T> Function0<T> memoizeSupplier(final Supplier<T> s) {
         final Map<Object, T> lazy = new ConcurrentHashMap<>();
         return () -> lazy.computeIfAbsent("k", a -> s.get());
     }
@@ -42,7 +42,7 @@ public class Memoize {
      * @param cache Cachable to store the results
      * @return Memoised Supplier
      */
-    public static <T> Fn0<T> memoizeSupplier(final Supplier<T> s, final Cacheable<T> cache) {
+    public static <T> Function0<T> memoizeSupplier(final Supplier<T> s, final Cacheable<T> cache) {
 
         return () -> cache.soften()
                           .computeIfAbsent("k", a -> s.get());
@@ -57,7 +57,7 @@ public class Memoize {
      * @param <R> Return type of Function
      * @return Memoized asynchronously updating function
      */
-    public static <R> Fn0<R> memoizeSupplierAsync(final Supplier<R> fn,ScheduledExecutorService ex, long updateRateInMillis){
+    public static <R> Function0<R> memoizeSupplierAsync(final Supplier<R> fn, ScheduledExecutorService ex, long updateRateInMillis){
         return ()-> Memoize.memoizeFunctionAsync(a-> fn.get(),ex,updateRateInMillis)
                            .apply("k");
     }
@@ -71,7 +71,7 @@ public class Memoize {
      * @param <R> Return type of Function
      * @return Memoized asynchronously updating function
      */
-    public static <R> Fn0<R> memoizeSupplierAsync(final Supplier<R> fn,ScheduledExecutorService ex, String cron){
+    public static <R> Function0<R> memoizeSupplierAsync(final Supplier<R> fn, ScheduledExecutorService ex, String cron){
         return ()-> Memoize.memoizeFunctionAsync(a-> fn.get(),ex,cron)
                 .apply("k");
     }
@@ -132,7 +132,7 @@ public class Memoize {
      * @param fn Function to memoise
      * @return Memoised Function
      */
-    public static <T, R> Fn1<T, R> memoizeFunction(final Function<T, R> fn) {
+    public static <T, R> Function1<T, R> memoizeFunction(final Function<T, R> fn) {
         final Map<T, R> lazy = new ConcurrentHashMap<>();
         LazyImmutable<R> nullR = LazyImmutable.def();
         return t -> t==null? nullR.computeIfAbsent(()->fn.apply(null)) : lazy.computeIfAbsent(t, fn);
@@ -149,7 +149,7 @@ public class Memoize {
      * @param <R> Return type of Function
      * @return Memoized asynchronously updating function
      */
-    public static <T, R> Fn1<T, R> memoizeFunctionAsync(final Function<T, R> fn,ScheduledExecutorService ex, long updateRateInMillis){
+    public static <T, R> Function1<T, R> memoizeFunctionAsync(final Function<T, R> fn, ScheduledExecutorService ex, long updateRateInMillis){
         final Map<T, R> lazy = new ConcurrentHashMap<>();
 
         ReactiveSeq.generate(()->{
@@ -174,7 +174,7 @@ public class Memoize {
      * @param <R> Return type of Function
      * @return Memoized asynchronously updating function
      */
-    public static <T, R> Fn1<T, R> memoizeFunctionAsync(final Function<T, R> fn, ScheduledExecutorService ex, String cron) {
+    public static <T, R> Function1<T, R> memoizeFunctionAsync(final Function<T, R> fn, ScheduledExecutorService ex, String cron) {
         final Map<T, R> lazy = new ConcurrentHashMap<>();
 
         ReactiveSeq.generate(()->{
@@ -197,7 +197,7 @@ public class Memoize {
      * @param cache Cachable to store the results
      * @return Memoised Function
      */
-    public static <T, R> Fn1<T, R> memoizeFunction(final Function<T, R> fn, final Cacheable<R> cache) {
+    public static <T, R> Function1<T, R> memoizeFunction(final Function<T, R> fn, final Cacheable<R> cache) {
         LazyImmutable<R> nullR = LazyImmutable.def();
         return t -> t==null? nullR.computeIfAbsent(()->fn.apply(null)) : (R)cache.soften()
                          .computeIfAbsent(t, (Function) fn);

@@ -4,10 +4,9 @@ package cyclops.typeclasses.cyclops;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.async.Future;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.future;
 import org.junit.Test;
 
@@ -48,7 +47,7 @@ public class FuturesTest {
     @Test
     public void applicative(){
         
-        Future<Fn1<Integer,Integer>> optFn =Future.Instances.unit()
+        Future<Function1<Integer,Integer>> optFn =Future.Instances.unit()
                                                         .unit(Lambda.l1((Integer i) ->i*2))
                                                         .convert(Future::narrowK);
         

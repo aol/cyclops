@@ -4,11 +4,9 @@ package cyclops.typeclasses.free;
 import static cyclops.typeclasses.free.CharToy.bell;
 import static cyclops.typeclasses.free.CharToy.done;
 import static cyclops.typeclasses.free.CharToy.output;
-import static cyclops.function.Fn0.SupplierKind;
 
 import cyclops.control.Xor;
-import cyclops.function.Fn0;
-import cyclops.monads.Witness;
+import cyclops.function.Function0;
 import cyclops.monads.Witness.supplier;
 import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
@@ -25,9 +23,9 @@ public final class FreeTest {
 
     private static Free<supplier, Long> fibonacci(long n, long a, long b) {
         return n == 0 ? Free.done(b) : λK( ()->fibonacci(n-1, a+b, a))
-                                        .kindTo(Fn0::suspend)
+                                        .kindTo(Function0::suspend)
                                         .flatMap(i->λK( ()->fibonacci(n-1, a+b, a))
-                                                .kindTo(Fn0::suspend));
+                                                .kindTo(Function0::suspend));
     }
     static Free<supplier, Long> fib(final Long n){
 
@@ -35,9 +33,9 @@ public final class FreeTest {
             return Free.done(2L);
         }else{
             return λK(()->fib(n-1))
-                            .kindTo(Fn0::suspend)
+                            .kindTo(Function0::suspend)
                             .flatMap(x->λK(()->fib(n-2))
-                                    .kindTo(Fn0::suspend)
+                                    .kindTo(Function0::suspend)
                                     .map(y->x+y));
         }
     }
@@ -46,7 +44,7 @@ public final class FreeTest {
     public void testFib(){
 
         long time = System.currentTimeMillis();
-        assertThat(1597l,equalTo(Fn0.run(fibonacci(17L))));
+        assertThat(1597l,equalTo(Function0.run(fibonacci(17L))));
         System.out.println("Taken "  +(System.currentTimeMillis()-time));
     }
 

@@ -13,11 +13,10 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.companion.CompletableFutures;
 import cyclops.companion.CompletableFutures.CompletableFutureKind;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.completableFuture;
 import org.junit.Test;
 
@@ -55,7 +54,7 @@ public class CompletableFuturesTest {
     @Test
     public void applicative(){
         
-        CompletableFutureKind<Fn1<Integer,Integer>> optFn =CompletableFutures.Instances.unit()
+        CompletableFutureKind<Function1<Integer,Integer>> optFn =CompletableFutures.Instances.unit()
                                                                                 .unit(Lambda.l1((Integer i) ->i*2))
                                                                                 .convert(CompletableFutureKind::narrow);
         

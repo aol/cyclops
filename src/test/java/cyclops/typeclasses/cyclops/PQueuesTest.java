@@ -7,9 +7,8 @@ import static org.junit.Assert.assertThat;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.persistentQueueX;
 import org.junit.Test;
 
@@ -47,7 +46,7 @@ public class PQueuesTest {
     @Test
     public void applicative(){
         
-        PersistentQueueX<Fn1<Integer,Integer>> listFn = PersistentQueueX.Instances.unit().unit(l1((Integer i) ->i*2)).convert(PersistentQueueX::narrowK);
+        PersistentQueueX<Function1<Integer,Integer>> listFn = PersistentQueueX.Instances.unit().unit(l1((Integer i) ->i*2)).convert(PersistentQueueX::narrowK);
         
         PersistentQueueX<Integer> list = PersistentQueueX.Instances.unit()
                                      .unit("hello")

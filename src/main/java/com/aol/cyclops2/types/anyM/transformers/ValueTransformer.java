@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.Folds;
-import cyclops.function.Fn0;
+import cyclops.function.Function0;
 import cyclops.collections.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -22,7 +22,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
                                                                             Unit<T>,
                                                                             Folds<T>,
                                                                             Zippable<T>,
-                                                                            Fn0<T> {
+        Function0<T> {
     public abstract <R> ValueTransformer<W,R> empty();
     public abstract <R> ValueTransformer<W,R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> f);
     public abstract AnyM<W,? extends MonadicValue<T>> transformerStream();

@@ -10,7 +10,7 @@ import cyclops.async.Future;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;
 import com.aol.cyclops2.types.stream.HeadAndTail;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import org.reactivestreams.Subscription;
 
 import java.util.concurrent.Executor;
@@ -107,7 +107,7 @@ public interface FoldableTraversable<T> extends Traversable<T>,
         return Try.catchExceptions(classes).tryThis(()->fn.apply(this));
     }
 
-    default  Fn1<Long,T> asFunction(){
+    default Function1<Long,T> asFunction(){
         return index->this.get(index).orElse(null);
     }
 

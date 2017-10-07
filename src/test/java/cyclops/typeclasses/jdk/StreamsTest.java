@@ -14,9 +14,8 @@ import cyclops.companion.Streams;
 import cyclops.companion.Streams.StreamKind;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.stream;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
@@ -55,7 +54,7 @@ public class StreamsTest {
     @Test
     public void applicative(){
         
-        StreamKind<Fn1<Integer,Integer>> listFn =Streams.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(StreamKind::narrowK);
+        StreamKind<Function1<Integer,Integer>> listFn =Streams.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(StreamKind::narrowK);
         
         StreamKind<Integer> list = Streams.Instances.unit()
                                      .unit("hello")

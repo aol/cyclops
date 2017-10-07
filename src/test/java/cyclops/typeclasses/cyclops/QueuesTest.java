@@ -7,10 +7,9 @@ import static org.junit.Assert.assertThat;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.mutable.QueueX;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
+import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.queue;
 import org.junit.Test;
 
@@ -48,7 +47,7 @@ public class QueuesTest {
     @Test
     public void applicative(){
         
-        QueueX<Fn1<Integer,Integer>> listFn =QueueX.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(QueueX::narrowK);
+        QueueX<Function1<Integer,Integer>> listFn =QueueX.Instances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(QueueX::narrowK);
         
         QueueX<Integer> list = QueueX.Instances.unit()
                                      .unit("hello")

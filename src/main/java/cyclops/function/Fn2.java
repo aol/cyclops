@@ -68,12 +68,12 @@ public interface Fn2<T1, T2, R> extends BiFunction<T1,T2,R> {
         return Memoize.memoizeBiFunctionAsync(this,ex,timeToLiveMillis);
     }
 
-    default Fn1<? super T1,Fn1<? super T2,? extends  R>> curry(){
+    default Function1<? super T1,Function1<? super T2,? extends  R>> curry(){
         return CurryVariance.curry2(this);
     }
     
     
-    default Fn1<T2, R> apply(final T1 s) {
+    default Function1<T2, R> apply(final T1 s) {
         return Curry.curry2(this)
                     .apply(s);
     }

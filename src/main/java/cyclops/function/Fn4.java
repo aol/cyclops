@@ -11,25 +11,25 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 
-public interface Fn4<T1, T2, T3, T4, R> extends Fn1<T1,Fn1<T2,Fn1<T3,Fn1<T4,R>>>> {
+public interface Fn4<T1, T2, T3, T4, R> extends Function1<T1,Function1<T2,Function1<T3,Function1<T4,R>>>> {
 
     public R apply(T1 a, T2 b, T3 c, T4 d);
     
     default Fn4<T1, T2, T3, T4, Maybe<R>> lift4(){
        return (s1,s2,s3,s4)-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3,s4))));
     }
-    default Fn1<T2, Fn1<T3, Fn1<T4, R>>> apply(final T1 s) {
+    default Function1<T2, Function1<T3, Function1<T4, R>>> apply(final T1 s) {
         return Curry.curry4(this)
                     .apply(s);
     }
 
-    default Fn1<T3, Fn1<T4, R>> apply(final T1 s, final T2 s2) {
+    default Function1<T3, Function1<T4, R>> apply(final T1 s, final T2 s2) {
         return Curry.curry4(this)
                     .apply(s)
                     .apply(s2);
     }
 
-    default Fn1<T4, R> apply(final T1 s, final T2 s2, final T3 s3) {
+    default Function1<T4, R> apply(final T1 s, final T2 s2, final T3 s3) {
         return Curry.curry4(this)
                     .apply(s)
                     .apply(s2)
@@ -59,7 +59,7 @@ public interface Fn4<T1, T2, T3, T4, R> extends Fn1<T1,Fn1<T2,Fn1<T3,Fn1<T4,R>>>
        return (s1,s2,s3,s4)-> Optional.ofNullable(apply(s1,s2,s3,s4));
     }
     
-    default Fn1<? super T1,Fn1<? super T2,Fn1<? super T3,Fn1<? super T4,? extends  R>>>> curry(){
+    default Function1<? super T1,Function1<? super T2,Function1<? super T3,Function1<? super T4,? extends  R>>>> curry(){
         return CurryVariance.curry4(this);
     }
 
