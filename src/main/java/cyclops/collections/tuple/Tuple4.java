@@ -6,6 +6,7 @@ import com.aol.cyclops2.hkt.Higher4;
 import com.aol.cyclops2.types.foldable.EqualTo;
 import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
+import cyclops.data.Comparators;
 import cyclops.function.Function4;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
@@ -27,7 +28,8 @@ public class Tuple4<T1,T2,T3,T4> implements To<Tuple4<T1,T2,T3,T4>>,
                                         Serializable,
                                         Higher4<tuple4,T1,T2,T3,T4>,
                                         EqualTo<Higher<Higher<Higher<tuple4,T1>,T2>,T3>,T4,Tuple4<T1,T2,T3,T4>>,
-                                        OrderedBy<Higher<Higher<Higher<tuple4,T1>,T2>,T3>,T4,Tuple4<T1,T2,T3,T4>>{
+                                        OrderedBy<Higher<Higher<Higher<tuple4,T1>,T2>,T3>,T4,Tuple4<T1,T2,T3,T4>>,
+                                        Comparable<Tuple4<T1,T2,T3,T4>>{
 
     private static final long serialVersionUID = 1L;
 
@@ -203,5 +205,21 @@ public class Tuple4<T1,T2,T3,T4> implements To<Tuple4<T1,T2,T3,T4>>,
     @Override
     public int hashCode() {
         return Objects.hash(_1(), _2(), _3(), _4());
+    }
+
+    @Override
+    public int compareTo(Tuple4<T1, T2, T3, T4> o) {
+        int result = Comparators.identityComparator().compare(_1(),o._1());
+        if(result==0){
+            result = Comparators.identityComparator().compare(_2(),o._2());
+            if(result==0){
+                result = Comparators.identityComparator().compare(_3(),o._3());
+                if(result==0){
+                    result = Comparators.identityComparator().compare(_4(),o._4());
+                }
+            }
+
+        }
+        return result;
     }
 }

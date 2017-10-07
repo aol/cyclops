@@ -2,6 +2,7 @@ package cyclops.collections.tuple;
 
 
 import com.aol.cyclops2.types.foldable.To;
+import cyclops.data.Comparators;
 import cyclops.function.Function6;
 import cyclops.function.Memoize;
 import lombok.AccessLevel;
@@ -19,7 +20,8 @@ import java.util.function.Supplier;
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tuple6<T1,T2,T3,T4,T5,T6> implements To<Tuple6<T1,T2,T3,T4,T5,T6>>,
-                                                Serializable{
+                                                Serializable,
+                                                Comparable<Tuple6<T1,T2,T3,T4,T5,T6>>{
 
     private static final long serialVersionUID = 1L;
 
@@ -211,6 +213,28 @@ public class Tuple6<T1,T2,T3,T4,T5,T6> implements To<Tuple6<T1,T2,T3,T4,T5,T6>>,
     }
     public <R> Tuple6<T1, T2, T3, T4, T5,R> lazyMap6(Function<? super T6, ? extends R> fn) {
         return lazy(() -> _1(), () -> _2(),()->_3(),()->_4(),()->_5(),()->fn.apply(_6()));
+    }
+
+    @Override
+    public int compareTo(Tuple6<T1, T2, T3, T4,T5,T6> o) {
+        int result = Comparators.identityComparator().compare(_1(),o._1());
+        if(result==0){
+            result = Comparators.identityComparator().compare(_2(),o._2());
+            if(result==0){
+                result = Comparators.identityComparator().compare(_3(),o._3());
+                if(result==0){
+                    result = Comparators.identityComparator().compare(_4(),o._4());
+                    if(result==0){
+                        result = Comparators.identityComparator().compare(_5(),o._5());
+                        if(result==0){
+                            result = Comparators.identityComparator().compare(_6(),o._6());
+                        }
+                    }
+                }
+            }
+
+        }
+        return result;
     }
 
     public <R> R visit(Function6<? super T1, ? super T2, ? super T3,? super T4, ? super T5,? super T6,? extends R> fn){

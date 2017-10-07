@@ -6,6 +6,7 @@ import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.types.foldable.EqualTo;
 import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
+import cyclops.data.Comparators;
 import cyclops.function.Function3;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
@@ -27,7 +28,8 @@ public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
                                         Serializable,
                                         Higher3<tuple3,T1,T2,T3> ,
                                         EqualTo<Higher<Higher<tuple3,T1>,T2>,T3,Tuple3<T1,T2,T3>>,
-                                        OrderedBy<Higher<Higher<tuple3,T1>,T2>,T3,Tuple3<T1,T2,T3>>{
+                                        OrderedBy<Higher<Higher<tuple3,T1>,T2>,T3,Tuple3<T1,T2,T3>>,
+                                        Comparable<Tuple3<T1,T2,T3>>{
 
     private static final long serialVersionUID = 1L;
 
@@ -171,5 +173,17 @@ public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
     @Override
     public int hashCode() {
         return Objects.hash(_1(), _2(), _3());
+    }
+
+    @Override
+    public int compareTo(Tuple3<T1, T2, T3> o) {
+        int result = Comparators.identityComparator().compare(_1(),o._1());
+        if(result==0){
+            result = Comparators.identityComparator().compare(_2(),o._2());
+            if(result==0){
+                result = Comparators.identityComparator().compare(_3(),o._3());
+            }
+        }
+        return result;
     }
 }

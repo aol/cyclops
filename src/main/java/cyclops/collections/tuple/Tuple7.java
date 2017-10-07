@@ -2,6 +2,7 @@ package cyclops.collections.tuple;
 
 
 import com.aol.cyclops2.types.foldable.To;
+import cyclops.data.Comparators;
 import cyclops.function.Function7;
 import cyclops.function.Memoize;
 import lombok.AccessLevel;
@@ -19,7 +20,8 @@ import java.util.function.Supplier;
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tuple7<T1,T2,T3,T4,T5,T6,T7> implements To<Tuple7<T1,T2,T3,T4,T5,T6,T7>>,
-                                                Serializable{
+                                                Serializable,
+                                                Comparable<Tuple7<T1,T2,T3,T4,T5,T6,T7>>{
 
     private static final long serialVersionUID = 1L;
 
@@ -172,6 +174,30 @@ public class Tuple7<T1,T2,T3,T4,T5,T6,T7> implements To<Tuple7<T1,T2,T3,T4,T5,T6
                 return memo7.get();
             }
         };
+    }
+    @Override
+    public int compareTo(Tuple7<T1, T2, T3, T4,T5,T6,T7> o) {
+        int result = Comparators.identityComparator().compare(_1(),o._1());
+        if(result==0){
+            result = Comparators.identityComparator().compare(_2(),o._2());
+            if(result==0){
+                result = Comparators.identityComparator().compare(_3(),o._3());
+                if(result==0){
+                    result = Comparators.identityComparator().compare(_4(),o._4());
+                    if(result==0){
+                        result = Comparators.identityComparator().compare(_5(),o._5());
+                        if(result==0){
+                            result = Comparators.identityComparator().compare(_6(),o._6());
+                            if(result==0){
+                                result = Comparators.identityComparator().compare(_7(),o._7());
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        return result;
     }
 
     public <R1,R2,R3,R4,R5,R6,R7> Tuple7<R1,R2,R3,R4,R5,R6,R7> mapAll(Function<? super T1, ? extends R1> fn1, Function<? super T2,? extends R2> fn2,

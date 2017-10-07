@@ -2,6 +2,7 @@ package cyclops.collections.tuple;
 
 
 import com.aol.cyclops2.types.foldable.To;
+import cyclops.data.Comparators;
 import cyclops.function.Function8;
 import cyclops.function.Memoize;
 import lombok.AccessLevel;
@@ -19,7 +20,8 @@ import java.util.function.Supplier;
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> implements To<Tuple8<T1,T2,T3,T4,T5,T6,T7,T8>>,
-                                                Serializable{
+                                                Serializable,
+                                                Comparable<Tuple8<T1,T2,T3,T4,T5,T6,T7,T8>>{
 
     private static final long serialVersionUID = 1L;
 
@@ -137,6 +139,34 @@ public class Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> implements To<Tuple8<T1,T2,T3,T4,T5
     }
     public Tuple1<T8> eighth(){
         return Tuple.tuple(_8());
+    }
+
+    @Override
+    public int compareTo(Tuple8<T1, T2, T3, T4,T5,T6,T7,T8> o) {
+        int result = Comparators.identityComparator().compare(_1(),o._1());
+        if(result==0){
+            result = Comparators.identityComparator().compare(_2(),o._2());
+            if(result==0){
+                result = Comparators.identityComparator().compare(_3(),o._3());
+                if(result==0){
+                    result = Comparators.identityComparator().compare(_4(),o._4());
+                    if(result==0){
+                        result = Comparators.identityComparator().compare(_5(),o._5());
+                        if(result==0){
+                            result = Comparators.identityComparator().compare(_6(),o._6());
+                            if(result==0){
+                                result = Comparators.identityComparator().compare(_7(),o._7());
+                                if(result==0){
+                                    result = Comparators.identityComparator().compare(_8(),o._8());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        return result;
     }
 
     public Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> eager(){

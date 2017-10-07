@@ -2,6 +2,7 @@ package cyclops.collections.tuple;
 
 
 import com.aol.cyclops2.types.foldable.To;
+import cyclops.data.Comparators;
 import cyclops.function.*;
 import lombok.AllArgsConstructor;
 
@@ -17,7 +18,8 @@ import java.util.function.Supplier;
  */
 @AllArgsConstructor
 public class Tuple5<T1,T2,T3,T4,T5> implements To<Tuple5<T1,T2,T3,T4,T5>>,
-                                                Serializable{
+                                                Serializable,
+                                                Comparable<Tuple5<T1,T2,T3,T4,T5>>{
 
     private static final long serialVersionUID = 1L;
 
@@ -187,7 +189,24 @@ public class Tuple5<T1,T2,T3,T4,T5> implements To<Tuple5<T1,T2,T3,T4,T5>>,
     public <R> R visit(Function5<? super T1, ? super T2, ? super T3,? super T4, ? super T5,? extends R> fn){
         return fn.apply(_1(),_2(),_3(),_4(),_5());
     }
+    @Override
+    public int compareTo(Tuple5<T1, T2, T3, T4,T5> o) {
+        int result = Comparators.identityComparator().compare(_1(),o._1());
+        if(result==0){
+            result = Comparators.identityComparator().compare(_2(),o._2());
+            if(result==0){
+                result = Comparators.identityComparator().compare(_3(),o._3());
+                if(result==0){
+                    result = Comparators.identityComparator().compare(_4(),o._4());
+                    if(result==0){
+                        result = Comparators.identityComparator().compare(_5(),o._5());
+                    }
+                }
+            }
 
+        }
+        return result;
+    }
     @Override
     public String toString() {
         return String.format("[%s,%s,%s,%s,%s]", _1(),_2(),_3(),_4(),_5());
