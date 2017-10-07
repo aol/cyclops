@@ -367,6 +367,11 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return limitWhile(p.negate());
     }
 
+    @Override
+    public final ReactiveSeq<T> limitUntilClosed(final Predicate<? super T> p) {
+        return limitWhileClosed(p.negate());
+    }
+
 
     @Override
     public ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
@@ -1299,10 +1304,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
+        return reduce(identity,accumulator);
+    }
+    @Override
+    public <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
         Future<U> future = Future.future();
         Object[] current = {identity};
         forEach(e -> current[0] = (U) accumulator.apply((U) current[0], e), this.defaultErrorHandler, () -> future.complete((U) current[0]));
-        return combiner.apply(identity, future.get());
+        return future.get();
     }
 
     @Override

@@ -11,7 +11,7 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
-import cyclops.monads.function.AnyMFn2;
+import cyclops.monads.function.AnyMFunction2;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import cyclops.collections.mutable.ListX;
@@ -33,7 +33,7 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R> {
     public R apply(T1 a, T2 b);
 
 
-    default <W extends WitnessType<W>> AnyMFn2<W,T1,T2,R> liftF(){return AnyM.liftF2(this);
+    default <W extends WitnessType<W>> AnyMFunction2<W,T1,T2,R> liftF(){return AnyM.liftF2(this);
     }
     
     

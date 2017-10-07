@@ -6,5 +6,5 @@ import cyclops.monads.WitnessType;
 import java.util.function.BinaryOperator;
 
 
-public interface BinaryAnyMFn<W extends WitnessType<W>,T> extends BinaryOperator<AnyM<W,T>>, AnyMFn2<W,T,T,T> {
+public interface BinaryAnyMFunction<W extends WitnessType<W>,T> extends BinaryOperator<AnyM<W,T>>, AnyMFunction2<W,T,T,T> {
 }

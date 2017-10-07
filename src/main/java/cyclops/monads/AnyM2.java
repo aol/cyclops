@@ -17,8 +17,8 @@ import cyclops.control.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.*;
-import cyclops.monads.function.AnyMFn1;
-import cyclops.monads.function.AnyMFn2;
+import cyclops.monads.function.AnyMFunction1;
+import cyclops.monads.function.AnyMFunction2;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import cyclops.stream.FutureStream;
@@ -511,7 +511,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
    * @param fn
    * @return
    */
-  public static <W extends WitnessType<W>,U, R> AnyMFn1<W,U,R> liftF(final Function<? super U, ? extends R> fn) {
+  public static <W extends WitnessType<W>,U, R> AnyMFunction1<W,U,R> liftF(final Function<? super U, ? extends R> fn) {
       return u -> u.map(input -> fn.apply(input));
   }
 
@@ -536,7 +536,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
    * @param fn BiFunction to lift
    * @return Lifted BiFunction
    */
-  public static <W extends WitnessType<W>,U1, U2, R> AnyMFn2<W,U1,U2,R> liftF2(
+  public static <W extends WitnessType<W>,U1, U2, R> AnyMFunction2<W,U1,U2,R> liftF2(
           final BiFunction<? super U1, ? super U2, ? extends R> fn) {
 
       return (u1, u2) -> u1.flatMapA(input1 -> u2.map(input2 -> fn.apply(input1, input2)));

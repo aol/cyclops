@@ -13,8 +13,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import cyclops.monads.Witness;
-import cyclops.monads.function.AnyMFn1;
-import cyclops.monads.function.AnyMFn2;
+import cyclops.monads.function.AnyMFunction1;
+import cyclops.monads.function.AnyMFunction2;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -92,7 +92,7 @@ public class AnyMValueTest {
 
 	@Test
 	public void testLiftMSimplex(){
-		AnyMFn1<optional,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
+		AnyMFunction1<optional,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
 		
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)));
 		
@@ -103,7 +103,7 @@ public class AnyMValueTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-		AnyMFn2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+		AnyMFunction2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.of(4)));
 		
@@ -111,7 +111,7 @@ public class AnyMValueTest {
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-		AnyMFn2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+		AnyMFunction2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.fromOptional(Optional.ofNullable(null)));
 		
@@ -123,7 +123,7 @@ public class AnyMValueTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-		AnyMFn2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
+		AnyMFunction2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
 		
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.fromOptional(Optional.of(3)),AnyM.ofNullable(4));
 		

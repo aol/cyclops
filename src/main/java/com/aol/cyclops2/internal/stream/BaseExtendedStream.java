@@ -130,6 +130,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
         return reducer.reduce(this);
     }
+
     @Override
     public <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
         return unwrapStream().reduce(identity, accumulator, combiner);

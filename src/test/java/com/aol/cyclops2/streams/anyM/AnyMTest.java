@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.monads.Witness;
-import cyclops.monads.function.AnyMFn1;
-import cyclops.monads.function.AnyMFn2;
+import cyclops.monads.function.AnyMFunction1;
+import cyclops.monads.function.AnyMFunction2;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
@@ -381,7 +381,7 @@ public class AnyMTest {
 	
 	@Test
 	public void testLiftMSimplex(){
-		AnyMFn1<Witness.optional,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
+		AnyMFunction1<Witness.optional,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
 		
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3));
 		
@@ -392,7 +392,7 @@ public class AnyMTest {
 
 	@Test
 	public void testLiftM2Simplex(){
-		AnyMFn2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+		AnyMFunction2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
 		
@@ -400,7 +400,7 @@ public class AnyMTest {
 	}
 	@Test
     public void testLiftM2AnyMValue(){
-		AnyMFn2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+		AnyMFunction2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
         
         AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
         
@@ -408,7 +408,7 @@ public class AnyMTest {
     }
 	@Test
 	public void testLiftM2SimplexNull(){
-		AnyMFn2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+		AnyMFunction2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(null));
 		
@@ -420,7 +420,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-		AnyMFn2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
+		AnyMFunction2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
 		
 		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
 		

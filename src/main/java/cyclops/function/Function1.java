@@ -13,7 +13,7 @@ import cyclops.control.*;
 
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.monads.function.AnyMFn1;
+import cyclops.monads.function.AnyMFunction1;
 
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
@@ -100,7 +100,7 @@ public interface Function1<T,  R> extends Function<T,R>{
        return (T1)-> Optional.ofNullable(apply(T1));
     }
 
-    default <W extends WitnessType<W>> AnyMFn1<W, T,R> liftF(){
+    default <W extends WitnessType<W>> AnyMFunction1<W, T,R> liftF(){
         return AnyM.liftF(this);
     }
 

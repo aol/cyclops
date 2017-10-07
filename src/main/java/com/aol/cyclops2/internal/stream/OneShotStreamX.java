@@ -1,5 +1,6 @@
 package com.aol.cyclops2.internal.stream;
 
+import com.aol.cyclops2.internal.stream.spliterators.LimitWhileClosedSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
 import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
@@ -144,6 +145,16 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
         return createSeq(Streams.cycle(unwrapStream()), reversible)
                 .limitWhile(predicate.negate());
     }
+
+    @Override
+    public ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
+        return createSeq(new LimitWhileClosedSpliterator<T>(get(),predicate),reversible);
+    }
+    @Override
+    public ReactiveSeq<T> limitUntilClosed(Predicate<? super T> predicate) {
+        return createSeq(new LimitWhileClosedSpliterator<T>(get(),predicate.negate()),reversible);
+    }
+
     @Override
     public ReactiveSeq<T> cycle(long times) {
         return createSeq(Streams.cycle(times, Streamable.fromStream(unwrapStream())), reversible);
@@ -158,26 +169,7 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
     <X> ReactiveSeq<X> createSeq(Spliterator<X> stream, Optional<ReversableSpliterator> reversible) {
         return new OneShotStreamX<X>(stream,reversible);
     }
-    /**
 
-    @Override @SafeVarargs
-    public  final ReactiveSeq<T> insertAt(final int pos, final T... values) {
-        return createSeq(Streams.insertAt(this, pos, values), Optional.zero());
-
-    }
-
-    @Override
-    public ReactiveSeq<T> deleteBetween(final int start, final int end) {
-        return createSeq(Streams.deleteBetween(this, start, end), Optional.zero());
-    }
-
-    @Override
-    public ReactiveSeq<T> insertAtS(final int pos, final Stream<T> stream) {
-
-        return createSeq(Streams.insertStreamAt(this, pos, stream), Optional.zero());
-
-    }
-    **/
     Spliterator<T> get() {
         return stream;
     }

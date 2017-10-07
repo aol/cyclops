@@ -9,7 +9,7 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import cyclops.monads.function.AnyMFn2;
+import cyclops.monads.function.AnyMFunction2;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -24,7 +24,7 @@ public class LiftTest {
 	
 	@Test
 	public void testLift(){
-		AnyMFn2<tryType,Integer,Integer,Integer> add =	AnyM.liftF2(this::add);
+		AnyMFunction2<tryType,Integer,Integer,Integer> add =	AnyM.liftF2(this::add);
 		
 		AnyM<tryType,Integer> result = add.apply(success(2), success(3));
 		assertThat(result.<Try<Integer,RuntimeException>>unwrap().get(),equalTo(5));
@@ -32,7 +32,7 @@ public class LiftTest {
 	
 	@Test
 	public void testLiftError(){
-		AnyMFn2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
+		AnyMFunction2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
 		AnyM<tryType,Integer> result = divide.apply(success(2, ArithmeticException.class),Try.success(0,ArithmeticException.class).anyM());
 		System.out.println(result);
@@ -41,7 +41,7 @@ public class LiftTest {
 	
 	@Test
 	public void testLiftErrorAndStream(){
-		AnyMFn2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
+		AnyMFunction2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
 		AnyM<tryType,Integer> result = divide.apply(success(20, ArithmeticException.class), Try.success(4).anyM());
 		System.out.println(result);
@@ -51,7 +51,7 @@ public class LiftTest {
 	@Test
 	public void testLiftAndStream(){
 
-		AnyMFn2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
+		AnyMFunction2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
 		AnyM<tryType,Integer> result = divide.apply(Try.success(2, ArithmeticException.class).anyM(), Try.success(4).anyM());
 		
@@ -61,7 +61,7 @@ public class LiftTest {
 	
 	@Test(expected=ArithmeticException.class)
 	public void testLiftNoExceptionType(){
-		AnyMFn2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
+		AnyMFunction2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 		
 		AnyM<tryType,Integer> result = divide.apply(Try.success(2).anyM(),Try.success(0).anyM());
 		System.out.println(result);

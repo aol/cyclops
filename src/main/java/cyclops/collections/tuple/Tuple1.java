@@ -11,6 +11,7 @@ import cyclops.control.Identity;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
+import cyclops.data.Comparators;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness;
@@ -43,6 +44,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
                                   Filters<T>,
                                   EqualTo<tuple1,T,Tuple1<T>>,
                                   OrderedBy<tuple1,T,Tuple1<T>>,
+                                  Comparable<Tuple1<T>>,
                                   Higher<tuple1,T>{
 
     private static final long serialVersionUID = 1L;
@@ -121,7 +123,10 @@ public class Tuple1<T> implements To<Tuple1<T>>,
         Tuple1<?> tuple1 = (Tuple1<?>) o;
         return Objects.equals(_1(), tuple1._1());
     }
-
+    @Override
+    public int compareTo(Tuple1<T> o) {
+        return Comparators.identityComparator().compare(_1(),o._1());
+    }
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), _1());

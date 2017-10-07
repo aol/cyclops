@@ -1290,9 +1290,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     <T2, T3, T4> ReactiveSeq<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth);
 
-    default ReactiveSeq<T> seq(){
-        return this;
-    }
+
     @Override
    default ReactiveSeq<T> shuffle(final Random random) {
         return coflatMap(r->{ List<T> list = r.toList(); Collections.shuffle(list,random); return list;})
@@ -1322,7 +1320,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     @Override
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
-        return seq().foldLeft(identity, accumulator);
+
+        Iterator<T> it = iterator();
+        U current = identity;
+        while(it.hasNext()){
+            current = accumulator.apply(current,it.next());
+        }
+        return current;
 
     }
 
@@ -2010,9 +2014,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#limitUntilClosed(java.util.function.Predicate)
      */
-    default ReactiveSeq<T> limitUntilClosed(final Predicate<? super T> p) {
-        return fromStream(seq().limitUntilClosed(p));
-    }
+     ReactiveSeq<T> limitUntilClosed(final Predicate<? super T> p);
 
     /**
      * @return Does nothing ReactiveSeq is for Sequential Streams
@@ -2355,7 +2357,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
-        return seq().collect(supplier,accumulator,combiner);
+        return Streams.stream(this).collect(supplier,accumulator,combiner);
     }
     default <R, A> ReactiveSeq<R> collectAll(Collector<? super T, A, R> collector){
         return coflatMap(s->s.collect(collector));
@@ -2413,10 +2415,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @see Collectors
      */
     @Override
-    default <R, A> R collect(Collector<? super T, A, R> collector) {
-
-        return seq().collect(collector);
-    }
+    <R, A> R collect(Collector<? super T, A, R> collector);
 
     /**
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
@@ -4531,19 +4530,20 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default void printErr() {
 
-        seq().printErr();
+        forEach(n->{},System.out::println,()->{});
     }
 
     @Override
     default void print(final PrintWriter writer) {
 
-        seq().print(writer);
+        forEach(writer::println,e->{},()->writer.close());
+
     }
 
     @Override
     default void print(final PrintStream stream) {
 
-        seq().print(stream);
+        forEach(stream::println,e->{},()->stream.close());
     }
 
     /**

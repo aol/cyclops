@@ -12,8 +12,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import cyclops.monads.Witness;
-import cyclops.monads.function.AnyMFn1;
-import cyclops.monads.function.AnyMFn2;
+import cyclops.monads.function.AnyMFunction1;
+import cyclops.monads.function.AnyMFunction2;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -75,7 +75,7 @@ public class MonadTest {
 
 	@Test
 	public void testLiftMSimplex(){
-		AnyMFn1<completableFuture,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
+		AnyMFunction1<completableFuture,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
 		
 		AnyM<completableFuture,Integer> result = lifted.apply(AnyM.fromCompletableFuture(CompletableFuture.completedFuture(3)));
 		
@@ -86,7 +86,7 @@ public class MonadTest {
 	
 	@Test
 	public void testLiftM2Simplex(){
-		AnyMFn2<completableFuture,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+		AnyMFunction2<completableFuture,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<completableFuture,Integer> result = lifted.apply(AnyM.fromCompletableFuture(CompletableFuture.completedFuture(3)),
 																AnyM.fromCompletableFuture(CompletableFuture.completedFuture(4)));
@@ -95,7 +95,7 @@ public class MonadTest {
 	}
 	@Test
 	public void testLiftM2SimplexNull(){
-		AnyMFn2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+		AnyMFunction2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 		
 		AnyM<optional,Integer> result = lifted.apply(AnyM.ofNullable(3),
 														AnyM.ofNullable(null));
@@ -108,7 +108,7 @@ public class MonadTest {
 	}
 	@Test
 	public void testLiftM2Stream(){
-		AnyMFn2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
+		AnyMFunction2<stream,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
 		
 		AnyM<stream,Integer> result = lifted.apply(AnyM.fromArray(3),AnyM.fromArray(4,6,7));
 		

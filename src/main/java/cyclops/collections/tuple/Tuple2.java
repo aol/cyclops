@@ -6,8 +6,10 @@ import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.types.foldable.EqualTo;
 import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
+import cyclops.collections.mutable.SortedSetX;
 import cyclops.control.Maybe;
 import cyclops.control.Xor;
+import cyclops.data.Comparators;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.tuple2;
@@ -34,6 +36,7 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
                                         Serializable,
                                         EqualTo<Higher<tuple2,T1>,T2,Tuple2<T1,T2>>,
                                         OrderedBy<Higher<tuple2,T1>,T2,Tuple2<T1,T2>>,
+                                        Comparable<Tuple2<T1,T2>>,
                                         Higher2<tuple2,T1,T2> {
 
     private static final long serialVersionUID = 1L;
@@ -179,6 +182,15 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
     @Override
     public int hashCode() {
         return Objects.hash(_1(), _2());
+    }
+
+    @Override
+    public int compareTo(Tuple2<T1, T2> o) {
+        int result = Comparators.identityComparator().compare(_1(),o._1());
+        if(result==0){
+            result = Comparators.identityComparator().compare(_2(),o._2());
+        }
+        return result;
     }
 
     public static class Instances {

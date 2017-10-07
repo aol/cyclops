@@ -12,7 +12,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.monads.Witness.supplier;
-import cyclops.monads.function.AnyMFn0;
+import cyclops.monads.function.AnyMFunction0;
 import cyclops.typeclasses.free.Free;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.FutureT;
@@ -60,7 +60,7 @@ public interface Function0<R> extends Supplier<R>{
        return ()-> Optional.ofNullable(apply());
     }
 
-    default <W extends WitnessType<W>> AnyMFn0<W,R> liftF(W witness){
+    default <W extends WitnessType<W>> AnyMFunction0<W,R> liftF(W witness){
         return ()-> witness.adapter().unit(this.get());
     }
     

@@ -5,6 +5,7 @@ import java.util.List;
 
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.ListX;
+import cyclops.collections.tuple.Tuple2;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import org.pcollections.AmortizedPQueue;
@@ -257,14 +258,14 @@ public class Reducers {
      * @return Reducer for PMap
      */
     public static <K, V> Reducer<PMap<K, V>> toPMap() {
-        /**
+//@TODO FIX THIS
         return Reducer.<PMap<K, V>> of(HashTreePMap.empty(), (final PMap<K, V> a) -> b -> a.plusAll(b), (in) -> {
 
-            final List w = ((TupleWrapper) () -> in).values();
-            return HashTreePMap.singleton((K) w.get(0), (V) w.get(1));
+            final Tuple2 w = (Tuple2)in;
+            return HashTreePMap.singleton((K) w._1(), (V) w._2());
+
         });
-         **/
-        return null;
+
     }
     /**
      * <pre>
@@ -277,13 +278,13 @@ public class Reducers {
      * @return Reducer for PersistentMapX
      */
     public static <K, V> Reducer<PersistentMapX<K, V>> toPMapX() {
-        /**
+//@TODO FIX THIS
         return Reducer.<PersistentMapX<K, V>> of(PersistentMapX.empty(), (final PersistentMapX<K, V> a) -> b -> a.plusAll(b), (in) -> {
-            final List w = ((TupleWrapper) () -> in).values();
-            return PersistentMapX.singleton((K) w.get(0), (V) w.get(1));
+            final Tuple2 w = (Tuple2)in;
+            return PersistentMapX.singleton((K) w._1(), (V) w._2());
         });
-         **/
-        return null;
+
+
     }
 
     /**

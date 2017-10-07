@@ -286,6 +286,10 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     public ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
         return createSeq(new LimitWhileClosedSpliterator<T>(get(),predicate),reversible);
     }
+    @Override
+    public ReactiveSeq<T> limitUntilClosed(Predicate<? super T> predicate) {
+        return createSeq(new LimitWhileClosedSpliterator<T>(get(),predicate.negate()),reversible);
+    }
 
 
 
