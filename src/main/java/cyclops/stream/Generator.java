@@ -2,7 +2,7 @@ package cyclops.stream;
 
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
-import cyclops.function.BooleanFn0;
+import cyclops.function.BooleanFunction0;
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ToStream;
 import cyclops.function.Function0;
@@ -367,14 +367,14 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
         };
     }
 
-    public static BooleanFn0 infinitely(){
+    public static BooleanFunction0 infinitely(){
         return ()->true;
     }
-    public static BooleanFn0 times(int times){
+    public static BooleanFunction0 times(int times){
         int[] num = {0};
         return ()->++num[0]<times-1;
     }
-    public static BooleanFn0 once(){
+    public static BooleanFunction0 once(){
         return times(1);
     }
 

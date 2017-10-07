@@ -1,26 +1,21 @@
 package cyclops.monads;
 
 import com.aol.cyclops2.types.Filters;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.reactive.Completable;
-import cyclops.async.Future;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
-import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
 import cyclops.control.lazy.Either;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.monads.Witness.*;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
@@ -35,7 +30,6 @@ import org.reactivestreams.Subscriber;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -211,7 +205,7 @@ public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> imple
     }
 
     @Override
-    public <S, U, R>  XorM<W1,W2,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    public <S, U, R>  XorM<W1,W2,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (XorM)Zippable.super.zip3(second,third,fn3);
     }
 
@@ -221,7 +215,7 @@ public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> imple
     }
 
     @Override
-    public <T2, T3, T4, R>  XorM<W1,W2,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    public <T2, T3, T4, R>  XorM<W1,W2,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (XorM)Zippable.super.zip4(second,third,fourth,fn);
     }
 

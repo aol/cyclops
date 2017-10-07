@@ -2,7 +2,6 @@ package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.matching.Deconstruct;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct1;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.*;
@@ -669,7 +668,7 @@ public interface Eval<T> extends To<Eval<T>>,
     }
 
     @Override
-    default <S, U, R> Eval<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> Eval<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (Eval<R>)MonadicValue.super.zip3(second,third,fn3);
     }
 
@@ -679,7 +678,7 @@ public interface Eval<T> extends To<Eval<T>>,
     }
 
     @Override
-    default <T2, T3, T4, R> Eval<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> Eval<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (Eval<R>)MonadicValue.super.zip4(second,third,fourth,fn);
     }
 
@@ -695,8 +694,8 @@ public interface Eval<T> extends To<Eval<T>>,
     @Override
     default <T2, R1, R2, R3, R> Eval<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (Eval<R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
@@ -706,9 +705,9 @@ public interface Eval<T> extends To<Eval<T>>,
     @Override
     default <T2, R1, R2, R3, R> Eval<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return (Eval<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
@@ -719,7 +718,7 @@ public interface Eval<T> extends To<Eval<T>>,
     @Override
     default <T2, R1, R2, R> Eval<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Eval<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
@@ -730,8 +729,8 @@ public interface Eval<T> extends To<Eval<T>>,
     @Override
     default <T2, R1, R2, R> Eval<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Eval<R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
@@ -1431,7 +1430,7 @@ public interface Eval<T> extends To<Eval<T>>,
         public static <T,R> Foldable<eval> foldable(){
             BiFunction<Monoid<T>,Higher<eval,T>,T> foldRightFn =  (m,l)-> Eval.narrowK(l).orElse(m.zero());
             BiFunction<Monoid<T>,Higher<eval,T>,T> foldLeftFn = (m,l)-> Eval.narrowK(l).orElse(m.zero());
-            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.eval, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            Function3<Monoid<R>, Function<T, R>, Higher<eval, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 

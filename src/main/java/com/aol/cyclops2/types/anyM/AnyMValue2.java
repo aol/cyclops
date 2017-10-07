@@ -1,29 +1,22 @@
 package com.aol.cyclops2.types.anyM;
 
-import com.aol.cyclops2.internal.monads.AnyMSeqImpl;
-import com.aol.cyclops2.internal.monads.AnyMValue2Impl;
-import com.aol.cyclops2.internal.monads.AnyMValueImpl;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
-import cyclops.collections.mutable.ListX;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.AnyM2;
 import cyclops.monads.WitnessType;
-import cyclops.monads.function.AnyMFn1;
-import cyclops.monads.function.AnyMFn2;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -31,8 +24,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
-
-import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * Wrapper around 'Any' scalar 'M'onad
@@ -153,7 +144,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     @Override
-    default <S, U, R> AnyMValue2<W,T2,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> AnyMValue2<W,T2,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (AnyMValue2<W,T2,R>)AnyM2.super.zip3(second,third,fn3);
     }
 
@@ -163,7 +154,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     @Override
-    default <T2, T3, T4, R> AnyMValue2<W,T2,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> AnyMValue2<W,T2,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (AnyMValue2<W,T2,R>)AnyM2.super.zip4(second,third,fourth,fn);
     }
 
@@ -386,22 +377,22 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     @Override
-    default <T2, R1, R2, R3, R> AnyMValue2<W,T2,R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2, final Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3, final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+    default <T2, R1, R2, R3, R> AnyMValue2<W,T2,R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2, final Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3, final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (AnyMValue2<W,T2,R>)AnyMValue.super.forEach4(value1,value2,value3,yieldingFunction);
     }
 
     @Override
-    default <T2, R1, R2, R3, R> AnyMValue2<W,T2,R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2, final Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3, final Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction, final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+    default <T2, R1, R2, R3, R> AnyMValue2<W,T2,R> forEach4(final Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2, final Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3, final Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction, final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (AnyMValue2<W,T2,R>)AnyMValue.super.forEach4(value1,value2,value3,filterFunction,yieldingFunction);
     }
 
     @Override
-    default <T2, R1, R2, R> AnyMValue2<W,T2,R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2, final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    default <T2, R1, R2, R> AnyMValue2<W,T2,R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2, final Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         return (AnyMValue2<W,T2,R>)AnyMValue.super.forEach3(value1,value2,yieldingFunction);
     }
 
     @Override
-    default <T2, R1, R2, R> AnyMValue2<W,T2,R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2, final Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction, final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    default <T2, R1, R2, R> AnyMValue2<W,T2,R> forEach3(final Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2, final Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction, final Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         return (AnyMValue2<W,T2,R>)AnyMValue.super.forEach3(value1,value2,filterFunction,yieldingFunction);
     }
 

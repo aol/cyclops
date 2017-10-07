@@ -1,8 +1,6 @@
 package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.internal.stream.spliterators.push.PublisherToOperator;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Present;
 import com.aol.cyclops2.types.Value;
@@ -11,7 +9,6 @@ import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.recoverable.Recoverable;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
-import cyclops.companion.Optionals;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -24,14 +21,12 @@ import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
@@ -437,7 +432,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     @Override
-    default <S, U, R> Option<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> Option<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (Option<R>)MonadicValue.super.zip3(second,third,fn3);
     }
 
@@ -447,7 +442,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     @Override
-    default <T2, T3, T4, R> Option<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> Option<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (Option<R>)MonadicValue.super.zip4(second,third,fourth,fn);
     }
 
@@ -462,8 +457,8 @@ public interface Option<T> extends To<Option<T>>,
     @Override
     default <T2, R1, R2, R3, R> Option<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                   BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                  Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                  Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                  Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (Option<R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
@@ -473,9 +468,9 @@ public interface Option<T> extends To<Option<T>>,
     @Override
     default <T2, R1, R2, R3, R> Option<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                   BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                  Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                  Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                  Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                  Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return (Option<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
@@ -486,7 +481,7 @@ public interface Option<T> extends To<Option<T>>,
     @Override
     default <T2, R1, R2, R> Option<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                               BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                              Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                              Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Option<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
@@ -497,8 +492,8 @@ public interface Option<T> extends To<Option<T>>,
     @Override
     default <T2, R1, R2, R> Option<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                               BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                              Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                              Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                              Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                              Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Option<R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }

@@ -11,8 +11,8 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.PersistentMapX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
@@ -148,8 +148,8 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
     default <K1,K2,K3,K4,R1, R2, R3, R> ImmutableMap<K4,R> forEach4(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1,
                                                                     BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Iterable<Tuple2<K2, R2>>> iterable2,
-                                                                    Fn3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Iterable<Tuple2<K3, R3>>> iterable3,
-                                                                    Fn4<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? super Tuple2<K3, R3>, ? extends Tuple2<K4, R>> yieldingFunction) {
+                                                                    Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Iterable<Tuple2<K3, R3>>> iterable3,
+                                                                    Function4<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? super Tuple2<K3, R3>, ? extends Tuple2<K4, R>> yieldingFunction) {
 
         return this.flatMapI((a1,b1) -> {
             Tuple2<K, V> in = Tuple.tuple(a1, b1);
@@ -168,9 +168,9 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
     default <K1,K2,K3,K4,R1, R2, R3, R> ImmutableMap<K4,R> forEach4(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1,
                                                                     BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Iterable<Tuple2<K2, R2>>> iterable2,
-                                                                    Fn3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Iterable<Tuple2<K3, R3>>> iterable3,
-                                                                    Fn4<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? super Tuple2<K3, R3>, Boolean> filterFunction,
-                                                                    Fn4<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? super Tuple2<K3, R3>, ? extends Tuple2<K4, R>> yieldingFunction) {
+                                                                    Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Iterable<Tuple2<K3, R3>>> iterable3,
+                                                                    Function4<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? super Tuple2<K3, R3>, Boolean> filterFunction,
+                                                                    Function4<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? super Tuple2<K3, R3>, ? extends Tuple2<K4, R>> yieldingFunction) {
 
         return this.flatMapI((a1,b1) -> {
             Tuple2<K, V> in = Tuple.tuple(a1, b1);
@@ -190,7 +190,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
     default <K1,K2,K3,R1, R2, R> ImmutableMap<K3,R> forEach3(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1,
                                                              BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Iterable<Tuple2<K2, R2>>> iterable2,
-                                                             Fn3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Tuple2<K3, R>> yieldingFunction) {
+                                                             Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Tuple2<K3, R>> yieldingFunction) {
 
         return this.flatMapI((a1,b1) -> {
             Tuple2<K, V> in = Tuple.tuple(a1, b1);
@@ -208,8 +208,8 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
     default <K1,K2,K3,R1, R2, R> ImmutableMap<K3,R> forEach3(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1,
                                                              BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Iterable<Tuple2<K2, R2>>> iterable2,
-                                                             Fn3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, Boolean> filterFunction,
-                                                             Fn3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Tuple2<K3, R>> yieldingFunction) {
+                                                             Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, Boolean> filterFunction,
+                                                             Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Tuple2<K3, R>> yieldingFunction) {
 
         return this.flatMapI((a1,b1) -> {
             Tuple2<K, V> in = Tuple.tuple(a1, b1);

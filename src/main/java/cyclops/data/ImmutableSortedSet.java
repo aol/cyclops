@@ -9,8 +9,8 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.tuple.Tuple2;
@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 public interface ImmutableSortedSet<T> extends ImmutableSet<T> {
@@ -106,22 +105,22 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T> {
     ImmutableSortedSet<T> filter(Predicate<? super T> predicate);
 
     @Override
-    default <R1, R2, R3, R> ImmutableSortedSet<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+    default <R1, R2, R3, R> ImmutableSortedSet<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (ImmutableSortedSet<R>)ImmutableSet.super.forEach4(iterable1,iterable2,iterable3,yieldingFunction);
     }
 
     @Override
-    default <R1, R2, R3, R> ImmutableSortedSet<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction, Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+    default <R1, R2, R3, R> ImmutableSortedSet<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction, Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (ImmutableSortedSet<R>)ImmutableSet.super.forEach4(iterable1,iterable2,iterable3,filterFunction,yieldingFunction);
     }
 
     @Override
-    default <R1, R2, R> ImmutableSortedSet<R> forEach3(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    default <R1, R2, R> ImmutableSortedSet<R> forEach3(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         return (ImmutableSortedSet<R>)ImmutableSet.super.forEach3(iterable1,iterable2,yieldingFunction);
     }
 
     @Override
-    default <R1, R2, R> ImmutableSortedSet<R> forEach3(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction, Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    default <R1, R2, R> ImmutableSortedSet<R> forEach3(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction, Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         return (ImmutableSortedSet<R>)ImmutableSet.super.forEach3(iterable1,iterable2,filterFunction,yieldingFunction);
 
     }
@@ -227,12 +226,12 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T> {
     }
 
     @Override
-    default <S, U, R> ImmutableSortedSet<R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> ImmutableSortedSet<R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return unitStream(stream().zip3(second,third,fn3));
     }
 
     @Override
-    default <T2, T3, T4, R> ImmutableSortedSet<R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> ImmutableSortedSet<R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return unitStream(stream().zip4(second,third,fourth,fn));
     }
 

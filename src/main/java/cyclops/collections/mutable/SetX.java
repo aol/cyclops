@@ -4,24 +4,21 @@ import com.aol.cyclops2.data.collections.extensions.lazy.LazySetX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.foldable.Evaluation;
 
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.collections.immutable.VectorX;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Xor;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.set;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.stream.Spouts;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
@@ -298,8 +295,8 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     @Override
     default <R1, R2, R3, R> SetX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
-            Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (SetX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
@@ -310,9 +307,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     @Override
     default <R1, R2, R3, R> SetX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
-            Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+            Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (SetX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
@@ -323,7 +320,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     @Override
     default <R1, R2, R> SetX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (SetX)LazyCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
     }
@@ -334,8 +331,8 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     @Override
     default <R1, R2, R> SetX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-            Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (SetX)LazyCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }
@@ -1159,12 +1156,12 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
 
     @Override
-    default <S, U, R> SetX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> SetX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (SetX<R>)LazyCollectionX.super.zip3(second,third,fn3);
     }
 
     @Override
-    default <T2, T3, T4, R> SetX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> SetX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (SetX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
 

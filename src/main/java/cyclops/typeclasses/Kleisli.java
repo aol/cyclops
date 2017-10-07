@@ -5,8 +5,8 @@ import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Xor;
 import cyclops.function.Function1;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 
 import cyclops.monads.WitnessType;
 import cyclops.typeclasses.functor.Functor;
@@ -104,8 +104,8 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
 
     public <R1, R2, R3, R4> Kleisli<W,T,R4> forEach4(Function<? super R, Function<? super T,? extends Higher<W,? extends R1>>> value2,
                                                      BiFunction<? super R, ? super R1, Function<? super T,? extends Higher<W,? extends R2>>> value3,
-                                                     Fn3<? super R, ? super R1, ? super R2, Function<? super T,? extends Higher<W,? extends R3>>> value4,
-                                                     Fn4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
+                                                     Function3<? super R, ? super R1, ? super R2, Function<? super T,? extends Higher<W,? extends R3>>> value4,
+                                                     Function4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
 
 
 
@@ -135,7 +135,7 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
 
     public <R1, R2, R4> Kleisli<W,T,R4> forEach3(Function<? super R, Function<? super T,? extends Higher<W,? extends R1>>> value2,
                                                  BiFunction<? super R, ? super R1, Function<? super T,? extends Higher<W,? extends R2>>> value3,
-                                                 Fn3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
+                                                 Function3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
 
         return this.flatMapK(in -> {
 
@@ -175,8 +175,8 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
     }
     public <R1, R2, R3, R4> Kleisli<W,T,R4> forEachK4(Function<? super R, ? extends Kleisli<W,T,? extends R1>> value2,
                                                      BiFunction<? super R, ? super R1, ? extends Kleisli<W,T,? extends R2>> value3,
-                                                     Fn3<? super R, ? super R1, ? super R2, ? extends Kleisli<W,T,? extends R3>> value4,
-                                                     Fn4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
+                                                     Function3<? super R, ? super R1, ? super R2, ? extends Kleisli<W,T,? extends R3>> value4,
+                                                     Function4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
 
 
 
@@ -206,7 +206,7 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
 
     public <R1, R2, R4> Kleisli<W,T,R4> forEachK3(Function<? super R, ? extends Kleisli<W,T,? extends R1>> value2,
                                                  BiFunction<? super R, ? super R1, ? extends Kleisli<W,T,? extends R2>> value3,
-                                                 Fn3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
+                                                 Function3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
 
         return this.flatMapK(in -> {
 

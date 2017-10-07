@@ -212,7 +212,7 @@ public class Memoize {
      * @param updateRateInMillis Time in millis between async updates
      * @return Memoized asynchronously updating function
      */
-    public static <T1, T2, R> Fn2<T1, T2, R> memoizeBiFunctionAsync(final BiFunction<T1, T2, R> fn,ScheduledExecutorService ex, long updateRateInMillis) {
+    public static <T1, T2, R> Function2<T1, T2, R> memoizeBiFunctionAsync(final BiFunction<T1, T2, R> fn, ScheduledExecutorService ex, long updateRateInMillis) {
         val memoise2 = memoizeFunctionAsync((final Tuple2<T1, T2> pair) -> fn.apply(pair._1(), pair._2()),ex,updateRateInMillis);
         return (t1, t2) -> memoise2.apply(tuple(t1, t2));
     }
@@ -225,7 +225,7 @@ public class Memoize {
      * @param cron Cron expression for updating cached values asynchonrously
      * @return Memoized asynchronously updating function
      */
-    public static <T1, T2, R> Fn2<T1, T2, R> memoizeBiFunctionAsync(final BiFunction<T1, T2, R> fn, ScheduledExecutorService ex, String cron) {
+    public static <T1, T2, R> Function2<T1, T2, R> memoizeBiFunctionAsync(final BiFunction<T1, T2, R> fn, ScheduledExecutorService ex, String cron) {
         val memoise2 = memoizeFunctionAsync((final Tuple2<T1, T2> pair) -> fn.apply(pair._1(), pair._2()),ex,cron);
         return (t1, t2) -> memoise2.apply(tuple(t1, t2));
     }
@@ -236,7 +236,7 @@ public class Memoize {
      * @param fn BiFunction to memoise
      * @return Memoised BiFunction
      */
-    public static <T1, T2, R> Fn2<T1, T2, R> memoizeBiFunction(final BiFunction<T1, T2, R> fn) {
+    public static <T1, T2, R> Function2<T1, T2, R> memoizeBiFunction(final BiFunction<T1, T2, R> fn) {
         val memoise2 = memoizeFunction((final Tuple2<T1, T2> pair) -> fn.apply(pair._1(), pair._2()));
         return (t1, t2) -> memoise2.apply(tuple(t1, t2));
     }
@@ -248,7 +248,7 @@ public class Memoize {
      * @param cache Cachable to store the results
      * @return Memoised BiFunction
      */
-    public static <T1, T2, R> Fn2<T1, T2, R> memoizeBiFunction(final BiFunction<T1, T2, R> fn, final Cacheable<R> cache) {
+    public static <T1, T2, R> Function2<T1, T2, R> memoizeBiFunction(final BiFunction<T1, T2, R> fn, final Cacheable<R> cache) {
         val memoise2 = memoizeFunction((final Tuple2<T1, T2> pair) -> fn.apply(pair._1(), pair._2()), cache);
         return (t1, t2) -> memoise2.apply(tuple(t1, t2));
     }
@@ -259,7 +259,7 @@ public class Memoize {
      * @param fn TriFunction to memoise
      * @return Memoised TriFunction
      */
-    public static <T1, T2, T3, R> Fn3<T1, T2, T3, R> memoizeTriFunction(final Fn3<T1, T2, T3, R> fn) {
+    public static <T1, T2, T3, R> Function3<T1, T2, T3, R> memoizeTriFunction(final Function3<T1, T2, T3, R> fn) {
         val memoise2 = memoizeFunction((final Tuple3<T1, T2, T3> triple) -> fn.apply(triple._1(), triple._2(), triple._3()));
         return (t1, t2, t3) -> memoise2.apply(tuple(t1, t2, t3));
     }
@@ -273,7 +273,7 @@ public class Memoize {
      * @param cron Cron expression for updating cached values asynchonrously
      * @return Memoized asynchronously updating function
      */
-    public static <T1, T2, T3, R> Fn3<T1, T2, T3, R> memoizeTriFunctionAsync(final Fn3<T1, T2, T3, R> fn, ScheduledExecutorService ex, String cron) {
+    public static <T1, T2, T3, R> Function3<T1, T2, T3, R> memoizeTriFunctionAsync(final Function3<T1, T2, T3, R> fn, ScheduledExecutorService ex, String cron) {
         val memoise2 = memoizeFunctionAsync((final Tuple3<T1, T2, T3> triple) -> fn.apply(triple._1(), triple._2(), triple._3()),ex,cron);
         return (t1, t2, t3) -> memoise2.apply(tuple(t1, t2, t3));
     }
@@ -284,7 +284,7 @@ public class Memoize {
      * @param cache Cachable to store the results
      * @return Memoised TriFunction
      */
-    public static <T1, T2, T3, R> Fn3<T1, T2, T3, R> memoizeTriFunction(final Fn3<T1, T2, T3, R> fn, final Cacheable<R> cache) {
+    public static <T1, T2, T3, R> Function3<T1, T2, T3, R> memoizeTriFunction(final Function3<T1, T2, T3, R> fn, final Cacheable<R> cache) {
         val memoise2 = memoizeFunction((final Tuple3<T1, T2, T3> triple) -> fn.apply(triple._1(), triple._2(), triple._3()), cache);
         return (t1, t2, t3) -> memoise2.apply(tuple(t1, t2, t3));
     }
@@ -297,7 +297,7 @@ public class Memoize {
      * @param updateRateInMillis Time in millis between async updates
      * @return Memoized asynchronously updating function
      */
-    public static <T1, T2, T3, R> Fn3<T1, T2, T3, R> memoizeTriFunctionAsync(final Fn3<T1, T2, T3, R> fn,ScheduledExecutorService ex, long updateRateInMillis) {
+    public static <T1, T2, T3, R> Function3<T1, T2, T3, R> memoizeTriFunctionAsync(final Function3<T1, T2, T3, R> fn, ScheduledExecutorService ex, long updateRateInMillis) {
         val memoise2 = memoizeFunctionAsync((final Tuple3<T1, T2, T3> triple) -> fn.apply(triple._1(), triple._2(), triple._3()),ex,updateRateInMillis);
         return (t1, t2, t3) -> memoise2.apply(tuple(t1, t2, t3));
     }
@@ -307,7 +307,7 @@ public class Memoize {
      * @param fn QuadFunction to memoise
      * @return Memoised TriFunction
      */
-    public static <T1, T2, T3, T4, R> Fn4<T1, T2, T3, T4, R> memoizeQuadFunction(final Fn4<T1, T2, T3, T4, R> fn) {
+    public static <T1, T2, T3, T4, R> Function4<T1, T2, T3, T4, R> memoizeQuadFunction(final Function4<T1, T2, T3, T4, R> fn) {
         val memoise2 = memoizeFunction((final Tuple4<T1, T2, T3, T4> quad) -> fn.apply(quad._1(), quad._2(), quad._3(), quad._4()));
         return (t1, t2, t3, t4) -> memoise2.apply(tuple(t1, t2, t3, t4));
     }
@@ -320,7 +320,7 @@ public class Memoize {
      * @param cron Cron expression for updating cached values asynchonrously
      * @return Memoized asynchronously updating function
      */
-    public static <T1, T2, T3, T4, R> Fn4<T1, T2, T3, T4, R> memoizeQuadFunctionAsync(final Fn4<T1, T2, T3, T4, R> fn, ScheduledExecutorService ex, String cron) {
+    public static <T1, T2, T3, T4, R> Function4<T1, T2, T3, T4, R> memoizeQuadFunctionAsync(final Function4<T1, T2, T3, T4, R> fn, ScheduledExecutorService ex, String cron) {
         val memoise2 = memoizeFunctionAsync((final Tuple4<T1, T2, T3, T4> quad) -> fn.apply(quad._1(), quad._2(), quad._3(), quad._4()),ex,cron);
         return (t1, t2, t3, t4) -> memoise2.apply(tuple(t1, t2, t3, t4));
     }
@@ -333,8 +333,8 @@ public class Memoize {
      * @param cache Cachable to store the results
      * @return Memoised TriFunction
      */
-    public static <T1, T2, T3, T4, R> Fn4<T1, T2, T3, T4, R> memoizeQuadFunction(final Fn4<T1, T2, T3, T4, R> fn,
-                                                                                 final Cacheable<R> cache) {
+    public static <T1, T2, T3, T4, R> Function4<T1, T2, T3, T4, R> memoizeQuadFunction(final Function4<T1, T2, T3, T4, R> fn,
+                                                                                       final Cacheable<R> cache) {
         val memoise2 = memoizeFunction((final Tuple4<T1, T2, T3, T4> quad) -> fn.apply(quad._1(), quad._2(), quad._3(), quad._4()), cache);
         return (t1, t2, t3, t4) -> memoise2.apply(tuple(t1, t2, t3, t4));
     }
@@ -347,7 +347,7 @@ public class Memoize {
      * @param updateRateInMillis Time in millis between async updates
      * @return Memoized asynchronously updating function
      */
-    public static <T1, T2, T3, T4, R> Fn4<T1, T2, T3, T4, R> memoizeQuadFunctionAsync(final Fn4<T1, T2, T3, T4, R> fn,ScheduledExecutorService ex, long updateRateInMillis) {
+    public static <T1, T2, T3, T4, R> Function4<T1, T2, T3, T4, R> memoizeQuadFunctionAsync(final Function4<T1, T2, T3, T4, R> fn, ScheduledExecutorService ex, long updateRateInMillis) {
         val memoise2 = memoizeFunctionAsync((final Tuple4<T1, T2, T3, T4> quad) -> fn.apply(quad._1(), quad._2(), quad._3(), quad._4()),ex,updateRateInMillis);
         return (t1, t2, t3, t4) -> memoise2.apply(tuple(t1, t2, t3, t4));
     }

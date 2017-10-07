@@ -1,8 +1,8 @@
 package com.aol.cyclops2.matching;
 
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
-import cyclops.function.Fn5;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
+import cyclops.function.Function5;
 import cyclops.collections.tuple.Tuple1;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
@@ -11,7 +11,6 @@ import cyclops.collections.tuple.Tuple5;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 @FunctionalInterface
 public interface Deconstruct<T> {
@@ -34,14 +33,14 @@ public interface Deconstruct<T> {
   }
 
   interface Deconstruct3<T1, T2, T3> extends Deconstruct<Tuple3<T1, T2, T3>> {
-    default <R> R fold(Fn3<? super T1, ? super T2, ? super T3, ? extends R> match){
+    default <R> R fold(Function3<? super T1, ? super T2, ? super T3, ? extends R> match){
       Tuple3<T1,T2,T3> t = unapply();
       return match.apply(t._1(),t._2(),t._3());
     }
   }
 
   interface Deconstruct4<T1, T2, T3, T4> extends Deconstruct<Tuple4<T1, T2, T3, T4>> {
-    default <R> R fold(Fn4<? super T1, ? super T2, ? super T3, ? super T4, ? extends R> match){
+    default <R> R fold(Function4<? super T1, ? super T2, ? super T3, ? super T4, ? extends R> match){
       Tuple4<T1,T2,T3,T4> t = unapply();
       return match.apply(t._1(),t._2(),t._3(),t._4());
     }
@@ -49,7 +48,7 @@ public interface Deconstruct<T> {
   }
 
   interface Deconstruct5<T1, T2, T3, T4, T5> extends Deconstruct<Tuple5<T1, T2, T3, T4, T5>> {
-    default <R> R fold(Fn5<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> match){
+    default <R> R fold(Function5<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> match){
       Tuple5<T1,T2,T3,T4,T5> t = unapply();
       return match.apply(t._1(),t._2(),t._3(),t._4(),t._5());
     }

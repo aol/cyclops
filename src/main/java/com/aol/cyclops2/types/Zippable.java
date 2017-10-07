@@ -6,8 +6,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.companion.Monoids;
 import cyclops.function.Semigroup;
@@ -149,7 +149,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
         return zip(second,Tuple::tuple).zip(third,(a,b)->Tuple.tuple(a._1(),a._2(),b));
     }
     default <S, U,R> Zippable<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third,
-                                                  final Fn3<? super T, ? super S, ? super U,? extends R> fn3) {
+                                                  final Function3<? super T, ? super S, ? super U,? extends R> fn3) {
         return (Zippable<R>)zip3(second,third).map(t-> fn3.apply(t._1(),t._2(),t._3()));
     }
 
@@ -172,7 +172,7 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
     }
     default <T2, T3, T4,R> Zippable<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
                                       final Iterable<? extends T4> fourth,
-                                      final Fn4<? super T, ? super T2, ? super T3,? super T4,? extends R> fn) {
+                                      final Function4<? super T, ? super T2, ? super T3,? super T4,? extends R> fn) {
         return (Zippable<R>)zip4(second,third,fourth).map(t->fn.apply(t._1(),t._2(),t._3(),t._4()));
     }
 }

@@ -3,10 +3,9 @@ package cyclops.control;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.writer;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
@@ -80,8 +79,8 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
       */
     public  <R1, R2, R3, R4> Writer<W,R4> forEach4(Function<? super T, ? extends Writer<W,R1>> value2,
                                                    BiFunction<? super T, ? super R1, ? extends Writer<W,R2>> value3,
-                                                   Fn3<? super T, ? super R1, ? super R2, ? extends Writer<W,R3>> value4,
-                                                   Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
+                                                   Function3<? super T, ? super R1, ? super R2, ? extends Writer<W,R3>> value4,
+                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
 
 
         return this.flatMap(in -> {
@@ -136,7 +135,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
      */
     public <R1, R2, R4> Writer<W,R4> forEach3(Function<? super T, ? extends Writer<W,R1>> value2,
                                                BiFunction<? super T, ? super R1, ? extends Writer<W,R2>> value3,
-                                               Fn3<? super T, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
+                                               Function3<? super T, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
 
         return this.flatMap(in -> {
 

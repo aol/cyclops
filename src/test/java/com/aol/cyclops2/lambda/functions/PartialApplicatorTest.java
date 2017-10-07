@@ -14,18 +14,18 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
-import cyclops.function.Fn7;
-import cyclops.function.Fn6;
-import cyclops.function.Fn8;
-import cyclops.function.Fn4;
-import cyclops.function.Fn5;
-import cyclops.function.Fn3;
+import cyclops.function.Function7;
+import cyclops.function.Function6;
+import cyclops.function.Function8;
+import cyclops.function.Function4;
+import cyclops.function.Function5;
+import cyclops.function.Function3;
 
 public class PartialApplicatorTest {
 
     @Test
     public void testArity3() {
-        Fn3<String, String, String, String> concat = (a, b, c) -> a + b + c;
+        Function3<String, String, String, String> concat = (a, b, c) -> a + b + c;
 
         Function<String, String> concatStrings = partial3("Hello", " World", concat);
         assertThat(concatStrings.apply("!!!"), equalTo("Hello World!!!"));
@@ -36,7 +36,7 @@ public class PartialApplicatorTest {
 
     @Test
     public void testArity4() {
-        Fn4<Integer, Integer, Integer, Integer, String> average = (a, b, c, d) -> ((a + b + c + d) / 4) + "";
+        Function4<Integer, Integer, Integer, Integer, String> average = (a, b, c, d) -> ((a + b + c + d) / 4) + "";
 
         Function<Integer, String> getAverageP1 = partial4(10, 10, 10, average);
         assertThat(getAverageP1.apply(10), equalTo("10"));
@@ -44,13 +44,13 @@ public class PartialApplicatorTest {
         BiFunction<Integer, Integer, String> getAverageP2 = partial4(10, 10, average);
         assertThat(getAverageP2.apply(10, 10), equalTo("10"));
 
-        Fn3<Integer, Integer, Integer, String> getAverageP3 = partial4(10, average);
+        Function3<Integer, Integer, Integer, String> getAverageP3 = partial4(10, average);
         assertThat(getAverageP3.apply(10, 10, 10), equalTo("10"));
     }
 
     @Test
     public void testArity5() {
-        Fn5<Integer, Integer, Integer, Integer, Integer, Integer> sum = (a, b, c, d, e) -> a + b + c + d + e;
+        Function5<Integer, Integer, Integer, Integer, Integer, Integer> sum = (a, b, c, d, e) -> a + b + c + d + e;
 
         Function<Integer, Integer> getSumP1 = partial5(4, 5, 6, 7, sum);
         assertThat(getSumP1.apply(10), equalTo(32));
@@ -58,10 +58,10 @@ public class PartialApplicatorTest {
         BiFunction<Integer, Integer, Integer> getSumP2 = partial5(5, 20, 50, sum);
         assertThat(getSumP2.apply(10, 20), equalTo(105));
 
-        Fn3<Integer, Integer, Integer, Integer> getSumP3 = partial5(5, 20, sum);
+        Function3<Integer, Integer, Integer, Integer> getSumP3 = partial5(5, 20, sum);
         assertThat(getSumP3.apply(30, 10, 50), equalTo(115));
 
-        Fn4<Integer, Integer, Integer, Integer, Integer> getSumP4 = partial5(5, sum);
+        Function4<Integer, Integer, Integer, Integer, Integer> getSumP4 = partial5(5, sum);
         assertThat(getSumP4.apply(10, 20, 30, 40), equalTo(105));
 
 
@@ -69,7 +69,7 @@ public class PartialApplicatorTest {
 
     @Test
     public void testArity6() {
-        Fn6<Integer, Integer, Integer, Integer, Integer, Integer, Integer> sum = (a, b, c, d, e, f) -> a + b + c + d + e + f;
+        Function6<Integer, Integer, Integer, Integer, Integer, Integer, Integer> sum = (a, b, c, d, e, f) -> a + b + c + d + e + f;
 
         Function<Integer, Integer> getSumP1 = partial6(4, 5, 6, 7, 8, sum);
         assertThat(getSumP1.apply(10), equalTo(40));
@@ -77,19 +77,19 @@ public class PartialApplicatorTest {
         BiFunction<Integer, Integer, Integer> getSumP2 = partial6(5, 20, 50, 60, sum);
         assertThat(getSumP2.apply(10, 20), equalTo(165));
 
-        Fn3<Integer, Integer, Integer, Integer> getSumP3 = partial6(5, 20, 20, sum);
+        Function3<Integer, Integer, Integer, Integer> getSumP3 = partial6(5, 20, 20, sum);
         assertThat(getSumP3.apply(30, 10, 50), equalTo(135));
 
-        Fn4<Integer, Integer, Integer, Integer, Integer> getSumP4 = partial6(5, 30, sum);
+        Function4<Integer, Integer, Integer, Integer, Integer> getSumP4 = partial6(5, 30, sum);
         assertThat(getSumP4.apply(10, 20, 30, 40), equalTo(135));
 
-        Fn5<Integer, Integer, Integer, Integer, Integer, Integer> getSumP5 = partial6(30, sum);
+        Function5<Integer, Integer, Integer, Integer, Integer, Integer> getSumP5 = partial6(30, sum);
         assertThat(getSumP5.apply(10, 20, 30, 40, 50), equalTo(180));
     }
 
     @Test
     public void testArity7() {
-        Fn7<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer> sum = (a, b, c, d, e, f, g) -> a + b + c + d + e + f + g;
+        Function7<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer> sum = (a, b, c, d, e, f, g) -> a + b + c + d + e + f + g;
 
         Function<Integer, Integer> getSumP1 = partial7(4, 5, 6, 7, 8, 9, sum);
         assertThat(getSumP1.apply(10), equalTo(49));
@@ -97,41 +97,41 @@ public class PartialApplicatorTest {
         BiFunction<Integer, Integer, Integer> getSumP2 = partial7(5, 20, 50, 60, 50, sum);
         assertThat(getSumP2.apply(10, 20), equalTo(215));
 
-        Fn3<Integer, Integer, Integer, Integer> getSumP3 = partial7(5, 20, 20, 20, sum);
+        Function3<Integer, Integer, Integer, Integer> getSumP3 = partial7(5, 20, 20, 20, sum);
         assertThat(getSumP3.apply(30, 10, 50), equalTo(155));
 
-        Fn4<Integer, Integer, Integer, Integer, Integer> getSumP4 = partial7(5, 30, 40, sum);
+        Function4<Integer, Integer, Integer, Integer, Integer> getSumP4 = partial7(5, 30, 40, sum);
         assertThat(getSumP4.apply(10, 20, 30, 40), equalTo(175));
 
-        Fn5<Integer, Integer, Integer, Integer, Integer, Integer> getSumP5 = partial7(30, 45, sum);
+        Function5<Integer, Integer, Integer, Integer, Integer, Integer> getSumP5 = partial7(30, 45, sum);
         assertThat(getSumP5.apply(10, 20, 30, 40, 50), equalTo(225));
 
-        Fn6<Integer, Integer, Integer, Integer, Integer, Integer, Integer> getSumP6 = partial7(30, sum);
+        Function6<Integer, Integer, Integer, Integer, Integer, Integer, Integer> getSumP6 = partial7(30, sum);
         assertThat(getSumP6.apply(10, 20, 30, 40, 50, 60), equalTo(240));
     }
 
     @Test
     public void testArity8() {
-        Fn8<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer> sum = (a, b, c, d, e, f, g, h) -> a + b + c + d + e + f + g + h;
+        Function8<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer> sum = (a, b, c, d, e, f, g, h) -> a + b + c + d + e + f + g + h;
         Function<Integer, Integer> getSumP1 = partial8(4, 5, 6, 7, 8, 9, 10, sum);
         assertThat(getSumP1.apply(10), equalTo(59));
 
         BiFunction<Integer,Integer,Integer> getSumP2 = partial8(5, 20, 50, 60, 50, 40, sum);
         assertThat(getSumP2.apply(10,20), equalTo(255));
 
-        Fn3<Integer,Integer,Integer,Integer> getSumP3 = partial8(5, 20, 20, 20, 10, sum);
+        Function3<Integer,Integer,Integer,Integer> getSumP3 = partial8(5, 20, 20, 20, 10, sum);
         assertThat(getSumP3.apply(30,10,50), equalTo(165));
 
-        Fn4<Integer,Integer,Integer,Integer,Integer> getSumP4 = partial8(5, 30, 40, 70 , sum);
+        Function4<Integer,Integer,Integer,Integer,Integer> getSumP4 = partial8(5, 30, 40, 70 , sum);
         assertThat(getSumP4.apply(10,20,30,40), equalTo(245));
 
-        Fn5<Integer,Integer,Integer,Integer,Integer,Integer> getSumP5 = partial8(30, 45,65 , sum);
+        Function5<Integer,Integer,Integer,Integer,Integer,Integer> getSumP5 = partial8(30, 45,65 , sum);
         assertThat(getSumP5.apply(10,20,30,40,50), equalTo(290));
 
-        Fn6<Integer, Integer, Integer, Integer, Integer, Integer, Integer> getSumP6 = partial8(30, 90, sum);
+        Function6<Integer, Integer, Integer, Integer, Integer, Integer, Integer> getSumP6 = partial8(30, 90, sum);
         assertThat(getSumP6.apply(10,20,30,40,50,60), equalTo(330));
 
-        Fn7<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer> getSumP7 = partial8(30, sum);
+        Function7<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer> getSumP7 = partial8(30, sum);
         assertThat(getSumP7.apply(10,20,30,40,50,60,70), equalTo(310));
     }
 

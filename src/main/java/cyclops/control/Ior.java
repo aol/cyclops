@@ -271,7 +271,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     }
 
     @Override
-    default <S, U, R> Ior<ST,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super PT, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> Ior<ST,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super PT, ? super S, ? super U, ? extends R> fn3) {
         return (Ior<ST,R>)MonadicValue.super.zip3(second,third,fn3);
     }
 
@@ -281,7 +281,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     }
 
     @Override
-    default <T2, T3, T4, R> Ior<ST,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super PT, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> Ior<ST,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super PT, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (Ior<ST,R>)MonadicValue.super.zip4(second,third,fourth,fn);
     }
 
@@ -296,8 +296,8 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     @Override
     default <T2, R1, R2, R3, R> Ior<ST,R> forEach4(Function<? super PT, ? extends MonadicValue<R1>> value1,
             BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            Fn4<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            Function3<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            Function4<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (Ior<ST,R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
@@ -307,9 +307,9 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     @Override
     default <T2, R1, R2, R3, R> Ior<ST,R> forEach4(Function<? super PT, ? extends MonadicValue<R1>> value1,
             BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            Fn4<? super PT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            Fn4<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            Function3<? super PT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            Function4<? super PT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            Function4<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return (Ior<ST,R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
@@ -320,7 +320,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     @Override
     default <T2, R1, R2, R> Ior<ST,R> forEach3(Function<? super PT, ? extends MonadicValue<R1>> value1,
             BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            Function3<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Ior<ST,R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
@@ -331,8 +331,8 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, MonadicValue<PT>, BiTransf
     @Override
     default <T2, R1, R2, R> Ior<ST,R> forEach3(Function<? super PT, ? extends MonadicValue<R1>> value1,
             BiFunction<? super PT, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super PT, ? super R1, ? super R2, Boolean> filterFunction,
-            Fn3<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            Function3<? super PT, ? super R1, ? super R2, Boolean> filterFunction,
+            Function3<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Ior<ST,R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }

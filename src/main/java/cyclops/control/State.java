@@ -94,8 +94,8 @@ public final class State<S, T> implements Higher2<state,S,T> {
    */
     public  <R1, R2, R3, R4> State<S,R4> forEach4(Function<? super T, ? extends State<S,R1>> value2,
                                                   BiFunction<? super T, ? super R1, ? extends State<S,R2>> value3,
-                                                  Fn3<? super T, ? super R1, ? super R2, ? extends State<S,R3>> value4,
-                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
+                                                  Function3<? super T, ? super R1, ? super R2, ? extends State<S,R3>> value4,
+                                                  Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
 
 
         return this.flatMap(in -> {
@@ -150,7 +150,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
      */
     public <R1, R2, R4> State<S,R4> forEach3(Function<? super T, ? extends State<S,R1>> value2,
                                              BiFunction<? super T, ? super R1, ? extends State<S,R2>> value3,
-                                             Fn3<? super T, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
+                                             Function3<? super T, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
 
         return this.flatMap(in -> {
 

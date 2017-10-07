@@ -1,14 +1,11 @@
 package cyclops.companion;
 
-import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.hkt.Higher;
 
-import com.aol.cyclops2.types.reactive.Completable;
-import cyclops.monads.transformers.FutureT;
 import cyclops.typeclasses.*;
 import cyclops.control.Xor;
 import cyclops.monads.Witness.future;
@@ -16,8 +13,8 @@ import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.async.Future;
 import cyclops.control.Maybe;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.Witness.completableFuture;
@@ -122,8 +119,8 @@ public class CompletableFutures {
     public static <T1, T2, T3, R1, R2, R3, R> CompletableFuture<R> forEach4(CompletableFuture<? extends T1> value1,
                                                                             Function<? super T1, ? extends CompletableFuture<R1>> value2,
                                                                             BiFunction<? super T1, ? super R1, ? extends CompletableFuture<R2>> value3,
-                                                                            Fn3<? super T1, ? super R1, ? super R2, ? extends CompletableFuture<R3>> value4,
-                                                                            Fn4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                            Function3<? super T1, ? super R1, ? super R2, ? extends CompletableFuture<R3>> value4,
+                                                                            Function4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return value1.thenCompose(in -> {
 
@@ -169,7 +166,7 @@ public class CompletableFutures {
     public static <T1, T2, R1, R2, R> CompletableFuture<R> forEach3(CompletableFuture<? extends T1> value1,
                                                                     Function<? super T1, ? extends CompletableFuture<R1>> value2,
                                                                     BiFunction<? super T1, ? super R1, ? extends CompletableFuture<R2>> value3,
-                                                                    Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                                    Function3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return value1.thenCompose(in -> {
 
@@ -864,7 +861,7 @@ public class CompletableFutures {
         public static <T,R> Foldable<completableFuture> foldable(){
             BiFunction<Monoid<T>,Higher<completableFuture,T>,T> foldRightFn =  (m, l)-> m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
             BiFunction<Monoid<T>,Higher<completableFuture,T>,T> foldLeftFn = (m, l)->  m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
-            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.completableFuture, T>, R> foldMapFn = (m, f, l)-> Future.of(CompletableFutureKind.narrowK(l).thenApply(f)).foldLeft(m);
+            Function3<Monoid<R>, Function<T, R>, Higher<completableFuture, T>, R> foldMapFn = (m, f, l)-> Future.of(CompletableFutureKind.narrowK(l).thenApply(f)).foldLeft(m);
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
         public static <T> Comonad<completableFuture> comonad(){

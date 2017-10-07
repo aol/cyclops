@@ -95,8 +95,8 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
 
     default <R1, R2, R3, R4> Reader<T,R4> forEach4(Function<? super R, Function<? super T,? extends R1>> value2,
                                                    BiFunction<? super R, ? super R1, Function<? super T,? extends R2>> value3,
-                                                   Fn3<? super R, ? super R1, ? super R2,Function<? super T, ? extends R3>> value4,
-                                                   Fn4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
+                                                   Function3<? super R, ? super R1, ? super R2,Function<? super T, ? extends R3>> value4,
+                                                   Function4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
 
 
         Reader<? super T, ? extends R4> res =  this.flatMap(in -> {
@@ -133,7 +133,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
 
     default <R1, R2, R4> Reader<T,R4> forEach3(Function<? super R, Function<? super T,? extends R1>> value2,
                                                          BiFunction<? super R, ? super R1, Function<? super T,? extends R2>> value3,
-                                                         Fn3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
+                                                         Function3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
 
         return this.flatMap(in -> {
 

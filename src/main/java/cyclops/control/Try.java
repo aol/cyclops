@@ -5,7 +5,6 @@ import static cyclops.monads.Witness.*;
 
 import java.io.Closeable;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -26,18 +25,15 @@ import com.aol.cyclops2.types.anyM.AnyMValue2;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.recoverable.RecoverableFrom;
 import cyclops.collections.mutable.ListX;
-import cyclops.companion.Monoids;
 import cyclops.control.lazy.Either;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.*;
@@ -540,7 +536,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     @Override
-    public <S, U, R> Try<R,X> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    public <S, U, R> Try<R,X> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (Try<R,X>)MonadicValue.super.zip3(second,third,fn3);
     }
 
@@ -550,7 +546,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     @Override
-    public <T2, T3, T4, R> Try<R,X> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    public <T2, T3, T4, R> Try<R,X> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (Try<R,X>)MonadicValue.super.zip4(second,third,fourth,fn);
     }
 
@@ -580,8 +576,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     @Override
     public <T2, R1, R2, R3, R> Try<R,X> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                  BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                 Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                 Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                 Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                 Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (Try<R,X>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
@@ -591,9 +587,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     @Override
     public <T2, R1, R2, R3, R> Try<R,X> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                  BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                 Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                 Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                 Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                 Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                 Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                 Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return (Try<R,X>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
@@ -604,7 +600,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     @Override
     public <T2, R1, R2, R> Try<R,X> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                              BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                             Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Try<R,X>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
@@ -615,8 +611,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     @Override
     public <T2, R1, R2, R> Try<R,X> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                              BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                             Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                             Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                             Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Try<R,X>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }

@@ -2,13 +2,10 @@ package cyclops.collections.tuple;
 
 
 import com.aol.cyclops2.types.foldable.To;
-import cyclops.function.Fn3;
-import cyclops.function.Fn5;
-import cyclops.function.Fn6;
+import cyclops.function.Function6;
 import cyclops.function.Memoize;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -216,7 +213,7 @@ public class Tuple6<T1,T2,T3,T4,T5,T6> implements To<Tuple6<T1,T2,T3,T4,T5,T6>>,
         return lazy(() -> _1(), () -> _2(),()->_3(),()->_4(),()->_5(),()->fn.apply(_6()));
     }
 
-    public <R> R visit(Fn6<? super T1, ? super T2, ? super T3,? super T4, ? super T5,? super T6,? extends R> fn){
+    public <R> R visit(Function6<? super T1, ? super T2, ? super T3,? super T4, ? super T5,? super T6,? extends R> fn){
         return fn.apply(_1(),_2(),_3(),_4(),_5(),_6());
     }
 

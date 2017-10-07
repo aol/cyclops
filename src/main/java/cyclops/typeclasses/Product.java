@@ -8,8 +8,8 @@ import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.*;
 import cyclops.stream.ReactiveSeq;
@@ -122,7 +122,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
         return of(a3,b3);
 
     }
-    public <R> Product<W1,W2,R> zip(Product<W1,W2,T> p2, Product<W1,W2,T> p3, Fn3<? super T,? super T, ? super T,? extends R> zipper){
+    public <R> Product<W1,W2,R> zip(Product<W1,W2,T> p2, Product<W1,W2,T> p3, Function3<? super T,? super T, ? super T,? extends R> zipper){
         Active<W1,T> a1 = Active.of(run._1(),def1);
         Active<W1,T> a2 = Active.of(p2.run._1(),def1);
         Active<W1,T> a3 = Active.of(p3.run._1(),def1);
@@ -373,13 +373,13 @@ public class Product<W1,W2,T> implements  Filters<T>,
 
     }
     public <T2, R1, R2, R> Product<W1,W2,R> forEach3(final Function<? super T, ? extends Product<W1,W2,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Product<W1,W2,R2>> value2,
-                                                     final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                     final Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         return flatMap(a->{
             return value1.apply(a).flatMap(b->value2.apply(a,b).map(c->yieldingFunction.apply(a,b,c)));
         });
     }
-    public <T2, R1, R2, R3, R> Product<W1,W2,R> forEach4(final Function<? super T, ? extends Product<W1,W2,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Product<W1,W2,R2>> value2, final Fn3<? super T, ? super R1, ? super R2, ? extends Product<W1,W2,R3>> value3,
-                                                         final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+    public <T2, R1, R2, R3, R> Product<W1,W2,R> forEach4(final Function<? super T, ? extends Product<W1,W2,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Product<W1,W2,R2>> value2, final Function3<? super T, ? super R1, ? super R2, ? extends Product<W1,W2,R3>> value3,
+                                                         final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return flatMap(a->{
             return value1.apply(a).flatMap(b->value2.apply(a,b).flatMap(c->value3.apply(a,b,c).map(d->yieldingFunction.apply(a,b,c,d))));
         });

@@ -14,8 +14,8 @@ import org.reactivestreams.Subscriber;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.monads.WitnessType;
-import cyclops.function.Fn4;
-import cyclops.function.Fn3;
+import cyclops.function.Function4;
+import cyclops.function.Function3;
 
 public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
                                                                             Unwrapable,
@@ -169,8 +169,8 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
      */
     public <T2, R1, R2, R3, R> ValueTransformer<W,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return unitAnyM(this.transformerStream().map(v->v.forEach4(value1, value2, value3, yieldingFunction)));
        
@@ -181,9 +181,9 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
    
     public <T2, R1, R2, R3, R> ValueTransformer<W,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+            Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return unitAnyM(this.transformerStream().map(v->v.forEach4(value1, value2, value3, filterFunction,yieldingFunction)));
        
     }
@@ -193,7 +193,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
    
     public <T2, R1, R2, R> ValueTransformer<W,R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         return unitAnyM(this.transformerStream().map(v->v.forEach3(value1, value2, yieldingFunction)));
         
     }
@@ -203,8 +203,8 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
    
     public <T2, R1, R2, R> ValueTransformer<W,R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+            Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return unitAnyM(this.transformerStream().map(v->v.forEach3(value1, value2, filterFunction,yieldingFunction)));
         

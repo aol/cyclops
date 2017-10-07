@@ -6,7 +6,6 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.async.Future;
 import cyclops.control.Xor;
-import cyclops.monads.Witness;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -22,8 +21,8 @@ import cyclops.control.Trampoline;
 import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.stream.Spouts;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -37,7 +36,6 @@ import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;
 import org.pcollections.AmortizedPQueue;
 import org.pcollections.PQueue;
-import org.pcollections.PStack;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -45,10 +43,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.Collector;
 import java.util.stream.Stream;
-
-import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * An eXtended Persistent Queue type, that offers additional functional style operators such as bimap, filter and more
@@ -343,8 +338,8 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     @Override
     default <R1, R2, R3, R> PersistentQueueX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
                                                          BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-                                                         Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
-                                                         Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                         Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+                                                         Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (PersistentQueueX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
@@ -358,9 +353,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     @Override
     default <R1, R2, R3, R> PersistentQueueX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
                                                          BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-                                                         Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
-                                                         Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                         Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                         Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+                                                         Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                         Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (PersistentQueueX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
@@ -371,7 +366,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     @Override
     default <R1, R2, R> PersistentQueueX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
                                                      BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-                                                     Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                     Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (PersistentQueueX)LazyCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
     }
@@ -382,8 +377,8 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     @Override
     default <R1, R2, R> PersistentQueueX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
                                                      BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-                                                     Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                                     Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                     Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                                     Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (PersistentQueueX)LazyCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }
@@ -1341,12 +1336,12 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
 
     @Override
-    default <S, U, R> PersistentQueueX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> PersistentQueueX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (PersistentQueueX<R>)LazyCollectionX.super.zip3(second,third,fn3);
     }
 
     @Override
-    default <T2, T3, T4, R> PersistentQueueX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> PersistentQueueX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (PersistentQueueX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
 
@@ -1661,7 +1656,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         public static <T,R> Foldable<persistentQueueX> foldable(){
             BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldRightFn =  (m, l)-> PersistentQueueX.narrowK(l).foldRight(m);
             BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldLeftFn = (m, l)-> PersistentQueueX.narrowK(l).reduce(m);
-            Fn3<Monoid<R>, Function<T, R>, Higher<persistentQueueX, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            Function3<Monoid<R>, Function<T, R>, Higher<persistentQueueX, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 

@@ -5,8 +5,7 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.reactive.BufferOverflowPolicy;
 import com.aol.cyclops2.types.reactive.PushSubscriber;
 import cyclops.control.Xor;
-import cyclops.function.Fn3;
-import cyclops.monads.Witness;
+import cyclops.function.Function3;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX.Type;
@@ -881,7 +880,7 @@ public interface Spouts {
         public static <T,R> Foldable<reactiveSeq> foldable(){
             BiFunction<Monoid<T>,Higher<reactiveSeq,T>,T> foldRightFn =  (m,l)-> narrow(l).foldRight(m);
             BiFunction<Monoid<T>,Higher<reactiveSeq,T>,T> foldLeftFn = (m,l)-> narrow(l).reduce(m);
-            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.reactiveSeq, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            Function3<Monoid<R>, Function<T, R>, Higher<reactiveSeq, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 

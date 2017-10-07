@@ -1,19 +1,10 @@
 package cyclops.function;
 
-import com.aol.cyclops2.hkt.Higher;
-import cyclops.companion.Semigroups;
-import cyclops.control.Maybe;
-import cyclops.function.BinaryFn;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.maybe;
 import cyclops.typeclasses.Cokleisli;
 import cyclops.typeclasses.Kleisli;
-import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.functions.SemigroupK;
 
-import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
-import java.util.function.Function;
 
 /**
  * An (associative) binary operation for combining values.
@@ -24,7 +15,7 @@ import java.util.function.Function;
  * @param <T> Data type of elements to be combined
  */
 @FunctionalInterface
-public interface Semigroup<T> extends BinaryFn<T>,BinaryOperator<T> {
+public interface Semigroup<T> extends BinaryFunction<T>,BinaryOperator<T> {
     
     /* (non-Javadoc)
      * @see java.util.function.BiFunction#applyHKT(java.lang.Object, java.lang.Object)

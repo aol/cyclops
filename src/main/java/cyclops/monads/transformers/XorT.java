@@ -7,11 +7,10 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
@@ -383,8 +382,8 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     @Override
     public <T2, R1, R2, R3, R> XorT<W,ST,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                    BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                   Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                   Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                   Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (XorT<W,ST,R>)super.forEach4(value1, value2, value3, yieldingFunction);
     }
@@ -395,9 +394,9 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     @Override
     public <T2, R1, R2, R3, R> XorT<W,ST,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                    BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                   Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                   Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                   Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                   Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (XorT<W,ST,R>)super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
@@ -408,7 +407,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     @Override
     public <T2, R1, R2, R> XorT<W,ST,R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                               Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                               Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (XorT<W,ST,R>)super.forEach3(value1, value2, yieldingFunction);
     }
@@ -419,8 +418,8 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     @Override
     public <T2, R1, R2, R> XorT<W,ST,R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                               Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                               Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                               Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                               Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (XorT<W,ST,R>)super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
@@ -467,8 +466,8 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     }
     public <T2, R1, R2, R3, R> XorT<W,ST,R> forEach4M(Function<? super T, ? extends XorT<W,ST,R1>> value1,
                                                    BiFunction<? super T, ? super R1, ? extends XorT<W,ST,R2>> value2,
-                                                   Fn3<? super T, ? super R1, ? super R2, ? extends XorT<W,ST,R3>> value3,
-                                                   Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                   Function3<? super T, ? super R1, ? super R2, ? extends XorT<W,ST,R3>> value3,
+                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return this.flatMapT(in->value1.apply(in)
                 .flatMapT(in2-> value2.apply(in,in2)
                         .flatMapT(in3->value3.apply(in,in2,in3)
@@ -477,9 +476,9 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     }
     public <T2, R1, R2, R3, R> XorT<W,ST,R> forEach4M(Function<? super T, ? extends XorT<W,ST,R1>> value1,
                                                    BiFunction<? super T, ? super R1, ? extends XorT<W,ST,R2>> value2,
-                                                   Fn3<? super T, ? super R1, ? super R2, ? extends XorT<W,ST,R3>> value3,
-                                                   Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                   Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                   Function3<? super T, ? super R1, ? super R2, ? extends XorT<W,ST,R3>> value3,
+                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return this.flatMapT(in->value1.apply(in)
                     .flatMapT(in2-> value2.apply(in,in2)
                             .flatMapT(in3->value3.apply(in,in2,in3)
@@ -490,7 +489,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
 
     public <T2, R1, R2, R> XorT<W,ST,R> forEach3M(Function<? super T, ? extends XorT<W,ST,R1>> value1,
                                                BiFunction<? super T, ? super R1, ? extends XorT<W,ST,R2>> value2,
-                                               Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                               Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2)
                                                  .map(in3->yieldingFunction.apply(in,in2,in3))));
@@ -499,8 +498,8 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
 
     public <T2, R1, R2, R> XorT<W,ST,R> forEach3M(Function<? super T, ? extends XorT<W,ST,R1>> value1,
                                                BiFunction<? super T, ? super R1, ? extends XorT<W,ST,R2>> value2,
-                                               Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                               Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                               Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                               Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2).filter(in3->filterFunction.apply(in,in2,in3))
                                                                                      .map(in3->yieldingFunction.apply(in,in2,in3))));
@@ -584,7 +583,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     }
 
     @Override
-    public <S, U, R> XorT<W,ST,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    public <S, U, R> XorT<W,ST,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (XorT<W,ST,R>)super.zip3(second,third, fn3);
     }
 
@@ -594,7 +593,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     }
 
     @Override
-    public <T2, T3, T4, R> XorT<W,ST,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    public <T2, T3, T4, R> XorT<W,ST,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (XorT<W,ST,R>)super.zip4(second,third,fourth,fn);
     }
 }

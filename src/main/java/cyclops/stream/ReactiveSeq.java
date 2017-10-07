@@ -5,10 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.react.ThreadPools;
 
-import cyclops.collections.mutable.QueueX;
 import cyclops.typeclasses.*;
-import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.Xor;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.Enumeration;
@@ -43,8 +40,8 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 
 import cyclops.control.lazy.Either;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
@@ -58,7 +55,6 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
-import lombok.experimental.var;
 import lombok.val;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
@@ -79,8 +75,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
 import java.util.stream.*;
-
-import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * A powerful extended, sequential Stream type.
@@ -4256,8 +4250,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default <R1, R2, R3,R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
                         final BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
-                            final Fn3<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
-                            final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+                            final Function3<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+                            final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
         return this.flatMap(in -> {
 
             ReactiveSeq<R1> a = stream1 instanceof ReactiveSeq ? (ReactiveSeq)stream1 :  ReactiveSeq.fromIterable(()->stream1.apply(in).iterator());
@@ -4308,9 +4302,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default <R1, R2, R3, R> ReactiveSeq<R> forEach4(final Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             final BiFunction<? super T, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-            final Fn3<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
-            final Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
+            final Function3<? super T, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+            final Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction){
 
         return this.flatMap(in -> {
 
@@ -4357,7 +4351,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
-            Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+            Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
 
         return this.flatMap(in -> {
 
@@ -4405,8 +4399,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
    default <R1, R2, R> ReactiveSeq<R> forEach3(Function<? super T, ? extends BaseStream<R1, ?>> stream1,
             BiFunction<? super T,? super R1, ? extends BaseStream<R2, ?>> stream2,
-            Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
+            Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+            Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction){
        return this.flatMap(in -> {
 
            ReactiveSeq<R1> a = stream1 instanceof ReactiveSeq ? (ReactiveSeq)stream1 :
@@ -4675,12 +4669,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     @Override
-    default <S, U, R> ReactiveSeq<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> ReactiveSeq<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (ReactiveSeq<R>)FoldableTraversable.super.zip3(second,third,fn3);
     }
 
     @Override
-    default <T2, T3, T4, R> ReactiveSeq<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> ReactiveSeq<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (ReactiveSeq<R>)FoldableTraversable.super.zip4(second,third,fourth,fn);
     }
     /**
@@ -4858,7 +4852,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R1,R2,R3,R4> ReactiveSeq<R4> parallelFanOutZipIn(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<? extends R1>> path1,
                                                       Function<? super Stream<T>, ? extends Stream<? extends R2>> path2,
                                                       Function<? super Stream<T>, ? extends Stream<? extends R3>> path3,
-                                                      Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn){
+                                                      Function3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn){
 
         Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3);
@@ -4871,7 +4865,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R1,R2,R3,R4> ReactiveSeq<R4> fanOutZipIn(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R1>> path1,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R2>> path2,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R3>> path3,
-                                            Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn){
+                                            Function3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn){
 
         ListX<ReactiveSeq<T>> list = multicast(3);
         return path1.apply(list.get(0)).zip3(path2.apply(list.get(1)),path3.apply(list.get(2)),zipFn);
@@ -4909,7 +4903,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                     Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R2>> path2,
                                                     Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R3>> path3,
                                                     Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R4>> path4,
-                                                    Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn){
+                                                    Function4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn){
 
 
         ListX<ReactiveSeq<T>> list = multicast(4);
@@ -4920,7 +4914,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                          Function<? super Stream<T>, ? extends Stream<? extends R2>> path2,
                                                          Function<? super Stream<T>, ? extends Stream<? extends R3>> path3,
                                                          Function<? super Stream<T>, ? extends Stream<? extends R4>> path4,
-                                                         Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn){
+                                                         Function4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn){
 
         val d = quadruplicate(()->new ArrayDeque<T>(100));
         val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
@@ -5310,7 +5304,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         public static <T,R> Foldable<reactiveSeq> foldable(){
             BiFunction<Monoid<T>,Higher<reactiveSeq,T>,T> foldRightFn =  (m,l)-> narrow(l).foldRight(m);
             BiFunction<Monoid<T>,Higher<reactiveSeq,T>,T> foldLeftFn = (m,l)-> narrow(l).reduce(m);
-            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.reactiveSeq, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            Function3<Monoid<R>, Function<T, R>, Higher<reactiveSeq, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 

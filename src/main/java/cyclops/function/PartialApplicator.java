@@ -85,7 +85,7 @@ public class PartialApplicator extends Lambda {
     * @return Function as a result of 2 arguments being applied to the incoming TriFunction
     */
 
-    public static <T1, T2, T3, R> Supplier<R> partial3(final T1 t1, final T2 t2, final T3 t3, final Fn3<T1, T2, T3, R> triFunc) {
+    public static <T1, T2, T3, R> Supplier<R> partial3(final T1 t1, final T2 t2, final T3 t3, final Function3<T1, T2, T3, R> triFunc) {
         return () -> triFunc.apply(t1, t2, t3);
     }
 
@@ -101,7 +101,7 @@ public class PartialApplicator extends Lambda {
      * @return Function as a result of 2 arguments being applied to the incoming TriFunction
      */
 
-    public static <T1, T2, T3, R> Function<T3, R> partial3(final T1 t1, final T2 t2, final Fn3<T1, T2, T3, R> triFunc) {
+    public static <T1, T2, T3, R> Function<T3, R> partial3(final T1 t1, final T2 t2, final Function3<T1, T2, T3, R> triFunc) {
         return (t3) -> triFunc.apply(t1, t2, t3);
     }
 
@@ -116,7 +116,7 @@ public class PartialApplicator extends Lambda {
      * @return BiFunction as a result of 1 argument being applied to the incoming TriFunction
      */
 
-    public static <T1, T2, T3, R> BiFunction<T2, T3, R> partial3(final T1 t1, final Fn3<T1, T2, T3, R> triFunc) {
+    public static <T1, T2, T3, R> BiFunction<T2, T3, R> partial3(final T1 t1, final Function3<T1, T2, T3, R> triFunc) {
         return (t2, t3) -> triFunc.apply(t1, t2, t3);
     }
 
@@ -135,7 +135,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, R> Supplier<R> partial4(final T1 t1, final T2 t2, final T3 t3, final T4 t4,
-            final Fn4<T1, T2, T3, T4, R> quadFunc) {
+            final Function4<T1, T2, T3, T4, R> quadFunc) {
         return () -> quadFunc.apply(t1, t2, t3, t4);
     }
 
@@ -154,7 +154,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, R> Function<T4, R> partial4(final T1 t1, final T2 t2, final T3 t3,
-            final Fn4<T1, T2, T3, T4, R> quadFunc) {
+            final Function4<T1, T2, T3, T4, R> quadFunc) {
         return (t4) -> quadFunc.apply(t1, t2, t3, t4);
     }
 
@@ -170,7 +170,7 @@ public class PartialApplicator extends Lambda {
      * @param <R> Function generic return type
      * @return BiFunction as a result of 2 arguments being applied to the incoming QuadFunction
      */
-    public static <T1, T2, T3, T4, R> BiFunction<T3, T4, R> partial4(final T1 t1, final T2 t2, final Fn4<T1, T2, T3, T4, R> quadFunc) {
+    public static <T1, T2, T3, T4, R> BiFunction<T3, T4, R> partial4(final T1 t1, final T2 t2, final Function4<T1, T2, T3, T4, R> quadFunc) {
         return (t3, t4) -> quadFunc.apply(t1, t2, t3, t4);
     }
 
@@ -186,7 +186,7 @@ public class PartialApplicator extends Lambda {
      * @return TriFunction as a result of 1 argument being applied to the incoming QuadFunction
      */
 
-    public static <T1, T2, T3, T4, R> Fn3<T2, T3, T4, R> partial4(final T1 t1, final Fn4<T1, T2, T3, T4, R> quadFunc) {
+    public static <T1, T2, T3, T4, R> Function3<T2, T3, T4, R> partial4(final T1 t1, final Function4<T1, T2, T3, T4, R> quadFunc) {
         return (t2, t3, t4) -> quadFunc.apply(t1, t2, t3, t4);
     }
 
@@ -207,7 +207,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, T5, R> Supplier<R> partial5(final T1 t1, final T2 t2, final T3 t3, final T4 t4, final T5 t5,
-            final Fn5<T1, T2, T3, T4, T5, R> quintFunc) {
+            final Function5<T1, T2, T3, T4, T5, R> quintFunc) {
         return () -> quintFunc.apply(t1, t2, t3, t4, t5);
     }
 
@@ -228,7 +228,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, T5, R> Function<T5, R> partial5(final T1 t1, final T2 t2, final T3 t3, final T4 t4,
-            final Fn5<T1, T2, T3, T4, T5, R> quintFunc) {
+            final Function5<T1, T2, T3, T4, T5, R> quintFunc) {
         return (t5) -> quintFunc.apply(t1, t2, t3, t4, t5);
     }
 
@@ -248,7 +248,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, T5, R> BiFunction<T4, T5, R> partial5(final T1 t1, final T2 t2, final T3 t3,
-            final Fn5<T1, T2, T3, T4, T5, R> quintFunc) {
+            final Function5<T1, T2, T3, T4, T5, R> quintFunc) {
         return (t4, t5) -> quintFunc.apply(t1, t2, t3, t4, t5);
     }
 
@@ -266,8 +266,8 @@ public class PartialApplicator extends Lambda {
      * @return TriFunction as a result of 2 arguments being applied to the incoming QuintFunction
      */
 
-    public static <T1, T2, T3, T4, T5, R> Fn3<T3, T4, T5, R> partial5(final T1 t1, final T2 t2,
-                                                                      final Fn5<T1, T2, T3, T4, T5, R> quintFunc) {
+    public static <T1, T2, T3, T4, T5, R> Function3<T3, T4, T5, R> partial5(final T1 t1, final T2 t2,
+                                                                            final Function5<T1, T2, T3, T4, T5, R> quintFunc) {
         return (t3, t4, t5) -> quintFunc.apply(t1, t2, t3, t4, t5);
     }
 
@@ -284,8 +284,8 @@ public class PartialApplicator extends Lambda {
      * @return QuadFunction as a result of 1 argument being applied to the incoming QuintFunction
      */
 
-    public static <T1, T2, T3, T4, T5, R> Fn4<T2, T3, T4, T5, R> partial5(final T1 t1,
-                                                                          final Fn5<T1, T2, T3, T4, T5, R> quintFunc) {
+    public static <T1, T2, T3, T4, T5, R> Function4<T2, T3, T4, T5, R> partial5(final T1 t1,
+                                                                                final Function5<T1, T2, T3, T4, T5, R> quintFunc) {
         return (t2, t3, t4, t5) -> quintFunc.apply(t1, t2, t3, t4, t5);
     }
 
@@ -308,7 +308,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, T5, T6, R> Supplier<R> partial6(final T1 t1, final T2 t2, final T3 t3, final T4 t4, final T5 t5, final T6 t6,
-            final Fn6<T1, T2, T3, T4, T5, T6, R> hexFunc) {
+            final Function6<T1, T2, T3, T4, T5, T6, R> hexFunc) {
         return () -> hexFunc.apply(t1, t2, t3, t4, t5, t6);
     }
 
@@ -331,7 +331,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, T5, T6, R> Function<T6, R> partial6(final T1 t1, final T2 t2, final T3 t3, final T4 t4, final T5 t5,
-            final Fn6<T1, T2, T3, T4, T5, T6, R> hexFunc) {
+            final Function6<T1, T2, T3, T4, T5, T6, R> hexFunc) {
         return (t6) -> hexFunc.apply(t1, t2, t3, t4, t5, t6);
     }
 
@@ -353,7 +353,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, T5, T6, R> BiFunction<T5, T6, R> partial6(final T1 t1, final T2 t2, final T3 t3, final T4 t4,
-            final Fn6<T1, T2, T3, T4, T5, T6, R> hexFunc) {
+            final Function6<T1, T2, T3, T4, T5, T6, R> hexFunc) {
         return (t5, t6) -> hexFunc.apply(t1, t2, t3, t4, t5, t6);
     }
 
@@ -373,8 +373,8 @@ public class PartialApplicator extends Lambda {
      * @return TriFunction as a result of 3 arguments being applied to the incoming HexFunction
      */
 
-    public static <T1, T2, T3, T4, T5, T6, R> Fn3<T4, T5, T6, R> partial6(final T1 t1, final T2 t2, final T3 t3,
-                                                                          final Fn6<T1, T2, T3, T4, T5, T6, R> hexFunc) {
+    public static <T1, T2, T3, T4, T5, T6, R> Function3<T4, T5, T6, R> partial6(final T1 t1, final T2 t2, final T3 t3,
+                                                                                final Function6<T1, T2, T3, T4, T5, T6, R> hexFunc) {
         return (t4, t5, t6) -> hexFunc.apply(t1, t2, t3, t4, t5, t6);
     }
 
@@ -393,8 +393,8 @@ public class PartialApplicator extends Lambda {
      * @return QuadFunction as a result of 2 arguments being applied to the incoming HexFunction
      */
 
-    public static <T1, T2, T3, T4, T5, T6, R> Fn4<T3, T4, T5, T6, R> partial6(final T1 t1, final T2 t2,
-                                                                              final Fn6<T1, T2, T3, T4, T5, T6, R> hexFunc) {
+    public static <T1, T2, T3, T4, T5, T6, R> Function4<T3, T4, T5, T6, R> partial6(final T1 t1, final T2 t2,
+                                                                                    final Function6<T1, T2, T3, T4, T5, T6, R> hexFunc) {
         return (t3, t4, t5, t6) -> hexFunc.apply(t1, t2, t3, t4, t5, t6);
     }
 
@@ -412,8 +412,8 @@ public class PartialApplicator extends Lambda {
      * @return QuintFunction as a result of 1 argument being applied to the incoming HexFunction
      */
 
-    public static <T1, T2, T3, T4, T5, T6, R> Fn5<T2, T3, T4, T5, T6, R> partial6(final T1 t1,
-                                                                                  final Fn6<T1, T2, T3, T4, T5, T6, R> hexFunc) {
+    public static <T1, T2, T3, T4, T5, T6, R> Function5<T2, T3, T4, T5, T6, R> partial6(final T1 t1,
+                                                                                        final Function6<T1, T2, T3, T4, T5, T6, R> hexFunc) {
         return (t2, t3, t4, t5, t6) -> hexFunc.apply(t1, t2, t3, t4, t5, t6);
     }
 
@@ -438,7 +438,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, T5, T6, T7, R> Supplier<R> partial7(final T1 t1, final T2 t2, final T3 t3, final T4 t4, final T5 t5, final T6 t6,
-            final T7 t7, final Fn7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
+            final T7 t7, final Function7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
         return () -> heptFunc.apply(t1, t2, t3, t4, t5, t6, t7);
     }
 
@@ -463,7 +463,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, T5, T6, T7, R> Function<T7, R> partial7(final T1 t1, final T2 t2, final T3 t3, final T4 t4, final T5 t5,
-            final T6 t6, final Fn7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
+            final T6 t6, final Function7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
         return (t7) -> heptFunc.apply(t1, t2, t3, t4, t5, t6, t7);
     }
 
@@ -487,7 +487,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, T5, T6, T7, R> BiFunction<T6, T7, R> partial7(final T1 t1, final T2 t2, final T3 t3, final T4 t4, final T5 t5,
-            final Fn7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
+            final Function7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
         return (t6, t7) -> heptFunc.apply(t1, t2, t3, t4, t5, t6, t7);
     }
 
@@ -509,8 +509,8 @@ public class PartialApplicator extends Lambda {
      * @return TriFunction as a result of 4 arguments being applied to the supplied HeptFunction
      */
 
-    public static <T1, T2, T3, T4, T5, T6, T7, R> Fn3<T5, T6, T7, R> partial7(final T1 t1, final T2 t2, final T3 t3, final T4 t4,
-                                                                              final Fn7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
+    public static <T1, T2, T3, T4, T5, T6, T7, R> Function3<T5, T6, T7, R> partial7(final T1 t1, final T2 t2, final T3 t3, final T4 t4,
+                                                                                    final Function7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
         return (t5, t6, t7) -> heptFunc.apply(t1, t2, t3, t4, t5, t6, t7);
     }
 
@@ -531,8 +531,8 @@ public class PartialApplicator extends Lambda {
      * @return QuadFunction as a result of 3 arguments being applied to the supplied HeptFunction
      */
 
-    public static <T1, T2, T3, T4, T5, T6, T7, R> Fn4<T4, T5, T6, T7, R> partial7(final T1 t1, final T2 t2, final T3 t3,
-                                                                                  final Fn7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
+    public static <T1, T2, T3, T4, T5, T6, T7, R> Function4<T4, T5, T6, T7, R> partial7(final T1 t1, final T2 t2, final T3 t3,
+                                                                                        final Function7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
         return (t4, t5, t6, t7) -> heptFunc.apply(t1, t2, t3, t4, t5, t6, t7);
     }
 
@@ -552,8 +552,8 @@ public class PartialApplicator extends Lambda {
      * @return QuintFunction as a result of 2 arguments being applied to the supplied HeptFunction
      */
 
-    public static <T1, T2, T3, T4, T5, T6, T7, R> Fn5<T3, T4, T5, T6, T7, R> partial7(final T1 t1, final T2 t2,
-                                                                                      final Fn7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
+    public static <T1, T2, T3, T4, T5, T6, T7, R> Function5<T3, T4, T5, T6, T7, R> partial7(final T1 t1, final T2 t2,
+                                                                                            final Function7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
         return (t3, t4, t5, t6, t7) -> heptFunc.apply(t1, t2, t3, t4, t5, t6, t7);
     }
 
@@ -572,8 +572,8 @@ public class PartialApplicator extends Lambda {
      * @return HexFunction as a result of 1 argument being applied to the supplied HeptFunction
      */
 
-    public static <T1, T2, T3, T4, T5, T6, T7, R> Fn6<T2, T3, T4, T5, T6, T7, R> partial7(final T1 t1,
-                                                                                          final Fn7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
+    public static <T1, T2, T3, T4, T5, T6, T7, R> Function6<T2, T3, T4, T5, T6, T7, R> partial7(final T1 t1,
+                                                                                                final Function7<T1, T2, T3, T4, T5, T6, T7, R> heptFunc) {
         return (t2, t3, t4, t5, t6, t7) -> heptFunc.apply(t1, t2, t3, t4, t5, t6, t7);
     }
 
@@ -600,7 +600,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Supplier<R> partial8(final T1 t1, final T2 t2, final T3 t3, final T4 t4, final T5 t5,
-            final T6 t6, final T7 t7, final T8 t8, final Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
+            final T6 t6, final T7 t7, final T8 t8, final Function8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
         return () -> octFunc.apply(t1, t2, t3, t4, t5, t6, t7, t8);
     }
 
@@ -627,7 +627,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function<T8, R> partial8(final T1 t1, final T2 t2, final T3 t3, final T4 t4, final T5 t5,
-            final T6 t6, final T7 t7, final Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
+            final T6 t6, final T7 t7, final Function8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
         return (t8) -> octFunc.apply(t1, t2, t3, t4, t5, t6, t7, t8);
     }
 
@@ -653,7 +653,7 @@ public class PartialApplicator extends Lambda {
      */
 
     public static <T1, T2, T3, T4, T5, T6, T7, T8, R> BiFunction<T7, T8, R> partial8(final T1 t1, final T2 t2, final T3 t3, final T4 t4, final T5 t5,
-            final T6 t6, final Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
+            final T6 t6, final Function8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
         return (t7, t8) -> octFunc.apply(t1, t2, t3, t4, t5, t6, t7, t8);
     }
 
@@ -677,8 +677,8 @@ public class PartialApplicator extends Lambda {
      * @return TriFunction as a result of 5 arguments being applied to the supplied OctFunction
      */
 
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Fn3<T6, T7, T8, R> partial8(final T1 t1, final T2 t2, final T3 t3, final T4 t4,
-                                                                                  final T5 t5, final Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function3<T6, T7, T8, R> partial8(final T1 t1, final T2 t2, final T3 t3, final T4 t4,
+                                                                                        final T5 t5, final Function8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
         return (t6, t7, t8) -> octFunc.apply(t1, t2, t3, t4, t5, t6, t7, t8);
     }
 
@@ -701,8 +701,8 @@ public class PartialApplicator extends Lambda {
      * @return QuadFunction as a result of 4 arguments being applied to the supplied OctFunction
      */
 
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Fn4<T5, T6, T7, T8, R> partial8(final T1 t1, final T2 t2, final T3 t3, final T4 t4,
-                                                                                      final Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function4<T5, T6, T7, T8, R> partial8(final T1 t1, final T2 t2, final T3 t3, final T4 t4,
+                                                                                            final Function8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
         return (t5, t6, t7, t8) -> octFunc.apply(t1, t2, t3, t4, t5, t6, t7, t8);
     }
 
@@ -724,8 +724,8 @@ public class PartialApplicator extends Lambda {
      * @return QuintFunction as a result of 3 arguments being applied to the supplied OctFunction
      */
 
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Fn5<T4, T5, T6, T7, T8, R> partial8(final T1 t1, final T2 t2, final T3 t3,
-                                                                                          final Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function5<T4, T5, T6, T7, T8, R> partial8(final T1 t1, final T2 t2, final T3 t3,
+                                                                                                final Function8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
         return (t4, t5, t6, t7, t8) -> octFunc.apply(t1, t2, t3, t4, t5, t6, t7, t8);
     }
 
@@ -746,8 +746,8 @@ public class PartialApplicator extends Lambda {
      * @return HexFunction as a result of 2 arguments being applied to the supplied OctFunction
      */
 
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Fn6<T3, T4, T5, T6, T7, T8, R> partial8(final T1 t1, final T2 t2,
-                                                                                              final Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function6<T3, T4, T5, T6, T7, T8, R> partial8(final T1 t1, final T2 t2,
+                                                                                                    final Function8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
         return (t3, t4, t5, t6, t7, t8) -> octFunc.apply(t1, t2, t3, t4, t5, t6, t7, t8);
     }
 
@@ -767,8 +767,8 @@ public class PartialApplicator extends Lambda {
      * @return HeptFunction as a result of 1 arguments being applied to the supplied OctFunction
      */
 
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Fn7<T2, T3, T4, T5, T6, T7, T8, R> partial8(final T1 t1,
-                                                                                                  final Fn8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function7<T2, T3, T4, T5, T6, T7, T8, R> partial8(final T1 t1,
+                                                                                                        final Function8<T1, T2, T3, T4, T5, T6, T7, T8, R> octFunc) {
         return (t2, t3, t4, t5, t6, t7, t8) -> octFunc.apply(t1, t2, t3, t4, t5, t6, t7, t8);
     }
 

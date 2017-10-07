@@ -1,21 +1,19 @@
 package com.aol.cyclops2.data.collections.extensions;
 
-import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.traversable.FoldableTraversable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.MapX;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.stream.HeadAndTail;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;
@@ -23,7 +21,6 @@ import org.reactivestreams.Publisher;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 /**
@@ -610,8 +607,8 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      */
     default <R1, R2, R3,R> CollectionX<R> forEach4(final Function<? super T, ? extends Iterable<R1>> iterable1,
                         final BiFunction<? super T,? super R1, ? extends Iterable<R2>> iterable2,
-                            final Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
-                            final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                            final Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
+                            final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return this.flatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(iterable1.apply(in));
@@ -664,9 +661,9 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      */
     default <R1, R2, R3, R> CollectionX<R> forEach4(final Function<? super T, ? extends Iterable<R1>> iterable1,
             final BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2,
-            final Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
-            final Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+            final Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
+            final Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+            final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return this.flatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(iterable1.apply(in));
@@ -712,7 +709,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      */
     default <R1, R2, R> CollectionX<R> forEach3(final Function<? super T, ? extends Iterable<R1>> iterable1,
                                                 final BiFunction<? super T,? super R1, ? extends Iterable<R2>> iterable2,
-                                                final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                final Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         return this.flatMap(in -> {
 
             Iterable<R1> a = iterable1.apply(in);
@@ -759,8 +756,8 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      */
     default <R1, R2, R> CollectionX<R> forEach3(final Function<? super T, ? extends Iterable<R1>> iterable1,
             final BiFunction<? super T,? super R1, ? extends Iterable<R2>> iterable2,
-                    final Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                    final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                    final Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                    final Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         return this.flatMap(in -> {
 
             Iterable<R1> a = iterable1.apply(in);

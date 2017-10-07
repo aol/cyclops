@@ -4,7 +4,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Unrestricted;
 import cyclops.control.lazy.Either3;
 import cyclops.function.Function1;
-import cyclops.function.Fn2;
+import cyclops.function.Function2;
 
 import java.util.function.Function;
 
@@ -54,7 +54,7 @@ abstract class ToyLanguage<A> implements Transformable<A> {
         }
 
 
-        public <Z> Z visit(final Fn2<Character, A, Z> output) {
+        public <Z> Z visit(final Function2<Character, A, Z> output) {
             return output.apply(a, next);
         }
 

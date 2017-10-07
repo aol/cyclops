@@ -1,8 +1,6 @@
 package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.immutable.PersistentSetX;
-import cyclops.collections.mutable.QueueX;
 import cyclops.typeclasses.*;
 import cyclops.control.Xor;
 import cyclops.typeclasses.Active;
@@ -164,8 +162,8 @@ public class Streams {
     public static <T1, T2, T3, R1, R2, R3, R> Stream<R> forEach4(Stream<? extends T1> value1,
                                                                  Function<? super T1, ? extends Stream<R1>> value2,
                                                                  BiFunction<? super T1, ? super R1, ? extends Stream<R2>> value3,
-                                                                 Fn3<? super T1, ? super R1, ? super R2, ? extends Stream<R3>> value4,
-                                                                 Fn4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                 Function3<? super T1, ? super R1, ? super R2, ? extends Stream<R3>> value4,
+                                                                 Function4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
 
         return value1.flatMap(in -> {
@@ -213,9 +211,9 @@ public class Streams {
     public static <T1, T2, T3, R1, R2, R3, R> Stream<R> forEach4(Stream<? extends T1> value1,
                                                                  Function<? super T1, ? extends Stream<R1>> value2,
                                                                  BiFunction<? super T1, ? super R1, ? extends Stream<R2>> value3,
-                                                                 Fn3<? super T1, ? super R1, ? super R2, ? extends Stream<R3>> value4,
-                                                                 Fn4<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                                 Fn4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                 Function3<? super T1, ? super R1, ? super R2, ? extends Stream<R3>> value4,
+                                                                 Function4<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                                 Function4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
 
         return value1.flatMap(in -> {
@@ -261,7 +259,7 @@ public class Streams {
     public static <T1, T2, R1, R2, R> Stream<R> forEach3(Stream<? extends T1> value1,
                                                          Function<? super T1, ? extends Stream<R1>> value2,
                                                          BiFunction<? super T1, ? super R1, ? extends Stream<R2>> value3,
-                                                         Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                         Function3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return value1.flatMap(in -> {
 
@@ -304,8 +302,8 @@ public class Streams {
     public static <T1, T2, R1, R2, R> Stream<R> forEach3(Stream<? extends T1> value1,
                                                          Function<? super T1, ? extends Stream<R1>> value2,
                                                          BiFunction<? super T1, ? super R1, ? extends Stream<R2>> value3,
-                                                         Fn3<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
-                                                         Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                         Function3<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
+                                                         Function3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
 
         return value1.flatMap(in -> {
@@ -3169,7 +3167,7 @@ public class Streams {
         public static <T,R> Foldable<stream> foldable(){
             BiFunction<Monoid<T>,Higher<stream,T>,T> foldRightFn =  (m,l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).foldRight(m);
             BiFunction<Monoid<T>,Higher<stream,T>,T> foldLeftFn = (m,l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).reduce(m);
-            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.stream, T>, R> foldMapFn = (m, f, l)->StreamKind.narrowK(l).map(f).reduce(m.zero(),m);
+            Function3<Monoid<R>, Function<T, R>, Higher<stream, T>, R> foldMapFn = (m, f, l)->StreamKind.narrowK(l).map(f).reduce(m.zero(),m);
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 

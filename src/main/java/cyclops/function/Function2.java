@@ -21,12 +21,12 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 
 @FunctionalInterface
-public interface Fn2<T1, T2, R> extends BiFunction<T1,T2,R> {
+public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R> {
 
-    public static <T1, T2, T3,R> Fn2<T1,T2, R> λ(final Fn2<T1,T2, R> triFunc){
+    public static <T1, T2, T3,R> Function2<T1,T2, R> λ(final Function2<T1,T2, R> triFunc){
         return triFunc;
     }
-    public static <T1, T2, T3,R> Fn2<? super T1,? super T2,? extends R> λv(final Fn2<? super T1,? super T2,? extends R> triFunc){
+    public static <T1, T2, T3,R> Function2<? super T1,? super T2,? extends R> λv(final Function2<? super T1,? super T2,? extends R> triFunc){
         return triFunc;
     }
     
@@ -37,34 +37,34 @@ public interface Fn2<T1, T2, R> extends BiFunction<T1,T2,R> {
     }
     
     
-    default Fn2<T1, T2,  Maybe<R>> lift(){
-        Fn2<T1, T2,  R> host = this;
+    default Function2<T1, T2,  Maybe<R>> lift(){
+        Function2<T1, T2,  R> host = this;
        return (T1,T2)-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(T1,T2))));
     }
-    default Fn2<T1, T2, Future<R>> lift(Executor ex){
-        Fn2<T1, T2,  R> host = this;
+    default Function2<T1, T2, Future<R>> lift(Executor ex){
+        Function2<T1, T2,  R> host = this;
        return (T1,T2)-> Future.of(()->host.apply(T1,T2),ex);
     }
-    default Fn2<T1, T2,  Try<R,Throwable>> liftTry(){
-        Fn2<T1, T2,  R> host = this;
+    default Function2<T1, T2,  Try<R,Throwable>> liftTry(){
+        Function2<T1, T2,  R> host = this;
        return (T1,T2)->  Try.withCatch(()->host.apply(T1,T2),Throwable.class);
     }
-    default Fn2<T1, T2,  Optional<R>> liftOpt(){
-        Fn2<T1, T2,  R> host = this;
+    default Function2<T1, T2,  Optional<R>> liftOpt(){
+        Function2<T1, T2,  R> host = this;
        return (T1,T2)-> Optional.ofNullable(host.apply(T1,T2));
     }
 
     
-    default Fn2<T1,T2,R> memoize(){
+    default Function2<T1,T2,R> memoize(){
         return Memoize.memoizeBiFunction(this);
     }
-    default Fn2<T1,T2,R> memoize(Cacheable<R> c){
+    default Function2<T1,T2,R> memoize(Cacheable<R> c){
         return Memoize.memoizeBiFunction(this,c);
     }
-    default Fn2<T1,T2, R> memoizeAsync(ScheduledExecutorService ex, String cron){
+    default Function2<T1,T2, R> memoizeAsync(ScheduledExecutorService ex, String cron){
         return Memoize.memoizeBiFunctionAsync(this,ex,cron);
     }
-    default Fn2<T1,T2, R> memoizeAsync(ScheduledExecutorService ex, long timeToLiveMillis){
+    default Function2<T1,T2, R> memoizeAsync(ScheduledExecutorService ex, long timeToLiveMillis){
         return Memoize.memoizeBiFunctionAsync(this,ex,timeToLiveMillis);
     }
 
@@ -78,11 +78,11 @@ public interface Fn2<T1, T2, R> extends BiFunction<T1,T2,R> {
                     .apply(s);
     }
 
-    default Fn2<T2,T1,R> reverse(){
+    default Function2<T2,T1,R> reverse(){
         return (t2,t1)->apply(t1,t2);
     }
     @Override
-    default <V> Fn2<T1, T2, V> andThen(Function<? super R, ? extends V> after) {
+    default <V> Function2<T1, T2, V> andThen(Function<? super R, ? extends V> after) {
         return (t1,t2)-> after.apply(apply(t1,t2));
     }
 
@@ -90,66 +90,66 @@ public interface Fn2<T1, T2, R> extends BiFunction<T1,T2,R> {
         return (a,b)->apply(a,b);
     }
 
-    interface FunctionalOperations<T1,T2,R> extends Fn2<T1,T2,R> {
+    interface FunctionalOperations<T1,T2,R> extends Function2<T1,T2,R> {
 
-        default <V> Fn2<T1,T2, V> apply(final BiFunction<? super T1,? super T2,? extends Function<? super R,? extends V>> applicative) {
+        default <V> Function2<T1,T2, V> apply(final BiFunction<? super T1,? super T2,? extends Function<? super R,? extends V>> applicative) {
             return (a,b) -> applicative.apply(a,b).apply(this.apply(a,b));
         }
 
-        default <R1> Fn2<T1,T2, R1> map(final Function<? super R, ? extends R1> f2) {
+        default <R1> Function2<T1,T2, R1> map(final Function<? super R, ? extends R1> f2) {
             return andThen(f2);
         }
 
-        default <R1> Fn2<T1, T2, R1> flatMap(final Function<? super R, ? extends Function<? super T1, ? extends R1>> f) {
+        default <R1> Function2<T1, T2, R1> flatMap(final Function<? super R, ? extends Function<? super T1, ? extends R1>> f) {
             return (a,b)-> f.apply(apply(a,b)).apply(a);
         }
-        default <W extends WitnessType<W>> Fn2<AnyM<W,T1>,AnyM<W,T2>,AnyM<W,R>> anyMZip() {
+        default <W extends WitnessType<W>> Function2<AnyM<W,T1>,AnyM<W,T2>,AnyM<W,R>> anyMZip() {
             return (a,b) -> (AnyM<W,R>)a.zip(b,this);
         }
 
 
-        default Fn2<ReactiveSeq<T1>,ReactiveSeq<T2>, ReactiveSeq<R>> streamZip() {
+        default Function2<ReactiveSeq<T1>,ReactiveSeq<T2>, ReactiveSeq<R>> streamZip() {
             return (a,b) -> a.zip(b,this);
         }
 
-        default Fn2<ReactiveSeq<T1>,ReactiveSeq<T2>, ReactiveSeq<R>> streamM() {
+        default Function2<ReactiveSeq<T1>,ReactiveSeq<T2>, ReactiveSeq<R>> streamM() {
             return (a,b) -> a.forEach2(x->b,this);
         }
-        default Fn2<Future<T1>, Future<T2>, Future<R>> futureZip() {
+        default Function2<Future<T1>, Future<T2>, Future<R>> futureZip() {
             return (a,b) -> a.zip(b,this);
         }
-        default Fn2<Future<T1>, Future<T2>, Future<R>> futureM() {
+        default Function2<Future<T1>, Future<T2>, Future<R>> futureM() {
             return (a,b) -> a.forEach2(x->b,this);
         }
-        default <W extends WitnessType<W>> Fn2<FutureT<W,T1>,FutureT<W,T2>, FutureT<W,R>> futureTM(W witness) {
+        default <W extends WitnessType<W>> Function2<FutureT<W,T1>,FutureT<W,T2>, FutureT<W,R>> futureTM(W witness) {
             return (a,b) -> a.forEach2M(x->b,this);
         }
-        default <W extends WitnessType<W>> Fn2<FutureT<W,T1>,FutureT<W,T2>, FutureT<W,R>> futureTZip(W witness) {
+        default <W extends WitnessType<W>> Function2<FutureT<W,T1>,FutureT<W,T2>, FutureT<W,R>> futureTZip(W witness) {
             return (a,b) -> a.zip(b,this);
         }
 
-        default Fn2<ListX<T1>,ListX<T2>, ListX<R>> listXZip() {
+        default Function2<ListX<T1>,ListX<T2>, ListX<R>> listXZip() {
             return (a,b) -> a.zip(b,this);
         }
 
-        default Fn2<ListX<T1>,ListX<T2>, ListX<R>> listXM() {
+        default Function2<ListX<T1>,ListX<T2>, ListX<R>> listXM() {
             return (a,b) -> a.forEach2(x->b,this);
         }
-        default Fn2<LinkedListX<T1>,LinkedListX<T2>, LinkedListX<R>> linkedListXZip() {
+        default Function2<LinkedListX<T1>,LinkedListX<T2>, LinkedListX<R>> linkedListXZip() {
             return (a,b) -> a.zip(b,this);
         }
 
-        default Fn2<LinkedListX<T1>,LinkedListX<T2>, LinkedListX<R>> linkedListXM() {
+        default Function2<LinkedListX<T1>,LinkedListX<T2>, LinkedListX<R>> linkedListXM() {
             return (a,b) -> a.forEach2(x->b,this);
         }
-        default Fn2<VectorX<T1>,VectorX<T2>, VectorX<R>> vectorXZip() {
+        default Function2<VectorX<T1>,VectorX<T2>, VectorX<R>> vectorXZip() {
             return (a,b) -> a.zip(b,this);
         }
 
-        default <W extends WitnessType<W>> Fn2<ListT<W,T1>,ListT<W,T2>, ListT<W,R>> listTM(W witness) {
+        default <W extends WitnessType<W>> Function2<ListT<W,T1>,ListT<W,T2>, ListT<W,R>> listTM(W witness) {
             return (a,b) -> a.forEach2M(x->b,this);
         }
-        default <W extends WitnessType<W>> Fn2<ListT<W,T1>,ListT<W,T2>, ListT<W,R>> listTZip(W witness) {
+        default <W extends WitnessType<W>> Function2<ListT<W,T1>,ListT<W,T2>, ListT<W,R>> listTZip(W witness) {
             return (a,b) -> a.zip(b,this);
         }
     }

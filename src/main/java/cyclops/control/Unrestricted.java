@@ -2,7 +2,7 @@ package cyclops.control;
 
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.lazy.Either3;
-import cyclops.function.Fn3;
+import cyclops.function.Function3;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -262,7 +262,7 @@ public abstract class Unrestricted<T> {
      */
     public  < T2, T3, R1, R2, R3> Unrestricted<R3> forEach4(Function<? super T, ? extends Unrestricted<R1>> value2,
                                                             BiFunction<? super T, ? super R1, ? extends Unrestricted<R2>> value3,
-                                                            Fn3<? super T, ? super R1, ? super R2, ? extends Unrestricted<R3>> value4
+                                                            Function3<? super T, ? super R1, ? super R2, ? extends Unrestricted<R3>> value4
                                                                        ) {
 
         return this.flatMap(in -> {
@@ -401,7 +401,7 @@ public abstract class Unrestricted<T> {
         return zip(b,c,(x,y,z)->Tuple.tuple(x,y,z));
 
     }
-    public  <B,C,R> Unrestricted<R> zip(Unrestricted<B> b, Unrestricted<C> c, Fn3<? super T, ? super B, ? super C,? extends R> fn){
+    public  <B,C,R> Unrestricted<R> zip(Unrestricted<B> b, Unrestricted<C> c, Function3<? super T, ? super B, ? super C,? extends R> fn){
 
         Xor<Transformable<Unrestricted<T>>,T> first = resume();
         Xor<Transformable<Unrestricted<B>>,B> second = b.resume();

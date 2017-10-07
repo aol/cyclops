@@ -3,7 +3,7 @@ package cyclops.typeclasses.free;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.lazy.Either3;
 import cyclops.function.Function1;
-import cyclops.function.Fn2;
+import cyclops.function.Function2;
 import cyclops.typeclasses.functor.Functor;
 
 import java.util.function.Function;
@@ -60,7 +60,7 @@ abstract class CharToy<A> implements Higher<CharToy.µ, A> {
         }
 
 
-        public <Z> Z visit(final Fn2<Character, A, Z> output) {
+        public <Z> Z visit(final Function2<Character, A, Z> output) {
             return output.apply(a, next);
         }
 

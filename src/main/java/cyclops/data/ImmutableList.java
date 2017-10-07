@@ -1,7 +1,6 @@
 package cyclops.data;
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
-import com.aol.cyclops2.matching.Matching;
 import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.Zippable;
@@ -17,11 +16,10 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
 
-import cyclops.matching.Api;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
@@ -32,7 +30,6 @@ import org.reactivestreams.Publisher;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import static cyclops.matching.Api.*;
@@ -269,8 +266,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     default <R1, R2, R3, R> ImmutableList<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1,
                                                       BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2,
-                                                      Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
-                                                      Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                      Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
+                                                      Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return this.flatMapI(in -> {
 
@@ -289,9 +286,9 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     default <R1, R2, R3, R> ImmutableList<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1,
                                                       BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2,
-                                                      Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
-                                                      Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                      Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                      Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
+                                                      Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                      Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return this.flatMapI(in -> {
 
@@ -312,7 +309,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     default <R1, R2, R> ImmutableList<R> forEach3(Function<? super T, ? extends Iterable<R1>> iterable1,
                                                   BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2,
-                                                  Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                  Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return this.flatMapI(in -> {
 
@@ -329,8 +326,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     default <R1, R2, R> ImmutableList<R> forEach3(Function<? super T, ? extends Iterable<R1>> iterable1,
                                                   BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2,
-                                                  Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                                  Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                  Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                                  Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return this.flatMapI(in -> {
 
@@ -459,12 +456,12 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default <S, U, R> ImmutableList<R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> ImmutableList<R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return unitStream(stream().zip3(second,third,fn3));
     }
 
     @Override
-    default <T2, T3, T4, R> ImmutableList<R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> ImmutableList<R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return unitStream(stream().zip4(second,third,fourth,fn));
     }
 

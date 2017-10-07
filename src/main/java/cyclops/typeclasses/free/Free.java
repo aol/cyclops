@@ -5,10 +5,9 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
 import cyclops.control.Xor;
 import cyclops.control.lazy.Either3;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
-import cyclops.function.Fn5;
-import cyclops.monads.Witness;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
+import cyclops.function.Function5;
 import cyclops.monads.Witness.free;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.Applicative;
@@ -261,9 +260,9 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
 
     public <R1, R2, R3,R4,R5> Free<F,R5> forEach6(Function<? super T, ? extends Free<F,R1>> value2,
                                                BiFunction<? super T, ? super R1, ? extends Free<F,R2>> value3,
-                                               Fn3<? super T, ? super R1, ? super R2, ? extends Free<F,R3>> value4,
-                                               Fn4<? super T, ? super R1, ? super R2,? super R3, ? extends Free<F,R4>> value5,
-                                                  Fn5<? super T, ? super R1, ? super R2,? super R3, ? super R4, ? extends Free<F,R5>> value6
+                                               Function3<? super T, ? super R1, ? super R2, ? extends Free<F,R3>> value4,
+                                               Function4<? super T, ? super R1, ? super R2,? super R3, ? extends Free<F,R4>> value5,
+                                                  Function5<? super T, ? super R1, ? super R2,? super R3, ? super R4, ? extends Free<F,R5>> value6
     ) {
 
         return this.flatMap(in -> {
@@ -296,8 +295,8 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
 
     public <R1, R2, R3,R4> Free<F,R4> forEach5(Function<? super T, ? extends Free<F,R1>> value2,
                                             BiFunction<? super T, ? super R1, ? extends Free<F,R2>> value3,
-                                            Fn3<? super T, ? super R1, ? super R2, ? extends Free<F,R3>> value4,
-                                               Fn4<? super T, ? super R1, ? super R2,? super R3, ? extends Free<F,R4>> value5
+                                            Function3<? super T, ? super R1, ? super R2, ? extends Free<F,R3>> value4,
+                                               Function4<? super T, ? super R1, ? super R2,? super R3, ? extends Free<F,R4>> value5
     ) {
 
         return this.flatMap(in -> {
@@ -326,7 +325,7 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
 
     public <R1, R2, R3> Free<F,R3> forEach4(Function<? super T, ? extends Free<F,R1>> value2,
                                                    BiFunction<? super T, ? super R1, ? extends Free<F,R2>> value3,
-                                                   Fn3<? super T, ? super R1, ? super R2, ? extends Free<F,R3>> value4
+                                                   Function3<? super T, ? super R1, ? super R2, ? extends Free<F,R3>> value4
                                                    ) {
 
         return this.flatMap(in -> {
@@ -451,7 +450,7 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
         return zip(f,b,c,(x,y,z)->Tuple.tuple(x,y,z));
 
     }
-    public  <B,C,R> Free<F,R> zip(Functor<F> f,Free<F,B> b, Free<F,C> c, Fn3<? super T, ? super B, ? super C,? extends R> fn){
+    public  <B,C,R> Free<F,R> zip(Functor<F> f,Free<F,B> b, Free<F,C> c, Function3<? super T, ? super B, ? super C,? extends R> fn){
 
         Xor<Higher<F, Free<F, T>>, T> first = resume(f);
         Xor<Higher<F, Free<F, B>>, B> second = b.resume(f);

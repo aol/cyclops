@@ -197,7 +197,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     }
 
     @Override
-    default <S, U, R> AnyM<W,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> AnyM<W,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (AnyM<W,R>)Zippable.super.zip3(second,third,fn3);
     }
 
@@ -207,7 +207,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
     }
 
     @Override
-    default <T2, T3, T4, R> AnyM<W,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> AnyM<W,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (AnyM<W,R>)Zippable.super.zip4(second,third,fourth,fn);
     }
 
@@ -1420,8 +1420,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
    * @param fn Function to lift
    * @return Lifted function
    */
-  public static <W extends WitnessType<W>,U1, U2, U3, R> Fn3<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,R>> liftF3(
-          final Fn3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
+  public static <W extends WitnessType<W>,U1, U2, U3, R> Function3<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,R>> liftF3(
+          final Function3<? super U1, ? super U2, ? super U3, ? extends R> fn) {
       return (u1, u2, u3) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.map(input3 -> fn.apply(input1, input2, input3))));
   }
 
@@ -1432,8 +1432,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
    * @param fn Quad funciton to lift
    * @return Lifted Quad function
    */
-  public static <W extends WitnessType<W>,U1, U2, U3, U4, R> Fn4<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,U4>, AnyM<W,R>> liftF4(
-          final Fn4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
+  public static <W extends WitnessType<W>,U1, U2, U3, U4, R> Function4<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,U4>, AnyM<W,R>> liftF4(
+          final Function4<? super U1, ? super U2, ? super U3, ? super U4, ? extends R> fn) {
 
       return (u1, u2, u3, u4) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.map(input4 -> fn.apply(input1, input2, input3, input4)))));
   }
@@ -1444,8 +1444,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
    * @param fn Function to lift
    * @return Lifted Function
    */
-  public static <W extends WitnessType<W>,U1, U2, U3, U4, U5, R> Fn5<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,U4>, AnyM<W,U5>, AnyM<W,R>> liftF5(
-          final Fn5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
+  public static <W extends WitnessType<W>,U1, U2, U3, U4, U5, R> Function5<AnyM<W,U1>, AnyM<W,U2>, AnyM<W,U3>, AnyM<W,U4>, AnyM<W,U5>, AnyM<W,R>> liftF5(
+          final Function5<? super U1, ? super U2, ? super U3, ? super U4, ? super U5, ? extends R> fn) {
 
       return (u1, u2, u3, u4,
               u5) -> u1.flatMapA(input1 -> u2.flatMapA(input2 -> u3.flatMapA(input3 -> u4.flatMapA(input4 -> u5.map(input5 -> fn.apply(input1, input2, input3,

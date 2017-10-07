@@ -2,33 +2,18 @@ package cyclops.collections.tuple;
 
 
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.types.foldable.EqualTo;
 import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
-import cyclops.control.Maybe;
-import cyclops.control.Xor;
-import cyclops.function.Fn3;
+import cyclops.function.Function3;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.tuple2;
 import cyclops.monads.Witness.tuple3;
-import cyclops.typeclasses.*;
-import cyclops.typeclasses.comonad.Comonad;
-import cyclops.typeclasses.comonad.ComonadByPure;
-import cyclops.typeclasses.foldable.Foldable;
-import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.monad.*;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -118,7 +103,7 @@ public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
             }
         };
     }
-    public <R1> R1 transform(Fn3<? super T1, ? super T2, ? super T3, ? extends R1> fn){
+    public <R1> R1 transform(Function3<? super T1, ? super T2, ? super T3, ? extends R1> fn){
         return fn.apply(_1(),_2(),_3());
     }
     public <R> Tuple3<T1,T2,R> flatMap(Monoid<T1> m1, Monoid<T2> m2,Function<? super T3, ? extends Tuple3<T1,T2,R>> fn){
@@ -155,7 +140,7 @@ public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
     }
 
 
-    public <R> R visit(Fn3<? super T1, ? super T2, ? super T3, ? extends R> fn){
+    public <R> R visit(Function3<? super T1, ? super T2, ? super T3, ? extends R> fn){
         return fn.apply(_1(),_2(),_3());
     }
 

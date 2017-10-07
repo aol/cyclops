@@ -9,16 +9,14 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import com.aol.cyclops2.types.traversable.FoldableTraversable;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
@@ -35,7 +33,6 @@ import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 
 /**
  * Monad Transformer for Java Lists
@@ -784,8 +781,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
     public <T2, R1, R2, R3, R> ListT<W,R> forEach4M(Function<? super T, ? extends ListT<W,R1>> value1,
                                                     BiFunction<? super T, ? super R1, ? extends ListT<W,R2>> value2,
-                                                    Fn3<? super T, ? super R1, ? super R2, ? extends ListT<W,R3>> value3,
-                                                    Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                    Function3<? super T, ? super R1, ? super R2, ? extends ListT<W,R3>> value3,
+                                                    Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return this.flatMapT(in->value1.apply(in)
                 .flatMapT(in2-> value2.apply(in,in2)
                         .flatMapT(in3->value3.apply(in,in2,in3)
@@ -794,9 +791,9 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
     public <T2, R1, R2, R3, R> ListT<W,R> forEach4M(Function<? super T, ? extends ListT<W,R1>> value1,
                                                     BiFunction<? super T, ? super R1, ? extends ListT<W,R2>> value2,
-                                                    Fn3<? super T, ? super R1, ? super R2, ? extends ListT<W,R3>> value3,
-                                                    Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                    Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                    Function3<? super T, ? super R1, ? super R2, ? extends ListT<W,R3>> value3,
+                                                    Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                    Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return this.flatMapT(in->value1.apply(in)
                 .flatMapT(in2-> value2.apply(in,in2)
                         .flatMapT(in3->value3.apply(in,in2,in3)
@@ -807,7 +804,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
     public <T2, R1, R2, R> ListT<W,R> forEach3M(Function<? super T, ? extends ListT<W,R1>> value1,
                                                 BiFunction<? super T, ? super R1, ? extends ListT<W,R2>> value2,
-                                                Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2)
                 .map(in3->yieldingFunction.apply(in,in2,in3))));
@@ -816,8 +813,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
     public <T2, R1, R2, R> ListT<W,R> forEach3M(Function<? super T, ? extends ListT<W,R1>> value1,
                                                 BiFunction<? super T, ? super R1, ? extends ListT<W,R2>> value2,
-                                                Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                                Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                                Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2).filter(in3->filterFunction.apply(in,in2,in3))
                 .map(in3->yieldingFunction.apply(in,in2,in3))));
@@ -914,12 +911,12 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     @Override
-    public <S, U, R> ListT<W,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    public <S, U, R> ListT<W,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (ListT) FoldableTransformerSeq.super.zip3(second,third,fn3);
     }
 
     @Override
-    public <T2, T3, T4, R> ListT<W,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    public <T2, T3, T4, R> ListT<W,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (ListT) FoldableTransformerSeq.super.zip4(second,third,fourth,fn);
     }
 

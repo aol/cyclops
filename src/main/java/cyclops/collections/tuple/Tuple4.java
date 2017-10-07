@@ -2,21 +2,15 @@ package cyclops.collections.tuple;
 
 
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.hkt.Higher4;
 import com.aol.cyclops2.types.foldable.EqualTo;
 import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function4;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.tuple3;
 import cyclops.monads.Witness.tuple4;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -177,7 +171,7 @@ public class Tuple4<T1,T2,T3,T4> implements To<Tuple4<T1,T2,T3,T4>>,
         return lazy(() -> _1(), () -> _2(),()->_3(),()->fn.apply(_4()));
     }
 
-    public <R> R visit(Fn4<? super T1, ? super T2, ? super T3,? super T4, ? extends R> fn){
+    public <R> R visit(Function4<? super T1, ? super T2, ? super T3,? super T4, ? extends R> fn){
         return fn.apply(_1(),_2(),_3(),_4());
     }
 

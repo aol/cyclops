@@ -1,10 +1,9 @@
 package cyclops.typeclasses.instances;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.function.Fn3;
+import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.Pure;
-import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.functor.Functor;
@@ -351,7 +350,7 @@ public interface General {
     static class GeneralFoldable<CRE,T,R> implements Foldable<CRE> {
         BiFunction<Monoid<T>,Higher<CRE,T>,T> foldRightFn;
         BiFunction<Monoid<T>,Higher<CRE,T>,T> foldLeftFn;
-        Fn3<Monoid<R>,Function<T,R>,Higher<CRE,T>,R> foldMapFn;
+        Function3<Monoid<R>,Function<T,R>,Higher<CRE,T>,R> foldMapFn;
         
         <T> BiFunction<Monoid<T>,Higher<CRE,T>,T> foldRightFn(){
             return (BiFunction)foldRightFn;
@@ -359,8 +358,8 @@ public interface General {
         <T> BiFunction<Monoid<T>,Higher<CRE,T>,T> foldLeftFn(){
             return (BiFunction)foldLeftFn;
         }
-        <T,R> Fn3<Monoid<R>,Function<? super T,? extends R>,Higher<CRE,T>,R>  foldMapFn(){
-            return (Fn3)foldMapFn;
+        <T,R> Function3<Monoid<R>,Function<? super T,? extends R>,Higher<CRE,T>,R> foldMapFn(){
+            return (Function3)foldMapFn;
         }
         
         public <T> T foldRight(Monoid<T> monoid, Higher<CRE,T> ds){
@@ -378,7 +377,7 @@ public interface General {
     }
     
     static <CRE,T,R> GeneralFoldable<CRE,T,R> foldable(BiFunction<Monoid<T>, Higher<CRE, T>, T> foldRightFn, BiFunction<Monoid<T>, Higher<CRE, T>, T> foldLeftFn,
-                                                       Fn3<Monoid<R>,Function<T,R>,Higher<CRE,T>,R> foldMapFn){
+                                                       Function3<Monoid<R>,Function<T,R>,Higher<CRE,T>,R> foldMapFn){
         return new GeneralFoldable<>(foldRightFn,foldLeftFn,foldMapFn);
     }
     @AllArgsConstructor
@@ -421,10 +420,10 @@ public interface General {
     static class GeneralTraverseByTraverse<CRE,C2,A,B> implements TraverseByTraverse<CRE>{
 
         Applicative<CRE> applicative;
-        Fn3<Applicative<C2>,Function<A, Higher<C2, B>>,Higher<CRE, A>,Higher<C2, Higher<CRE, B>>> traverseFn;
+        Function3<Applicative<C2>,Function<A, Higher<C2, B>>,Higher<CRE, A>,Higher<C2, Higher<CRE, B>>> traverseFn;
         
-        <C2,T,R> Fn3<Applicative<C2>,Function< T, Higher<C2, R>>,Higher<CRE, T>,Higher<C2, Higher<CRE, R>>> traverseFn(){
-            return (Fn3)traverseFn;
+        <C2,T,R> Function3<Applicative<C2>,Function< T, Higher<C2, R>>,Higher<CRE, T>,Higher<C2, Higher<CRE, R>>> traverseFn(){
+            return (Function3)traverseFn;
         }
 
         @Override
@@ -453,7 +452,7 @@ public interface General {
        
     }
     static <CRE,C2,T,R> Traverse<CRE> traverseByTraverse(Applicative<CRE> applicative,
-                                                         Fn3<Applicative<C2>, Function<T, Higher<C2, R>>, Higher<CRE, T>, Higher<C2, Higher<CRE, R>>> traverseFn)  {
+                                                         Function3<Applicative<C2>, Function<T, Higher<C2, R>>, Higher<CRE, T>, Higher<C2, Higher<CRE, R>>> traverseFn)  {
         return new GeneralTraverseByTraverse<>(applicative,traverseFn);
     }
     

@@ -16,11 +16,10 @@ import cyclops.companion.Optionals.OptionalKind;
 import cyclops.companion.Streams;
 import cyclops.companion.Streams.StreamKind;
 import cyclops.control.*;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Group;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;
@@ -877,8 +876,8 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         public  < T2, T3, R1, R2, R3, R> Nested<W1,W2,R> forEach4(
                                                                   Function<? super T, ? extends Nested<W1,W2,R1>> value2,
                                                                   BiFunction<? super T, ? super R1, ? extends Nested<W1,W2,R2>> value3,
-                                                                  Fn3<? super T, ? super R1, ? super R2, ? extends Nested<W1,W2,R3>> value4,
-                                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                  Function3<? super T, ? super R1, ? super R2, ? extends Nested<W1,W2,R3>> value4,
+                                                                  Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
             return narrowK(monad.flatMap_(value1,in -> {
 
@@ -903,7 +902,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         public  <T2, R1, R2, R> Nested<W1,W2,R> forEach3(
                                                           Function<? super T, ? extends Nested<W1,W2,R1>> value2,
                                                           BiFunction<? super T, ? super R1, ? extends Nested<W1,W2,R2>> value3,
-                                                          Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                          Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
             return narrowK(monad.flatMap_(value1,in -> {
 
@@ -941,9 +940,9 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             public  <T2, T3, R1, R2, R3, R> Nested<W1,W2,R> forEach4(
                                                                       Function<? super T, ? extends Nested<W1,W2,R1>> value2,
                                                                       BiFunction<? super T, ? super R1, ? extends Nested<W1,W2,R2>> value3,
-                                                                      Fn3<? super T, ? super R1, ? super R2, ? extends Nested<W1,W2,R3>> value4,
-                                                                      Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                                      Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                      Function3<? super T, ? super R1, ? super R2, ? extends Nested<W1,W2,R3>> value4,
+                                                                      Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                                      Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
                 return narrowK(monadZero.flatMap_(value1,in -> {
 
@@ -965,8 +964,8 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             public  <T2, R1, R2, R> Nested<W1,W2,R> forEach3(
                                                               Function<? super T, ? extends Nested<W1,W2,R1>> value2,
                                                               BiFunction<? super T, ? super R1, ? extends Nested<W1,W2,R2>> value3,
-                                                              Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                                              Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                              Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                                              Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
                 return narrowK(monadZero.flatMap_(value1,in -> {
 

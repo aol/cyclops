@@ -32,8 +32,8 @@ import cyclops.companion.Streams;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.lazy.Either;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
@@ -189,12 +189,12 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default <S, U1, R> FutureStream<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U1> third, final Fn3<? super U, ? super S, ? super U1, ? extends R> fn3) {
+    default <S, U1, R> FutureStream<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U1> third, final Function3<? super U, ? super S, ? super U1, ? extends R> fn3) {
         return fromStream(stream().zip3(second,third,fn3));
     }
 
     @Override
-    default <T2, T3, T4, R> FutureStream<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super U, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> FutureStream<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super U, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return fromStream(stream().zip4(second,third,fourth,fn));
     }
 
@@ -257,7 +257,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default <R1, R2, R3, R4> FutureStream<R4> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<? extends R1>> path1,
                                                                   Function<? super Stream<U>, ? extends Stream<? extends R2>> path2,
                                                                   Function<? super Stream<U>, ? extends Stream<? extends R3>> path3,
-                                                                  Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn) {
+                                                                  Function3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn) {
         return fromStream(stream().parallelFanOutZipIn(fj,path1, path2, path3,zipFn));
     }
 
@@ -265,7 +265,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default <R1, R2, R3, R4> FutureStream<R4> fanOutZipIn(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R1>> path1,
                                                           Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R2>> path2,
                                                           Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R3>> path3,
-                                                          Fn3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn) {
+                                                          Function3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn) {
         return fromStream(stream().fanOutZipIn(path1, path2, path3,zipFn));
     }
 
@@ -290,7 +290,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                                               Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R2>> path2,
                                                               Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R3>> path3,
                                                               Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R4>> path4,
-                                                              Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn) {
+                                                              Function4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn) {
         return fromStream(stream().fanOutZipIn(path1, path2, path3,path4,zipFn));
     }
 
@@ -299,7 +299,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                                                       Function<? super Stream<U>, ? extends Stream<? extends R2>> path2,
                                                                       Function<? super Stream<U>, ? extends Stream<? extends R3>> path3,
                                                                       Function<? super Stream<U>, ? extends Stream<? extends R4>> path4,
-                                                                      Fn4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn) {
+                                                                      Function4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn) {
         return fromStream(stream().parallelFanOutZipIn(fj,path1, path2, path3,path4,zipFn));
     }
 
@@ -524,8 +524,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default <R1, R2, R3, R> FutureStream<R> forEach4(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
                                                      BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-                                                     Fn3<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
-                                                     Fn4<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                     Function3<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+                                                     Function4<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (FutureStream<R>)ReactiveSeq.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
@@ -536,9 +536,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default <R1, R2, R3, R> FutureStream<R> forEach4(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
                                                      BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-                                                     Fn3<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
-                                                     Fn4<? super U, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                     Fn4<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                     Function3<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
+                                                     Function4<? super U, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                     Function4<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         
         return (FutureStream<R>)ReactiveSeq.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
@@ -549,7 +549,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default <R1, R2, R> FutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
                                                  BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-                                                 Fn3<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                 Function3<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (FutureStream<R>)ReactiveSeq.super.forEach3(stream1, stream2, yieldingFunction);
     }
@@ -560,8 +560,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default <R1, R2, R> FutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
                                                  BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-                                                 Fn3<? super U, ? super R1, ? super R2, Boolean> filterFunction,
-                                                 Fn3<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                 Function3<? super U, ? super R1, ? super R2, Boolean> filterFunction,
+                                                 Function3<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         
         return (FutureStream<R>)ReactiveSeq.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }

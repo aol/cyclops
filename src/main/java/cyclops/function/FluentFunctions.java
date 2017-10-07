@@ -201,7 +201,7 @@ public class FluentFunctions {
      * @param fn TriFunction to convert
      * @return FluentTriFunction
      */
-    public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> of(final Fn3<T1, T2, T3, R> fn) {
+    public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> of(final Function3<T1, T2, T3, R> fn) {
         return new FluentTriFunction<>(
                                        fn);
     }
@@ -300,7 +300,7 @@ public class FluentFunctions {
         });
     }
 
-    private static <T1, T2, T3, R> Fn3<T1, T2, T3, R> softenTriFunction(final CheckedTriFunction<T1, T2, T3, R> fn) {
+    private static <T1, T2, T3, R> Function3<T1, T2, T3, R> softenTriFunction(final CheckedTriFunction<T1, T2, T3, R> fn) {
         return (t1, t2, t3) -> {
             try {
                 return fn.apply(t1, t2, t3);
@@ -1016,7 +1016,7 @@ public class FluentFunctions {
 
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentBiFunction<T1, T2, R> implements Fn2<T1, T2, R> {
+    public static class FluentBiFunction<T1, T2, R> implements Function2<T1, T2, R> {
         BiFunction<T1, T2, R> fn;
         private final String name;
 
@@ -1378,18 +1378,18 @@ public class FluentFunctions {
          */
         @Override
         public <V> FluentBiFunction<T1, T2, V> andThen(final Function<? super R, ? extends V> after) {
-            return FluentFunctions.of(Fn2.super.andThen(after));
+            return FluentFunctions.of(Function2.super.andThen(after));
         }
 
     }
 
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentTriFunction<T1, T2, T3, R> implements Fn3<T1, T2, T3, R> {
-        private final Fn3<T1, T2, T3, R> fn;
+    public static class FluentTriFunction<T1, T2, T3, R> implements Function3<T1, T2, T3, R> {
+        private final Function3<T1, T2, T3, R> fn;
         private final String name;
 
-        public FluentTriFunction(final Fn3<T1, T2, T3, R> fn) {
+        public FluentTriFunction(final Function3<T1, T2, T3, R> fn) {
             this.name = null;
             this.fn = fn;
         }
@@ -1632,7 +1632,7 @@ public class FluentFunctions {
          * @param onError Recovery BiFunction
          * @return TriFunction capable of error recovery
          */
-        public <X extends Throwable> FluentTriFunction<T1, T2, T3, R> recover(final Class<X> type, final Fn3<T1, T2, T3, R> onError) {
+        public <X extends Throwable> FluentTriFunction<T1, T2, T3, R> recover(final Class<X> type, final Function3<T1, T2, T3, R> onError) {
             return FluentFunctions.of((t1, t2, t3) -> {
                 try {
                     return fn.apply(t1, t2, t3);
@@ -1867,7 +1867,7 @@ public class FluentFunctions {
         public final T1 param1;
         public final T2 param2;
         public final T3 param3;
-        private final Fn3<T1, T2, T3, R> fn;
+        private final Function3<T1, T2, T3, R> fn;
 
         /**
          * Proceed and execute wrapped TriFunction with it's input params as captured

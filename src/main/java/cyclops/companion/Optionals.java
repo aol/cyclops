@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -14,8 +13,8 @@ import cyclops.typeclasses.*;
 import cyclops.control.Xor;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.Witness.optional;
@@ -128,8 +127,8 @@ public class Optionals {
     public static <T1, T2, T3, R1, R2, R3, R> Optional<R> forEach4(Optional<? extends T1> value1,
                                                                    Function<? super T1, ? extends Optional<R1>> value2,
                                                                    BiFunction<? super T1, ? super R1, ? extends Optional<R2>> value3,
-                                                                   Fn3<? super T1, ? super R1, ? super R2, ? extends Optional<R3>> value4,
-                                                                   Fn4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                   Function3<? super T1, ? super R1, ? super R2, ? extends Optional<R3>> value4,
+                                                                   Function4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return value1.flatMap(in -> {
 
@@ -178,9 +177,9 @@ public class Optionals {
     public static <T1, T2, T3, R1, R2, R3, R> Optional<R> forEach4(Optional<? extends T1> value1,
                                                                    Function<? super T1, ? extends Optional<R1>> value2,
                                                                    BiFunction<? super T1, ? super R1, ? extends Optional<R2>> value3,
-                                                                   Fn3<? super T1, ? super R1, ? super R2, ? extends Optional<R3>> value4,
-                                                                   Fn4<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                                   Fn4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                   Function3<? super T1, ? super R1, ? super R2, ? extends Optional<R3>> value4,
+                                                                   Function4<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                                   Function4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return value1.flatMap(in -> {
 
@@ -225,7 +224,7 @@ public class Optionals {
     public static <T1, T2, R1, R2, R> Optional<R> forEach3(Optional<? extends T1> value1,
                                                            Function<? super T1, ? extends Optional<R1>> value2,
                                                            BiFunction<? super T1, ? super R1, ? extends Optional<R2>> value3,
-                                                           Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                           Function3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return value1.flatMap(in -> {
 
@@ -269,8 +268,8 @@ public class Optionals {
     public static <T1, T2, R1, R2, R> Optional<R> forEach3(Optional<? extends T1> value1,
                                                            Function<? super T1, ? extends Optional<R1>> value2,
                                                            BiFunction<? super T1, ? super R1, ? extends Optional<R2>> value3,
-                                                           Fn3<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
-                                                           Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                           Function3<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
+                                                           Function3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return value1.flatMap(in -> {
 
@@ -928,7 +927,7 @@ public class Optionals {
         public static <T,R> Foldable<optional> foldable(){
             BiFunction<Monoid<T>,Higher<optional,T>,T> foldRightFn =  (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
             BiFunction<Monoid<T>,Higher<optional,T>,T> foldLeftFn = (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
-            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.optional, T>, R> foldMapFn = (m, f, l)->OptionalKind.narrowK(l).map(f).orElseGet(()->m.zero());
+            Function3<Monoid<R>, Function<T, R>, Higher<optional, T>, R> foldMapFn = (m, f, l)->OptionalKind.narrowK(l).map(f).orElseGet(()->m.zero());
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
         public static <T> Comonad<optional> comonad(){

@@ -27,9 +27,9 @@ import java.util.function.Function;
  *          {@link cyclops.function.Memoize}
  *          {@link cyclops.function.FluentFunctions}
  *          {@link Function1}
- *          {@link Fn2}
- *          {@link Fn3}
- *          {@link Fn4}
+ *          {@link Function2}
+ *          {@link Function3}
+ *          {@link Function4}
  */
 public class Functions {
 
@@ -114,8 +114,8 @@ public class Functions {
     static <T,R,R1, R2, R3, R4> Function<T,R4> forEach4(Function<? super T, ? extends R> fn,
                                                         Function<? super R, Function<? super T,? extends R1>> value2,
                                                         BiFunction<? super R, ? super R1, Function<? super T,? extends R2>> value3,
-                                                        Fn3<? super R, ? super R1, ? super R2, Function<? super T,? extends R3>> value4,
-                                                        Fn4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
+                                                        Function3<? super R, ? super R1, ? super R2, Function<? super T,? extends R3>> value4,
+                                                        Function4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
 
         Reader< T,R> rd = Reader.narrow(FluentFunctions.of(fn));
         return rd.forEach4(value2, value3, value4, yieldingFunction);
@@ -127,7 +127,7 @@ public class Functions {
     static <T,R,R1, R2, R4> Function<T,R4> forEach3(Function<? super T, ? extends R> fn,
                                                   Function<? super R, Function<? super T,? extends R1>> value2,
                                                   BiFunction<? super R, ? super R1, Function<? super T,? extends R2>> value3,
-                                                  Fn3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
+                                                  Function3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
 
 
         Reader< T,R> rd = Reader.narrow(FluentFunctions.of(fn));

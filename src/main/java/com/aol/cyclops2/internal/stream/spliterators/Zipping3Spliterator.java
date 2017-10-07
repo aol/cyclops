@@ -1,6 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators;
 
-import cyclops.function.Fn3;
+import cyclops.function.Function3;
 
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -16,10 +16,10 @@ public class Zipping3Spliterator<T1,T2,T3,R> implements CopyableSpliterator<R>,
 
     private final Spliterator<T2> middle;
     private final Spliterator<T3> right;
-    private final Fn3<? super T1, ? super T2, ? super T3, ? extends R> fn;
+    private final Function3<? super T1, ? super T2, ? super T3, ? extends R> fn;
 
 
-    public Zipping3Spliterator(Spliterator<T1> left, Spliterator<T2> middle,Spliterator<T3> right, Fn3<? super T1, ? super T2, ? super T3, ? extends R> fn) {
+    public Zipping3Spliterator(Spliterator<T1> left, Spliterator<T2> middle,Spliterator<T3> right, Function3<? super T1, ? super T2, ? super T3, ? extends R> fn) {
         this.left = CopyableSpliterator.copy(left);
         this.middle = CopyableSpliterator.copy(middle);
         this.right = CopyableSpliterator.copy(right);
