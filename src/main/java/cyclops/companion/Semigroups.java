@@ -90,6 +90,9 @@ public interface Semigroups {
         };
     }
 
+  /**  static <T> Semigroup<NonEmptyList<T>> nonEmptyList(){
+        return (a,b)->b.prependAll(a);
+    }**/
     /**
      * @return A combiner for mutable lists
      */

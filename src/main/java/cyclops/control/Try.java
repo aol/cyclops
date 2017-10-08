@@ -1427,7 +1427,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream, java.util.function.BiFunction)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     public <U, R> Try<R, X> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -1436,7 +1436,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     public <U> Try<Tuple2<T, U>, X> zipS(final Stream<? extends U> other) {

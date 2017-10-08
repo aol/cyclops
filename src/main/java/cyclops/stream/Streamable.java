@@ -191,7 +191,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Streamable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -200,7 +200,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip3(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -209,7 +209,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip4(java.util.reactiveStream.Stream, java.util.reactiveStream.Stream, java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.traversable.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -540,7 +540,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#filtered(java.util.function.Predicate)
+     * @see java.util.stream.Stream#filtered(java.util.function.Predicate)
      */
     @Override
     default Streamable<T> filter(final Predicate<? super T> fn) {
@@ -548,7 +548,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#flatMap(java.util.function.Function)
+     * @see java.util.stream.Stream#flatMap(java.util.function.Function)
      */
     default <R> Streamable<R> flatMap(final Function<? super T, Streamable<? extends R>> fn) {
         return Streamable.fromStream(reactiveSeq().flatMap(i -> fn.apply(i)
@@ -585,21 +585,21 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#forEachOrdered(java.util.function.Consumer)
+     * @see java.util.stream.Stream#forEachOrdered(java.util.function.Consumer)
      */
     default void forEachOrdered(final Consumer<? super T> action) {
         reactiveSeq().forEachOrdered(action);
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#toArray()
+     * @see java.util.stream.Stream#toArray()
      */
     default Object[] toArray() {
         return reactiveSeq().toArray();
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#toArray(java.util.function.IntFunction)
+     * @see java.util.stream.Stream#toArray(java.util.function.IntFunction)
      */
     default <A> A[] toArray(final IntFunction<A[]> generator) {
         return reactiveSeq().toArray(generator);
@@ -1460,7 +1460,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#min(java.util.Comparator)
+     * @see java.util.stream.Stream#min(java.util.Comparator)
      */
     @Override
     default Optional<T> min(final Comparator<? super T> comparator) {
@@ -1477,7 +1477,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.reactiveStream.Stream#max(java.util.Comparator)
+     * @see java.util.stream.Stream#max(java.util.Comparator)
      */
     @Override
     default Optional<T> max(final Comparator<? super T> comparator) {
@@ -1602,7 +1602,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-    * @see java.util.reactiveStream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
+    * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
     */
     @Override
     default T reduce(final T identity, final BinaryOperator<T> accumulator) {
@@ -1610,7 +1610,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-    * @see java.util.reactiveStream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
+    * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
     */
     @Override
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
@@ -2059,7 +2059,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * <pre>
      * {@code
      * assertTrue(Streamable.of(1,2,3,4,5,6)
-    			.endsWith(Stream.of(5,6))); 
+    			.endsWith(Stream.of(5,6)));
      * }
      * </pre>
      * 
@@ -2147,7 +2147,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Turns this Streamable into a HotStream, a connectable Stream, being executed on a thread on the 
+     * Turns this Streamable into a HotStream, a connectable Stream, being executed on a thread on the
      * supplied executor, that is producing data
      * <pre>
      * {@code 
@@ -2365,7 +2365,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Unzip a zipped Stream 
+     * Unzip a zipped Stream
      * 
      * <pre>
      * {@code 
@@ -2420,21 +2420,21 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#crossJoin(java.util.reactiveStream.Stream)
+     * @see org.jooq.lambda.Seq#crossJoin(java.util.stream.Stream)
      */
     default <U> Streamable<Tuple2<T, U>> crossJoin(final Streamable<U> other) {
         return fromStream(seq().crossJoin(other));
     }
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#innerJoin(java.util.reactiveStream.Stream, java.util.function.BiPredicate)
+     * @see org.jooq.lambda.Seq#innerJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
     default <U> Streamable<Tuple2<T, U>> innerJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
         return fromStream(seq().innerJoin(other, predicate));
     }
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.reactiveStream.Stream, java.util.function.BiPredicate)
+     * @see org.jooq.lambda.Seq#leftOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
     default <U> Streamable<Tuple2<T, U>> leftOuterJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
         return fromStream(reactiveSeq().jool(s->s.leftOuterJoin(other, predicate)));
@@ -2442,7 +2442,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.reactiveStream.Stream, java.util.function.BiPredicate)
+     * @see org.jooq.lambda.Seq#rightOuterJoin(java.util.stream.Stream, java.util.function.BiPredicate)
      */
     default <U> Streamable<Tuple2<T, U>> rightOuterJoin(final Streamable<U> other, final BiPredicate<T, U> predicate) {
         return fromStream(reactiveSeq().jool(s->s.rightOuterJoin(other, predicate)));

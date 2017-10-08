@@ -359,7 +359,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.reactiveStream.Stream)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
      */
     @Override
     public <U> OptionalT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {

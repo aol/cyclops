@@ -38,10 +38,15 @@ public interface Value<T> extends   Folds<T>,
                                     Convertable<T>,
                                     Publisher<T>,
                                     Predicate<T> {
-    @Override
+    @Override @Deprecated
     default T apply() {
         return this.orElse(null);
     }
+
+    @Deprecated
+    T get();
+
+
 
     /* An Iterator over the list returned from toList()
          *

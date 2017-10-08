@@ -1,4 +1,4 @@
-task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport, description: 'Aggregated jacoco report') {
+task jacocoRootReport(type: JacocoReport, description: 'Aggregated jacoco report') {
   dependsOn = subprojects.test
   sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
   classDirectories = files(subprojects.sourceSets.main.output)

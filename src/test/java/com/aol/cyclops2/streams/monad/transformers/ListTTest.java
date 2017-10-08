@@ -28,7 +28,6 @@ public class ListTTest {
 		assertThat(streamT.filter(num->num<10).unwrap().<Optional<List<String>>>unwrap()
 						.get(),  equalTo(Arrays.asList()));
 
-
         AnyM<Witness.optional, IndexedSequenceX<Integer>> anyM = streamT.unwrap();
         Optional<IndexedSequenceX<Integer>> opt = Witness.optional(anyM);
         Optional<LinkedList<Integer>> list = opt.map(s -> s.toX(Converters::LinkedList));

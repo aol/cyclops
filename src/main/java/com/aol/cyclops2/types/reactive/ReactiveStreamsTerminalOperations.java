@@ -163,8 +163,8 @@ public interface ReactiveStreamsTerminalOperations<T> {
     <X extends Throwable> Subscription forEach(long numberOfElements, Consumer<? super T> consumer);
 
     /**
-     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
-     * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription 
+     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming
+     * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
      * <pre>
      * {@code
      *     Subscription next = ReactiveSeq.of(()->1,()->2,()->throw new RuntimeException(),()->4)
@@ -199,7 +199,7 @@ public interface ReactiveStreamsTerminalOperations<T> {
                                                Consumer<? super Throwable> consumerError);
 
     /**
-     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming 
+     * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming
      * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription,
      * when the entire Stream has been processed an onComplete event will be recieved.
      * 
@@ -237,7 +237,7 @@ public interface ReactiveStreamsTerminalOperations<T> {
                                                Runnable onComplete);
 
     /**
-     *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,  
+     *  Perform a forEach operation over the Stream    capturing any elements and errors in the supplied consumers,
      * <pre>
      * {@code
      *     Subscription next = ReactiveSeq.of(()->1,()->2,()->throw new RuntimeException(),()->4)

@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import cyclops.async.Future;
 
+import cyclops.control.Option;
 import cyclops.function.Fn0;
 import cyclops.stream.ReactiveSeq;
 import lombok.Value;
@@ -129,6 +130,10 @@ public interface Convertable<T> extends Iterable<T>, Fn0<T>, Visitable<T> {
     default Optional<T> toOptional() {
 
         return visit(p -> Optional.ofNullable(p), () -> Optional.empty());
+    }
+    default Option<T> toOption() {
+        return visit(p -> Option.ofNullable(p), () -> Option.none());
+
     }
 
     /**

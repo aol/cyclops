@@ -8,7 +8,6 @@ import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.SetX;
 import cyclops.companion.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;

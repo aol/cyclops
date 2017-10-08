@@ -459,7 +459,7 @@ public interface Folds<T> {
      * <pre>
      * {@code
      * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .endsWith(Stream.of(5,6))); 
+     *              .endsWith(Stream.of(5,6)));
      * }
      * </pre>
      * 

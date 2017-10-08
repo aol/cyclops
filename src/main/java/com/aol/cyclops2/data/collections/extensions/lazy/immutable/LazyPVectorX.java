@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  * Extended List operations execute lazily e.g.
  * <pre>
  * {@code
- *    LazyListX<Integer> q = LazyListX.of(1,2,3)
+ *    StreamX<Integer> q = StreamX.of(1,2,3)
  *                                      .map(i->i*2);
  * }
  * </pre>
@@ -235,4 +235,19 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
         return (VectorX<T>)super.plusLoop(supplier);
     }
 
+    @Override
+    public T getOrElse(int index, T value) {
+        List<T> x = get();
+        if(index>x.size())
+            return value;
+        return x.get(index);
+    }
+
+    @Override
+    public T getOrElseGet(int index, Supplier<? extends T> supplier) {
+        List<T> x = get();
+        if(index>x.size())
+            return supplier.get();
+        return x.get(index);
+    }
 }

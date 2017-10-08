@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
+import cyclops.collections.tuple.Tuple1;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -76,6 +77,14 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
      }
     public <R> Identity<R> flatMap(Function<? super T,? extends Identity<? extends R>> fn){
         return narrow(fn.apply(value));
+    }
+
+    public Tuple1<T> toTuple(){
+        return Tuple1.of(value);
+    }
+
+    public Tuple1<T> toLazyTuple(){
+        return Tuple1.lazy(()->value);
     }
 
     public AnyMValue<identity,T> anyM(){

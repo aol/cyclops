@@ -43,7 +43,7 @@ public class Predicates {
     public static <T1,T2> BiPredicate<T1,T2> when(BiPredicate<T1,T2> pred){
         return pred;
     }
-    public static <T1,T2> BiPredicate<T1,T2> bicompose(){
+    public static <T1,T2> BiPredicate<T1,T2> true2(){
         return (a,b)->true;
     }
     public static <T1,T2> BiPredicate<T1,T2> and(Predicate<? super T1> p1, Predicate<? super T2> p2){
@@ -68,6 +68,7 @@ public class Predicates {
     public static <T1,T2> BiPredicate<T1,T2> xor(Predicate<? super T1> p1, Predicate<? super T2> p2){
         return (a,b)->p1.test(a) ^ p2.test(b);
     }
+
     /**
      * Method for point-free Predicate definition (helps with lambda type inferencing) 
      * 

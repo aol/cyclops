@@ -366,7 +366,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.reactiveStream.Stream)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
      */
     @Override
     public <U> FutureT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {

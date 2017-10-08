@@ -355,7 +355,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.reactiveStream.Stream)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
      */
     @Override
     public <U> EvalT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {

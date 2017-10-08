@@ -821,9 +821,9 @@ public class Future<T> implements To<Future<T>>,
      * @param failure Function to execute if this Future fails
      * @return Future with the eventual result of the executed Function
      */
-    public <R> Future<R> visitAsync(Function<T,R> success, Function<Throwable,R> failure){
-        return map(success).recover(failure);
-
+    public <R> Future<R> visitAsync(Function<? super T,? extends R> success, Function<? super Throwable,? extends R> failure){
+        Future<R> f = map(success);
+        return f.recover(failure);
     }
     /**
      * Blocking analogue to visitAsync. Visit the state of this Future, block until ready.
@@ -844,7 +844,7 @@ public class Future<T> implements To<Future<T>>,
      * @param failure  Function to execute if this Future fails
      * @return Result of the executed Function
      */
-    public <R> R visit(Function<T,R> success, Function<Throwable,R> failure){
+    public <R> R visit(Function<? super T,? extends R> success, Function<? super Throwable,? extends R> failure){
         return visitAsync(success,failure).get();
 
     }
@@ -1304,6 +1304,17 @@ public class Future<T> implements To<Future<T>>,
         }
 
     }
+    public Option<T> toOption() {
+        if (future.isDone() && future.isCompletedExceptionally())
+            return Option.none();
+
+        try {
+            return Option.some(get());
+        } catch (final Throwable t) {
+            return Option.none();
+        }
+
+    }
 
 
     /*
@@ -1395,7 +1406,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream,
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -1406,7 +1417,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.reactiveStream.Stream)
+     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     public <U> Future<Tuple2<T, U>> zipS(final Stream<? extends U> other) {

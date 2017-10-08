@@ -124,7 +124,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /*
      * (non-Javadoc)
      * 
-     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
+     * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
     default AnyM<W,T> reduce(final T identity, final BinaryOperator<T> accumulator) {
@@ -134,7 +134,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /*
      * (non-Javadoc)
      * 
-     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
+     * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
     default <U> AnyM<W,U> reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
@@ -194,7 +194,18 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     default ListT<W,T> reduce(final Iterable<? extends Monoid<T>> reducers) {
         return ListT.of(nestedFoldables().map(s -> s.reduce(reducers)));
     }
-
+    default AnyM<W,T> foldLeft(final Monoid<T> reducer) {
+        return nestedFoldables().map(s -> s.foldLeft(reducer));
+    }
+    default AnyM<W,T> foldLeft(final T identity, final BinaryOperator<T> accumulator) {
+        return nestedFoldables().map(s -> s.foldLeft(identity, accumulator));
+    }
+    default <U> AnyM<W,U> foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator) {
+        return nestedFoldables().map(s -> s.foldLeft(identity, accumulator));
+    }
+    default <T> AnyM<W,T> foldLeftMapToType(final Reducer<T> reducer) {
+        return nestedFoldables().map(s -> s.mapReduce(reducer));
+    }
     /**
      * 
      * <pre>
@@ -419,7 +430,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * <pre>
      * {@code
      * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .endsWith(Stream.of(5,6))); 
+     *              .endsWith(Stream.of(5,6)));
      * }
      * </pre>
      * 

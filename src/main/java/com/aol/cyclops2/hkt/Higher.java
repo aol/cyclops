@@ -3,8 +3,6 @@ package com.aol.cyclops2.hkt;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-//import org.derive4j.hkt.__;
-
 
 
 /**
@@ -17,7 +15,6 @@ import java.util.function.Function;
  * @param <T2> Data type of elements in Core Type
  */
 public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{
-
 
     /**
      * Apply the provided BiFunction passing this as the second parameter

@@ -50,6 +50,20 @@ public class MaybeTest implements Printable {
     public void setUp() throws Exception {
         just = Maybe.just(10);
         none = Maybe.none();
+        cap =0;
+
+    }
+
+    int cap =0;
+
+
+    @Test
+    public void lazy(){
+
+        Maybe.just(10)
+                .peek(i->cap=i);
+
+        assertThat(cap,equalTo(0));
 
     }
     @Test

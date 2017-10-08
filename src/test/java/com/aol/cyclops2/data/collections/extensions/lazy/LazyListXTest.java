@@ -3,7 +3,6 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 import cyclops.collections.mutable.ListX;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

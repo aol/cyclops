@@ -46,36 +46,27 @@ if (JavaVersion.current().isJava8Compatible()) {
   }
 }
 
-configurations {
-  provided
-}
-
 dependencies {
 
-  compile 'org.pcollections:pcollections:' + pCollectionsVersion
-  compile 'org.jooq:jool:${joolVersion}'
-  compile 'org.agrona:Agrona:' + agronaVersion
-  compile 'org.reactivestreams:reactive-streams:' + reactiveStreamsVersion
-  provided 'org.projectlombok:lombok:' + lombokVersion
+  compile 'org.pcollections:pcollections:2.1.2'
+  compile 'org.jooq:jool:0.9.12'
+  compile 'org.agrona:Agrona:0.9.1'
+  compile 'org.reactivestreams:reactive-streams:1.0.0'
+  compileOnly 'org.projectlombok:lombok:1.16.12'
+  testCompileOnly 'org.projectlombok:lombok:1.16.12'
   testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
   testCompile 'io.projectreactor:reactor-core:3.0.7.RELEASE'
   testCompile 'com.google.guava:guava:19.0'
   testCompile 'com.google.guava:guava-testlib:19.0'
   testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
   testCompile 'junit:junit:4.12'
-  testCompile 'org.hamcrest:hamcrest-all:' + hamcrestVersion
+  testCompile 'org.hamcrest:hamcrest-all:1.3'
   testCompile 'org.mockito:mockito-all:1.9.5'
   testCompile 'io.vertx:vertx-core:3.0.0'
   testCompile 'org.testng:testng:5.14.10'
   testCompile 'io.javaslang:javaslang:2.0.2'
   jmh 'com.github.akarnokd:ixjava:1.0.0-RC5'
 
-}
-
-sourceSets {
-  main.compileClasspath += [configurations.provided]
-  test.compileClasspath += [configurations.provided]
-  test.runtimeClasspath += [configurations.provided]
 }
 
 jacocoTestReport {
@@ -114,7 +105,6 @@ test {
     events "started", "passed", "skipped", "failed"//, "standardOut", "standardError"
   }
 }
-eclipse.classpath.plusConfigurations += [configurations.provided]  // Eclipse users only
 
 test {
   systemProperties 'property': 'value'
@@ -191,5 +181,5 @@ nexus {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.3'
+  gradleVersion = '2.14.1'
 }

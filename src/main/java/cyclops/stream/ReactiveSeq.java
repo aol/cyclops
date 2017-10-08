@@ -4,6 +4,7 @@ package cyclops.stream;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.react.ThreadPools;
+import com.aol.cyclops2.types.foldable.StatCollectors;
 import cyclops.collections.mutable.QueueX;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.foldable.Evaluation;
@@ -84,7 +85,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * A powerful extended, sequential Stream type.
- * Extends JDK 8 java.util.reactiveStream.Stream.
+ * Extends JDK 8 java.util.stream.Stream.
  * Implements the reactiveBuffer-reactiveStream publisher api.
  * Replayable Stream by default, using primitive operators (ints,longs, doubles or jool results in conversion to a oneshot Stream
  * (as of 2.0.0-MI1)
@@ -130,6 +131,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Higher<reactiveSeq,T> {
 
 
+    default StatCollectors<T> stats(){
+        return ()->this;
+    }
     /**
      *
      * Stream over the values of an enum
@@ -2314,7 +2318,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
+     * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
     @Override
@@ -2326,7 +2330,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#reduce(java.lang.Object,
+     * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
     @Override
@@ -2600,7 +2604,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#map(java.util.function.Function)
+     * @see java.util.stream.Stream#map(java.util.function.Function)
      */
     @Override
     <R> ReactiveSeq<R> map(Function<? super T, ? extends R> fn);
@@ -2609,7 +2613,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#peek(java.util.function.Consumer)
+     * @see java.util.stream.Stream#peek(java.util.function.Consumer)
      */
     @Override
     default ReactiveSeq<T> peek(Consumer<? super T> c){
@@ -2696,7 +2700,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.reactiveStream.Stream#filter(java.util.function.Predicate)
+     * @see java.util.stream.Stream#filter(java.util.function.Predicate)
      */
     @Override
     ReactiveSeq<T> filter(Predicate<? super T> fn);
@@ -3671,6 +3675,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     static <U, T> ReactiveSeq<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.fromSpliterator(new UnfoldSpliterator<>(seed, unfolder));
     }
+
 
     /**
      * @see Stream#generate(Supplier)
