@@ -1,6 +1,7 @@
 package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Present;
 import com.aol.cyclops2.types.Value;
@@ -36,6 +37,7 @@ import java.util.stream.Stream;
 public interface Option<T> extends To<Option<T>>,
                                    MonadicValue<T>,
                                    Recoverable<T>,
+                                   Sealed2<T,Option.None<T>>,
                                    Iterable<T>{
 
 
@@ -855,6 +857,11 @@ public interface Option<T> extends To<Option<T>>,
             }
             return false;
         }
+
+        @Override
+        public <R> R fold(Function<? super T, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
+            return fn1.apply(value);
+        }
     }
     public static class None<T> implements Option<T> {
         static None NOTHING_EAGER = new None();
@@ -951,6 +958,11 @@ public interface Option<T> extends To<Option<T>>,
         @Override
         public void forEach(Consumer<? super T> action) {
 
+        }
+
+        @Override
+        public <R> R fold(Function<? super T, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
+            return fn2.apply(this);
         }
     }
 

@@ -4530,20 +4530,20 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default void printErr() {
 
-        forEach(n->{},System.out::println,()->{});
+        forEach(System.err::println,System.err::println,()->{});
     }
 
     @Override
     default void print(final PrintWriter writer) {
 
-        forEach(writer::println,e->{},()->writer.close());
+        forEach(writer::println,writer::println,()->writer.close());
 
     }
 
     @Override
     default void print(final PrintStream stream) {
 
-        forEach(stream::println,e->{},()->stream.close());
+        forEach(stream::println,stream::println,()->stream.close());
     }
 
     /**

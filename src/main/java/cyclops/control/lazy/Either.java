@@ -345,6 +345,11 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         public boolean equals(Object obj) {
             return either.equals(obj);
         }
+
+        @Override
+        public <R> R fold(Function<? super Throwable, ? extends R> fn1, Function<? super RT, ? extends R> fn2) {
+            return either.fold(fn1,fn2);
+        }
     }
 
     static <ST,PT> Either<ST,PT> fromXor(Xor<ST,PT> xor){
@@ -1638,6 +1643,11 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         public String toString(){
             return trampoline().toString();
         }
+
+        @Override
+        public <R> R fold(Function<? super ST, ? extends R> fn1, Function<? super PT, ? extends R> fn2) {
+            return lazy.get().fold(fn1,fn2);
+        }
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -1823,7 +1833,11 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                 return false;
             return true;
         }
-        
+
+        @Override
+        public <R> R fold(Function<? super ST, ? extends R> fn1, Function<? super PT, ? extends R> fn2) {
+            return fn2.apply(value.get());
+        }
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -2014,8 +2028,11 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
             return true;
         }
 
-        
-        
+
+        @Override
+        public <R> R fold(Function<? super ST, ? extends R> fn1, Function<? super PT, ? extends R> fn2) {
+            return fn1.apply(value.get());
+        }
     }
 
 }

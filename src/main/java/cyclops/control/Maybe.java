@@ -271,6 +271,11 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         public boolean equals(Object obj) {
             return maybe.equals(obj);
         }
+
+        @Override
+        public <R> R fold(Function<? super T2, ? extends R> fn1, Function<? super None<T2>, ? extends R> fn2) {
+            return maybe.fold(fn1,fn2);
+        }
     }
     static <T> Maybe<T> fromFuture(Future<T> future){
         return fromLazy(Eval.fromFuture(future.recover(e->null)).map(Maybe::ofNullable));
@@ -1085,80 +1090,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     }
 
 
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class Some<T> implements Maybe<T>, Present<T> {
-        private final T value;
 
-        @Override
-        public T get() {
-            return value;
-        }
-
-        @Override
-        public boolean isPresent() {
-            return true;
-        }
-
-        @Override
-        public Maybe<T> recover(Supplier<? extends T> value) {
-            return this;
-        }
-
-        @Override
-        public Maybe<T> recover(T value) {
-            return this;
-        }
-
-        @Override
-        public Maybe<T> recoverWith(Supplier<? extends Option<T>> fn) {
-            return this;
-        }
-
-        @Override
-        public <R> Maybe<R> map(Function<? super T, ? extends R> mapper) {
-            return new Maybe.Some(mapper.apply(value));
-        }
-
-        @Override
-        public <R> Maybe<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-            Maybe<? extends R> x = mapper.apply(value).toMaybe();
-            return Maybe.narrow(x);
-        }
-
-        @Override
-        public <R> R visit(Function<? super T, ? extends R> some, Supplier<? extends R> none) {
-            return some.apply(value);
-        }
-
-        @Override
-        public Maybe<T> filter(Predicate<? super T> fn) {
-            return fn.test(value) ? this : Maybe.none();
-        }
-        /*
-       * (non-Javadoc)
-       *
-       * @see java.lang.Object#hashCode()
-       */
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(value);
-        }
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        @Override
-        public boolean equals(final Object obj) {
-            if (obj instanceof Present)
-                return Objects.equals(value, ((Maybe) obj).get());
-            else if (obj instanceof Lazy) {
-                return Objects.equals(get(), ((Maybe) obj).get());
-            }
-            return false;
-        }
-    }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class Just<T> implements Maybe<T>, Present {
@@ -1283,6 +1215,10 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         }
 
 
+        @Override
+        public <R> R fold(Function<? super T, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
+            return fn1.apply(this.lazy.get());
+        }
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -1506,6 +1442,10 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
         }
 
+        @Override
+        public <R> R fold(Function<? super T, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
+            return this.lazy.get().fold(fn1,fn2);
+        }
     }
 
     public static class Nothing<T> implements Maybe<T> {
@@ -1603,6 +1543,12 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         @Override
         public void forEach(Consumer<? super T> action) {
 
+        }
+
+        @Override
+        public <R> R fold(Function<? super T, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
+            Option.None<T> none = None.NOTHING_EAGER;
+            return fn2.apply(none);
         }
     }
 

@@ -2,6 +2,7 @@ package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
+import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
 import cyclops.collections.immutable.LinkedListX;
@@ -124,6 +125,7 @@ import java.util.stream.Stream;
 public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
                                      MonadicValue<PT>,
                                      BiTransformable<ST,PT>,
+                                     Sealed2<ST,PT>,
                                      Higher2<xor,ST,PT> {
 
     /**
@@ -1257,6 +1259,10 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
             return result;
         }
 
+        @Override
+        public <R> R fold(Function<? super ST, ? extends R> fn1, Function<? super PT, ? extends R> fn2) {
+            return fn2.apply(value);
+        }
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -1430,6 +1436,10 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
             return true;
         }
 
+        @Override
+        public <R> R fold(Function<? super ST, ? extends R> fn1, Function<? super PT, ? extends R> fn2) {
+            return fn1.apply(value);
+        }
     }
 
     public static class Instances {

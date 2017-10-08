@@ -3,6 +3,7 @@ package cyclops.control.lazy;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher3;
+import com.aol.cyclops2.matching.Sealed3;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
@@ -51,6 +52,7 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
                                                 BiTransformable<LT2, RT>,
                                                 To<Either3<LT1, LT2, RT>>,
                                                 Supplier<RT>,
+                                                Sealed3<LT1,LT2,RT>,
                                                 Higher3<either3,LT1,LT2,RT> {
 
     public static  <LT1,LT2,T> Kleisli<Higher<Higher<either3, LT1>, LT2>,Either3<LT1,LT2,T>,T> kindKleisli(){
@@ -201,6 +203,11 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
         @Override
         public <T> Either3<Throwable, LT1, T> unit(T unit) {
             return either.unit(unit);
+        }
+
+        @Override
+        public <R> R fold(Function<? super Throwable, ? extends R> fn1, Function<? super LT1, ? extends R> fn2, Function<? super RT, ? extends R> fn3) {
+            return either.fold(fn1,fn2,fn3);
         }
     }
 
@@ -1047,6 +1054,10 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
         }
 
 
+        @Override
+        public <R> R fold(Function<? super ST, ? extends R> fn1, Function<? super M, ? extends R> fn2, Function<? super PT, ? extends R> fn3) {
+            return this.lazy.get().fold(fn1,fn2,fn3);
+        }
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -1226,6 +1237,10 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
         }
 
 
+        @Override
+        public <R> R fold(Function<? super ST, ? extends R> fn1, Function<? super M, ? extends R> fn2, Function<? super PT, ? extends R> fn3) {
+            return fn3.apply(value.get());
+        }
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -1393,6 +1408,10 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
             return true;
         }
 
+        @Override
+        public <R> R fold(Function<? super ST, ? extends R> fn1, Function<? super M, ? extends R> fn2, Function<? super PT, ? extends R> fn3) {
+            return fn1.apply(value.get());
+        }
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -1560,6 +1579,10 @@ public interface Either3<LT1, LT2, RT> extends  MonadicValue<RT>,
             return true;
         }
 
+        @Override
+        public <R> R fold(Function<? super ST, ? extends R> fn1, Function<? super M, ? extends R> fn2, Function<? super PT, ? extends R> fn3) {
+            return fn2.apply(value.get());
+        }
     }
     public static <L1,L2,T> Either3<L1,L2,T> narrowK3(final Higher3<either3, L1,L2,T> xor) {
         return (Either3<L1,L2,T>)xor;

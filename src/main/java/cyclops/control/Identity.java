@@ -1,10 +1,12 @@
 package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.matching.Deconstruct;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
+import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple1;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
@@ -27,7 +29,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Identity<T> implements Higher<identity,T>, Iterable<T> {
+public class Identity<T> implements Higher<identity,T>, Iterable<T>, Deconstruct.Deconstruct1<T>{
     private final T value;
 
 
@@ -109,6 +111,11 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return Arrays.asList(value).iterator();
+    }
+
+    @Override
+    public Tuple1<T> unapply() {
+        return Tuple.tuple(value);
     }
 
     public static class Instances{

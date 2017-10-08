@@ -3,6 +3,9 @@ package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
+import com.aol.cyclops2.matching.Deconstruct;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple1;
 import cyclops.function.Monoid;
 import cyclops.function.Semigroup;
 import cyclops.monads.Witness;
@@ -22,7 +25,7 @@ import java.util.function.Supplier;
  * @param <P> Phantom type
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Constant<T,P> implements Higher2<constant,T,P> , Supplier<T> {
+public class Constant<T,P> implements Higher2<constant,T,P> , Supplier<T>, Deconstruct.Deconstruct1<T> {
 
     private final T value;
 
@@ -50,6 +53,11 @@ public class Constant<T,P> implements Higher2<constant,T,P> , Supplier<T> {
     }
     public static <T,P> MonoidK<Higher<constant,T>,P> monoidK(Monoid<T> monoid){
        return MonoidK.of(Constant.of(monoid.zero()), (a, b) -> Constant.of(monoid.apply(narrowK(a).value, narrowK(b).value)));
+    }
+
+    @Override
+    public Tuple1<T> unapply() {
+        return Tuple.tuple(value);
     }
 
     public static class Instances{

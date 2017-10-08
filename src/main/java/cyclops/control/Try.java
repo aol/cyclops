@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
+import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.anyM.AnyMValue2;
@@ -152,6 +153,7 @@ throw new IOException();
 public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                                                       RecoverableFrom<X,T>,
                                                       MonadicValue<T>,
+                                                       Sealed2<T,X>,
                                                       Higher2<tryType,X,T> {
 
 
@@ -1143,6 +1145,11 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     public static <X extends Throwable> Init<X> catchExceptions(final Class<? extends X>... classes) {
         return new MyInit<X>(
                 (Class[]) classes);
+    }
+
+    @Override
+    public <R> R fold(Function<? super T, ? extends R> fn1, Function<? super X, ? extends R> fn2) {
+        return isFailure() ? fn2.apply(this.failureGet()) : fn1.apply(get());
     }
 
     @AllArgsConstructor

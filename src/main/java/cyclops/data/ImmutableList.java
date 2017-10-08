@@ -2,6 +2,7 @@ package cyclops.data;
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import com.aol.cyclops2.matching.Sealed2;
+import com.aol.cyclops2.matching.Sealed3;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
@@ -36,8 +37,8 @@ import static cyclops.matching.Api.*;
 
 
 public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,ImmutableList.None<T>>,
-        Folds<T>,
-        Filters<T>,
+                                          Folds<T>,
+                                          Filters<T>,
         Transformable<T>,
         OnEmptySwitch<ImmutableList<T>,ImmutableList<T>>,
                                            Iterable<T>,
@@ -48,6 +49,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
 
     ImmutableList<T> emptyUnit();
+
 
     default ImmutableList<T> replace(T currentElement, T newElement){
         ImmutableList<T> preceding = emptyUnit();

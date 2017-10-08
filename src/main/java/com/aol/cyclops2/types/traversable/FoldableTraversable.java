@@ -5,8 +5,10 @@ import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalOperations;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
+import cyclops.collections.tuple.Tuple0;
 import cyclops.control.Eval;
 import cyclops.async.Future;
+import cyclops.control.lazy.Either3;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;
 import com.aol.cyclops2.types.stream.HeadAndTail;
@@ -212,4 +214,5 @@ public interface FoldableTraversable<T> extends Traversable<T>,
     default <X extends Throwable> void forEach(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete){
         stream().forEach(consumerElement, consumerError, onComplete);
     }
+   
 }
