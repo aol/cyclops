@@ -205,7 +205,7 @@ public interface Folds<T> {
     default double sumDouble(ToDoubleFunction<T> fn){
         return stream().mapToDouble(fn).sum();
     }
-    default double sumLong(ToLongFunction<T> fn){
+    default long sumLong(ToLongFunction<T> fn){
         return stream().mapToLong(fn).sum();
     }
 
