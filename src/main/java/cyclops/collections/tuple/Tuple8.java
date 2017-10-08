@@ -3,12 +3,14 @@ package cyclops.collections.tuple;
 
 import com.aol.cyclops2.types.foldable.To;
 import cyclops.data.Comparators;
+import cyclops.data.HashMap;
 import cyclops.function.Function8;
 import cyclops.function.Memoize;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -143,21 +145,21 @@ public class Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> implements To<Tuple8<T1,T2,T3,T4,T5
 
     @Override
     public int compareTo(Tuple8<T1, T2, T3, T4,T5,T6,T7,T8> o) {
-        int result = Comparators.identityComparator().compare(_1(),o._1());
+        int result = Comparators.naturalOrderIdentityComparator().compare(_1(),o._1());
         if(result==0){
-            result = Comparators.identityComparator().compare(_2(),o._2());
+            result = Comparators.naturalOrderIdentityComparator().compare(_2(),o._2());
             if(result==0){
-                result = Comparators.identityComparator().compare(_3(),o._3());
+                result = Comparators.naturalOrderIdentityComparator().compare(_3(),o._3());
                 if(result==0){
-                    result = Comparators.identityComparator().compare(_4(),o._4());
+                    result = Comparators.naturalOrderIdentityComparator().compare(_4(),o._4());
                     if(result==0){
-                        result = Comparators.identityComparator().compare(_5(),o._5());
+                        result = Comparators.naturalOrderIdentityComparator().compare(_5(),o._5());
                         if(result==0){
-                            result = Comparators.identityComparator().compare(_6(),o._6());
+                            result = Comparators.naturalOrderIdentityComparator().compare(_6(),o._6());
                             if(result==0){
-                                result = Comparators.identityComparator().compare(_7(),o._7());
+                                result = Comparators.naturalOrderIdentityComparator().compare(_7(),o._7());
                                 if(result==0){
-                                    result = Comparators.identityComparator().compare(_8(),o._8());
+                                    result = Comparators.naturalOrderIdentityComparator().compare(_8(),o._8());
                                 }
                             }
                         }
@@ -324,5 +326,14 @@ public class Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> implements To<Tuple8<T1,T2,T3,T4,T5
     @Override
     public int hashCode() {
         return Objects.hash(_1(), _2(), _3(), _4(), _5(), _6(), _7(), _8());
+    }
+
+    public HashMap<T1,T2> toHashMap(){
+        return HashMap.<T1,T2>empty().put(_1(),_2());
+    }
+    public Map<T1,T2> toMap(){
+        java.util.HashMap<T1,T2> res = new java.util.HashMap();
+        res.put(_1(),_2());
+        return res;
     }
 }

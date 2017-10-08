@@ -129,6 +129,8 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     @Override
     public void forEach2() {
 
+        System.out.println(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), (a, b) -> a + b)
+                .toList());
         assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), (a, b) -> a + b)
                               .toList()
                               .size(),

@@ -85,7 +85,7 @@ public interface Folds<T> {
 
     }
     default <U> Optional<T> maxBy(Function<? super T, ? extends U> function,Comparator<? super U> comparator){
-        return stream().sorted(function,comparator)
+        return stream().sorted(function,comparator.reversed())
                 .get(0l)
                 .toOptional();
     }
@@ -95,12 +95,12 @@ public interface Folds<T> {
                 .toOptional();
     }
     default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function){
-        return stream().sorted(function, Comparator.reverseOrder())
+        return stream().sorted(function, Comparator.naturalOrder())
                 .get(0l)
                 .toOptional();
     }
     default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function,Comparator<? super U> comparator){
-        return stream().sorted(function, Comparator.reverseOrder())
+        return stream().sorted(function, Comparator.naturalOrder())
                 .takeRight(1)
                 .findFirst();
     }
@@ -190,12 +190,12 @@ public interface Folds<T> {
     }
 
     default Optional<T> max(Comparator<? super T> comparator){
-        return stream().sorted(comparator)
+        return stream().sorted(comparator.reversed())
                        .get(0l)
                        .toOptional();
     }
     default Optional<T> min(Comparator<? super T> comparator){
-        return stream().sorted(comparator.reversed())
+        return stream().sorted(comparator)
                 .get(0l)
                 .toOptional();
     }

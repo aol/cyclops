@@ -191,15 +191,15 @@ public class Tuple5<T1,T2,T3,T4,T5> implements To<Tuple5<T1,T2,T3,T4,T5>>,
     }
     @Override
     public int compareTo(Tuple5<T1, T2, T3, T4,T5> o) {
-        int result = Comparators.identityComparator().compare(_1(),o._1());
+        int result = Comparators.naturalOrderIdentityComparator().compare(_1(),o._1());
         if(result==0){
-            result = Comparators.identityComparator().compare(_2(),o._2());
+            result = Comparators.naturalOrderIdentityComparator().compare(_2(),o._2());
             if(result==0){
-                result = Comparators.identityComparator().compare(_3(),o._3());
+                result = Comparators.naturalOrderIdentityComparator().compare(_3(),o._3());
                 if(result==0){
-                    result = Comparators.identityComparator().compare(_4(),o._4());
+                    result = Comparators.naturalOrderIdentityComparator().compare(_4(),o._4());
                     if(result==0){
-                        result = Comparators.identityComparator().compare(_5(),o._5());
+                        result = Comparators.naturalOrderIdentityComparator().compare(_5(),o._5());
                     }
                 }
             }

@@ -1463,6 +1463,7 @@ public abstract class AbstractCollectionXTest {
 	    
 	    @Test
 	    public void testSorted() {
+
 	        CollectionX<Tuple2<Integer, String>> t1 = of(tuple(2, "two"), tuple(1, "replaceWith"));
 
 	        List<Tuple2<Integer, String>> s1 = t1.sorted().toList();

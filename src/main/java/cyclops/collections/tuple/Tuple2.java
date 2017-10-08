@@ -23,6 +23,7 @@ import cyclops.typeclasses.monad.*;
 import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.function.*;
 
@@ -186,9 +187,9 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
 
     @Override
     public int compareTo(Tuple2<T1, T2> o) {
-        int result = Comparators.identityComparator().compare(_1(),o._1());
+        int result = Comparators.naturalOrderIdentityComparator().compare(_1(),o._1());
         if(result==0){
-            result = Comparators.identityComparator().compare(_2(),o._2());
+            result = Comparators.naturalOrderIdentityComparator().compare(_2(),o._2());
         }
         return result;
     }

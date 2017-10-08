@@ -125,7 +125,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
     }
     @Override
     public int compareTo(Tuple1<T> o) {
-        return Comparators.identityComparator().compare(_1(),o._1());
+        return Comparators.naturalOrderIdentityComparator().compare(_1(),o._1());
     }
     @Override
     public int hashCode() {
