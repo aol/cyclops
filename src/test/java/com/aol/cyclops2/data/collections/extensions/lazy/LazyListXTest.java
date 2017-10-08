@@ -3,14 +3,13 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 import cyclops.collections.mutable.ListX;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class StreamXTest {
+public class LazyListXTest {
 
     public class Animal {
         protected String name;
@@ -41,7 +40,7 @@ public class StreamXTest {
 
     @Test
     public void testIntercalate() {
-        StreamX<Animal> lazyListX = (StreamX<Animal>) ListX.of(new Animal("A"), new Animal("B"), new Animal("C"));
+        LazyListX<Animal> lazyListX = (LazyListX<Animal>) ListX.of(new Animal("A"), new Animal("B"), new Animal("C"));
         List<List<Cat>> listOfLists = Arrays.asList(new List[]{
                 Arrays.asList(new Cat[]{new Cat("1"), new Cat("2"), new Cat("3")}),
                 Arrays.asList(new Cat[]{new Cat("4"), new Cat("5"), new Cat("6")}),

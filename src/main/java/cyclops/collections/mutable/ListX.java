@@ -1,16 +1,11 @@
 package cyclops.collections.mutable;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.data.collections.extensions.lazy.StreamX;
+import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.stream.HeadAndTail;
 import cyclops.async.Future;
-import cyclops.collections.box.Mutable;
-import cyclops.collections.box.MutableBoolean;
 import cyclops.control.Xor;
-import cyclops.monads.Witness;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
@@ -754,7 +749,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @SafeVarargs
     public static <T> ListX<T> of(final T... values) {
 
-        return new StreamX<T>(null,
+        return new LazyListX<T>(null,
                 ReactiveSeq.of(values),
                 defaultCollector());
     }
@@ -792,7 +787,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @return
      */
     public static <T> ListX<T> listX(ReactiveSeq<T> stream){
-        return new StreamX<T>(null,
+        return new LazyListX<T>(null,
                 stream,
                 defaultCollector());
     }
@@ -802,10 +797,10 @@ public interface ListX<T> extends To<ListX<T>>,
         if (it instanceof ListX)
             return (ListX<T>) it;
         if (it instanceof List)
-            return new StreamX<T>(
+            return new LazyListX<T>(
                                     (List<T>) it, null,defaultCollector());
 
-        return new StreamX<T>(null,
+        return new LazyListX<T>(null,
                                 ReactiveSeq.fromIterable(it),
                                            defaultCollector());
     }
@@ -814,9 +809,9 @@ public interface ListX<T> extends To<ListX<T>>,
         if (it instanceof ListX)
             return ((ListX<T>) it).withCollector(collector);
         if (it instanceof List)
-            return new StreamX<T>(
+            return new LazyListX<T>(
                                     (List<T>) it,null,collector);
-        return new StreamX<T>(null,
+        return new LazyListX<T>(null,
                                 ReactiveSeq.fromIterable(it),
                                 collector);
     }
@@ -904,7 +899,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
     @Override
     default <X> ListX<X> fromStream(final ReactiveSeq<X> stream) {
-        return new StreamX<>(null,ReactiveSeq.fromStream(stream), getCollector());
+        return new LazyListX<>(null,ReactiveSeq.fromStream(stream), getCollector());
     }
 
     /* (non-Javadoc)

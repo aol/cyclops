@@ -2,12 +2,10 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
@@ -40,10 +38,10 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  *
  * @param <T> the type of elements held in this toX
  */
-public class StreamX<T> extends AbstractLazyCollection<T,List<T>> implements ListX<T> {
+public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements ListX<T> {
 
 
-    public StreamX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector,Evaluation strict) {
+    public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector, Evaluation strict) {
 
         super(list, seq, collector,strict,r->{
             CompletableListX<T> res = new CompletableListX<>();
@@ -53,14 +51,14 @@ public class StreamX<T> extends AbstractLazyCollection<T,List<T>> implements Lis
 
 
     }
-    public StreamX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector) {
+    public LazyListX(List<T> list, ReactiveSeq<T> seq, Collector<T, ?, List<T>> collector) {
        this(list, seq, collector, LAZY);
 
     }
 
     @Override
-    public StreamX<T> withCollector(Collector<T, ?, List<T>> collector){
-        return (StreamX)new StreamX<T>(this.getList(),this.getSeq().get(),collector, evaluation());
+    public LazyListX<T> withCollector(Collector<T, ?, List<T>> collector){
+        return (LazyListX)new LazyListX<T>(this.getList(),this.getSeq().get(),collector, evaluation());
     }
     //@Override
     public ListX<T> materialize() {
@@ -86,12 +84,12 @@ public class StreamX<T> extends AbstractLazyCollection<T,List<T>> implements Lis
 
     @Override
     public ListX<T> lazy() {
-        return new StreamX<T>(getList(),getSeq().get(),getCollectorInternal(), LAZY) ;
+        return new LazyListX<T>(getList(),getSeq().get(),getCollectorInternal(), LAZY) ;
     }
 
     @Override
     public ListX<T> eager() {
-        return new StreamX<T>(getList(),getSeq().get(),getCollectorInternal(),Evaluation.EAGER) ;
+        return new LazyListX<T>(getList(),getSeq().get(),getCollectorInternal(),Evaluation.EAGER) ;
     }
 
     @Override
@@ -179,19 +177,19 @@ public class StreamX<T> extends AbstractLazyCollection<T,List<T>> implements Lis
     }
 
     @Override
-    public <X> StreamX<X> fromStream(ReactiveSeq<X> stream) {
-        return new StreamX<X>((List) getList(), ReactiveSeq.fromStream(stream), (Collector) this.getCollectorInternal(),this.evaluation());
+    public <X> LazyListX<X> fromStream(ReactiveSeq<X> stream) {
+        return new LazyListX<X>((List) getList(), ReactiveSeq.fromStream(stream), (Collector) this.getCollectorInternal(),this.evaluation());
     }
 
     @Override
-    public <T1> StreamX<T1> from(Collection<T1> c) {
+    public <T1> LazyListX<T1> from(Collection<T1> c) {
         if(c instanceof List)
-            return new StreamX<T1>((List)c,null,(Collector)this.getCollectorInternal(),this.evaluation());
+            return new LazyListX<T1>((List)c,null,(Collector)this.getCollectorInternal(),this.evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 
     @Override
-    public <U> StreamX<U> unitIterator(Iterator<U> it) {
+    public <U> LazyListX<U> unitIterator(Iterator<U> it) {
         return fromStream(ReactiveSeq.fromIterator(it));
     }
 
@@ -199,7 +197,7 @@ public class StreamX<T> extends AbstractLazyCollection<T,List<T>> implements Lis
 
 
     @Override
-    public <R> StreamX<R> unit(Collection<R> col) {
+    public <R> LazyListX<R> unit(Collection<R> col) {
         return from(col);
     }
 }
