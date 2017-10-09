@@ -11,10 +11,7 @@ import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
-import cyclops.control.Try;
-import cyclops.control.Xor;
+import cyclops.control.*;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -182,13 +179,9 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
 	public void testGet() {
-		assertThat(just.get(),equalTo(10));
+		assertThat(just.get(),equalTo(Option.some(10)));
 	}
-	@Test(expected=NoSuchElementException.class)
-	public void testGetNone() {
-		none.get();
-		
-	}
+
 
 	@Test
 	public void testFilter() {

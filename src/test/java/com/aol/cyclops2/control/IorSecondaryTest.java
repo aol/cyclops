@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.control.Ior;
+import cyclops.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +32,7 @@ public class IorSecondaryTest {
        
         Ior<RuntimeException,Integer> mapped = failure.bimap(e->new RuntimeException(), d->d+1);
         assertTrue(mapped.isSecondary());
-        assertThat(mapped.swap().get(),instanceOf(RuntimeException.class));
+        assertThat(mapped.swap().orElse(null),instanceOf(RuntimeException.class));
     }
     Throwable capT;
     int capInt=0;
@@ -47,7 +48,7 @@ public class IorSecondaryTest {
     public void bicast(){
         Ior<Throwable,Number> mapped = failure.bicast(Throwable.class, Number.class);
         assertTrue(mapped.isSecondary());
-        assertThat(mapped.swap().get(),instanceOf(Throwable.class));
+        assertThat(mapped.swap().orElse(null),instanceOf(Throwable.class));
     }
 
 
@@ -57,10 +58,7 @@ public class IorSecondaryTest {
 		assertNotNull(failure);
 	}
 
-	@Test(expected=NoSuchElementException.class)
-	public void testGet() {
-		failure.get();
-	}
+
 
 	@Test
 	public void testMap() {
@@ -74,7 +72,7 @@ public class IorSecondaryTest {
 
 	@Test
 	public void testFilter() {
-		assertThat(failure.filter(x->x==10),equalTo(failure));
+		assertThat(failure.filter(x->x==10),equalTo(Option.none()));
 	}
 
 	

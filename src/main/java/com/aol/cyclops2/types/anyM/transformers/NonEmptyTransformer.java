@@ -8,6 +8,7 @@ import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collections.tuple.Tuple2;
+import cyclops.control.Option;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.AnyM;
@@ -32,8 +33,8 @@ public abstract class NonEmptyTransformer<W extends WitnessType<W>,T> implements
 
         return !stream().isEmpty();
     }
-    public T get(){
-        return stream().firstValue();
+    public Option<T> get(){
+        return stream().findOne();
     }
 
     public T orElse(T value){

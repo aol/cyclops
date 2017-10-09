@@ -8,10 +8,7 @@ import cyclops.companion.Streams;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.immutable.LinkedListX;
-import cyclops.control.Eval;
-import cyclops.control.Trampoline;
-import cyclops.control.Try;
-import cyclops.control.Xor;
+import cyclops.control.*;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -175,12 +172,7 @@ public class EvalTTest implements Printable {
 
 	@Test
 	public void testGet() {
-		assertThat(just.get(),equalTo(10));
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testGetNone() {
-		none.get();
-		
+		assertThat(just.get(),equalTo(Option.some(10)));
 	}
 
 	@Test

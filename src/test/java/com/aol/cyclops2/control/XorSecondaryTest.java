@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.control.Option;
 import cyclops.control.Xor;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,10 +32,7 @@ public class XorSecondaryTest {
 		assertNotNull(failure);
 	}
 
-	@Test(expected=NoSuchElementException.class)
-	public void testGet() {
-		failure.get();
-	}
+
 
 	@Test
 	public void testMap() {
@@ -48,7 +46,7 @@ public class XorSecondaryTest {
 
 	@Test
 	public void testFilter() {
-		assertThat(failure.filter(x->x==10),equalTo(failure));
+		assertThat(failure.filter(x->x==10),equalTo(Option.some(failure)));
 	}
 
 	

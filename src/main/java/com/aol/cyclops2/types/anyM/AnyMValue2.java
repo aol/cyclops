@@ -100,7 +100,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
                         .orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
 
-    
+
     @Override
     default String mkString() {
         return visit(s->"AnyMValue2[" + s + "]",()->"AnyMValue2[]");

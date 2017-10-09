@@ -8,10 +8,7 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
-import cyclops.control.Try;
-import cyclops.control.Xor;
+import cyclops.control.*;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -100,7 +97,7 @@ public class MaybeTTest implements Printable {
 	@Test
 	public void testFlatMap() {
 	    
-		assertThat(just.flatMap(i->Maybe.of(i+5)).get(),equalTo(15));
+		assertThat(just.flatMap(i->Maybe.of(i+5)).get(),equalTo(Option.some(15)));
 		assertThat(none.flatMap(i->Maybe.of(i+5)).orElse(-1),equalTo(-1));
 	}
 	
@@ -173,13 +170,9 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testGet() {
-		assertThat(just.get(),equalTo(10));
+		assertThat(just.get(),equalTo(Option.some(10)));
 	}
-	@Test(expected=NoSuchElementException.class)
-	public void testGetNone() {
-		none.get();
-		
-	}
+
 
 	@Test
 	public void testFilter() {
@@ -379,7 +372,7 @@ public class MaybeTTest implements Printable {
 		
 		
 		
-		just.get();
+		just.orElse(null);
 		assertThat(capture.get(),equalTo(10));
 	}
 

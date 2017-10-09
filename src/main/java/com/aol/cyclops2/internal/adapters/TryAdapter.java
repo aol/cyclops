@@ -42,8 +42,8 @@ public class TryAdapter extends AbstractFunctionalAdapter<tryType> implements Va
         return fn2.apply(this);
     }
 
-    public <T> Xor<?,T> tryType(AnyM<tryType, T> t){
-        return (Xor<?,T>)t.unwrap();
+    public <T> Try<T,Throwable> tryType(AnyM<tryType, T> t){
+        return (Try<T,Throwable>)t.unwrap();
     }
     @Override
     public <T> AnyM<tryType, T> filter(AnyM<tryType, T> t, Predicate<? super T> fn) {

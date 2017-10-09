@@ -8,10 +8,7 @@ import cyclops.collections.mutable.ListX;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
-import cyclops.control.Try;
-import cyclops.control.Xor;
+import cyclops.control.*;
 import cyclops.control.lazy.Either;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
@@ -80,7 +77,7 @@ public class XorTTest implements Printable {
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20).get(),equalTo(20));
+		assertThat(just.unit(20).get(),equalTo(Maybe.just(20)));
 	}
 
 	
@@ -89,14 +86,14 @@ public class XorTTest implements Printable {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
-		assertThat(just.map(i->i+5).get(),equalTo(15));
+		assertThat(just.map(i->i+5).get(),equalTo(Option.some(15)));
 		assertThat(none.map(i->i+5).orElse(1000),equalTo(1000));
 	}
 
 	@Test
 	public void testFlatMap() {
 	    
-		assertThat(just.flatMap(i->Xor.primary(i+5)).get(),equalTo(15));
+		assertThat(just.flatMap(i->Xor.primary(i+5)).get(),equalTo(Option.some(15)));
 		assertThat(none.flatMap(i->Xor.primary(i+5)).orElse(-1),equalTo(-1));
 	}
 	
@@ -169,13 +166,9 @@ public class XorTTest implements Printable {
 
 	@Test
 	public void testGet() {
-		assertThat(just.get(),equalTo(10));
+		assertThat(just.get(),equalTo(Option.some(10)));
 	}
-	@Test(expected=NoSuchElementException.class)
-	public void testGetNone() {
-		none.get();
-		
-	}
+
 
 	@Test
 	public void testFilter() {
@@ -350,7 +343,7 @@ public class XorTTest implements Printable {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5).get(),equalTo(15));
+		assertThat(just.map(i->i+5).get(),equalTo(Option.some(15)));
 	}
 	
 	@Test
@@ -369,7 +362,7 @@ public class XorTTest implements Printable {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)).get(),equalTo(65));
+		assertThat(just.trampoline(n ->sum(10,n)).get(),equalTo(Maybe.just(65)));
 	}
 
 	

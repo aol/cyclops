@@ -47,7 +47,7 @@ public class IorBothTest {
 	   
 	    Ior<RuntimeException,Integer> mapped = success.bimap(e->new RuntimeException(), d->d+1);
 	    assertThat(mapped.orElse(-10),equalTo(11));
-	    assertThat(mapped.swap().orElseUse(null),instanceOf(RuntimeException.class));
+	    assertThat(mapped.swap().orElse(null),instanceOf(RuntimeException.class));
 	}
 	Throwable capT;
 	int capInt=0;

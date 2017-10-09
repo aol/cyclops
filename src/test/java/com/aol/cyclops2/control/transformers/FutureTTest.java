@@ -16,10 +16,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import cyclops.collections.immutable.LinkedListX;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
-import cyclops.control.Try;
-import cyclops.control.Xor;
+import cyclops.control.*;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.Witness;
 import cyclops.companion.Streams;
@@ -185,13 +182,9 @@ public class FutureTTest implements Printable {
 
 	@Test
 	public void testGet() {
-		assertThat(just.get(),equalTo(10));
+		assertThat(just.get(),equalTo(Option.some(10)));
 	}
-	@Test(expected=NoSuchElementException.class)
-	public void testGetNone() {
-		none.get();
-		
-	}
+
 
 	@Test
 	public void testFilter() {

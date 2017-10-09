@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.control.Ior;
+import cyclops.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,7 +45,7 @@ public class IorPrimaryTest {
     public void bimap(){
        
         Ior<RuntimeException,Integer> mapped = success.bimap(e->new RuntimeException(), d->d+1);
-        assertThat(mapped.get(),equalTo(11));
+        assertThat(mapped.get(),equalTo(Option.some(11)));
         assertTrue(mapped.isPrimary());
     }
     Throwable capT;
@@ -60,7 +61,7 @@ public class IorPrimaryTest {
     @Test
     public void bicast(){
         Ior<Throwable,Number> mapped = success.bicast(Throwable.class, Number.class);
-        assertThat(mapped.get(),equalTo(10));
+        assertThat(mapped.get(),equalTo(Option.some(10)));
         assertTrue(mapped.isPrimary());
     }
 
@@ -68,7 +69,7 @@ public class IorPrimaryTest {
 
 	@Test
 	public void testGet() {
-		assertThat(success.get(),equalTo(value));
+		assertThat(success.get(),equalTo(Option.some(value)));
 	}
 
 	@Test
@@ -88,11 +89,11 @@ public class IorPrimaryTest {
 
 	@Test
 	public void testFilter() {
-		assertThat(success.filter(x->x>5),equalTo(Ior.primary(value)));
+		assertThat(success.filter(x->x>5),equalTo(Option.some(value)));
 	}
 	@Test
 	public void testFilterFail() {
-		assertThat(success.filter(x->x>15),equalTo(Ior.secondary(null)));
+		assertThat(success.filter(x->x>15),equalTo(Option.none()));
 	}
 
 	

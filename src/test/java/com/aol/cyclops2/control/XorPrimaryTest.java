@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.control.Option;
 import cyclops.control.Xor;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +46,7 @@ public class XorPrimaryTest {
 
 	@Test
 	public void testGet() {
-		assertThat(success.get(),equalTo(value));
+		assertThat(success.get(),equalTo(Option.some(value)));
 	}
 
 	@Test
@@ -65,11 +66,11 @@ public class XorPrimaryTest {
 
 	@Test
 	public void testFilter() {
-		assertThat(success.filter(x->x>5),equalTo(Xor.primary(value)));
+		assertThat(success.filter(x->x>5),equalTo(Option.some(value)));
 	}
 	@Test
 	public void testFilterFail() {
-		assertThat(success.filter(x->x>15),equalTo(Xor.secondary(null)));
+		assertThat(success.filter(x->x>15),equalTo(Option.none()));
 	}
 
 	

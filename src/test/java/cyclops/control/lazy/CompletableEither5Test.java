@@ -323,7 +323,7 @@ public class CompletableEither5Test {
 
     @Test
     public void testGet() {
-        assertThat(just.get(),equalTo(10));
+        assertThat(just.get(),equalTo(Option.some(10)));
     }
     @Test(expected=NoSuchElementException.class)
     public void testGetNone() {
