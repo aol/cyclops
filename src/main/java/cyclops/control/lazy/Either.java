@@ -354,6 +354,8 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     }
 
     static <ST,PT> Either<ST,PT> fromXor(Xor<ST,PT> xor){
+        if(xor instanceof Either)
+            return (Either<ST,PT>)xor;
         return xor.visit(Either::left, Either::right);
     }
 
@@ -1580,7 +1582,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         @Override
         public <R> R visit(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
-            return null;
+            return present.apply(value.get());
         }
     }
 
@@ -1767,7 +1769,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         @Override
         public <R> R visit(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
-            return null;
+            return absent.get();
         }
     }
 

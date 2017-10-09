@@ -661,7 +661,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
             @Override
             public <C2, T> Traverse<Higher<Higher<nested, W1>, W2>> traverse() {
-                return null;
+                return Instances.traverse(def1,def2,factory);
             }
 
             @Override
@@ -924,8 +924,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             Higher<Higher<Higher<nested, W1>, W2>, R> x = monad.flatMap_(value1, in -> {
 
                 Nested<W1, W2, R1> a = value2.apply(in);
-                monad.map_(a, in2 -> yieldingFunction.apply(in, in2));
-                return null;
+                return monad.map_(a, in2 -> yieldingFunction.apply(in, in2));
             });
             return narrowK(x);
 

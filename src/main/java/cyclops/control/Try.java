@@ -1315,8 +1315,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     private Throwable orThrow(final Optional<Throwable> findFirst, final Throwable t) {
         if (findFirst.isPresent())
             return findFirst.get();
-        ExceptionSoftener.throwSoftenedException(t);
-        return null;
+        throw ExceptionSoftener.throwSoftenedException(t);
+
     }
 
     @Override

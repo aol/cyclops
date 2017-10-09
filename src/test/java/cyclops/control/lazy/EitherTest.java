@@ -48,7 +48,7 @@ public class EitherTest {
         completable.complete(5);
         System.out.println(mapped.getClass());
         mapped.printOut();
-        assertThat(mapped.get(),equalTo(11));
+        assertThat(mapped.get(),equalTo(Maybe.just(11)));
 
 
     }
@@ -62,7 +62,7 @@ public class EitherTest {
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.secondaryGet(),instanceOf(NoSuchElementException.class));
+        assertThat(mapped.secondaryOrElse(null),instanceOf(NoSuchElementException.class));
 
     }
     @Test
@@ -75,7 +75,7 @@ public class EitherTest {
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.secondaryGet(),instanceOf(IllegalStateException.class));
+        assertThat(mapped.secondaryOrElse(null),instanceOf(IllegalStateException.class));
 
     }
 
@@ -102,7 +102,7 @@ public class EitherTest {
 
         assertFalse(result.isDone());
         System.out.println("Blocking?");
-        assertThat("Result is " + result.get(),result.get(),equalTo(2000));
+        assertThat("Result is " + result.get(),result.get(),equalTo(Try.success(2000)));
 
     }
 
@@ -142,7 +142,7 @@ public class EitherTest {
         assertThat(Either.right(10)
                .map(i->i*2)
                .flatMap(i->Either.right(i*4))
-               .get(),equalTo(80));
+               .get(),equalTo(Option.some(80)));
     }
     @Test
     public void odd() {
@@ -319,7 +319,7 @@ public class EitherTest {
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
         
-        assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
     
     @Test
@@ -385,13 +385,9 @@ public class EitherTest {
 
     @Test
     public void testGet() {
-        assertThat(just.get(),equalTo(10));
+        assertThat(just.get(),equalTo(Option.some(10)));
     }
-    @Test(expected=NoSuchElementException.class)
-    public void testGetNone() {
-        none.get();
-        
-    }
+
 
     @Test
     public void testFilter() {
@@ -503,7 +499,7 @@ public class EitherTest {
     public void testPeek() {
         Mutable<Integer> capture = Mutable.of(null);
         just = just.peek(c->capture.set(c));
-        just.get();
+        just.orElse(null);
         
         assertThat(capture.get(),equalTo(10));
     }
