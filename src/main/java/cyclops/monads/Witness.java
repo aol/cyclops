@@ -378,7 +378,7 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<maybe> adapter() {
-            return new MonadicValueAdapter<Witness.maybe>(()->Maybe.none(),
+            return new MonadicValueAdapter<Witness.maybe>(()->Maybe.nothing(),
                     Maybe::just,Maybe::fromIterable,true,this);
         }
         

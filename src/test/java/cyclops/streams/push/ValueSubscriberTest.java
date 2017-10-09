@@ -107,7 +107,7 @@ public class ValueSubscriberTest {
     @Test
     public void maybeNonePublisherTest(){
         ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
-        Maybe.<Integer>none()
+        Maybe.<Integer>nothing()
              .subscribe(sub);
         
         Maybe<Integer> maybe = sub.toMaybe();

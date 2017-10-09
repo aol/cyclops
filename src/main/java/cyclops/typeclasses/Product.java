@@ -225,7 +225,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
     public Maybe<Unfolds> unfolds(){
         if(def1.unfoldable().isPresent() && def2.unfoldable().isPresent())
             return Maybe.just(new Unfolds(def1.unfoldable().orElse(null),def2.unfoldable().orElse(null)));
-        return Maybe.none();
+        return Maybe.nothing();
     }
     public Plus plusUnsafe(){
         return new Plus(def1.monadPlus().orElse(null),def2.monadPlus().orElse(null));
@@ -233,7 +233,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
     public Maybe<Plus> plus(){
         if(def1.monadPlus().isPresent() && def2.monadPlus().isPresent())
             return Maybe.just(new Plus(def1.monadPlus().orElse(null),def2.monadPlus().orElse(null)));
-        return Maybe.none();
+        return Maybe.nothing();
     }
     @AllArgsConstructor
     public  class Unfolds {
@@ -704,7 +704,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
 
         @Override
         public <T> Maybe<Comonad<Higher<Higher<product, W1>, W2>>> comonad() {
-            return Maybe.none();
+            return Maybe.nothing();
         }
 
 
@@ -712,7 +712,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
         @Override
         public <T> Maybe<Unfoldable<Higher<Higher<product, W1>, W2>>> unfoldable() {
             if(!def1.unfoldable().isPresent() && !def2.unfoldable().isPresent())
-                return Maybe.none();
+                return Maybe.nothing();
             return Maybe.just(new  Unfoldable<Higher<Higher<product, W1>, W2>>(){
 
                 @Override

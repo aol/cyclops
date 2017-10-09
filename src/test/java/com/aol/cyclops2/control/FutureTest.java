@@ -119,7 +119,7 @@ public class FutureTest {
         Future<Integer> result = Future.firstSuccess(Future.of(()->1),ft);
                
         ft.complete(10);
-        assertThat(result.get(), is(equalTo(1)));
+        assertThat(result.get(), is(equalTo(Try.success(1))));
     }
     @Test
     public void testBreakoutOne(){
@@ -132,13 +132,13 @@ public class FutureTest {
 
     @Test
     public void testZip(){
-        assertThat(Future.ofResult(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
-        assertThat(Future.ofResult(10).zipP(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
-        assertThat(Future.ofResult(10).zipS(Stream.of(20),(a, b)->a+b).get(),equalTo(30));
-        assertThat(Future.ofResult(10).zip(ReactiveSeq.of(20),(a, b)->a+b).get(),equalTo(30));
-        assertThat(Future.ofResult(10).zip(ReactiveSeq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(Future.ofResult(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(Future.ofResult(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
+        assertThat(Future.ofResult(10).zip(Eval.now(20),(a, b)->a+b).orElse(-100),equalTo(30));
+        assertThat(Future.ofResult(10).zipP(Eval.now(20),(a, b)->a+b).orElse(-100),equalTo(30));
+        assertThat(Future.ofResult(10).zipS(Stream.of(20),(a, b)->a+b).orElse(-100),equalTo(30));
+        assertThat(Future.ofResult(10).zip(ReactiveSeq.of(20),(a, b)->a+b).orElse(-100),equalTo(30));
+        assertThat(Future.ofResult(10).zip(ReactiveSeq.of(20)).orElse(null),equalTo(Tuple.tuple(10,20)));
+        assertThat(Future.ofResult(10).zipS(Stream.of(20)).orElse(null),equalTo(Tuple.tuple(10,20)));
+        assertThat(Future.ofResult(10).zip(Eval.now(20)).orElse(null),equalTo(Tuple.tuple(10,20)));
     }
    
 
@@ -210,7 +210,7 @@ public class FutureTest {
     @Test
     public void coFlatMap(){
         assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50).get(),equalTo(just.get()));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50).get(),equalTo(50));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50).get(),equalTo(Try.success(50)));
     }
     
     @Test
@@ -225,7 +225,7 @@ public class FutureTest {
     @Test
     public void testToMaybe() {
         assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
-        assertThat(none.toMaybe(),equalTo(Maybe.none()));
+        assertThat(none.toMaybe(),equalTo(Maybe.nothing()));
     }
 
     private int add1(int i){
@@ -245,7 +245,7 @@ public class FutureTest {
     @Test
     public void testSequence() {
         Future<ListX<Integer>> maybes = Future.sequence(ListX.of(just, Future.ofResult(1)));
-        assertThat(maybes.get(),equalTo(ListX.of(10,1)));
+        assertThat(maybes.orElse(ListX.empty()),equalTo(ListX.of(10,1)));
     }
     @Test
     public void testSequenceCF() {
@@ -257,13 +257,13 @@ public class FutureTest {
     public void testAccumulateSuccessSemigroup() {
         Future<Integer> maybes = Future.accumulateSuccess(Monoid.of(0,(a,b)->a+1),ListX.of(just,none, Future.ofResult(1)));
         
-        assertThat(maybes.get(),equalTo(2));
+        assertThat(maybes.get(),equalTo(Try.success(2)));
     }
     @Test
     public void testAccumulateSuccess() {
         Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofResult(1)), Reducers.toPersistentSetX());
         
-        assertThat(maybes.get(),equalTo(PersistentSetX.of(10,1)));
+        assertThat(maybes.get(),equalTo(Try.success(PersistentSetX.of(10,1))));
     }
     @Test @Ignore
     public void testAccumulateJNonBlocking() {
@@ -274,22 +274,22 @@ public class FutureTest {
     @Test
     public void testAccumulateNoValue() {
         Future<String> maybes = Future.accumulate(ListX.of(), i->""+i,Monoids.stringConcat);
-        assertThat(maybes.get(),equalTo(""));
+        assertThat(maybes.orElse("npo"),equalTo(""));
     }
     @Test
     public void testAccumulateOneValue() {
         Future<String> maybes = Future.accumulate(ListX.of(just), i->""+i,Monoids.stringConcat);
-        assertThat(maybes.get(),equalTo("10"));
+        assertThat(maybes.get(),equalTo(Try.success("10")));
     }
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
         Future<String> maybes = Future.accumulate(ListX.of(just, Future.ofResult(1)), i->""+i,Monoids.stringConcat);
-        assertThat(maybes.get(),equalTo("101"));
+        assertThat(maybes.get(),equalTo(Try.success("101")));
     }
     @Test
     public void testAccumulateJust() {
         Future<Integer> maybes = Future.accumulate(Monoids.intSum,ListX.of(just, Future.ofResult(1)));
-        assertThat(maybes.get(),equalTo(11));
+        assertThat(maybes.get(),equalTo(Try.success(11)));
     }
     @Test
     public void testAccumulateError() {
@@ -314,7 +314,7 @@ public class FutureTest {
     
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
-        assertThat(just.map(i->i+5).get(),equalTo(15));
+        assertThat(just.map(i->i+5).get(),equalTo(Try.success(15)));
         assertTrue(none.map(i->i+5).isFailed());
     }
 
@@ -353,7 +353,7 @@ public class FutureTest {
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
         
-        assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
 
     
@@ -444,13 +444,9 @@ public class FutureTest {
 
     @Test
     public void testGet() {
-        assertThat(just.get(),equalTo(10));
+        assertThat(just.get(),equalTo(Try.success(10)));
     }
-    @Test(expected=NoSuchElementException.class)
-    public void testGetNone() {
-        none.get();
-        
-    }
+
 
     @Test
     public void testFilter() {
@@ -589,7 +585,7 @@ public class FutureTest {
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {
-        assertThat(just.map(i->i+5).get(),equalTo(15));
+        assertThat(just.map(i->i+5).get(),equalTo(Try.success(15)));
     }
     
     @Test
@@ -605,13 +601,13 @@ public class FutureTest {
     }
     @Test
     public void testTrampoline() {
-        assertThat(just.trampoline(n ->sum(10,n)).get(),equalTo(Xor.primary(65).get()));
+        assertThat(just.trampoline(n ->sum(10,n)).get(),equalTo(Xor.primary(65).toTry()));
     }
 
     
     @Test
     public void mapBoth(){
-        assertThat(Future.ofResult(1).map(i->i*2, e->-1).get(),equalTo(2));
+        assertThat(Future.ofResult(1).map(i->i*2, e->-1).get(),equalTo(Try.success(2)));
     }
     @Test
     public void testUnitT1() {
@@ -620,26 +616,26 @@ public class FutureTest {
 
     @Test
     public void testRecover() {
-        assertThat(Future.ofError(new RuntimeException()).recover(__ -> true).get(), equalTo(true));
+        assertThat(Future.ofError(new RuntimeException()).recover(__ -> true).get(), equalTo(Try.success(true)));
     }
     @Test
     public void testRecoverSupplier() {
-        assertThat(Future.ofError(new RuntimeException()).recover(() -> true).get(), equalTo(true));
+        assertThat(Future.ofError(new RuntimeException()).recover(() -> true).get(), equalTo(Try.success(true)));
     }
     
     @Test
     public void testFlatMapIterable() {
         Future<Integer> f = just.flatMapI(i -> Arrays.asList(i, 20, 30));
-        assertThat(f.get(), equalTo(10));
+        assertThat(f.orElse(-10), equalTo(10));
 
         f = just.flatMapI(i -> AnyM.fromStream(ReactiveSeq.of(20, i, 30)));
-        assertThat(f.get(), equalTo(20));
+        assertThat(f.orElse(-50), equalTo(20));
     }
     
     @Test
     public void testFlatMapPublisher() {
         Future<Integer> f = just.flatMapP(i -> Flux.just(100, i));
-        assertThat(f.get(), equalTo(100));
+        assertThat(f.get(), equalTo(Try.success(100)));
     }
 
 }

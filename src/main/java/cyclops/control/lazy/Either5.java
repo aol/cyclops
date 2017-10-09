@@ -16,16 +16,12 @@ import cyclops.monads.Witness;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 /**
  * A right biased Lazy Either4 type. transform / flatMap operators are tail-call optimized
@@ -1007,7 +1003,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
 
-            return Maybe.fromEval(Eval.later(() -> test.test(get()) ? Maybe.just(get()) : Maybe.<PT> none()))
+            return Maybe.fromEval(Eval.later(() -> test.test(get()) ? Maybe.just(get()) : Maybe.<PT>nothing()))
                         .flatMap(Function.identity());
 
         }
@@ -1191,7 +1187,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
 
-            return Maybe.none();
+            return Maybe.nothing();
 
         }
 
@@ -1366,7 +1362,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
 
-            return Maybe.none();
+            return Maybe.nothing();
 
         }
 
@@ -1539,7 +1535,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
 
-            return Maybe.none();
+            return Maybe.nothing();
 
         }
 
@@ -1713,7 +1709,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
 
-            return Maybe.none();
+            return Maybe.nothing();
 
         }
 

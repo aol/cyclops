@@ -981,7 +981,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return AnyMFactory.instance.value(Maybe.just(nullable),Witness.maybe.INSTANCE);
     }
     public static <T> AnyMValue<maybe,T> none() {
-        return AnyMFactory.instance.value(Maybe.none(),Witness.maybe.INSTANCE);
+        return AnyMFactory.instance.value(Maybe.nothing(),Witness.maybe.INSTANCE);
     }
 
     /**

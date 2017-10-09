@@ -1476,12 +1476,12 @@ public class Future<T> implements To<Future<T>>,
 
                 @Override
                 public <T> Maybe<Comonad<future>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<Unfoldable<future>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }

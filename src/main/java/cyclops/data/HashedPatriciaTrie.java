@@ -92,7 +92,7 @@ public interface HashedPatriciaTrie<K, V>  {
 
         @Override
         public Maybe<V> get(int hash, K key) {
-            return Maybe.none();
+            return Maybe.nothing();
         }
 
         @Override
@@ -171,7 +171,7 @@ public interface HashedPatriciaTrie<K, V>  {
         public Maybe<V> get(int hash, K key) {
             if(hash==0 && this.key.equals(key))
                 return Maybe.of(value);
-            return Maybe.none();
+            return Maybe.nothing();
 
         }
 
@@ -256,7 +256,7 @@ public interface HashedPatriciaTrie<K, V>  {
         public Maybe<V> get(int hash, K key) {
             return (hash == 0)
                     ? bucket.filter(t2 -> t2._1().equals(key)).get(0).map(Tuple2::_2)
-                    : Maybe.none();
+                    : Maybe.nothing();
         }
 
         @Override

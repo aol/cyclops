@@ -1243,7 +1243,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
                 @Override
                 public <T> Maybe<Comonad<set>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
                 @Override
                 public <T> Maybe<Unfoldable<set>> unfoldable() {

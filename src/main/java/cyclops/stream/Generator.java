@@ -70,7 +70,7 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
         this.remainderOfWorkToBeDone = work;
     }
     public Generator(Suspended suspended, GeneratorSupplier<T> work){
-        this.value = Maybe.none();
+        this.value = Maybe.nothing();
         this.suspended=suspended;
         this.suspended.local = work;
         this.remainderOfWorkToBeDone = work;
@@ -263,7 +263,7 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
             Suspended<T> stopped = new Suspended<>();
 
             stopped.local = local;
-            return new Generator<T>(stopped,Maybe.none(),null );
+            return new Generator<T>(stopped,Maybe.nothing(),null );
         }
 
         Suspended<T> copy() {
@@ -323,7 +323,7 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
     }
 
     private static <T> Generator<T> empty(Suspended<T> suspended) {
-        return new Generator(suspended,Maybe.none(),null);
+        return new Generator(suspended,Maybe.nothing(),null);
     }
 
     public static <T> Generator<T> suspendRef(Supplier<T> value){

@@ -120,7 +120,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
     default Maybe<Zipper<T>> focusAt(int pos){
         Tuple2<ImmutableQueue<T>, ImmutableQueue<T>> t2 = splitAt(pos);
-        Maybe<T> value = t2._2().fold(c -> Maybe.just(c.head()), n -> Maybe.none());
+        Maybe<T> value = t2._2().fold(c -> Maybe.just(c.head()), n -> Maybe.nothing());
         return value.map(l-> {
             ImmutableQueue<T> right = t2._2().fold(c -> c.tail(), n -> null);
             return Zipper.of(t2._1().lazySeq(), l, right.lazySeq());

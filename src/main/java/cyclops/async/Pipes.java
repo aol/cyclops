@@ -489,7 +489,7 @@ public class Pipes<K, V> {
                                                          final Maybe<V> res = sub.toMaybe();
                                                          return res;
                                                      }));
-        return nested.orElse(Eval.now(Maybe.<V> none()));
+        return nested.orElse(Eval.now(Maybe.<V>nothing()));
     }
 
     /**

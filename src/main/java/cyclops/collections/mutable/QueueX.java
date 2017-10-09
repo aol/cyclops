@@ -1274,7 +1274,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
                 @Override
                 public <T> Maybe<Comonad<queue>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
                 @Override
                 public <T> Maybe<Unfoldable<queue>> unfoldable() {

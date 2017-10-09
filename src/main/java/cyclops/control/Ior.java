@@ -11,7 +11,6 @@ import com.aol.cyclops2.types.functor.BiTransformable;
 import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.companion.Monoids;
-import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
@@ -20,7 +19,6 @@ import cyclops.monads.Witness.ior;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
-import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.BiFunctor;
@@ -31,16 +29,11 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 /**
  * Inclusive Or (can be one of Primary, Secondary or Both Primary and Secondary)
@@ -1017,7 +1010,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
             @Override
             public Maybe<PT> toMaybe() {
-                return Maybe.none();
+                return Maybe.nothing();
             }
 
             @Override
@@ -1266,12 +1259,12 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
                 @Override
                 public <T> Maybe<Comonad<Higher<ior, L>>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<Unfoldable<Higher<ior, L>>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }

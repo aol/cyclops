@@ -74,7 +74,7 @@ public class SuccessTest {
 	}
 	@Test
 	public void testFilterFail() {
-		assertThat(success.filter(x->x>15),equalTo(Maybe.none()));
+		assertThat(success.filter(x->x>15),equalTo(Maybe.nothing()));
 	}
 
 	@Test

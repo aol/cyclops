@@ -2,7 +2,6 @@ package cyclops.data;
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import com.aol.cyclops2.matching.Sealed2;
-import com.aol.cyclops2.matching.Sealed3;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
@@ -131,7 +130,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
     default Maybe<Zipper<T>> focusAt(int pos){
         Tuple2<ImmutableList<T>, ImmutableList<T>> t2 = splitAt(pos);
-        Maybe<T> value = t2._2().fold(c -> Maybe.just(c.head()), n -> Maybe.none());
+        Maybe<T> value = t2._2().fold(c -> Maybe.just(c.head()), n -> Maybe.nothing());
         return value.map(l-> {
             ImmutableList<T> right = t2._2().fold(c -> c.tail(), n -> null);
             return Zipper.of(t2._1(), l, right);

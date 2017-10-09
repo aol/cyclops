@@ -1423,7 +1423,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
                 @Override
                 public <T> Maybe<Comonad<deque>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
                 @Override
                 public <T> Maybe<Unfoldable<deque>> unfoldable() {

@@ -135,8 +135,8 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
      */
     @Override
     default String mkString() {
-        final Optional<T> opt = toOptional();
-        return opt.isPresent() ? "AnyMValue[" + get() + "]" : "AnyMValue[]";
+        return visit(s->"AnyMValue[" + s + "]",()->"AnyMValue[]");
+
     }
 
     @Override

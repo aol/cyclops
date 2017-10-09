@@ -27,16 +27,13 @@ import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Stream;
+
 /**
  * A right biased Lazy Either3 type. transform / flatMap operators are tail-call optimized
  * 
@@ -913,7 +910,7 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
 
-            return Maybe.fromEval(Eval.later(() -> test.test(get()) ? Maybe.just(get()) : Maybe.<PT> none()))
+            return Maybe.fromEval(Eval.later(() -> test.test(get()) ? Maybe.just(get()) : Maybe.<PT>nothing()))
                         .flatMap(Function.identity());
 
         }
@@ -1080,7 +1077,7 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
 
-            return Maybe.none();
+            return Maybe.nothing();
 
         }
 
@@ -1231,7 +1228,7 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
 
-            return Maybe.none();
+            return Maybe.nothing();
 
         }
 
@@ -1412,7 +1409,7 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<Higher<either3, L1>, L2>>> monadPlus() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -1422,7 +1419,7 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<Higher<either3, L1>, L2>>> monadPlus(Monoid<Higher<Higher<Higher<either3, L1>, L2>, T>> m) {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -1442,7 +1439,7 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
 
                 @Override
                 public <T> Maybe<Unfoldable<Higher<Higher<either3, L1>, L2>>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
 

@@ -1,7 +1,6 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.matching.Deconstruct;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
@@ -47,7 +46,7 @@ public class HAMT<K, V>  {
 
        @Override
        public Maybe<V> get(int bitShiftDepth, int hash, K key) {
-           return Maybe.none();
+           return Maybe.nothing();
        }
 
        @Override
@@ -111,7 +110,7 @@ public class HAMT<K, V>  {
 
        @Override
        public Maybe<V> get(int bitShiftDepth, int hash, K key) {
-           return isMatch(hash, key) ? Maybe.of(value) : Maybe.none();
+           return isMatch(hash, key) ? Maybe.of(value) : Maybe.nothing();
        }
 
        @Override
@@ -192,7 +191,7 @@ public class HAMT<K, V>  {
            if(this.hash==hash){
                return bucket.stream().filter(t->Objects.equals(key,t._1())).findOne().map(Tuple2::_2);
            }
-           return Maybe.none();
+           return Maybe.nothing();
        }
 
         @Override
@@ -257,7 +256,7 @@ public class HAMT<K, V>  {
         @Override
         public Maybe<V> get(int bitShiftDepth, int hash, K key) {
             int pos = bitpos(hash, bitShiftDepth);
-            return absent(pos)? Maybe.none() : find(bitShiftDepth,pos,hash,key);
+            return absent(pos)? Maybe.nothing() : find(bitShiftDepth,pos,hash,key);
         }
 
         @Override

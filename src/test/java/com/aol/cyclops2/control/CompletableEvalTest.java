@@ -20,9 +20,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -71,7 +68,7 @@ public class CompletableEvalTest {
 	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
-		assertThat(none.toMaybe(),equalTo(Maybe.none()));
+		assertThat(none.toMaybe(),equalTo(Maybe.nothing()));
 	}
 
 	private int add1(int i){
@@ -163,13 +160,13 @@ public class CompletableEvalTest {
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
 		assertThat(just.map(i->i+5),equalTo(CompletableEvalTest.now(15)));
-		assertThat(none.toMaybe().map(i->i+5),equalTo(Maybe.none()));
+		assertThat(none.toMaybe().map(i->i+5),equalTo(Maybe.nothing()));
 	}
 
 	@Test
 	public void testFlatMap() {
 		assertThat(just.flatMap(i->CompletableEvalTest.now(i+5)),equalTo(Eval.later(()->15)));
-		assertThat(none.toMaybe().flatMap(i->Maybe.of(i+5)),equalTo(Maybe.none()));
+		assertThat(none.toMaybe().flatMap(i->Maybe.of(i+5)),equalTo(Maybe.nothing()));
 	}
 
 	@Test
@@ -200,7 +197,7 @@ public class CompletableEvalTest {
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
         
-        assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
 	
 
@@ -397,7 +394,7 @@ public class CompletableEvalTest {
 
 	@Test
 	public void testToStream() {
-		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
+		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(1));
 		assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
 		
 	}
@@ -414,7 +411,7 @@ public class CompletableEvalTest {
 	@Test
 	public void testToFuture() {
 		Future<Integer> cf = just.toFuture();
-		assertThat(cf.get(),equalTo(10));
+		assertThat(cf.get(),equalTo(Try.success(10)));
 	}
 
 

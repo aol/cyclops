@@ -1,6 +1,5 @@
 package cyclops.data;
 
-import com.aol.cyclops2.matching.Deconstruct;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct1;
 import com.aol.cyclops2.matching.Sealed3;
 import cyclops.control.Maybe;
@@ -93,7 +92,7 @@ public interface IntPatriciaTrie<V>  {
 
         @Override
         public Maybe<V> get(int hash, int pos) {
-            return Maybe.none();
+            return Maybe.nothing();
         }
 
         @Override
@@ -168,7 +167,7 @@ public interface IntPatriciaTrie<V>  {
         public Maybe<V> get(int hash, int key) {
             if(hash==0)
                 return Maybe.just(value);
-            return Maybe.none();
+            return Maybe.nothing();
 
         }
 

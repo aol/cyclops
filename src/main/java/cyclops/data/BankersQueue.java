@@ -44,7 +44,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
     <R> BankersQueue<R> flatMap(Function<? super T, ? extends ImmutableQueue<? extends R>> fn);
 
     default Maybe<T> get(int n){
-        return Maybe.none();
+        return Maybe.nothing();
     }
 
     default ReactiveSeq<T> stream(){
@@ -260,7 +260,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
                int pos = n-sizeFront;
                return  back.get(sizeBack-pos-1);
            }
-           return Maybe.none();
+           return Maybe.nothing();
 
        }
 

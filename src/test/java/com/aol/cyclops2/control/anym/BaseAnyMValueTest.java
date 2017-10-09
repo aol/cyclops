@@ -21,9 +21,6 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -44,7 +41,7 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
-		assertThat(none.toMaybe(),equalTo(Maybe.none()));
+		assertThat(none.toMaybe(),equalTo(Maybe.nothing()));
 	}
 
 	@Test
@@ -134,14 +131,14 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
-		assertThat(just.map(i->i+5).get(),equalTo(Maybe.of(15).orElse(-40000)));
-		assertThat(none.map(i->i+5).toMaybe(),equalTo(Maybe.none()));
+		assertThat(just.map(i->i+5).orElse(-400),equalTo(Maybe.of(15).orElse(-40000)));
+		assertThat(none.map(i->i+5).toMaybe(),equalTo(Maybe.nothing()));
 	}
 
 	@Test
 	public void testFlatMap() {
 		assertThat(just.flatMap(i-> AnyM.ofNullable(i+5)).toMaybe(),equalTo(Maybe.of(15)));
-		assertThat(none.flatMap(i->AnyM.ofNullable(i+5)).toMaybe(),equalTo(Maybe.none()));
+		assertThat(none.flatMap(i->AnyM.ofNullable(i+5)).toMaybe(),equalTo(Maybe.nothing()));
 	}
 
 	@Test
@@ -173,7 +170,7 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 	public void testConvertToAsync() {
 		Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
 		
-		assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
+		assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
 	}
 
 
@@ -267,13 +264,9 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testGet() {
-		assertThat(just.get(),equalTo(10));
+		assertThat(just.get(),equalTo(Option.some(10)));
 	}
-	@Test(expected=NoSuchElementException.class)
-	public void testGetNone() {
-		none.get();
-		
-	}
+
 
 	@Test
 	public void testFilter() {

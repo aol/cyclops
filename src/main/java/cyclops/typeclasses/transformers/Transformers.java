@@ -2,10 +2,8 @@ package cyclops.typeclasses.transformers;
 
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.control.*;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.monad.Monad;
@@ -29,7 +27,7 @@ public interface Transformers {
         @Override
         public <R> Nested<W1, maybe, R> flatMap(Function<? super T, ? extends Nested<W1, maybe, R>> fn) {
             Higher<W1, Higher<maybe, R>> r = monad1.flatMap(m -> Maybe.narrowK(m).visit(t -> fn.apply(t).nested,
-                    () -> monad1.unit(Maybe.none())),
+                    () -> monad1.unit(Maybe.nothing())),
                     nested.nested);
 
 

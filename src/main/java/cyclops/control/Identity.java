@@ -2,22 +2,17 @@ package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.matching.Deconstruct;
-import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.anyM.AnyMValue;
-import cyclops.async.Future;
-import cyclops.collections.mutable.ListX;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple1;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.identity;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -26,7 +21,6 @@ import lombok.AllArgsConstructor;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Identity<T> implements Higher<identity,T>, Iterable<T>, Deconstruct.Deconstruct1<T>{
@@ -144,12 +138,12 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T>, Deconstruct
 
                 @Override
                 public <T, R> Maybe<MonadZero<identity>> monadZero() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<MonadPlus<identity>> monadPlus() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -159,7 +153,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T>, Deconstruct
 
                 @Override
                 public <T> Maybe<MonadPlus<identity>> monadPlus(Monoid<Higher<identity, T>> m) {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -179,7 +173,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T>, Deconstruct
 
                 @Override
                 public <T> Maybe<Unfoldable<identity>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }

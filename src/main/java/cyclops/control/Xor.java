@@ -31,18 +31,12 @@ import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 /**
  * eXclusive Or (Xor)
@@ -1183,7 +1177,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
         @Override
         public Maybe<PT> toMaybe() {
-            return Maybe.none();
+            return Maybe.nothing();
         }
 
         @Override
@@ -1305,12 +1299,12 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
                 @Override
                 public <T> Maybe<Comonad<Higher<xor, L>>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<Unfoldable<Higher<xor, L>>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }

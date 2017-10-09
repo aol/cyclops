@@ -71,7 +71,7 @@ public class PredicatesTest {
     }
     @Test
     public void testEqvNone() {
-        assertTrue(eqv(Maybe.none()).test(null));
+        assertTrue(eqv(Maybe.nothing()).test(null));
         
     }
     @Test

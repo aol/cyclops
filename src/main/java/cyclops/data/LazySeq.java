@@ -326,7 +326,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         for(int i=0;i<pos;i++){
            l = l.fold(c->c.tail(), n->n);
            if(l instanceof Nil){ //short circuit
-               return Maybe.none();
+               return Maybe.nothing();
            }
         }
         return Maybe.ofNullable(l.fold(c->c.head(), n->null));

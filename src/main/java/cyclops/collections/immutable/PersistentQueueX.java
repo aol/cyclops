@@ -1407,7 +1407,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
                 @Override
                 public <T> Maybe<Comonad<persistentQueueX>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
                 @Override
                 public <T> Maybe<Unfoldable<persistentQueueX>> unfoldable() {

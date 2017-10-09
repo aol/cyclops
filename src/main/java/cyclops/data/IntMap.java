@@ -281,7 +281,7 @@ public class IntMap<T> implements ImmutableList<T>{
 
         @Override
         public Maybe<T> get(int pos) {
-            return Maybe.none();
+            return Maybe.nothing();
         }
 
         @Override

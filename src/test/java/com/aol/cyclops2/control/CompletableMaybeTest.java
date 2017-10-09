@@ -25,9 +25,7 @@ import org.junit.Test;
 import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.BinaryOperator;
@@ -110,14 +108,14 @@ public class CompletableMaybeTest implements Printable {
 
         assertFalse(result.isDone());
         System.out.println("Blocking?");
-        assertThat(result.get(),equalTo(2000));
+        assertThat(result.get(),equalTo(Try.success(2000)));
 
     }
     
     @Test
     public void recoverWith(){
         assertThat(none.recoverWith(()->CompletableMaybeTest.just(10)).orElse(null),equalTo(10));
-        assertThat(none.recoverWith(()->Maybe.none()).isPresent(),equalTo(false));
+        assertThat(none.recoverWith(()->Maybe.nothing()).isPresent(),equalTo(false));
         assertThat(just.recoverWith(()->CompletableMaybeTest.just(5)).orElse(null),equalTo(10));
     }
     
@@ -176,7 +174,7 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void nest() {
         assertThat(just.nest().map(m -> m.toOptional().get()), equalTo(Maybe.just(10)));
-        assertThat(none.nest().map(m -> m.toOptional().get()), equalTo(Maybe.none()));
+        assertThat(none.nest().map(m -> m.toOptional().get()), equalTo(Maybe.nothing()));
     }
 
 
@@ -225,7 +223,7 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void testToMaybe() {
         assertThat(just.toMaybe(), equalTo(Maybe.just(10)));
-        assertThat(none.toMaybe(), equalTo(Maybe.none()));
+        assertThat(none.toMaybe(), equalTo(Maybe.nothing()));
     }
 
     private int add1(int i) {
@@ -262,14 +260,14 @@ public class CompletableMaybeTest implements Printable {
     public void testSequenceLazy() {
         Maybe<ListX<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
 
-        assertThat(maybes, equalTo(CompletableMaybeTest.just(1).flatMap(i -> Maybe.none())));
+        assertThat(maybes, equalTo(CompletableMaybeTest.just(1).flatMap(i -> Maybe.nothing())));
     }
 
     @Test
     public void testSequence() {
         Maybe<ListX<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
 
-        assertThat(maybes, equalTo(Maybe.none()));
+        assertThat(maybes, equalTo(Maybe.nothing()));
     }
 
     @Test
@@ -323,20 +321,20 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
         assertThat(just.map(i -> i + 5), equalTo(Maybe.of(15)));
-        assertThat(none.map(i -> i + 5), equalTo(Maybe.none()));
+        assertThat(none.map(i -> i + 5), equalTo(Maybe.nothing()));
     }
 
     @Test
     public void testFlatMap() {
 
         assertThat(just.flatMap(i -> Maybe.of(i + 5)), equalTo(Maybe.of(15)));
-        assertThat(none.flatMap(i -> Maybe.of(i + 5)), equalTo(Maybe.none()));
+        assertThat(none.flatMap(i -> Maybe.of(i + 5)), equalTo(Maybe.nothing()));
     }
 
     @Test
     public void testFlatMapAndRecover() {
-        assertThat(just.flatMap(i -> Maybe.none()).recover(15), equalTo(Maybe.of(15)));
-        assertThat(just.flatMap(i -> Maybe.none()).recover(() -> 15), equalTo(Maybe.of(15)));
+        assertThat(just.flatMap(i -> Maybe.nothing()).recover(15), equalTo(Maybe.of(15)));
+        assertThat(just.flatMap(i -> Maybe.nothing()).recover(() -> 15), equalTo(Maybe.of(15)));
         assertThat(none.flatMap(i -> Maybe.of(i + 5)).recover(15), equalTo(Maybe.of(15)));
     }
 
@@ -368,7 +366,7 @@ public class CompletableMaybeTest implements Printable {
         Future<Stream<Integer>> async = Future
                 .of(() -> just.visit(f -> Stream.of((int) f), () -> Stream.of()));
 
-        assertThat(async.get().collect(Collectors.toList()), equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()), equalTo(ListX.of(10)));
     }
 
     @Test

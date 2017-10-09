@@ -1332,7 +1332,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
                 @Override
                 public <T> Maybe<Comonad<vectorX>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
                 @Override
                 public <T> Maybe<Unfoldable<vectorX>> unfoldable() {

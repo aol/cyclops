@@ -16,20 +16,14 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Maybe.CompletableMaybe;
 import cyclops.function.Monoid;
-import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
-import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple3;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,7 +42,7 @@ public class MaybeTest implements Printable {
     @Before
     public void setUp() throws Exception {
         just = Maybe.just(10);
-        none = Maybe.none();
+        none = Maybe.nothing();
         cap =0;
 
     }
@@ -136,7 +130,7 @@ public class MaybeTest implements Printable {
     @Test
     public void recoverWith(){
         assertThat(none.recoverWith(()->Maybe.just(10)).toOptional().get(),equalTo(10));
-        assertThat(none.recoverWith(()->Maybe.none()).toOptional().isPresent(),equalTo(false));
+        assertThat(none.recoverWith(()->Maybe.nothing()).toOptional().isPresent(),equalTo(false));
         assertThat(just.recoverWith(()->Maybe.just(5)).toOptional().get(),equalTo(10));
     }
     
@@ -189,7 +183,7 @@ public class MaybeTest implements Printable {
     @Test
     public void coFlatMap() {
 
-        Maybe.none().coflatMap(m -> m.isPresent() ? m.toOptional().get() : 10);
+        Maybe.nothing().coflatMap(m -> m.isPresent() ? m.toOptional().get() : 10);
 
         // Maybe[10]
 
@@ -288,14 +282,14 @@ public class MaybeTest implements Printable {
     public void testSequenceLazy() {
         Maybe<ListX<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
 
-        assertThat(maybes, equalTo(Maybe.just(1).flatMap(i -> Maybe.none())));
+        assertThat(maybes, equalTo(Maybe.just(1).flatMap(i -> Maybe.nothing())));
     }
 
     @Test
     public void testSequence() {
         Maybe<ListX<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
 
-        assertThat(maybes, equalTo(Maybe.none()));
+        assertThat(maybes, equalTo(Maybe.nothing()));
     }
 
     @Test
@@ -350,20 +344,20 @@ public class MaybeTest implements Printable {
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
         assertThat(just.map(i -> i + 5), equalTo(Maybe.of(15)));
-        assertThat(none.map(i -> i + 5), equalTo(Maybe.none()));
+        assertThat(none.map(i -> i + 5), equalTo(Maybe.nothing()));
     }
 
     @Test
     public void testFlatMap() {
 
         assertThat(just.flatMap(i -> Maybe.of(i + 5)), equalTo(Maybe.of(15)));
-        assertThat(none.flatMap(i -> Maybe.of(i + 5)), equalTo(Maybe.none()));
+        assertThat(none.flatMap(i -> Maybe.of(i + 5)), equalTo(Maybe.nothing()));
     }
 
     @Test
     public void testFlatMapAndRecover() {
-        assertThat(just.flatMap(i -> Maybe.none()).recover(15), equalTo(Maybe.of(15)));
-        assertThat(just.flatMap(i -> Maybe.none()).recover(() -> 15), equalTo(Maybe.of(15)));
+        assertThat(just.flatMap(i -> Maybe.nothing()).recover(15), equalTo(Maybe.of(15)));
+        assertThat(just.flatMap(i -> Maybe.nothing()).recover(() -> 15), equalTo(Maybe.of(15)));
         assertThat(none.flatMap(i -> Maybe.of(i + 5)).recover(15), equalTo(Maybe.of(15)));
     }
 

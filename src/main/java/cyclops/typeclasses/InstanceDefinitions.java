@@ -2,19 +2,14 @@ package cyclops.typeclasses;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Maybe;
-import cyclops.control.Xor;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.SemigroupK;
-import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.ContravariantFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.functor.ProFunctor;
 import cyclops.typeclasses.monad.*;
-
-import java.util.function.Function;
 
 /**
  * Created by johnmcclean on 28/06/2017.
@@ -39,13 +34,13 @@ public interface InstanceDefinitions<W> {
 
 
     default <T> Maybe<ContravariantFunctor<W>> contravariantFunctor(){
-        return Maybe.none();
+        return Maybe.nothing();
     }
     default <T> Maybe<ProFunctor<W>> profunctor(){
-        return Maybe.none();
+        return Maybe.nothing();
     }
     default <T,E> Maybe<ApplicativeError<W,E>> applicativeError(){
-        return Maybe.none();
+        return Maybe.nothing();
     }
 
 
@@ -56,7 +51,7 @@ public interface InstanceDefinitions<W> {
     <T> Maybe<Comonad<W>> comonad();
 
     default  <T> Maybe<Unfoldable<W>> unfoldable(){
-        return Maybe.none();
+        return Maybe.nothing();
     }
 
 

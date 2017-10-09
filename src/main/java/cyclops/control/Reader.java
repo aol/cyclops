@@ -203,12 +203,12 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
 
                 @Override
                 public <T, R> Maybe<MonadZero<Higher<reader, IN>>> monadZero() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<reader, IN>>> monadPlus() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -218,7 +218,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<reader, IN>>> monadPlus(Monoid<Higher<Higher<reader, IN>, T>> m) {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
 
@@ -234,12 +234,12 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
 
                 @Override
                 public <T> Maybe<Comonad<Higher<reader, IN>>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<Unfoldable<Higher<reader, IN>>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }

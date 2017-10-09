@@ -2,7 +2,6 @@ package com.aol.cyclops2.types.foldable;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -222,7 +221,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
     public Maybe<T> firstValue() {
         return Eval.later(() -> listX(Evaluation.LAZY)).toMaybe()
-                                       .flatMap(l->l.size()==0? Maybe.none() : Maybe.just(l.firstValue()));
+                                       .flatMap(l->l.size()==0? Maybe.nothing() : Maybe.just(l.firstValue()));
     }
     /**
      * Lazily converts this ReactiveSeq into a Collection. This does not trigger

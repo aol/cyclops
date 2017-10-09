@@ -206,12 +206,12 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
 
                 @Override
                 public <T, R2> Maybe<MonadZero<Higher<Higher<Higher<rws, R>, W>, S>>> monadZero() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<Higher<Higher<rws, R>, W>, S>>> monadPlus() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -221,7 +221,7 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<Higher<Higher<rws, R>, W>, S>>> monadPlus(Monoid<Higher<Higher<Higher<Higher<rws, R>, W>, S>, T>> m) {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -236,12 +236,12 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
 
                 @Override
                 public <T> Maybe<Comonad<Higher<Higher<Higher<rws, R>, W>, S>>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<Unfoldable<Higher<Higher<Higher<rws, R>, W>, S>>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             }  ;
         }

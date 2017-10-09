@@ -696,7 +696,7 @@ public class Optionals {
 
                 @Override
                 public <T> Maybe<Unfoldable<optional>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }

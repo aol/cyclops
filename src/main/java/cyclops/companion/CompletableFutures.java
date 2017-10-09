@@ -652,7 +652,7 @@ public class CompletableFutures {
 
                 @Override
                 public <T> Maybe<Unfoldable<completableFuture>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }

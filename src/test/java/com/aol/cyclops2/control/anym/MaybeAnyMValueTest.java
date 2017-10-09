@@ -15,7 +15,7 @@ public class MaybeAnyMValueTest extends BaseAnyMValueTest<Witness.maybe> {
     @Before
     public void setUp() throws Exception {
         just = AnyM.fromMaybe(Maybe.of(10));
-        none = AnyM.fromMaybe(Maybe.none());
+        none = AnyM.fromMaybe(Maybe.nothing());
     }
     @Test
     public void testPeek() {

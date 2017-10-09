@@ -4,15 +4,12 @@ package cyclops.typeclasses;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.types.Filters;
-import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.async.Future;
 import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
 import cyclops.companion.CompletableFutures;
 import cyclops.companion.CompletableFutures.CompletableFutureKind;
 import cyclops.companion.Optionals;
@@ -22,12 +19,8 @@ import cyclops.companion.Streams.StreamKind;
 import cyclops.control.*;
 import cyclops.control.lazy.Either;
 import cyclops.function.Monoid;
-import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
-import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.MonoidK;
@@ -42,11 +35,8 @@ import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -208,8 +198,8 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public Maybe<Plus> plus(){
         MonadPlus<W1> plus1 = def1.monadPlus().visit(p->p,()->null);
         MonadPlus<W2> plus2 = def2.monadPlus().visit(p->p,()->null);
-        return xor.visit(s->def1.monadPlus().isPresent() ? Maybe.just(new Plus(plus1,plus2)) : Maybe.none(),
-                                p->def2.monadPlus().isPresent() ? Maybe.just(new Plus(plus1,plus2)) : Maybe.none());
+        return xor.visit(s->def1.monadPlus().isPresent() ? Maybe.just(new Plus(plus1,plus2)) : Maybe.nothing(),
+                                p->def2.monadPlus().isPresent() ? Maybe.just(new Plus(plus1,plus2)) : Maybe.nothing());
     }
 
     public Unfolds unfoldsDefault(){
@@ -223,7 +213,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         Unfoldable<W1> unf1 = def1.unfoldable().visit(a->  a ,()-> new Unfoldable.UnsafeValueUnfoldable<>());
         Unfoldable<W2> unf2 = def2.unfoldable().visit(a->  a ,()-> new Unfoldable.UnsafeValueUnfoldable<>());
 
-        return xor.visit(s-> def1.unfoldable().isPresent() ? Maybe.just(new Unfolds(unf1,unf2)) : Maybe.none(),p-> def2.unfoldable().isPresent() ? Maybe.just(new Unfolds(unf1,unf2)) : Maybe.none());
+        return xor.visit(s-> def1.unfoldable().isPresent() ? Maybe.just(new Unfolds(unf1,unf2)) : Maybe.nothing(), p-> def2.unfoldable().isPresent() ? Maybe.just(new Unfolds(unf1,unf2)) : Maybe.nothing());
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -399,7 +389,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return new Coproduct<>(Xor.primary(Maybe.just(value)),def1,Maybe.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,maybe,T> none(InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(Maybe.none()),def1,Maybe.Instances.definitions());
+        return new Coproduct<>(Xor.primary(Maybe.nothing()),def1,Maybe.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,maybe,T> maybeNullabe(T value,InstanceDefinitions<W1> def1){
         return new Coproduct<>(Xor.primary(Maybe.ofNullable(value)),def1,Maybe.Instances.definitions());

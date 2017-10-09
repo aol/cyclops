@@ -2,8 +2,6 @@ package cyclops.control;
 
 
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.matching.Case;
-import cyclops.matching.Api;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -334,7 +332,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * @return Get the zero Maybe (singleUnsafe instance)
      */
     @SuppressWarnings("unchecked")
-    static <T> Maybe<T> none() {
+    static <T> Maybe<T> nothing() {
         return EMPTY;
     }
 
@@ -422,7 +420,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     static <T> Maybe<T> fromOptional(final Optional<T> opt) {
         if (opt.isPresent())
             return Maybe.of(opt.get());
-        return none();
+        return nothing();
     }
 
     static <T> Maybe<T> fromOptionalKind(final OptionalKind<T> opt){
@@ -532,7 +530,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     static <T> Maybe<T> ofNullable(final T value) {
         if (value != null)
             return of(value);
-        return none();
+        return nothing();
     }
 
     /**
@@ -842,7 +840,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     default <T2, R> Maybe<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                .apply(v))).flatMap(tuple -> app.visit(i -> Maybe.just(tuple._2().apply(i)), () -> Maybe.none()));
+                .apply(v))).flatMap(tuple -> app.visit(i -> Maybe.just(tuple._2().apply(i)), () -> Maybe.nothing()));
     }
 
     /*
@@ -857,7 +855,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                 .apply(v))).flatMap(tuple -> Maybe.fromIterable(app)
-                .visit(i -> Maybe.just(tuple._2().apply(i)), () -> Maybe.none()));
+                .visit(i -> Maybe.just(tuple._2().apply(i)), () -> Maybe.nothing()));
     }
 
 
@@ -872,7 +870,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     default <T2, R> Maybe<R> zipP(final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                 .apply(v))).flatMap(tuple -> Maybe.fromPublisher(app)
-                .visit(i -> Maybe.just(tuple._2().apply(i)), () -> Maybe.none()));
+                .visit(i -> Maybe.just(tuple._2().apply(i)), () -> Maybe.nothing()));
 
     }
 
@@ -1234,7 +1232,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         public Maybe<T> resolve() {
 
             return lazy.get()
-                    .visit(Maybe::just,Maybe::none);
+                    .visit(Maybe::just,Maybe::nothing);
         }
         @Override
         public <R> Maybe<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
@@ -1244,7 +1242,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
         @Override
         public Maybe<T> filter(final Predicate<? super T> test) {
-            return flatMap(t -> test.test(t) ? this : Maybe.none());
+            return flatMap(t -> test.test(t) ? this : Maybe.nothing());
         }
 
         @Override
@@ -1597,12 +1595,12 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
                 @Override
                 public <T> Maybe<Comonad<maybe>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<Unfoldable<maybe>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }
@@ -1758,7 +1756,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          */
         public static <T,R> MonadZero<maybe> monadZero(){
 
-            return General.monadZero(monad(), Maybe.none());
+            return General.monadZero(monad(), Maybe.nothing());
         }
         /**
          * <pre>
@@ -1854,7 +1852,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
             Maybe<T> maybe = Maybe.narrowK(ds);
             Higher<C2, Maybe<R>> res = maybe.visit(some-> applicative.map(m->Maybe.of(m), fn.apply(some)),
-                    ()->applicative.unit(Maybe.<R>none()));
+                    ()->applicative.unit(Maybe.<R>nothing()));
 
             return Maybe.widen2(res);
         }

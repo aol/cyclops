@@ -10,20 +10,14 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.*;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
-import cyclops.collections.tuple.Tuple;
-import cyclops.stream.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -83,7 +77,7 @@ public class Ior2Test {
 	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
-		assertThat(none.toMaybe(),equalTo(Maybe.none()));
+		assertThat(none.toMaybe(),equalTo(Maybe.nothing()));
 	}
 
 	private int add1(int i){
@@ -203,7 +197,7 @@ public class Ior2Test {
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
         
-        assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
 	
 	@Test
@@ -260,13 +254,9 @@ public class Ior2Test {
 
 	@Test
 	public void testGet() {
-		assertThat(just.get(),equalTo(10));
+		assertThat(just.orElse(-50),equalTo(10));
 	}
-	@Test(expected=NoSuchElementException.class)
-	public void testGetNone() {
-		none.get();
-		
-	}
+
 
 	@Test
 	public void testFilter() {

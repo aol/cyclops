@@ -90,20 +90,20 @@ public class MaybesTest {
                                      .applyHKT(h->Maybe.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(Maybe::narrowK);
         
-        assertThat(opt,equalTo(Maybe.none()));
+        assertThat(opt,equalTo(Maybe.nothing()));
     }
     
     @Test
     public void monadPlus(){
         Maybe<Integer> opt = Maybe.Instances.<Integer>monadPlus()
-                                      .plus(Maybe.none(), Maybe.of(10))
+                                      .plus(Maybe.nothing(), Maybe.of(10))
                                       .convert(Maybe::narrowK);
         assertThat(opt,equalTo(Maybe.of(10)));
     }
     @Test
     public void monadPlusNonEmpty(){
         
-        Monoid<Maybe<Integer>> m = Monoid.of(Maybe.none(), (a, b)->a.isPresent() ? b : a);
+        Monoid<Maybe<Integer>> m = Monoid.of(Maybe.nothing(), (a, b)->a.isPresent() ? b : a);
         Maybe<Integer> opt = Maybe.Instances.<Integer>monadPlus(m)
                                       .plus(Maybe.of(5), Maybe.of(10))
                                       .convert(Maybe::narrowK);

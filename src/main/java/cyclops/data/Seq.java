@@ -163,7 +163,7 @@ public interface Seq<T> extends ImmutableList<T>,
         for(int i=0;i<pos;i++){
            l = l.visit(c->c.tail,n->n);
            if(l instanceof Nil){ //short circuit
-               return Maybe.none();
+               return Maybe.nothing();
            }
         }
         return Maybe.ofNullable(l.visit(c->c.head, n->null));

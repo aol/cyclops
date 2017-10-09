@@ -1387,7 +1387,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
                 @Override
                 public <T> Maybe<Comonad<linkedListX>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override

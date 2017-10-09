@@ -631,7 +631,7 @@ public interface Spouts {
 
                 @Override
                 public <T> Maybe<Comonad<reactiveSeq>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override

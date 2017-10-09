@@ -279,7 +279,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
 
     @Override
     public <R> MaybeT<W,R> empty() {
-        return of(run.unit(Maybe.<R>none()));
+        return of(run.unit(Maybe.<R>nothing()));
     }
 
     

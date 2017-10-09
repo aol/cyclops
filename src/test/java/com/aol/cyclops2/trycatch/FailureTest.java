@@ -51,7 +51,7 @@ public class FailureTest {
 
 	@Test
 	public void testFilter() {
-		assertThat(failure.filter(x->x==10),equalTo(Maybe.none()));
+		assertThat(failure.filter(x->x==10),equalTo(Maybe.nothing()));
 	}
 
 	@Test

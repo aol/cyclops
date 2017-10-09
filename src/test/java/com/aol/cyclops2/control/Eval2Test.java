@@ -19,9 +19,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -80,7 +77,7 @@ public class Eval2Test {
 	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
-		assertThat(none.toMaybe(),equalTo(Maybe.none()));
+		assertThat(none.toMaybe(),equalTo(Maybe.nothing()));
 	}
 
 	private int add1(int i){
@@ -172,13 +169,13 @@ public class Eval2Test {
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
 		assertThat(just.map(i->i+5),equalTo(Eval.now(15)));
-		assertThat(none.toMaybe().map(i->i+5),equalTo(Maybe.none()));
+		assertThat(none.toMaybe().map(i->i+5),equalTo(Maybe.nothing()));
 	}
 
 	@Test
 	public void testFlatMap() {
 		assertThat(just.flatMap(i->Eval.now(i+5)),equalTo(Eval.later(()->15)));
-		assertThat(none.toMaybe().flatMap(i->Maybe.of(i+5)),equalTo(Maybe.none()));
+		assertThat(none.toMaybe().flatMap(i->Maybe.of(i+5)),equalTo(Maybe.nothing()));
 	}
 
 	@Test

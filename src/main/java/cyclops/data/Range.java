@@ -76,18 +76,18 @@ public class Range<T> {
         //1 .. x    >=1 .. y
         if(comp.isLessThanOrEqual(start,range.start)){
             if(range.contains(end)){
-                return tuple(range(start,range.end,enm,comp), Maybe.none());
+                return tuple(range(start,range.end,enm,comp), Maybe.nothing());
             }
             if(end.equals(enm.succ(range.end).orElse(null))){
-                return tuple(range(start,end,enm,comp), Maybe.none());
+                return tuple(range(start,end,enm,comp), Maybe.nothing());
             }
             return tuple(this, Maybe.just(range));
 
         }else{
             if(this.contains(range.end)){
-                return tuple(range(range.start,end,enm,comp), Maybe.none());
+                return tuple(range(range.start,end,enm,comp), Maybe.nothing());
             }if(range.end.equals(enm.succ(end).orElse(null))){
-                return tuple(range(start,range.end,enm,comp), Maybe.none());
+                return tuple(range(start,range.end,enm,comp), Maybe.nothing());
             }
             else{
                 return tuple(range, Maybe.just(this));
@@ -99,19 +99,19 @@ public class Range<T> {
         //            |         |  <--range
         // |    |
         if (comp.isLessThan(end, range.start)) {
-            return Maybe.just(tuple(this, Maybe.none()));
+            return Maybe.just(tuple(this, Maybe.nothing()));
         }
         //                           |   |
         if(comp.isGreaterThanOrEqual(start,range.end)){
-            return Maybe.just(tuple(this, Maybe.none()));
+            return Maybe.just(tuple(this, Maybe.nothing()));
         }
         //                 | |
         if(range.contains(this)){
-            return Maybe.none();
+            return Maybe.nothing();
         }
         if(comp.isLessThanOrEqual(start,range.start)){
             if(comp.isLessThanOrEqual(end,range.end))
-                return Maybe.just(tuple(range(start,range.start,enm,comp), Maybe.none()));
+                return Maybe.just(tuple(range(start,range.start,enm,comp), Maybe.nothing()));
             else
                 return Maybe.just(tuple(range(start,range.start,enm,comp), Maybe.just(range(range.end,end,enm,comp))));
         }
@@ -120,7 +120,7 @@ public class Range<T> {
         // |       |
         // |                            |
         //               |            |
-        return Maybe.just(tuple(range(range.end,end,enm,comp), Maybe.none()));
+        return Maybe.just(tuple(range(range.end,end,enm,comp), Maybe.nothing()));
 
     }
 
@@ -131,7 +131,7 @@ public class Range<T> {
         T newEnd = (T) comp.min(this.end, toMerge.end);
         if (comp.isLessThanOrEqual(start, end))
             return Maybe.just(range(start, end, enm, comp));
-        return Maybe.none();
+        return Maybe.nothing();
     }
 
     public ReactiveSeq<T> stream(){

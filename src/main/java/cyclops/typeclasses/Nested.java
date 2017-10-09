@@ -337,7 +337,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
 
     public Maybe<Unfolds> unfolds(){
-        return def2.unfoldable().visit(s-> Maybe.just(new Unfolds(s)),Maybe::none);
+        return def2.unfoldable().visit(s-> Maybe.just(new Unfolds(s)),Maybe::nothing);
     }
 
 
@@ -349,7 +349,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         if(def1.monadPlus().isPresent() && def2.monadPlus().isPresent()){
             return Maybe.just(plusUnsafe());
         }
-        return Maybe.none();
+        return Maybe.nothing();
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public class Plus{
@@ -610,7 +610,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         return Active.of(this,definitions(def1,def2,factory));
     }
     public InstanceDefinitions<Higher<Higher<nested, W1>, W2>> definitions(InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2,TransformerFactory<W1,W2> factory){
-        return definitions(def1,def2,factory,Maybe.none());
+        return definitions(def1,def2,factory,Maybe.nothing());
     }
     public InstanceDefinitions<Higher<Higher<nested, W1>, W2>> definitions(InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2,TransformerFactory<W1,W2> factory,Maybe<Higher<W2,?>> zero){
         return new InstanceDefinitions<Higher<Higher<nested, W1>, W2>>() {
@@ -646,7 +646,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
             @Override
             public <T> Maybe<MonadPlus<Higher<Higher<nested, W1>, W2>>> monadPlus() {
-                return Maybe.none();
+                return Maybe.nothing();
             }
 
             @Override
@@ -656,7 +656,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
             @Override
             public <T> Maybe<MonadPlus<Higher<Higher<nested, W1>, W2>>> monadPlus(Monoid<Higher<Higher<Higher<nested, W1>, W2>, T>> m) {
-                return Maybe.none();
+                return Maybe.nothing();
             }
 
             @Override
@@ -671,7 +671,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
             @Override
             public <T> Maybe<Comonad<Higher<Higher<nested, W1>, W2>>> comonad() {
-                return Maybe.none();
+                return Maybe.nothing();
             }
         };
     }

@@ -190,7 +190,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
                 @Override
                 public <T> Maybe<Comonad<list>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
                 @Override
                 public <T> Maybe<Unfoldable<list>> unfoldable() {

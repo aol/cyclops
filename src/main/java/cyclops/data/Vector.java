@@ -215,7 +215,7 @@ public class Vector<T> implements ImmutableList<T>{
 
     public Maybe<T> get(int pos){
         if(pos<0||pos>=size){
-            return Maybe.none();
+            return Maybe.nothing();
         }
         int tailStart = size-tail.size();
         if(pos>=tailStart){
@@ -332,7 +332,7 @@ public class Vector<T> implements ImmutableList<T>{
 
         @Override
         public Maybe<T> get(int pos) {
-            return Maybe.none();
+            return Maybe.nothing();
         }
 
         @Override

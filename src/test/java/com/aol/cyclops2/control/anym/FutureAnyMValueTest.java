@@ -31,7 +31,7 @@ public class FutureAnyMValueTest extends BaseAnyMValueTest<Witness.future> {
     public void ofType(){
         just.ofType(String.class).printOut();
     }
-    @Test(expected = NoSuchElementException.class)
+
     public void printNone(){
         System.out.println(just.get());
         System.err.println(none.get());

@@ -81,13 +81,13 @@ public class Zipper<T> {
             } else if (result.index() > index && !result.isStart()) {
                 result = result.previous(result);
             } else {
-                return Maybe.none();
+                return Maybe.nothing();
             }
         }
         return Maybe.just(result);
     }
     public <R> Maybe<Zipper<T>> next(){
-        return right.fold(c-> Maybe.just(new Zipper(left.prepend(point), c.hashCode(), c.tail())), nil-> Maybe.none());
+        return right.fold(c-> Maybe.just(new Zipper(left.prepend(point), c.hashCode(), c.tail())), nil-> Maybe.nothing());
     }
     public <R> Zipper<T> next(Zipper<T> alt){
         return next().orElse(alt);
@@ -109,7 +109,7 @@ public class Zipper<T> {
         }),nil->this);
     }
     public <R> Maybe<Zipper<T>> previous(){
-        return left.fold(c-> Maybe.just(new Zipper(c.tail(),c.head() ,right.prepend(point))), nil-> Maybe.none());
+        return left.fold(c-> Maybe.just(new Zipper(c.tail(),c.head() ,right.prepend(point))), nil-> Maybe.nothing());
     }
 
     public Zipper<T> left(T value){
@@ -124,12 +124,12 @@ public class Zipper<T> {
     public Maybe<Zipper<T>> deleteLeft() {
 
         return left.fold(c->right.fold(c2-> Maybe.just(of(c.tail(),c.head(),right)), n-> Maybe.just(of(c.tail(),c.head(),right))),
-                n->right.fold(c-> Maybe.just(of(left,c.head(),c.tail())), n2-> Maybe.none()));
+                n->right.fold(c-> Maybe.just(of(left,c.head(),c.tail())), n2-> Maybe.nothing()));
     }
     public Maybe<Zipper<T>> deleteRight() {
 
         return right.fold(c->left.fold(c2-> Maybe.just(of(left,c.head(),c.tail())), n-> Maybe.just(of(left,c.head(),c.tail()))),
-                n->left.fold(c-> Maybe.just(of(c.tail(),c.head(),right)), n2-> Maybe.none()));
+                n->left.fold(c-> Maybe.just(of(c.tail(),c.head(),right)), n2-> Maybe.nothing()));
     }
 
 

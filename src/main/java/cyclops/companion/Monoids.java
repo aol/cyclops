@@ -12,7 +12,6 @@ import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Xor;
 import cyclops.function.Monoid;
-import cyclops.function.Semigroup;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -394,7 +393,7 @@ public interface Monoids {
      * @return Combine two Maybe's by taking the first present
      */
     static <T> Monoid<Maybe<T>> firstPresentMaybe() {
-        return Monoid.of(Maybe.none(), Semigroups.firstPresentMaybe());
+        return Monoid.of(Maybe.nothing(), Semigroups.firstPresentMaybe());
     }
 
     /**
@@ -408,7 +407,7 @@ public interface Monoids {
      * @return Combine two Maybes by taking the last present
      */
     static <T> Monoid<Maybe<T>> lastPresentMaybe() {
-        return Monoid.of(Maybe.none(), Semigroups.lastPresentMaybe());
+        return Monoid.of(Maybe.nothing(), Semigroups.lastPresentMaybe());
     }
 
     /**

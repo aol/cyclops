@@ -5056,7 +5056,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
                 @Override
                 public <T> Maybe<Comonad<reactiveSeq>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
                 @Override
                 public <T> Maybe<Unfoldable<reactiveSeq>> unfoldable() {

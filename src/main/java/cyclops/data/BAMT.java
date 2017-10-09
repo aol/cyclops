@@ -112,7 +112,7 @@ public class BAMT<T> {
             int indx = pos & 0x01f;
             if(indx<array.length)
                 return Maybe.of((T)array[indx]);
-            return Maybe.none();
+            return Maybe.nothing();
         }
         @Override
         public T getOrElse(int pos, T alt) {
@@ -194,7 +194,7 @@ public class BAMT<T> {
             int indx = pos & 0x01f;
             if(indx<array.length)
                 return Maybe.of((T)array[indx]);
-            return Maybe.none();
+            return Maybe.nothing();
         }
         @Override
         public T getOrElse(int pos, T alt) {
@@ -254,7 +254,7 @@ public class BAMT<T> {
             if(indx<local.length){
                 return Maybe.of(local[indx]);
             }
-            return Maybe.none();
+            return Maybe.nothing();
         }
         @Override
         public T getOrElse(int pos, T alt) {
@@ -340,7 +340,7 @@ public class BAMT<T> {
             if(indx<local.length){
                 return Maybe.of(local[indx]);
             }
-            return Maybe.none();
+            return Maybe.nothing();
         }
         @Override
         public T getOrElse(int pos, T alt) {
@@ -446,7 +446,7 @@ public class BAMT<T> {
             if(indx<local.length){
                 return Maybe.of(local[indx]);
             }
-            return Maybe.none();
+            return Maybe.nothing();
         }
         @Override
         public T getOrElse(int pos, T alt) {
@@ -577,7 +577,7 @@ public class BAMT<T> {
             if(indx<local.length){
                 return Maybe.of(local[indx]);
             }
-            return Maybe.none();
+            return Maybe.nothing();
         }
         @Override
         public T getOrElse(int pos, T alt) {
@@ -723,7 +723,7 @@ public class BAMT<T> {
             if(indx<local.length){
                 return Maybe.of(local[indx]);
             }
-            return Maybe.none();
+            return Maybe.nothing();
         }
         @Override
         public T getOrElse(int pos, T alt) {

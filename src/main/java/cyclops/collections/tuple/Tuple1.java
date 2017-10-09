@@ -14,7 +14,6 @@ import cyclops.control.Xor;
 import cyclops.data.Comparators;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.tuple1;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
@@ -23,9 +22,7 @@ import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -176,7 +173,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
 
     @Override
     public Maybe<T> filter(Predicate<? super T> predicate) {
-        return predicate.test(_1()) ? Maybe.just(_1()) :  Maybe.none();
+        return predicate.test(_1()) ? Maybe.just(_1()) :  Maybe.nothing();
     }
 
     @Override
@@ -221,12 +218,12 @@ public class Tuple1<T> implements To<Tuple1<T>>,
 
                 @Override
                 public <T, R> Maybe<MonadZero<tuple1>> monadZero() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<MonadPlus<tuple1>> monadPlus() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -236,7 +233,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
 
                 @Override
                 public <T> Maybe<MonadPlus<tuple1>> monadPlus(Monoid<Higher<tuple1, T>> m) {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -256,7 +253,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
 
                 @Override
                 public <T> Maybe<Unfoldable<tuple1>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }

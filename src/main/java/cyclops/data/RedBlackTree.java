@@ -235,7 +235,7 @@ public interface RedBlackTree {
 
         @Override
         public Maybe<V> get(K key) {
-            return Maybe.none();
+            return Maybe.nothing();
         }
 
         @Override

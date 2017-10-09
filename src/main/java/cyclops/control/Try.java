@@ -9,7 +9,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -34,15 +33,11 @@ import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
-import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.*;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
@@ -1388,12 +1383,12 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
                 @Override
                 public <T, R> Maybe<MonadZero<Higher<tryType, L>>> monadZero() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<tryType, L>>> monadPlus() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -1403,7 +1398,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<tryType, L>>> monadPlus(Monoid<Higher<Higher<tryType, L>, T>> m) {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
 
@@ -1419,12 +1414,12 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
                 @Override
                 public <T> Maybe<Comonad<Higher<tryType, L>>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<Unfoldable<Higher<tryType, L>>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }

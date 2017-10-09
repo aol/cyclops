@@ -7,25 +7,17 @@ import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
-import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.*;
-import cyclops.control.lazy.Either;
 import cyclops.control.lazy.Either4;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
-import cyclops.stream.ReactiveSeq;
 
-import cyclops.collections.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -153,7 +145,7 @@ public class Either4Test {
     @Test
     public void testToMaybe() {
         assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
-        assertThat(none.toMaybe(),equalTo(Maybe.none()));
+        assertThat(none.toMaybe(),equalTo(Maybe.nothing()));
     }
 
     private int add1(int i){

@@ -1,7 +1,6 @@
 package cyclops.control.lazy;
 
 
-import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
@@ -11,15 +10,12 @@ import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Either4.CompletableEither4;
 import cyclops.function.Monoid;
-import cyclops.stream.ReactiveSeq;
-import cyclops.collections.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -173,7 +169,7 @@ public class CompletableEither4Test {
     @Test
     public void testToMaybe() {
         assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
-        assertThat(none.toMaybe(),equalTo(Maybe.none()));
+        assertThat(none.toMaybe(),equalTo(Maybe.nothing()));
     }
 
     private int add1(int i){

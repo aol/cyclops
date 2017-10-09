@@ -1,6 +1,5 @@
 package com.aol.cyclops2.sum.types;
 
-import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
@@ -12,12 +11,9 @@ import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Either;
 import cyclops.control.lazy.Either.CompletableEither;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
-import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
-import cyclops.collections.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -25,9 +21,6 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -210,7 +203,7 @@ public class EitherTest {
     @Test
     public void testToMaybe() {
         assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
-        assertThat(none.toMaybe(),equalTo(Maybe.none()));
+        assertThat(none.toMaybe(),equalTo(Maybe.nothing()));
     }
 
     private int add1(int i){

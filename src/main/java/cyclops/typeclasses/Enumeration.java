@@ -68,7 +68,7 @@ public interface Enumeration<E> {
         final Function1<E,Integer> memo = this::calcFromEnum;
         public Maybe<E> toEnum(int a){
 
-            return a>-1 && a< values.length ? Maybe.just(values[a]) :  Maybe.none();
+            return a>-1 && a< values.length ? Maybe.just(values[a]) :  Maybe.nothing();
         }
         public E toEnumOrElse(int a,E e){
 

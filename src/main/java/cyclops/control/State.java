@@ -40,7 +40,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
     }
 
     public static <S> State<S, Nothing> transition(Function<? super S,? extends S> f) {
-        return state(s -> Tuple.tuple(f.apply(s),(Nothing) Maybe.none()));
+        return state(s -> Tuple.tuple(f.apply(s),(Nothing) Maybe.nothing()));
     }
 
     public static <S, T> State<S, T> transition(Function<? super S,? extends S> f, T value) {
@@ -218,7 +218,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
     }
 
     public static <S> State<S, Nothing> of(S s) {
-        return state(__ -> Tuple.tuple(s, (Nothing)Maybe.none()));
+        return state(__ -> Tuple.tuple(s, (Nothing)Maybe.nothing()));
     }
     public static <S> State<S, Nothing> put(S s) {
         return of(s);
@@ -274,12 +274,12 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
                 @Override
                 public <T, R> Maybe<MonadZero<Higher<state, S>>> monadZero() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<state, S>>> monadPlus() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -289,7 +289,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<state, S>>> monadPlus(Monoid<Higher<Higher<state, S>, T>> m) {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -304,12 +304,12 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
                 @Override
                 public <T> Maybe<Comonad<Higher<state, S>>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<Unfoldable<Higher<state, S>>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }

@@ -563,7 +563,7 @@ public class BaseSequentialTest {
     public void combineEmpty() {
         assertThat(this.<Integer>of()
                 .combine((a, b) -> a < 5, Semigroups.intSum)
-                .findOne(), Matchers.equalTo(Maybe.none()));
+                .findOne(), Matchers.equalTo(Maybe.nothing()));
     }
 
     @Test

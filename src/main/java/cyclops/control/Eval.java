@@ -1188,7 +1188,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
                 @Override
                 public <T> Maybe<MonadPlus<eval>> monadPlus() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -1198,7 +1198,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
                 @Override
                 public <T> Maybe<MonadPlus<eval>> monadPlus(Monoid<Higher<eval, T>> m) {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -1218,7 +1218,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
                 @Override
                 public <T> Maybe<Unfoldable<eval>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }

@@ -1225,7 +1225,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
 
                 @Override
                 public <T> Maybe<Comonad<persistentSetX>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
                 @Override
                 public <T> Maybe<Unfoldable<persistentSetX>> unfoldable() {

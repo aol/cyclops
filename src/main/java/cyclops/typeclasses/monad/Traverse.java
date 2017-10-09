@@ -2,24 +2,15 @@ package cyclops.typeclasses.monad;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.mutable.ListX;
-import cyclops.companion.Monoids;
 import cyclops.control.Constant;
 import cyclops.control.Maybe;
-import cyclops.control.Maybe.Nothing;
 import cyclops.control.State;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.constant;
-import cyclops.monads.Witness.state;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
 
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -93,10 +84,10 @@ public interface Traverse<CRE> extends Applicative<CRE>{
         State<Maybe<T2>,  Higher<CRE, R>> st = State.narrowK(traverseA(State.Instances.applicative(),
                 a -> {
 
-                    State<Maybe<T2>,R> xz = state((Maybe<T2> s) -> tuple(list.hasNext() ? Maybe.just(list.next()) : Maybe.none(), f.apply(a, s)));
+                    State<Maybe<T2>,R> xz = state((Maybe<T2> s) -> tuple(list.hasNext() ? Maybe.just(list.next()) : Maybe.nothing(), f.apply(a, s)));
                     return xz;
                 }, ds));
-        Maybe<T2> opt = list.hasNext() ? Maybe.of(list.next()) : Maybe.none();
+        Maybe<T2> opt = list.hasNext() ? Maybe.of(list.next()) : Maybe.nothing();
         return st.run(opt)._2();
 
     }

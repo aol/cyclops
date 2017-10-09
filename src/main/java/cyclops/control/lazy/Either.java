@@ -3,8 +3,6 @@ package cyclops.control.lazy;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.reactive.Completable;
 import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.Value;
-import com.aol.cyclops2.types.Zippable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
@@ -18,10 +16,6 @@ import cyclops.monads.Witness.either;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -33,7 +27,6 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 /**
  * A totally Lazy Either implementation with tail call optimization for transform and flatMap operators. Either can operate reactively (i.e. suppports data arriving asynchronsouly
@@ -1703,7 +1696,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         @Override
         public Maybe<PT> toMaybe() {
-            return Maybe.none();
+            return Maybe.nothing();
         }
 
         @Override

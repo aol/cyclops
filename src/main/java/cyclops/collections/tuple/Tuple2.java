@@ -6,7 +6,6 @@ import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.types.foldable.EqualTo;
 import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
-import cyclops.collections.mutable.SortedSetX;
 import cyclops.control.Maybe;
 import cyclops.control.Xor;
 import cyclops.data.Comparators;
@@ -23,7 +22,6 @@ import cyclops.typeclasses.monad.*;
 import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.Objects;
 import java.util.function.*;
 
@@ -221,12 +219,12 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
 
                 @Override
                 public <T, R> Maybe<MonadZero<Higher<tuple2, T1>>> monadZero() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<tuple2, T1>>> monadPlus() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -242,7 +240,7 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<tuple2, T1>>> monadPlus(Monoid<Higher<Higher<tuple2, T1>, T>> m) {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -257,7 +255,7 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
 
                 @Override
                 public <T> Maybe<Unfoldable<Higher<tuple2, T1>>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }

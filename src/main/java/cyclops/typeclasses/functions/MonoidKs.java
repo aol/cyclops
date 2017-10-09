@@ -18,10 +18,7 @@ import cyclops.control.Try;
 import cyclops.control.Xor;
 import cyclops.monads.Witness.*;
 import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
@@ -232,7 +229,7 @@ public class MonoidKs {
      * @return Combine two Maybe's by taking the first present
      */
     static <T> MonoidK<maybe,T> firstPresentMaybe() {
-        return MonoidK.of(Maybe.none(),SemigroupKs.firstPresentMaybe());
+        return MonoidK.of(Maybe.nothing(),SemigroupKs.firstPresentMaybe());
     }
 
     /**
@@ -246,7 +243,7 @@ public class MonoidKs {
      * @return Combine two Maybes by taking the last present
      */
     static <T> MonoidK<maybe,T> lastPresentMaybe() {
-        return MonoidK.of(Maybe.none(),SemigroupKs.lastPresentMaybe());
+        return MonoidK.of(Maybe.nothing(),SemigroupKs.lastPresentMaybe());
     }
 
     /**
