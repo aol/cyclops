@@ -1249,8 +1249,11 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
         @Override
         public <R> R visit(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
-            final Maybe<R> mapped = map(some);
-            return mapped.fold(s->s,n->none.get());
+            Maybe<T> maybe = lazy.get();
+            while (maybe instanceof Lazy) {
+                maybe = ((Lazy<T>) maybe).lazy.get();
+            }
+            return maybe.visit(some,none);
         }
         @Override
         public final void subscribe(final Subscriber<? super T> sub) {
@@ -1380,6 +1383,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         public int hashCode() {
             Maybe<T> maybe = lazy.get();
             while (maybe instanceof Lazy) {
+                System.out.println("New maybe calling get");
                 maybe = ((Lazy<T>) maybe).lazy.get();
             }
 

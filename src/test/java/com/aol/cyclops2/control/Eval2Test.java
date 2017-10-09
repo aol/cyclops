@@ -209,7 +209,7 @@ public class Eval2Test {
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
         
-        assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.toOptional().get().collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
 	
 
@@ -407,7 +407,7 @@ public class Eval2Test {
 
 	@Test
 	public void testToStream() {
-		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
+		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(1));
 		assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
 		
 	}
@@ -423,7 +423,7 @@ public class Eval2Test {
 	@Test
 	public void testToFuture() {
 		Future<Integer> cf = just.toFuture();
-		assertThat(cf.get(),equalTo(10));
+		assertThat(cf.orElse(-1),equalTo(10));
 	}
 
 

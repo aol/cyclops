@@ -129,7 +129,7 @@ public class MaybeTest implements Printable {
 
         assertFalse(result.isDone());
         System.out.println("Blocking?");
-        assertThat(result.get(),equalTo(2000));
+        assertThat(result.toOptional().get(),equalTo(2000));
 
     }
     
@@ -220,7 +220,16 @@ public class MaybeTest implements Printable {
 
     @Test
     public void odd() {
-        System.out.println(even(Maybe.just(200000)).toOptional().get());
+        System.out.println(even(Maybe.just(200000)));
+
+    }
+    @Test
+    public void oddBug() {
+       
+        even(Maybe.just(200000)).visit(i->{
+            System.out.println(i);
+            return null;
+        },()->null);
     }
 
     public Maybe<String> odd(Maybe<Integer> n) {
@@ -386,7 +395,7 @@ public class MaybeTest implements Printable {
         Future<Stream<Integer>> async = Future
                 .of(() -> just.visit(f -> Stream.of((int) f), () -> Stream.of()));
 
-        assertThat(async.get().collect(Collectors.toList()), equalTo(ListX.of(10)));
+        assertThat(async.toOptional().get().collect(Collectors.toList()), equalTo(ListX.of(10)));
     }
 
     @Test
@@ -430,7 +439,7 @@ public class MaybeTest implements Printable {
     @Test
     public void testToTry() {
         assertTrue(none.toTry().isFailure());
-        assertThat(just.toTry(), equalTo(Try.success(10)));
+        assertThat(just.toTry(),equalTo(Try.success(10)));
     }
 
     @Test

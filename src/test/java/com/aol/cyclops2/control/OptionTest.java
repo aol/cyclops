@@ -288,7 +288,7 @@ public class OptionTest implements Printable {
         Future<Stream<Integer>> async = Future
                 .of(() -> eager.visit(f -> Stream.of((int) f), () -> Stream.of()));
 
-        assertThat(async.get().collect(Collectors.toList()), equalTo(ListX.of(10)));
+        assertThat(async.toOptional().get().collect(Collectors.toList()), equalTo(ListX.of(10)));
     }
 
     @Test

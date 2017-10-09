@@ -1563,17 +1563,14 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                 return ((Lazy)obj).equals(this);
             }
             if(obj instanceof Primary){
-                return value.get().equals(((Primary)obj).get());
+                return Objects.equals(value.get(),((Primary)obj).orElse(null));
+
             }
             if (getClass() != obj.getClass())
                 return false;
             Right other = (Right) obj;
-            if (value == null) {
-                if (other.value != null)
-                    return false;
-            } else if (!value.equals(other.value))
-                return false;
-            return true;
+            return Objects.equals(value.get(),other.orElse(null));
+
         }
 
         @Override
@@ -1754,17 +1751,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                 return ((Lazy)obj).equals(this);
             }
             if(obj instanceof Secondary){
-                return value.equals(((Primary)obj).get());
+                return Objects.equals(value.get(),((Secondary)obj).secondaryOrElse(null));
             }
             if (getClass() != obj.getClass())
                 return false;
             Left other = (Left) obj;
-            if (value == null) {
-                if (other.value != null)
-                    return false;
-            } else if (!value.equals(other.value))
-                return false;
-            return true;
+            return Objects.equals(value.get(),other.secondaryOrElse(null));
         }
 
 

@@ -38,6 +38,7 @@ import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -1054,12 +1055,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
             Xor other = (Xor) obj;
             if(!other.isPrimary())
                 return false;
-            if (value == null) {
-                if (other.get() != null)
-                    return false;
-            } else if (!value.equals(other.get()))
-                return false;
-            return true;
+            return Objects.equals(value,other.orElse(null));
         }
 
         /* (non-Javadoc)
@@ -1238,13 +1234,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
             Xor other = (Xor) obj;
             if(other.isPrimary())
                 return false;
-            if (value == null) {
-                if (other.secondaryGet() != null)
-                    return false;
-            } else if (!value.equals(other.secondaryGet()))
-                return false;
-            
-            return true;
+            return Objects.equals(value,other.swap().orElse(null));
         }
 
         @Override
@@ -1254,7 +1244,7 @@ public interface Xor<ST, PT> extends To<Xor<ST,PT>>,
 
         @Override
         public <R> R visit(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
-            return null;
+            return absent.get();
         }
     }
 
