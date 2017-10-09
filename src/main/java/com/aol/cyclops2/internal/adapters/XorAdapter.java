@@ -83,7 +83,7 @@ public class XorAdapter extends AbstractFunctionalAdapter<xor> implements ValueA
 
     @Override
     public <T> AnyM<xor, T> unitIterable(Iterable<T> it) {
-       return AnyM.fromXor(Xor.fromIterable(it));
+       return AnyM.fromXor(fromIterable(it));
     }
    
     @Override
@@ -91,6 +91,10 @@ public class XorAdapter extends AbstractFunctionalAdapter<xor> implements ValueA
         return AnyM.fromXor(Xor.primary(o));
     }
 
-   
+    public static <ST, T> Xor<ST, T> fromIterable(final Iterable<T> iterable) {
+
+        final Iterator<T> it = iterable.iterator();
+        return it.hasNext() ? Xor.primary( it.next()) :Xor.secondary(null);
+    }
    
 }

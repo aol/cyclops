@@ -64,10 +64,8 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
         return new Iterator<T>() {
             @Override
             public boolean hasNext() {
-                Boolean visit = visit(p->true,()->false);
-                System.out.println("Visit " + visit);
                 return !complete[0]
-                           && visit;
+                           && visit(p->true,()->false);
             }
 
             @Override

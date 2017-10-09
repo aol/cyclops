@@ -299,6 +299,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
             return AnyM.<W,T2,R>ofValue2(mapped,a);
            
         }
+
         return flatMapA(fn.andThen(a->this.fromIterable(a)));
     }
     @Override

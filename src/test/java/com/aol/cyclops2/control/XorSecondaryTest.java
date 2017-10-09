@@ -46,7 +46,7 @@ public class XorSecondaryTest {
 
 	@Test
 	public void testFilter() {
-		assertThat(failure.filter(x->x==10),equalTo(Option.some(failure)));
+		assertThat(failure.filter(x->x==10),equalTo(Option.none()));
 	}
 
 	

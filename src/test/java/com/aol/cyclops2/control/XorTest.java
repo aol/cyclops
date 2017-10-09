@@ -43,7 +43,7 @@ public class XorTest {
 		assertThat(Xor.accumulateSecondary(Monoids.stringConcat,ListX.of(Xor.secondary("failed1"),
 													Xor.secondary("failed2"),
 													Xor.primary("success"))
-													).get(),equalTo("failed1failed2"));
+													).orElse(":"),equalTo("failed1failed2"));
 		
 	}
 
@@ -56,19 +56,19 @@ public class XorTest {
 	public void applicative(){
 	    Xor<String,String> fail1 =  Xor.secondary("failed1");
 	    Xor<String,String> result = fail1.combine(Xor.secondary("failed2"), Semigroups.stringConcat,(a,b)->a+b);
-	    assertThat(result.secondaryGet(),equalTo("failed2failed1"));
+	    assertThat(result.secondaryOrElse(":"),equalTo("failed2failed1"));
 	}
 	@Test
     public void applicativeColleciton(){
         Xor<String,String> fail1 =  Xor.secondary("failed1");
         Xor<LinkedListX<String>,String> result = fail1.list().combine(Xor.secondary("failed2").list(), Semigroups.collectionXConcat(),(a, b)->a+b);
-        assertThat(result.secondaryGet(),equalTo(LinkedListX.of("failed1","failed2")));
+        assertThat(result.secondaryOrElse(LinkedListX.empty()),equalTo(LinkedListX.of("failed1","failed2")));
     }
 	@Test
     public void applicativePStack(){
         Xor<String,String> fail1 =  Xor.secondary("failed1");
         Xor<LinkedListX<String>,String> result = fail1.combineToList(Xor.<String,String>secondary("failed2"),(a, b)->a+b);
-        assertThat(result.secondaryGet(),equalTo(LinkedListX.of("failed1","failed2")));
+        assertThat(result.secondaryOrElse(LinkedListX.empty()),equalTo(LinkedListX.of("failed1","failed2")));
     }
 	
 

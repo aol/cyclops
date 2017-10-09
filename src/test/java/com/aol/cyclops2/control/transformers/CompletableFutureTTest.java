@@ -91,7 +91,7 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20).get(),equalTo(20));
+		assertThat(just.unit(20).orElse(-1),equalTo(20));
 	}
 
 	
@@ -100,14 +100,14 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
-		assertThat(just.map(i->i+5).get(),equalTo(15));
+		assertThat(just.map(i->i+5).orElse(-1),equalTo(15));
 		assertThat(none.map(i->i+5).orElse(1000),equalTo(1000));
 	}
 
 	@Test
 	public void testFlatMap() {
 	    
-		assertThat(just.flatMap(i->CompletableFuture.completedFuture(i+5)).get(),equalTo(15));
+		assertThat(just.flatMap(i->CompletableFuture.completedFuture(i+5)).orElse(-1),equalTo(15));
 		assertThat(none.flatMap(i->CompletableFuture.completedFuture(i+5)).orElse(-1),equalTo(-1));
 	}
 	
@@ -371,7 +371,7 @@ public class CompletableFutureTTest implements Printable {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5).get(),equalTo(15));
+		assertThat(just.map(i->i+5).orElse(-1),equalTo(15));
 	}
 	
 	@Test
@@ -390,7 +390,7 @@ public class CompletableFutureTTest implements Printable {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)).get(),equalTo(65));
+		assertThat(just.trampoline(n ->sum(10,n)).orElse(-1),equalTo(65));
 	}
 
 	
