@@ -43,8 +43,8 @@ public class IorAdapter extends AbstractFunctionalAdapter<ior> implements ValueA
         return fn2.apply(this);
     }
 
-    public <T> Xor<?,T> ior(AnyM<ior, T> t){
-        return (Xor<?,T>)t.unwrap();
+    public <T> Ior<?,T> ior(AnyM<ior, T> t){
+        return (Ior<?,T>)t.unwrap();
     }
     @Override
     public <T> AnyM<ior, T> filter(AnyM<ior, T> t, Predicate<? super T> fn) {

@@ -100,13 +100,11 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
                         .orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#mkString()
-     */
+    
     @Override
     default String mkString() {
-        final Optional<T> opt = toOptional();
-        return opt.isPresent() ? "AnyMValue2[" + get() + "]" : "AnyMValue2[]";
+        return visit(s->"AnyMValue2[" + s + "]",()->"AnyMValue2[]");
+
     }
 
     @Override
