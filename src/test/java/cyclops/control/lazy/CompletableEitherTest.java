@@ -47,7 +47,7 @@ public class CompletableEitherTest {
         completable.complete(5);
         System.out.println(mapped.getClass());
         mapped.printOut();
-        assertThat(mapped.get(),equalTo(11));
+        assertThat(mapped.get(),equalTo(Option.some(11)));
 
 
     }
@@ -61,7 +61,7 @@ public class CompletableEitherTest {
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.secondaryGet(),instanceOf(NoSuchElementException.class));
+        assertThat(mapped.secondaryOrElse(null),instanceOf(NoSuchElementException.class));
 
     }
     @Test
@@ -74,7 +74,7 @@ public class CompletableEitherTest {
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.secondaryGet(),instanceOf(IllegalStateException.class));
+        assertThat(mapped.secondaryOrElse(null),instanceOf(IllegalStateException.class));
 
     }
 
@@ -100,7 +100,7 @@ public class CompletableEitherTest {
         assertThat(CompletableEitherTest.right(10)
                .map(i->i*2)
                .flatMap(i->CompletableEitherTest.right(i*4))
-               .get(),equalTo(80));
+               .get(),equalTo(Option.some(80)));
     }
     @Test
     public void odd() {
@@ -240,7 +240,7 @@ public class CompletableEitherTest {
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
         
-        assertThat(async.get().collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
     
     @Test
@@ -300,15 +300,7 @@ public class CompletableEitherTest {
         assertThat(none.mkString(),equalTo("Either.left[java.util.NoSuchElementException: none]"));
     }
 
-    @Test
-    public void testGet() {
-        assertThat(just.get(),equalTo(10));
-    }
-    @Test(expected=NoSuchElementException.class)
-    public void testGetNone() {
-        none.get();
-        
-    }
+
 
     @Test
     public void testFilter() {
@@ -426,7 +418,7 @@ public class CompletableEitherTest {
     public void testPeek() {
         Mutable<Integer> capture = Mutable.of(null);
         just = just.peek(c->capture.set(c));
-        just.get();
+        just.orElse(null);
         
         assertThat(capture.get(),equalTo(10));
     }
