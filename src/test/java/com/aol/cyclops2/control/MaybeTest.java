@@ -225,7 +225,7 @@ public class MaybeTest implements Printable {
     }
     @Test
     public void oddBug() {
-       
+
         even(Maybe.just(200000)).visit(i->{
             System.out.println(i);
             return null;

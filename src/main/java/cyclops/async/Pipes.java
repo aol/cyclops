@@ -8,10 +8,7 @@ import cyclops.collections.immutable.PersistentMapX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple0;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.control.Try;
-import cyclops.control.Xor;
+import cyclops.control.*;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
@@ -160,8 +157,8 @@ public class Pipes<K, V> {
      * @return selected Queue
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Maybe<Adapter<V>> get(final K key) {
-        return Maybe.ofNullable((Adapter) registered.get(key));
+    public Option<Adapter<V>> get(final K key) {
+        return Option.ofNullable((Adapter) registered.get(key));
     }
 
     /**
@@ -200,7 +197,7 @@ public class Pipes<K, V> {
      * @return LazyFutureStream from selected Queue
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Maybe<FutureStream<V>> futureStream(final K key) {
+    public Option<FutureStream<V>> futureStream(final K key) {
         return get(key).map(a -> a.futureStream());
     }
 
@@ -238,7 +235,7 @@ public class Pipes<K, V> {
      * @return LazyFutureStream from selected Queue
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Maybe<FutureStream<V>> futureStream(final K key, final LazyReact builder) {
+    public Option<FutureStream<V>> futureStream(final K key, final LazyReact builder) {
 
         return get(key).map(a -> a.futureStream(builder));
     }
@@ -268,7 +265,7 @@ public class Pipes<K, V> {
      * @return {@link ReactiveSeq} from selected Queue
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Maybe<ReactiveSeq<V>> reactiveSeq(final K key) {
+    public Option<ReactiveSeq<V>> reactiveSeq(final K key) {
         return get(key).map(a -> a.stream());
     }
 
@@ -313,7 +310,7 @@ public class Pipes<K, V> {
      * @return Maybe containing next value from the Adapter identified by the provided key
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Maybe<V> oneValue(final K key) {
+    public Option<V> oneValue(final K key) {
         final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
                                    .subscribe(sub))
@@ -371,7 +368,7 @@ public class Pipes<K, V> {
      * @return
      */
     @Deprecated //errors aren't propagated across Adapters (at least without continuations)
-    public <X extends Throwable> Maybe<Try<V, X>> oneValueOrError(final K key, final Class<X>... classes) {
+    public <X extends Throwable> Option<Try<V, X>> oneValueOrError(final K key, final Class<X>... classes) {
         final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
                                    .subscribe(sub))
@@ -399,7 +396,7 @@ public class Pipes<K, V> {
      * @return
      */
     @Deprecated //errors aren't propagated across Adapters (at least without continuations)
-    public Maybe<Try<V, Throwable>> oneValueOrError(final K key) {
+    public Option<Try<V, Throwable>> oneValueOrError(final K key) {
         final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
                                    .subscribe(sub))
@@ -481,7 +478,7 @@ public class Pipes<K, V> {
     public Eval<Maybe<V>> nextValue(final K key) {
         final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         final LazyImmutable<Boolean> requested = LazyImmutable.def();
-        final Maybe<Eval<Maybe<V>>> nested = get(key).peek(a -> a.stream()
+        final Option<Eval<Maybe<V>>> nested = get(key).peek(a -> a.stream()
                                                                  .subscribe(sub))
                                                      .map(a -> Eval.always(() -> {
                                                          if (requested.isSet()) {

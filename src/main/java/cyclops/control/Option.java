@@ -835,6 +835,10 @@ public interface Option<T> extends To<Option<T>>,
         public Option<T> filter(Predicate<? super T> fn) {
             return fn.test(value) ? this : None.NOTHING_EAGER;
         }
+        @Override
+        public String toString() {
+            return mkString();
+        }
         /*
        * (non-Javadoc)
        *

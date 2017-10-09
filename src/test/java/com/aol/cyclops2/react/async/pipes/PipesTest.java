@@ -20,6 +20,8 @@ import cyclops.async.*;
 import cyclops.async.adapters.Queue;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
+import cyclops.control.Option;
+import cyclops.control.Try;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -109,7 +111,7 @@ public class PipesTest {
         results.add(bus.oneOrError("reactor").get());
         results.add(bus.oneOrError("reactor").get());
         
-        assertThat(results,equalTo(ListX.of(10,20,30)));       
+        assertThat(results,equalTo(ListX.of(10,20,30).map(Option::some)));
      
          
     }
@@ -287,9 +289,9 @@ public class PipesTest {
         pipes.push("hello", "world");
         pipes.push("hello", "world2");
         q.close();
-        assertThat(pipes.oneOrError("hello")
+        assertThat(pipes.oneOrError("hello").toOptional()
              .get(),equalTo("world"));
-        assertThat(pipes.oneOrError("hello")
+        assertThat(pipes.oneOrError("hello").toOptional()
                 .get(),equalTo("world2"));
           
     }
@@ -302,9 +304,9 @@ public class PipesTest {
       
         q.close();
         assertThat(pipes.oneValueOrError("hello").toOptional()
-             .get().get(),equalTo("world"));
+             .get().get(),equalTo(Option.some("world")));
         assertThat(pipes.oneValueOrError("hello").toOptional()
-                .get().get(),equalTo("world2"));
+                .get().get(),equalTo(Option.some("world2")));
           
     }
 	@Test
@@ -316,9 +318,9 @@ public class PipesTest {
       
         q.close();
         assertThat(pipes.oneValueOrError("hello",Throwable.class).toOptional()
-             .get().get(),equalTo("world"));
+             .get().get(),equalTo(Option.some("world")));
         assertThat(pipes.oneValueOrError("hello").toOptional()
-                .get().get(),equalTo("world2"));
+                .get().get(),equalTo(Option.some("world2")));
           
     }
 	@Test
@@ -328,10 +330,9 @@ public class PipesTest {
         pipes.push("hello", "world");
       
         q.close();
+        assertThat(pipes.oneValueOrError("hello",Throwable.class),equalTo(Option.some(Try.success("world"))));
         assertThat(pipes.oneValueOrError("hello",Throwable.class).toOptional()
-             .get().get(),equalTo("world"));
-        assertThat(pipes.oneValueOrError("hello",Throwable.class).toOptional()
-                .get().failureGet(),instanceOf(NoSuchElementException.class));
+                .get().failureGet().orElse(null),instanceOf(NoSuchElementException.class));
           
     }
 	
