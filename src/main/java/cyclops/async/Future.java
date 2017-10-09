@@ -1023,8 +1023,14 @@ public class Future<T> implements To<Future<T>>,
      */
     @Override
     public <R> Future<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-        return Future.<R> of(future.<R> thenCompose(t -> (CompletionStage<R>) mapper.apply(t).visit(s->CompletableFuture.completedFuture(s),
-                                                                            ()->CompletableFutures.error(new NoSuchElementException()))));
+
+        return Future.<R> of(future.<R> thenCompose(t -> (CompletionStage<R>) Future.fromMonadicValue(mapper.apply(t)).getFuture()));
+    }
+
+    private static <R> Future<R> fromMonadicValue(MonadicValue<R> apply) {
+        if(apply instanceof Future)
+            return (Future<R>)apply;
+        return Future.fromPublisher(apply);
     }
 
     /**
