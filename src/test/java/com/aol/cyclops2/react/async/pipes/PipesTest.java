@@ -127,7 +127,7 @@ public class PipesTest {
         
        
       System.out.println(Thread.currentThread().getId());
-       List<String> res =  bus.futureStream("reactor", new LazyReact())
+       List<String> res =  bus.futureStream("reactor", new LazyReact()).toOptional()
             .get()
            .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList();
@@ -153,7 +153,7 @@ public class PipesTest {
         
        
       System.out.println(Thread.currentThread().getId());
-       List<String> res =  bus.futureStream("reactor", new LazyReact(10,10))
+       List<String> res =  bus.futureStream("reactor", new LazyReact(10,10)).toOptional()
             .get()
            .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList();
@@ -179,7 +179,7 @@ public class PipesTest {
         
        
       System.out.println(Thread.currentThread().getId());
-       List<String> res =  bus.futureStream("reactor", new LazyReact())
+       List<String> res =  bus.futureStream("reactor", new LazyReact()).toOptional()
             .get()
            .map(i->"fan-out toNested handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList();
@@ -209,7 +209,7 @@ public class PipesTest {
 	    pipes.register("hello", q);
 	    pipes.push("hello", "world");
 	    q.close();
-	    assertThat(pipes.reactiveSeq("hello")
+	    assertThat(pipes.reactiveSeq("hello").toOptional()
 	         .get().toList(),equalTo(Arrays.asList("world")));
 	   
 	   
@@ -301,9 +301,9 @@ public class PipesTest {
         pipes.push("hello", "world2");
       
         q.close();
-        assertThat(pipes.oneValueOrError("hello")
+        assertThat(pipes.oneValueOrError("hello").toOptional()
              .get().get(),equalTo("world"));
-        assertThat(pipes.oneValueOrError("hello")
+        assertThat(pipes.oneValueOrError("hello").toOptional()
                 .get().get(),equalTo("world2"));
           
     }
@@ -315,9 +315,9 @@ public class PipesTest {
         pipes.push("hello", "world2");
       
         q.close();
-        assertThat(pipes.oneValueOrError("hello",Throwable.class)
+        assertThat(pipes.oneValueOrError("hello",Throwable.class).toOptional()
              .get().get(),equalTo("world"));
-        assertThat(pipes.oneValueOrError("hello")
+        assertThat(pipes.oneValueOrError("hello").toOptional()
                 .get().get(),equalTo("world2"));
           
     }
@@ -328,9 +328,9 @@ public class PipesTest {
         pipes.push("hello", "world");
       
         q.close();
-        assertThat(pipes.oneValueOrError("hello",Throwable.class)
+        assertThat(pipes.oneValueOrError("hello",Throwable.class).toOptional()
              .get().get(),equalTo("world"));
-        assertThat(pipes.oneValueOrError("hello",Throwable.class)
+        assertThat(pipes.oneValueOrError("hello",Throwable.class).toOptional()
                 .get().failureGet(),instanceOf(NoSuchElementException.class));
           
     }

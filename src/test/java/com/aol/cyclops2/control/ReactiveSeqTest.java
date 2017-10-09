@@ -66,18 +66,18 @@ public class ReactiveSeqTest {
         assertThat(ReactiveSeq.of()
                         .takeOne().isPresent(),equalTo(false));
         assertThat(ReactiveSeq.of(1,2,3)
-                              .takeOne().get(),equalTo(1));
+                              .takeOne().toOptional().get(),equalTo(1));
         assertThat(ListX.of(1,2,3)
-                              .takeOne().get(),equalTo(1));
+                              .takeOne().toOptional().get(),equalTo(1));
 
         assertThat(ReactiveSeq.of(1,2,3)
-                              .get(0).get(),equalTo(1));
+                              .get(0).toOptional().get(),equalTo(1));
         assertThat(ListX.of(1,2,3)
-                              .get(0l).get(),equalTo(1));
+                              .get(0l).toOptional().get(),equalTo(1));
         assertThat(ReactiveSeq.of(1,2,3)
-                .get(1).get(),equalTo(2));
+                .get(1).toOptional().get(),equalTo(2));
         assertThat(ListX.of(1,2,3)
-                        .get(1l).get(),equalTo(2));
+                        .get(1l).toOptional().get(),equalTo(2));
     }
 
     @Test
@@ -844,7 +844,7 @@ public class ReactiveSeqTest {
 
         pushable.onNext("hello");
         pushable.onComplete();
-        assertThat(list.get().size(),equalTo(1));
+        assertThat(list.orElse(ListX.empty()).size(),equalTo(1));
 
     }
 

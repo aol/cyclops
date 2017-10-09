@@ -109,17 +109,7 @@ public class Either5Test {
     }
 
    
-    @Test
-    public void testZip(){
-        assertThat(Either.right(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
- //pending https://github.com/aol/cyclops-react/issues/380
-        //       assertThat(Either.right(10).zip((a,b)->a+b,Eval.now(20)).get(),equalTo(30));
-        assertThat(Either.right(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Either.right(10).zip(ReactiveSeq.of(20),(a, b)->a+b).get(),equalTo(30));
-        assertThat(Either.right(10).zip(ReactiveSeq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(Either.right(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(Either.right(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
-    }
+
     @Test
     public void testTraverseLeft1() {
         ListX<Either5<Integer,String,String,String,String>> list = ListX.of(just,none,Either5.<String,String,String,String,Integer>right(1)).map(Either5::swap1);
@@ -148,31 +138,15 @@ public class Either5Test {
 
     @Test
     public void nest(){
-       assertThat(just.nest().map(m->m.get()),equalTo(just));
+       assertThat(just.nest().map(m->m.toOptional().get()),equalTo(just));
        assertThat(none.nest().map(m->m.get()),equalTo(none));
     }
     @Test
     public void coFlatMap(){
-        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Either5.right(50)));
+        assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Either5.right(50)));
     }
-    @Test
-    public void combine(){
-       
-        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
-        assertThat(just.combineEager(add,none),equalTo(Either5.right(10)));
-        assertThat(none.combineEager(add,just),equalTo(Either5.right(0))); 
-        assertThat(none.combineEager(add,none),equalTo(Either5.right(0))); 
-        assertThat(just.combineEager(add,Either5.right(10)),equalTo(Either5.right(20)));
-        Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-        Either<String,Integer> nil = Either.right(null);
-        Either<String,Integer> ten = Either.right(10);
-        //pending https://github.com/aol/cyclops-react/issues/380
-      //  assertThat(just.combineEager(firstNonNull,nil),equalTo(just));
-     //   assertThat(just.combineEager(firstNonNull,nil.transform(i->null)),equalTo(just));
-      //  assertThat(just.combineEager(firstNonNull,ten.transform(i->null)),equalTo(just));
-         
-    }
+
     @Test
     public void visit(){
         
@@ -268,32 +242,22 @@ public class Either5Test {
     
     @Test
     public void testIterate() {
-        assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
+        assertThat(just.asSupplier(-1000).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
     }
 
     @Test
     public void testGenerate() {
-        assertThat(just.generate().limit(10).sumInt(i->i),equalTo(100));
+        assertThat(just.asSupplier(-1000).generate().limit(10).sumInt(i->i),equalTo(100));
     }
 
-    @Test
-    public void testMapReduceReducerOfE() {
-        assertThat(just.mapReduce(Reducers.toCountInt()),equalTo(1));
-    }
+
 
     @Test
     public void testFoldMonoidOfT() {
-        assertThat(just.foldLeft(Reducers.toTotalInt()),equalTo(10));
-    }
-
-    @Test
-    public void testFoldTBinaryOperatorOfT() {
-        assertThat(just.foldLeft(1, (a,b)->a*b),equalTo(10));
+        assertThat(just.fold(Reducers.toTotalInt()),equalTo(10));
     }
 
 
-
-   
     @Test
     public void testToTry() {
         assertTrue(none.toTry().isFailure());
@@ -332,38 +296,7 @@ public class Either5Test {
         assertThat(ior,equalTo(Ior.primary("none")));
         
     }
-    @Test
-    public void testToEvalNow() {
-        assertThat(just.toEvalNow(),equalTo(Eval.now(10)));
-    }
-    @Test(expected=NoSuchElementException.class)
-    public void testToEvalNowNone() {
-        none.toEvalNow();
-        fail("exception expected");
-        
-    }
 
-    @Test
-    public void testToEvalLater() {
-        assertThat(just.toEvalLater(),equalTo(Eval.later(()->10)));
-    }
-    @Test(expected=NoSuchElementException.class)
-    public void testToEvalLaterNone() {
-        none.toEvalLater().get();
-        fail("exception expected");
-        
-    }
-
-    @Test
-    public void testToEvalAlways() {
-        assertThat(just.toEvalAlways(),equalTo(Eval.always(()->10)));
-    }
-    @Test(expected=NoSuchElementException.class)
-    public void testToEvalAlwaysNone() {
-        none.toEvalAlways().get();
-        fail("exception expected");
-        
-    }
 
 
     @Test
@@ -414,71 +347,13 @@ public class Either5Test {
         
     }
 
-    
-
-
-
-    @Test
-    public void testMapReduceReducerOfR() {
-        assertThat(just.mapReduce(Reducers.toLinkedListX()),equalTo(LinkedListX.fromIterable(just)));
-    }
-
-    @Test
-    public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-        assertThat(just.mapReduce(s->s.toString(), Monoid.of("",Semigroups.stringJoin(","))),equalTo(",10"));
-    }
-
-    @Test
-    public void testReduceMonoidOfT() {
-        assertThat(just.reduce(Monoid.of(1,Semigroups.intMult)),equalTo(10));
-    }
-
-    @Test
-    public void testReduceBinaryOperatorOfT() {
-        assertThat(just.reduce((a,b)->a+b),equalTo(Optional.of(10)));
-    }
-
-    @Test
-    public void testReduceTBinaryOperatorOfT() {
-        assertThat(just.reduce(10,(a,b)->a+b),equalTo(20));
-    }
-
-    @Test
-    public void testReduceUBiFunctionOfUQsuperTUBinaryOperatorOfU() {
-        assertThat(just.reduce(11,(a,b)->a+b,(a,b)->a*b),equalTo(21));
-    }
-
-    @Test
-    public void testReduceStreamOfQextendsMonoidOfT() {
-        ListX<Integer> countAndTotal = just.reduce(Stream.of(Reducers.toCountInt(),Reducers.toTotalInt()));
-        assertThat(countAndTotal,equalTo(ListX.of(1,10)));
-    }
-
-    @Test
-    public void testReduceIterableOfReducerOfT() {
-        ListX<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(),Reducers.toTotalInt()));
-        assertThat(countAndTotal,equalTo(ListX.of(1,10)));
-    }
-
-    
 
     @Test
     public void testFoldRightMonoidOfT() {
-        assertThat(just.foldRight(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+        assertThat(just.fold(Monoid.of(1,Semigroups.intMult)),equalTo(10));
     }
 
-    @Test
-    public void testFoldRightTBinaryOperatorOfT() {
-        assertThat(just.foldRight(10,(a,b)->a+b),equalTo(20));
-    }
 
-    @Test
-    public void testFoldRightMapToType() {
-        assertThat(just.foldRightMapToType(Reducers.toLinkedListX()),equalTo(LinkedListX.fromIterable(just)));
-    }
-
-    
-    
     @Test
     public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
         assertThat(just.visit(s->"hello", ()->"world"),equalTo("hello"));
@@ -501,8 +376,8 @@ public class Either5Test {
 
     @Test
     public void testToStream() {
-        assertThat(none.toStream().collect(Collectors.toList()).size(),equalTo(0));
-        assertThat(just.toStream().collect(Collectors.toList()).size(),equalTo(1));
+        assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
+        assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
         
     }
 
@@ -514,37 +389,9 @@ public class Either5Test {
         assertThat(just.orElse(20),equalTo(10));
     }
 
-    @Test(expected=RuntimeException.class)
-    public void testOrElseThrow() {
-        none.orElseThrow(()->new RuntimeException());
-    }
-    @Test
-    public void testOrElseThrowSome() {
-        
-        assertThat(just.orElseThrow(()->new RuntimeException()),equalTo(10));
-    }
-
-
-    @Test
-    public void testToFuture() {
-        Future<Integer> cf = just.toFuture();
-        assertThat(cf.get(),equalTo(10));
-    }
-
-    @Test
-    public void testToCompletableFuture() {
-        CompletableFuture<Integer> cf = just.toCompletableFuture();
-        assertThat(cf.join(),equalTo(10));
-    }
-
 
     Executor exec = Executors.newFixedThreadPool(1);
 
-    @Test
-    public void testToCompletableFutureAsyncExecutor() {
-        CompletableFuture<Integer> cf = just.toCompletableFutureAsync(exec);
-        assertThat(cf.join(),equalTo(10));
-    }
 
  
     @Test

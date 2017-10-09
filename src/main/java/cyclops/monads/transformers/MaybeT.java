@@ -31,6 +31,7 @@ import java.util.stream.Stream;
  *
  * @param <T> Type of data stored inside the nested Maybe(s)
  */
+//@TODO should be OptionT
 public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
                                                        implements To<MaybeT<W,T>>,
         Transformable<T>,
@@ -45,7 +46,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
 
                                                                          @Override
     public ReactiveSeq<T> stream() {
-        return run.stream().map(Maybe::get);
+        return run.stream().flatMap(Maybe::stream);
     }
 
 
@@ -82,7 +83,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     @Override
     public MaybeT<W,T> filter(final Predicate<? super T> test) {
         return of(run.map(f->f.map(in->Tuple.tuple(in,test.test(in))))
-                     .filter( f->f.get()._2() )
+                     .filter( f->f.visit(t->t._2(),()->false) )
                      .map( f->f.map(in->in._1())));
     }
 
@@ -155,8 +156,8 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
         return (AnyM) run;
     }
 
-    @Override
-    public <B> MaybeT<W,B> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
+
+    public <B> MaybeT<W,B> flatMap(final Function<? super T, ? extends Maybe<? extends B>> f) {
 
         final AnyM<W,Maybe<? extends B>> mapped = run.map(o -> o.flatMap(f));
         return of(narrow(mapped));
@@ -321,18 +322,18 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
      * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
      */
     @Override
-    public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn) {
+    public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T alt) {
         
-        return super.iterate(fn);
+        return super.iterate(fn,alt);
     }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ValueTransformer#generate()
      */
     @Override
-    public AnyM<W, ? extends ReactiveSeq<T>> generate() {
+    public AnyM<W, ? extends ReactiveSeq<T>> generate(T alt) {
         
-        return super.generate();
+        return super.generate(alt);
     }
 
     /* (non-Javadoc)

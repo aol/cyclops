@@ -5,6 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.control.Xor;
 import cyclops.typeclasses.*;
@@ -97,7 +98,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            VectorX<T> target = future.get();
+            VectorX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }
@@ -1502,7 +1503,8 @@ public interface VectorX<T> extends To<VectorX<T>>,
                         if(!newValue[0])
                             break;
                     }
-                    return Xor.sequencePrimary(next).map(l->l.to().vectorX(LAZY)).get();
+                    return Xor.sequencePrimary(next).map(l -> l.to().vectorX(LAZY)).orElse(VectorX.empty());
+
                 }
             };
         }

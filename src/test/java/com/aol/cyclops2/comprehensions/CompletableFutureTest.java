@@ -36,7 +36,7 @@ public class CompletableFutureTest {
 		Future<String> result =  Future.of(()->"hello world").forEach3(a->f2,(a, b)->f3,(v1, v2, v3) -> v1 +v2 +v3);
 									
 		
-		assertThat(result.join(),equalTo("hello world23"));
+		assertThat(result.getFuture().join(),equalTo("hello world23"));
 	}
 	@Test
 	public void cfFromSupplier(){
@@ -47,6 +47,6 @@ public class CompletableFutureTest {
 		val f3 = Future.of(CompletableFuture.completedFuture("3"));
 		Future<String> result = Future.of(()->"hello world").forEach3(a->f2,(a, b)->f3,(v1, v2, v3) -> v1 +v2 +v3);
 		
-		assertThat(result.join(),equalTo("hello world23"));
+		assertThat(result.getFuture().join(),equalTo("hello world23"));
 	}
 }

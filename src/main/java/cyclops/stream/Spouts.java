@@ -184,7 +184,7 @@ public interface Spouts {
         AtomicBoolean complete = new AtomicBoolean();
         AtomicLong requested = new AtomicLong(0);
         ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
-            Subscriber<T> local = subscriber.get();
+            Subscriber<T> local = subscriber.getFuture().join();
             Subscription streamSub = t.forEach(0,local::onNext,local::onError,()->{
                 complete.set(true);
                 local.onComplete();
@@ -222,7 +222,7 @@ public interface Spouts {
             public void subscribe(Subscriber<? super T> s) {
 
                 subscriber.complete((Subscriber<T>)s);
-                s.onSubscribe(sub.get());
+                s.onSubscribe(sub.getFuture().join());
 
 
             }

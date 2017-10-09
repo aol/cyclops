@@ -165,7 +165,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     result.complete(null);
                 }
             });
-            T value = result.get();
+
             return result.toMaybe();
         }
         return Maybe.fromPublisher(this);
@@ -185,7 +185,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     result.complete(null);
                 }
             });
-            T value = result.get();
+
             return Either.fromFuture(result);
         }
         return Either.fromPublisher(this);
@@ -208,8 +208,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     result.complete(null);
                 }
             });
-            T value = result.get();
-            return Optional.ofNullable(value);
+            return result.toOptional();
+
         }
 
 
@@ -234,8 +234,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         });
         sub[0].request(1l);
 
-        T value = result.get();
-        return Optional.ofNullable(value);
+        return result.toOptional();
     }
 
     public final static <T> Optional<T> findFirstCallAll(ReactiveStreamX<T> stream) {
@@ -254,8 +253,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     result.complete(null);
                 }
             });
-            T value = result.get();
-            return Optional.ofNullable(value);
+            return result.toOptional();
+
         }
 
         Subscription sub[] = {null};
@@ -279,8 +278,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         });
         sub[0].request(Long.MAX_VALUE);
 
-        T value = result.get();
-        return Optional.ofNullable(value);
+        return result.toOptional();
+
     }
 
 
@@ -1311,7 +1310,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         Future<U> future = Future.future();
         Object[] current = {identity};
         forEach(e -> current[0] = (U) accumulator.apply((U) current[0], e), this.defaultErrorHandler, () -> future.complete((U) current[0]));
-        return future.get();
+        return future.getFuture().join();
     }
 
     @Override
@@ -1333,7 +1332,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         Future<R> future = Future.future();
         R container = supplier.get();
         forEach(e -> accumulator.accept(container, e), this.defaultErrorHandler, () -> future.complete(container));
-        return future.get();
+        //@TODO - switch to visit and use the error handler?
+        return future.getFuture().join();
     }
 
     @Override
@@ -1374,7 +1374,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             }).request(1l);
         }
 
-        return result.get();
+        return result.getFuture().join();
 
     }
 
@@ -1396,7 +1396,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             });
 
 
-            return result.get();
+            return result.getFuture().join();
         }
 
         Subscription sub[] = {null};
@@ -1417,7 +1417,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         });
         sub[0].request(1l);
 
-        return result.get();
+        return result.getFuture().join();
     }
 
     @Override

@@ -42,7 +42,7 @@ public class ClojureOrJava8 {
     @Test
     public void comonad(){
         AnyM.fromOptional(Optional.of(1))
-            .coflatMap(v->v.isPresent()?v.get() : 10);
+            .coflatMap(v->v.isPresent()?v.toOptional().get() : 10);
         
     }
 

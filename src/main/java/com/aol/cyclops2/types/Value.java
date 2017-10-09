@@ -1,30 +1,27 @@
 package com.aol.cyclops2.types;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collector;
 
-import com.aol.cyclops2.types.foldable.Convertable;
-import com.aol.cyclops2.types.foldable.Folds;
+import com.aol.cyclops2.types.foldable.Visitable;
+import cyclops.control.*;
 import cyclops.control.lazy.Either;
+import cyclops.function.Function0;
+import cyclops.function.Monoid;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.control.Eval;
-import cyclops.control.Ior;
-import cyclops.control.Maybe;
 import cyclops.stream.ReactiveSeq;
-import cyclops.control.Try;
-import cyclops.control.Xor;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
-import cyclops.function.Predicates;
-
-import lombok.AllArgsConstructor;
 
 /**
  * A data type that stores at most 1 Values
@@ -34,20 +31,28 @@ import lombok.AllArgsConstructor;
  * @param <T> Data type of element in this value
  */
 @FunctionalInterface
-public interface Value<T> extends   Folds<T>,
-                                    Convertable<T>,
-                                    Publisher<T>,
-                                    Predicate<T> {
-    @Override @Deprecated
-    default T apply() {
-        return this.orElse(null);
+public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
+
+
+    default  Function0<T> asSupplier(T alt){
+        return ()-> orElse(alt);
+    }
+    default boolean isPresent(){
+        return visit(p->true,()->false);
     }
 
-    @Deprecated
-    T get();
+     default T orElse(T alt) {
+        return visit(p->p,()->alt);
+     }
+
+     default T  orElseGet(Supplier<? extends T> s) {
+         return visit(p->p,()->s.get());
+     }
 
 
-
+    default T fold(final Monoid<T> reducer) {
+        return orElse(reducer.zero());
+    }
     /* An Iterator over the list returned from toList()
          *
          *  (non-Javadoc)
@@ -55,22 +60,22 @@ public interface Value<T> extends   Folds<T>,
          */
     @Override
     default Iterator<T> iterator() {
-        return Convertable.super.iterator();
+        boolean[] complete = {false};
+        return new Iterator<T>() {
+            @Override
+            public boolean hasNext() {
+                return !complete[0] && visit(p->true,()->false);
+            }
+
+            @Override
+            public T next() {
+                complete[0]=true;
+                return visit(p->p,()->null);
+            }
+        };
+
     }
 
-    /* (non-Javadoc)
-     * @see java.util.function.Predicate#test(java.lang.Object)
-     */
-    @Override
-    default boolean test(final T t) {
-        if (!(t instanceof Value))
-            return Predicates.eqv(Maybe.ofNullable(t))
-                             .test(this);
-        else
-            return Predicates.eqv((Value) t)
-                             .test(this);
-
-    }
 
     /**
      * @return A factory class generating Values from reactiveBuffer-streams Subscribers
@@ -103,9 +108,12 @@ public interface Value<T> extends   Folds<T>,
                     return;
                 }
                 try {
-                    T value = get();
-                    if(!cancelled.get())
-                        sub.onNext(get());
+                    Iterator<T> it = iterator();
+                    if(it.hasNext()) {
+                        T value = it.next();
+                        if (!cancelled.get())
+                            sub.onNext(value);
+                    }
 
                 } catch (final Throwable t) {
                     sub.onError(t);
@@ -131,73 +139,19 @@ public interface Value<T> extends   Folds<T>,
 
     }
 
-    /**
-     * Construct a generic Value from the provided Supplier
-     *
-     * @param supplier Value supplier
-     * @return Value wrapping a value that can be generated from the provided Supplier
-     */
-    public static <T> Value<T> of(final Supplier<T> supplier) {
-        return new ValueImpl<T>(
-                                supplier);
+
+
+
+    default <R> R transform(Function<? super Value<? super T>, ? extends R> fn){
+        return fn.apply(this);
     }
 
-    @AllArgsConstructor
-    public static class ValueImpl<T> implements Value<T> {
-        private final Supplier<T> delegate;
-
-        @Override
-        public T get() {
-            return delegate.get();
-        }
-
-        @Override
-        public Iterator<T> iterator() {
-            return stream().iterator();
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#reactiveStream()
-     */
- //   @Override
     default ReactiveSeq<T> stream() {
-        return ReactiveSeq.generate(()->Try.withCatch(() -> get(), NoSuchElementException.class))
-                          .take(1)
-                          .filter(Try::isSuccess)
-                          .map(Try::get);
+        return ReactiveSeq.fromIterable(this);
     }
 
 
 
-    /**
-     * Use the value stored in this Value to seed a Stream generated from the provided function
-     *
-     * @param fn Function to generate a Stream
-     * @return Stream generated from a seed value (the Value stored in this Value) and the provided function
-     */
-    default ReactiveSeq<T> iterate(final UnaryOperator<T> fn) {
-        return ReactiveSeq.iterate(get(), fn);
-    }
-
-    /**
-     * @return A Stream that repeats the value stored in this Value over and over
-     */
-    default ReactiveSeq<T> generate() {
-        return ReactiveSeq.generate(this);
-    }
-
-
-    /**
-     * @return Primary Xor that has the same value as this Value
-     */
-    default  Xor<?, T> toXor() {
-        if (this instanceof Xor)
-            return (Xor) this;
-        final Optional<T> o = toOptional();
-        return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(null);
-
-    }
 
     /**
      * Convert to an Xor where the secondary value will be used if no primary value is present
@@ -206,8 +160,8 @@ public interface Value<T> extends   Folds<T>,
     * @return Primary Xor with same value as this Value, or a Secondary Xor with the provided Value if this Value is zero
     */
     default <ST> Xor<ST, T> toXor(final ST secondary) {
-        final Optional<T> o = toOptional();
-        return o.isPresent() ? Xor.primary(o.get()) : Xor.secondary(secondary);
+        return visit(p->Xor.primary(p),()->Xor.secondary(secondary));
+
     }
     default  Either<Throwable, T> toEither() {
        return Either.fromPublisher(this);
@@ -216,14 +170,14 @@ public interface Value<T> extends   Folds<T>,
     /**
      * Lazily convert this Value to an Either.right instance
      */
-    default <LT> Either<LT,T> toRight(){
-        return Either.fromIterable(this);
+    default <LT> Either<LT,T> toRight(T alt){
+        return Either.fromIterable(this,alt);
     }
     /**
      * Lazily convert this Value to an Either.left instance
      */
-    default <RT> Either<T,RT> toLeft(){
-        return Either.<RT,T>fromIterable(this)
+    default <RT> Either<T,RT> toLeft(T alt){
+        return Either.<RT,T>fromIterable(this,alt)
                      .swap();
     }
     /**
@@ -253,55 +207,22 @@ public interface Value<T> extends   Folds<T>,
     }
 
 
-    /**
-     * Return an Ior that can be this object or a Ior.primary or Ior.secondary
-     * @return new Ior
-     */
-    default  Ior<?, T> toIor() {
-        if (this instanceof Ior)
-            return (Ior) this;
-        final Optional<T> o = toOptional();
-        return o.isPresent() ? Ior.primary(o.get()) : Ior.secondary(null);
-    }
 
 
-    default Eval<T> toEval() {
-        return Eval.fromPublisher(this);
-    }
-    /**
-     * Return the value, evaluated right now.
-     * @return value evaluated from this object.
-     */
-    default Eval<T> toEvalNow() {
-        return Eval.now(get());
-    }
 
-    /**
-     * Return the value, evaluated later.
-     * @return value evaluated from this object.
-     */
-    default Eval<T> toEvalLater() {
-        return Eval.later(this);
-    }
 
-    /**
-     * Return the value of this object, evaluated always.
-     * @return value evaluated from this object.
-     */
-    default Eval<T> toEvalAlways() {
-        return Eval.always(this);
+
+    default Optional<T> toOptional(){
+        return visit(Optional::of,Optional::empty);
     }
 
     default Maybe<T> toMaybe() {
         return Maybe.fromPublisher(this);
     }
 
-    /**
-     * Returns a function result or a supplier result. The first one if the function isn't null and the second one if it is.
-     * @return new Maybe with the result of a function or supplier.
-     */
-    default Maybe<T> toMaybeEager() {
-        return visit(p -> Maybe.ofNullable(p), () -> Maybe.none());
+
+    default Option<T> toOption() {
+        return visit(Option::some,Option::none);
     }
 
 
@@ -311,11 +232,66 @@ public interface Value<T> extends   Folds<T>,
      */
     default String mkString() {
 
-        if (isPresent())
-            return getClass().getSimpleName() + "[" + get() + "]";
-        return getClass().getSimpleName() + "[]";
+        return visit(p->getClass().getSimpleName() + "[" + p + "]",()->getClass().getSimpleName() + "[]");
     }
 
 
+    /**
+     * Write each element within this Folds in turn to the supplied PrintStream
+     *
+     * @param str PrintStream to tell to
+     */
+    default void print(final PrintStream str) {
+        stream().print(str);
+    }
 
+    /**
+     * Write each element within this Folds in turn to the supplied PrintWriter
+     *
+     * @param writer PrintWriter to tell to
+     */
+    default void print(final PrintWriter writer) {
+        stream().print(writer);
+    }
+
+    /**
+     *  Print each value in this Folds to the console in turn (left-to-right)
+     */
+    default void printOut() {
+        stream().printOut();
+    }
+
+    /**
+     *  Print each value in this Folds to the error console in turn (left-to-right)
+     */
+    default void printErr() {
+        stream().printErr();
+    }
+    default <R, A> R collect(final Collector<? super T, A, R> collector) {
+
+        return stream().collect(collector);
+    }
+
+    default void forEach(Consumer<? super T> c){
+        visit(p->{
+            c.accept(p);
+            return null;
+        },()->null);
+    }
+    /**
+     * Use the value stored in this Value to seed a Stream generated from the provided function
+     *
+     * @param fn Function to generate a Stream
+     * @return Stream generated from a seed value (the Value stored in this Value) and the provided function
+     */
+    default ReactiveSeq<T> iterate(final UnaryOperator<T> fn,T alt) {
+        return asSupplier(alt).iterate(fn);
+    }
+
+    /**
+     * @return A Stream that repeats the value stored in this Value over and over
+     */
+    default ReactiveSeq<T> generate(T alt) {
+        return asSupplier(alt).generate();
+    }
 }

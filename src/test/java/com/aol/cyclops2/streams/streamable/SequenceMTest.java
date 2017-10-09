@@ -100,7 +100,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void elementAt0(){
-		assertThat(Streamable.of(1).get(0).get(),equalTo(1));
+		assertThat(Streamable.of(1).get(0).toOptional().get(),equalTo(1));
 	}
 	@Test
 	public void elementAtMultple(){
@@ -121,7 +121,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void getMultple(){
-		assertThat(Streamable.of(1,2,3,4,5).get(2).get(),equalTo(3));
+		assertThat(Streamable.of(1,2,3,4,5).get(2).toOptional().get(),equalTo(3));
 	}
 	@Test
 	public void getAt1(){

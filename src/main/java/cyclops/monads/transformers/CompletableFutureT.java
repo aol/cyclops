@@ -162,10 +162,10 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
         return (AnyM) run;
     }
 
-    @Override
-    public <B> CompletableFutureT<W,B> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
 
-        final AnyM<W,CompletableFuture<? extends B>> mapped = run.map(o -> o.thenCompose(f.andThen(m->m.toCompletableFuture())));
+    public <B> CompletableFutureT<W,B> flatMap(final Function<? super T, ? extends CompletableFuture<? extends B>> f) {
+
+        final AnyM<W,CompletableFuture<? extends B>> mapped = run.map(o -> o.thenCompose(f.andThen(s->s.toCompletableFuture())));
         return of(narrow(mapped));
 
     }
@@ -338,18 +338,18 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
      */
     @Override
-    public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn) {
+    public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T alt) {
         
-        return super.iterate(fn);
+        return super.iterate(fn,alt);
     }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ValueTransformer#generate()
      */
     @Override
-    public AnyM<W, ? extends ReactiveSeq<T>> generate() {
+    public AnyM<W, ? extends ReactiveSeq<T>> generate(T alt) {
         
-        return super.generate();
+        return super.generate(alt);
     }
 
     /* (non-Javadoc)

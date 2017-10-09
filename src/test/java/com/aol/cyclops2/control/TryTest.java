@@ -40,7 +40,7 @@ public class TryTest {
 		just = Try.success(10);
 		none = Try.failure(exception);
 
-		just.toXor().secondaryMap(x-> new Exception()).toTry(Exception.class);
+		just.toXor(-5000).secondaryMap(x-> new Exception()).toTry(Exception.class);
 	}
 
 
@@ -50,47 +50,26 @@ public class TryTest {
         final String result = Try.withCatch(() -> "takeOne", RuntimeException.class)
                 .recoverFlatMap(__ -> Try.<String,RuntimeException>success("ignored")
                         .retry(i->"retry"))
-                .get();
+                .orElse("boo!");
         Try.withCatch(() -> "hello", RuntimeException.class)
            .recover(()->"world");
 	}
 	
 
-	   @Test
-	    public void testZip(){
-	        assertThat(Try.success(10).zip(Eval.now(20),(a, b)->a+b).get(),equalTo(30));
-	        assertThat(Try.success(10).zipP(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
-	        assertThat(Try.success(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
-	        assertThat(Try.success(10).zip(ReactiveSeq.of(20),(a, b)->a+b).get(),equalTo(30));
-	        assertThat(Try.success(10).zip(ReactiveSeq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-	        assertThat(Try.success(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-	        assertThat(Try.success(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
-	    }  
-	    
+
 
 
 	@Test
     public void nest(){
-       assertThat(just.nest().map(m->m.get()),equalTo(just));
+       assertThat(just.nest().map(m->m.toOptional().get()),equalTo(just));
        assertThat(none.nest().map(m->m.get()),equalTo(none));
     }
     @Test
     public void coFlatMap(){
-        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Try.success(50)));
+        assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Try.success(50)));
     }
-    @Test
-    public void combine(){
-        
-        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
-        assertThat(just.combine(add,none),equalTo(Try.success(10)));
-        assertThat(none.combine(add,just),equalTo(Try.success(0))); 
-        assertThat(none.combine(add,none),equalTo(Try.success(0))); 
-        assertThat(just.combine(add,Try.success(10)),equalTo(Try.success(20)));
-        Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-        assertThat(just.combine(firstNonNull,Try.success(null)),equalTo(just));
-         
-    }
+
 	
 	@Test
 	public void testToMaybe() {
@@ -175,24 +154,20 @@ public class TryTest {
 	
 	@Test
 	public void testIterate() {
-		assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
+		assertThat(just.asSupplier(-100).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
 	}
 
 	@Test
 	public void testGenerate() {
-		assertThat(just.generate().limit(10).sumInt(i->i),equalTo(100));
+		assertThat(just.asSupplier(-100).generate().limit(10).sumInt(i->i),equalTo(100));
 	}
 
-	@Test
-	public void testMapReduceReducerOfE() {
-		assertThat(just.mapReduce(Reducers.toCountInt()),equalTo(1));
-	}
 
 
 
 	@Test
 	public void testToXor() {
-		assertThat(just.toXor(),equalTo(Xor.primary(10)));
+		assertThat(just.toXor(-5000),equalTo(Xor.primary(10)));
 		
 	}
 	@Test
@@ -206,11 +181,12 @@ public class TryTest {
 
 	@Test
 	public void testToXorSecondary() {
-		assertThat(just.toXor().swap(),equalTo(Xor.secondary(10)));
+		assertThat(just.toXor(-5000).swap(),equalTo(Xor.secondary(10)));
 	}
 
 	@Test
 	public void testToXorSecondaryNone(){
+
 		Xor<Integer,RuntimeException> xorNone = none.toXor().swap();
 		assertThat(xorNone,equalTo(Xor.primary(exception)));
 		
@@ -253,38 +229,8 @@ public class TryTest {
         assertThat(ior,equalTo(Ior.primary(exception)));
 		
 	}
-	@Test
-	public void testToEvalNow() {
-		assertThat(just.toEvalNow(),equalTo(Eval.now(10)));
-	}
-	@Test(expected=RuntimeException.class)
-	public void testToEvalNowNone() {
-		none.toEvalNow();
-		fail("exception expected");
-		
-	}
 
-	@Test
-	public void testToEvalLater() {
-		assertThat(just.toEvalLater(),equalTo(Eval.later(()->10)));
-	}
-	@Test(expected=RuntimeException.class)
-	public void testToEvalLaterNone() {
-		none.toEvalLater().get();
-		fail("exception expected");
-		
-	}
 
-	@Test
-	public void testToEvalAlways() {
-		assertThat(just.toEvalAlways(),equalTo(Eval.always(()->10)));
-	}
-	@Test(expected=RuntimeException.class)
-	public void testToEvalAlwaysNone() {
-		none.toEvalAlways().get();
-		fail("exception expected");
-		
-	}
 
 
 
@@ -356,54 +302,14 @@ public class TryTest {
 		return a+b+c+d+e;
 	}
 
-	@Test
-	public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-		assertThat(just.mapReduce(s->s.toString(), Monoid.of("",Semigroups.stringJoin(","))),equalTo(",10"));
-	}
-
-	@Test
-	public void testReduceMonoidOfT() {
-		assertThat(just.reduce(Monoid.of(1,Semigroups.intMult)),equalTo(10));
-	}
-
-	@Test
-	public void testReduceBinaryOperatorOfT() {
-		assertThat(just.reduce((a,b)->a+b),equalTo(Optional.of(10)));
-	}
-
-	@Test
-	public void testReduceTBinaryOperatorOfT() {
-		assertThat(just.reduce(10,(a,b)->a+b),equalTo(20));
-	}
-
-	@Test
-	public void testReduceUBiFunctionOfUQsuperTUBinaryOperatorOfU() {
-		assertThat(just.reduce(11,(a,b)->a+b,(a,b)->a*b),equalTo(21));
-	}
-
-	@Test
-	public void testReduceStreamOfQextendsMonoidOfT() {
-		ListX<Integer> countAndTotal = just.reduce(Stream.of(Reducers.toCountInt(),Reducers.toTotalInt()));
-		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
-	}
-
-	@Test
-	public void testReduceIterableOfReducerOfT() {
-		ListX<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(),Reducers.toTotalInt()));
-		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
-	}
 
 	
 
 	@Test
 	public void testFoldRightMonoidOfT() {
-		assertThat(just.foldRight(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+		assertThat(just.fold(Monoid.of(1,Semigroups.intMult)),equalTo(10));
 	}
 
-	@Test
-	public void testFoldRightTBinaryOperatorOfT() {
-		assertThat(just.foldRight(10,(a,b)->a+b),equalTo(20));
-	}
 
 
 	
@@ -430,8 +336,8 @@ public class TryTest {
 
 	@Test
 	public void testToStream() {
-		assertThat(none.toStream().collect(Collectors.toList()).size(),equalTo(0));
-		assertThat(just.toStream().collect(Collectors.toList()).size(),equalTo(1));
+		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
+		assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
 		
 	}
 
@@ -442,46 +348,10 @@ public class TryTest {
 		assertThat(just.orElse(20),equalTo(10));
 	}
 
-	@Test(expected=RuntimeException.class)
-	public void testOrElseThrow() {
-		none.orElseThrow(()->new RuntimeException());
-	}
-	@Test
-	public void testOrElseThrowSome() {
-		
-		assertThat(just.orElseThrow(()->new RuntimeException()),equalTo(10));
-	}
-
-
-
-	
-	@Test
-	public void testToFuture() {
-		Future<Integer> cf = just.toFuture();
-		assertThat(cf.get(),equalTo(10));
-	}
-
-	@Test
-	public void testToCompletableFuture() {
-		CompletableFuture<Integer> cf = just.toCompletableFuture();
-		assertThat(cf.join(),equalTo(10));
-	}
 
 
 	Executor exec = Executors.newFixedThreadPool(1);
 
-	@Test
-	public void testToCompletableFutureAsyncExecutor() {
-		CompletableFuture<Integer> cf = just.toCompletableFutureAsync(exec);
-		assertThat(cf.join(),equalTo(10));
-	}
-
-	
-
-
-	
-
-	
 
 	@Test
 	public void testIterator1() {

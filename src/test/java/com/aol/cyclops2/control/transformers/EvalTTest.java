@@ -59,29 +59,6 @@ public class EvalTTest implements Printable {
 	
 
 
-	@Test
-	public void testFiltering(){
-	    assertThat(ReactiveSeq.of(Eval.now(1), Try.success(1)).filter(Xor.primary(1))
-	                .toListX(),equalTo(ListX.of(Eval.now(1),Try.success(1))));
-	}
-	@Test
-    public void testFilteringNoValue(){
-        assertThat(ReactiveSeq.of(1,1).filter(Xor.primary(1))
-                    .toListX(),equalTo(ListX.of(1,1)));
-    }
-    /**
-	@Test
-	public void testToEval() {
-		assertThat(just.toEval(),equalTo(Eval.just(10)));
-		assertThat(none.toEval().isPresent(),equalTo(false));
-	}
-	@Test
-    public void testToOptional2() {
-        assertThat(just.toOptional(),equalTo(Optional.of(10)));
-       
-    }
-	**/
-
 	private int add1(int i){
 		return i+1;
 	}
@@ -161,12 +138,12 @@ public class EvalTTest implements Printable {
 
 	@Test
 	public void testIterate() {
-		assertThat(just.iterate(i->i+1).to(Witness::optional).get().limit(10).sumInt(i->(int)i),equalTo(145));
+		assertThat(just.iterate(i->i+1,-1000).to(Witness::optional).get().limit(10).sumInt(i->(int)i),equalTo(145));
 	}
 
 	@Test
 	public void testGenerate() {
-		assertThat(just.generate().to(Witness::optional).get().limit(10).sumInt(i->i),equalTo(100));
+		assertThat(just.generate(-100).to(Witness::optional).get().limit(10).sumInt(i->i),equalTo(100));
 	}
 
 	@Test

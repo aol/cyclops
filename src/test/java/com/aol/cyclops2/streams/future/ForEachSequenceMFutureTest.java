@@ -31,7 +31,7 @@ public class ForEachSequenceMFutureTest {
 	public void forEachX(){
 		Subscription s = ReactiveSeq.of(1,2,3)
                                     .foldFuture(exec,t->t.forEach(2,System.out::println))
-                                    .get();
+                                    .orElse(null);
 
 		
 		System.out.println("takeOne batch");
@@ -42,7 +42,7 @@ public class ForEachSequenceMFutureTest {
 	public void forEachXTest(){
 		List<Integer> list = new ArrayList<>();
 		Subscription s = ReactiveSeq.of(1,2,3)
-                                    .foldFuture(exec,t->t.forEach(2, i->list.add(i))).get();
+                                    .foldFuture(exec,t->t.forEach(2, i->list.add(i))).toOptional().get();
 
 		while(list.size()!=2){
 

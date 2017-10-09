@@ -146,7 +146,7 @@ public class AsyncExtensionOperatorsTest {
 
 	@Test
     public void duplicateFindOne(){
-        Tuple2<Integer, Long> v2 = of(1).duplicate()._1().zipWithIndex().findOne().get();
+        Tuple2<Integer, Long> v2 = of(1).duplicate()._1().zipWithIndex().findOne().toOptional().get();
         assertThat(v2,equalTo(Tuple.tuple(1,0l)));
     }
 	@Test
@@ -178,7 +178,7 @@ public class AsyncExtensionOperatorsTest {
 	}
 	@Test
 	public void getAtMultple(){
-		assertThat(of(1,2,3,4,5).get(2).get(),equalTo(3));
+		assertThat(of(1,2,3,4,5).get(2).toOptional().get(),equalTo(3));
 	}
 	@Test
 	public void getAt1(){
@@ -202,7 +202,7 @@ public class AsyncExtensionOperatorsTest {
 	}
 	@Test
 	public void singleOptionalTest(){
-		assertThat(of(1).single().get(),equalTo(1));
+		assertThat(of(1).single().toOptional().get(),equalTo(1));
 	}
 	@Test
 	public void singleOptionalEmpty(){

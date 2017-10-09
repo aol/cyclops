@@ -1,6 +1,7 @@
 package com.aol.cyclops2.types.anyM;
 
 import com.aol.cyclops2.types.Filters;
+import cyclops.control.Option;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -18,6 +19,8 @@ import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +41,31 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
                                                                 Filters<T>,
                                                                 MonadicValue<T> {
 
+
+    @Override
+    default void print(final PrintStream str) {
+        MonadicValue.super.print(str);
+    }
+
+    @Override
+    default void print(final PrintWriter writer) {
+        MonadicValue.super.print(writer);
+    }
+
+    @Override
+    default void printOut() {
+        MonadicValue.super.printOut();
+    }
+
+    @Override
+    default void printErr() {
+        MonadicValue.super.printErr();
+    }
+
+    @Override
+    default <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent){
+        return get().visit(present,absent);
+    }
 
     @Override
     default <R, A> R collect(Collector<? super T, A, R> collector) {
@@ -294,8 +322,8 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
         }
         return flatMapA(fn.andThen(a->this.fromIterable(a)));
     }
-    @Override
-    default T get() {
+
+    default Option<T> get() {
         return adapter().visit(e->{ throw new IllegalAccessError("misconfigured adapter : value adapter required");}
                              , v->v.get(this));
     }

@@ -44,7 +44,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T>, Deconstruct
                 return true;
             }, __ -> false));
         } while (cont);
-        return next[0].map(Xor::get);
+        return next[0].map(x->x.visit(l->null,r->r));
     }
     public static <T> Identity<T> of(T value){
          return new Identity<>(value);

@@ -70,7 +70,7 @@ public class FutureTest {
     public void testVisitAsync(){
        
       int r =  Future.ofResult(10)
-                      .visitAsync(i->i*2, e->-1)
+                      .visitAsync(i->i*2, e->-1).toOptional()
                       .get();
         assertThat(20,equalTo(r));
     }
@@ -78,7 +78,7 @@ public class FutureTest {
     public void testVisitFailAsync(){
         
       int r =  Future.<Integer>ofError(new RuntimeException())
-                      .visitAsync(i->i*2, e->-1)
+                      .visitAsync(i->i*2, e->-1).toOptional()
                       .get();
         assertThat(-1,equalTo(r));
     }
@@ -102,7 +102,7 @@ public class FutureTest {
         Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() > 1, Future.of(()->1), Future.of(()->1), Future.of(()->1));
                
 
-        assertThat(strings.get().size(), is(greaterThan(1)));
+        assertThat(strings.toCompletableFuture().join().size(), is(greaterThan(1)));
     }
     @Test
     public void testBreakoutAll(){
@@ -110,7 +110,7 @@ public class FutureTest {
         Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() > 2, Future.of(()->1), Future.of(()->1), Future.of(()->1));
                
 
-        assertThat(strings.get().size(), is(equalTo(3)));
+        assertThat(strings.toCompletableFuture().join().size(), is(equalTo(3)));
     }
     @Test
     public void testFirstSuccess(){
@@ -127,7 +127,7 @@ public class FutureTest {
         Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.of(()->1), Future.future(), Future.future());
                
 
-        assertThat(strings.get().size(), is(equalTo(1)));
+        assertThat(strings.toCompletableFuture().join().size(), is(equalTo(1)));
     }
 
     @Test
@@ -162,7 +162,7 @@ public class FutureTest {
         ReactiveSeq<Integer> stream = ReactiveSeq.of(1, 2, 3);
 
         Future<Integer> maybe = Future.fromPublisher(stream);
-        assertThat(maybe.get(), equalTo(1));
+        assertThat(maybe.toOptional().get(), equalTo(1));
 
     }
 
@@ -172,7 +172,7 @@ public class FutureTest {
         ReactiveSeq<Integer> stream = ReactiveSeq.of(1, 2, 3);
 
         Future<Integer> maybe = Future.fromIterable(stream, ex);
-        assertThat(maybe.get(), equalTo(1));
+        assertThat(maybe.toOptional().get(), equalTo(1));
 
     }
 
@@ -180,7 +180,7 @@ public class FutureTest {
     public void scheduleDelay(){
         
         long start = System.currentTimeMillis();
-        String res = Future.schedule(100, Executors.newScheduledThreadPool(1), ()->"hello")
+        String res = Future.schedule(100, Executors.newScheduledThreadPool(1), ()->"hello").toOptional()
                             .get();
         
         assertThat(100l,lessThan(System.currentTimeMillis()-start));
@@ -191,10 +191,10 @@ public class FutureTest {
     public void scheduleCron(){
         
         long start = System.currentTimeMillis();
-        Future.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello")
+        Future.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello").toOptional()
                             .get();
         
-        String res = Future.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello")
+        String res = Future.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello").toOptional()
                 .get();
         assertThat(1000l,lessThan(System.currentTimeMillis()-start));
         assertThat(res,equalTo("hello"));
@@ -204,13 +204,13 @@ public class FutureTest {
 
     @Test
     public void nest(){
-       assertThat(just.nest().map(m->m.get()).get(),equalTo(just.get()));
-       assertThat(none.nest().map(m->m.get()).isPresent(),equalTo(false));
+       assertThat(just.nest().map(m->m.toOptional().get()).get(),equalTo(just.get()));
+       assertThat(none.nest().map(m->m.toOptional().get()).isPresent(),equalTo(false));
     }
     @Test
     public void coFlatMap(){
-        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50).get(),equalTo(just.get()));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50).get(),equalTo(50));
+        assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50).get(),equalTo(just.get()));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50).get(),equalTo(50));
     }
     
     @Test
@@ -359,23 +359,19 @@ public class FutureTest {
     
     @Test
     public void testIterate() {
-        assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
+        assertThat(just.asSupplier(-100).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
     }
 
     @Test
     public void testGenerate() {
-        assertThat(just.generate().limit(10).sumInt(i->i),equalTo(100));
+        assertThat(just.asSupplier(-100).generate().limit(10).sumInt(i->i),equalTo(100));
     }
 
-    @Test
-    public void testMapReduceReducerOfE() {
-        assertThat(just.mapReduce(Reducers.toCountInt()),equalTo(1));
-    }
 
 
     @Test
     public void testToXor() {
-        assertThat(just.toXor(),equalTo(Xor.primary(10)));
+        assertThat(just.toXor(-5000),equalTo(Xor.primary(10)));
         
     }
     @Test
@@ -389,7 +385,7 @@ public class FutureTest {
 
     @Test
     public void testToXorSecondary() {
-        assertThat(just.toXor().swap(),equalTo(Xor.secondary(10)));
+        assertThat(just.toXor(-5000).swap(),equalTo(Xor.secondary(10)));
     }
 
     @Test
@@ -436,38 +432,7 @@ public class FutureTest {
         assertThat(ior,equalTo(Ior.primary(exception)));
         
     }
-    @Test
-    public void testToEvalNow() {
-        assertThat(just.toEvalNow(),equalTo(Eval.now(10)));
-    }
-    @Test(expected=NoSuchElementException.class)
-    public void testToEvalNowNone() {
-        none.toEvalNow();
-        fail("exception expected");
-        
-    }
 
-    @Test
-    public void testToEvalLater() {
-        assertThat(just.toEvalLater(),equalTo(Eval.later(()->10)));
-    }
-    @Test(expected=NoSuchElementException.class)
-    public void testToEvalLaterNone() {
-        none.toEvalLater().get();
-        fail("exception expected");
-        
-    }
-
-    @Test
-    public void testToEvalAlways() {
-        assertThat(just.toEvalAlways(),equalTo(Eval.always(()->10)));
-    }
-    @Test(expected=NoSuchElementException.class)
-    public void testToEvalAlwaysNone() {
-        none.toEvalAlways().get();
-        fail("exception expected");
-        
-    }
 
 
     @Test
@@ -541,53 +506,10 @@ public class FutureTest {
 
 
 
-    @Test
-    public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-        assertThat(just.mapReduce(s->s.toString(), Monoid.of("",Semigroups.stringJoin(","))),equalTo(",10"));
-    }
-
-    @Test
-    public void testReduceMonoidOfT() {
-        assertThat(just.reduce(Monoid.of(1,Semigroups.intMult)),equalTo(10));
-    }
-
-    @Test
-    public void testReduceBinaryOperatorOfT() {
-        assertThat(just.reduce((a,b)->a+b),equalTo(Optional.of(10)));
-    }
-
-    @Test
-    public void testReduceTBinaryOperatorOfT() {
-        assertThat(just.reduce(10,(a,b)->a+b),equalTo(20));
-    }
-
-    @Test
-    public void testReduceUBiFunctionOfUQsuperTUBinaryOperatorOfU() {
-        assertThat(just.reduce(11,(a,b)->a+b,(a,b)->a*b),equalTo(21));
-    }
-
-    @Test
-    public void testReduceStreamOfQextendsMonoidOfT() {
-        ListX<Integer> countAndTotal = just.reduce(Stream.of(Reducers.toCountInt(),Reducers.toTotalInt()));
-        assertThat(countAndTotal,equalTo(ListX.of(1,10)));
-    }
-
-    @Test
-    public void testReduceIterableOfReducerOfT() {
-        ListX<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(),Reducers.toTotalInt()));
-        assertThat(countAndTotal,equalTo(ListX.of(1,10)));
-    }
-
-    
 
     @Test
     public void testFoldRightMonoidOfT() {
-        assertThat(just.foldRight(Monoid.of(1, Semigroups.intMult)),equalTo(10));
-    }
-
-    @Test
-    public void testFoldRightTBinaryOperatorOfT() {
-        assertThat(just.foldRight(10,(a,b)->a+b),equalTo(20));
+        assertThat(just.fold(Monoid.of(1, Semigroups.intMult)),equalTo(10));
     }
 
     
@@ -613,8 +535,8 @@ public class FutureTest {
 
     @Test
     public void testToStream() {
-        assertThat(none.toStream().collect(Collectors.toList()).size(),equalTo(0));
-        assertThat(just.toStream().collect(Collectors.toList()).size(),equalTo(1));
+        assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
+        assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
         
     }
 
@@ -624,23 +546,7 @@ public class FutureTest {
         assertThat(just.orElse(20),equalTo(10));
     }
 
-    @Test(expected=RuntimeException.class)
-    public void testOrElseThrow() {
-        none.orElseThrow(()->new RuntimeException());
-    }
-    @Test
-    public void testOrElseThrowSome() {
-        
-        assertThat(just.orElseThrow(()->new RuntimeException()),equalTo(10));
-    }
 
-
-    
-    @Test
-    public void testToFuture() {
-        Future<Integer> cf = just.toFuture();
-        assertThat(cf.get(),equalTo(10));
-    }
 
     @Test
     public void testToCompletableFuture() {
@@ -651,11 +557,7 @@ public class FutureTest {
 
     Executor exec = Executors.newFixedThreadPool(1);
 
-    @Test
-    public void testToCompletableFutureAsyncExecutor() {
-        CompletableFuture<Integer> cf = just.toCompletableFutureAsync(exec);
-        assertThat(cf.join(),equalTo(10));
-    }
+
 
     
 

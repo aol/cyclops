@@ -233,11 +233,11 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         public Coproduct<W1,W2,T> plus(Coproduct<W1,W2,T> a){
 
             if(xor.isSecondary() && a.xor.isSecondary()){
-                    Higher<W1, T> plused = plus1.plus(xor.secondaryGet(), a.xor.secondaryGet());
+                    Higher<W1, T> plused = plus1.plus(xor.secondaryOrElse(null), a.xor.secondaryOrElse(null));
                     return Coproduct.left(plused,def1,def2);
             }
             if(xor.isPrimary() && a.xor.isPrimary()){
-                Higher<W2, T> plused = plus2.plus(xor.get(), a.getXor().get());
+                Higher<W2, T> plused = plus2.plus(xor.orElse(null), a.getXor().orElse(null));
                 return Coproduct.right(plused,def1,def2);
             }
             return Coproduct.this;
@@ -246,11 +246,11 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         public Coproduct<W1,W2,T> sum(ListX<Coproduct<W1,W2,T>> l){
             ListX<Coproduct<W1,W2,T>> list = l.plus(Coproduct.this);
             if(xor.isSecondary()){
-                Higher<W1, T> summed = plus1.sum(list.map(c -> c.xor.secondaryGet()));
+                Higher<W1, T> summed = plus1.sum(list.map(c -> c.xor.secondaryOrElse(null)));
                 return Coproduct.left(summed,def1,def2);
             }
             if(xor.isPrimary()){
-                Higher<W2, T> summed = plus2.sum(list.map(c -> c.xor.get()));
+                Higher<W2, T> summed = plus2.sum(list.map(c -> c.xor.orElse(null)));
                 return Coproduct.right(summed,def1,def2);
             }
             return Coproduct.this;
@@ -463,7 +463,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
 
                 @Override
                 public <R, T> Higher<Higher<Higher<coproduct, W1>, W2>, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
-                    return cop.unfolds().get().unfold(b,fn);
+                    return cop.unfolds().orElse(null).unfold(b,fn);
                 }
             };
         }

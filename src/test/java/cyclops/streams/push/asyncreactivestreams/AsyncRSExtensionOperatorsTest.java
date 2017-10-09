@@ -148,7 +148,7 @@ public class AsyncRSExtensionOperatorsTest {
     }
     @Test
     public void getAtMultple(){
-        assertThat(of(1,2,3,4,5).get(2).get(),equalTo(3));
+        assertThat(of(1,2,3,4,5).get(2).toOptional().get(),equalTo(3));
     }
     @Test
     public void getAt1(){
@@ -172,7 +172,7 @@ public class AsyncRSExtensionOperatorsTest {
     }
     @Test
     public void singleOptionalTest(){
-        assertThat(of(1).single().get(),equalTo(1));
+        assertThat(of(1).single().toOptional().get(),equalTo(1));
     }
     @Test
     public void singleOptionalEmpty(){

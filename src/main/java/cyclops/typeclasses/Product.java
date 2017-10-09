@@ -224,15 +224,15 @@ public class Product<W1,W2,T> implements  Filters<T>,
 
     public Maybe<Unfolds> unfolds(){
         if(def1.unfoldable().isPresent() && def2.unfoldable().isPresent())
-            return Maybe.just(new Unfolds(def1.unfoldable().get(),def2.unfoldable().get()));
+            return Maybe.just(new Unfolds(def1.unfoldable().orElse(null),def2.unfoldable().orElse(null)));
         return Maybe.none();
     }
     public Plus plusUnsafe(){
-        return new Plus(def1.monadPlus().get(),def2.monadPlus().get());
+        return new Plus(def1.monadPlus().orElse(null),def2.monadPlus().orElse(null));
     }
     public Maybe<Plus> plus(){
         if(def1.monadPlus().isPresent() && def2.monadPlus().isPresent())
-            return Maybe.just(new Plus(def1.monadPlus().get(),def2.monadPlus().get()));
+            return Maybe.just(new Plus(def1.monadPlus().orElse(null),def2.monadPlus().orElse(null)));
         return Maybe.none();
     }
     @AllArgsConstructor
@@ -522,8 +522,8 @@ public class Product<W1,W2,T> implements  Filters<T>,
                     @Override
                     public Higher<Higher<Higher<product, W1>, W2>, ?> zero() {
 
-                        Active ac1 = Active.of( def1.monadZero().get().zero(), def1);
-                        Active ac2 = Active.of(def2.monadZero().get().zero(), def2);
+                        Active ac1 = Active.of( def1.monadZero().orElse(null).zero(), def1);
+                        Active ac2 = Active.of(def2.monadZero().orElse(null).zero(), def2);
                         return Product.of(ac1, ac2);
 
                     }
@@ -567,7 +567,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
 
                         });
                     } while (cont);
-                    return next[0].map(Xor::get);
+                    return next[0].map(x->x.orElse(null));
                 }
 
             };
@@ -602,7 +602,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
 
                         @Override
                         public Monoid<Higher<Higher<Higher<product, W1>, W2>, ?>> monoid() {
-                            return Monoid.of(monadZero().get().zero(), (a, b) -> {
+                            return Monoid.of(monadZero().orElse(null).zero(), (a, b) -> {
                                 Product<W1, W2, ?> p1 = narrowK(a);
                                 Product<W1, W2, ?> p2 = narrowK(b);
                                 return p1.zip((Product) p2);
@@ -717,8 +717,8 @@ public class Product<W1,W2,T> implements  Filters<T>,
 
                 @Override
                 public <R, T> Higher<Higher<Higher<product, W1>, W2>, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
-                    Higher<W1, R> a1 = def1.unfoldable().get().unfold(b, fn);
-                    Higher<W2, R> a2 = def2.unfoldable().get().unfold(b, fn);
+                    Higher<W1, R> a1 = def1.unfoldable().orElse(null).unfold(b, fn);
+                    Higher<W2, R> a2 = def2.unfoldable().orElse(null).unfold(b, fn);
                     return Product.of(Tuple.tuple(a1,a2),def1,def2);
 
                 }

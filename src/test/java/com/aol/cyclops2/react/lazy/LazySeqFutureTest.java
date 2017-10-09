@@ -25,7 +25,7 @@ public class LazySeqFutureTest extends BaseSeqFutureTest{
 	    public void testZipDifferingLength() {
 	        List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d"))
 	        		.foldFuture(s->s
-	        		.toList())
+	        		.toList()).toOptional()
 	        		.get();
 
 	        assertEquals(2, list.size());

@@ -78,7 +78,7 @@ public class Range<T> {
             if(range.contains(end)){
                 return tuple(range(start,range.end,enm,comp), Maybe.none());
             }
-            if(end.equals(enm.succ(range.end).get())){
+            if(end.equals(enm.succ(range.end).orElse(null))){
                 return tuple(range(start,end,enm,comp), Maybe.none());
             }
             return tuple(this, Maybe.just(range));
@@ -86,7 +86,7 @@ public class Range<T> {
         }else{
             if(this.contains(range.end)){
                 return tuple(range(range.start,end,enm,comp), Maybe.none());
-            }if(range.end.equals(enm.succ(end).get())){
+            }if(range.end.equals(enm.succ(end).orElse(null))){
                 return tuple(range(start,range.end,enm,comp), Maybe.none());
             }
             else{
@@ -135,7 +135,7 @@ public class Range<T> {
     }
 
     public ReactiveSeq<T> stream(){
-        return ReactiveSeq.iterate(start, e->!end.equals(e), e->enm.succ(e).get());
+        return ReactiveSeq.iterate(start, e->!end.equals(e), e->enm.succ(e).orElse(null));
     }
 
     public LazySeq<T> lazySeq(){
@@ -143,9 +143,9 @@ public class Range<T> {
         if(order==0){
             return LazySeq.of(start);
         }if(order<0){
-            return LazySeq.cons(start,()->range(enm.succ(start).get(),end,enm,comp).lazySeq());
+            return LazySeq.cons(start,()->range(enm.succ(start).orElse(null),end,enm,comp).lazySeq());
         }
-        return LazySeq.cons(start,()->range(enm.pred(start).get(),end,enm,comp).lazySeq());
+        return LazySeq.cons(start,()->range(enm.pred(start).orElse(null),end,enm,comp).lazySeq());
     }
 
 

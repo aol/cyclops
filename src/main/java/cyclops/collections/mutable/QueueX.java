@@ -3,6 +3,7 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Xor;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
@@ -80,7 +81,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            QueueX<T> target = future.get();
+            QueueX<T> target =  future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }
@@ -1570,7 +1571,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                 break;
 
         }
-        return Xor.sequencePrimary(next).get().to().queueX(Evaluation.LAZY);
+        return Xor.sequencePrimary(next).orElse(ListX.empty()).to().queueX(Evaluation.LAZY);
     }
 
 }

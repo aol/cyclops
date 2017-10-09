@@ -2,10 +2,7 @@ package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.matching.Sealed2;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.Present;
-import com.aol.cyclops2.types.Value;
-import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.recoverable.Recoverable;
 import cyclops.async.Future;
@@ -35,6 +32,7 @@ import java.util.stream.Stream;
  Less powerful, but may perform better than Maybe (simpler Object structure)
  */
 public interface Option<T> extends To<Option<T>>,
+                                   OrElseValue<T,Option<T>>,
                                    MonadicValue<T>,
                                    Recoverable<T>,
                                    Sealed2<T,Option.None<T>>,
@@ -69,7 +67,7 @@ public interface Option<T> extends To<Option<T>>,
         return (Option<R>) MonadicValue.super.flatMapI(mapper);
     }
 
-    default Option<T> recoverWith(Option<T> opt){
+    default Option<T> orElseUse(Option<T> opt){
         if(isPresent())
             return this;
         return opt;
@@ -765,23 +763,34 @@ public interface Option<T> extends To<Option<T>>,
         return (Option<T>) MonadicValue.super.peek(c);
     }
 
+    @Override
+    default <T1> Option<T1> emptyUnit(){
+        return Option.none();
+    }
 
     /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.lambda.monads.Functor#trampoline(java.util.function.
-     * Function)
-     */
+         * (non-Javadoc)
+         *
+         * @see com.aol.cyclops2.lambda.monads.Functor#trampoline(java.util.function.
+         * Function)
+         */
     @Override
     default <R> Option<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
         return (Option<R>) MonadicValue.super.trampoline(mapper);
     }
+
+    public static <T> Option<T> fromNullable(T t) {
+        if(t==null)
+            return none();
+        return some(t);
+    }
+
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class Some<T> implements Option<T>, Present {
+    public static final class Some<T> implements Option<T>, Present<T> {
         private final T value;
 
-        @Override
+
         public T get() {
             return value;
         }
@@ -848,11 +857,11 @@ public interface Option<T> extends To<Option<T>>,
                 return Objects.equals(value,s.value);
             }
             if (obj instanceof Present)
-                return Objects.equals(value, ((Maybe) obj).get());
+                return Objects.equals(value, ((Maybe) obj).orElse(null));
             else if (obj instanceof Option) {
                 Option<T> opt = (Option<T>)obj;
                 if(opt.isPresent())
-                    return Objects.equals(value,opt.get());
+                    return Objects.equals(value,opt.orElse(null));
 
             }
             return false;
@@ -861,6 +870,11 @@ public interface Option<T> extends To<Option<T>>,
         @Override
         public <R> R fold(Function<? super T, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
             return fn1.apply(value);
+        }
+
+        @Override
+        public T orElse(T alt) {
+            return value;
         }
     }
     public static class None<T> implements Option<T> {
@@ -882,10 +896,7 @@ public interface Option<T> extends To<Option<T>>,
             return NOTHING_EAGER;
         }
 
-        @Override
-        public T get() {
-            throw new NoSuchElementException("No value present");
-        }
+
 
         @Override
         public Option<T> recover(final T value) {

@@ -50,9 +50,9 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
         return stream().iterator();
     }
 
-                                                                         @Override
+    @Override
     public ReactiveSeq<T> stream() {
-        return run.stream().map(Future::get);
+        return run.stream().flatMap(Future::stream);
     }
 
 
@@ -89,7 +89,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     @Override
     public FutureT<W,T> filter(final Predicate<? super T> test) {
         return of(run.map(f->f.map(in->Tuple.tuple(in,test.test(in))))
-                     .filter( f->f.get()._2() )
+                     .filter( f->f.visit(t->t._2(),()->false) )
                      .map( f->f.map(in->in._1())));
     }
 
@@ -166,7 +166,6 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
         return (AnyM) run;
     }
 
-    @Override
     public <B> FutureT<W,B> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
 
         final AnyM<W,Future<? extends B>> mapped = run.map(o -> o.flatMap(f));
@@ -332,18 +331,18 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
      * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
      */
     @Override
-    public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn) {
+    public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T alt) {
         
-        return super.iterate(fn);
+        return super.iterate(fn,alt);
     }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ValueTransformer#generate()
      */
     @Override
-    public AnyM<W, ? extends ReactiveSeq<T>> generate() {
+    public AnyM<W, ? extends ReactiveSeq<T>> generate(T alt) {
         
-        return super.generate();
+        return super.generate(alt);
     }
 
     /* (non-Javadoc)

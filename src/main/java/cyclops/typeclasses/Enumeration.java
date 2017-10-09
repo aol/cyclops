@@ -136,7 +136,7 @@ public interface Enumeration<E> {
     default  ReactiveSeq<E> streamTo(E e,E end){
         return ReactiveSeq.range(fromEnum(e),fromEnum(end)).map(this::toEnum)
                 .takeWhile(Maybe::isPresent)
-                .filter(Maybe::isPresent).map(Maybe::get);
+                .filter(Maybe::isPresent).flatMap(Maybe::stream);
     }
 
     default  ReactiveSeq<E> streamThenTo(E e,E next,E end){
@@ -144,13 +144,13 @@ public interface Enumeration<E> {
         int step = fromEnum(next)-start;
         return ReactiveSeq.range(start,step,fromEnum(end)).map(this::toEnum)
                 .takeWhile(Maybe::isPresent)
-                .filter(Maybe::isPresent).map(Maybe::get);
+                .filter(Maybe::isPresent).flatMap(Maybe::stream);
     }
 
     default  ReactiveSeq<E> stream(E e){
         return ReactiveSeq.range(fromEnum(e),Integer.MAX_VALUE).map(this::toEnum)
                 .takeWhile(Maybe::isPresent)
-                    .filter(Maybe::isPresent).map(Maybe::get);
+                    .filter(Maybe::isPresent).flatMap(Maybe::stream);
     }
 
     default ListX<E> list(E e){

@@ -165,7 +165,7 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
                 return true;
             }, __ -> false));
         } while (cont);
-        return next[0].map2(Xor::get);
+        return next[0].map2(x->x.orElse(null));
     }
     public Active<Higher<tuple2,T1>,T2> allTypeclasses(Monoid<T1> m){
         return Active.of(this,Instances.definitions(m));

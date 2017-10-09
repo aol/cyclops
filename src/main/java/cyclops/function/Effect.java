@@ -32,7 +32,7 @@ public interface Effect extends Runnable{
         return ()->future(ex);
     }
     default Effect asyncAndBlock(Executor ex){
-        return ()->future(ex).join();
+        return ()->future(ex).getFuture().join();
     }
     default void run(){
         try {

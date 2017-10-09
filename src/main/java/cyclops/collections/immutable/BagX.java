@@ -7,6 +7,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.companion.Reducers;
 import cyclops.collections.mutable.ListX;
@@ -71,7 +72,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            BagX<T> target = future.get();
+            BagX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }

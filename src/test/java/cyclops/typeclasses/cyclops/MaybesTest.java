@@ -130,8 +130,8 @@ public class MaybesTest {
                                                           .convert(Maybe::narrowK);
        
        
-       assertThat(res.map(h->h.convert(Maybe::narrowK).get()),
-                  equalTo(Maybe.just(Maybe.just(2).get())));
+       assertThat(res.map(h->h.convert(Maybe::narrowK).toOptional().get()),
+                  equalTo(Maybe.just(Maybe.just(2).toOptional().get())));
     }
     
 }

@@ -2414,13 +2414,13 @@ public class Streams {
 
         return  ListX.range(0,copies)
                 .zipWithIndex()
-                .map(t->()-> toBufferingCopier(it.iterator(),copies).get(t._2()).get());
+                .map(t->()-> toBufferingCopier(it.iterator(),copies).get(t._2().intValue()));
     }
     public static final <A> ListX<Iterable<A>> toBufferingCopier(final Iterable<A> it, final int copies,Supplier<Deque<A>> bufferSupplier) {
 
         return  ListX.range(0,copies)
                 .zipWithIndex()
-                .map(t->() ->  toBufferingCopier(it.iterator(),copies,bufferSupplier).get(t._2()).get());
+                .map(t->() ->  toBufferingCopier(it.iterator(),copies,bufferSupplier).get(t._2().intValue()));
     }
 
     public static final <A> ListX<Iterator<A>> toBufferingCopier(final Iterator<A> iterator, final int copies) {

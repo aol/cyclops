@@ -100,7 +100,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void elementAtMultple(){
-		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5).get(2).get(),equalTo(3));
+		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5).get(2).toOptional().get(),equalTo(3));
 	}
 	@Test
 	public void elementAt1(){

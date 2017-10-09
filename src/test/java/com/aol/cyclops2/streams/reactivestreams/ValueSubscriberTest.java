@@ -28,7 +28,7 @@ public class ValueSubscriberTest {
                     .subscribe(sub);
         
         Maybe<Integer> maybe = sub.toMaybe();
-        assertThat(maybe.get(),equalTo(1));
+        assertThat(maybe.toOptional().get(),equalTo(1));
         
     }
     @Test
@@ -37,7 +37,7 @@ public class ValueSubscriberTest {
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
         Maybe<Integer> maybe = Maybe.fromPublisher(stream);
-        assertThat(maybe.get(),equalTo(1));
+        assertThat(maybe.toOptional().get(),equalTo(1));
         
     }
     @Test
@@ -46,7 +46,7 @@ public class ValueSubscriberTest {
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
         Future<Integer> maybe = Future.fromPublisher(stream);
-        assertThat(maybe.get(),equalTo(1));
+        assertThat(maybe.toOptional().get(),equalTo(1));
         
     }
     @Test
@@ -55,7 +55,7 @@ public class ValueSubscriberTest {
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
         Future<Integer> maybe = Future.fromPublisher(stream,ex);
-        assertThat(maybe.get(),equalTo(1));
+        assertThat(maybe.toOptional().get(),equalTo(1));
         
     }
  
@@ -65,7 +65,7 @@ public class ValueSubscriberTest {
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
         Eval<Integer> maybe = Eval.fromPublisher(stream);
-        assertThat(maybe.get(),equalTo(1));
+        assertThat(maybe.toOptional().get(),equalTo(1));
         
     }
     @Test
@@ -74,7 +74,7 @@ public class ValueSubscriberTest {
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
         Xor<Throwable,Integer> maybe = Xor.fromPublisher(stream);
-        assertThat(maybe.get(),equalTo(1));
+        assertThat(maybe.toOptional().get(),equalTo(1));
         
     }
     @Test
@@ -83,7 +83,7 @@ public class ValueSubscriberTest {
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
         Ior<Throwable,Integer> maybe = Ior.fromPublisher(stream);
-        assertThat(maybe.get(),equalTo(1));
+        assertThat(maybe.toOptional().get(),equalTo(1));
         
     }
     @Test
@@ -92,7 +92,7 @@ public class ValueSubscriberTest {
         ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
         
         Try<Integer,Throwable> maybe = Try.fromPublisher(stream);
-        assertThat(maybe.get(),equalTo(1));
+        assertThat(maybe.toOptional().get(),equalTo(1));
         
     }
     @Test
@@ -102,7 +102,7 @@ public class ValueSubscriberTest {
              .subscribe(sub);
         
         Maybe<Integer> maybe = sub.toMaybe();
-        assertThat(maybe.get(),equalTo(1));
+        assertThat(maybe.toOptional().get(),equalTo(1));
     }
     @Test
     public void maybeNonePublisherTest(){
@@ -120,7 +120,7 @@ public class ValueSubscriberTest {
              .subscribe(sub);
         
         Xor<Throwable,Integer> maybe = sub.toXor();
-        assertThat(maybe.get(),equalTo(1));
+        assertThat(maybe.toOptional().get(),equalTo(1));
     }
     @Test
     public void xorPublisherErrorTest(){
@@ -156,7 +156,7 @@ public class ValueSubscriberTest {
              .subscribe(sub);
         
         Ior<Throwable,Integer> maybe = sub.toIor();
-        assertThat(maybe.get(),equalTo(1));
+        assertThat(maybe.toOptional().get(),equalTo(1));
     }
     @Test
     public void iorPublisherErrorTest(){

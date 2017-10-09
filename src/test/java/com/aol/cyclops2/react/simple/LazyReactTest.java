@@ -45,7 +45,7 @@ public class LazyReactTest {
 				.<Integer> fromIterableAsync(iterable)
 				.withAsync(false);
 
-		assertThat(futures.get(0).get(), is(lessThan(99)));
+		assertThat(futures.get(0).toOptional().get(), is(lessThan(99)));
 	}
 	
 	@Test
@@ -73,7 +73,7 @@ public class LazyReactTest {
 		FutureStream<Integer> futures = new LazyReact()
 				.<Integer> fromStreamAsync(stream).withAsync(false);
 
-		assertThat(futures.get(0).get(), is(lessThan(99)));
+		assertThat(futures.get(0).toOptional().get(), is(lessThan(99)));
 	}
 	
 	@Test
@@ -102,6 +102,6 @@ public class LazyReactTest {
 				.<Integer> fromIteratorAsync(iterator)
 				.withAsync(false);
 
-		assertThat(futures.get(0).get(), is(lessThan(99)));
+		assertThat(futures.get(0).toOptional().get(), is(lessThan(99)));
 	}
 }

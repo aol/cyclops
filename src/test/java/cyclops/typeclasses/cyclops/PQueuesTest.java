@@ -132,7 +132,7 @@ public class PQueuesTest {
 
 
        assertThat(res.map(q-> PersistentQueueX.narrowK(q)
-                                       .toArray()).get(),equalTo(Maybe.just(PersistentQueueX.of(2,4,6).toArray()).get()));
+                                       .toArray()).orElse(null),equalTo(Maybe.just(PersistentQueueX.of(2,4,6).toArray()).orElse(null)));
     }
     
 }

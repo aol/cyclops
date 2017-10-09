@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.anyM.AnyMValue;
@@ -44,8 +45,8 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
     private <U> Function<Iterator<U>,MonadicValue<U>>  getUnitIterator(){
         return  it->it.hasNext() ? this.<U>getUnit().apply(it.next()) : this.<U>getEmpty().get();
     }
-    public <T> T get(AnyMValue<W,T> t){
-        return ((MonadicValue<T>)t.unwrap()).get();
+    public <T> Option<T> get(AnyMValue<W,T> t){
+        return ((MonadicValue<T>)t.unwrap()).toOption();
     }
     @Override
     public <T> Iterable<T> toIterable(AnyM<W, T> t) {

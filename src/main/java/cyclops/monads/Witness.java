@@ -32,6 +32,7 @@ public interface Witness {
    static interface MonadicValueWitness<W extends MonadicValueWitness<W>>  extends WitnessType<W>{
         
     }
+
     static interface StreamWitness<W extends StreamWitness<W>>  extends WitnessType<W>{
 
     }
@@ -296,8 +297,7 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<tryType> adapter() {
-            return new MonadicValueAdapter<tryType>(()->Try.failure(null),
-                    Try::success,Try::fromIterable,false,this);
+            return new TryAdapter();
         }
         
     }
@@ -307,8 +307,7 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<ior> adapter() {
-            return new MonadicValueAdapter<Witness.ior>(()->Ior.secondary(null),
-                    Ior::primary,Ior::fromIterable,false,this);
+            return new IorAdapter();
         }
         
     }
@@ -318,8 +317,7 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<either> adapter() {
-            return new MonadicValueAdapter<Witness.either>(()-> Either.left(null),
-                    Either::right,Either::fromIterable,false,this);
+            return new EitherAdapter();
         }
 
     }
@@ -329,8 +327,7 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<either3> adapter() {
-            return new MonadicValueAdapter<Witness.either3>(()-> Either3.left1(null),
-                    Either3::right,Either3::fromIterable,false,this);
+            return new Either3Adapter();
         }
 
     }
@@ -340,8 +337,7 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<either4> adapter() {
-            return new MonadicValueAdapter<Witness.either4>(()-> Either4.left1(null),
-                    Either4::right, Either4::fromIterable,false,this);
+            return new Either4Adapter();
         }
 
     }
@@ -351,19 +347,17 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<either5> adapter() {
-            return new MonadicValueAdapter<Witness.either5>(()-> Either5.left1(null),
-                    Either5::right, Either5::fromIterable,false,this);
+            return new Either5Adapter();
         }
 
     }
-    public static enum xor implements MonadicValueWitness<xor>{
+    public static enum xor implements WitnessType<xor>{
         INSTANCE;
 
 
         @Override
         public FunctionalAdapter<xor> adapter() {
-            return new MonadicValueAdapter<Witness.xor>(()->Xor.secondary(null),
-                    Xor::primary,Xor::fromIterable,false,this);
+            return new XorAdapter();
         }
         
     }

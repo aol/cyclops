@@ -9,6 +9,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.aol.cyclops2.types.reactive.Completable;
+import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.async.Future;
 import com.aol.cyclops2.types.anyM.AnyMValue;
@@ -38,8 +40,16 @@ public class FutureAdapter extends AbstractFunctionalAdapter<completableFuture> 
     private <U> Function<Iterator<U>,CompletableFuture<U>>  getUnitIterator(){
         return  it->it.hasNext() ? this.<U>getUnit().apply(it.next()) : this.<U>getEmpty().get();
     }
-    public <T> T get(AnyMValue<completableFuture,T> t){
-        return ((CompletableFuture<T>)t.unwrap()).join();
+    public <T> Option<T> get(AnyMValue<completableFuture,T> t){
+        CompletableFuture<T> cf = (CompletableFuture<T>)t;
+        if(cf.isCompletedExceptionally())
+            return Option.none();
+        try {
+            return Option.some(cf.join());
+        }
+        catch(Throwable x){
+            return Option.none();
+        }
     }
 
 

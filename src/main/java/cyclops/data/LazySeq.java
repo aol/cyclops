@@ -62,7 +62,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                 break;
 
         }
-        ListX<R> x = Xor.sequencePrimary(next.stream().to().listX(Evaluation.LAZY)).get();
+        ListX<R> x = Xor.sequencePrimary(next.stream().to().listX(Evaluation.LAZY)).orElse(ListX.empty());
         return LazySeq.fromIterator(x.iterator());
     }
     static <T> LazySeq<T> fill(T t){

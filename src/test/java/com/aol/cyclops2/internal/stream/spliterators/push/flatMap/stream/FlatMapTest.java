@@ -68,7 +68,7 @@ public class FlatMapTest {
         //		.flatMapP(i->Maybe.of(i)).printOut();
 
         Assert.assertThat(of(1,2,3)
-                .flatMap(i-> Maybe.of(i).toStream())
+                .flatMap(i-> Maybe.of(i).stream())
                 .toListX(), Matchers.equalTo(Arrays.asList(1,2,3)));
 
 

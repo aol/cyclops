@@ -959,7 +959,7 @@ public abstract class AbstractCollectionXTest {
 	}
 	@Test
 	public void getAtMultple(){
-		assertThat(of(1,2,3,4,5).get(2).get(),equalTo(3));
+		assertThat(of(1,2,3,4,5).get(2).toOptional().get(),equalTo(3));
 	}
 	@Test
 	public void getAt1(){
@@ -983,7 +983,7 @@ public abstract class AbstractCollectionXTest {
 	}
 	@Test
 	public void singleOptionalTest(){
-		assertThat(of(1).single().get(),equalTo(1));
+		assertThat(of(1).single().toOptional().get(),equalTo(1));
 	}
 	@Test
 	public void singleOptionalEmpty(){
@@ -1441,7 +1441,7 @@ public abstract class AbstractCollectionXTest {
 	    public void batchBySizeCollection(){
 	        
 	        
-	        assertThat(of(1,2,3,4,5,6).grouped(3,()->ListX.empty()).get(0).get().size(),is(3));
+	        assertThat(of(1,2,3,4,5,6).grouped(3,()->ListX.empty()).get(0).toOptional().get().size(),is(3));
 	        
 	       // assertThat(of(1,1,1,1,1,1).grouped(3,()->new ListXImpl<>()).get(1).get().size(),is(1));
 	    }

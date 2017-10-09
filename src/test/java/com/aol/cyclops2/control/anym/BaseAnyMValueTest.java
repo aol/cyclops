@@ -49,14 +49,14 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
     public void nest(){
-       assertThat(just.nest().map(m->m.get()),equivalent(just));
+       assertThat(just.nest().map(m->m.orElse(-2000)),equivalent(just));
       
     }
     @Test
     public void coFlatMap(){
       
-        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equivalent(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : just.get()),equivalent(just));
+        assertThat(just.coflatMap(m-> m.isPresent()? m.orElse(-4000) : 50),equivalent(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.orElse(-5000) : just.orElse(-4000)),equivalent(just));
     }
     @Test
     public void combine(){
@@ -134,7 +134,7 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
-		assertThat(just.map(i->i+5).get(),equalTo(Maybe.of(15).get()));
+		assertThat(just.map(i->i+5).get(),equalTo(Maybe.of(15).orElse(-40000)));
 		assertThat(none.map(i->i+5).toMaybe(),equalTo(Maybe.none()));
 	}
 
@@ -179,12 +179,12 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testIterate() {
-		assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
+		assertThat(just.asSupplier(1000).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
 	}
 
 	@Test
 	public void testGenerate() {
-		assertThat(just.generate().limit(10).sumInt(i->i),equalTo(100));
+		assertThat(just.asSupplier(400000).generate().limit(10).sumInt(i->i),equalTo(100));
 	}
 
 	@Test
@@ -195,27 +195,27 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testToXor() {
-		assertThat(just.toXor(),equalTo(Xor.primary(10)));
+		assertThat(just.toXor(1000000),equalTo(Xor.primary(10)));
 		
 	}
 	@Test
 	public void testToXorNone(){
-	    Xor<?,Integer> empty = none.toXor();
+	    Xor<?,Integer> empty = none.toXor(1000000);
 	    
 	    
-        assertTrue(empty.swap().map(__->10).get()==10);
+        assertTrue(empty.swap().map(__->10).orElse(-10000)==10);
 		
 	}
 
 
 	@Test
 	public void testToXorSecondary() {
-		assertThat(just.toXor().swap(),equalTo(Xor.secondary(10)));
+		assertThat(just.toXor(1000000).swap(),equalTo(Xor.secondary(10)));
 	}
 
 	@Test
 	public void testToXorSecondaryNone(){
-		Xor<Integer,?> empty = none.toXor().swap();
+		Xor<Integer,?> empty = none.toXor(100000).swap();
 		assertTrue(empty.isPrimary());
 		assertThat(empty.map(__->10),equalTo(Xor.primary(10)));
 		
@@ -232,63 +232,13 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 		assertTrue(none.toTry(Throwable.class).isFailure());
 	}
 
-	@Test
-	public void testToIor() {
-		assertThat(just.toIor(),equalTo(Ior.primary(10)));
-		
-	}
-	@Test
-	public void testToIorNone(){
-	    Xor<Integer,?> empty = none.toXor().swap();
-        assertTrue(empty.isPrimary());
-        assertThat(empty.map(__->10),equalTo(Xor.primary(10)));
-		
-	}
 
 
-	@Test
-	public void testToIorSecondary() {
-		assertThat(just.toIor().swap(),equalTo(Ior.secondary(10)));
-	}
 
-	@Test
-	public void testToIorSecondaryNone(){
-		Ior<Integer,?> ior = none.toIor().swap().map(__->10);
-		assertThat(ior.get(),equalTo(10));
-		
-	}
-	@Test
-	public void testToEvalNow() {
-		assertThat(just.toEvalNow(),equalTo(Eval.now(10)));
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testToEvalNowNone() {
-		none.toEvalNow();
-		fail("exception expected");
-		
-	}
 
-	@Test
-	public void testToEvalLater() {
-		assertThat(just.toEvalLater(),equalTo(Eval.later(()->10)));
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testToEvalLaterNone() {
-		none.toEvalLater().get();
-		fail("exception expected");
-		
-	}
 
-	@Test
-	public void testToEvalAlways() {
-		assertThat(just.toEvalAlways(),equalTo(Eval.always(()->10)));
-	}
-	@Test(expected=NoSuchElementException.class)
-	public void testToEvalAlwaysNone() {
-		none.toEvalAlways().get();
-		fail("exception expected");
-		
-	}
+
+
 
 
 	@Test
@@ -445,8 +395,8 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testToStream() {
-		assertThat(none.toStream().collect(Collectors.toList()).size(),equalTo(0));
-		assertThat(just.toStream().collect(Collectors.toList()).size(),equalTo(1));
+		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
+		assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
 		
 	}
 
@@ -457,38 +407,8 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 		assertThat(just.orElse(20),equalTo(10));
 	}
 
-	@Test(expected=RuntimeException.class)
-	public void testOrElseThrow() {
-		none.orElseThrow(()->new RuntimeException());
-	}
-	@Test
-	public void testOrElseThrowSome() {
-		
-		assertThat(just.orElseThrow(()->new RuntimeException()),equalTo(10));
-	}
 
 
-	@Test
-	public void testToFuture() {
-		Future<Integer> cf = just.toFuture();
-		assertThat(cf.get(),equalTo(10));
-	}
-
-	@Test
-	public void testToCompletableFuture() {
-		CompletableFuture<Integer> cf = just.toCompletableFuture();
-		assertThat(cf.join(),equalTo(10));
-	}
-
-	Executor exec = Executors.newFixedThreadPool(1);
-
-	@Test
-	public void testToCompletableFutureAsyncExecutor() {
-		CompletableFuture<Integer> cf = just.toCompletableFutureAsync(exec);
-		assertThat(cf.join(),equalTo(10));
-	}
-
-	
 
 
 	

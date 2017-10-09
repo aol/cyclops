@@ -4,6 +4,7 @@ package cyclops.collections.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.control.Xor;
 import cyclops.typeclasses.*;
@@ -81,7 +82,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            PersistentQueueX<T> target = future.get();
+            PersistentQueueX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }

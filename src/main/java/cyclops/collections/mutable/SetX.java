@@ -7,6 +7,7 @@ import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
 
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.control.Xor;
@@ -79,7 +80,8 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            SetX<T> target = future.get();
+            //@TODO
+            SetX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }
@@ -1578,7 +1580,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                 break;
 
         }
-        return Xor.sequencePrimary(next).get().to().setX(Evaluation.LAZY);
+        return Xor.sequencePrimary(next).orElse(ListX.empty()).to().setX(Evaluation.LAZY);
     }
 
 }

@@ -54,9 +54,9 @@ public class OptionTest implements Printable {
     
     @Test
     public void recoverWith(){
-        assertThat(none.recoverWith(()->Option.some(10)).get(),equalTo(10));
+        assertThat(none.recoverWith(()->Option.some(10)).toOptional().get(),equalTo(10));
         assertThat(none.recoverWith(()->Option.none()).isPresent(),equalTo(false));
-        assertThat(eager.recoverWith(()->Option.some(5)).get(),equalTo(10));
+        assertThat(eager.recoverWith(()->Option.some(5)).toOptional().get(),equalTo(10));
     }
     
     boolean lazy = true;
@@ -82,19 +82,6 @@ public class OptionTest implements Printable {
 
 
     @Test
-    public void testZip() {
-        assertThat(Option.some(10).zip(Eval.now(20), (a, b) -> a + b).get(), equalTo(30));
-        assertThat(Option.some(10).zipP(Eval.now(20),(a, b) -> a + b).get(), equalTo(30));
-        assertThat(Option.some(10).zipS(Stream.of(20), (a, b) -> a + b).get(), equalTo(30));
-        assertThat(Option.some(10).zip(ReactiveSeq.of(20), (a, b) -> a + b).get(), equalTo(30));
-        assertThat(Option.some(10).zip(ReactiveSeq.of(20)).get(), equalTo(Tuple.tuple(10, 20)));
-        assertThat(Option.some(10).zipS(Stream.of(20)).get(), equalTo(Tuple.tuple(10, 20)));
-        assertThat(Option.some(10).zip(Eval.now(20)).get(), equalTo(Tuple.tuple(10, 20)));
-    }
-
-
-
-    @Test
     public void fib2() {
         System.out.println(fib(10, 1l, 0l));
     }
@@ -105,19 +92,19 @@ public class OptionTest implements Printable {
 
     @Test
     public void nest() {
-        assertThat(eager.nest().map(m -> m.get()), equalTo(eager));
-        assertThat(none.nest().map(m -> m.get()), equalTo(none));
+        assertThat(eager.nest().map(m -> m.toOptional().get()), equalTo(eager));
+        assertThat(none.nest().map(m -> m.toOptional().get()), equalTo(none));
     }
 
     @Test
     public void coFlatMap() {
 
-        Option.none().coflatMap(m -> m.isPresent() ? m.get() : 10);
+        Option.none().coflatMap(m -> m.isPresent() ? m.toOptional().get() : 10);
 
         // Maybe[10]
 
-        assertThat(eager.coflatMap(m -> m.isPresent() ? m.get() : 50), equalTo(eager));
-        assertThat(none.coflatMap(m -> m.isPresent() ? m.get() : 50), equalTo(Option.some(50)));
+        assertThat(eager.coflatMap(m -> m.isPresent() ? m.toOptional().get() : 50), equalTo(eager));
+        assertThat(none.coflatMap(m -> m.isPresent() ? m.toOptional().get() : 50), equalTo(Option.some(50)));
     }
 
     @Test
@@ -142,16 +129,7 @@ public class OptionTest implements Printable {
     }
 
 
-    @Test
-    public void testFiltering() {
-        assertThat(ReactiveSeq.of(Option.some(1), Try.success(1)).filter(Xor.primary(1)).toListX(),
-                equalTo(ListX.of(Option.some(1), Try.success(1))));
-    }
 
-    @Test
-    public void testFilteringNoValue() {
-        assertThat(ReactiveSeq.of(1, 1).filter(Xor.primary(1)).toListX(), equalTo(ListX.of(1, 1)));
-    }
     @Test
     public void noneEquals(){
         assertThat(none.toMaybe(), equalTo(none));
@@ -315,42 +293,38 @@ public class OptionTest implements Printable {
 
     @Test
     public void testIterate() {
-        assertThat(eager.iterate(i -> i + 1).limit(10).sumInt(i->i), equalTo(145));
+        assertThat(eager.iterate(i -> i + 1,-1000).limit(10).sumInt(i->i), equalTo(145));
     }
 
     @Test
     public void testGenerate() {
-        assertThat(eager.generate().limit(10).sumInt(i->i), equalTo(100));
+        assertThat(eager.generate(-1000).limit(10).sumInt(i->i), equalTo(100));
     }
 
-    @Test
-    public void testMapReduceReducerOfE() {
-        assertThat(eager.mapReduce(Reducers.toCountInt()), equalTo(1));
-    }
 
 
     @Test
     public void testToXor() {
-        assertThat(eager.toXor(), equalTo(Xor.primary(10)));
+        assertThat(eager.toXor(-1000), equalTo(Xor.primary(10)));
 
     }
 
     @Test
     public void testToXorNone() {
-        Xor<?, Integer> empty = none.toXor();
+        Xor<?, Integer> empty = none.toXor(-50000);
 
-        assertTrue(empty.swap().map(__ -> 10).get() == 10);
+        assertTrue(empty.swap().map(__ -> 10).toOptional().get() == 10);
 
     }
 
     @Test
     public void testToXorSecondary() {
-        assertThat(eager.toXor().swap(), equalTo(Xor.secondary(10)));
+        assertThat(eager.toXor(-1000).swap(), equalTo(Xor.secondary(10)));
     }
 
     @Test
     public void testToXorSecondaryNone() {
-        Xor<Integer, ?> empty = none.toXor().swap();
+        Xor<Integer, ?> empty = none.toXor(-50000).swap();
         assertTrue(empty.isPrimary());
         assertThat(empty.map(__ -> 10), equalTo(Xor.primary(10)));
 
@@ -367,68 +341,16 @@ public class OptionTest implements Printable {
         assertTrue(none.toTry(Throwable.class).isFailure());
     }
 
-    @Test
-    public void testToIor() {
-        assertThat(eager.toIor(), equalTo(Ior.primary(10)));
-        assertThat(Ior.fromPublisher(eager), equalTo(Ior.primary(10)));
-
-    }
 
     @Test
     public void testToIorNone() {
-        Xor<Integer, ?> empty = none.toXor().swap();
+        Xor<Integer, ?> empty = none.toXor(-50000).swap();
         assertTrue(empty.isPrimary());
         assertThat(empty.map(__ -> 10), equalTo(Xor.primary(10)));
 
     }
 
-    @Test
-    public void testToIorSecondary() {
-        assertThat(eager.toIor().swap(), equalTo(Ior.secondary(10)));
-    }
 
-    @Test
-    public void testToIorSecondaryNone() {
-        Ior<Integer, ?> ior = none.toIor().swap().map(__ -> 10);
-        assertThat(ior.get(), equalTo(10));
-
-    }
-
-    @Test
-    public void testToEvalNow() {
-        assertThat(eager.toEvalNow(), equalTo(Eval.now(10)));
-    }
-
-    @Test(expected = NoSuchElementException.class)
-    public void testToEvalNowNone() {
-        none.toEvalNow();
-        fail("exception expected");
-
-    }
-
-    @Test
-    public void testToEvalLater() {
-        assertThat(eager.toEvalLater(), equalTo(Eval.later(() -> 10)));
-    }
-
-    @Test(expected = NoSuchElementException.class)
-    public void testToEvalLaterNone() {
-        none.toEvalLater().get();
-        fail("exception expected");
-
-    }
-
-    @Test
-    public void testToEvalAlways() {
-        assertThat(eager.toEvalAlways(), equalTo(Eval.always(() -> 10)));
-    }
-
-    @Test(expected = NoSuchElementException.class)
-    public void testToEvalAlwaysNone() {
-        none.toEvalAlways().get();
-        fail("exception expected");
-
-    }
 
 
 
@@ -441,16 +363,7 @@ public class OptionTest implements Printable {
     LazyReact react = new LazyReact();
 
 
-    @Test
-    public void testGet() {
-        assertThat(eager.get(), equalTo(10));
-    }
 
-    @Test(expected = NoSuchElementException.class)
-    public void testGetNone() {
-        none.get();
-
-    }
 
     @Test
     public void testFilter() {
@@ -507,51 +420,10 @@ public class OptionTest implements Printable {
 
 
 
-    @Test
-    public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-        assertThat(eager.mapReduce(s -> s.toString(), Monoid.of("", Semigroups.stringJoin(","))), equalTo(",10"));
-    }
-
-    @Test
-    public void testReduceMonoidOfT() {
-        assertThat(eager.reduce(Monoid.of(1, Semigroups.intMult)), equalTo(10));
-    }
-
-    @Test
-    public void testReduceBinaryOperatorOfT() {
-        assertThat(eager.reduce((a, b) -> a + b), equalTo(Optional.of(10)));
-    }
-
-    @Test
-    public void testReduceTBinaryOperatorOfT() {
-        assertThat(eager.reduce(10, (a, b) -> a + b), equalTo(20));
-    }
-
-    @Test
-    public void testReduceUBiFunctionOfUQsuperTUBinaryOperatorOfU() {
-        assertThat(eager.reduce(11, (a, b) -> a + b, (a, b) -> a * b), equalTo(21));
-    }
-
-    @Test
-    public void testReduceStreamOfQextendsMonoidOfT() {
-        ListX<Integer> countAndTotal = eager.reduce(Stream.of(Reducers.toCountInt(), Reducers.toTotalInt()));
-        assertThat(countAndTotal, equalTo(ListX.of(1, 10)));
-    }
-
-    @Test
-    public void testReduceIterableOfReducerOfT() {
-        ListX<Integer> countAndTotal = eager.reduce(Arrays.asList(Reducers.toCountInt(), Reducers.toTotalInt()));
-        assertThat(countAndTotal, equalTo(ListX.of(1, 10)));
-    }
 
     @Test
     public void testFoldRightMonoidOfT() {
-        assertThat(eager.foldRight(Monoid.of(1, Semigroups.intMult)), equalTo(10));
-    }
-
-    @Test
-    public void testFoldRightTBinaryOperatorOfT() {
-        assertThat(eager.foldRight(10, (a, b) -> a + b), equalTo(20));
+        assertThat(eager.fold(Monoid.of(1, Semigroups.intMult)), equalTo(10));
     }
 
 
@@ -579,8 +451,8 @@ public class OptionTest implements Printable {
 
     @Test
     public void testToStream() {
-        assertThat(none.toStream().collect(Collectors.toList()).size(), equalTo(0));
-        assertThat(eager.toStream().collect(Collectors.toList()).size(), equalTo(1));
+        assertThat(none.stream().collect(Collectors.toList()).size(), equalTo(0));
+        assertThat(eager.stream().collect(Collectors.toList()).size(), equalTo(1));
 
     }
 
@@ -591,39 +463,7 @@ public class OptionTest implements Printable {
         assertThat(eager.orElse(20), equalTo(10));
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testOrElseThrow() {
-        none.orElseThrow(() -> new RuntimeException());
-    }
 
-    @Test
-    public void testOrElseThrowSome() {
-
-        assertThat(eager.orElseThrow(() -> new RuntimeException()), equalTo(10));
-    }
-
-
-
-    @Test
-    public void testToFuture() {
-        Future<Integer> cf = eager.toFuture();
-        assertThat(cf.get(), equalTo(10));
-    }
-
-    @Test
-    public void testToCompletableFuture() {
-        CompletableFuture<Integer> cf = eager.toCompletableFuture();
-        assertThat(cf.join(), equalTo(10));
-    }
-
-
-    static Executor exec = Executors.newFixedThreadPool(1);
-
-    @Test
-    public void testToCompletableFutureAsyncExecutor() {
-        CompletableFuture<Integer> cf = eager.toCompletableFutureAsync(exec);
-        assertThat(cf.join(), equalTo(10));
-    }
 
 
     @Test
@@ -661,7 +501,7 @@ public class OptionTest implements Printable {
         Mutable<Integer> capture = Mutable.of(null);
         eager = eager.peek(c -> capture.set(c));
 
-        eager.get();
+        eager.toOptional().get();
         assertThat(capture.get(), equalTo(10));
     }
 
@@ -682,12 +522,12 @@ public class OptionTest implements Printable {
 	@Test
 	public void testFlatMapIterable() {
         Option<Integer> maybe = eager.flatMapI(i -> Arrays.asList(i, 20, 30));
-		assertThat(maybe.get(), equalTo(10));
+		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
 
 	@Test
 	public void testFlatMapPublisher() {
         Option<Integer> maybe = Option.some(100).flatMapP(i -> Flux.just(10, i));
-		assertThat(maybe.get(), equalTo(10));
+		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
 }

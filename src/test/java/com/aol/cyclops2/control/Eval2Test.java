@@ -54,13 +54,13 @@ public class Eval2Test {
 	}
 	@Test
     public void nest(){
-       assertThat(just.nest().map(m->m.get()),equalTo(just));
+       assertThat(just.nest().map(m->m.toOptional().get()),equalTo(just));
        
     }
     @Test
     public void coFlatMap(){
-        assertThat(just.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.get() : 50),equalTo(Eval.now(50)));
+        assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Eval.now(50)));
         
     }
     @Test
@@ -215,20 +215,17 @@ public class Eval2Test {
 
 	@Test
 	public void testIterate() {
-		assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(
+		assertThat(just.asSupplier(-10000).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(
 						Stream.iterate(just.get(),i->i+1).limit(10).mapToInt(i->i).sum()));
-		assertThat(just.iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
+		assertThat(just.asSupplier(-10000).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
 	}
 
 	@Test
 	public void testGenerate() {
-		assertThat(just.generate().limit(10).sumInt(i->i),equalTo(100));
+		assertThat(just.asSupplier(-10000).generate().limit(10).sumInt(i->i),equalTo(100));
 	}
 
-	@Test
-	public void testMapReduceReducerOfE() {
-		assertThat(just.mapReduce(Reducers.toCountInt()),equalTo(1));
-	}
+
 
 
 
@@ -236,27 +233,27 @@ public class Eval2Test {
 
 	@Test
 	public void testToXor() {
-		assertThat(just.toXor(),equalTo(Xor.primary(10)));
+		assertThat(just.toXor(-5000),equalTo(Xor.primary(10)));
 		
 	}
 	@Test
 	public void testToXorNone(){
-	    Xor<?,Integer> empty = none.toXor();
+	    Xor<?,Integer> empty = none.toXor(-50000);
 	    
 	    
-        assertTrue(empty.swap().map(__->10).get()==10);
+        assertTrue(empty.swap().map(__->10).toOptional().get()==10);
 		
 	}
 
 
 	@Test
 	public void testToXorSecondary() {
-		assertThat(just.toXor().swap(),equalTo(Xor.secondary(10)));
+		assertThat(just.toXor(-5000).swap(),equalTo(Xor.secondary(10)));
 	}
 
 	@Test
 	public void testToXorSecondaryNone(){
-		Xor<Integer,?> empty = none.toXor().swap();
+		Xor<Integer,?> empty = none.toXor(-50000).swap();
 		assertTrue(empty.isPrimary());
 		assertThat(empty.map(__->10),equalTo(Xor.primary(10)));
 		
@@ -276,63 +273,17 @@ public class Eval2Test {
 		assertFalse(none.toTry(Throwable.class).isSuccess());
 	}
 
-	@Test
-	public void testToIor() {
-		assertThat(just.toIor(),equalTo(Ior.primary(10)));
-		
-	}
+
 	@Test
 	public void testToIorNone(){
-	    Xor<Integer,?> empty = none.toXor().swap();
+	    Xor<Integer,?> empty = none.toXor(-50000).swap();
         assertTrue(empty.isPrimary());
         assertThat(empty.map(__->10),equalTo(Xor.primary(10)));
 		
 	}
 
 
-	@Test
-	public void testToIorSecondary() {
-		assertThat(just.toIor().swap(),equalTo(Ior.secondary(10)));
-	}
 
-	@Test
-	public void testToIorSecondaryNone(){
-		Ior<Integer,?> ior = none.toIor().swap().map(__->10);
-		assertThat(ior.get(),equalTo(10));
-		
-	}
-	@Test
-	public void testToEvalNow() {
-		assertThat(just.toEvalNow(),equalTo(Eval.now(10)));
-	}
-	@Test
-	public void testToEvalNowNone() {
-		assertThat(none.toEvalNow(),equalTo(Eval.now(null)));
-		
-		
-	}
-
-	@Test
-	public void testToEvalLater() {
-		assertThat(just.toEvalLater(),equalTo(Eval.later(()->10)));
-	}
-	@Test
-	public void testToEvalLaterNone() {
-	    assertThat(none.toEvalLater().get(),nullValue());
-	
-		
-	}
-
-	@Test
-	public void testToEvalAlways() {
-		assertThat(just.toEvalAlways(),equalTo(Eval.always(()->10)));
-	}
-	@Test
-	public void testToEvalAlwaysNone() {
-		assertThat(none.toEvalAlways().get(),nullValue());
-		
-		
-	}
 
 
 
@@ -427,60 +378,13 @@ public class Eval2Test {
 	}
 
 
-	
-
-
-	@Test
-	public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-		assertThat(just.mapReduce(s->s.toString(), Monoid.of("",Semigroups.stringJoin(","))),equalTo(",10"));
-	}
-
-	@Test
-	public void testReduceMonoidOfT() {
-		assertThat(just.reduce(Monoid.of(1,Semigroups.intMult)),equalTo(10));
-	}
-
-	@Test
-	public void testReduceBinaryOperatorOfT() {
-		assertThat(just.reduce((a,b)->a+b),equalTo(Optional.of(10)));
-	}
-
-	@Test
-	public void testReduceTBinaryOperatorOfT() {
-		assertThat(just.reduce(10,(a,b)->a+b),equalTo(20));
-	}
-
-	@Test
-	public void testReduceUBiFunctionOfUQsuperTUBinaryOperatorOfU() {
-		assertThat(just.reduce(11,(a,b)->a+b,(a,b)->a*b),equalTo(21));
-	}
-
-	@Test
-	public void testReduceStreamOfQextendsMonoidOfT() {
-		ListX<Integer> countAndTotal = just.reduce(Stream.of(Reducers.toCountInt(),Reducers.toTotalInt()));
-		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
-	}
-
-	@Test
-	public void testReduceIterableOfReducerOfT() {
-		ListX<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(),Reducers.toTotalInt()));
-		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
-	}
-
-	
 
 	@Test
 	public void testFoldRightMonoidOfT() {
-		assertThat(just.foldRight(Monoid.of(1,Semigroups.intMult)),equalTo(10));
-	}
-
-	@Test
-	public void testFoldRightTBinaryOperatorOfT() {
-		assertThat(just.foldRight(10,(a,b)->a+b),equalTo(20));
+		assertThat(just.fold(Monoid.of(1,Semigroups.intMult)),equalTo(10));
 	}
 
 
-	
 	@Test
 	public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
 		assertThat(just.visit(s->"hello", ()->"world"),equalTo("hello"));
@@ -503,8 +407,8 @@ public class Eval2Test {
 
 	@Test
 	public void testToStream() {
-		assertThat(none.toStream().collect(Collectors.toList()).size(),equalTo(0));
-		assertThat(just.toStream().collect(Collectors.toList()).size(),equalTo(1));
+		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
+		assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
 		
 	}
 
@@ -515,40 +419,14 @@ public class Eval2Test {
 		assertThat(just.orElse(20),equalTo(10));
 	}
 
-	@Test(expected=RuntimeException.class)
-	public void testOrElseThrow() {
-		none.orElseThrow(()->new RuntimeException());
-	}
-	@Test
-	public void testOrElseThrowSome() {
-		
-		assertThat(just.orElseThrow(()->new RuntimeException()),equalTo(10));
-	}
 
-
-	
 	@Test
 	public void testToFuture() {
 		Future<Integer> cf = just.toFuture();
 		assertThat(cf.get(),equalTo(10));
 	}
 
-	@Test
-	public void testToCompletableFuture() {
-		CompletableFuture<Integer> cf = just.toCompletableFuture();
-		assertThat(cf.join(),equalTo(10));
-	}
 
-
-	Executor exec = Executors.newFixedThreadPool(1);
-
-	@Test
-	public void testToCompletableFutureAsyncExecutor() {
-		CompletableFuture<Integer> cf = just.toCompletableFutureAsync(exec);
-		assertThat(cf.join(),equalTo(10));
-	}
-
-	
 
 	@Test
 	public void testIterator1() {

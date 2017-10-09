@@ -16,6 +16,7 @@ import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadZero;
 import cyclops.typeclasses.monad.Traverse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -374,11 +375,6 @@ public class Active<W,T> implements Filters<T>,
         return new Unfolds(def1.unfoldable().visit(p->p,()->new Unfoldable.UnsafeValueUnfoldable<>()));
     }
 
-    @Deprecated
-    public Plus plusUnsafe(){
-        return new Plus(def1.monadPlus().get());
-    }
-
 
     public Maybe<Unfolds> unfolds(){
         return def1.unfoldable().visit(e->Maybe.just(new Unfolds(e)),Maybe::none);
@@ -559,7 +555,9 @@ public class Active<W,T> implements Filters<T>,
     public <T2, R1, R2, R3, R> Maybe<Active<W,R>> forEach4(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Function3<? super T, ? super R1, ? super R2, ? extends Higher<W,R3>> value3, final Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction, final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         if(!def1.monadZero().isPresent())
             return Maybe.none();
-        return Maybe.just(of(Comprehensions.of(def1.monadZero().get()).forEach4(this.single,value1,value2,value3,filterFunction,yieldingFunction),def1));
+        MonadZero<W> mZero = def1.monadZero().orElse(null);
+
+        return Maybe.just(of(Comprehensions.of(mZero).forEach4(this.single,value1,value2,value3,filterFunction,yieldingFunction),def1));
     }
 
 
@@ -570,7 +568,8 @@ public class Active<W,T> implements Filters<T>,
     public <T2, R1, R2, R> Maybe<Active<W,R>> forEach3(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction, final Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         if(!def1.monadZero().isPresent())
             return Maybe.none();
-        return Maybe.just(of(Comprehensions.of(def1.monadZero().get()).forEach3(this.single,value1,value2,filterFunction,yieldingFunction),def1));
+        MonadZero<W> mZero = def1.monadZero().orElse(null);
+        return Maybe.just(of(Comprehensions.of(mZero).forEach3(this.single,value1,value2,filterFunction,yieldingFunction),def1));
     }
 
 
@@ -582,7 +581,8 @@ public class Active<W,T> implements Filters<T>,
     public <R1, R> Maybe<Active<W,R>> forEach2(Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, Boolean> filterFunction, final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         if(!def1.monadZero().isPresent())
             return Maybe.none();
-        return Maybe.just(of(Comprehensions.of(def1.monadZero().get()).forEach2(this.single,value1,filterFunction,yieldingFunction),def1));
+        MonadZero<W> mZero = def1.monadZero().orElse(null);
+        return Maybe.just(of(Comprehensions.of(mZero).forEach2(this.single,value1,filterFunction,yieldingFunction),def1));
     }
 
     public String show(){

@@ -24,7 +24,7 @@ public class FuturesTest {
                                             .unit("hello")
                                             .convert(Future::narrowK);
         
-        assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello").join()));
+        assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello").toCompletableFuture().join()));
     }
     @Test
     public void functor(){
@@ -34,7 +34,7 @@ public class FuturesTest {
                                      .applyHKT(h->Future.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(Future::narrowK);
         
-        assertThat(opt.join(),equalTo(Future.ofResult("hello".length()).join()));
+        assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello".length()).toCompletableFuture().join()));
     }
     @Test
     public void apSimple(){
@@ -57,7 +57,7 @@ public class FuturesTest {
                                      .applyHKT(h->Future.Instances.applicative().ap(optFn, h))
                                      .convert(Future::narrowK);
         
-        assertThat(opt.join(),equalTo(Future.ofResult("hello".length()*2).join()));
+        assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello".length()*2).toCompletableFuture().join()));
     }
     @Test
     public void monadSimple(){
@@ -73,7 +73,7 @@ public class FuturesTest {
                                      .applyHKT(h->Future.Instances.monad().flatMap((String v) ->Future.Instances.unit().unit(v.length()), h))
                                      .convert(Future::narrowK);
         
-        assertThat(opt.join(),equalTo(Future.ofResult("hello".length()).join()));
+        assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello".length()).toCompletableFuture().join()));
     }
     @Test
     public void monadZeroFilter(){
@@ -83,7 +83,7 @@ public class FuturesTest {
                                      .applyHKT(h->Future.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(Future::narrowK);
         
-        assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello").join()));
+        assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello").toCompletableFuture().join()));
     }
     @Test
     public void monadZeroFilterOut(){
@@ -110,7 +110,7 @@ public class FuturesTest {
         Future<Integer> opt = Future.Instances.<Integer>monadPlus(m)
                                       .plus(Future.ofResult(5), Future.ofResult(10))
                                       .convert(Future::narrowK);
-        assertThat(opt.join(),equalTo(Future.ofResult(10).join()));
+        assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult(10).toCompletableFuture().join()));
     }
     @Test
     public void  foldLeft(){

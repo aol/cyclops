@@ -280,7 +280,8 @@ public interface HashedPatriciaTrie<K, V>  {
                 return this;
 
             LazySeq<Tuple2<K, V>> newBucket = bucket.filter(t2 -> !t2._1().equals(key));
-            return newBucket.fold(c->c.size()>1? new CollisionNode<K,V>(newBucket) : new SingleNode<>(newBucket.get(0).get()), nil->  HashedPatriciaTrie.empty());
+            //@TODO safety
+            return newBucket.fold(c->c.size()>1? new CollisionNode<K,V>(newBucket) : new SingleNode<>(newBucket.get(0).orElse(null)), nil->  HashedPatriciaTrie.empty());
         }
 
         @Override

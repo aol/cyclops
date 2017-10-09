@@ -3,6 +3,7 @@ package cyclops.collections.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyDequeX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.control.Xor;
 import cyclops.typeclasses.*;
@@ -91,7 +92,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            DequeX<T> target = future.get();
+            DequeX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }
@@ -1721,6 +1722,6 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 break;
 
         }
-        return Xor.sequencePrimary(next).get().to().dequeX(Evaluation.LAZY);
+        return Xor.sequencePrimary(next).orElse(ListX.empty()).to().dequeX(Evaluation.LAZY);
     }
 }

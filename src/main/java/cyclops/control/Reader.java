@@ -381,7 +381,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
                                 return true;
                             }, pr -> false);
                         } while (cont);
-                        return next[0].map(Xor::get);
+                        return next[0].map(x->x.orElse(null));
                     };
                     return reader.flatMap(Function.identity());
 

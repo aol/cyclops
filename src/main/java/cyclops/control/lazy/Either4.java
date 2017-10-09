@@ -4,6 +4,7 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher4;
 import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.BiTransformable;
 import com.aol.cyclops2.types.functor.Transformable;
@@ -60,7 +61,8 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                                                     Higher4<either4,LT1,LT2,LT3,RT>,
                                                     BiTransformable<LT3, RT>,
                                                     To<Either4<LT1, LT2,LT3, RT>>,
-                                                    MonadicValue<RT>,
+                                                    OrElseValue<RT,Either4<LT1,LT2,LT3,RT>>,
+                                                    Unit<RT>,
                                                     Supplier<RT>{
 
     public static  <LT1,LT2,LT3,T> Kleisli<Higher<Higher<Higher<either4, LT1>, LT2>,LT3>,Either4<LT1,LT2,LT3,T>,T> kindKleisli(){
@@ -161,7 +163,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         }
 
         @Override
-        public <RT1> Either4<Throwable, LT1, LT2, RT1> flatMap(Function<? super RT, ? extends MonadicValue<? extends RT1>> mapper) {
+        public <RT1> Either4<Throwable, LT1, LT2, RT1> flatMap(Function<? super RT, ? extends Either4<Throwable,LT1,LT2,? extends RT1>> mapper) {
             return either.flatMap(mapper);
         }
 
@@ -214,6 +216,11 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         public <T> Either4<Throwable, LT1, LT2, T> unit(T unit) {
             return either.unit(unit);
         }
+
+        @Override
+        public <R> R visit(Function<? super RT, ? extends R> present, Supplier<? extends R> absent) {
+            return either.visit(present,absent);
+        }
     }
 
 
@@ -256,14 +263,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         return visitAny(either, fn);
     }
 
-    static <LT1, LT2, LT3, RT> Either4<LT1, LT2, LT3, RT> fromMonadicValue(MonadicValue<RT> mv4) {
-        if (mv4 instanceof Either4) {
-            return (Either4) mv4;
-        }
-        return mv4.toOptional()
-                  .isPresent() ? Either4.right(mv4.get()) : Either4.left1(null);
-
-    }
 
 
 
@@ -467,79 +466,23 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                 middle);
     }
 
-                                                        @Override
-                                                        default <R> Either4<LT1, LT2, LT3, R> zipWith(Iterable<Function<? super RT, ? extends R>> fn) {
-                                                            return (Either4<LT1, LT2, LT3, R>) MonadicValue.super.zipWith(fn);
-                                                        }
 
-                                                        @Override
-                                                        default <R> Either4<LT1,LT2,LT3,R> zipWithS(Stream<Function<? super RT, ? extends R>> fn) {
-                                                            return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.zipWithS(fn);
-                                                        }
-
-                                                        @Override
-                                                        default <R> Either4<LT1,LT2,LT3,R> zipWithP(Publisher<Function<? super RT, ? extends R>> fn) {
-                                                            return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.zipWithP(fn);
-                                                        }
-
-                                                        @Override
-                                                        default <R> Either4<LT1,LT2,LT3,R> retry(final Function<? super RT, ? extends R> fn) {
-                                                            return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.retry(fn);
-                                                        }
-
-                                                        @Override
-                                                        default <U> Either4<LT1,LT2,LT3,Tuple2<RT, U>> zipP(final Publisher<? extends U> other) {
-                                                            return (Either4)MonadicValue.super.zipP(other);
-                                                        }
-
-                                                        @Override
-                                                        default <R> Either4<LT1,LT2,LT3,R> retry(final Function<? super RT, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-                                                            return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.retry(fn,retries,delay,timeUnit);
-                                                        }
-
-                                                        @Override
-                                                        default <S, U> Either4<LT1,LT2,LT3,Tuple3<RT, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-                                                            return (Either4)MonadicValue.super.zip3(second,third);
-                                                        }
-
-                                                        @Override
-                                                        default <S, U, R> Either4<LT1,LT2,LT3,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super RT, ? super S, ? super U, ? extends R> fn3) {
-                                                            return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.zip3(second,third,fn3);
-                                                        }
-
-                                                        @Override
-                                                        default <T2, T3, T4> Either4<LT1,LT2,LT3,Tuple4<RT, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
-                                                            return (Either4)MonadicValue.super.zip4(second,third,fourth);
-                                                        }
-
-                                                        @Override
-                                                        default <T2, T3, T4, R> Either4<LT1,LT2,LT3,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super RT, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-                                                            return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.zip4(second,third,fourth,fn);
-                                                        }
-
-                                                        @Override
-                                                        default <R> Either4<LT1,LT2,LT3,R> flatMapS(final Function<? super RT, ? extends Stream<? extends R>> mapper) {
-                                                            return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.flatMapS(mapper);
-                                                        }
-
-
-
-                                                        default < RT1> Either4<LT1, LT2, LT3, RT1> flatMapI(Function<? super RT, ? extends Iterable<? extends RT1>> mapper){
-        return this.flatMap(a -> {
-            return Either4.fromIterable(mapper.apply(a));
-
-        });
+    @Override
+    default <R> Either4<LT1,LT2,LT3,R> retry(final Function<? super RT, ? extends R> fn) {
+       return (Either4<LT1,LT2,LT3,R>)Transformable.super.retry(fn);
     }
+
+
+
+    @Override
+    default <R> Either4<LT1,LT2,LT3,R> retry(final Function<? super RT, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (Either4<LT1,LT2,LT3,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
+    }
+
     default Trampoline<Either4<LT1,LT2,LT3,RT>> toTrampoline() {
         return Trampoline.more(()->Trampoline.done(this));
     }
-    @Override
-    default int arity() {
-        return 4;
-    }
-    default < RT1> Either4<LT1, LT2, LT3,RT1> flatMapP(Function<? super RT, ? extends Publisher<? extends RT1>> mapper){
-        return this.flatMap(a -> fromPublisher(mapper.apply(a)));
-    }
+
 
     /**
      * Visit the types in this Either4, only one user supplied function is executed depending on the type
@@ -571,7 +514,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * @return Mapped Either4
      */
     < RT1> Either4<LT1, LT2,LT3, RT1> flatMap(
-            Function<? super RT, ? extends MonadicValue<? extends RT1>> mapper);
+            Function<? super RT, ? extends Either4<LT1,LT2,LT3,? extends RT1>> mapper);
     /**
      * @return Swap the third and the right types
      */
@@ -606,7 +549,9 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     boolean isLeft3();
 
 
-
+    default <T2, R> Either4<LT1, LT2, LT3,R> zip(final Either4<LT1, LT2,LT3,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
+        return flatMap(t->app.map(t2->fn.apply(t,t2)));
+    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Filters#ofType(java.lang.Class)
@@ -614,7 +559,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     @Override
     default <U> Maybe<U> ofType(Class<? extends U> type) {
 
-        return (Maybe<U>)MonadicValue.super.ofType(type);
+        return (Maybe<U>)Filters.super.ofType(type);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Filters#filterNot(java.util.function.Predicate)
@@ -622,7 +567,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     @Override
     default Maybe<RT> filterNot(Predicate<? super RT> predicate) {
 
-        return (Maybe<RT>)MonadicValue.super.filterNot(predicate);
+        return (Maybe<RT>)Filters.super.filterNot(predicate);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Filters#notNull()
@@ -630,7 +575,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     @Override
     default Maybe<RT> notNull() {
 
-        return (Maybe<RT>)MonadicValue.super.notNull();
+        return (Maybe<RT>)Filters.super.notNull();
     }
     /*
      * (non-Javadoc)
@@ -670,155 +615,63 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
 
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
-     */
-    @Override
-    default <R> Either4<LT1,LT2,LT3,R> coflatMap(Function<? super MonadicValue<RT>, R> mapper) {
-
-        return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.coflatMap(mapper);
+    default <R> Either4<LT1,LT2,LT3,R> coflatMap(Function<? super Either4<LT1,LT2,LT3,RT>, R> mapper) {
+        return mapper.andThen(r -> unit(r))
+                .apply(this);
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#nest()
-     */
-    @Override
-    default Either4<LT1,LT2,LT3,MonadicValue<RT>> nest() {
 
-        return (Either4<LT1,LT2,LT3,MonadicValue<RT>>)MonadicValue.super.nest();
+    default Either4<LT1,LT2,LT3,Either4<LT1,LT2,LT3,RT>> nest() {
+
+        return this.map(t -> unit(t));
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
-     */
-    @Override
-    default <T2, R1, R2, R3, R> Either4<LT1,LT2,LT3,R> forEach4(Function<? super RT, ? extends MonadicValue<R1>> value1,
-                                                                BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                                Function3<? super RT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+
+    default <T2, R1, R2, R3, R> Either4<LT1,LT2,LT3,R> forEach4(Function<? super RT, ? extends Either4<LT1,LT2,LT3,R1>> value1,
+                                                                BiFunction<? super RT, ? super R1, ? extends Either4<LT1,LT2,LT3,R2>> value2,
+                                                                Function3<? super RT, ? super R1, ? super R2, ? extends Either4<LT1,LT2,LT3,R3>> value3,
                                                                 Function4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
-        return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
-    }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
-     */
-    @Override
-    default <T2, R1, R2, R3, R> Either4<LT1,LT2,LT3,R> forEach4(Function<? super RT, ? extends MonadicValue<R1>> value1,
-                                                                BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                                Function3<? super RT, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                                Function4<? super RT, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                                Function4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return this.flatMap(in-> {
 
-        return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
+            Either4<LT1,LT2,LT3,R1> a = value1.apply(in);
+            return a.flatMap(ina-> {
+                Either4<LT1,LT2,LT3,R2> b = value2.apply(in,ina);
+                return b.flatMap(inb-> {
+                    Either4<LT1,LT2,LT3,R3> c= value3.apply(in,ina,inb);
+                    return c.map(in2->yieldingFunction.apply(in,ina,inb,in2));
+                });
+
+            });
+
+        });
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
-     */
-    @Override
-    default <T2, R1, R2, R> Either4<LT1,LT2,LT3,R> forEach3(Function<? super RT, ? extends MonadicValue<R1>> value1,
-                                                            BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
+
+
+    default <T2, R1, R2, R> Either4<LT1,LT2,LT3,R> forEach3(Function<? super RT, ? extends Either4<LT1,LT2,LT3,R1>> value1,
+                                                            BiFunction<? super RT, ? super R1, ? extends Either4<LT1,LT2,LT3,R2>> value2,
                                                             Function3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-        return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
-    }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
-     */
-    @Override
-    default <T2, R1, R2, R> Either4<LT1,LT2,LT3,R> forEach3(Function<? super RT, ? extends MonadicValue<R1>> value1,
-                                                            BiFunction<? super RT, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                            Function3<? super RT, ? super R1, ? super R2, Boolean> filterFunction,
-                                                            Function3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        return this.flatMap(in-> {
 
-        return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
+            Either4<LT1,LT2,LT3,R1> a = value1.apply(in);
+            return a.flatMap(ina-> {
+                Either4<LT1,LT2,LT3,R2> b = value2.apply(in,ina);
+                return b.map(in2->yieldingFunction.apply(in,ina, in2));
+            });
+
+        });
     }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
-     */
-    @Override
-    default <R1, R> Either4<LT1,LT2,LT3,R> forEach2(Function<? super RT, ? extends MonadicValue<R1>> value1,
+
+
+    default <R1, R> Either4<LT1,LT2,LT3,R> forEach2(Function<? super RT, ? extends Either4<LT1,LT2,LT3,R1>> value1,
                                                     BiFunction<? super RT, ? super R1, ? extends R> yieldingFunction) {
 
-        return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.forEach2(value1, yieldingFunction);
-    }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
-     */
-    @Override
-    default <R1, R> Either4<LT1,LT2,LT3,R> forEach2(Function<? super RT, ? extends MonadicValue<R1>> value1,
-                                                    BiFunction<? super RT, ? super R1, Boolean> filterFunction,
-                                                    BiFunction<? super RT, ? super R1, ? extends R> yieldingFunction) {
-
-        return (Either4<LT1,LT2,LT3,R>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
-    }
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#combineEager(com.aol.cyclops2.Monoid, com.aol.cyclops2.types.MonadicValue)
-     */
-    @Override
-    default Either4<LT1,LT2,LT3,RT> combineEager(Monoid<RT> monoid, MonadicValue<? extends RT> v2) {
-
-        return (Either4<LT1,LT2,LT3,RT>)MonadicValue.super.combineEager(monoid, v2);
-    }
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.Combiner#combine(com.aol.cyclops2.types.Value,
-     * java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> Either4<LT1, LT2, LT3, R> combine(final Value<? extends T2> app,
-                                                      final BiFunction<? super RT, ? super T2, ? extends R> fn) {
-
-        return (Either4<LT1, LT2, LT3, R>) MonadicValue.super.combine(app, fn);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.aol.cyclops2.types.Combiner#combine(java.util.function.BinaryOperator,
-     * com.aol.cyclops2.types.Combiner)
-     */
-    @Override
-    default Either4<LT1, LT2, LT3, RT> zip(final BinaryOperator<Zippable<RT>> combiner, final Zippable<RT> app) {
-
-        return (Either4<LT1, LT2, LT3, RT>) MonadicValue.super.zip(combiner, app);
+        return this.flatMap(in-> {
+            Either4<LT1,LT2,LT3,R1> b = value1.apply(in);
+            return b.map(in2->yieldingFunction.apply(in, in2));
+        });
     }
 
 
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
-     * java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> Either4<LT1, LT2, LT3, R> zipS(final Stream<? extends U> other,
-                                                 final BiFunction<? super RT, ? super U, ? extends R> zipper) {
-
-        return (Either4<LT1, LT2, LT3, R>) MonadicValue.super.zipS(other, zipper);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
-     */
-    @Override
-    default <U> Either4<LT1, LT2, LT3, Tuple2<RT, U>> zipS(final Stream<? extends U> other) {
-
-        return (Either4) MonadicValue.super.zipS(other);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
-     */
-    @Override
-    default <U> Either4<LT1, LT2, LT3, Tuple2<RT, U>> zip(final Iterable<? extends U> other) {
-
-        return (Either4) MonadicValue.super.zip(other);
-    }
 
     /*
      * (non-Javadoc)
@@ -827,32 +680,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      */
     @Override
     <T> Either4<LT1, LT2,LT3, T> unit(T unit);
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.applicative.MonadicValue#zip(java.lang.
-     * Iterable, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> Either4<LT1, LT2, LT3, R> zip(final Iterable<? extends T2> app,
-                                                  final BiFunction<? super RT, ? super T2, ? extends R> fn) {
-
-        return (Either4<LT1, LT2, LT3, R>) MonadicValue.super.zip(app, fn);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.applicative.MonadicValue#zip(java.util.
-     * function.BiFunction, org.reactivestreams.Publisher)
-     */
-    @Override
-    default <T2, R> Either4<LT1, LT2,LT3, R> zipP(final Publisher<? extends T2> app,
-                                                 final BiFunction<? super RT, ? super T2, ? extends R> fn) {
-
-        return (Either4<LT1, LT2, LT3, R>) MonadicValue.super.zipP(app,fn);
-    }
 
     /*
      * (non-Javadoc)
@@ -901,7 +728,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     @Override
     default <U> Either4<LT1, LT2, LT3, U> cast(final Class<? extends U> type) {
 
-        return (Either4<LT1, LT2, LT3, U>) MonadicValue.super.cast(type);
+        return (Either4<LT1, LT2, LT3, U>) Transformable.super.cast(type);
     }
 
     /*
@@ -912,7 +739,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     @Override
     default Either4<LT1, LT2, LT3, RT> peek(final Consumer<? super RT> c) {
 
-        return (Either4<LT1, LT2, LT3, RT>) MonadicValue.super.peek(c);
+        return (Either4<LT1, LT2, LT3, RT>) Transformable.super.peek(c);
     }
 
     /*
@@ -924,7 +751,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     @Override
     default <R> Either4<LT1, LT2, LT3, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Either4<LT1, LT2, LT3, R>) MonadicValue.super.trampoline(mapper);
+        return (Either4<LT1, LT2, LT3, R>) Transformable.super.trampoline(mapper);
     }
 
 
@@ -950,7 +777,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
         @Override
         public <RT1> Either4<ST, M,M2, RT1> flatMap(
-                final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
+                final Function<? super PT, ? extends Either4<ST,M,M2,? extends RT1>> mapper) {
             return Either4.fromLazy(lazy.map(m->m.flatMap(mapper)));
         }
 
@@ -1029,11 +856,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                 .subscribe(s);
         }
 
-        @Override
-        public boolean test(final PT t) {
-            return trampoline()
-                       .test(t);
-        }
+
 
         @Override
         public <R> R visit(final Function<? super ST, ? extends R> first,
@@ -1152,8 +975,8 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
         @Override
         public <RT1> Either4<ST, M, M2, RT1> flatMap(
-                final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
-            Eval<? extends Either4<? extends ST, ? extends M, ? extends M2, ? extends RT1>> et = value.map(mapper.andThen(Either4::fromMonadicValue));
+                final Function<? super PT, ? extends Either4<ST,M,M2,? extends RT1>> mapper) {
+            Eval<? extends Either4<? extends ST, ? extends M, ? extends M2, ? extends RT1>> et = value.map(mapper);
 
 
            final Eval<Either4<ST, M, M2, RT1>> e3 =  (Eval<Either4<ST, M, M2, RT1>>)et;
@@ -1190,19 +1013,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return primary.apply(value.get());
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.aol.cyclops2.types.applicative.MonadicValue#ap(com.aol.
-         * cyclops2.types.Value, java.util.function.BiFunction)
-         */
-        @Override
-        public <T2, R> Either4<ST, M,M2, R> combine(final Value<? extends T2> app,
-                final BiFunction<? super PT, ? super T2, ? extends R> fn) {
-            return new Right<>(
-                               value.combine(app, fn));
 
-        }
 
         @Override
         public <R1, R2> Either4<ST,M, R1, R2> bimap(final Function<? super M2, ? extends R1> fn1,
@@ -1231,10 +1042,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
         }
 
-        @Override
-        public boolean test(final PT t) {
-            return value.test(t);
-        }
 
         @Override
         public <T> Either4<ST, M, M2, T> unit(final T unit) {
@@ -1343,7 +1150,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
         @Override
         public <RT1> Either4<ST, M, M2, RT1> flatMap(
-                final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
+                final Function<? super PT, ? extends Either4<ST,M,M2,? extends RT1>> mapper) {
 
             return (Either4) this;
 
@@ -1382,18 +1189,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return secondary.apply(value.get());
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.aol.cyclops2.types.applicative.MonadicValue#ap(com.aol.
-         * cyclops2.types.Value, java.util.function.BiFunction)
-         */
-        @Override
-        public <T2, R> Either4<ST, M, M2, R> combine(final Value<? extends T2> app,
-                final BiFunction<? super PT, ? super T2, ? extends R> fn) {
-            return (Either4<ST, M,M2, R>) this;
-
-        }
 
         @Override
         public <R1, R2> Either4<ST, M,R1, R2> bimap(final Function<? super M2, ? extends R1> fn1,
@@ -1418,11 +1213,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         }
 
 
-
-        @Override
-        public boolean test(final PT t) {
-            return false;
-        }
 
         @Override
         public <T> Either4<ST, M,M2, T> unit(final T unit) {
@@ -1523,7 +1313,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         }
         @Override
         public <RT1> Either4<ST, M, M2,RT1> flatMap(
-                final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
+                final Function<? super PT, ? extends Either4<ST,M,M2,? extends RT1>> mapper) {
 
             return (Either4) this;
 
@@ -1558,19 +1348,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return mid1.apply(value.get());
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.aol.cyclops2.types.applicative.MonadicValue#ap(com.aol.
-         * cyclops2.types.Value, java.util.function.BiFunction)
-         */
-        @Override
-        public <T2, R> Either4<ST, M, M2,R> combine(final Value<? extends T2> app,
-                final BiFunction<? super PT, ? super T2, ? extends R> fn) {
-            return (Either4<ST, M, M2,R>) this;
-
-        }
-
         @Override
         public <R1, R2> Either4<ST, M, R1, R2> bimap(final Function<? super M2, ? extends R1> fn1,
                 final Function<? super PT, ? extends R2> fn2) {
@@ -1593,11 +1370,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return absent.get();
         }
 
-
-        @Override
-        public boolean test(final PT t) {
-            return false;
-        }
 
         @Override
         public <T> Either4<ST, M,M2, T> unit(final T unit) {
@@ -1702,7 +1474,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
         @Override
         public <RT1> Either4<ST, M, M2,RT1> flatMap(
-                final Function<? super PT, ? extends MonadicValue<? extends RT1>> mapper) {
+                final Function<? super PT, ? extends Either4<ST,M,M2,? extends RT1>> mapper) {
 
             return (Either4) this;
 
@@ -1740,18 +1512,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return mid2.apply(value.get());
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.aol.cyclops2.types.applicative.MonadicValue#ap(com.aol.
-         * cyclops2.types.Value, java.util.function.BiFunction)
-         */
-        @Override
-        public <T2, R> Either4<ST, M, M2,R> combine(final Value<? extends T2> app,
-                final BiFunction<? super PT, ? super T2, ? extends R> fn) {
-            return (Either4<ST, M, M2,R>) this;
-
-        }
 
         @Override
         public <R1, R2> Either4<ST, M, R1, R2> bimap(final Function<? super M2, ? extends R1> fn1,
@@ -1775,10 +1535,6 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return absent.get();
         }
 
-        @Override
-        public boolean test(final PT t) {
-            return false;
-        }
 
         @Override
         public <T> Either4<ST, M,M2, T> unit(final T unit) {
@@ -1997,7 +1753,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                 @Override
                 public <T, R> Higher<Higher<Higher<Higher<either4, L1>, L2>,L3>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<Higher<either4, L1>, L2>,L3>, ? extends Xor<T, R>>> fn) {
                     return narrowK(fn.apply(initial)).flatMap( eval ->
-                            eval.visit(s->narrowK(tailRec(s,fn)),p->Eval.now(p)));
+                            eval.visit(s->narrowK(tailRec(s,fn)),p->Either4.right(p)));
                 }
 
 
@@ -2080,12 +1836,12 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
                 @Override
                 public <T> T foldRight(Monoid<T> monoid, Higher<Higher<Higher<Higher<either4, L1>, L2>,L3>, T> ds) {
-                    return narrowK(ds).foldRight(monoid);
+                    return narrowK(ds).fold(monoid);
                 }
 
                 @Override
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<Higher<Higher<either4, L1>, L2>,L3>, T> ds) {
-                    return narrowK(ds).foldLeft(monoid);
+                    return narrowK(ds).fold(monoid);
                 }
 
             };

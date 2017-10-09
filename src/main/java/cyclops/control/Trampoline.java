@@ -4,14 +4,17 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.Value;
+import cyclops.function.Function0;
 import cyclops.function.Function3;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
+import cyclops.stream.ReactiveSeq;
 
 import static cyclops.collections.tuple.Tuple.tuple;
 
@@ -83,7 +86,7 @@ import static cyclops.collections.tuple.Tuple.tuple;
  * @param <T> Return type
  */
 @FunctionalInterface
-public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
+public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> {
 
     default <R> R visit(Function<? super Trampoline<T>,? extends R> more, Function<? super T, ? extends R> done){
         return complete() ? done.apply(get()) : more.apply(this.bounce());
@@ -99,16 +102,16 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
         Xor<Trampoline<B>,B> second = b.resume();
 
         if(first.isSecondary() && second.isSecondary()) {
-            return Trampoline.more(()->first.secondaryGet().zip(second.secondaryGet(),zipper));
+            return Trampoline.more(()->first.secondaryOrElse(null).zip(second.secondaryOrElse(null),zipper));
         }
         if(first.isPrimary() && second.isPrimary()){
-            return Trampoline.done(zipper.apply(first.get(),second.get()));
+            return Trampoline.done(zipper.apply(first.orElse(null),second.orElse(null)));
         }
         if(first.isSecondary() && second.isPrimary()){
-            return Trampoline.more(()->first.secondaryGet().zip(b,zipper));
+            return Trampoline.more(()->first.secondaryOrElse(null).zip(b,zipper));
         }
         if(first.isPrimary() && second.isSecondary()){
-            return Trampoline.more(()->this.zip(second.secondaryGet(),zipper));
+            return Trampoline.more(()->this.zip(second.secondaryOrElse(null),zipper));
         }
         //unreachable
         return null;
@@ -125,31 +128,31 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
         Xor<Trampoline<C>,C> third = c.resume();
 
         if(first.isSecondary() && second.isSecondary() && third.isSecondary()) {
-            return Trampoline.more(()->first.secondaryGet().zip(second.secondaryGet(),third.secondaryGet(),fn));
+            return Trampoline.more(()->first.secondaryOrElse(null).zip(second.secondaryOrElse(null),third.secondaryOrElse(null),fn));
         }
         if(first.isPrimary() && second.isPrimary() && third.isPrimary()){
-            return Trampoline.done(fn.apply(first.get(),second.get(),third.get()));
+            return Trampoline.done(fn.apply(first.orElse(null),second.orElse(null),third.orElse(null)));
         }
 
         if(first.isSecondary() && second.isPrimary() && third.isPrimary()){
-            return Trampoline.more(()->first.secondaryGet().zip(b,c,fn));
+            return Trampoline.more(()->first.secondaryOrElse(null).zip(b,c,fn));
         }
         if(first.isPrimary() && second.isSecondary() && third.isPrimary()){
-            return Trampoline.more(()->this.zip(second.secondaryGet(),c,fn));
+            return Trampoline.more(()->this.zip(second.secondaryOrElse(null),c,fn));
         }
         if(first.isPrimary() && second.isPrimary() && third.isSecondary()){
-            return Trampoline.more(()->this.zip(b,third.secondaryGet(),fn));
+            return Trampoline.more(()->this.zip(b,third.secondaryOrElse(null),fn));
         }
 
 
         if(first.isPrimary() && second.isSecondary() && third.isSecondary()){
-            return Trampoline.more(()->this.zip(second.secondaryGet(),third.secondaryGet(),fn));
+            return Trampoline.more(()->this.zip(second.secondaryOrElse(null),third.secondaryOrElse(null),fn));
         }
         if(first.isSecondary() && second.isPrimary() && third.isSecondary()){
-            return Trampoline.more(()->first.secondaryGet().zip(b,third.secondaryGet(),fn));
+            return Trampoline.more(()->first.secondaryOrElse(null).zip(b,third.secondaryOrElse(null),fn));
         }
         if(first.isSecondary() && second.isSecondary() && third.isPrimary()){
-            return Trampoline.more(()->first.secondaryGet().zip(second.secondaryGet(),c,fn));
+            return Trampoline.more(()->first.secondaryOrElse(null).zip(second.secondaryOrElse(null),c,fn));
         }
         //unreachable
         return null;
@@ -189,6 +192,11 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
     default Iterator<T> iterator() {
         return Arrays.asList(result())
                      .iterator();
+    }
+
+    @Override
+    default ReactiveSeq<T> stream() {
+        return Function0.super.stream();
     }
 
     /**
@@ -244,5 +252,10 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
 
             }
         };
+    }
+
+    @Override
+    default <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent){
+        return present.apply(get());
     }
 }

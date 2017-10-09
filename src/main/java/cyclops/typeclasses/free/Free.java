@@ -403,8 +403,8 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
         for(;;) {
             Xor<Higher<F, Free<F, T>>, T> xor = (Xor)toUse.resume(functor);
             if (xor.isPrimary())
-                return xor.get();
-            toUse =  fn.apply(xor.secondaryGet());
+                return xor.orElse(null);
+            toUse =  fn.apply(xor.secondaryOrElse(null));
         }
     }
 
@@ -429,19 +429,19 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
         Xor<Higher<F, Free<F, B>>, B> second = b.resume(f);
 
         if(first.isSecondary() && second.isSecondary()) {
-            return suspend(f.map_(first.secondaryGet(), a1->{
-                return suspend(f.map_(second.secondaryGet(), b1->a1.zip(f,b1,zipper)));
+            return suspend(f.map_(first.secondaryOrElse(null), a1->{
+                return suspend(f.map_(second.secondaryOrElse(null), b1->a1.zip(f,b1,zipper)));
             }));
         }
         if(first.isPrimary() && second.isPrimary()){
-            return done(zipper.apply(first.get(),second.get()));
+            return done(zipper.apply(first.orElse(null),second.orElse(null)));
         }
         if(first.isSecondary() && second.isPrimary()){
-            return suspend(f.map_(first.secondaryGet(), a1->a1.zip(f,b,zipper)));
+            return suspend(f.map_(first.secondaryOrElse(null), a1->a1.zip(f,b,zipper)));
 
         }
         if(first.isPrimary() && second.isSecondary()){
-            return suspend(f.map_(second.secondaryGet(), a1->Free.<F,T>done(first.get()).zip(f,b,zipper)));
+            return suspend(f.map_(second.secondaryOrElse(null), a1->Free.<F,T>done(first.orElse(null)).zip(f,b,zipper)));
         }
         return null;
     }
@@ -457,48 +457,48 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
         Xor<Higher<F, Free<F, C>>, C> third = c.resume(f);
 
         if(first.isSecondary() && second.isSecondary() && third.isSecondary()) {
-            return suspend(f.map_(first.secondaryGet(), a1->{
-                return suspend(f.map_(second.secondaryGet(), b1->{
-                    return suspend(f.map_(third.secondaryGet(), c1->a1.zip(f,b1,c1,fn)));
+            return suspend(f.map_(first.secondaryOrElse(null), a1->{
+                return suspend(f.map_(second.secondaryOrElse(null), b1->{
+                    return suspend(f.map_(third.secondaryOrElse(null), c1->a1.zip(f,b1,c1,fn)));
                 }));
             }));
         }
 
         if(first.isPrimary() && second.isPrimary() && third.isPrimary()){
-            return done(fn.apply(first.get(),second.get(),third.get()));
+            return done(fn.apply(first.orElse(null),second.orElse(null),third.orElse(null)));
         }
 
         if(first.isSecondary() && second.isPrimary() && third.isPrimary()){
-            return suspend(f.map_(first.secondaryGet(), a1->a1.zip(f,b,c,fn)));
+            return suspend(f.map_(first.secondaryOrElse(null), a1->a1.zip(f,b,c,fn)));
         }
         if(first.isPrimary() && second.isSecondary() && third.isPrimary()){
 
-            return suspend(f.map_(second.secondaryGet(), b1->this.zip(f,b1,c,fn)));
+            return suspend(f.map_(second.secondaryOrElse(null), b1->this.zip(f,b1,c,fn)));
 
 
 
         }
         if(first.isPrimary() && second.isPrimary() && third.isSecondary()){
-            return suspend(f.map_(third.secondaryGet(), c1->this.zip(f,b,c1,fn)));
+            return suspend(f.map_(third.secondaryOrElse(null), c1->this.zip(f,b,c1,fn)));
         }
 
 
         if(first.isPrimary() && second.isSecondary() && third.isSecondary()){
-            return suspend(f.map_(second.secondaryGet(), b1->{
-                return suspend(f.map_(third.secondaryGet(), c1->this.zip(f,b1,c1,fn)));
+            return suspend(f.map_(second.secondaryOrElse(null), b1->{
+                return suspend(f.map_(third.secondaryOrElse(null), c1->this.zip(f,b1,c1,fn)));
             }));
 
         }
         if(first.isSecondary() && second.isPrimary() && third.isSecondary()){
-            return suspend(f.map_(first.secondaryGet(), a1->{
+            return suspend(f.map_(first.secondaryOrElse(null), a1->{
 
-                return suspend(f.map_(third.secondaryGet(), c1->a1.zip(f,b,c1,fn)));
+                return suspend(f.map_(third.secondaryOrElse(null), c1->a1.zip(f,b,c1,fn)));
 
             }));
         }
         if(first.isSecondary() && second.isSecondary() && third.isPrimary()){
-            return suspend(f.map_(first.secondaryGet(), a1->{
-                return suspend(f.map_(second.secondaryGet(), b1->a1.zip(f,b1,c,fn)));
+            return suspend(f.map_(first.secondaryOrElse(null), a1->{
+                return suspend(f.map_(second.secondaryOrElse(null), b1->a1.zip(f,b1,c,fn)));
 
             }));
         }

@@ -28,7 +28,7 @@ public class EvalTest {
                     System.out.println("filter");
                     return true;
                 })
-                .orElseThrow(() -> new RuntimeException("bad"));
+                .orElseGet(() -> "bad");
         assertThat(times,equalTo(1));
     }
     @Test
@@ -39,7 +39,7 @@ public class EvalTest {
                     System.out.println("filter");
                     return true;
                 })
-                .orElseThrow(() -> new RuntimeException("bad"));
+                .orElseGet(() -> "bad");
         assertThat(times,equalTo(1));
     }
     @Test
@@ -50,7 +50,7 @@ public class EvalTest {
                     System.out.println("filter");
                     return true;
                 })
-                .orElseThrow(() -> new RuntimeException("bad"));
+                .orElseGet(() -> "bad");
         assertThat(times,equalTo(1));
     }
     

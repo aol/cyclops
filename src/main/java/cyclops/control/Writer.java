@@ -435,7 +435,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                             return true;
                         }, pr -> false));
                     } while (cont);
-                    return next[0].map(Xor::get);
+                    return next[0].map(x->x.orElse(null));
                 }
             };
         }

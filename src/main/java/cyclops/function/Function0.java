@@ -1,11 +1,13 @@
 package cyclops.function;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.LinkedListX;
@@ -75,6 +77,28 @@ public interface Function0<R> extends Supplier<R>{
     }
     default Function0<R> memoizeAsync(ScheduledExecutorService ex, long timeToLiveMillis){
         return Memoize.memoizeSupplierAsync(this,ex,timeToLiveMillis);
+    }
+    default ReactiveSeq<R> stream() {
+        return ReactiveSeq.of(get());
+    }
+
+
+
+    /**
+     * Use the value stored in this Value to seed a Stream generated from the provided function
+     *
+     * @param fn Function to generate a Stream
+     * @return Stream generated from a seed value (the Value stored in this Value) and the provided function
+     */
+    default ReactiveSeq<R> iterate(final UnaryOperator<R> fn) {
+        return ReactiveSeq.iterate(get(), fn);
+    }
+
+    /**
+     * @return A Stream that repeats the value stored in this Value over and over
+     */
+    default ReactiveSeq<R> generate() {
+        return ReactiveSeq.generate(this);
     }
 
 

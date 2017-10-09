@@ -4,6 +4,7 @@ import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.anyM.transformers.NonEmptyTransformer;
 import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
@@ -34,20 +35,20 @@ import java.util.stream.Stream;
  *
  * @param <T> Type of data stored inside the nested Maybe(s)
  */
-public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer<W, T> implements  To<XorT<W, ST,T>>,
+public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransformer<W, T> implements  To<XorT<W, ST,T>>,
                                                                                                     Transformable<T>,
                                                                                                      Filters<T> {
 
     private final AnyM<W,Xor<ST,T>> run;
 
-    @Override
+
     public Iterator<T> iterator() {
         return stream().iterator();
     }
 
     @Override
     public ReactiveSeq<T> stream() {
-        return run.stream().map(Xor::get);
+        return run.stream().flatMap(Xor::stream);
     }
 
 
@@ -76,7 +77,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     }
 
     @Override
-    public AnyM<W,? extends MonadicValue<T>> transformerStream() {
+    public AnyM<W,? extends Xor<ST,T>> transformerStream() {
 
         return run;
     }
@@ -84,7 +85,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
     @Override
     public XorT<W,ST,T> filter(final Predicate<? super T> test) {
         return of(run.map(f->f.map(in->Tuple.tuple(in,test.test(in))))
-                     .filter( f->f.get()._2() )
+                     .filter( f->f.visit(t->t._2(),()->false) )
                      .map( f->f.map(in->in._1())));
     }
 
@@ -157,8 +158,8 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
         return (AnyM) run;
     }
 
-    @Override
-    public <B> XorT<W,ST,B> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
+
+    public <B> XorT<W,ST,B> flatMap(final Function<? super T, ? extends Xor<ST,? extends B>> f) {
 
         final AnyM<W,Xor<ST,? extends B>> mapped = run.map(o -> o.flatMap(f));
         return of(narrow(mapped));
@@ -278,10 +279,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
         return of(run.unit(Xor.primary(value)));
     }
 
-    @Override
-    public <R> XorT<W,ST,R> empty() {
-        return of(run.unit(Xor.<ST,R>secondary(null)));
-    }
+
 
     
 
@@ -299,23 +297,8 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(com.aol.cyclops2.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    public <T2, R> XorT<W,ST,R> combine(Value<? extends T2> app,
-                                     BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (XorT<W,ST,R>)super.combine(app, fn);
-    }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(java.util.function.BinaryOperator, com.aol.cyclops2.types.Combiner)
-     */
-    @Override
-    public XorT<W, ST,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        
-        return (XorT<W, ST,T>)super.zip(combiner, app);
-    }
+
 
 
 
@@ -323,205 +306,23 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
      * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
      */
     @Override
-    public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn) {
+    public StreamT<W,T> iterate(UnaryOperator<T> fn, T alt) {
         
-        return super.iterate(fn);
+        return super.iterate(fn,alt);
     }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ValueTransformer#generate()
      */
     @Override
-    public AnyM<W, ? extends ReactiveSeq<T>> generate() {
+    public StreamT<W,T> generate(T alt) {
         
-        return super.generate();
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.lang.Iterable, java.util.function.BiFunction)
-     */
-    @Override
-    public <T2, R> XorT<W,ST,R> zip(Iterable<? extends T2> iterable,
-                                  BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
-        return (XorT<W,ST,R>)super.zip(iterable, fn);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
-     */
-    @Override
-    public <T2, R> XorT<W,ST,R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
-        return (XorT<W,ST,R>)super.zipP(publisher,fn);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
-     */
-    @Override
-    public <U> XorT<W,ST,Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        
-        return (XorT)super.zipS(other);
-    }
-
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.lang.Iterable)
-     */
-    @Override
-    public <U> XorT<W,ST,Tuple2<T, U>> zip(Iterable<? extends U> other) {
-        
-        return (XorT)super.zip(other);
-    }
-
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
-     */
-    @Override
-    public <T2, R1, R2, R3, R> XorT<W,ST,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
-                                                   BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                   Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
-        return (XorT<W,ST,R>)super.forEach4(value1, value2, value3, yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
-     */
-    @Override
-    public <T2, R1, R2, R3, R> XorT<W,ST,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
-                                                   BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                   Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
-        return (XorT<W,ST,R>)super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
-     */
-    @Override
-    public <T2, R1, R2, R> XorT<W,ST,R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
-                                               BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                               Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
-        return (XorT<W,ST,R>)super.forEach3(value1, value2, yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
-     */
-    @Override
-    public <T2, R1, R2, R> XorT<W,ST,R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
-                                               BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                               Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                               Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
-        return (XorT<W,ST,R>)super.forEach3(value1, value2, filterFunction, yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach2(java.util.function.Function, java.util.function.BiFunction)
-     */
-    @Override
-    public <R1, R> XorT<W,ST,R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
-                                       BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
-        return (XorT<W,ST,R>)super.forEach2(value1, yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
-     */
-    @Override
-    public <R1, R> XorT<W,ST,R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
-                                       BiFunction<? super T, ? super R1, Boolean> filterFunction,
-                                       BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
-        return (XorT<W,ST,R>)super.forEach2(value1, filterFunction, yieldingFunction);
+        return super.generate(alt);
     }
 
 
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#flatMapI(java.util.function.Function)
-     */
-    @Override
-    public <R> XorT<W,ST,R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        
-        return (XorT<W,ST,R>)super.flatMapIterable(mapper);
-    }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#flatMapP(java.util.function.Function)
-     */
-    @Override
-    public <R> XorT<W,ST,R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        
-        return (XorT<W,ST,R>)super.flatMapPublisher(mapper);
-    }
-    public <T2, R1, R2, R3, R> XorT<W,ST,R> forEach4M(Function<? super T, ? extends XorT<W,ST,R1>> value1,
-                                                   BiFunction<? super T, ? super R1, ? extends XorT<W,ST,R2>> value2,
-                                                   Function3<? super T, ? super R1, ? super R2, ? extends XorT<W,ST,R3>> value3,
-                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        return this.flatMapT(in->value1.apply(in)
-                .flatMapT(in2-> value2.apply(in,in2)
-                        .flatMapT(in3->value3.apply(in,in2,in3)
-                                .map(in4->yieldingFunction.apply(in,in2,in3,in4)))));
-
-    }
-    public <T2, R1, R2, R3, R> XorT<W,ST,R> forEach4M(Function<? super T, ? extends XorT<W,ST,R1>> value1,
-                                                   BiFunction<? super T, ? super R1, ? extends XorT<W,ST,R2>> value2,
-                                                   Function3<? super T, ? super R1, ? super R2, ? extends XorT<W,ST,R3>> value3,
-                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                   Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        return this.flatMapT(in->value1.apply(in)
-                    .flatMapT(in2-> value2.apply(in,in2)
-                            .flatMapT(in3->value3.apply(in,in2,in3)
-                                                 .filter(in4->filterFunction.apply(in,in2,in3,in4))
-                                                 .map(in4->yieldingFunction.apply(in,in2,in3,in4)))));
-
-    }
-
-    public <T2, R1, R2, R> XorT<W,ST,R> forEach3M(Function<? super T, ? extends XorT<W,ST,R1>> value1,
-                                               BiFunction<? super T, ? super R1, ? extends XorT<W,ST,R2>> value2,
-                                               Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-
-        return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2)
-                                                 .map(in3->yieldingFunction.apply(in,in2,in3))));
-
-    }
-
-    public <T2, R1, R2, R> XorT<W,ST,R> forEach3M(Function<? super T, ? extends XorT<W,ST,R1>> value1,
-                                               BiFunction<? super T, ? super R1, ? extends XorT<W,ST,R2>> value2,
-                                               Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                               Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-
-        return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2).filter(in3->filterFunction.apply(in,in2,in3))
-                                                                                     .map(in3->yieldingFunction.apply(in,in2,in3))));
-
-    }
-    public <R1, R> XorT<W,ST,R> forEach2M(Function<? super T, ? extends XorT<W,ST,R1>> value1,
-                                       BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-
-
-        return this.flatMapT(in->value1.apply(in)
-                    .map(in2->yieldingFunction.apply(in,in2)));
-    }
-
-    public <R1, R> XorT<W,ST,R> forEach2M(Function<? super T, ? extends XorT<W,ST,R1>> value1,
-                                       BiFunction<? super T, ? super R1, Boolean> filterFunction,
-                                       BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-
-
-        return this.flatMapT(in->value1.apply(in)
-                                       .filter(in2->filterFunction.apply(in,in2))
-                                       .map(in2->yieldingFunction.apply(in,in2)));
-    }
 
     public String mkString(){
         return toString();
@@ -547,53 +348,12 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends ValueTransformer
         return (XorT<W,ST,T>)Filters.super.notNull();
     }
 
-    @Override
-    public <R> XorT<W,ST,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (XorT<W,ST,R>)super.zipWith(fn);
-    }
-
-    @Override
-    public <R> XorT<W,ST,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (XorT<W,ST,R>)super.zipWithS(fn);
-    }
-
-    @Override
-    public <R> XorT<W,ST,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (XorT<W,ST,R>)super.zipWithP(fn);
-    }
 
     @Override
     public <R> XorT<W,ST,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
         return (XorT<W,ST,R>)super.trampoline(mapper);
     }
 
-    @Override
-    public <U, R> XorT<W,ST,R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (XorT<W,ST,R>)super.zipS(other,zipper);
-    }
 
-    @Override
-    public <U> XorT<W,ST,Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (XorT)super.zipP(other);
-    }
 
-    @Override
-    public <S, U> XorT<W,ST,Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
-        return (XorT)super.zip3(second,third);
-    }
-
-    @Override
-    public <S, U, R> XorT<W,ST,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (XorT<W,ST,R>)super.zip3(second,third, fn3);
-    }
-
-    @Override
-    public <T2, T3, T4> XorT<W,ST,Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth) {
-        return (XorT)super.zip4(second,third,fourth);
-    }
-
-    @Override
-    public <T2, T3, T4, R> XorT<W,ST,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (XorT<W,ST,R>)super.zip4(second,third,fourth,fn);
-    }
 }

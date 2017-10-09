@@ -39,7 +39,9 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         return containsRec(range).result();
     }
     default DIET<T> add(T value, Enumeration<T> enm, Comparator<? super T> comp){
-        return add(Range.range(value,enm.succ(value).get(),enm,comp));
+        return enm.succ(value).visit(s-> {
+            return add(Range.range(value, s, enm, comp));
+        },()->this);
     }
     Trampoline<Boolean> containsRec(T value);
     Trampoline<Boolean> containsRec(Range<T> range);
@@ -48,7 +50,9 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
     DIET<T> add(Range<T> range);
     DIET<T> merge(DIET<T> merge);
     default DIET<T> remove(T value, Enumeration<T> enm, Comparator<? super T> comp){
-        return remove(Range.range(value,enm.succ(value).get(),enm,comp));
+        return enm.succ(value).visit(s-> {
+            return remove(Range.range(value,s, enm, comp));
+        },()->this);
     }
     DIET<T> remove(Range<T> range);
 

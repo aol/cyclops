@@ -171,7 +171,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
                 return true;
             }, __ -> false));
         } while (cont);
-        return next[0].map(Xor::get);
+        return next[0].map(x->x.orElse(null));
     }
 
     @Override

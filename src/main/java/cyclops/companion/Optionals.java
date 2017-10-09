@@ -60,7 +60,7 @@ public class Optionals {
                 return true;
             }, pr -> false), () -> false);
         } while (cont);
-        return next[0].map(Xor::get);
+        return next[0].map(x->x.orElse(null));
     }
     public static  <T> Kleisli<optional,Optional<T>,T> kindKleisli(){
         return Kleisli.of(Optionals.Instances.monad(), Optionals::widen);

@@ -4,6 +4,7 @@ import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 import com.aol.cyclops2.types.extensability.ValueAdapter;
 import cyclops.control.Identity;
+import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.identity;
@@ -43,7 +44,7 @@ public class IdentityAdapter extends AbstractFunctionalAdapter<identity> impleme
     }
 
     @Override
-    public <T> T get(AnyMValue<identity, T> t) {
-        return Witness.identity(t).get();
+    public <T> Option<T> get(AnyMValue<identity, T> t) {
+        return Option.some(Witness.identity(t).get());
     }
 }

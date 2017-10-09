@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
 import com.aol.cyclops2.types.anyM.AnyMValue;
@@ -38,8 +39,8 @@ public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional>
     private <U> Function<Iterator<U>,Optional<U>>  getUnitIterator(){
         return  it->it.hasNext() ? this.<U>getUnit().apply(it.next()) : this.<U>getEmpty().get();
     }
-    public <T> T get(AnyMValue<Witness.optional,T> t){
-        return ((Optional<T>)t.unwrap()).get();
+    public <T> Option<T> get(AnyMValue<Witness.optional,T> t){
+        return Option.fromOptional((Optional<T>)t.unwrap());
     }
     
     @Override

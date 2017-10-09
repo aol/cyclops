@@ -21,10 +21,9 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
                                                                             Unwrapable,
                                                                             Unit<T>,
                                                                             Folds<T>,
-                                                                            Zippable<T>,
-        Function0<T> {
+                                                                            Zippable<T> {
     public abstract <R> ValueTransformer<W,R> empty();
-    public abstract <R> ValueTransformer<W,R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> f);
+   // public abstract <R> ValueTransformer<W,R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> f);
     public abstract AnyM<W,? extends MonadicValue<T>> transformerStream();
     protected abstract <R> ValueTransformer<W,R> unitAnyM(AnyM<W,? super MonadicValue<R>> anyM);
 
@@ -77,33 +76,23 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return this.unitAnyM(this.transformerStream().map(v->v.zip(combiner, app)));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#reactiveStream()
-     */
-   //Return StreamT
-  /**  public AnyM<W,? extends ReactiveSeq<T>> reactiveStream() {
-        return this.transformerStream().transform(v->v.reactiveStream());
-    }**/
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#unapply()
-     */
-   
+
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Value#iterate(java.util.function.UnaryOperator)
      */
-  //Return StreamT
-    public AnyM<W,? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn) {
+  //@TODO Return StreamT
+    public AnyM<W,? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T altSeed) {
         
-        return this.transformerStream().map(v->v.iterate(fn));
+        return this.transformerStream().map(v->v.asSupplier(altSeed).iterate(fn));
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Value#generate()
      */
-    //Return StreamT
-    public AnyM<W,? extends ReactiveSeq<T>> generate() {
+    //@TODO Return StreamT
+    public AnyM<W,? extends ReactiveSeq<T>> generate(T altSeed) {
         
-        return this.transformerStream().map(v->v.generate());
+        return this.transformerStream().map(v->v.asSupplier(altSeed).generate());
     }
 
     
@@ -140,28 +129,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         
         return unitAnyM(this.transformerStream().map(v->v.zip(other)));
     }
-    /* (non-Javadoc)
-     * @see java.util.function.Predicate#and(java.util.function.Predicate)
-     */
-   
-    public AnyM<W,Predicate<T>> and(Predicate<? super T> other) {
 
-        return this.transformerStream().map(v->v.and(other));
-    }
-    /* (non-Javadoc)
-     * @see java.util.function.Predicate#negate()
-     */
-   
-    public AnyM<W,Predicate<T>> negate() {
-        return this.transformerStream().map(v->v.negate());
-    }
-    /* (non-Javadoc)
-     * @see java.util.function.Predicate#or(java.util.function.Predicate)
-     */
-   
-    public AnyM<W,Predicate<T>> or(Predicate<? super T> other) {
-        return this.transformerStream().map(v->v.or(other));
-    }
 
    
     /* (non-Javadoc)

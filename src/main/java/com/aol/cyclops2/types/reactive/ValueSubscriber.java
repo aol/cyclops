@@ -2,9 +2,13 @@ package com.aol.cyclops2.types.reactive;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
+import cyclops.async.Future;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -105,22 +109,32 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
     }
 
     @Override
-    public T get() {
+    public T orElse(T alt) {
 
         while (firstValue.get() == UNSET && firstError.get() == UNSET)
             LockSupport.parkNanos(1000000l);
         if (firstValue.get() == UNSET)
-            return null;
+            return alt;
+
+        return (T) firstValue.get();
+    }
+    @Override
+    public T orElseGet(Supplier<? extends T> alt) {
+
+        while (firstValue.get() == UNSET && firstError.get() == UNSET)
+            LockSupport.parkNanos(1000000l);
+        if (firstValue.get() == UNSET)
+            return alt.get();
 
         return (T) firstValue.get();
     }
 
 
     public Xor<Throwable, T> toXor() {
-        if (get() == null && firstError.get() != UNSET) {
+        if (orElse(null) == null && firstError.get() != UNSET) {
             return Xor.secondary((Throwable) firstError.get());
         }
-        return Xor.primary(get());
+        return Xor.primary(orElse(null));
     }
 
     private T throwingGet() {
@@ -140,7 +154,7 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
 
 
     public Ior<Throwable, T> toIor() {
-        get();
+        orElse(null);
 
         Ior<Throwable, T> secondary = null;
         Ior<Throwable, T> primary = null;
@@ -152,7 +166,7 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
             primary = Ior.<Throwable, T> primary((T) firstValue.get());
         }
         if (secondary != null && primary != null)
-            return Ior.both(secondary, primary);
+            return Ior.both((Throwable)firstError.get(), (T) firstValue.get());
         if (primary != null)
             return primary;
 
@@ -160,4 +174,16 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
 
     }
 
+    @Override
+    public <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
+        while (firstValue.get() == UNSET && firstError.get() == UNSET)
+            LockSupport.parkNanos(1000000l);
+        if (firstValue.get() == UNSET)
+            return absent.get();
+
+        return present.apply((T) firstValue.get());
+    }
+    public Future<T> toFutureAsync(final Executor ex) {
+        return Future.of(()->orElse(null),ex);
+    }
 }

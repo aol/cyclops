@@ -1,6 +1,7 @@
 package com.aol.cyclops2.react.mixins;
 import static org.junit.Assert.assertFalse;
 
+import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import cyclops.async.Pipes;
@@ -21,7 +22,7 @@ public class LazyReactiveTest {
             pipes.push("hello", "world");
             
             pipes.get("hello").map(a->a.close()).orElse(false);
-            pipes.reactiveSeq("hello").get().forEach(System.out::println);
+            pipes.reactiveSeq("hello").orElse(ReactiveSeq.of("boo!")).forEach(System.out::println);
           //  assertThat(pipes.oneOrError("hello"),equalTo(Xor.primary("world")));
             
         }

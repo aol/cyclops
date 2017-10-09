@@ -87,7 +87,7 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
 
 
     public T extract(){
-        T ex = value.get();
+        T ex = value.orElse(null); //unsafe call but should never be null
         suspended.value=ex;
         return ex;
     }
@@ -351,7 +351,7 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
                     if(nextCont.remainderOfWorkToBeDone==null){
                         return false;
                     }
-                    nextCont = nextCont.proceed().get();
+                    nextCont = nextCont.proceed().orElse(null);
 
                     ready = nextCont==null? false : nextCont.value.isPresent();
                 }

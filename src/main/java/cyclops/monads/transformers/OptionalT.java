@@ -159,10 +159,9 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
         return (AnyM) run;
     }
 
-    @Override
-    public <B> OptionalT<W,B> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
+    public <B> OptionalT<W,B> flatMap(final Function<? super T, Optional<B>> f) {
 
-        final AnyM<W,Optional<? extends B>> mapped = run.map(o -> o.flatMap(f.andThen(m->m.toOptional())));
+        final AnyM<W,Optional<? extends B>> mapped = run.map(o -> o.flatMap(f));
         return of(narrow(mapped));
 
     }
@@ -325,18 +324,18 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
      */
     @Override
-    public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn) {
+    public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T alt) {
         
-        return super.iterate(fn);
+        return super.iterate(fn,alt);
     }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ValueTransformer#generate()
      */
     @Override
-    public AnyM<W, ? extends ReactiveSeq<T>> generate() {
+    public AnyM<W, ? extends ReactiveSeq<T>> generate(T alt) {
         
-        return super.generate();
+        return super.generate(alt);
     }
 
     /* (non-Javadoc)

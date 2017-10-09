@@ -6,6 +6,8 @@ import cyclops.async.adapters.Adapter;
 import cyclops.collections.box.LazyImmutable;
 import cyclops.collections.immutable.PersistentMapX;
 import cyclops.collections.mutable.ListX;
+import cyclops.collections.tuple.Tuple;
+import cyclops.collections.tuple.Tuple0;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
@@ -424,17 +426,25 @@ public class Pipes<K, V> {
      * @return Future containing lazy next value or NoSuchElementException
      */
     public Future<V> oneOrErrorAsync(final K key, final Executor ex) {
-        final CompletableFuture<V> cf = CompletableFuture.supplyAsync(() -> {
+        Future<V> res = Future.future();
+        final CompletableFuture<Tuple0> cf = CompletableFuture.supplyAsync(() -> {
 
             final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
-            return get(key).peek(a -> a.stream()
-                                       .subscribe(sub))
-                           .map(a -> sub.toMaybe()
-                                        .get())
-                           .get();
+            get(key).peek(a -> a.stream()
+                    .subscribe(sub))
+                    .map(a -> sub.toMaybe().visit(s -> {
+                        res.complete(s);
+                        return Tuple.empty();
+                    }, () -> {
+                        res.completeExceptionally(new NoSuchElementException());
+                        return Tuple.empty();
+                    }));
+            return Tuple.empty();
+
+
         } , ex);
 
-        return Future.of(cf);
+        return res;
     }
 
     /**

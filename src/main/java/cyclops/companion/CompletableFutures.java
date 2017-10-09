@@ -48,6 +48,11 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class CompletableFutures {
 
+    public static <T> CompletableFuture<T> error(Throwable t){
+        CompletableFuture<T> cf = new CompletableFuture<>();
+        cf.completeExceptionally(t);
+        return cf;
+    }
     public static  <T,R> CompletableFuture<R> tailRec(T initial, Function<? super T, ? extends CompletableFuture<? extends Xor<T, R>>> fn){
         Higher<future, R> x = Future.Instances.monadRec().tailRec(initial, fn.andThen(Future::of));
         return Future.narrowK(x).getFuture();
@@ -861,7 +866,7 @@ public class CompletableFutures {
         public static <T,R> Foldable<completableFuture> foldable(){
             BiFunction<Monoid<T>,Higher<completableFuture,T>,T> foldRightFn =  (m, l)-> m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
             BiFunction<Monoid<T>,Higher<completableFuture,T>,T> foldLeftFn = (m, l)->  m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
-            Function3<Monoid<R>, Function<T, R>, Higher<completableFuture, T>, R> foldMapFn = (m, f, l)-> Future.of(CompletableFutureKind.narrowK(l).thenApply(f)).foldLeft(m);
+            Function3<Monoid<R>, Function<T, R>, Higher<completableFuture, T>, R> foldMapFn = (m, f, l)-> Future.of(CompletableFutureKind.narrowK(l).thenApply(f)).fold(m);
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
         public static <T> Comonad<completableFuture> comonad(){

@@ -329,10 +329,9 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public Unfolds unfoldsUnsafe(){
         return def2.unfoldable().visit(s-> new Unfolds(s),()->new Unfolds(new Unfoldable.UnsafeValueUnfoldable<>()));
     }
-    public Plus plusUnsafe(){
-        return new Plus(def1.monadPlus().get(),def2.monadPlus().get());
+    private Plus plusUnsafe(){
+        return new Plus(def1.monadPlus().orElse(null),def2.monadPlus().orElse(null));
     }
-
 
 
 
@@ -357,7 +356,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         private final  MonadPlus<W1> plus1;
         private final  MonadPlus<W2> plus2;
         public Monoid<Higher<W2,T>> monoid2(){
-            return def2.monadPlus().get().narrowMonoid();
+            return def2.monadPlus().orElse(null).narrowMonoid();
         }
         public Nested<W1,W2,T> sum(ListX<Nested<W1,W2, T>> list){
             return of(plus1.sum(list.plus(Nested.this).map(x -> x.nested)),def1,def2);
@@ -750,7 +749,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
                     } while (cont[0]);
                     Nested<W1, W2, Xor<T, R>> res = narrowK(next[0]);
-                    return res.map(Xor::get);
+                    return res.map(x->x.orElse(null));
                 }
             };
 

@@ -167,7 +167,8 @@ public class AnyMTest {
 		assertThat(AnyM.fromStream(Stream.of(1,2,3,null))
 					.map(Maybe::ofNullable)
 					.filter(Maybe::isPresent)
-				    .map(Maybe::get)
+				    .map(Maybe::toOptional)
+					.map(Optional::get)
 					.stream()
 					.toList(),equalTo(Arrays.asList(1,2,3)));
 	

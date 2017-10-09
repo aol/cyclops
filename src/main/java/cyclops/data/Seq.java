@@ -89,7 +89,7 @@ public interface Seq<T> extends ImmutableList<T>,
                 break;
 
         }
-        ListX<R> x = Xor.sequencePrimary(next.stream().to().listX(Evaluation.LAZY)).get();
+        ListX<R> x = Xor.sequencePrimary(next.stream().to().listX(Evaluation.LAZY)).orElse(ListX.empty());
         return Seq.fromIterator(x.iterator());
     }
     static <T> Seq<T> fill(T t, int max){

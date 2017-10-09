@@ -167,10 +167,7 @@ public class SuccessTest {
 		assertThat(errorCaptured,is(nullValue()));
 	}
 
-	@Test
-	public void testThrowException() {
-		success.throwException();
-	}
+
 
 	@Test
 	public void testToFailedOptional() {

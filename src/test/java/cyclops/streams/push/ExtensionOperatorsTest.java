@@ -138,7 +138,7 @@ public class ExtensionOperatorsTest {
 	}
 	@Test
 	public void getAtMultple(){
-		assertThat(Spouts.of(1,2,3,4,5).get(2).get(),equalTo(3));
+		assertThat(Spouts.of(1,2,3,4,5).get(2).toOptional().get(),equalTo(3));
 	}
 	@Test
 	public void getAt1(){
@@ -162,7 +162,7 @@ public class ExtensionOperatorsTest {
 	}
 	@Test
 	public void singleOptionalTest(){
-		assertThat(Spouts.of(1).single().get(),equalTo(1));
+		assertThat(Spouts.of(1).single().toOptional().get(),equalTo(1));
 	}
 	@Test
 	public void singleOptionalEmpty(){

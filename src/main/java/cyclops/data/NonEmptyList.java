@@ -123,7 +123,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     }
 
     @Override
-    public ImmutableList<T> appendAll(Iterable<T> value) {
+    public NonEmptyList<T> appendAll(Iterable<T> value) {
         return of(head,tail.appendAll(value));
     }
 
@@ -156,8 +156,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     }
 
     public <R> NonEmptyList<R> map(Function<? super T, ? extends R> fn) {
-        ImmutableList<R> list = asList().map(fn);
-        return list.nonEmptyList().get();
+        return NonEmptyList.of(fn.apply(head),tail.map(fn));
     }
 
     @Override
@@ -217,8 +216,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     }
 
     public <R> NonEmptyList<R> flatMapNel(Function<? super T, ? extends NonEmptyList<R>> fn) {
-        ImmutableList<R> l = asList().flatMap(fn.andThen(a -> a));
-        return l.nonEmptyList().get();
+        return fn.apply(head).appendAll(tail.flatMap(fn));
+
     }
 
 

@@ -140,7 +140,7 @@ public class CompletableFuturesTest {
                                                                          .convert(Maybe::narrowK);
        
        
-       assertThat(res.get().convert(CompletableFutureKind::narrowK).join(),equalTo(2));
+       assertThat(res.toOptional().get().convert(CompletableFutureKind::narrowK).join(),equalTo(2));
     }
     
 }

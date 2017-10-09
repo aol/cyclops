@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
 import cyclops.function.*;
@@ -303,7 +304,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
         return flatMapA(fn.andThen(a->this.fromIterable(a)));
     }
     @Override
-    default T get() {
+    default Option<T> get() {
         return adapter().visit(e->{ throw new IllegalAccessError("misconfigured adapter : value adapter required");}
                              , v->v.get(this));
     }

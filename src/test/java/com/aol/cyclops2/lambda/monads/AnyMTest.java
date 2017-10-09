@@ -130,7 +130,7 @@ public class AnyMTest {
        Maybe l= AnyM.fromMaybe(Maybe.of(1))
             		.flatMapI(i->SetX.of(10,i)).toMaybe();
 
-       assertThat(l.get(),instanceOf(Integer.class));
+       assertThat(l.toOptional().get(),instanceOf(Integer.class));
     }
     @Test
     public void flatMapValueFirstQueue(){

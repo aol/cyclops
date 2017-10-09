@@ -34,7 +34,6 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -70,7 +69,7 @@ import java.util.stream.Stream;
  *
  * @param <T> Type of value storable in this Eval
  */
-public interface Eval<T> extends To<Eval<T>>,
+public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                                  Deconstruct1<T>,
                                     MonadicValue<T>,
                                     Higher<eval ,T>{
@@ -175,6 +174,12 @@ public interface Eval<T> extends To<Eval<T>>,
         return new CompletableEval<T, T>(c,fromFuture(Future.fromPublisher(c)));
 
     }
+
+    @Override
+    default ReactiveSeq<T> stream() {
+        return Function0.super.stream();
+    }
+
     @AllArgsConstructor
     static class CompletableEval<ORG,T2> implements Eval<T2>, Completable<ORG>{
         public final Completable.CompletablePublisher<ORG> complete;
@@ -755,8 +760,14 @@ public interface Eval<T> extends To<Eval<T>>,
         return (Eval<R>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
     }
 
+    default <R> Eval<R> emptyUnit(){
+        return Eval.now(null);
+    }
 
 
+    default Future<T> toFuture(){
+        return Future.of(this);
+    }
 
     static class Module {
 
@@ -764,7 +775,7 @@ public interface Eval<T> extends To<Eval<T>>,
 
             if (value instanceof Eval)
                 return (Eval<T>) value;
-            return value.toEvalAlways();
+            return Eval.now(value.orElse(null));
         }
 
         public static class Later<T> extends Rec<T> implements Eval<T> {
@@ -806,13 +817,7 @@ public interface Eval<T> extends To<Eval<T>>,
                 return Eval.later(() -> unit);
             }
 
-            /* (non-Javadoc)
-             * @see com.aol.cyclops2.value.Value#toEvalLater()
-             */
-            @Override
-            public Eval<T> toEvalLater() {
-                return this;
-            }
+
 
             /* (non-Javadoc)
              * @see java.lang.Object#hashCode()
@@ -882,13 +887,7 @@ public interface Eval<T> extends To<Eval<T>>,
                 return Eval.always(() -> unit);
             }
 
-            /* (non-Javadoc)
-             * @see com.aol.cyclops2.value.Value#toEvalAlways()
-             */
-            @Override
-            public Eval<T> toEvalAlways() {
-                return this;
-            }
+
 
             /* (non-Javadoc)
              * @see java.lang.Object#hashCode()
@@ -969,27 +968,11 @@ public interface Eval<T> extends To<Eval<T>>,
              * @return  This convertable converted to a Future asyncrhonously
              */
             @Override
-            public Future<T> toFutureAsync(final Executor ex) {
+            public Future<T> future(final Executor ex) {
                 return toFuture();
             }
 
-            /**
-             * @return A CompletableFuture, populated immediately by a call to get
-             */
-            @Override
-            public CompletableFuture<T> toCompletableFuture() {
-                return toFuture().getFuture();
-            }
 
-
-            /**
-             * @param exec Executor to asyncrhonously populate the CompletableFuture
-             * @return  A CompletableFuture populated asynchronously on the supplied Executor by calling get
-             */
-            @Override
-            public CompletableFuture<T> toCompletableFutureAsync(final Executor exec) {
-                return toFuture().getFuture();
-            }
             @Override
             public final void subscribe(final Subscriber<? super T> sub) {
                 Mutable<Future<Eval<T>>> future = Mutable.of(input);
@@ -1042,8 +1025,8 @@ public interface Eval<T> extends To<Eval<T>>,
             }
             @Override
             public T get() {
-
-                Eval<T> eval = input.get();
+//@TODO
+                Eval<T> eval = input.visit(i->i,()->null);
                 return eval.get();
             }
 
@@ -1052,13 +1035,7 @@ public interface Eval<T> extends To<Eval<T>>,
                 return Eval.always(() -> unit);
             }
 
-            /* (non-Javadoc)
-             * @see com.aol.cyclops2.value.Value#toEvalAlways()
-             */
-            @Override
-            public Eval<T> toEvalAlways() {
-                return this;
-            }
+
 
             /* (non-Javadoc)
              * @see java.lang.Object#hashCode()
@@ -1430,7 +1407,7 @@ public interface Eval<T> extends To<Eval<T>>,
         public static <T,R> Foldable<eval> foldable(){
             BiFunction<Monoid<T>,Higher<eval,T>,T> foldRightFn =  (m,l)-> Eval.narrowK(l).orElse(m.zero());
             BiFunction<Monoid<T>,Higher<eval,T>,T> foldLeftFn = (m,l)-> Eval.narrowK(l).orElse(m.zero());
-            Function3<Monoid<R>, Function<T, R>, Higher<eval, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            Function3<Monoid<R>, Function<T, R>, Higher<eval, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).fold(m);
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 

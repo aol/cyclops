@@ -6,6 +6,7 @@ import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
 
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Xor;
 import cyclops.function.Monoid;
@@ -70,7 +71,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            SortedSetX<T> target = future.get();
+            SortedSetX<T> target =  future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }
@@ -1205,7 +1206,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
                 break;
 
         }
-        return Xor.sequencePrimary(next).get().to().sortedSetX(Evaluation.LAZY);
+        return Xor.sequencePrimary(next).orElse(ListX.empty()).to().sortedSetX(Evaluation.LAZY);
     }
 
 }

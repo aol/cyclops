@@ -395,15 +395,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
 
     
-    /**
-     * @return The first value of this monad
-     */
-    default Value<T> toFirstValue() {
-
-        return () -> firstOrNull(toListX());
-    }
-
-
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.functor.Transformable#cast(java.lang.Class)

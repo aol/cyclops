@@ -1,5 +1,6 @@
 package com.aol.cyclops2.types;
 
+import com.aol.cyclops2.types.factory.EmptyUnit;
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.Monoid;
@@ -9,12 +10,15 @@ import cyclops.function.Curry;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.collections.tuple.Tuple;
+import cyclops.matching.Api;
 import org.reactivestreams.Publisher;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import static cyclops.matching.Api.Case;
 
 /**
  * A type that represents a Monad that wraps a singleUnsafe value
@@ -23,7 +27,7 @@ import java.util.stream.Stream;
  *
  * @param <T> Data type of element stored inside this Monad
  */
-public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Filters<T>, Zippable<T>{
+public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Filters<T>, Zippable<T>, EmptyUnit<T>{
 
     default int arity(){
         return 1;
@@ -39,6 +43,9 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      */
     @Override
     public <T> MonadicValue<T> unit(T unit);
+
+    @Override
+    <T> MonadicValue<T> emptyUnit();
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.functor.Transformable#transform(java.util.function.Function)
@@ -441,7 +448,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
             publisher.subscribe(sub);
 
             final Maybe<R> maybe = sub.toMaybe();
-            return unit(maybe.get());
+            return maybe.fold(in->unit(in),__->emptyUnit());
 
         });
 

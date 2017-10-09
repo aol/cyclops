@@ -74,7 +74,7 @@ public class MaybeTest implements Printable {
         completable.complete(5);
         System.out.println(mapped.getClass());
         mapped.printOut();
-        assertThat(mapped.get(),equalTo(11));
+        assertThat(mapped.toOptional().get(),equalTo(11));
 
 
     }
@@ -135,9 +135,9 @@ public class MaybeTest implements Printable {
     
     @Test
     public void recoverWith(){
-        assertThat(none.recoverWith(()->Maybe.just(10)).get(),equalTo(10));
-        assertThat(none.recoverWith(()->Maybe.none()).isPresent(),equalTo(false));
-        assertThat(just.recoverWith(()->Maybe.just(5)).get(),equalTo(10));
+        assertThat(none.recoverWith(()->Maybe.just(10)).toOptional().get(),equalTo(10));
+        assertThat(none.recoverWith(()->Maybe.none()).toOptional().isPresent(),equalTo(false));
+        assertThat(just.recoverWith(()->Maybe.just(5)).toOptional().get(),equalTo(10));
     }
     
     boolean lazy = true;
@@ -163,18 +163,6 @@ public class MaybeTest implements Printable {
 
 
     @Test
-    public void testZip() {
-        assertThat(Maybe.just(10).zip(Eval.now(20), (a, b) -> a + b).get(), equalTo(30));
-        assertThat(Maybe.just(10).zipP(Eval.now(20),(a, b) -> a + b).get(), equalTo(30));
-        assertThat(Maybe.just(10).zipS(Stream.of(20), (a, b) -> a + b).get(), equalTo(30));
-        assertThat(Maybe.just(10).zip(ReactiveSeq.of(20), (a, b) -> a + b).get(), equalTo(30));
-        assertThat(Maybe.just(10).zip(ReactiveSeq.of(20)).get(), equalTo(Tuple.tuple(10, 20)));
-        assertThat(Maybe.just(10).zipS(Stream.of(20)).get(), equalTo(Tuple.tuple(10, 20)));
-        assertThat(Maybe.just(10).zip(Eval.now(20)).get(), equalTo(Tuple.tuple(10, 20)));
-    }
-
-
-    @Test
     public void fib() {
         System.out.println(fibonacci(just(tuple(100_000, 1l, 0l))));
     }
@@ -194,19 +182,19 @@ public class MaybeTest implements Printable {
 
     @Test
     public void nest() {
-        assertThat(just.nest().map(m -> m.get()), equalTo(just));
-        assertThat(none.nest().map(m -> m.get()), equalTo(none));
+        assertThat(just.nest().map(m -> m.toOptional().get()), equalTo(just));
+        assertThat(none.nest().map(m -> m.toOptional().get()), equalTo(none));
     }
 
     @Test
     public void coFlatMap() {
 
-        Maybe.none().coflatMap(m -> m.isPresent() ? m.get() : 10);
+        Maybe.none().coflatMap(m -> m.isPresent() ? m.toOptional().get() : 10);
 
         // Maybe[10]
 
-        assertThat(just.coflatMap(m -> m.isPresent() ? m.get() : 50), equalTo(just));
-        assertThat(none.coflatMap(m -> m.isPresent() ? m.get() : 50), equalTo(Maybe.of(50)));
+        assertThat(just.coflatMap(m -> m.isPresent() ? m.toOptional().get() : 50), equalTo(just));
+        assertThat(none.coflatMap(m -> m.isPresent() ? m.toOptional().get() : 50), equalTo(Maybe.of(50)));
     }
 
     @Test
@@ -232,7 +220,7 @@ public class MaybeTest implements Printable {
 
     @Test
     public void odd() {
-        System.out.println(even(Maybe.just(200000)).get());
+        System.out.println(even(Maybe.just(200000)).toOptional().get());
     }
 
     public Maybe<String> odd(Maybe<Integer> n) {
@@ -246,16 +234,7 @@ public class MaybeTest implements Printable {
         });
     }
 
-    @Test
-    public void testFiltering() {
-        assertThat(ReactiveSeq.of(Maybe.just(1), Try.success(1)).filter(Xor.primary(1)).toListX(),
-                equalTo(ListX.of(Maybe.just(1), Try.success(1))));
-    }
 
-    @Test
-    public void testFilteringNoValue() {
-        assertThat(ReactiveSeq.of(1, 1).filter(Xor.primary(1)).toListX(), equalTo(ListX.of(1, 1)));
-    }
 
     @Test
     public void testToMaybe() {
@@ -412,42 +391,37 @@ public class MaybeTest implements Printable {
 
     @Test
     public void testIterate() {
-        assertThat(just.iterate(i -> i + 1).limit(10).sumInt(i->i), equalTo(145));
+        assertThat(just.iterate(i -> i + 1,-1000).limit(10).sumInt(i->i), equalTo(145));
     }
 
     @Test
     public void testGenerate() {
-        assertThat(just.generate().limit(10).sumInt(i->i), equalTo(100));
-    }
-
-    @Test
-    public void testMapReduceReducerOfE() {
-        assertThat(just.mapReduce(Reducers.toCountInt()), equalTo(1));
+        assertThat(just.generate(-10000).limit(10).sumInt(i->i), equalTo(100));
     }
 
 
     @Test
     public void testToXor() {
-        assertThat(just.toXor(), equalTo(Xor.primary(10)));
+        assertThat(just.toXor(-5000), equalTo(Xor.primary(10)));
 
     }
 
     @Test
     public void testToXorNone() {
-        Xor<?, Integer> empty = none.toXor();
+        Xor<?, Integer> empty = none.toXor(-50000);
 
-        assertTrue(empty.swap().map(__ -> 10).get() == 10);
+        assertTrue(empty.swap().map(__ -> 10).toOptional().get() == 10);
 
     }
 
     @Test
     public void testToXorSecondary() {
-        assertThat(just.toXor().swap(), equalTo(Xor.secondary(10)));
+        assertThat(just.toXor(-5000).swap(), equalTo(Xor.secondary(10)));
     }
 
     @Test
     public void testToXorSecondaryNone() {
-        Xor<Integer, ?> empty = none.toXor().swap();
+        Xor<Integer, ?> empty = none.toXor(-50000).swap();
         assertTrue(empty.isPrimary());
         assertThat(empty.map(__ -> 10), equalTo(Xor.primary(10)));
 
@@ -464,66 +438,13 @@ public class MaybeTest implements Printable {
         assertTrue(none.toTry(Throwable.class).isFailure());
     }
 
-    @Test
-    public void testToIor() {
-        assertThat(just.toIor(), equalTo(Ior.primary(10)));
-        assertThat(Ior.fromPublisher(just), equalTo(Ior.primary(10)));
 
-    }
 
     @Test
     public void testToIorNone() {
-        Xor<Integer, ?> empty = none.toXor().swap();
+        Xor<Integer, ?> empty = none.toXor(-50000).swap();
         assertTrue(empty.isPrimary());
         assertThat(empty.map(__ -> 10), equalTo(Xor.primary(10)));
-
-    }
-
-    @Test
-    public void testToIorSecondary() {
-        assertThat(just.toIor().swap(), equalTo(Ior.secondary(10)));
-    }
-
-    @Test
-    public void testToIorSecondaryNone() {
-        Ior<Integer, ?> ior = none.toIor().swap().map(__ -> 10);
-        assertThat(ior.get(), equalTo(10));
-
-    }
-
-    @Test
-    public void testToEvalNow() {
-        assertThat(just.toEvalNow(), equalTo(Eval.now(10)));
-    }
-
-    @Test(expected = NoSuchElementException.class)
-    public void testToEvalNowNone() {
-        none.toEvalNow();
-        fail("exception expected");
-
-    }
-
-    @Test
-    public void testToEvalLater() {
-        assertThat(just.toEvalLater(), equalTo(Eval.later(() -> 10)));
-    }
-
-    @Test(expected = NoSuchElementException.class)
-    public void testToEvalLaterNone() {
-        none.toEvalLater().get();
-        fail("exception expected");
-
-    }
-
-    @Test
-    public void testToEvalAlways() {
-        assertThat(just.toEvalAlways(), equalTo(Eval.always(() -> 10)));
-    }
-
-    @Test(expected = NoSuchElementException.class)
-    public void testToEvalAlwaysNone() {
-        none.toEvalAlways().get();
-        fail("exception expected");
 
     }
 
@@ -537,17 +458,6 @@ public class MaybeTest implements Printable {
 
     LazyReact react = new LazyReact();
 
-
-    @Test
-    public void testGet() {
-        assertThat(just.get(), equalTo(10));
-    }
-
-    @Test(expected = NoSuchElementException.class)
-    public void testGetNone() {
-        none.get();
-
-    }
 
     @Test
     public void testFilter() {
@@ -604,53 +514,11 @@ public class MaybeTest implements Printable {
 
 
 
-    @Test
-    public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-        assertThat(just.mapReduce(s -> s.toString(), Monoid.of("", Semigroups.stringJoin(","))), equalTo(",10"));
-    }
-
-    @Test
-    public void testReduceMonoidOfT() {
-        assertThat(just.reduce(Monoid.of(1, Semigroups.intMult)), equalTo(10));
-    }
-
-    @Test
-    public void testReduceBinaryOperatorOfT() {
-        assertThat(just.reduce((a, b) -> a + b), equalTo(Optional.of(10)));
-    }
-
-    @Test
-    public void testReduceTBinaryOperatorOfT() {
-        assertThat(just.reduce(10, (a, b) -> a + b), equalTo(20));
-    }
-
-    @Test
-    public void testReduceUBiFunctionOfUQsuperTUBinaryOperatorOfU() {
-        assertThat(just.reduce(11, (a, b) -> a + b, (a, b) -> a * b), equalTo(21));
-    }
-
-    @Test
-    public void testReduceStreamOfQextendsMonoidOfT() {
-        ListX<Integer> countAndTotal = just.reduce(Stream.of(Reducers.toCountInt(), Reducers.toTotalInt()));
-        assertThat(countAndTotal, equalTo(ListX.of(1, 10)));
-    }
-
-    @Test
-    public void testReduceIterableOfReducerOfT() {
-        ListX<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(), Reducers.toTotalInt()));
-        assertThat(countAndTotal, equalTo(ListX.of(1, 10)));
-    }
 
     @Test
     public void testFoldRightMonoidOfT() {
-        assertThat(just.foldRight(Monoid.of(1, Semigroups.intMult)), equalTo(10));
+        assertThat(just.fold(Monoid.of(1, Semigroups.intMult)), equalTo(10));
     }
-
-    @Test
-    public void testFoldRightTBinaryOperatorOfT() {
-        assertThat(just.foldRight(10, (a, b) -> a + b), equalTo(20));
-    }
-
 
     @Test
     public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
@@ -676,8 +544,8 @@ public class MaybeTest implements Printable {
 
     @Test
     public void testToStream() {
-        assertThat(none.toStream().collect(Collectors.toList()).size(), equalTo(0));
-        assertThat(just.toStream().collect(Collectors.toList()).size(), equalTo(1));
+        assertThat(none.stream().collect(Collectors.toList()).size(), equalTo(0));
+        assertThat(just.stream().collect(Collectors.toList()).size(), equalTo(1));
 
     }
 
@@ -688,39 +556,6 @@ public class MaybeTest implements Printable {
         assertThat(just.orElse(20), equalTo(10));
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testOrElseThrow() {
-        none.orElseThrow(() -> new RuntimeException());
-    }
-
-    @Test
-    public void testOrElseThrowSome() {
-
-        assertThat(just.orElseThrow(() -> new RuntimeException()), equalTo(10));
-    }
-
-
-
-    @Test
-    public void testToFuture() {
-        Future<Integer> cf = just.toFuture();
-        assertThat(cf.get(), equalTo(10));
-    }
-
-    @Test
-    public void testToCompletableFuture() {
-        CompletableFuture<Integer> cf = just.toCompletableFuture();
-        assertThat(cf.join(), equalTo(10));
-    }
-
-
-    static Executor exec = Executors.newFixedThreadPool(1);
-
-    @Test
-    public void testToCompletableFutureAsyncExecutor() {
-        CompletableFuture<Integer> cf = just.toCompletableFutureAsync(exec);
-        assertThat(cf.join(), equalTo(10));
-    }
 
 
     @Test
@@ -759,7 +594,7 @@ public class MaybeTest implements Printable {
         just = just.peek(c -> capture.set(c));
         assertNull(capture.get());
 
-        just.get();
+        just.toOptional().get();
         assertThat(capture.get(), equalTo(10));
     }
 
@@ -780,12 +615,12 @@ public class MaybeTest implements Printable {
 	@Test
 	public void testFlatMapIterable() {
 		Maybe<Integer> maybe = just.flatMapI(i -> Arrays.asList(i, 20, 30));
-		assertThat(maybe.get(), equalTo(10));
+		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
 
 	@Test
 	public void testFlatMapPublisher() {
 		Maybe<Integer> maybe = Maybe.of(100).flatMapP(i -> Flux.just(10, i));
-		assertThat(maybe.get(), equalTo(10));
+		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
 }

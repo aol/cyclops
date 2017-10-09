@@ -12,6 +12,7 @@ import java.util.function.Supplier;
  */
 public interface Visitable<T> {
 
+    //@TODO Replace with Sealed1Or
     /**
      * The provided function is executed with the value stored in this Visitable if one is present,
      * otherwise the provided Supplier is executed instead.

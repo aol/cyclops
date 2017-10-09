@@ -2,6 +2,8 @@ package cyclops.control;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.matching.Case;
+import cyclops.matching.Api;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -42,7 +44,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -193,10 +194,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         public final Completable.CompletablePublisher<ORG> complete;
         public final Maybe<T2> maybe;
 
-        @Override
-        public T2 get() {
-            return maybe.get();
-        }
+
 
         @Override
         public boolean isPresent() {
@@ -513,7 +511,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         return Maybe.fromIterable(this);
     }
     default Option<T> eager(){
-        return visit(s->Option.some(s),Option.none());
+        return visit(s->Option.some(s),()->Option.none());
     }
     /**
      * <pre>
@@ -988,7 +986,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
     Maybe<T> recoverWith(Supplier<? extends Option<T>> fn);
     @Override
-    default Maybe<T> recoverWith(Option<T> opt){
+    default Maybe<T> orElseUse(Option<T> opt){
         return recoverWith(()->opt);
     }
 
@@ -1093,7 +1091,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class Just<T> implements Maybe<T>, Present {
+    public static final class Just<T> implements Maybe<T>, Present<T> {
 
 
         private final Eval<T> lazy;
@@ -1125,7 +1123,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
         @Override
         public <R> R visit(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
-            return map(some).get();
+            return some.apply(lazy.get());
         }
 
         @Override
@@ -1144,10 +1142,6 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
             return mkString();
         }
 
-        @Override
-        public T get() {
-            return lazy.get();
-        }
 
         @Override
         public boolean isPresent() {
@@ -1172,15 +1166,16 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         @Override
         public boolean equals(final Object obj) {
             if (obj instanceof Present)
-                return Objects.equals(lazy.get(), ((Present) obj).get());
+                return Objects.equals(lazy.get(), ((Present) obj).orElse(null));
             else if (obj instanceof Lazy) {
-                return Objects.equals(get(), ((Maybe) obj).get());
+                return Objects.equals(orElse(null), ((Maybe) obj).orElse(null));
             }
             return false;
         }
 
+
         @Override
-        public T orElse(final T value) {
+        public T orElse(T value) {
             return lazy.get();
         }
 
@@ -1190,15 +1185,15 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         }
 
         @Override
-        public <R> Just<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        public <R> Maybe<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
             final Maybe<R> maybe = Maybe.super.flatMapI(mapper);
-            return (Just<R>) Maybe.just(maybe.get());
+            return maybe;
         }
 
         @Override
-        public <R> Just<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        public <R> Maybe<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
             final Maybe<R> m = Maybe.super.flatMapP(mapper);
-            return (Just<R>) Maybe.just(m.get());
+            return m;
         }
 
         /* (non-Javadoc)
@@ -1255,11 +1250,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         @Override
         public <R> R visit(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
             final Maybe<R> mapped = map(some);
-            if (isPresent()) {
-                return mapped.get();
-            }
-            return none.get();
-
+            return mapped.fold(s->s,n->none.get());
         }
         @Override
         public final void subscribe(final Subscriber<? super T> sub) {
@@ -1273,7 +1264,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
                 @Override
                 public void onNext(Maybe<T> ts) {
                     if(ts.isPresent()){
-                        sub.onNext(ts.get());
+                        sub.onNext(ts.orElse(null));
                     }else if(!onCompleteSent){
                         sub.onComplete();
                         onCompleteSent =true;
@@ -1352,14 +1343,6 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
             return maybe.mkString();
         }
 
-        @Override
-        public T get() {
-            Maybe<T> maybe = lazy.get();
-            while (maybe instanceof Lazy) {
-                maybe = ((Lazy<T>) maybe).lazy.get();
-            }
-            return maybe.get();
-        }
 
         @Override
         public boolean isPresent() {
@@ -1412,7 +1395,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         public boolean equals(final Object obj) {
 
             if (obj instanceof Present)
-                return Objects.equals(get(), ((Present) obj).get());
+                return Objects.equals(orElse(null), ((Present) obj).orElse(null));
             else if (obj instanceof Nothing) {
                 return !isPresent();
             }
@@ -1420,7 +1403,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
                 return !isPresent();
             }else if (obj instanceof Lazy) {
                 if (isPresent())
-                    return Objects.equals(get(), ((Maybe) obj).get());
+                    return Objects.equals(orElse(null), ((Maybe) obj).orElse(null));
                 else {
                     return !((Lazy) obj).isPresent();
                 }
@@ -1466,10 +1449,6 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
             return EMPTY;
         }
 
-        @Override
-        public T get() {
-            throw new NoSuchElementException("No value present");
-        }
 
         @Override
         public Maybe<T> recover(final T value) {
@@ -1614,7 +1593,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
                 @Override
                 public <T> Maybe<Comonad<maybe>> comonad() {
-                    return Maybe.just(Instances.comonad());
+                    return Maybe.none();
                 }
 
                 @Override
@@ -1844,14 +1823,10 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         public static <T,R> Foldable<maybe> foldable(){
             BiFunction<Monoid<T>,Higher<maybe,T>,T> foldRightFn =  (m,l)-> Maybe.narrowK(l).orElse(m.zero());
             BiFunction<Monoid<T>,Higher<maybe,T>,T> foldLeftFn = (m,l)-> Maybe.narrowK(l).orElse(m.zero());
-            Function3<Monoid<R>, Function<T, R>, Higher<maybe, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+            Function3<Monoid<R>, Function<T, R>, Higher<maybe, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).fold(m);
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
-        public static <T> Comonad<maybe> comonad(){
-            Function<? super Higher<maybe, T>, ? extends T> extractFn = maybe -> maybe.convert(Maybe::narrowK).get();
-            return General.comonad(functor(), unit(), extractFn);
-        }
 
 
         private <T> Maybe<T> of(T value){

@@ -171,10 +171,7 @@ public class FailureTest {
 		assertThat(errorCaptured,is(nullValue()));
 	}
 
-	@Test(expected=FileNotFoundException.class)
-	public void testThrowException() {
-		failure.throwException();
-	}
+
 
 	@Test
 	public void testToFailedOptional() {

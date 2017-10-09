@@ -15,7 +15,7 @@ public class MaybeTest {
     }
      @Test
     public void odd() {
-        System.out.println(even(Maybe.just(200000)).get());
+        System.out.println(even(Maybe.just(200000)).toOptional().get());
     }
 
     public Maybe<String> odd(Maybe<Integer> n) {
