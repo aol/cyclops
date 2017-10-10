@@ -720,6 +720,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 	
 	@Test(expected=ClassCastException.class)
 	public void cast(){
+
 		of(1,2,3).cast(String.class).toList();
 	}
 	@Test

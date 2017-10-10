@@ -599,7 +599,8 @@ public  class CoreReactiveSeqTest {
 	}
 	@Test(expected=ClassCastException.class)
 	public void cast(){
-		of(1,2,3).cast(String.class).printOut();
+		assertThat(of(1,2,3).cast(String.class).toList(),equalTo(ListX.empty()));
+        of(1,2,3).cast(String.class).printOut();
 	}
 	@Test(expected=ClassCastException.class)
 	public void castList(){

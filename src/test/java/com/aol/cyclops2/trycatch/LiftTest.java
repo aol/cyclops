@@ -1,5 +1,6 @@
 package com.aol.cyclops2.trycatch;
 
+import cyclops.control.Option;
 import cyclops.monads.Witness.*;
 
 import static cyclops.monads.AnyM.success;
@@ -27,7 +28,7 @@ public class LiftTest {
 		AnyMFunction2<tryType,Integer,Integer,Integer> add =	AnyM.liftF2(this::add);
 		
 		AnyM<tryType,Integer> result = add.apply(success(2), success(3));
-		assertThat(result.<Try<Integer,RuntimeException>>unwrap().get(),equalTo(5));
+		assertThat(result.<Try<Integer,RuntimeException>>unwrap().get(),equalTo(Option.some(5)));
 	}
 	
 	@Test
@@ -55,7 +56,7 @@ public class LiftTest {
 		
 		AnyM<tryType,Integer> result = divide.apply(Try.success(2, ArithmeticException.class).anyM(), Try.success(4).anyM());
 		
-		assertThat(result.<Try<List<Integer>,ArithmeticException>>unwrap().get(),equalTo(0));
+		assertThat(result.<Try<List<Integer>,ArithmeticException>>unwrap().orElse(null),equalTo(0));
 		
 	}
 	

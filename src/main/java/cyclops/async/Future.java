@@ -43,6 +43,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import javax.annotation.processing.Completion;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -925,8 +926,8 @@ public class Future<T> implements To<Future<T>>,
     public Try<T,Throwable> get(){
         try {
             return Try.success(future.join());
-        } catch (final Throwable t) {
-            return Try.failure(t);
+        } catch (final CompletionException t) {
+            return Try.failure(t.getCause());
         }
     }
 
@@ -1420,6 +1421,7 @@ public class Future<T> implements To<Future<T>>,
             return failure.get();
         }
     }
+
 
     /**
      * Companion class for creating Type Class instances for working with Futures

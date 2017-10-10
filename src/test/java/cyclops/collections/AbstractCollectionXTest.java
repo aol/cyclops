@@ -10,7 +10,9 @@ import cyclops.collections.mutable.ListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.*;
 import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
@@ -94,7 +96,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void foldFuture(){
-        assertThat(of(1,2,3).foldFuture(ex, l->l.reduce(Monoids.intSum)).get(),equalTo(6));
+        assertThat(of(1,2,3).foldFuture(ex, l->l.reduce(Monoids.intSum)).get(),equalTo(Try.success(6)));
     }
     @Test
     public void foldLazy(){
@@ -102,7 +104,7 @@ public abstract class AbstractCollectionXTest {
     }
     @Test
     public void foldTry(){
-        assertThat(of(1,2,3).foldTry(l->l.reduce(Monoids.intSum), Throwable.class).get(),equalTo(6));
+        assertThat(of(1,2,3).foldTry(l->l.reduce(Monoids.intSum), Throwable.class).get(),equalTo(Option.some(6)));
     }
     @Test
     public void plusLoop(){

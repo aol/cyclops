@@ -16,6 +16,7 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
 import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.lazy.Either;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
@@ -237,7 +238,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return result.toOptional();
     }
 
-    public final static <T> Optional<T> findFirstCallAll(ReactiveStreamX<T> stream) {
+    public final static <T> Option<T> findFirstCallAll(ReactiveStreamX<T> stream) {
 
 
         Future<T> result = Future.future();
@@ -253,7 +254,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     result.complete(null);
                 }
             });
-            return result.toOptional();
+            return Option.fromNullable(result.get().visit(s->s,e->{throw ExceptionSoftener.throwSoftenedException(e);}));
 
         }
 
@@ -278,7 +279,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         });
         sub[0].request(Long.MAX_VALUE);
 
-        return result.toOptional();
+        return Option.fromNullable(result.get().visit(s->s,e->{throw ExceptionSoftener.throwSoftenedException(e);}));
+
 
     }
 
@@ -1315,13 +1317,13 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public T reduce(T identity, BinaryOperator<T> accumulator) {
-        return findFirstCallAll((ReactiveStreamX<T>) reduceAll(identity, accumulator)).get();
+        return findFirstCallAll((ReactiveStreamX<T>) reduceAll(identity, accumulator)).orElse(identity);
     }
 
     @Override
     public final <R, A> R collect(final Collector<? super T, A, R> collector) {
 
-        return findFirstCallAll((ReactiveStreamX<R>) collectStream(collector)).get();
+        return findFirstCallAll((ReactiveStreamX<R>) collectStream(collector)).orElseGet(()->collector.finisher().apply(collector.supplier().get()));
 
 
     }
