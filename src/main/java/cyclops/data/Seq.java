@@ -32,10 +32,10 @@ import java.util.stream.Stream;
 
 //safe list implementation that does not support exceptional states
 public interface Seq<T> extends ImmutableList<T>,
-        Folds<T>,
-        Filters<T>,
-        Transformable<T>,
-        Higher<seq,T> {
+                                Folds<T>,
+                                Filters<T>,
+                                Transformable<T>,
+                                Higher<seq,T> {
 
     @Override
     default <R> Seq<R> unitStream(Stream<R> stream){
@@ -278,7 +278,7 @@ public interface Seq<T> extends ImmutableList<T>,
     default <R> Seq<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn) {
          return foldRight(empty(), (a, l) -> {
              Seq<R> b = narrow(fn.apply(a).imSeq());
-             return b.prependAll(l);
+             return l.prependAll(b);
          });
     }
     default <R> Seq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
@@ -328,7 +328,14 @@ public interface Seq<T> extends ImmutableList<T>,
 
         @Override
         public T foldRight(T identity, BinaryOperator<T> accumulator) {
-            return foldRight(identity,accumulator);
+            class Step{
+                public Trampoline<T> loop(Seq<T> s, Function<? super T, ? extends Trampoline<T>> fn){
+
+                    return s.visit(c-> Trampoline.more(()->loop(c.tail, rem -> Trampoline.more(() -> fn.apply(accumulator.apply(c.head, rem))))), n->fn.apply(identity));
+
+                }
+            }
+            return new Step().loop(this,i-> Trampoline.done(i)).result();
         }
 
         public <R> R foldRight(R zero, BiFunction<? super T, ? super R, ? extends R> f) {
@@ -380,9 +387,21 @@ public interface Seq<T> extends ImmutableList<T>,
 
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof LazySeq)
-                return linkedListX().equals(((LazySeq)obj).linkedListX());
+            if(obj instanceof Seq)
+                return linkedListX().equals(((Seq)obj).linkedListX());
             return false;
+        }
+
+        @Override
+        public String toString(){
+            StringBuffer b = new StringBuffer("["+head);
+            Iterator<T> it = tail.iterator();
+            while(it.hasNext()){
+                b.append(","+it.next());
+            }
+            b.append("]");
+            return b.toString();
+
         }
 
         @Override

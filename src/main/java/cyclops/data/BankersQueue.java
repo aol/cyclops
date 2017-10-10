@@ -238,6 +238,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
             return front.fold(s->s.fold((h, t)->h), n->back.fold(s2->s2.fold( (h2, t2) ->h2), nil->{throw new RuntimeException("Unreachable!");}));
         }
         public BankersQueue<T> tail() {
+            if(size()==1)
+                return empty();
             if(sizeFront==0){
                 return BankersQueue.ofAll(back.fold(s->s.fold((h, t)->t), n->n));
             }
@@ -298,7 +300,19 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
         }
 
 
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof ImmutableQueue){
+                ImmutableQueue<T> q = (ImmutableQueue<T>)obj;
+                return q.linkdedListX().equals(linkdedListX());
+            }
+            return false;
+        }
 
+        @Override
+        public int hashCode() {
+            return linkdedListX().hashCode();
+        }
 
         public String toString(){
            return lazySeq().toString();

@@ -244,11 +244,11 @@ public class HAMT<K, V>  {
                 System.arraycopy(nodes, 0, addedNodes, 0, arrayPos);
                 addedNodes[arrayPos] = node;
                 System.arraycopy(nodes, arrayPos, addedNodes, arrayPos + 1, nodes.length - arrayPos);
-                return new BitsetNode<>(addedBit, size + node.size(), addedNodes);
+                return new BitsetNode<>(addedBit, size +1, addedNodes);
             }else{
                 Node<K,V>[] updatedNodes = Arrays.copyOf(nodes, nodes.length);
                 updatedNodes[arrayPos] = node;
-                return new BitsetNode<>(bitset, size + nodes[arrayPos].size(), updatedNodes);
+                return new BitsetNode<>(bitset, size + 1, updatedNodes);
             }
 
         }
@@ -296,7 +296,7 @@ public class HAMT<K, V>  {
             Node<K,V>[] removedNodes = new Node[nodes.length - 1];
             System.arraycopy(nodes, 0, removedNodes, 0, arrayPos);
             System.arraycopy(nodes, arrayPos + 1, removedNodes, arrayPos, nodes.length - arrayPos - 1);
-            return new BitsetNode<>(removedBit, size + node.size(), removedNodes);
+            return new BitsetNode<>(removedBit, size -1, removedNodes);
         }
 
         @Override
