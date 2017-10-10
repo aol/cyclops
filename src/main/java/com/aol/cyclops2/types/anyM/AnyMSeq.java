@@ -60,6 +60,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     default <R> AnyMSeq<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){
         return this.flatMap(fn.andThen(i->unitIterator(i.iterator())));
     }
+
     /**
      * Perform a four level nested internal iteration over this monad and the
      * supplied monads

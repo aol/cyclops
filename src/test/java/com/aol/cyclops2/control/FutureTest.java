@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static com.aol.cyclops2.Matchers.equivalent;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -56,7 +57,16 @@ public class FutureTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void combine(){
 
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+
+        just.combineEager(add,none).printOut();
+        assertThat(just.combineEager(add,none),equalTo(just));
+
+
+    }
     @Test
     public void sub(){
         Future<Integer> f = Future.future();
@@ -214,7 +224,7 @@ public class FutureTest {
     }
     
     @Test
-    public void combine(){
+    public void combine2(){
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
         
         assertThat(just.combineEager(add, Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));

@@ -4,6 +4,7 @@ import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.companion.Semigroups;
 import cyclops.monads.Witness;
+import cyclops.monads.Witness.future;
 import org.junit.Before;
 
 import cyclops.monads.AnyM;
@@ -11,7 +12,7 @@ import org.junit.Test;
 
 import java.util.NoSuchElementException;
 
-public class FutureAnyMValueTest extends BaseAnyMValueTest<Witness.future> {
+public class FutureAnyMValueTest extends BaseAnyMValueTest<future> {
     @Before
     public void setUp() throws Exception {
         just = AnyM.fromFuture(Future.ofResult(10));
@@ -20,6 +21,7 @@ public class FutureAnyMValueTest extends BaseAnyMValueTest<Witness.future> {
     }
     @Test
     public void combineEager(){
+
 
         Monoid<Integer> add = Monoid.of(0, Semigroups.intSum);
 

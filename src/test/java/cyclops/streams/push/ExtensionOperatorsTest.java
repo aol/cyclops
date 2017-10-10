@@ -260,7 +260,7 @@ public class ExtensionOperatorsTest {
             }
         }).request(1l);
 
-        assertThat(result.get(),equalTo(ListX.of(5)));
+        assertThat(result.orElse(null),equalTo(ListX.of(5)));
         System.out.println(Spouts.of(1,2,3,4,5).limitLast(1).collectStream(Collectors.toList()).findFirst());
 
 

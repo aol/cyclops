@@ -64,7 +64,8 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
         assertThat(none.combineEager(add,none).toTry(),equalTo(Try.success(0)));
         assertThat(just.combineEager(add,just).toTry(),equalTo(Try.success(20)));
  **/
-            just.combineEager(add,none).printOut();
+          //  just.combineEager(add,none).printOut();
+        System.out.println("None " + none);
 	    assertThat(just.combineEager(add,none),equivalent(just));
         
          

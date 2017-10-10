@@ -18,6 +18,7 @@ import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -122,17 +123,31 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
         return unit(this);
     }
 
+    default <R> R print(R r){
+        System.out.println(r);
+        return r;
+    }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue2#combine(cyclops2.function.Monoid, com.aol.cyclops2.types.MonadicValue2)
      */
     default AnyMValue<W,T> combineEager(final Monoid<T> monoid, final AnyMValue<W,? extends T> v2) {
-        return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid.apply(t1, t2)))
+        return unit(this.<T> flatMap(t1 -> print(v2.map(t2 -> monoid.apply(t1, t2))))
                         .orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
 
+    @Override
+    default void subscribe(final Subscriber<? super T> sub) {
+        Object o = unwrap();
+        if(o instanceof  Publisher){
+            ((Publisher)o).subscribe(sub);
+        }
+        MonadicValue.super.subscribe(sub);
+
+    }
+
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#mkString()
-     */
+         * @see com.aol.cyclops2.types.Value#mkString()
+         */
     @Override
     default String mkString() {
         return visit(s->"AnyMValue[" + s + "]",()->"AnyMValue[]");

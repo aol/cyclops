@@ -209,7 +209,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     result.complete(null);
                 }
             });
-            return result.toOptional();
+            return Optional.ofNullable(result.get().visit(s->s,e->{throw ExceptionSoftener.throwSoftenedException(e);}));
 
         }
 
@@ -235,7 +235,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         });
         sub[0].request(1l);
 
-        return result.toOptional();
+        return Optional.ofNullable(result.get().visit(s->s,e->{throw ExceptionSoftener.throwSoftenedException(e);}));
     }
 
     public final static <T> Option<T> findFirstCallAll(ReactiveStreamX<T> stream) {
@@ -1343,7 +1343,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         Future<T> future = Future.future();
         Object[] current = {null};
         forEach(e -> current[0] = current[0] != null ? accumulator.apply((T) current[0], e) : e, this.defaultErrorHandler, () -> future.complete((T) current[0]));
-        return future.toOptional();
+        return Optional.ofNullable(future.get().visit(s->s,e->{throw ExceptionSoftener.throwSoftenedException(e);}));
 
     }
 
