@@ -34,10 +34,7 @@ public class FailureTest {
 		assertNotNull(failure);
 	}
 
-	@Test(expected=FileNotFoundException.class)
-	public void testGet() {
-		failure.get();
-	}
+
 
 	@Test
 	public void testMap() {

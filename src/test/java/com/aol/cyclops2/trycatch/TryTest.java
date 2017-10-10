@@ -18,7 +18,7 @@ import org.junit.Test;
 import cyclops.control.Try;
 public class TryTest {
  
-	@Test(expected=IOException.class)
+	@Test
 	public void test(){
 		Try<Integer,RuntimeException> tryM;
 		

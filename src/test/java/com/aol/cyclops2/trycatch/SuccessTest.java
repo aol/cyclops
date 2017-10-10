@@ -50,7 +50,7 @@ public class SuccessTest {
 
 	@Test
 	public void testGet() {
-		assertThat(success.get(),equalTo(value));
+		assertThat(success.orElse(null),equalTo(value));
 	}
 
 	@Test

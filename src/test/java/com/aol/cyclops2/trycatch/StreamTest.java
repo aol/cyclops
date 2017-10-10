@@ -28,7 +28,7 @@ public class StreamTest {
 		  .tryWithResources(lines -> {
 			  lines.forEach(System.out::println);
 			  return "hello";
-		  }).get(),equalTo("hello"));
+		  }).orElse(null),equalTo("hello"));
 	}
 	@Test
 	public void testTryWithResources(){

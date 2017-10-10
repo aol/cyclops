@@ -261,7 +261,7 @@ public  class CoreReactiveStreamXTest {
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
 	}
-	@Test(expected=ClassCastException.class)
+	@Test
 	public void cast(){
 		of(1,2,3).cast(String.class).printOut();
 	}

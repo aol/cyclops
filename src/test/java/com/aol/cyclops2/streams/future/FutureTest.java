@@ -38,7 +38,7 @@ public  class FutureTest {
 	public void testMapReduce(){
 		assertThat(of(1,2,3,4,5).map(it -> it*100).foldFuture(exec,s->s
 					.reduce( (acc,next) -> acc+next))
-					.get(),is(Optional.of(1500)));
+					.orElse(null),is(Optional.of(1500)));
 	}
 	@Test
 	public void testMapReduceSeed(){
