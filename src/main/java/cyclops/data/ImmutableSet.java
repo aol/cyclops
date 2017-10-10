@@ -33,11 +33,11 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 public interface ImmutableSet<T> extends Folds<T>,
-        Filters<T>,
-        Transformable<T>,
-        OnEmpty<T>,
-        OnEmptySwitch<ImmutableSet<T>,ImmutableSet<T>>,
-        FoldableTraversable<T>,
+                                         Filters<T>,
+                                         Transformable<T>,
+                                         OnEmpty<T>,
+                                         OnEmptySwitch<ImmutableSet<T>,ImmutableSet<T>>,
+                                         FoldableTraversable<T>,
                                          Iterable<T> {
     @Override
     default <U> ImmutableSet<U> ofType(Class<? extends U> type) {

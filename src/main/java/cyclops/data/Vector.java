@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.collections.tuple.Tuple;
@@ -213,7 +214,7 @@ public class Vector<T> implements ImmutableList<T>{
             return unitStream(stream().reverse());
     }
 
-    public Maybe<T> get(int pos){
+    public Option<T> get(int pos){
         if(pos<0||pos>=size){
             return Maybe.nothing();
         }

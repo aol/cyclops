@@ -3,6 +3,8 @@ package com.aol.cyclops2.types;
 import com.aol.cyclops2.types.factory.EmptyUnit;
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.functor.Transformable;
+import cyclops.async.Future;
+import cyclops.control.Try;
 import cyclops.function.Monoid;
 import cyclops.control.Maybe;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
@@ -13,6 +15,8 @@ import cyclops.collections.tuple.Tuple;
 import cyclops.matching.Api;
 import org.reactivestreams.Publisher;
 
+import java.util.NoSuchElementException;
+import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -28,6 +32,20 @@ import static cyclops.matching.Api.Case;
  * @param <T> Data type of element stored inside this Monad
  */
 public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Filters<T>, Zippable<T>, EmptyUnit<T>{
+
+    default <R> Future<R> mapAsync(Function<? super T,? extends R> fn, Executor ex){
+        return Future.of(()->map(fn),ex).flatMap(a->a.visit(s->Future.ofResult(s),()->Future.ofError(new NoSuchElementException())));
+    }
+
+    default <X extends Throwable,R> Try<R,X> mapTry(Function<? super T,? extends R> fn, Class<X>... exceptionTypes){
+        Try<? extends MonadicValue<? extends R>, X> x = Try.catchExceptions(exceptionTypes).tryThis(() -> map(fn));
+        return x.flatMap(a->a.toTry(exceptionTypes));
+    }
+
+    default <R> Try<R,Throwable> mapTry(Function<? super T,? extends R> fn){
+        Try<? extends MonadicValue<? extends R>, Throwable> x = Try.withCatch(() -> map(fn));
+        return x.flatMap(a->a.toTry());
+    }
 
     default int arity(){
         return 1;

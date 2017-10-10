@@ -2,6 +2,7 @@ package cyclops.data;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -43,8 +44,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
     <R> BankersQueue<R> map(Function<? super T, ? extends R> map);
     <R> BankersQueue<R> flatMap(Function<? super T, ? extends ImmutableQueue<? extends R>> fn);
 
-    default Maybe<T> get(int n){
-        return Maybe.nothing();
+    default Option<T> get(int n){
+        return Option.none();
     }
 
     default ReactiveSeq<T> stream(){
@@ -253,7 +254,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
             ImmutableList<T> replaceB = back.replace(currentElement, newElement);
             return  front==replaceF && back==replaceB ? this : new Cons<>(replaceF, replaceB);
         }
-       public Maybe<T> get(int n) {
+       public Option<T> get(int n) {
            if (n < sizeFront)
                return front.get(sizeFront-n-1);
            else if (n < sizeFront + sizeBack) {

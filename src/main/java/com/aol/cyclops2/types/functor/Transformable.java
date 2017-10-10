@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Trampoline;
+import cyclops.control.Try;
 
 /**
  * An interface that represents a type that can transform a value from one type to another
@@ -28,6 +29,7 @@ public interface Transformable<T> {
     default <U> Transformable<U> cast(final Class<? extends U> type) {
         return map(type::cast);
     }
+
 
     /**
      * Transform this functor using the supplied transformation function

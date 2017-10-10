@@ -4,6 +4,7 @@ package cyclops.data;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
@@ -53,9 +54,9 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     }
 
 
-    public Maybe<T> get(int pos){
+    public Option<T> get(int pos){
         if(pos==0)
-            return Maybe.of(head);
+            return Option.of(head);
         return tail.get(pos);
 
     }

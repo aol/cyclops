@@ -15,6 +15,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -34,13 +35,14 @@ import java.util.stream.Stream;
 
 
 public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,ImmutableQueue.None<T>>,
-        Folds<T>,
-        Filters<T>,
-        Transformable<T>,
-        OnEmptySwitch<ImmutableQueue<T>,ImmutableQueue<T>>,
-                                           Iterable<T>,
-        FoldableTraversable<T>,
-        To<ImmutableQueue<T>> {
+                                            Folds<T>,
+                                            Filters<T>,
+                                            Transformable<T>,
+                                            OnEmptySwitch<ImmutableQueue<T>,
+                                            ImmutableQueue<T>>,
+                                            Iterable<T>,
+                                            FoldableTraversable<T>,
+                                            To<ImmutableQueue<T>> {
 
     <R> ImmutableQueue<R> unitStream(Stream<R> stream);
 
@@ -139,7 +141,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
 
     ImmutableQueue<T> reverse();
 
-    Maybe<T> get(int pos);
+    Option<T> get(int pos);
     T getOrElse(int pos, T alt);
     T getOrElseGet(int pos, Supplier<T> alt);
     int size();

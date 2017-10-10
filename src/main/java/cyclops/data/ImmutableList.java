@@ -15,6 +15,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -149,7 +150,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     ImmutableList<T> reverse();
 
-    Maybe<T> get(int pos);
+    Option<T> get(int pos);
     T getOrElse(int pos, T alt);
     T getOrElseGet(int pos, Supplier<T> alt);
     int size();

@@ -21,12 +21,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
-        Folds<Tuple2<K,V>>,
-        Filters<Tuple2<K,V>>,
-        Transformable<V>,
-        BiTransformable<K, V>,
-        OnEmpty<Tuple2<K, V>>,
-        OnEmptySwitch<Tuple2<K, V>,ImmutableMap<K, V>> {
+                                            Folds<Tuple2<K,V>>,
+                                            Filters<Tuple2<K,V>>,
+                                            Transformable<V>,
+                                            BiTransformable<K, V>,
+                                            OnEmpty<Tuple2<K, V>>,
+                                            OnEmptySwitch<Tuple2<K, V>,ImmutableMap<K, V>> {
 
     PersistentMapX<K,V> persistentMapX();
     ImmutableMap<K,V> put(K key, V value);

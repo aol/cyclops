@@ -1,6 +1,7 @@
 package cyclops.data;
 
-import cyclops.control.Maybe;
+import cyclops.control.Option;
+import cyclops.control.Option;
 import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
 
@@ -39,7 +40,7 @@ public class BAMT<T> {
     public interface PopulatedArray<T> extends NestedArray<T>{
         public T getOrElseGet(int pos, Supplier<T> alt);
         public T getOrElse(int pos, T alt);
-        public Maybe<T> get(int pos);
+        public Option<T> get(int pos);
         public T[] getNestedArrayAt(int pos);
         public PopulatedArray<T> set(int pos, T value);
 
@@ -108,11 +109,11 @@ public class BAMT<T> {
         }
 
         @Override
-        public Maybe<T> get(int pos) {
+        public Option<T> get(int pos) {
             int indx = pos & 0x01f;
             if(indx<array.length)
-                return Maybe.of((T)array[indx]);
-            return Maybe.nothing();
+                return Option.of((T)array[indx]);
+            return Option.none();
         }
         @Override
         public T getOrElse(int pos, T alt) {
@@ -190,11 +191,11 @@ public class BAMT<T> {
         }
 
         @Override
-        public Maybe<T> get(int pos) {
+        public Option<T> get(int pos) {
             int indx = pos & 0x01f;
             if(indx<array.length)
-                return Maybe.of((T)array[indx]);
-            return Maybe.nothing();
+                return Option.of((T)array[indx]);
+            return Option.none();
         }
         @Override
         public T getOrElse(int pos, T alt) {
@@ -247,14 +248,14 @@ public class BAMT<T> {
         }
 
         @Override
-        public Maybe<T> get(int pos) {
+        public Option<T> get(int pos) {
             T[] local = getNestedArrayAt(pos);
             int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
-                return Maybe.of(local[indx]);
+                return Option.of(local[indx]);
             }
-            return Maybe.nothing();
+            return Option.none();
         }
         @Override
         public T getOrElse(int pos, T alt) {
@@ -333,14 +334,14 @@ public class BAMT<T> {
         }
 
         @Override
-        public Maybe<T> get(int pos) {
+        public Option<T> get(int pos) {
             T[] local = getNestedArrayAt(pos);
             int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
-                return Maybe.of(local[indx]);
+                return Option.of(local[indx]);
             }
-            return Maybe.nothing();
+            return Option.none();
         }
         @Override
         public T getOrElse(int pos, T alt) {
@@ -439,14 +440,14 @@ public class BAMT<T> {
 
         }
         @Override
-        public Maybe<T> get(int pos) {
+        public Option<T> get(int pos) {
             T[] local = getNestedArrayAt(pos);
             int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
-                return Maybe.of(local[indx]);
+                return Option.of(local[indx]);
             }
-            return Maybe.nothing();
+            return Option.none();
         }
         @Override
         public T getOrElse(int pos, T alt) {
@@ -570,14 +571,14 @@ public class BAMT<T> {
         }
 
         @Override
-        public Maybe<T> get(int pos) {
+        public Option<T> get(int pos) {
             T[] local = getNestedArrayAt(pos);
             int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
-                return Maybe.of(local[indx]);
+                return Option.of(local[indx]);
             }
-            return Maybe.nothing();
+            return Option.none();
         }
         @Override
         public T getOrElse(int pos, T alt) {
@@ -716,14 +717,14 @@ public class BAMT<T> {
         }
 
         @Override
-        public Maybe<T> get(int pos) {
+        public Option<T> get(int pos) {
             T[] local = getNestedArrayAt(pos);
             int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
-                return Maybe.of(local[indx]);
+                return Option.of(local[indx]);
             }
-            return Maybe.nothing();
+            return Option.none();
         }
         @Override
         public T getOrElse(int pos, T alt) {
