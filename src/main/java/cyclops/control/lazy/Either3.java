@@ -54,7 +54,6 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
                                                 Filters<RT>,
                                                 BiTransformable<LT2, RT>,
                                                 To<Either3<LT1, LT2, RT>>,
-                                                Supplier<RT>,
                                                 Sealed3<LT1,LT2,RT>,
                                                 Higher3<either3,LT1,LT2,RT> {
 
@@ -119,6 +118,9 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
         Completable.CompletablePublisher<RT> c = new Completable.CompletablePublisher<RT>();
         return new Either3.CompletableEither3<RT,LT2, RT>(c,fromFuture(Future.fromPublisher(c)));
     }
+
+
+
     @AllArgsConstructor
     static class CompletableEither3<ORG,LT1,RT> implements Either3<Throwable,LT1,RT>, Completable<ORG> {
 
@@ -146,7 +148,7 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
         }
 
         @Override
-        public RT get() {
+        public Option<RT> get() {
             return either.get();
         }
 
@@ -501,6 +503,7 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
 
 
 
+     Option<RT> get();
 
     @Override
     default <U> Maybe<U> ofType(Class<? extends U> type) {
@@ -767,8 +770,8 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
 
         }
 
-        @Override
-        public PT get() {
+
+        public Option<PT> get() {
             return trampoline().get();
         }
 
@@ -910,14 +913,14 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
 
-            return Maybe.fromEval(Eval.later(() -> test.test(get()) ? Maybe.just(get()) : Maybe.<PT>nothing()))
+            return Maybe.fromEval(Eval.later(() -> test.test(value.get()) ? Maybe.just(value.get()) : Maybe.<PT>nothing()))
                         .flatMap(Function.identity());
 
         }
 
         @Override
-        public PT get() {
-            return value.get();
+        public Option<PT> get() {
+            return Option.some(value.get());
         }
 
         @Override
@@ -1082,9 +1085,8 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
         }
 
         @Override
-        public PT get() {
-            throw new NoSuchElementException(
-                                             "Attempt to access right value on a Left Either3");
+        public Option<PT> get() {
+            return Option.none();
         }
 
         @Override
@@ -1233,9 +1235,8 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
         }
 
         @Override
-        public PT get() {
-            throw new NoSuchElementException(
-                                             "Attempt to access right value on a Middle Either3");
+        public Option<PT> get() {
+            return Option.none();
         }
 
         @Override
@@ -1434,7 +1435,7 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
 
                 @Override
                 public <T> Maybe<Comonad<Higher<Higher<either3, L1>, L2>>> comonad() {
-                    return Maybe.just(Instances.comonad());
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -1607,26 +1608,7 @@ public interface Either3<LT1, LT2, RT> extends  Value<RT>,
 
             };
         }
-        public static <L1,L2> Comonad<Higher<Higher<either3, L1>, L2>> comonad() {
-            return new ComonadByPure<Higher<Higher<either3, L1>, L2>>() {
 
-
-                @Override
-                public <T> T extract(Higher<Higher<Higher<either3, L1>, L2>, T> ds) {
-                    return narrowK(ds).get();
-                }
-
-                @Override
-                public <T, R> Higher<Higher<Higher<either3, L1>, L2>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<either3, L1>, L2>, T> ds) {
-                    return Instances.<L1,L2>functor().map(fn,ds);
-                }
-
-                @Override
-                public <T> Higher<Higher<Higher<either3, L1>, L2>, T> unit(T value) {
-                    return Instances.<L1, L2>unit().unit(value);
-                }
-            };
-        }
 
     }
 }

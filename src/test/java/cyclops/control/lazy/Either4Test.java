@@ -44,7 +44,7 @@ public class Either4Test {
         assertThat(Either4.right(10)
                .map(i->i*2)
                .flatMap(i->Either4.right(i*4))
-               .get(),equalTo(80));
+               .orElse(-10),equalTo(80));
     }
     @Test
     public void odd() {
@@ -296,11 +296,7 @@ public class Either4Test {
     public void testGet() {
         assertThat(just.get(),equalTo(Option.some(10)));
     }
-    @Test(expected=NoSuchElementException.class)
-    public void testGetNone() {
-        none.get();
-        
-    }
+
 
     @Test
     public void testFilter() {

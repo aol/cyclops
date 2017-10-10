@@ -39,7 +39,7 @@ public class Either3Test {
         completable.complete(5);
         System.out.println(mapped.getClass());
         mapped.printOut();
-        assertThat(mapped.get(),equalTo(11));
+        assertThat(mapped.orElse(-20),equalTo(11));
 
 
     }
@@ -53,7 +53,7 @@ public class Either3Test {
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.swap1().get(),instanceOf(NoSuchElementException.class));
+        assertThat(mapped.swap1().orElse(null),instanceOf(NoSuchElementException.class));
 
     }
     @Test
@@ -66,7 +66,7 @@ public class Either3Test {
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.swap1().get(),instanceOf(IllegalStateException.class));
+        assertThat(mapped.swap1().orElse(null),instanceOf(IllegalStateException.class));
 
     }
     boolean lazy = true;
@@ -87,7 +87,7 @@ public class Either3Test {
         assertThat(Either3.right(10)
                .map(i->i*2)
                .flatMap(i->Either3.right(i*4))
-               .get(),equalTo(80));
+               .orElse(-30),equalTo(80));
     }
     static class Base{ }
     static class One extends Base{ }
@@ -342,11 +342,6 @@ public class Either3Test {
     @Test
     public void testGet() {
         assertThat(just.get(),equalTo(Option.some(10)));
-    }
-    @Test(expected=NoSuchElementException.class)
-    public void testGetNone() {
-        none.get();
-        
     }
 
     @Test

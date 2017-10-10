@@ -28,17 +28,17 @@ public abstract class BaseNumberOperationsTest {
 	
 	@Test
 	public void sumInt(){
-		assertThat(of(1,2,3,4).foldFuture(exec,s->s.sumInt(i->i)).get(),
+		assertThat(of(1,2,3,4).foldFuture(exec,s->s.sumInt(i->i)).orElse(-1),
 				equalTo(10));
 	}
 	@Test
 	public void sumDouble(){
-		assertThat(of(1.0,2.0,3.0,4.0).foldFuture(exec,s->s.sumDouble(i->i)).get(),
+		assertThat(of(1.0,2.0,3.0,4.0).foldFuture(exec,s->s.sumDouble(i->i)).orElse(-1d),
 				equalTo(10.0));
 	}
 	@Test
 	public void sumLong(){
-		assertThat(of(1l,2l,3l,4l).foldFuture(exec,s->s.sumLong(i->i)).get(),
+		assertThat(of(1l,2l,3l,4l).foldFuture(exec,s->s.sumLong(i->i)).orElse(-1l),
 				equalTo(10l));
 	}
 	@Test

@@ -49,10 +49,10 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                                                         To<Either5<LT1, LT2,LT3, LT4,RT>>,
                                                         OrElseValue<RT,Either5<LT1,LT2,LT3,LT4,RT>>,
                                                         Unit<RT>,
-                                                        Value<RT>,
-                                                        Supplier<RT>{
+                                                        Value<RT>{
 
 
+    Option<RT> get();
     /**
      * Create a reactiveBuffer CompletableEither
      *
@@ -126,7 +126,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public RT get() {
+        public Option<RT> get() {
             return either.get();
         }
 
@@ -846,8 +846,8 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                 }
             };
         }
-        @Override
-        public PT get() {
+
+        public Option<PT> get() {
             return trampoline().get();
         }
 
@@ -1003,14 +1003,14 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
 
-            return Maybe.fromEval(Eval.later(() -> test.test(get()) ? Maybe.just(get()) : Maybe.<PT>nothing()))
+            return Maybe.fromEval(Eval.later(() -> test.test(value.get()) ? Maybe.just(value.get()) : Maybe.<PT>nothing()))
                         .flatMap(Function.identity());
 
         }
 
         @Override
-        public PT get() {
-            return value.get();
+        public Option<PT> get() {
+            return Option.some(value.get());
         }
 
         @Override
@@ -1192,9 +1192,8 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public PT get() {
-            throw new NoSuchElementException(
-                                             "Attempt to access right value on a Left Either4");
+        public Option<PT> get() {
+            return Option.none();
         }
 
         @Override
@@ -1367,9 +1366,8 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public PT get() {
-            throw new NoSuchElementException(
-                                             "Attempt to access right value on a Middle Either4");
+        public Option<PT> get() {
+            return Option.none();
         }
 
         @Override
@@ -1540,9 +1538,8 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public PT get() {
-            throw new NoSuchElementException(
-                                             "Attempt to access right value on a Middle Either4");
+        public Option<PT> get() {
+            return Option.none();
         }
 
         @Override
@@ -1714,9 +1711,8 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public PT get() {
-            throw new NoSuchElementException(
-                                             "Attempt to access right value on a Middle Either4");
+        public Option<PT> get() {
+            return Option.none();
         }
 
         @Override

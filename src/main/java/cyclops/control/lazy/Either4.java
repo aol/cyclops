@@ -58,9 +58,9 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                                                     BiTransformable<LT3, RT>,
                                                     To<Either4<LT1, LT2,LT3, RT>>,
                                                     OrElseValue<RT,Either4<LT1,LT2,LT3,RT>>,
-                                                    Unit<RT>,
-                                                    Supplier<RT>{
+                                                    Unit<RT>{
 
+    Option<RT> get();
     public static  <LT1,LT2,LT3,T> Kleisli<Higher<Higher<Higher<either4, LT1>, LT2>,LT3>,Either4<LT1,LT2,LT3,T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), Either4::widen);
     }
@@ -144,7 +144,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
 
         @Override
-        public RT get() {
+        public Option<RT> get() {
             return either.get();
         }
 
@@ -813,7 +813,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         }
 
         @Override
-        public PT get() {
+        public Option<PT> get() {
             return trampoline().get();
         }
 
@@ -959,14 +959,14 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
 
-            return Maybe.fromEval(Eval.later(() -> test.test(get()) ? Maybe.just(get()) : Maybe.<PT>nothing()))
+            return Maybe.fromEval(Eval.later(() -> test.test(value.get()) ? Maybe.just(value.get()) : Maybe.<PT>nothing()))
                         .flatMap(Function.identity());
 
         }
 
         @Override
-        public PT get() {
-            return value.get();
+        public Option<PT> get() {
+            return Option.some(value.get());
         }
 
         @Override
@@ -1139,9 +1139,8 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         }
 
         @Override
-        public PT get() {
-            throw new NoSuchElementException(
-                                             "Attempt to access right value on a Left Either4");
+        public Option<PT> get() {
+            return Option.none();
         }
 
         @Override
@@ -1299,9 +1298,8 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         }
 
         @Override
-        public PT get() {
-            throw new NoSuchElementException(
-                                             "Attempt to access right value on a Middle Either4");
+        public Option<PT> get() {
+            return Option.none();
         }
         @Override
         public void subscribe(final Subscriber<? super PT> s) {
@@ -1463,9 +1461,8 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         }
 
         @Override
-        public PT get() {
-            throw new NoSuchElementException(
-                                             "Attempt to access right value on a Middle Either4");
+        public Option<PT> get() {
+           return Option.none();
         }
 
         @Override
@@ -1668,7 +1665,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
                 @Override
                 public <T> Maybe<Comonad<Higher<Higher<Higher<either4, L1>, L2>,L3>>> comonad() {
-                    return Maybe.just(Instances.comonad());
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -1842,26 +1839,7 @@ public interface Either4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
             };
         }
-        public static <L1,L2,L3> Comonad<Higher<Higher<Higher<either4, L1>, L2>,L3>> comonad() {
-            return new ComonadByPure<Higher<Higher<Higher<either4, L1>, L2>,L3>>() {
 
-
-                @Override
-                public <T> T extract(Higher<Higher<Higher<Higher<either4, L1>, L2>,L3>, T> ds) {
-                    return narrowK(ds).get();
-                }
-
-                @Override
-                public <T, R> Higher<Higher<Higher<Higher<either4, L1>, L2>,L3>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<Higher<either4, L1>, L2>,L3>, T> ds) {
-                    return Instances.<L1,L2,L3>functor().map(fn,ds);
-                }
-
-                @Override
-                public <T> Higher<Higher<Higher<Higher<either4, L1>, L2>,L3>, T> unit(T value) {
-                    return Instances.<L1, L2,L3>unit().unit(value);
-                }
-            };
-        }
 
     }
 
